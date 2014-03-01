@@ -1792,7 +1792,7 @@ if ($action == 'create')
 	$absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax)) {
-		//print ajax_combobox('fac_replacement');
+		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');
 	}
 
@@ -1997,11 +1997,18 @@ if ($action == 'create')
 	{
 		// Credit note
 		print '<tr height="18"><td valign="middle">';
-		print '<input type="radio" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked=true' : '');
+		print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked=true' : '');
 		if (! $optionsav)
 			print ' disabled="disabled"';
 		print '>';
 		print '</td><td valign="middle">';
+		print '<script type="text/javascript" language="javascript">
+		jQuery(document).ready(function() {
+			jQuery("#fac_avoir").click(function() {
+				jQuery("#radio_creditnote").attr(\'checked\',\'checked\');
+			});
+		});
+		</script>';
 		$text = $langs->transnoentities("InvoiceAvoirAsk") . ' ';
 		// $text.='<input type="text" value="">';
 		$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
