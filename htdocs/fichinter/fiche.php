@@ -998,7 +998,7 @@ if ($action == 'create')
 		// Contract
 		if ($conf->contrat->enabled)
 		{
-			$langs->load("contrat");
+			$langs->load("contracts");
 			print '<tr><td valign="top">'.$langs->trans("Contract").'</td><td>';
 			$numcontrat=$formcontract->select_contract($soc->id,GETPOST('contratid','int'),'contratid',0,1);
 			if ($numcontrat==0)
