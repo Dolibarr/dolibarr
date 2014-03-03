@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,7 +210,15 @@ class Paiement extends CommonObject
                                 }
                             }
 
-                            if ($invoice->type != 0 && $invoice->type != 1 && $invoice->type != 2) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note. We do nothing more.");
+                            //Invoice types that are eligible for changing status to paid
+							$affected_types = array(
+								0,
+								1,
+								2,
+								3
+							);
+
+                            if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
                             else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else $result=$invoice->set_paid($user,'','');

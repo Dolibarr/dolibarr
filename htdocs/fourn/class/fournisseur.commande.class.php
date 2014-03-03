@@ -224,7 +224,8 @@ class CommandeFournisseur extends CommonOrder
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->subprice            = $objp->subprice;
+                    $line->subprice            = $objp->subprice;	  // deprecated
+                    $line->pu_ht	           = $objp->subprice;	  // Unit price HT
                     $line->remise_percent      = $objp->remise_percent;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
@@ -462,7 +463,9 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
+                        $up_ht_disc=$this->lines[$i]->subprice;
+   	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -715,7 +718,9 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrement stock of product (and sub-products)
-                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderApprovedInDolibarr",$this->ref));
+	                        $up_ht_disc=$this->lines[$i]->subprice;
+    	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr",$this->ref));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -1308,7 +1313,7 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$product	Id of product to dispatch
      * @param 	double		$qty		Qty to dispatch
      * @param 	int			$entrepot	Id of warehouse to add product
-     * @param 	double		$price		Price for PMP value calculation
+     * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment	Comment for stock movement
      * @return 	int						<0 if KO, >0 if OK
      */
@@ -1364,6 +1369,7 @@ class CommandeFournisseur extends CommonOrder
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
+                	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
                     $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
                     if ($result < 0)
                     {

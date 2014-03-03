@@ -2732,10 +2732,10 @@ class PropaleLigne  extends CommonObject
 	var $marge_tx;
 	var $marque_tx;
 
-    var $special_code;	// Liste d'options non cumulabels:
+    var $special_code;	// Tag for special lines (exlusive tags)
     // 1: frais de port
     // 2: ecotaxe
-    // 3: ??
+    // 3: option line (when qty = 0)
 
     var $info_bits = 0;	// Liste d'options cumulables:
     // Bit 0: 	0 si TVA normal - 1 si TVA NPR

@@ -739,7 +739,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql.= " FROM ".MAIN_DB_PREFIX.$table;
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     $sql.= " AND ".$field." NOT LIKE '%PROV%'";
-    $sql.= " AND entity IN (".getEntity($table, 1).")";
+    if ($table != 'projet_task') $sql.= " AND entity IN (".getEntity($table, 1).")";
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 

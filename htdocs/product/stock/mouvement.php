@@ -236,9 +236,12 @@ if ($resql)
 
         // Country
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $img=picto_from_langcode($entrepot->country_code);
-        print ($img?$img.' ':'');
-        print $entrepot->country;
+        if (! empty($entrepot->country_code))
+        {
+        	$img=picto_from_langcode($entrepot->country_code);
+        	print ($img?$img.' ':'');
+        	print $entrepot->country;
+        }
         print '</td></tr>';
 
         // Status

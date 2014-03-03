@@ -16,9 +16,6 @@
 use Cwd;
 
 $PROJECT="dolibarr";
-$MAJOR="3";
-$MINOR="5";
-$BUILD="1";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -40,15 +37,6 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 "makensis.exe"=>"NSIS"
 );
 
-$FILENAME="$PROJECT";
-$FILENAMESNAPSHOT="$PROJECT-snapshot";
-$FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
-$FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
-$FILENAMEXZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
-$FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
-$FILENAMEDEB="see later";
-$FILENAMEAPS="$PROJECT-$MAJOR.$MINOR.$BUILD.app";
-$FILENAMEEXEDOLIWAMP="DoliWamp-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat")   { $RPMDIR="/usr/src/redhat"; } # redhat
 if (-d "/usr/src/packages") { $RPMDIR="/usr/src/packages"; } # opensuse
 if (-d "/usr/src/RPM")      { $RPMDIR="/usr/src/RPM"; } # mandrake
@@ -120,6 +108,28 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
+# Get version $MAJOR, $MINOR and $BUILD
+$result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
+if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
+while (<IN>) {
+	if ( $_ =~ /define\('DOL_VERSION','([\d\.]+)'\)/ ) { $PROJVERSION = $1; break; }
+}
+close IN;
+($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
+if ($MINOR eq '') { die "Error can't detect version into ".$SOURCE . "/htdocs/filefunc.inc.php"; }
+
+# Set vars for packaging
+$FILENAME            = "$PROJECT";
+$FILENAMESNAPSHOT    = "$PROJECT-snapshot";
+$FILENAMETGZ         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEZIP         = "$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEXZ          = "$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMERPM         = "$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
+$FILENAMEDEB         = "see later";
+$FILENAMEAPS         = "$PROJECT-$MAJOR.$MINOR.$BUILD.app";
+$FILENAMEEXEDOLIWAMP = "DoliWamp-$MAJOR.$MINOR.$BUILD";
+
+
 my $copyalreadydone=0;      # Use "-" before number of choice to avoid copy
 my $batch=0;
 for (0..@ARGV-1) {
@@ -132,7 +142,6 @@ for (0..@ARGV-1) {
 }
 if ($ENV{"DESTIBETARC"} && $BUILD =~ /[a-z]/i)   { $DESTI = $ENV{"DESTIBETARC"}; }	# Force output dir if env DESTI is defined
 if ($ENV{"DESTISTABLE"} && $BUILD =~ /^[0-9]+$/) { $DESTI = $ENV{"DESTISTABLE"}; }	# Force output dir if env DESTI is defined
-
 
 print "Makepack version $VERSION\n";
 print "Building package name: $PROJECT\n";

@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=いくつかのオブジェクト（請求書、
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=プロジェクトリーダー
 TypeContact_project_external_PROJECTLEADER=プロジェクトリーダー
-TypeContact_project_internal_CONTRIBUTOR=貢献者
-TypeContact_project_external_CONTRIBUTOR=貢献者
+TypeContact_project_internal_PROJECTCONTRIBUTOR=貢献者
+TypeContact_project_external_PROJECTCONTRIBUTOR=貢献者
 TypeContact_project_task_internal_TASKEXECUTIVE=タスクの幹部
 TypeContact_project_task_external_TASKEXECUTIVE=タスクの幹部
-TypeContact_project_task_internal_CONTRIBUTOR=貢献者
-TypeContact_project_task_external_CONTRIBUTOR=貢献者
+TypeContact_project_task_internal_TASKCONTRIBUTOR=貢献者
+TypeContact_project_task_external_TASKCONTRIBUTOR=貢献者
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=Ha egyes tárgyakat (számla, megrendelés, ...)
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projekt vezető
 TypeContact_project_external_PROJECTLEADER=Projekt vezető
-TypeContact_project_internal_CONTRIBUTOR=Hozzájáruló
-TypeContact_project_external_CONTRIBUTOR=Hozzájáruló
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Hozzájáruló
+TypeContact_project_external_PROJECTCONTRIBUTOR=Hozzájáruló
 TypeContact_project_task_internal_TASKEXECUTIVE=Kivitelező
 TypeContact_project_task_external_TASKEXECUTIVE=Task Kivitelező
-TypeContact_project_task_internal_CONTRIBUTOR=Hozzájáruló
-TypeContact_project_task_external_CONTRIBUTOR=Hozzájáruló
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Hozzájáruló
+TypeContact_project_task_external_TASKCONTRIBUTOR=Hozzájáruló
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

@@ -569,7 +569,7 @@ class Contrat extends CommonObject
 
 				if ($line->statut == 0) $this->nbofserviceswait++;
 				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
-				if ($line->statut == 4 && $line->date_fin_prevue < $now) $this->nbofservicesexpired++;
+				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
 
 				$total_ttc+=$objp->total_ttc;   // TODO Not saved into database
@@ -654,7 +654,7 @@ class Contrat extends CommonObject
 
 				if ($line->statut == 0) $this->nbofserviceswait++;
 				if ($line->statut == 4 && (empty($line->date_fin_prevue) || $line->date_fin_prevue >= $now)) $this->nbofservicesopened++;
-				if ($line->statut == 4 && $line->date_fin_prevue < $now) $this->nbofservicesexpired++;
+				if ($line->statut == 4 && (! empty($line->date_fin_prevue) && $line->date_fin_prevue < $now)) $this->nbofservicesexpired++;
 				if ($line->statut == 5) $this->nbofservicesclosed++;
 
 				$this->lines[]        = $line;
@@ -1799,7 +1799,7 @@ class ContratLigne
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut,$mode,(isset($this->date_fin_validite)?($this->date_fin_validite < dol_now()?1:0):-1));
+		return $this->LibStatut($this->statut,$mode,((! empty($this->date_fin_validite))?($this->date_fin_validite < dol_now()?1:0):-1));
 	}
 
 	/**

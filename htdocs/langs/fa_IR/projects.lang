@@ -100,12 +100,12 @@ LinkedToAnotherCompany=ربط طرف ثالث آخر
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
 TypeContact_project_external_PROJECTLEADER=مشروع زعيم
-TypeContact_project_internal_CONTRIBUTOR=مساهم
-TypeContact_project_external_CONTRIBUTOR=مساهم
+TypeContact_project_internal_PROJECTCONTRIBUTOR=مساهم
+TypeContact_project_external_PROJECTCONTRIBUTOR=مساهم
 TypeContact_project_task_internal_TASKEXECUTIVE=المهمة التنفيذية
 TypeContact_project_task_external_TASKEXECUTIVE=المهمة التنفيذية
-TypeContact_project_task_internal_CONTRIBUTOR=مساهم
-TypeContact_project_task_external_CONTRIBUTOR=مساهم
+TypeContact_project_task_internal_TASKCONTRIBUTOR=مساهم
+TypeContact_project_task_external_TASKCONTRIBUTOR=مساهم
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models
