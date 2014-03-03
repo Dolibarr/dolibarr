@@ -100,12 +100,12 @@ ProjectCreatedInDolibarr=Projecte %s creat
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Cap de projecte
 TypeContact_project_external_PROJECTLEADER=Cap de projecte
-TypeContact_project_internal_CONTRIBUTOR=Participant
-TypeContact_project_external_CONTRIBUTOR=Participant
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Participant
+TypeContact_project_external_PROJECTCONTRIBUTOR=Participant
 TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
-TypeContact_project_task_internal_CONTRIBUTOR=Participant
-TypeContact_project_task_external_CONTRIBUTOR=Participant
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Participant
+TypeContact_project_task_external_TASKCONTRIBUTOR=Participant
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

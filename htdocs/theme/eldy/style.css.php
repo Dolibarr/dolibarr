@@ -2280,7 +2280,7 @@ li.cal_event       { border: none; list-style-type: none; }
 	       background-color:white;
 	       border:1px solid #888;
 	       margin:0px;
-	       padding:0px;
+/*	       padding:0px; This make combo crazy */
 	     }
 .ui-autocomplete ul {
 	       list-style-type:none;

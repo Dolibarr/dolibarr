@@ -100,12 +100,12 @@ ProjectCreatedInDolibarr=项目 %s  创建
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=项目负责人
 TypeContact_project_external_PROJECTLEADER=项目负责人
-TypeContact_project_internal_CONTRIBUTOR=投稿
-TypeContact_project_external_CONTRIBUTOR=投稿
+TypeContact_project_internal_PROJECTCONTRIBUTOR=投稿
+TypeContact_project_external_PROJECTCONTRIBUTOR=投稿
 TypeContact_project_task_internal_TASKEXECUTIVE=执行任务
 TypeContact_project_task_external_TASKEXECUTIVE=执行任务
-TypeContact_project_task_internal_CONTRIBUTOR=投稿
-TypeContact_project_task_external_CONTRIBUTOR=投稿
+TypeContact_project_task_internal_TASKCONTRIBUTOR=投稿
+TypeContact_project_task_external_TASKCONTRIBUTOR=投稿
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models
