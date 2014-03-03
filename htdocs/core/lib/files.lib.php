@@ -832,7 +832,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		$error=0;
 
 		//print "x".$file." ".$disableglob;exit;
-		$ok=true;
+		$ok=false;
 		$file_osencoded=dol_osencode($file);    // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && ! empty($file_osencoded))
 		{
