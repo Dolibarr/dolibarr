@@ -10,7 +10,6 @@ beta version of Dolibarr, step by step.
 - Check all files are commited.
 - Update version/info in /ChangeLog
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
-- Update version number with x.y.z-w in build/makepack-dolibarr.pl
 - Update version number with x.y.z-w in build/debian/changelog
 - Update version number with x.y.z-w in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.y.z-w in build/rpm/*.spec
@@ -34,7 +33,6 @@ complete release of Dolibarr, step by step.
 - Check all files are commited.
 - Update version/info in ChangeLog
 - Update version number with x.y.z in htdocs/filefunc.inc.php
-- Update version number with x.y.z in build/makepack-dolibarr.pl
 - Update version number with x.y.z in build/debian/changelog
 - Update version number with x.y.z in build/exe/doliwamp/doliwamp.iss
 - Update version number with x.y.z in build/rpm/*.spec
