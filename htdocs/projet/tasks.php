@@ -314,7 +314,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 
 	// planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-	print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
+	print $form->select_duration('planned_workload', $planned_workload?$planned_workload : $object->planned_workload,0,'text');
 	print '</td></tr>';
 
 	// Progress
