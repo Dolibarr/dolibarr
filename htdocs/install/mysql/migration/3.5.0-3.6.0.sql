@@ -1010,3 +1010,29 @@ create table llx_product_customer_price_log
   fk_user				integer,
  import_key			varchar(14)                  -- Import key
 )ENGINE=innodb;
+
+--Batch number managment
+ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
+
+CREATE TABLE IF NOT EXISTS `llx_product_batch` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `fk_product_stock` int(11) NOT NULL,
+  `eatby` datetime DEFAULT NULL,
+  `sellby` datetime DEFAULT NULL,
+  `batch` varchar(30) DEFAULT NULL,
+  `qty` double NOT NULL DEFAULT '0',
+  `import_key` varchar(14) DEFAULT NULL,
+  KEY `ix_fk_product_stock` (`fk_product_stock`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `llx_expeditiondet_batch` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fk_expeditiondet` int(11) NOT NULL,
+  `eatby` date DEFAULT NULL,
+  `sellby` date DEFAULT NULL,
+  `batch` varchar(30) DEFAULT NULL,
+  `qty` double NOT NULL DEFAULT '0',
+  `fk_origin_stock` int(11) NOT NULL,
+  KEY `ix_fk_expeditiondet` (`fk_expeditiondet`)
+) ENGINE=InnoDB;
