@@ -29,6 +29,7 @@
  *	\brief      File of class to manage predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
 /**
@@ -2796,7 +2797,7 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('warehouse', 1).")";
@@ -2817,6 +2818,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
+					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
@@ -3319,6 +3321,48 @@ class Product extends CommonObject
 	function hasbatch()
 	{
 		return ($this->status_batch == 1 ? true : false);
+	}
+
+	/**
+	 *  Adjust stock in a warehouse for product with batch number
+	 *
+	 *  @param  	User	$user           user asking change
+	 *  @param  	int		$id_entrepot    id of warehouse
+	 *  @param  	double	$nbpiece        nb of units
+	 *  @param  	int		$movement       0 = add, 1 = remove
+	 * 	@param		string	$label			Label of stock movement
+	 * 	@param		double	$price			Price to use for stock eval
+	 * 	@param		date	$dlc			eat-by date
+	 * 	@param		date	$dluo			sell-by date
+	 * 	@param		string	$lot			Lot number
+	 * 	@return     int     				<0 if KO, >0 if OK
+	 */
+	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='')
+	{
+		if ($id_entrepot)
+		{
+			$this->db->begin();
+
+			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
+
+			$op[0] = "+".trim($nbpiece);
+			$op[1] = "-".trim($nbpiece);
+
+			$movementstock=new MouvementStock($this->db);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,'',$dlc,$dluo,$lot);
+
+			if ($result >= 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				dol_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
 	}
 }
 ?>
