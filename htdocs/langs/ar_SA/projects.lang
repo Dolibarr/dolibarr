@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=المشروع
 Projects=المشاريع
 SharedProject=مشاريع مشتركة
@@ -30,11 +32,18 @@ TimeSpent=الوقت الذي تستغرقه
 TimesSpent=قضى وقتا
 RefTask=المرجع. مهمة
 LabelTask=علامة مهمة
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 NewTimeSpent=جديد الوقت الذي يقضيه
 MyTimeSpent=وقتي قضى
 MyTasks=مهمتي
 Tasks=المهام
 Task=مهمة
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=مهمة جديدة
 AddTask=إضافة مهمة
 AddDuration=تضاف المدة
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=إذا كانت بعض الكائنات (فات�
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=مشروع زعيم
 TypeContact_project_external_PROJECTLEADER=مشروع زعيم
-TypeContact_project_internal_PROJECTCONTRIBUTOR=مساهم
-TypeContact_project_external_PROJECTCONTRIBUTOR=مساهم
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=المهمة التنفيذية
 TypeContact_project_task_external_TASKEXECUTIVE=المهمة التنفيذية
-TypeContact_project_task_internal_TASKCONTRIBUTOR=مساهم
-TypeContact_project_task_external_TASKCONTRIBUTOR=مساهم
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models
