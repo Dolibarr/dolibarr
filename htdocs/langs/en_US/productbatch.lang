@@ -1,0 +1,7 @@
+# ProductBATCH language file - en_US - ProductBATCH
+CHARSET= UTF-8
+ProductStatusOnBatch= Managed
+ProductStatusNotOnBatch= Not Managed
+ProductStatusOnBatchShort= Managed
+ProductStatusNotOnBatchShort= Not Managed
+Batch=Batch

@@ -6,6 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Christophe Battarel	<contact@altairis.fr>
+ * Copyright (C) 2014      Cédric Gross			<c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ class modProduct extends DolibarrModules
 
 		// Dependencies
 		$this->depends = array();
-		$this->requiredby = array("modStock","modBarcode");
+		$this->requiredby = array("modStock","modBarcode","modProductBatch");
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
