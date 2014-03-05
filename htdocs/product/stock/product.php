@@ -125,8 +125,8 @@ if ($action == "correct_stock" && ! $cancel)
 			$result=$product->fetch($id);
 			}
 			if ($product->hasbatch()) {
-				$d_eatby=dol_mktime(12, 0 , 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
-				$d_sellby=dol_mktime(12, 0 , 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+				$d_eatby=dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+				$d_sellby=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
 				$result=$product->correct_stock_batch(
 					$user,
 					GETPOST("id_entrepot"),

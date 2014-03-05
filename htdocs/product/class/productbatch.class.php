@@ -31,7 +31,7 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
 class Productbatch extends CommonObject
 {
 	var $element='productbatch';			//!< Id that identify managed objects
-	private static $table_element='product_batch';		//!< Name of table without prefix where object is stored
+	private static $_table_element='product_batch';		//!< Name of table without prefix where object is stored
 
     var $id;
     
@@ -77,7 +77,7 @@ class Productbatch extends CommonObject
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::$table_element." (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::$_table_element." (";
 		$sql.= "fk_product_stock,";
 		$sql.= "sellby,";
 		$sql.= "eatby,";
@@ -102,7 +102,7 @@ class Productbatch extends CommonObject
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		if (! $error)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
 
 			if (! $notrigger)
 			{
@@ -158,7 +158,7 @@ class Productbatch extends CommonObject
 		$sql.= " t.import_key";
 
 		
-        $sql.= " FROM ".MAIN_DB_PREFIX.self::$table_element." as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -206,7 +206,7 @@ class Productbatch extends CommonObject
 		$this->clean_param();
 
         // Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.self::$table_element." SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.self::$_table_element." SET";
 		$sql.= " fk_product_stock=".(isset($this->fk_product_stock)?$this->fk_product_stock:"null").",";
 		$sql.= " sellby=".(dol_strlen($this->sellby)!=0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
 		$sql.= " eatby=".(dol_strlen($this->eatby)!=0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
@@ -286,7 +286,7 @@ class Productbatch extends CommonObject
 
 		if (! $error)
 		{
-    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$table_element."";
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
     		$sql.= " WHERE rowid=".$this->id;
 
     		dol_syslog(get_class($this)."::delete sql=".$sql);
@@ -388,17 +388,20 @@ class Productbatch extends CommonObject
 		
 	}
 
+	/**
+	 * Clean fields (triming)
+	 */ 
 	private function clean_param() {
-		if (isset($this->fk_product_stock)) $this->fk_product_stock=(int)trim($this->fk_product_stock);
+		if (isset($this->fk_product_stock)) $this->fk_product_stock=(int) trim($this->fk_product_stock);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
-		if (isset($this->qty)) $this->qty=(float)trim($this->qty);
+		if (isset($this->qty)) $this->qty=(float) trim($this->qty);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
 	}
 
     /**
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
-     *  @param	int			$fk_product_stck    id product_stock for objet
+     *  @param	int			$fk_product_stock    id product_stock for objet
      *  @param	date		$eatby    eat-by date for objet
      *  @param	date		$sellby   sell-by date for objet
      *  @param	string		$batch_number   	batch number for objet
@@ -417,7 +420,7 @@ class Productbatch extends CommonObject
 		$sql.= " t.batch,";
 		$sql.= " t.qty,";
 		$sql.= " t.import_key";
-		$sql.= " FROM ".MAIN_DB_PREFIX.self::$table_element." as t";
+		$sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 
 		if (! empty($eatby)) array_push($where," eatby = '".$this->db->idate($eatby)."'");
@@ -459,7 +462,7 @@ class Productbatch extends CommonObject
      * Return all batch detail records for given product and warehouse
      *
      *  @param	obj			$db    database object
-     *  @param	int			$fk_product_stck    id product_stock for objet
+     *  @param	int			$fk_product_stock    id product_stock for objet
      *  @param	int			$with_qty    doesn't return line with 0 quantity
 	 *  @return int          	<0 if KO, >0 if OK
      */
@@ -478,7 +481,7 @@ class Productbatch extends CommonObject
 		$sql.= " t.import_key";
 
 		
-        $sql.= " FROM ".MAIN_DB_PREFIX.self::$table_element." as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 		
 		if ($with_qty) $sql.= " AND qty<>0";
