@@ -14,7 +14,7 @@ For users:
        use the "print" view on screen.
 - New: Add a menu entry to a barcode generation page.
 - New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
-       to automatically add timestamp and user line into editionf field when editing a note.
+       to automatically add timestamp and user line into edition field when editing a note.
 - New: Add button cancel into edition of notes.
 - New: Improved Opensurvey module and added options to disable comments and disable
        public votes.
@@ -54,8 +54,8 @@ Dolibarr better:
 
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
-- Remove the javascrit function ac_delay() that is not used anymore by core code.
-- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Remove the javascript function ac_delay() that is not used anymore by core code.
+- Properties "dictionaries" into module descriptor files has been renamed into "dictionaries".
 
 
 
@@ -64,7 +64,7 @@ Fix: Do not report trigger errors twice.
 Fix: Error when creating event was not reported.
 Fix: Bug of import of agenda when using https link
 Fix: Field nature not saved correctly
-Fix: Substituion of extra field was ko for order
+Fix: Substitution of extra field was ko for order
 Fix: Bad translation of date format for pt_BR.
 Fix: priority field of agenda record is smallint.
 Fix: Missing loading of lang in some pages.
@@ -73,7 +73,7 @@ Fix: Link to paypal was invalid into email text.
 Fix: ref and date of supplier invoice.
 Fix: Check on bank account.
 Fix: Problem with file upload and download.
-Fix: Page load not ending when large number of thirdparies. We 
+Fix: Page load not ending when large number of thirdparties. We 
      added option MAIN_DISABLE_AJAX_COMBOX to disable javascript
      combo feature that is root cause of problem.
 Fix: [ bug #1231 ] PDF always generated in interventions
@@ -1499,7 +1499,7 @@ For developers:
 - Add Dolibarr triggers support on payments.
 - Add Dolibarr triggers on supplier and customers orders.
 - Webcalendar triggers for actions on Member module.
-- Support optionnal new javascript popup selector for date fields.
+- Support optional new javascript popup selector for date fields.
 - Support for several RSS boxes in external RSS module. Setup easier.
 - Can attach documents on Action, Orders, Invoices, Commercial proposals.
 - Can attach contacts on proposals, orders, contracts, invoices.

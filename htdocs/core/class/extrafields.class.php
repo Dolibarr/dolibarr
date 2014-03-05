@@ -1,25 +1,25 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
-* Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
-* Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
-* Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
-* Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2013	  Florian Henry        <forian.henry@open-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier	    <benoit.mortier@opensides.be>
+ * Copyright (C) 2009-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Florian Henry        <forian.henry@open-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  * 	\file 		htdocs/core/class/extrafields.class.php
@@ -135,7 +135,7 @@ class ExtraFields
 	}
 
 	/**
-	 *	Add a new optionnal attribute.
+	 *	Add a new optional attribute.
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
@@ -205,7 +205,7 @@ class ExtraFields
 	}
 
 	/**
-	 *	Add description of a new optionnal attribute
+	 *	Add description of a new optional attribute
 	 *
 	 *	@param	string	$attrname			code of attribute
 	 *	@param	string	$label				label of attribute
@@ -269,7 +269,7 @@ class ExtraFields
 	}
 
 	/**
-	 *	Delete an optionnal attribute
+	 *	Delete an optional attribute
 	 *
 	 *	@param	string	$attrname		Code of attribute to delete
 	 *  @param  string	$elementtype    Element type ('member', 'product', 'company', 'contact', ...)
@@ -300,7 +300,7 @@ class ExtraFields
 	}
 
 	/**
-	 *	Delete description of an optionnal attribute
+	 *	Delete description of an optional attribute
 	 *
 	 *	@param	string	$attrname			Code of attribute to delete
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)

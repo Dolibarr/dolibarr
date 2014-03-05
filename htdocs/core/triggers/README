@@ -10,6 +10,6 @@ where:
             directory or value 'all' if not enabled by a particular module.
 > Mytrigger is name of the trigger. The PHP class inside the trigger file
             would be named InterfaceMytrigger.
-> -NORUN is optionnal and disable completely a trigger file if set. To use 
+> -NORUN is optional and disable completely a trigger file if set. To use 
             a trigger with such a name, rename file to remove the -NORUN part.
 
