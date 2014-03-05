@@ -18,10 +18,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
-
 ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 
-ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1 AFTER canedit;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 -- ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
 -- ALTER TABLE llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
 -- ALTER TABLE llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
@@ -33,6 +33,7 @@ ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN mailsonde mailsonde tinyint NOT
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
 
 ALTER TABLE llx_facture_rec CHANGE COLUMN usenewprice usenewprice INTEGER DEFAULT 0;
 

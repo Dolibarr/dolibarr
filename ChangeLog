@@ -25,6 +25,7 @@ For users:
 - New: Add an admin page to make a mass init of barcode values for all products.
 - New: Automatic events for sending mails showing info about mail linked objects. 
 - New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty)
+- New: Add filter on text and status into survey list. Can also sorter on id, text and date end.
 - Fix: Project Task numbering rule customs rule works
 
 TODO

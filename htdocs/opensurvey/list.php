@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +32,36 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 $action=GETPOST('action');
 $id=GETPOST('id');
 $numsondage= $id;
+$surveytitle=GETPOST('surveytitle');
+$status=GETPOST('status');
+//if (! isset($_POST['status']) && ! isset($_GET['status'])) $status='opened';	// If filter unknown, we choose 'opened'
 
-if (! $sortorder) $sortorder="ASC";
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.titre";
+if (! $sortorder) $sortorder="ASC";
 if ($page < 0) {
 	$page = 0;
 }
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
+
+$langs->load("opensurvey");
+
+/*
+ * Actions
+ */
+
+if (GETPOST('button_removefilter'))
+{
+	$status='';
+	$surveytitle='';
+}
 
 
 /*
@@ -48,18 +70,49 @@ $offset = $limit * $page;
 
 $form=new Form($db);
 
-$langs->load("opensurvey");
+$now = dol_now();
+
 llxHeader();
 
-print '<div class=corps>'."\n";
+$param='';
+
+print '<div class="corps">'."\n";
 
 print_fiche_titre($langs->trans("OpenSurveyArea"));
 
-// tableau qui affiche tous les sondages de la base
-print '<table class="liste">'."\n";
-print '<tr class="liste_titre"><td>'. $langs->trans("Ref").'</td><td>'. $langs->trans("Title") .'</td><td>'. $langs->trans("Type") .'</td><td>'. $langs->trans("Author") .'</td><td align="center">'. $langs->trans("ExpireDate") .'</td><td align="center">'. $langs->trans("NbOfVoters") .'</td>'."\n";
+// List of surveys into database
 
-$sql = "SELECT id_sondage, fk_user_creat, u.login, format, date_fin, titre, nom_admin";
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+print '<table class="liste">'."\n";
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.id_sondage",$param,"","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Title"), $_SERVER["PHP_SELF"], "p.titre",$param,"","",$sortfield,$sortorder);
+print '<td>'. $langs->trans("Type") .'</td>';
+print '<td>'. $langs->trans("Author") .'</td>';
+print_liste_field_titre($langs->trans("ExpireDate"), $_SERVER["PHP_SELF"], "p.date_fin",$param,"",'align="center"',$sortfield,$sortorder);
+print '<td align="center">'. $langs->trans("NbOfVoters") .'</td>';
+print '</tr>'."\n";
+
+print '<tr class="liste_titre">';
+print '<td></td>';
+print '<td><input type="text" name="surveytitle" value="'.dol_escape_htmltag($surveytitle).'"></td>';
+print '<td></td>';
+print '<td></td>';
+$arraystatus=array(''=>'&nbsp;','expired'=>$langs->trans("Expired"),'opened'=>$langs->trans("Opened"));
+print '<td align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
+print '<td class="liste_titre" align="right">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '</td>';
+print '</tr>'."\n";
+
+$sql = "SELECT p.id_sondage, p.fk_user_creat, p.format, p.date_fin, p.titre, p.nom_admin,";
+$sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 // Count total nb of records
@@ -69,8 +122,12 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-$sql.= " ORDER BY $sortfield $sortorder ";
-$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+$sql.= " WHERE p.entity = ".getEntity('survey');
+if ($status == 'expired') $sql.=" AND date_fin < '".$db->idate($now)."'";
+if ($status == 'opened') $sql.=" AND date_fin >= '".$db->idate($now)."'";
+if ($surveytitle) $sql.=" AND titre LIKE '%".$db->escape($surveytitle)."%'";
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql=$db->query($sql);
 if (! $resql) dol_print_error($db);
@@ -100,22 +157,22 @@ while ($i < min($num,$limit))
 	print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 	print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate");
 	print '</td><td>';
-	
+
 	// Author
 	if ($obj->fk_user_creat) {
 		$userstatic = new User($db);
 		$userstatic->id = $obj->fk_user_creat;
 		$userstatic->login = $obj->login;
-		
+
 		print $userstatic->getLoginUrl(1);
 	} else {
 		print dol_htmlentities($obj->nom_admin);
 	}
-	
+
 	print '</td>';
 
 	print '<td align="center">'.dol_print_date($db->jdate($obj->date_fin),'day');
-	if ($db->jdate($obj->date_fin) < time()) { print ' '.img_warning(); }
+	if ($db->jdate($obj->date_fin) < time()) { print ' ('.$langs->trans("Expired").')'; }
 	print '</td>';
 
 	print'<td align="center">'.$nbuser.'</td>'."\n";
@@ -125,6 +182,9 @@ while ($i < min($num,$limit))
 }
 
 print '</table>'."\n";
+
+print '</form>';
+
 print '</div>'."\n";
 
 llxFooter();
