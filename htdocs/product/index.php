@@ -68,8 +68,6 @@ llxHeader("",$langs->trans("ProductsAndServices"),$helpurl);
 print_fiche_titre($transAreaType);
 
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
@@ -122,19 +120,19 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 if (! empty($conf->product->enabled))
 {
-	$statProducts = "<tr $bc[0]>";
+	$statProducts = "<tr ".$bc[0].">";
 	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
 	$statProducts.= "</tr>";
-	$statProducts.= "<tr $bc[1]>";
+	$statProducts.= "<tr ".$bc[1].">";
 	$statProducts.= '<td><a href="liste.php?type=0&amp;tosell=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
 	$statProducts.= "</tr>";
 }
 if (! empty($conf->service->enabled))
 {
-	$statServices = "<tr $bc[0]>";
+	$statServices = "<tr ".$bc[0].">";
 	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=0&amp;tobuy=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
 	$statServices.= "</tr>";
-	$statServices.= "<tr $bc[1]>";
+	$statServices.= "<tr ".$bc[1].">";
 	$statServices.= '<td><a href="liste.php?type=1&amp;tosell=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
 	$statServices.= "</tr>";
 }
@@ -160,7 +158,6 @@ print '</td></tr>';
 print '</table>';
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -261,7 +258,7 @@ else
 
 
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
-// Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover": 
+// Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
 if ($conf->global->MAIN_FEATURES_LEVEL)
 {
@@ -270,7 +267,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL)
 }
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 llxFooter();
@@ -283,8 +279,8 @@ $db->close();
 function activitytrim($product_type)
 {
 	global $conf,$langs,$db;
-	
-	// on affiche les 3 dernières années 
+
+	// on affiche les 3 dernières années
 	$yearofbegindate=date('Y',dol_time_plus_duree(time(), -3, "y"));
 
 	// ventilation par trimestre
@@ -311,7 +307,7 @@ function activitytrim($product_type)
 		$trim4=0;
 		$lgn = 0;
 		$num = $db->num_rows($result);
-		
+
 		if ($num > 0 )
 		{
 			print '<br>';
@@ -353,7 +349,7 @@ function activitytrim($product_type)
 				$trim3=0;
 				$trim4=0;
 			}
-			
+
 			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03")
 				$trim1 += $objp->Mnttot;
 

@@ -75,6 +75,7 @@ $now = dol_now();
 llxHeader();
 
 $param='';
+$fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':'lastname';
 
 print '<div class="corps">'."\n";
 
@@ -93,7 +94,7 @@ print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.id_sondage",$param,"","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Title"), $_SERVER["PHP_SELF"], "p.titre",$param,"","",$sortfield,$sortorder);
 print '<td>'. $langs->trans("Type") .'</td>';
-print '<td>'. $langs->trans("Author") .'</td>';
+print_liste_field_titre($langs->trans("Author"), $_SERVER["PHP_SELF"], "u.".$fieldtosortuser,$param,"","",$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("ExpireDate"), $_SERVER["PHP_SELF"], "p.date_fin",$param,"",'align="center"',$sortfield,$sortorder);
 print '<td align="center">'. $langs->trans("NbOfVoters") .'</td>';
 print '</tr>'."\n";
@@ -112,7 +113,7 @@ print '</td>';
 print '</tr>'."\n";
 
 $sql = "SELECT p.id_sondage, p.fk_user_creat, p.format, p.date_fin, p.titre, p.nom_admin,";
-$sql.= " u.login";
+$sql.= " u.login, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
 // Count total nb of records
@@ -162,7 +163,9 @@ while ($i < min($num,$limit))
 	if ($obj->fk_user_creat) {
 		$userstatic = new User($db);
 		$userstatic->id = $obj->fk_user_creat;
-		$userstatic->login = $obj->login;
+		$userstatic->firstname = $obj->firstname;
+		$userstatic->lastname = $obj->lastname;
+		$userstatic->login = $userstatic->getFullName($langs, 0, -1, 48);
 
 		print $userstatic->getLoginUrl(1);
 	} else {
