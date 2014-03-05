@@ -52,6 +52,7 @@ InvoiceSentByEMail=客户发票通过电子邮件发送%s
 SupplierOrderSentByEMail=供应商的订单通过电子邮件发送%s
 SupplierInvoiceSentByEMail=供应商的发票通过电子邮件发送%s
 ShippingSentByEMail=通过电子邮件发送的航运%s
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=通过电子邮件发送的干预%s
 NewCompanyToDolibarr= 第三方创建
 DateActionPlannedStart= 计划开始日期

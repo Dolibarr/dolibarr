@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 # Project=Project
 Projects=פרוייקטים
 # SharedProject=Everybody
@@ -30,11 +32,18 @@ Projects=פרוייקטים
 # TimesSpent=Time spent
 # RefTask=Ref. task
 # LabelTask=Label task
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 # NewTimeSpent=New time spent
 # MyTimeSpent=My time spent
 # MyTasks=My tasks
 # Tasks=Tasks
 # Task=Task
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 # NewTask=New task
 # AddTask=Add task
 # AddDuration=Add duration

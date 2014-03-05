@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Hanke
 Projects=Projektit
 SharedProject=Yhteiset hanke
@@ -30,11 +32,18 @@ TimeSpent=Käytetty aika
 TimesSpent=Käytetty aika
 RefTask=Ref. tehtävä
 LabelTask=Label tehtävä
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 NewTimeSpent=Uusi käytetty aika
 MyTimeSpent=Oma käytetty aika
 MyTasks=Omat tehtävät
 Tasks=Tehtävät
 Task=Tehtävä
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Uusi tehtävä
 AddTask=Lisää tehtävä
 AddDuration=Lisää kesto
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=Jos jotkin esineet (lasku, tilaus, ...), jotka k
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektin johtaja
 TypeContact_project_external_PROJECTLEADER=Projektin johtaja
-TypeContact_project_internal_PROJECTCONTRIBUTOR=Avustaja
-TypeContact_project_external_PROJECTCONTRIBUTOR=Avustaja
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Tehtävä johtoon
 TypeContact_project_task_external_TASKEXECUTIVE=Tehtävä johtoon
-TypeContact_project_task_internal_TASKCONTRIBUTOR=Avustaja
-TypeContact_project_task_external_TASKCONTRIBUTOR=Avustaja
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

@@ -35,6 +35,7 @@ AddNewColumn=Pievienot jaunu kolonnu
 TitleChoice=Izvēlies nosaukumu
 ExportSpreadsheet=Eksporta rezultātu izklājlapu
 ExpireDate=Ierobežot datumu
+# NbOfSurveys=Number of surveys
 NbOfVoters=Balsotāju skaits
 SurveyResults=Rezultāti
 PollAdminDesc=Jums ir atļauts mainīt visus balsot līnijas šajā aptaujā ar pogu &quot;Edit&quot;. Jūs varat, kā arī, noņemt kolonnu vai ar %s līniju. Jūs varat arī pievienot jaunu kolonnu ar %s.

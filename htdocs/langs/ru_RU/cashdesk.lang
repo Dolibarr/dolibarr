@@ -37,3 +37,4 @@ ShowCompany=Показать компании
 ShowStock=Показать склад
 DeleteArticle=Нажмите, чтобы удалить эту статью
 # FilterRefOrLabelOrBC=Search (Ref/Label)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

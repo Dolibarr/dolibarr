@@ -52,6 +52,7 @@ InvoiceSentByEMail=Factura client %s trimisă prin e-mail
 SupplierOrderSentByEMail=Comanda  furnizor %s  trimisă prin e-mail
 SupplierInvoiceSentByEMail=Factura furnizor %s trimise prin e-mail
 ShippingSentByEMail=Avizul de expediţie %s trimis  prin e-mail
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervenţia %s  trimisă prin e-mail
 NewCompanyToDolibarr= Terţ creat
 DateActionPlannedStart= Data planificată a începerii

@@ -224,7 +224,7 @@ SetConditions=Uzstādīt apmaksas nosacījumus
 SetMode=Uzstādīt maksājumu režīmu
 SetDate= Iestatīt datumu
 SelectDate=Izvēlieties datumu
-Billed=Jāmaksā
+Billed=Samaksāts
 RepeatableInvoice=Iepriekš definēts rēķins
 RepeatableInvoices=Iepriekš definēti rēķini
 Repeatable=Iepriekš definēts
@@ -299,7 +299,7 @@ RelatedBills=Saistītie rēķini
 
 # PaymentConditions
 PaymentConditionShortRECEP=Tūlītējs
-PaymentConditionRECEP=Tūlītējs
+PaymentConditionRECEP=Nekavējoties
 PaymentConditionShort30D=30 dienas
 PaymentCondition30D=30 dienas
 PaymentConditionShort30DENDMONTH=30 dienas mēneša beigās

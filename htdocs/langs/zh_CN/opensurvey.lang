@@ -35,6 +35,7 @@ CreateSurveyStandard=创建一个标准的调查
 TitleChoice=选择标签
 # ExportSpreadsheet=Export result spreadsheet
 ExpireDate=极限日期
+# NbOfSurveys=Number of surveys
 # NbOfVoters=Nb of voters
 SurveyResults=结果
 # PollAdminDesc=You are allowed to change all vote lines of this poll with button "Edit". You can, as well, remove a column or a line with %s. You can also add a new column with %s.

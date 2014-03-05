@@ -37,3 +37,4 @@ CashDeskProducts=מוצרים
 # ShowStock=Show warehouse
 # DeleteArticle=Click to remove this article
 # FilterRefOrLabelOrBC=Search (Ref/Label)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

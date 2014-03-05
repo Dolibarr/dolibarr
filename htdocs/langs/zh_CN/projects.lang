@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=项目
 Projects=项目
 SharedProject=每个人
@@ -30,11 +32,18 @@ TimeSpent=花费的时间
 TimesSpent=所花费的时间
 RefTask=号。任务
 LabelTask=标签任务
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 NewTimeSpent=新的时间
 MyTimeSpent=我的时间花
 MyTasks=我的任务
 Tasks=任务
 Task=任务
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=新任务
 AddTask=新增任务
 AddDuration=添加时间
@@ -100,12 +109,12 @@ ProjectCreatedInDolibarr=项目 %s  创建
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=项目负责人
 TypeContact_project_external_PROJECTLEADER=项目负责人
-TypeContact_project_internal_PROJECTCONTRIBUTOR=投稿
-TypeContact_project_external_PROJECTCONTRIBUTOR=投稿
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=执行任务
 TypeContact_project_task_external_TASKEXECUTIVE=执行任务
-TypeContact_project_task_internal_TASKCONTRIBUTOR=投稿
-TypeContact_project_task_external_TASKCONTRIBUTOR=投稿
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

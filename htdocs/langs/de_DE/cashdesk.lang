@@ -37,3 +37,4 @@ ShowCompany=Zeige Unternehmen
 ShowStock=Zeige Lager
 DeleteArticle=Klicken, um diesen Artikel zu entfernen
 FilterRefOrLabelOrBC=Suche (Ref/Label)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
