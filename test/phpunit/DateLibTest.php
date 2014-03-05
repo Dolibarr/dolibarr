@@ -150,7 +150,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1,$result);
 
-		// With different date before and after sunlight hour (day to change is 2014-03-30)
+		// With different date before and after sunlight hour (day to change sunlight hour is 2014-03-30)
 		$date1=dol_mktime(0, 0, 0, 3, 28, 2014, true);
 		$date2=dol_mktime(0, 0, 0, 3, 31, 2014, true);
 

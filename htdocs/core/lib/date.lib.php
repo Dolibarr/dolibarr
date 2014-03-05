@@ -585,7 +585,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 }
 
 /**
- *	Fonction retournant le nombre de jour feries samedis et dimanches entre 2 dates entrees en timestamp
+ *	Fonction retournant le nombre de jour feries, samedis et dimanches entre 2 dates entrees en timestamp. Dates must be UTC with hour, day, min to 0
  *	Called by function num_open_day
  *
  *	@param	    timestamp	$timestampStart     Timestamp de debut
@@ -597,7 +597,10 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 {
 	$nbFerie = 0;
 
-	while ($timestampStart != $timestampEnd)
+	// Check to ensure we use correct parameters
+	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'ErrorDates must use same hour and be GMT dates';
+
+	while ($timestampStart < $timestampEnd)		// Loop end when equals
 	{
 		$ferie=false;
 		$countryfound=0;
@@ -707,9 +710,9 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 		// On incremente compteur
 		if ($ferie) $nbFerie++;
 
-		// Incrementation du nombre de jour (on avance dans la boucle)
+		// Increase number of days (on go up into loop)
 		$jour++;
-		$timestampStart=mktime(0,0,0,$mois,$jour,$annee);
+		$timestampStart=dol_mktime(0,0,0,$mois,$jour,$annee,1);	// Generate GMT date for next day
 	}
 
 	return $nbFerie;
@@ -765,7 +768,6 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
 	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
 	if ($timestampStart < $timestampEnd)
 	{
-		//print num_between_day($timestampStart, $timestampEnd, $lastday).' - '.num_public_holiday($timestampStart, $timestampEnd);
 		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $lastday);
 		$nbOpenDay.= " " . $langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
