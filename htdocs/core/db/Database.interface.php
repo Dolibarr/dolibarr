@@ -382,13 +382,15 @@ interface Database
 	);
 
 	/**
-	 *    Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-	 *    19700101020000 -> 3600 with TZ+1
-	 *
-	 * @param        string $string Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 * @return        date                Date TMS
-	 */
-	function jdate($string);
+     *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
+     * 	19700101020000 -> 3600 with TZ+1 and gmt=0
+     * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
+     *
+     * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
+     *	@return	date				Date TMS
+     */
+    function jdate($string, $gm=false);
 
 	/**
 	 *  Encrypt sensitive data in database

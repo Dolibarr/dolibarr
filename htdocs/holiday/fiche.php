@@ -64,6 +64,8 @@ if ($action == 'create')
 
     $date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
     $date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+    $date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
+    $date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
     $starthalfday=GETPOST('starthalfday');
     $endhalfday=GETPOST('endhalfday');
     $halfday=0;
@@ -105,7 +107,7 @@ if ($action == 'create')
     }
 
     // Si aucun jours ouvrés dans la demande
-    $nbopenedday=num_open_day($date_debut, $date_fin, 0, 1, $halfday);
+    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
     if($nbopenedday < 1)
     {
         header('Location: fiche.php?action=request&error=DureeHoliday');
@@ -147,6 +149,8 @@ if ($action == 'update')
 {
 	$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
 	$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
+	$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
+	$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
 	$starthalfday=GETPOST('starthalfday');
 	$endhalfday=GETPOST('endhalfday');
 	$halfday=0;
@@ -198,7 +202,7 @@ if ($action == 'update')
             }
 
             // Si pas de jours ouvrés dans la demande
-            $nbopenedday=num_open_day($date_debut, $date_fin, 0, 1, $halfday);
+            $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
             if ($nbopenedday < 1)
             {
                 header('Location: fiche.php?id='.$_POST['holiday_id'].'&action=edit&error=DureeHoliday');
@@ -237,9 +241,9 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
     if($user->rights->holiday->delete)
     {
     	$error=0;
-    	
+
     	$db->begin();
-    	
+
         $cp = new Holiday($db);
         $cp->fetch($id);
 
@@ -251,12 +255,12 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
             {
                 $result=$cp->delete($id);
             }
-            else 
+            else
             {
                 $error = $langs->trans('ErrorCantDeleteCP');
             }
         }
-        
+
        	if (! $error)
         {
           	$db->commit();
@@ -265,7 +269,7 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
         }
         else
         {
-        	$db->rollback();	
+        	$db->rollback();
         }
     }
 }
@@ -331,7 +335,7 @@ if ($action == 'confirm_send')
             // Si l'option pour avertir le valideur en cas de solde inférieur à la demande
             if ($cp->getConfCP('AlertValidatorSolde'))
             {
-            	$nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1,$cp->halfday);
+            	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
                 if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
                 {
                     $message.= "\n";
@@ -384,10 +388,10 @@ if($action == 'confirm_valid')
         $verif = $cp->update($user->id);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
-        if ($verif > 0) 
+        if ($verif > 0)
         {
             // Calculcate number of days consummed
-            $nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
+            $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1);
 
             $soldeActuel = $cp->getCpforUser($cp->fk_user);
             $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
@@ -470,7 +474,7 @@ if ($action == 'confirm_refuse')
             $verif = $cp->update($user->id);
 
             // Si pas d'erreur SQL on redirige vers la fiche de la demande
-            if ($verif > 0) 
+            if ($verif > 0)
             {
                 // To
                 $destinataire = new User($db);
@@ -541,7 +545,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
     if (($cp->statut == 2 || $cp->statut == 3) && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
     {
     	$db->begin();
-    	
+
     	$oldstatus = $cp->statut;
         $cp->date_cancel = dol_now();
         $cp->fk_user_cancel = $user->id;
@@ -552,7 +556,7 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         if ($result >= 0 && $oldstatus == 3)	// holiday was already validated, status 3, so we must increase back sold
         {
         	// Calculcate number of days consummed
-        	$nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1,$cp->halfday);
+        	$nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
         	$soldeActuel = $cp->getCpforUser($cp->fk_user);
         	$newSolde = $soldeActuel + ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
@@ -568,16 +572,16 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
         		$error = $langs->trans('ErrorCantDeleteCP');
         	}
         }
-        
+
         if (! $error)
         {
-        	$db->commit();	
+        	$db->commit();
         }
         else
         {
         	$db->rollback();
         }
-        
+
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
         if (! $error && $result > 0)
         {
@@ -874,7 +878,7 @@ else
             if($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
             {
 
-                if ($action == 'delete') 
+                if ($action == 'delete')
                 {
                     if($user->rights->holiday->delete)
                     {
@@ -943,8 +947,8 @@ else
                     print $langs->trans($listhalfday[$starthalfday]);
                     print '</td>';
                     print '</tr>';
-                } 
-                else 
+                }
+                else
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
@@ -965,8 +969,8 @@ else
                     print $langs->trans($listhalfday[$endhalfday]);
                     print '</td>';
                     print '</tr>';
-                } 
-                else 
+                }
+                else
                 {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
@@ -979,7 +983,7 @@ else
                 }
                 print '<tr>';
                 print '<td>'.$langs->trans('NbUseDaysCP').'</td>';
-                print '<td>'.num_open_day($cp->date_debut, $cp->date_fin, 0, 1, $cp->halfday).'</td>';
+                print '<td>'.num_open_day($cp->date_debut_gmt, $cp->date_fin_gmt, 0, 1, $cp->halfday).'</td>';
                 print '</tr>';
 
                 // Status

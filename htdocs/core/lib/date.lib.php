@@ -716,11 +716,11 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 }
 
 /**
- *	Fonction retournant le nombre de jour entre deux dates
+ *	Function to return number of days between two dates (date must be UTC date !)
  *  Example: 2012-01-01 2012-01-02 => 1 if lastday=0, 2 if lastday=1
  *
- *	@param	   timestamp	$timestampStart     Timestamp de debut
- *	@param	   timestamp	$timestampEnd       Timestamp de fin
+ *	@param	   timestamp	$timestampStart     Timestamp start UTC
+ *	@param	   timestamp	$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: non, 1:oui
  *	@return    int								Number of days
  */
@@ -745,9 +745,9 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 /**
  *	Function to return number of working days (and text of units) between two dates (working days)
  *
- *	@param	   	timestamp	$timestampStart     Timestamp for start date
- *	@param	   	timestamp	$timestampEnd       Timestamp for end date
- *	@param     	int			$inhour             0: return number of days, 1: return number of hours (72h max)
+ *	@param	   	timestamp	$timestampStart     Timestamp for start date (date must be UTC to avoid calculation errors)
+ *	@param	   	timestamp	$timestampEnd       Timestamp for end date (date must be UTC to avoid calculation errors)
+ *	@param     	int			$inhour             0: return number of days, 1: return number of hours
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *	@return    	int								Number of days or hours
