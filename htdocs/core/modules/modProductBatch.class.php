@@ -43,7 +43,7 @@ class modProductBatch extends DolibarrModules
         global $langs,$conf;
 
         $this->db = $db;
-		$this->numero = 150010;
+		$this->numero = 39000;
 
 		$this->family = "products";
 		$this->name = preg_replace('/^mod/i','',get_class($this));
