@@ -59,6 +59,7 @@ class MouvementStock
 	 *	@param		date	$eatby			eat-by date
 	 *	@param		date	$sellby			sell-by date
 	 *	@param		string	$batch			batch number
+	 *	@param		boolean	$skip_sellby	If set to true, stock mouvement is done without impacting batch record
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
 	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
@@ -420,6 +421,7 @@ class MouvementStock
 	 *
 	 * @param	variant		$dluo	Could be either int if id of product_batch or array with at leat fk_product_stock
 	 * @param	int			$qty	Quantity of product with batch number
+	 * @return 	int   				<0 if KO, else return productbatch id
 	 */
 	function _create_batch($dluo, $qty ) {
 		$pdluo=New Productbatch($this->db);
