@@ -52,13 +52,13 @@ $nblignes=count($object->fetch_lines());
 //Return to the results
 if (GETPOST('retoursondage')) {
 	header('Location: results.php?id='.$_GET['id']);
-	die;
+	exit;
 }
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 // Add vote
-if (isset($_POST["boutonp"]))
+if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrom, boutonp.x for firefox
 {
 	if (GETPOST('nom'))
 	{
@@ -128,7 +128,7 @@ if ($testmodifier)
 
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 	$nouveauchoix = '';
 	for ($i = 0; $i < $nbcolonnes; $i++)
 	{
@@ -161,7 +161,7 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format 
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 	$nouveauxsujets=$object->sujet;
 
 	//on rajoute la valeur a la fin de tous les sujets deja entrés
@@ -185,7 +185,7 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D"))
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 	$nouveauxsujets=$object->sujet;
 
 	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
@@ -280,7 +280,7 @@ for ($i = 0; $i < $nblignes; $i++)
 	{
 		// Security check
 		if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 		$compteur=0;
 
 		// Loop on each answer
@@ -315,7 +315,7 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 	{
 		// Security check
 		if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 		$db->begin();
 
 		$toutsujet = explode(",",$object->sujet);
@@ -473,7 +473,7 @@ if (GETPOST('ajoutsujet'))
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
-		
+
 	//on recupere les données et les sujets du sondage
 	print '<form name="formulaire" action="" method="POST">'."\n";
 	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">';
@@ -496,7 +496,7 @@ if (GETPOST('ajoutsujet'))
 	else
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-		
+
 		$formother=new FormOther($db);
 		//ajout d'une date avec creneau horaire
 		print $langs->trans("AddADate") .':<br><br>'."\n";
@@ -508,9 +508,9 @@ if (GETPOST('ajoutsujet'))
 		print '</SELECT>'."\n";
 
 		print $formother->select_month('', 'nouveaumois', 1);
-		
+
 		print '&nbsp;';
-		
+
 		print $formother->select_year('', 'nouvelleannee', 1, 0, 5, 0, 1);
 
 		print '<br><br>'. $langs->trans("AddStartHour") .': <br><br>'."\n";
@@ -624,7 +624,7 @@ if ($object->format=="D")
 		print '<td class="annee">';
 		print '<a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 	}
-	
+
 	print '</tr>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -653,7 +653,7 @@ if ($object->format=="D")
 	if ($user->rights->opensurvey->write) {
 		print '<td class="mois"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 	}
-	
+
 	print '</tr>'."\n";
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -700,7 +700,7 @@ if ($object->format=="D")
 		if ($user->rights->opensurvey->write) {
 			print '<td class="heure"><a href="'.$_SERVER["PHP_SELF"].'?ajoutsujet=1&id='.$object->id_sondage.'">'.$langs->trans("Add").'</a></td>'."\n";
 		}
-		
+
 		print '</tr>'."\n";
 	}
 }
@@ -744,11 +744,11 @@ while ($compteur < $num)
 	$ensemblereponses = $obj->reponses;
 
 	print '<tr><td>'."\n";
-	
+
 	if ($user->rights->opensurvey->write) {
 		print '<input type="image" name="effaceligne'.$compteur.'" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'">'."\n";
 	}
-	
+
 	// Name
 	print '</td><td class="nom">'.dol_htmlentities($obj->nom).'</td>'."\n";
 
