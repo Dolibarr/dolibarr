@@ -157,7 +157,7 @@ if ($testmodifier)
 }
 
 // Add column (not for date)
-if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format == "A"))
+if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && $object->format == "A")
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
@@ -181,8 +181,9 @@ if (GETPOST("ajoutercolonne") && GETPOST('nouvellecolonne') && ($object->format 
 }
 
 // Add column (with format date)
-if (isset($_POST["ajoutercolonne"]) && ($object->format == "D"))
+if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 {
+
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
@@ -276,7 +277,7 @@ if (isset($_POST["ajoutercolonne"]) && ($object->format == "D"))
 // Delete line
 for ($i = 0; $i < $nblignes; $i++)
 {
-	if (isset($_POST["effaceligne$i"]))
+	if (GETPOST("effaceligne".$i) || GETPOST("effaceligne".$i."_x") || GETPOST("effaceligne".$i.".x"))	// effacelignei for chrome, effacelignei_x for firefox
 	{
 		// Security check
 		if (!$user->rights->opensurvey->write) accessforbidden();
@@ -311,7 +312,8 @@ for ($i = 0; $i < $nblignes; $i++)
 // Delete column
 for ($i = 0; $i < $nbcolonnes; $i++)
 {
-	if (isset($_POST["effacecolonne$i"]) && $nbcolonnes > 1)
+	if ((GETPOST("effacecolonne".$i) || GETPOST("effacecolonne".$i."_x") || GETPOST("effacecolonne".$i.".x"))
+		&& $nbcolonnes > 1)	// effacecolonnei for chrome, effacecolonnei_x for firefox
 	{
 		// Security check
 		if (!$user->rights->opensurvey->write) accessforbidden();
@@ -462,19 +464,20 @@ dol_fiche_end();
 
 print '</form>'."\n";
 
+
 print '<div class="tabsAction">';
 
 print '<a class="butAction" href="exportcsv.php?id=' . $numsondage . '">'.$langs->trans("ExportSpreadsheet") .' (.CSV)' . '</a>';
 
 print '</div>';
 
-// Add form to add a field
+
+// Show form to add a new field/column
 if (GETPOST('ajoutsujet'))
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
-	//on recupere les données et les sujets du sondage
 	print '<form name="formulaire" action="" method="POST">'."\n";
 	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">';
 
@@ -706,7 +709,7 @@ if ($object->format=="D")
 }
 else
 {
-	//affichage des sujets du sondage
+	// Show titles
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 	print '<td></td>'."\n";

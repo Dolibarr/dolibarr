@@ -94,3 +94,10 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 -- DROP TABLE llx_product_fournisseur;
 -- ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
+
+-- Fix: deprecated tag to new one
+update llx_opensurvey_sondage set format = 'D' where format = 'D+';
+update llx_opensurvey_sondage set format = 'A' where format = 'A+';
+
+
+
