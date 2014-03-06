@@ -39,6 +39,11 @@ into
 	// initialize subsetchars
 	$subsetchars = array_fill(0, 256, true);
 
+* Made freemono the default monotype font because we removed courier
+In htdocs/includes/tcpdf/tcpdf.php
+-       protected $default_monospaced_font = 'courier';
++       protected $default_monospaced_font = 'freemono';
+
 
 JSGANTT:
 --------
