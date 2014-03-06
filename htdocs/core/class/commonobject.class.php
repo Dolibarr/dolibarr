@@ -5,7 +5,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2012 Philippe Grand	      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2075,7 +2075,7 @@ abstract class CommonObject
      *
      *  @param	int		$rowid			Id of line
      *  @param  array	$optionsArray   Array resulting of call of extrafields->fetch_name_optionals_label()
-     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optionnal loaded
+     *  @return	int						<0 if error, 0 if no optionals to find nor found, 1 if a line is found and optional loaded
      */
     function fetch_optionals($rowid,$optionsArray='')
     {

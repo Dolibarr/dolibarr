@@ -1258,7 +1258,7 @@ class TCPDF {
 	 * @protected
 	 * @since 4.5.025 (2009-03-10)
 	 */
-	protected $default_monospaced_font = 'courier';
+	protected $default_monospaced_font = 'freemono';
 
 	/**
 	 * Cloned copy of the current class object.
