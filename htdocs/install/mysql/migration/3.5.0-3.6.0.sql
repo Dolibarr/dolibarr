@@ -1037,3 +1037,21 @@ CREATE TABLE IF NOT EXISTS `llx_expeditiondet_batch` (
   `fk_origin_stock` int(11) NOT NULL,
   KEY `ix_fk_expeditiondet` (`fk_expeditiondet`)
 ) ENGINE=InnoDB;
+
+--Salary payment in tax module
+CREATE TABLE IF NOT EXISTS `llx_salaries` (
+  `rowid` integer AUTO_INCREMENT PRIMARY KEY,
+  `tms` timestamp,
+  `fk_user` integer NOT NULL,
+  `datep` date,
+  `datev` date,
+  `amount` real NOT NULL DEFAULT 0,
+  `label` varchar(255),
+  `datesp` date,                       -- date de début de la période
+  `dateep` date,                       -- date de fin de la période    
+  `entity` integer DEFAULT 1 NOT NULL,	-- multi company id
+  `note` text,
+  `fk_bank` integer,  
+  `fk_user_creat` integer,
+  `fk_user_modif` integer
+)ENGINE=innodb;
