@@ -162,15 +162,15 @@ if ($viewstatut <> '')
 if ($ordermonth > 0)
 {
     if ($orderyear > 0 && empty($day))
-    $sql.= " AND c.date_valid BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
     else if ($orderyear > 0 && ! empty($day))
-    $sql.= " AND c.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $day, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $day, $orderyear))."'";
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $day, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $day, $orderyear))."'";
     else
-    $sql.= " AND date_format(c.date_valid, '%m') = '".$ordermonth."'";
+    $sql.= " AND date_format(c.date_commande, '%m') = '".$ordermonth."'";
 }
 else if ($orderyear > 0)
 {
-    $sql.= " AND c.date_valid BETWEEN '".$db->idate(dol_get_first_day($orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($orderyear,12,false))."'";
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($orderyear,12,false))."'";
 }
 if ($deliverymonth > 0)
 {
@@ -297,8 +297,14 @@ if ($resql)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
-	print '<td class="liste_titre">&nbsp;';
-	print '</td><td class="liste_titre">&nbsp;';
+	print '<td class="liste_titre">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="orderday" value="'.$orderday.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="ordermonth" value="'.$ordermonth.'">';
+    $formother->select_year($orderyear?$orderyear:-1,'orderyear',1, 20, 5);
+	print '</td><td class="liste_titre">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="deliveryday" value="'.$deliveryday.'">';
+    print '<input class="flat" type="text" size="1" maxlength="2" name="deliverymonth" value="'.$deliverymonth.'">';
+    $formother->select_year($deliveryyear?$deliveryyear:-1,'deliveryyear',1, 20, 5);
 	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
@@ -370,25 +376,13 @@ if ($resql)
 		print '</td>';
 
 		// Order date
-		$y = dol_print_date($db->jdate($objp->date_commande),'%Y');
-		$m = dol_print_date($db->jdate($objp->date_commande),'%m');
-		$ml = dol_print_date($db->jdate($objp->date_commande),'%B');
-		$d = dol_print_date($db->jdate($objp->date_commande),'%d');
 		print '<td align="right">';
-		print $d;
-		print ' <a href="'.$_SERVER['PHP_SELF'].'?orderyear='.$y.'&amp;ordermonth='.$m.'">'.$ml.'</a>';
-		print ' <a href="'.$_SERVER['PHP_SELF'].'?orderyear='.$y.'">'.$y.'</a>';
+		print dol_print_date($db->jdate($objp->date_commande), 'day');
 		print '</td>';
 
 		// Delivery date
-		$y = dol_print_date($db->jdate($objp->date_livraison),'%Y');
-		$m = dol_print_date($db->jdate($objp->date_livraison),'%m');
-		$ml = dol_print_date($db->jdate($objp->date_livraison),'%B');
-		$d = dol_print_date($db->jdate($objp->date_livraison),'%d');
 		print '<td align="right">';
-		print $d;
-		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'&amp;deliverymonth='.$m.'">'.$ml.'</a>';
-		print ' <a href="'.$_SERVER['PHP_SELF'].'?deliveryyear='.$y.'">'.$y.'</a>';
+		print dol_print_date($db->jdate($objp->date_delivery), 'day');
 		print '</td>';
 
 		// Amount HT
