@@ -155,22 +155,22 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		global $conf;
 
 		return array(
-		'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
-		'line_product_ref'=>$line->product_ref,
-		'line_product_label'=>$line->product_label,
-		'line_desc'=>$line->desc,
-		'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-		'line_up'=>price($line->subprice, 0, $outputlangs),
-		'line_qty'=>$line->qty,
-		'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
+			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
+			'line_product_ref'=>$line->product_ref,
+			'line_product_label'=>$line->product_label,
+			'line_desc'=>$line->desc,
+			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+			'line_up'=>price($line->subprice, 0, $outputlangs),
+			'line_qty'=>$line->qty,
+			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
 			'line_price_ht'=>price2num($line->total_ht), 
 			'line_price_ttc'=>price2num($line->total_ttc),
 			'line_price_vat'=>price2num($line->total_tva),
 			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs), 
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
-		'line_date_start'=>$line->date_start,
-		'line_date_end'=>$line->date_end
+			'line_date_start'=>$line->date_start,
+			'line_date_end'=>$line->date_end
 		);
 	}
 
