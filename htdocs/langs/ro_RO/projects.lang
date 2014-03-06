@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Proiect
 Projects=Proiecte
 SharedProject=Toată lumea
@@ -30,11 +32,18 @@ TimeSpent=Timp comsumat
 TimesSpent=Timpi consumaţi
 RefTask=Ref. Task
 LabelTask=Eticheta Task
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 NewTimeSpent=Timp nou consumat
 MyTimeSpent=Timpul meu consumat
 MyTasks=TAskurile mele
 Tasks=Taskuri
 Task=Task
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Task nou
 AddTask=Adaugă Task
 AddDuration=Adaugă  durată
@@ -100,12 +109,12 @@ ProjectCreatedInDolibarr=Proiect %s creat
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Şef de Proiect
 TypeContact_project_external_PROJECTLEADER=Şef de Proiect
-TypeContact_project_internal_CONTRIBUTOR=Contribuabil
-TypeContact_project_external_CONTRIBUTOR=Contribuabil
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Responsabil
 TypeContact_project_task_external_TASKEXECUTIVE=Responsabil
-TypeContact_project_task_internal_CONTRIBUTOR=Contributor
-TypeContact_project_task_external_CONTRIBUTOR=Contributor
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Selectați elementul
 AddElement=Link către element
 # Documents models

@@ -35,6 +35,7 @@ AddNewColumn=Добавяне на нова колона
 TitleChoice=Избор на етикет
 # ExportSpreadsheet=Export result spreadsheet
 ExpireDate=Крайната дата
+# NbOfSurveys=Number of surveys
 NbOfVoters=Брой гласове
 SurveyResults=Резултати
 # PollAdminDesc=You are allowed to change all vote lines of this poll with button "Edit". You can, as well, remove a column or a line with %s. You can also add a new column with %s.

@@ -52,6 +52,7 @@ InvoiceSentByEMail=Το τιμολόγιο του πελάτη %s εστάλη �
 SupplierOrderSentByEMail=Η παραγγελία προμηθευτή %s στάλθηκε με e-mail
 SupplierInvoiceSentByEMail=Το τιμολόγιο προμηθευτή %s στάλθηκε με e-mail
 ShippingSentByEMail=Αποστολές %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Παρέμβαση %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
 NewCompanyToDolibarr= Το στοιχείο δημιουργήθηκε
 DateActionPlannedStart= Προγρ/σμένη ημερομηνία έναρξης

@@ -716,7 +716,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
- *  @return boolean         		True if file is deleted, False if error
+ *  @return boolean         		True if file is deleted (or if glob is used and there's nothing to delete), False if error
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
@@ -761,8 +761,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 			{
 				foreach ($listofdir as $filename)
 				{
-					if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
-					else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+					if ($nophperrors) $ok=@unlink($filename);
+					else $ok=unlink($filename);
 					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 				}
@@ -771,8 +771,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		}
 		else
 		{
-			if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-			else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+			if ($nophperrors) $ok=@unlink($file_osencoded);
+			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
 			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
 		}

@@ -52,6 +52,7 @@ InvoiceSentByEMail=Faktura %s wysłana e-mailem
 SupplierOrderSentByEMail=Zamówienie %s wysłane do dostawcy e-mailem
 SupplierInvoiceSentByEMail=Faktura %s wysłana do dostawcy e-mailem
 ShippingSentByEMail=Informacje o dostawie %s wysłane e-mailem
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=%s interwencyjne wysłane pocztą
 NewCompanyToDolibarr= Stworzono kontrahenta
 DateActionPlannedStart= Planowana data rozpoczęcia

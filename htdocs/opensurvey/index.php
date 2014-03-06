@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,38 @@ if ($resql)
 }
 else dol_print_error($db,'');
 
+
+
 print_fiche_titre($langs->trans("OpenSurveyArea"));
 
-echo $langs->trans("NoSurveysInDatabase",$nbsondages).'<br><br>'."\n";
+
+print '<div class="fichecenter"><div class="fichethirdleft">';
+
+
+$nbsondages=0;
+$sql='SELECT COUNT(*) as nb FROM '.MAIN_DB_PREFIX.'opensurvey_sondage';
+$resql=$db->query($sql);
+if ($resql)
+{
+	$obj=$db->fetch_object($resql);
+	$nbsondages=$obj->nb;
+}
+else dol_print_error($db,'');
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("OpenSurveyArea").'</td></tr>';
+print "<tr ".$bc[0].">";
+print '<td>'.$langs->trans("NbOfSurveys").'</td><td align="right"><a href="list.php">'.$nbsondages.'</a></td>';
+print "</tr>";
+//print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+//print $total;
+//print '</td></tr>';
+print '</table>';
+
+
+print '</div></div></div>';
+
+
 
 llxFooter();
 

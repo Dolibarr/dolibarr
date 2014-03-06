@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=項目
 Projects=項目
 SharedProject=每個人
@@ -30,11 +32,18 @@ TimeSpent=花費的時間
 TimesSpent=所花費的時間
 RefTask=任務編號
 LabelTask=標簽任務
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 NewTimeSpent=新的時間
 MyTimeSpent=我的時間花
 MyTasks=我的任務
 Tasks=任務
 Task=任務
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=新任務
 AddTask=新增任務
 AddDuration=添加時間
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=如果某些對象（發票，訂單，...），
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=項目負責人
 TypeContact_project_external_PROJECTLEADER=項目負責人
-TypeContact_project_internal_CONTRIBUTOR=投稿
-TypeContact_project_external_CONTRIBUTOR=投稿
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=執行任務
 TypeContact_project_task_external_TASKEXECUTIVE=執行任務
-TypeContact_project_task_internal_CONTRIBUTOR=投稿
-TypeContact_project_task_external_CONTRIBUTOR=投稿
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

@@ -825,11 +825,10 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 	}
 
 	// Define special_code for special lines
-	$special_code = 0;
-	if (! GETPOST('qty'))
-		$special_code = 3;
+	$special_code=GETPOST('special_code');
+	if (! GETPOST('qty')) $special_code=3;
 
-		// Check minimum price
+	// Check minimum price
 	$productid = GETPOST('productid', 'int');
 	if (! empty($productid)) {
 		$product = new Product($db);

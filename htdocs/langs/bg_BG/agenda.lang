@@ -52,6 +52,7 @@ InvoiceSentByEMail=, Изпратени по електронната поща %
 SupplierOrderSentByEMail=%s доставчик реда, изпратени по електронната поща
 SupplierInvoiceSentByEMail=, Изпратени по електронната поща %s доставчик фактура
 ShippingSentByEMail=Доставка %s изпращат по електронна поща
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Намеса %s изпращат по електронна поща
 NewCompanyToDolibarr= Създадено от трета страна
 DateActionPlannedStart= Планирана начална дата

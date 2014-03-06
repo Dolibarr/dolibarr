@@ -70,7 +70,7 @@ print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
 $head = project_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes_task', $langs->trans("Project"), 0, 'user');
+dol_fiche_head($head, 'attributes_task', $langs->trans("Project"), 0, 'project');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

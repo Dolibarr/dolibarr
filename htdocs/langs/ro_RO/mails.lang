@@ -79,6 +79,13 @@ MailtoEMail=Hyper link către email
 ActivateCheckRead=Permite utiliyarea linkului  "Dezabonare"
 ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare"
 EMailSentToNRecipients=EMail trimis la %s destinatari.
+# EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+# MailTopicSendRemindUnpaidInvoices=Remind of invoice %s (%s)
+# SendRemind=Send remind by EMails
+# RemindSent=%S remind(s) sent
+# AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+# NoRemindSent=No remind by EMail sent
+# ResultOfMassSending=Result of mass remind sending by EMail
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=De contact ale tuturor părţilor terţe (client, perspectiva, furnizor, ...)

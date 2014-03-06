@@ -100,12 +100,12 @@ IfNeedToUseOhterObjectKeepEmpty=Če nekateri objekti (računi, naročila, ...), 
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Vodja projekta
 TypeContact_project_external_PROJECTLEADER=Vodja projekta
-TypeContact_project_internal_CONTRIBUTOR=Sodelavec
-TypeContact_project_external_CONTRIBUTOR=Sodelavec
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Sodelavec
+TypeContact_project_external_PROJECTCONTRIBUTOR=Sodelavec
 TypeContact_project_task_internal_TASKEXECUTIVE=Odgovorna oseba
 TypeContact_project_task_external_TASKEXECUTIVE=Odgovorna oseba
-TypeContact_project_task_internal_CONTRIBUTOR=Sodelavec
-TypeContact_project_task_external_CONTRIBUTOR=Sodelavec
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Sodelavec
+TypeContact_project_task_external_TASKCONTRIBUTOR=Sodelavec
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

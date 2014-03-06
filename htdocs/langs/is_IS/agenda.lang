@@ -52,6 +52,7 @@ InvoiceSentByEMail=Viðskiptavinur vörureikningi %s send með tölvupósti
 SupplierOrderSentByEMail=Birgir röð %s send með tölvupósti
 SupplierInvoiceSentByEMail=Birgir vörureikningi %s send með tölvupósti
 ShippingSentByEMail=Sendingarmáti %s send með tölvupósti
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Inngrip %s send með tölvupósti
 NewCompanyToDolibarr= Í þriðja aðila til
 DateActionPlannedStart= Fyrirhugaður upphafsdagur

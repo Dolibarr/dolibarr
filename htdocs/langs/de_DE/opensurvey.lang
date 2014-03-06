@@ -35,6 +35,7 @@ AddNewColumn=Neue Spalte hinzufügen
 TitleChoice=Beschreibung wählen
 ExportSpreadsheet=Exportiere Resultattabelle
 ExpireDate=Frist
+# NbOfSurveys=Number of surveys
 NbOfVoters=Anzahl Wähler
 SurveyResults=Resultate
 PollAdminDesc=Du bist berechtigt, sämtliche Abstimmungszeilen mit dem Button "Edit" zu verändern. Du kannst zusätzlich auch eine Spalte oder Zeile mit %s entfernen. Du kannst auch eine neue Spalte hinzufügen mit %s.

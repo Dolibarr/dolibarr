@@ -773,9 +773,13 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 							if ($result > 0) {
 								$totalamount = 0;
 								$lines = $srcobject->lines;
-								$numlines = count($lines);
-								for($i = 0; $i < $numlines; $i ++) {
-									$totalamount += $lines [$i]->total_ht;
+								$numlines=count($lines);
+								for ($i=0; $i<$numlines; $i++)
+								{
+									$qualified=1;
+									if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
+									if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
+									if ($qualified) $totalamount += $lines[$i]->total_ht;
 								}
 
 								if ($totalamount != 0) {
@@ -825,12 +829,12 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
 								$lines = $srcobject->fetch_lines();
 
-							$fk_parent_line = 0;
-							$num = count($lines);
-
-							for($i = 0; $i < $num; $i ++) {
-								$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
-								$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
+							$fk_parent_line=0;
+							$num=count($lines);
+							for ($i=0;$i<$num;$i++)
+							{
+								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
 								if ($lines [$i]->subprice < 0) {
 									// Negative line, we create a discount line

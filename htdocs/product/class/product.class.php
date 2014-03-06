@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013	     Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
@@ -96,6 +96,8 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
+	// We must manage batch number, sell-by date and so on : '1':yes '0':no
+	var $status_batch;
 
 	var $customcode;       // Customs code
     var $country_id;       // Country origin id
@@ -169,6 +171,7 @@ class Product extends CommonObject
 		$this->seuil_stock_alerte = 0;
 		$this->desiredstock = 0;
 		$this->canvas = '';
+		$this->status_batch=0;
 	}
 
 	/**
@@ -337,6 +340,7 @@ class Product extends CommonObject
 					$sql.= ", accountancy_code_sell";
 					$sql.= ", canvas";
 					$sql.= ", finished";
+					$sql.= ", tobatch";
 					$sql.= ") VALUES (";
 					$sql.= "'".$this->db->idate($now)."'";
 					$sql.= ", ".$conf->entity;
@@ -356,6 +360,7 @@ class Product extends CommonObject
 					$sql.= ", '".$this->accountancy_code_sell."'";
 					$sql.= ", '".$this->canvas."'";
 					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : $this->finished);
+					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -592,6 +597,7 @@ class Product extends CommonObject
 
 			$sql.= ", tosell = " . $this->status;
 			$sql.= ", tobuy = " . $this->status_buy;
+			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
 			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : $this->finished);
 			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
@@ -1275,7 +1281,7 @@ class Product extends CommonObject
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity, desiredstock";
+		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1303,6 +1309,7 @@ class Product extends CommonObject
 				$this->type						= $obj->fk_product_type;
 				$this->status					= $obj->tosell;
 				$this->status_buy				= $obj->tobuy;
+				$this->status_batch				= $obj->tobatch;
 
 	            $this->customcode				= $obj->customcode;
 	            $this->country_id				= $obj->fk_country;
@@ -2631,15 +2638,23 @@ class Product extends CommonObject
 	 *	Return label of status of object
 	 *
 	 *	@param      int	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@param      int	$type       0=Shell, 1=Buy
+	 *	@param      int	$type       0=Sell, 1=Buy, 2=Batch Number management
 	 *	@return     string      	Label of status
 	 */
 	function getLibStatut($mode=0, $type=0)
 	{
-		if($type==0)
+		switch ($type) 
+		{
+		case 0:
 			return $this->LibStatut($this->status,$mode,$type);
-		else
+		case 1:
 			return $this->LibStatut($this->status_buy,$mode,$type);
+		case 2:
+			return $this->LibStatut($this->status_batch,$mode,$type);
+		default:
+			//Simulate previous behavior but should return an error string
+			return $this->LibStatut($this->status_buy,$mode,$type);
+		}
 	}
 
 	/**
@@ -2647,14 +2662,42 @@ class Product extends CommonObject
 	 *
 	 *	@param      int		$status     Statut
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy"
+	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 	 *	@return     string      		Label of status
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
 		global $langs;
 		$langs->load('products');
+		if ($conf->productbatch->enabled) $langs->load("productbatch");
 
+		if ($type == 2)
+		{
+			switch ($mode) 
+			{
+				case 0:
+					return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
+				case 1:
+					return ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
+				case 2:
+					return $this->LibStatut($status,3,2).' '.$this->LibStatut($status,1,2);
+				case 3:
+					if ($status == 0 ) 
+					{
+						return img_picto($langs->trans('ProductStatusNotOnBatch'),'statut5');
+					}
+					else
+					{
+						return img_picto($langs->trans('ProductStatusOnBatch'),'statut4');
+					}
+				case 4:
+					return $this->LibStatut($status,3,2).' '.$this->LibStatut($status,0,2);
+				case 5:
+					return $this->LibStatut($status,1,2).' '.$this->LibStatut($status,3,2);
+				default:
+					return $langs->trans('Unknown');
+			}
+		}
 		if ($mode == 0)
 		{
 			if ($status == 0) return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
@@ -3261,10 +3304,21 @@ class Product extends CommonObject
         $this->country_id=1;
         $this->tosell=1;
         $this->tobuy=1;
+		$this->tobatch=0;
         $this->type=0;
         $this->note='This is a comment (private)';
 
         $this->barcode=-1;	// Create barcode automatically
     }
+
+    /**
+     * Return if object has a sell-by date or eat-by date
+     *
+     * @return  boolean     True if it's has
+     */
+	function hasbatch()
+	{
+		return ($this->status_batch == 1 ? true : false);
+	}
 }
 ?>

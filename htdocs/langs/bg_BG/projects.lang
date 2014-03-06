@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Проект
 Projects=Проекти
 SharedProject=Всички
@@ -30,11 +32,18 @@ TimeSpent=Времето, прекарано
 TimesSpent=Времето, прекарано
 RefTask=Реф. задача
 LabelTask=Label задача
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=Task time user
+# TaskTimeNote=Task time note
+# TaskTimeDate=Task time date
 NewTimeSpent=Времето, прекарано на
 MyTimeSpent=Времето, прекарано
 MyTasks=Моите задачи
 Tasks=Задачи
 Task=Задача
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Нова задача
 AddTask=Добавяне на задача
 AddDuration=Добави продължителността
@@ -100,12 +109,12 @@ ErrorShiftTaskDate=Невъзможно е да се смени датата н�
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Ръководител на проекта
 TypeContact_project_external_PROJECTLEADER=Ръководител на проекта
-TypeContact_project_internal_CONTRIBUTOR=Сътрудник
-TypeContact_project_external_CONTRIBUTOR=Сътрудник
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Задача изпълнителен
 TypeContact_project_task_external_TASKEXECUTIVE=Задача изпълнителен
-TypeContact_project_task_internal_CONTRIBUTOR=Сътрудник
-TypeContact_project_task_external_CONTRIBUTOR=Сътрудник
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

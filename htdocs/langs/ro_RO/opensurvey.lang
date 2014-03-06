@@ -35,6 +35,7 @@ AddNewColumn=Adaugă coloană nouă
 TitleChoice=Etichetă Alegere
 ExportSpreadsheet=Exportă rezultatul în foaie de calcul
 ExpireDate=Data limită
+# NbOfSurveys=Number of surveys
 NbOfVoters=Nr-ul voturilor
 SurveyResults=Rezultate
 PollAdminDesc=Vi se permite să schimbaţi toate liniile de vot ale acestui sondaj cu butonul "Editează". Puteți, de asemenea, elimina o coloană sau o linie cu % s. Puteți adăuga, de asemenea, o nouă coloană cu % s.

@@ -37,3 +37,4 @@ ShowCompany=Prikaži podjetje
 ShowStock=Prikaži skladišče
 DeleteArticle=Kliknite za izbris tega artikla
 # FilterRefOrLabelOrBC=Search (Ref/Label)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

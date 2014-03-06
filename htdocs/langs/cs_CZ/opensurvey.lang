@@ -35,6 +35,7 @@ AddNewColumn=Přidat nový sloupec
 TitleChoice=Volba štítek
 ExportSpreadsheet=Export výsledků tabulku
 ExpireDate=Omezit datum
+# NbOfSurveys=Number of surveys
 NbOfVoters=Nb voličů
 SurveyResults=Výsledky
 PollAdminDesc=Jste dovoleno měnit všichni volit řádky této ankety pomocí tlačítka &quot;Edit&quot;. Můžete také odebrat sloupec nebo řádek s %s. Můžete také přidat nový sloupec s %s.

@@ -35,6 +35,7 @@ AddNewColumn=Pridať nový stĺpec
 TitleChoice=Voľba štítok
 ExportSpreadsheet=Export výsledkov tabuľku
 ExpireDate=Obmedziť dátum
+# NbOfSurveys=Number of surveys
 NbOfVoters=Nb voličov
 SurveyResults=Výsledky
 PollAdminDesc=Ste dovolené meniť všetci voliť riadky tejto ankety pomocou tlačidla &quot;Edit&quot;. Môžete tiež odstrániť stĺpec alebo riadok s %s. Môžete tiež pridať nový stĺpec s %s.

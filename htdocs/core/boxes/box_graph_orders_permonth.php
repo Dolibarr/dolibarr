@@ -86,7 +86,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 		$socid=0;
 		if ($user->societe_id) $socid=$user->societe_id;
 		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
-		
+
 		if ($user->rights->commande->lire)
 		{
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -95,7 +95,8 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
-			if (GETPOST('DOL_AUTOSET_COOKIE'))
+			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 			{
 				$endyear=GETPOST($param_year,'int');
 				$shownb=GETPOST($param_shownb,'alpha');

@@ -52,6 +52,7 @@ InvoiceSentByEMail=Račun kupca %s poslan Emailom
 SupplierOrderSentByEMail=Narudžba dobavljača %s poslana Emailom
 SupplierInvoiceSentByEMail=Račun dobavljača %s poslan Emailom
 ShippingSentByEMail=Dostava %s poslana putem Emaila
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervencija %s poslana putem Emaila
 NewCompanyToDolibarr= Treća stranka stvorena
 DateActionPlannedStart= Planirani početni datum
