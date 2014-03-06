@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,14 @@
 /**
  *      \file       htdocs/compta/charges/index.php
  *      \ingroup    compta
- *		\brief      Page to list payments of social contributions and vat
+ *		  \brief      Page to list payments of social contributions, vat and salaries
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salaries.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("compta");
@@ -59,6 +61,7 @@ if (! $sortorder) $sortorder="DESC";
 $tva_static = new Tva($db);
 $socialcontrib=new ChargeSociales($db);
 $payment_sc_static=new PaymentSocialContribution($db);
+$sal_static = new Sal($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 
@@ -74,12 +77,92 @@ print_fiche_titre($title, ($year?"<a href='index.php?year=".($year-1).$param."'>
 
 if ($year) $param.='&year='.$year;
 
-// Social contributions only
 if (GETPOST("mode") != 'sconly')
 {
 	print $langs->trans("DescTaxAndDividendsArea").'<br>';
 	print "<br>";
+}
 
+// Salaries
+if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
+{
+  $sal = new Sal($db);
+
+	print_fiche_titre($langs->trans("SalPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
+
+	$sql = "SELECT s.rowid, s.amount, s.label, s.datev as dm";
+	$sql.= " FROM ".MAIN_DB_PREFIX."salaries as s";
+	$sql.= " WHERE s.entity = ".$conf->entity;
+	if ($year > 0)
+	{
+		// Si period renseignee on l'utilise comme critere de date, sinon on prend date echeance,
+		// ceci afin d'etre compatible avec les cas ou la periode n'etait pas obligatoire
+		$sql.= " AND s.datev between '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	}
+	if (preg_match('/^s/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+	    $num = $db->num_rows($result);
+	    $i = 0;
+	    $total = 0 ;
+	    print '<table class="noborder" width="100%">';
+	    print '<tr class="liste_titre">';
+		  print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.datev","",$param,'width="120"',$sortfield,$sortorder);
+		  print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
+		  print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+		  print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
+		  print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datev","",$param,'align="center"',$sortfield,$sortorder);
+		  print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+	    print "</tr>\n";
+	    $var=1;
+	    while ($i < $num)
+	    {
+	        $obj = $db->fetch_object($result);
+
+	        $total = $total + $obj->amount;
+
+	        $var=!$var;
+	        print "<tr ".$bc[$var].">";
+	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
+
+	        print "<td>".$obj->label."</td>\n";
+
+	        print '<td align="right">'.price($obj->amount)."</td>";
+
+	        // Ref payment
+			    $sal_static->id=$obj->rowid;
+		    	$sal_static->ref=$obj->rowid;
+	        print '<td align="left">'.$sal_static->getNomUrl(1)."</td>\n";
+
+	        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
+	        print '<td align="right">'.price($obj->amount)."</td>";
+	        print "</tr>\n";
+
+	        $i++;
+	    }
+	    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+	    print '<td align="right">'.price($total)."</td>";
+	    print '<td align="center">&nbsp;</td>';
+	    print '<td align="center">&nbsp;</td>';
+	    print '<td align="right">'.price($total)."</td>";
+	    print "</tr>";
+
+	    print "</table>";
+	    $db->free($result);
+      
+     	print "<br>";
+  }
+	else
+	{
+	    dol_print_error($db);
+	}
+}
+
+// Social contributions only
+if (GETPOST("mode") != 'sconly')
+{
 	print_fiche_titre($langs->trans("SocialContributionsPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 }
 
@@ -219,7 +302,7 @@ if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 
 	        $var=!$var;
 	        print "<tr ".$bc[$var].">";
-	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').' ? </td>'."\n";
+	        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
 
 	        print "<td>".$obj->label."</td>\n";
 
