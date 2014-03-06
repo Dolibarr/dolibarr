@@ -133,7 +133,7 @@ abstract class CommonDocGenerator
     function get_substitutionarray_thirdparty($object,$outputlangs)
     {
         global $conf;
-
+        
         if (empty($object->country) && ! empty($object->country_code))
         {
         	$object->country=$outputlangs->transnoentitiesnoconv("Country".$object->country_code);
@@ -142,8 +142,6 @@ abstract class CommonDocGenerator
         {
         	$object->state=getState($object->state_code,0);
         }
-
-	$object->load_ban();
 
         $array_thirdparty = array(
             'company_name'=>$object->name,
