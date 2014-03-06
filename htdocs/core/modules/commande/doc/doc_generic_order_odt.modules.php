@@ -93,7 +93,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs)
+	function get_substitutionarray_object($object, Translate $outputlangs)
 	{
 		global $conf;
 
@@ -176,6 +176,9 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
 		'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
 		'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
+			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
+			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
+			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
 		'line_date_start'=>$line->date_start,
 		'line_date_end'=>$line->date_end
 		);

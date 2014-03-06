@@ -150,7 +150,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @return	array								Return a substitution array
 	 */
-	function get_substitutionarray_lines($line,$outputlangs)
+	function get_substitutionarray_lines($line, Translate $outputlangs)
 	{
 		global $conf;
 
@@ -163,9 +163,12 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		'line_up'=>price($line->subprice, 0, $outputlangs),
 		'line_qty'=>$line->qty,
 		'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-		'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
-		'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
-		'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
+			'line_price_ht'=>price2num($line->total_ht), 
+			'line_price_ttc'=>price2num($line->total_ttc),
+			'line_price_vat'=>price2num($line->total_tva),
+			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs), 
+			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
+			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
 		'line_date_start'=>$line->date_start,
 		'line_date_end'=>$line->date_end
 		);
