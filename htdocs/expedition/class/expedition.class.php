@@ -873,7 +873,7 @@ class Expedition extends CommonObject
 		$this->db->begin();
 
 		if ($conf->productbatch->enabled) {
-			if ( ExpeditionLignebatch::deletefromexp($this->db,$this->id)<0) 
+			if ( ExpeditionLigneBatch::deletefromexp($this->db,$this->id)<0) 
 			{$error++;$this->errors[]="Error ".$this->db->lasterror();}
 		}
 		// Stock control
