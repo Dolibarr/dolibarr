@@ -22,6 +22,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salaries.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -155,6 +156,23 @@ if ($id)
 // Formulaire saisie salaire
 if ($action == 'create')
 {
+    $year_current = strftime("%Y",dol_now());
+    $pastmonth = strftime("%m",dol_now()) - 1;
+    $pastmonthyear = $year_current;
+    if ($pastmonth == 0)
+    {
+    	$pastmonth = 12;
+    	$pastmonthyear--;
+    }
+    
+    $datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
+    $dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
+    
+    if (empty($datesp) || empty($dateep)) // We define date_start and date_end
+    {
+    	$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
+    }
+  
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
