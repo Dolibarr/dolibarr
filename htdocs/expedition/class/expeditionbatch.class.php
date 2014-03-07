@@ -23,6 +23,10 @@
  *				with batch record 
  */
 
+ /**
+ *	CRUD class for batch number management within shipment
+ */
+
 class ExpeditionLigneBatch extends CommonObject
 {
 	var $element='expeditionlignebatch';			//!< Id that identify managed objects
@@ -77,7 +81,7 @@ class ExpeditionLigneBatch extends CommonObject
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->batch = $obj->batch;
 				$this->entrepot_id= $obj->fk_entrepot;
-				$this->fk_origin_stock=(int)$id_stockdluo;
+				$this->fk_origin_stock=(int) $id_stockdluo;
                 
             }
             $this->db->free($resql);
@@ -141,7 +145,7 @@ class ExpeditionLigneBatch extends CommonObject
 	 * Delete batch record attach to a shipment
 	 *
 	 * @param	object	$db				Database object
-	 * @param	int		$id_expedtion	rowid of shipment
+	 * @param	int		$id_expedition	rowid of shipment
 	 *
 	 * @return 	int						-1 if KO, 1 if OK
 	 */
