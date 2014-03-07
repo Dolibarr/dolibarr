@@ -683,7 +683,7 @@ class DoliDBSqlite extends DoliDB
 	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
      *	@return	date				Date TMS
      */
-    function jdate($string, $gmt=false)
+    function jdate($string, $gm=false)
     {
         $string=preg_replace('/([^0-9])/i','',$string);
         $tmp=$string.'000000';
