@@ -1,210 +1,235 @@
-﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
+﻿/**
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
+ */
 
 /**
- * @fileOverview Defines the {@link CKEDITOR.env} object, which constains
+ * @fileOverview Defines the {@link CKEDITOR.env} object which contains
  *		environment and browser information.
  */
 
-if ( !CKEDITOR.env )
-{
+if ( !CKEDITOR.env ) {
 	/**
-	 * @namespace Environment and browser information.
+	 * Environment and browser information.
+	 *
+	 * @class CKEDITOR.env
+	 * @singleton
 	 */
-	CKEDITOR.env = (function()
-	{
+	CKEDITOR.env = ( function() {
 		var agent = navigator.userAgent.toLowerCase();
 		var opera = window.opera;
 
-		var env =
-		/** @lends CKEDITOR.env */
-		{
+		var env = {
 			/**
-			 * Indicates that CKEditor is running on Internet Explorer.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.ie )
-			 *     alert( "I'm on IE!" );
+			 * Indicates that CKEditor is running in Internet Explorer.
+			 *
+			 *		if ( CKEDITOR.env.ie )
+			 *			alert( 'I\'m running in IE!' );
+			 *
+			 * @property {Boolean}
 			 */
-			ie		: /*@cc_on!@*/false,
+			ie: ( agent.indexOf( 'trident/' ) > -1 ),
 
 			/**
-			 * Indicates that CKEditor is running on Opera.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.opera )
-			 *     alert( "I'm on Opera!" );
+			 * Indicates that CKEditor is running in Opera.
+			 *
+			 *		if ( CKEDITOR.env.opera )
+			 *			alert( 'I\'m running in Opera!' );
+			 *
+			 * @property {Boolean}
 			 */
-			opera	: ( !!opera && opera.version ),
+			opera: ( !!opera && opera.version ),
 
 			/**
-			 * Indicates that CKEditor is running on a WebKit based browser, like
-			 * Safari.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.webkit )
-			 *     alert( "I'm on WebKit!" );
+			 * Indicates that CKEditor is running in a WebKit-based browser, like Safari.
+			 *
+			 *		if ( CKEDITOR.env.webkit )
+			 *			alert( 'I\'m running in a WebKit browser!' );
+			 *
+			 * @property {Boolean}
 			 */
-			webkit	: ( agent.indexOf( ' applewebkit/' ) > -1 ),
+			webkit: ( agent.indexOf( ' applewebkit/' ) > -1 ),
 
 			/**
-			 * Indicates that CKEditor is running on Adobe AIR.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.air )
-			 *     alert( "I'm on AIR!" );
+			 * Indicates that CKEditor is running in Adobe AIR.
+			 *
+			 *		if ( CKEDITOR.env.air )
+			 *			alert( 'I\'m on AIR!' );
+			 *
+			 * @property {Boolean}
 			 */
-			air		: ( agent.indexOf( ' adobeair/' ) > -1 ),
+			air: ( agent.indexOf( ' adobeair/' ) > -1 ),
 
 			/**
 			 * Indicates that CKEditor is running on Macintosh.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.mac )
-			 *     alert( "I love apples!" );
+			 *
+			 *		if ( CKEDITOR.env.mac )
+			 *			alert( 'I love apples!'' );
+			 *
+			 * @property {Boolean}
 			 */
-			mac	: ( agent.indexOf( 'macintosh' ) > -1 ),
+			mac: ( agent.indexOf( 'macintosh' ) > -1 ),
 
 			/**
-			 * Indicates that CKEditor is running on a quirks mode environemnt.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.quirks )
-			 *     alert( "Nooooo!" );
+			 * Indicates that CKEditor is running in a Quirks Mode environment.
+			 *
+			 *		if ( CKEDITOR.env.quirks )
+			 *			alert( 'Nooooo!' );
+			 *
+			 * Internet Explorer 10 introduced the _New Quirks Mode_, which is similar to the _Quirks Mode_
+			 * implemented in other modern browsers and defined in the HTML5 specification. It can be handled
+			 * as the Standards mode, so the value of this property will be set to `false`.
+			 *
+			 * The _Internet Explorer 5 Quirks_ mode which is still available in Internet Explorer 10+
+			 * sets this value to `true` and {@link #version} to `7`.
+			 *
+			 * Read more: [IEBlog](http://blogs.msdn.com/b/ie/archive/2011/12/14/interoperable-html5-quirks-mode-in-ie10.aspx)
+			 *
+			 * @property {Boolean}
 			 */
-			quirks : ( document.compatMode == 'BackCompat' ),
+			quirks: ( document.compatMode == 'BackCompat' && ( !document.documentMode || document.documentMode < 10 ) ),
 
 			/**
-			 * Indicates that CKEditor is running on a mobile like environemnt.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.mobile )
-			 *     alert( "I'm running with CKEditor today!" );
+			 * Indicates that CKEditor is running in a mobile environemnt.
+			 *
+			 *		if ( CKEDITOR.env.mobile )
+			 *			alert( 'I\'m running with CKEditor today!' );
+			 *
+			 * @property {Boolean}
 			 */
-			mobile : ( agent.indexOf( 'mobile' ) > -1 ),
+			mobile: ( agent.indexOf( 'mobile' ) > -1 ),
 
 			/**
 			 * Indicates that CKEditor is running on Apple iPhone/iPad/iPod devices.
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.iOS )
-			 *     alert( "I like little apples!" );
+			 *
+			 *		if ( CKEDITOR.env.iOS )
+			 *			alert( 'I like little apples!' );
+			 *
+			 * @property {Boolean}
 			 */
-			iOS : /(ipad|iphone|ipod)/.test(agent),
+			iOS: /(ipad|iphone|ipod)/.test( agent ),
 
 			/**
 			 * Indicates that the browser has a custom domain enabled. This has
-			 * been set with "document.domain".
-			 * @returns {Boolean} "true" if a custom domain is enabled.
-			 * @example
-			 * if ( CKEDITOR.env.isCustomDomain() )
-			 *     alert( "I'm in a custom domain!" );
+			 * been set with `document.domain`.
+			 *
+			 *		if ( CKEDITOR.env.isCustomDomain() )
+			 *			alert( 'I\'m in a custom domain!' );
+			 *
+			 * @returns {Boolean} `true` if a custom domain is enabled.
+			 * @deprecated
 			 */
-			isCustomDomain : function()
-			{
+			isCustomDomain: function() {
 				if ( !this.ie )
 					return false;
 
 				var domain = document.domain,
 					hostname = window.location.hostname;
 
-				return domain != hostname &&
-					domain != ( '[' + hostname + ']' );	// IPv6 IP support (#5434)
+				return domain != hostname && domain != ( '[' + hostname + ']' ); // IPv6 IP support (#5434)
 			},
 
 			/**
-			 * Indicates that page is running under an encrypted connection.
-			 * @returns {Boolean} "true" if the page has an encrypted connection.
-			 * @example
-			 * if ( CKEDITOR.env.secure )
-			 *     alert( "I'm in SSL!" );
+			 * Indicates that the page is running under an encrypted connection.
+			 *
+			 *		if ( CKEDITOR.env.secure )
+			 *			alert( 'I\'m on SSL!' );
+			 *
+			 * @returns {Boolean} `true` if the page has an encrypted connection.
 			 */
-			secure : location.protocol == 'https:'
+			secure: location.protocol == 'https:'
 		};
 
 		/**
-		 * Indicates that CKEditor is running on a Gecko based browser, like
+		 * Indicates that CKEditor is running in a Gecko-based browser, like
 		 * Firefox.
-		 * @name CKEDITOR.env.gecko
-		 * @type Boolean
-		 * @example
-		 * if ( CKEDITOR.env.gecko )
-		 *     alert( "I'm riding a gecko!" );
+		 *
+		 *		if ( CKEDITOR.env.gecko )
+		 *			alert( 'I\'m riding a gecko!' );
+		 *
+		 * @property {Boolean}
 		 */
-		env.gecko = ( navigator.product == 'Gecko' && !env.webkit && !env.opera );
+		env.gecko = ( navigator.product == 'Gecko' && !env.webkit && !env.opera && !env.ie );
+
+		/**
+		 * Indicates that CKEditor is running in Chrome.
+		 *
+		 *		if ( CKEDITOR.env.chrome )
+		 *			alert( 'I\'m running in Chrome!' );
+		 *
+		 * @property {Boolean} chrome
+		 */
+
+		 /**
+		 * Indicates that CKEditor is running in Safari (including the mobile version).
+		 *
+		 *		if ( CKEDITOR.env.safari )
+		 *			alert( 'I\'m on Safari!' );
+		 *
+		 * @property {Boolean} safari
+		 */
+		if ( env.webkit ) {
+			if ( agent.indexOf( 'chrome' ) > -1 )
+				env.chrome = true;
+			else
+				env.safari = true;
+		}
 
 		var version = 0;
 
 		// Internet Explorer 6.0+
-		if ( env.ie )
-		{
-			version = parseFloat( agent.match( /msie (\d+)/ )[1] );
+		if ( env.ie ) {
+			// We use env.version for feature detection, so set it properly.
+			if ( env.quirks || !document.documentMode )
+				version = parseFloat( agent.match( /msie (\d+)/ )[ 1 ] );
+			else
+				version = document.documentMode;
+
+			// Deprecated features available just for backwards compatibility.
+			env.ie9Compat = version == 9;
+			env.ie8Compat = version == 8;
+			env.ie7Compat = version == 7;
+			env.ie6Compat = version < 7 || env.quirks;
 
 			/**
-			 * Indicates that CKEditor is running on Internet Explorer 8.
-			 * @name CKEDITOR.env.ie8
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.ie8 )
-			 *     alert( "I'm on IE8!" );
+			 * Indicates that CKEditor is running in an IE6-like environment, which
+			 * includes IE6 itself as well as IE7, IE8 and IE9 in Quirks Mode.
+			 *
+			 * @deprecated
+			 * @property {Boolean} ie6Compat
 			 */
-			env.ie8 = !!document.documentMode;
 
 			/**
-			 * Indicates that CKEditor is running on Internet Explorer 8 on
-			 * standards mode.
-			 * @name CKEDITOR.env.ie8Compat
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.ie8Compat )
-			 *     alert( "Now I'm on IE8, for real!" );
+			 * Indicates that CKEditor is running in an IE7-like environment, which
+			 * includes IE7 itself and IE8's IE7 Document Mode.
+			 *
+			 * @deprecated
+			 * @property {Boolean} ie7Compat
 			 */
-			env.ie8Compat = document.documentMode == 8;
 
 			/**
-			 * Indicates that CKEditor is running on Internet Explorer 9's standards mode.
-			 * @name CKEDITOR.env.ie9Compat
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.ie9Compat )
-			 *     alert( "IE9, the beauty of the web!" );
+			 * Indicates that CKEditor is running in Internet Explorer 8 on
+			 * Standards Mode.
+			 *
+			 * @deprecated
+			 * @property {Boolean} ie8Compat
 			 */
-			env.ie9Compat = document.documentMode == 9;
 
 			/**
-			 * Indicates that CKEditor is running on an IE7-like environment, which
-			 * includes IE7 itself and IE8's IE7 document mode.
-			 * @name CKEDITOR.env.ie7Compat
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.ie8Compat )
-			 *     alert( "I'm on IE7 or on an IE7 like IE8!" );
+			 * Indicates that CKEditor is running in Internet Explorer 9 on
+			 * Standards Mode.
+			 *
+			 * @deprecated
+			 * @property {Boolean} ie9Compat
 			 */
-			env.ie7Compat = ( ( version == 7 && !document.documentMode )
-					|| document.documentMode == 7 );
-
-			/**
-			 * Indicates that CKEditor is running on an IE6-like environment, which
-			 * includes IE6 itself and IE7 and IE8 quirks mode.
-			 * @name CKEDITOR.env.ie6Compat
-			 * @type Boolean
-			 * @example
-			 * if ( CKEDITOR.env.ie6Compat )
-			 *     alert( "I'm on IE6 or quirks mode!" );
-			 */
-			env.ie6Compat = ( version < 7 || env.quirks );
 		}
 
 		// Gecko.
-		if ( env.gecko )
-		{
+		if ( env.gecko ) {
 			var geckoRelease = agent.match( /rv:([\d\.]+)/ );
-			if ( geckoRelease )
-			{
-				geckoRelease = geckoRelease[1].split( '.' );
-				version = geckoRelease[0] * 10000 + ( geckoRelease[1] || 0 ) * 100 + ( geckoRelease[2] || 0 ) * 1;
+			if ( geckoRelease ) {
+				geckoRelease = geckoRelease[ 1 ].split( '.' );
+				version = geckoRelease[ 0 ] * 10000 + ( geckoRelease[ 1 ] || 0 ) * 100 + ( geckoRelease[ 2 ] || 0 ) * 1;
 			}
 		}
 
@@ -216,89 +241,118 @@ if ( !CKEDITOR.env )
 		// Checked before Safari because AIR have the WebKit rich text editor
 		// features from Safari 3.0.4, but the version reported is 420.
 		if ( env.air )
-			version = parseFloat( agent.match( / adobeair\/(\d+)/ )[1] );
+			version = parseFloat( agent.match( / adobeair\/(\d+)/ )[ 1 ] );
 
 		// WebKit 522+ (Safari 3+)
 		if ( env.webkit )
-			version = parseFloat( agent.match( / applewebkit\/(\d+)/ )[1] );
+			version = parseFloat( agent.match( / applewebkit\/(\d+)/ )[ 1 ] );
 
 		/**
-		 * Contains the browser version.<br />
-		 * <br />
-		 * For gecko based browsers (like Firefox) it contains the revision
+		 * Contains the browser version.
+		 *
+		 * For Gecko-based browsers (like Firefox) it contains the revision
 		 * number with first three parts concatenated with a padding zero
-		 * (e.g. for revision 1.9.0.2 we have 10900).<br />
-		 * <br />
-		 * For webkit based browser (like Safari and Chrome) it contains the
+		 * (e.g. for revision 1.9.0.2 we have 10900).
+		 *
+		 * For WebKit-based browsers (like Safari and Chrome) it contains the
 		 * WebKit build version (e.g. 522).
-		 * @name CKEDITOR.env.version
-		 * @type Boolean
-		 * @example
-		 * if ( CKEDITOR.env.ie && <b>CKEDITOR.env.version</b> <= 6 )
-		 *     alert( "Ouch!" );
+		 *
+		 * For IE browsers, it matches the "Document Mode".
+		 *
+		 *		if ( CKEDITOR.env.ie && CKEDITOR.env.version <= 6 )
+		 *			alert( 'Ouch!' );
+		 *
+		 * @property {Number}
 		 */
 		env.version = version;
 
 		/**
-		 * Indicates that CKEditor is running on a compatible browser.
-		 * @name CKEDITOR.env.isCompatible
-		 * @type Boolean
-		 * @example
-		 * if ( CKEDITOR.env.isCompatible )
-		 *     alert( "Your browser is pretty cool!" );
+		 * Indicates that CKEditor is running in a compatible browser.
+		 *
+		 *		if ( CKEDITOR.env.isCompatible )
+		 *			alert( 'Your browser is pretty cool!' );
+		 *
+		 * @property {Boolean}
 		 */
 		env.isCompatible =
-
-			// White list of mobile devices that supports.
+			// White list of mobile devices that CKEditor supports.
 			env.iOS && version >= 534 ||
-
 			!env.mobile && (
-
-			( env.ie && version >= 6 ) ||
-			( env.gecko && version >= 10801 ) ||
-			( env.opera && version >= 9.5 ) ||
-			( env.air && version >= 1 ) ||
-			( env.webkit && version >= 522 ) ||
-			false );
+				( env.ie && version > 6 ) ||
+				( env.gecko && version >= 10801 ) ||
+				( env.opera && version >= 9.5 ) ||
+				( env.air && version >= 1 ) ||
+				( env.webkit && version >= 522 ) ||
+				false
+			);
 
 		/**
-		 * The CSS class to be appended on the main UI containers, making it
-		 * easy to apply browser specific styles to it.
-		 * @name CKEDITOR.env.cssClass
-		 * @type String
-		 * @example
-		 * myDiv.className = CKEDITOR.env.cssClass;
+		 * Indicates that CKEditor is running in the HiDPI environment.
+		 *
+		 *		if ( CKEDITOR.env.hidpi )
+		 *			alert( 'You are using a screen with high pixel density.' );
+		 *
+		 * @property {Boolean}
 		 */
-		env.cssClass =
-			'cke_browser_' + (
-				env.ie ? 'ie' :
-				env.gecko ? 'gecko' :
-				env.opera ? 'opera' :
-				env.webkit ? 'webkit' :
-				'unknown' );
+		env.hidpi = window.devicePixelRatio >= 2;
+
+		/**
+		 * Indicates that CKEditor is running in a browser which uses a bogus
+		 * `<br>` filler in order to correctly display caret in empty blocks.
+		 *
+		 * @since 4.3
+		 * @property {Boolean}
+		 */
+		env.needsBrFiller = env.gecko || env.webkit || ( env.ie && version > 10 );
+
+		/**
+		 * Indicates that CKEditor is running in a browser which needs a
+		 * non-breaking space filler in order to correctly display caret in empty blocks.
+		 *
+		 * @since 4.3
+		 * @property {Boolean}
+		 */
+		env.needsNbspFiller = env.ie && version < 11;
+
+		/**
+		 * A CSS class that denotes the browser where CKEditor runs and is appended
+		 * to the HTML element that contains the editor. It makes it easier to apply
+		 * browser-specific styles to editor instances.
+		 *
+		 *		myDiv.className = CKEDITOR.env.cssClass;
+		 *
+		 * @property {String}
+		 */
+		env.cssClass = 'cke_browser_' + ( env.ie ? 'ie' : env.gecko ? 'gecko' : env.opera ? 'opera' : env.webkit ? 'webkit' : 'unknown' );
 
 		if ( env.quirks )
 			env.cssClass += ' cke_browser_quirks';
 
-		if ( env.ie )
-		{
-			env.cssClass += ' cke_browser_ie' + (
-				env.version < 7 ? '6' :
-				env.version >= 8 ? document.documentMode:
-				'7' );
+		if ( env.ie ) {
+			env.cssClass += ' cke_browser_ie' + ( env.quirks || env.version < 7 ? '6' : env.version );
 
 			if ( env.quirks )
 				env.cssClass += ' cke_browser_iequirks';
 		}
 
-		if ( env.gecko && version < 10900 )
-			env.cssClass += ' cke_browser_gecko18';
+		if ( env.gecko ) {
+			if ( version < 10900 )
+				env.cssClass += ' cke_browser_gecko18';
+			else if ( version <= 11000 )
+				env.cssClass += ' cke_browser_gecko19';
+		}
 
 		if ( env.air )
 			env.cssClass += ' cke_browser_air';
 
+		if ( env.iOS )
+			env.cssClass += ' cke_browser_ios';
+
+		if ( env.hidpi )
+			env.cssClass += ' cke_hidpi';
+
 		return env;
-	})();
+	} )();
 }
 
 // PACKAGER_RENAME( CKEDITOR.env )
