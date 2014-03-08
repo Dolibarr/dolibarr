@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
+- New: Update ckeditor to version 4.
 - New: Add form search customer order on commercial main page.
 - New: Can input barcode during product creation step.
 - New: Add autonumbering of barcode value for products.
@@ -29,7 +30,7 @@ For users:
 - New: Add option MAIN_FAVICON_URL
 - Fix: Project Task numbering rule customs rule works
 - New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags
-
+ 
 TODO
 - New: Predefined product and free product use same form.
 - New: [ task #926 ] Add extrafield feature on order lines.
