@@ -116,7 +116,7 @@ $BUILDROOT="$TEMP/buildroot";
 $result = open( IN, "<" . $SOURCE . "/htdocs/filefunc.inc.php" );
 if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
 while (<IN>) {
-	if ( $_ =~ /define\('DOL_VERSION','([\d\.]+)'\)/ ) { $PROJVERSION = $1; break; }
+	if ( $_ =~ /define\('DOL_VERSION','([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
 }
 close IN;
 ($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
@@ -679,6 +679,8 @@ if ($nboftargetok) {
     		unlink("$NEWDESTI/${FILENAMEDEB}.tar.gz");
     		print "Remove target ${FILENAMEDEB}.changes...\n";
     		unlink("$NEWDESTI/${FILENAMEDEB}.changes");
+    		print "Remove target ${FILENAMEDEB}.debian.tar.gz...\n";
+    		unlink("$NEWDESTI/${FILENAMEDEB}.debian.tar.gz");
     		print "Remove target ${FILENAMEDEBNATIVE}.orig.tar.gz...\n";
     		unlink("$NEWDESTI/${FILENAMEDEBNATIVE}.orig.tar.gz");
 
@@ -726,6 +728,11 @@ if ($nboftargetok) {
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/perl`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/rpm`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/zip`;
+            # Removed duplicate license files
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/LICENSE.md`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/plugins/scayt/LICENSE.md`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/plugins/wsc/LICENSE.md`;
+            $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/jquery/plugins/flot/LICENSE.txt`;
             # Rename upstream changelog to match debian rules
 			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
 			
@@ -820,6 +827,7 @@ if ($nboftargetok) {
             $ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
             $ret=`mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
             $ret=`mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
+            $ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
             $ret=`mv $BUILDROOT/*.changes "$NEWDESTI/"`;
         	next;
         }
