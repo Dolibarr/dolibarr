@@ -1,17 +1,17 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## install.patch by <eldy@users.sourceforge.net>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Updates htdocs/filefunc.inc.php
-## DP: Updates htdocs/install/inc.php
-## DP: Updates htdocs/support/inc.php
-
-@DPATCH@
-
-
---- old/htdocs/filefunc.inc.php 2011-09-03 02:32:48.666952000 +0200
-+++ new/htdocs/filefunc.inc.php	2011-09-03 02:33:00.510952001 +0200
-@@ -63,8 +63,8 @@
+Description: Enable /etc/dolibarr/conf.php so that we use packaged libraries
+ Update some PHP include files to refer to /etc/dolibarr/conf.php
+ instead of the in-tree conf/conf.php.
+ .
+ /etc/dolibarr/conf.php configures Dolibarr to use packaged libraries
+ instead of the embedded ones.
+Author: Laurent Destailleur <eldy@users.sourceforge.net>
+Forwarded: not-needed
+Last-Update: 2013-07-29
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/htdocs/filefunc.inc.php
++++ b/htdocs/filefunc.inc.php
+@@ -63,8 +63,8 @@ $conffiletoshowshort = "conf.php";
  $conffile = "conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems
@@ -22,9 +22,9 @@
  
  
  // Include configuration
---- old/htdocs/install/inc.php	2011-09-03 02:33:26.450952000 +0200
-+++ new/htdocs/install/inc.php	2011-09-03 02:33:36.286952001 +0200
-@@ -71,8 +71,8 @@
+--- a/htdocs/install/inc.php
++++ b/htdocs/install/inc.php
+@@ -73,8 +73,8 @@ $conffiletoshowshort = "conf.php";
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems
@@ -35,9 +35,9 @@
  
  
  if (! defined('DONOTLOADCONF') && file_exists($conffile))
---- old/htdocs/support/inc.php	2011-09-03 02:34:39.606952000 +0200
-+++ new/htdocs/support/inc.php	2011-09-03 02:33:59.814952000 +0200
-@@ -69,8 +69,8 @@
+--- a/htdocs/support/inc.php
++++ b/htdocs/support/inc.php
+@@ -69,8 +69,8 @@ $conffiletoshowshort = "conf.php";
  $conffile = "../conf/conf.php";
  $conffiletoshow = "htdocs/conf/conf.php";
  // For debian/redhat like systems
