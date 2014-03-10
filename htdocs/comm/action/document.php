@@ -261,7 +261,7 @@ if ($object->id > 0)
 }
 else
 {
-	print $langs->trans("UnkownError");
+	print $langs->trans("ErrorUnknown");
 }
 
 $db->close();

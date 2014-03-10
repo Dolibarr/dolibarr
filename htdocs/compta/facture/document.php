@@ -160,7 +160,7 @@ if ($id > 0 || ! empty($ref))
 }
 else
 {
-	print $langs->trans("UnkownError");
+	print $langs->trans("ErrorUnknown");
 }
 
 $db->close();
