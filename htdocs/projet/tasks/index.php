@@ -119,9 +119,20 @@ print '</td>';
 print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 print "</tr>\n";
 
-// Show all lines in taskarray (recursive function to go down on tree)
-$j=0; $level=0;
-$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
+if (count($tasksarray) > 1000)
+{
+	print '<tr '.$bc[0].'>';
+	print '<td colspan="9">';
+	print $langs->trans("TooManyDataPleaseUseMoreFilters");
+	print '</td></tr>';
+}
+else
+{
+	// Show all lines in taskarray (recursive function to go down on tree)
+	$j=0; $level=0;
+	$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
+}
+
 print "</table>";
 
 print '</form>';
