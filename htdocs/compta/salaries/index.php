@@ -39,7 +39,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 llxHeader();
 
-$salstatic = new Sal($db);
+$salstatic = new Salaries($db);
 $userstatic = new User($db);
         
 

@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 /**
  *  Put here description of your class
  */
-class Sal extends CommonObject
+class Salaries extends CommonObject
 {
 	//public $element='salaries';			//!< Id that identify managed objects
 	//public $table_element='salaries';	//!< Name of table without prefix where object is stored
@@ -130,7 +130,7 @@ class Sal extends CommonObject
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('SAL_CREATE',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('SALARIES_CREATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
@@ -205,7 +205,7 @@ class Sal extends CommonObject
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('SAL_MODIFY',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('SALARIES_MODIFY',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
     	}
@@ -313,7 +313,7 @@ class Sal extends CommonObject
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($this->db);
-    $result=$interface->run_triggers('SAL_DELETE',$this,$user,$langs,$conf);
+    $result=$interface->run_triggers('SALARIES_DELETE',$this,$user,$langs,$conf);
     if ($result < 0) { $error++; $this->errors=$interface->errors; }
     // Fin appel triggers
 
@@ -424,7 +424,7 @@ class Sal extends CommonObject
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('SAL_ADDPAYMENT',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('SALARIES_ADDPAYMENT',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
@@ -478,7 +478,7 @@ class Sal extends CommonObject
                     $linkaddedforthirdparty=array();
                     foreach ($this->amounts as $key => $value)
                     {
-                        $sal = new Sal ($this->db);
+                        $sal = new Salaries ($this->db);
                                 
                         $sal->fetch($key);
                         $sal->fetch_user($this->fk_user);

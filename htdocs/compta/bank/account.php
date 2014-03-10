@@ -142,7 +142,7 @@ $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
-$paymentsalstatic=new Sal($db);
+$paymentsalstatic=new Salaries($db);
 $bankstatic=new Account($db);
 $banklinestatic=new AccountLine($db);
 

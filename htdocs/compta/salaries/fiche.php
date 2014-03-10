@@ -38,7 +38,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-$sal = new Sal($db);
+$sal = new Salaries($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('taxsalcard'));
@@ -144,7 +144,7 @@ $form = new Form($db);
 
 if ($id)
 {
-  $salpayment = new Sal($db);
+  $salpayment = new Salaries($db);
 	$result = $salpayment->fetch($id);
 	if ($result <= 0)
 	{

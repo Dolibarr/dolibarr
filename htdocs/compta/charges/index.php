@@ -61,7 +61,7 @@ if (! $sortorder) $sortorder="DESC";
 $tva_static = new Tva($db);
 $socialcontrib=new ChargeSociales($db);
 $payment_sc_static=new PaymentSocialContribution($db);
-$sal_static = new Sal($db);
+$sal_static = new Salaries($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 
@@ -86,7 +86,7 @@ if (GETPOST("mode") != 'sconly')
 // Salaries
 if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 {
-  $sal = new Sal($db);
+  $sal = new Salaries($db);
 
 	print_fiche_titre($langs->trans("SalPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
