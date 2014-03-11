@@ -35,6 +35,7 @@
 # TitleChoice=Choice label
 # ExportSpreadsheet=Export result spreadsheet
 ExpireDate=Дата лимита
+# NbOfSurveys=Number of surveys
 # NbOfVoters=Nb of voters
 # SurveyResults=Results
 # PollAdminDesc=You are allowed to change all vote lines of this poll with button "Edit". You can, as well, remove a column or a line with %s. You can also add a new column with %s.

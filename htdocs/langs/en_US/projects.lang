@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+RefProject=Ref. project
+ProjectId=Project Id
 Project=Project
 Projects=Projects
 SharedProject=Everybody
@@ -30,11 +32,18 @@ TimeSpent=Time spent
 TimesSpent=Time spent
 RefTask=Ref. task
 LabelTask=Label task
+TaskTimeSpent=Time spent on tasks
+TaskTimeUser=Task time user
+TaskTimeNote=Task time note
+TaskTimeDate=Task time date
 NewTimeSpent=New time spent
 MyTimeSpent=My time spent
 MyTasks=My tasks
 Tasks=Tasks
 Task=Task
+TaskDateStart=Task start date
+TaskDateEnd=Task end date
+TaskDescription=Task description
 NewTask=New task
 AddTask=Add task
 AddDuration=Add duration
@@ -100,12 +109,12 @@ ProjectCreatedInDolibarr=Project %s created
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leader
 TypeContact_project_external_PROJECTLEADER=Project leader
-TypeContact_project_internal_CONTRIBUTOR=Contributor
-TypeContact_project_external_CONTRIBUTOR=Contributor
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Task executive
 TypeContact_project_task_external_TASKEXECUTIVE=Task executive
-TypeContact_project_task_internal_CONTRIBUTOR=Contributor
-TypeContact_project_task_external_CONTRIBUTOR=Contributor
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Select element
 AddElement=Link to element
 # Documents models

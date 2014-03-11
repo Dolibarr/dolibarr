@@ -109,8 +109,8 @@ ParameterInDolibarr=Parameter %s
 LanguageParameter=Language parameter %s
 LanguageBrowserParameter=Parameter %s
 LocalisationDolibarrParameters=Localisation parameters
-ClientTZ=Client Time Zone(user)
-ClientHour=Client time(user)
+ClientTZ=Client Time Zone (user)
+ClientHour=Client time (user)
 OSTZ=Servre OS Time Zone
 PHPTZ=PHP server Time Zone
 PHPServerOffsetWithGreenwich=PHP server offset width Greenwich (seconds)
@@ -380,13 +380,15 @@ DefaultLink=Default link
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
 ExternalModule=External module - Installed into directory %s
 BarcodeInitForThirdparties=Mass barcode init for thirdparties
-BarcodeInitForProductsOrServices=Mass barcode init for products or services
+BarcodeInitForProductsOrServices=Mass barcode init or reset for products or services
 CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> records on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=Init value for next %s empty records
 EraseAllCurrentBarCode=Erase all current barcode values
+ConfirmEraseAllCurrentBarCode=Are you sure you want to erase all current barcode values ?
 AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
+
 
 # Modules
 Module0Name=Users & groups
@@ -516,6 +518,8 @@ Module59000Name=Margins
 Module59000Desc=Module to manage margins
 Module60000Name=Commissions
 Module60000Desc=Module to manage commissions
+Module150010Name=Batch number, eat-by date and sell-by date
+Module150010Desc=batch number, eat-by date and sell-by date management for product
 Permission11=Read customer invoices
 Permission12=Create/modify customer invoices
 Permission13=Unvalidate customer invoices
@@ -732,8 +736,8 @@ Permission55001=Read surveys
 Permission55002=Create/modify surveys
 Permission59001=Read commercial margins
 Permission59002=Define commercial margins
-DictionaryCompanyType=Company types
-DictionaryCompanyJuridicalType=Juridical kinds of company
+DictionaryCompanyType=Thirdparties type
+DictionaryCompanyJuridicalType=Juridical kinds of thirdparties
 DictionaryProspectLevel=Prospect potential level
 DictionaryCanton=State/Cantons
 DictionaryRegion=Regions
@@ -965,7 +969,7 @@ SimpleNumRefModelDesc=Returns the reference number with format %syymm-nnnn where
 ShowProfIdInAddress=Show professionnal id with addresses on documents
 ShowVATIntaInAddress=Hide VAT Intra num with addresses on documents
 TranslationUncomplete=Partial translation
-SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix <b>.lang</b> text files into directory <b>htdocs/langs</b> and submit them on the forum at <a href="http://www.dolibarr.org/forum" target="_blank">http://www.dolibarr.org</a>. 
+SomeTranslationAreUncomplete=Some languages may be partially translated or may contains errors. If you detect some, you can fix language files registering to <a href="http://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a>. 
 MenuUseLayout=Make vertical menu hidable (option javascript must not be disabled)
 MAIN_DISABLE_METEO=Disable meteo view
 TestLoginToAPI=Test login to API
@@ -991,6 +995,7 @@ ExtraFieldsProject=Complementary attributes (projects)
 ExtraFieldsProjectTask=Complementary attributes (tasks)
 ExtraFieldHasWrongValue=Attribut %s has a wrong value.
 AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
+AlphaNumOnlyLowerCharsAndNoSpace=only alphanumericals and lower case characters without space
 SendingMailSetup=Setup of sendings by email
 SendmailOptionNotComplete=Warning, on some Linux systems, to send email from your email, sendmail execution setup must contains option -ba (parameter mail.force_extra_parameters into your php.ini file). If some recipients never receive emails, try to edit this PHP parameter with mail.force_extra_parameters = -ba).
 PathToDocuments=Path to documents

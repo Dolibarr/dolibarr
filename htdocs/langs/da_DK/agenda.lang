@@ -52,6 +52,7 @@ InvoiceSentByEMail=Kundefaktura %s sendt via e-mail
 SupplierOrderSentByEMail=Leverandør ordre %s sendt via e-mail
 SupplierInvoiceSentByEMail=Leverandørfaktura %s sendt via e-mail
 ShippingSentByEMail=Forsendelse %s sendt via e-mail
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s sendt via e-mail
 NewCompanyToDolibarr= Tredjepart skabt
 DateActionPlannedStart= Planlagt startdato

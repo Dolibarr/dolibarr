@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ $langs->load("products");
 $langs->load("other");
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
+if ($conf->productbatch->enabled) $langs->load("productbatch");
 
 $mesg=''; $error=0; $errors=array(); $_error=0;
 
@@ -197,6 +199,7 @@ if (empty($reshook))
             $object->type               	 = $type;
             $object->status             	 = GETPOST('statut');
             $object->status_buy            = GETPOST('statut_buy');
+			$object->status_batch          	= GETPOST('status_batch');
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
@@ -280,6 +283,7 @@ if (empty($reshook))
                 $object->country_id             = GETPOST('country_id');
                 $object->status                 = GETPOST('statut');
                 $object->status_buy             = GETPOST('statut_buy');
+                $object->status_batch	        = GETPOST('status_batch');
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 $object->duration_value         = GETPOST('duration_value');
@@ -763,8 +767,17 @@ else
         // To buy
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-        print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy"'));
+        print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy'));
         print '</td></tr>';
+
+	    // batch number management
+		if ($conf->productbatch->enabled) {
+			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
+			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
+			print '</td></tr>';
+		}
+
 
         $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
 
@@ -1008,6 +1021,14 @@ else
             }
             print '</select>';
             print '</td></tr>';
+
+			// Batch number managment
+			if ($conf->productbatch->enabled) {
+				print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
+				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
+				print '</td></tr>';
+			}
 
             // Barcode
             $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
@@ -1290,6 +1311,13 @@ else
             print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
             print $object->getLibStatut(2,1);
             print '</td></tr>';
+
+			// Batch number management (to batch)
+			if ($conf->productbatch->enabled) {
+				print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
+				print $object->getLibStatut(2,2);
+				print '</td></tr>';
+			}
 
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';

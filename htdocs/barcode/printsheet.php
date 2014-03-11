@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("members");
 $langs->load("errors");
 
-// Choix de l'annee d'impression ou annee courante.
+// Choice of print year or current year.
 $now = dol_now();
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
@@ -57,7 +57,7 @@ $thirdpartytmp=new Societe($db);
 
 if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 {
-	$action='';	// We reset because we dont want to build doc
+	$action='';	// We reset because we don't want to build doc
 	if (GETPOST('productid') > 0)
 	{
 		$producttmp->fetch(GETPOST('productid'));
@@ -74,7 +74,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 }
 if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 {
-	$action='';	// We reset because we dont want to build doc
+	$action='';	// We reset because we don't want to build doc
 	if (GETPOST('socid') > 0)
 	{
 		$thirdpartytmp->fetch(GETPOST('socid'));

@@ -35,6 +35,7 @@ AddNewColumn=Lisa uus veerg
 TitleChoice=Valiku silt
 ExportSpreadsheet=Ekspordi tulemuste tabel
 ExpireDate=Piira kuupäevaga
+# NbOfSurveys=Number of surveys
 NbOfVoters=Hääletajaid
 SurveyResults=Tulemused
 PollAdminDesc=Kõiki küsitluse rida saad muuta nupuga "Muuda". Samuti võid eemaldada veeru või rea üksusega %s. Samuti saad lisada uue veeru üksusega %s.

@@ -37,3 +37,4 @@ ShowCompany=Näita ettevõtet
 ShowStock=Näita ladu
 DeleteArticle=Klõpsa selle artikli eemaldamiseks
 FilterRefOrLabelOrBC=Otsi (viide/nimi)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

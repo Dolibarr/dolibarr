@@ -430,30 +430,25 @@ class Export
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
-	 *      TODO replace by translation
 	 */
 	function genDocFilter($TypeField)
 	{
+        global $langs;
+
 		$szMsg='';
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
-				$szMsg="% permet de remplacer un ou plusieurs caract&egrave;res dans la chaine";
+				$szMsg= $langs->trans('ExportStringFilter');
 				break;
 			case 'Date':
-				$szMsg ="'AAAA' 'AAAAMM' 'AAAAMMJJ' : filtre sur une ann&eacute;e/mois/jour <br>";
-				$szMsg.="'AAAA+AAAA' 'AAAAMM+AAAAMM' 'AAAAMMJJ+AAAAMMJJ': filtre sur une plage d'ann&eacute;e/mois/jour <br>";
-				$szMsg.="'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ' filtre sur les ann&eacute;e/mois/jour suivants <br>";
-				$szMsg.="'&lsaquo;AAAA' '&lsaquo;AAAAMM' '&lsaquo;AAAAMMJJ' filtre sur les ann&eacute;e/mois/jour pr&eacute;c&eacute;dent <br>";
+				$szMsg = $langs->trans('ExportDateFilter');
 				break;
 			case 'Duree':
 				break;
 			case 'Numeric':
-				$szMsg ="'NNNNN' filtre sur une valeur <br>";
-				$szMsg.="'NNNNN+NNNNN' filtre sur une plage de valeur<br>";
-				$szMsg.="'&lsaquo;NNNNN' filtre sur les valeurs inf&eacute;rieurs<br>";
-				$szMsg.="'&gt;NNNNN' filtre sur les valeurs sup&eacute;rieurs<br>";
+				$szMsg = $langs->trans('ExportNumericFilter');
 				break;
 			case 'Boolean':
 				break;

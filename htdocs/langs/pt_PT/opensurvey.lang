@@ -35,6 +35,7 @@ AddNewColumn=Adicionar nova coluna
 # TitleChoice=Choice label
 ExportSpreadsheet=Exportar resultados para uma folha de cálculo
 ExpireDate=Data Limite
+# NbOfSurveys=Number of surveys
 NbOfVoters=N.º de Eleitores
 SurveyResults=Resultados
 # PollAdminDesc=You are allowed to change all vote lines of this poll with button "Edit". You can, as well, remove a column or a line with %s. You can also add a new column with %s.

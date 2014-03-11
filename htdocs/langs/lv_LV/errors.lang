@@ -26,8 +26,11 @@ ErrorFromToAccountsMustDiffers=Avots un mērķiem banku kontiem jābūt atšķir
 ErrorBadThirdPartyName=Slikti vērtība trešo personu vārda
 ErrorProdIdIsMandatory=%s ir obligāta
 ErrorBadCustomerCodeSyntax=Slikti sintakse klientu kodu
+# ErrorBadBarCodeSyntax=Bad syntax for bar code
 ErrorCustomerCodeRequired=Klientam nepieciešams kods
+# ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Klienta kods jau ir izmantots
+# ErrorBarCodeAlreadyUsed=Bar code already used
 ErrorPrefixRequired=Prefikss nepieciešams
 ErrorUrlNotValid=Mājas lapas adrese ir nepareiza
 ErrorBadSupplierCodeSyntax=Slikti sintakse piegādātāju kodu
@@ -37,7 +40,7 @@ ErrorBadParameters=Slikts parametrs
 ErrorBadValueForParameter=Nepareizu vērtību &quot;%s&quot; parametru nepareizu &quot;%s&quot;
 ErrorBadImageFormat=Attēla fails ir nevis atbalstītā formātā
 ErrorBadDateFormat=Vērtība &quot;%s&quot; ir nepareizs datuma formātu
-# ErrorWrongDate=Date is not correct!
+ErrorWrongDate=Datums nav pareizs
 ErrorFailedToWriteInDir=Neizdevās ierakstīt direktorijā %s
 ErrorFoundBadEmailInFile=Atrasts nepareiza e-pasta sintakse %s līnijām failā (piemērs line %s ar e-pasta = %s)
 ErrorUserCannotBeDelete=Lietotājs nevar izdzēst. Var būt tas ir saistīts ar Dolibarr vienībām.
@@ -63,6 +66,7 @@ ErrorNoValueForCheckBoxType=Lūdzu, aizpildiet vērtību rūtiņu sarakstu
 ErrorNoValueForRadioType=Lūdzu, aizpildiet vērtību radio sarakstā
 ErrorBadFormatValueList=Saraksts vērtība nevar būt vairāk kā viens nāk: <u>%s,</u> bet ir nepieciešams vismaz viens: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Lauka <b>%s</b> nedrīkst satur speciālās rakstzīmes.
+# ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=Nav grāmatvedības moduli aktivizēts
 # ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP saskaņošana nav pilnīga.
@@ -129,7 +133,7 @@ ErrorPaymentModeDefinedToWithoutSetup=Maksājumu režīms tika noteikts rakstīt
 ErrorPHPNeedModule=Kļūda, jūsu PHP ir jābūt moduli <b>%s</b> uzstādītas, lai izmantotu šo funkciju.
 ErrorOpenIDSetupNotComplete=Jūs uzstādīšana Dolibarr config failu, lai ļautu OpenID autentifikācijas, bet OpenID pakalpojuma URL nav definēts spēkā salīdzināmajās %s
 ErrorWarehouseMustDiffers=Avota un mērķa noliktavas jābūt atšķiras
-# ErrorBadFormat=Bad format!
+ErrorBadFormat=Nepareizs formāts
 # ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 
 # Warnings

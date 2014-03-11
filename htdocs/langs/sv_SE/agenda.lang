@@ -52,6 +52,7 @@ InvoiceSentByEMail=Kundfaktura %s via e-post
 SupplierOrderSentByEMail=Leverantör beställa %s via e-post
 SupplierInvoiceSentByEMail=Leverantörsfaktura %s via e-post
 ShippingSentByEMail=Frakt %s via e-post
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s via e-post
 NewCompanyToDolibarr= Tredje part har skapats
 DateActionPlannedStart= Planerat startdatum

@@ -52,6 +52,7 @@ InvoiceSentByEMail=Fattura attiva %s inviata per email
 SupplierOrderSentByEMail=Ordine fornitore %s inviato per email
 SupplierInvoiceSentByEMail=Fornitore %s fattura inviata per email
 ShippingSentByEMail=%s spedizione inviata per email
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervento %s inviato via email
 NewCompanyToDolibarr= Soggetto terzo creato
 DateActionPlannedStart= Data di inizio prevista

@@ -37,3 +37,4 @@ ShowCompany=Rādīt uzņēmumu
 ShowStock=Rādīt noliktavu
 DeleteArticle=Klikšķiniet, lai izņemtu šo rakstu
 FilterRefOrLabelOrBC=Meklēšana (Ref/Nosaukums)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -63,32 +63,17 @@ print '<tr '.$bc[0].'><td width="300"><a href="'.DOL_URL_ROOT.'/admin/system/dat
 print '</table>';
 
 
-$base=0;
-$sqls = array();
-if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
-{
-	$sqls[0] = "SHOW VARIABLES";	// TODO Use function getServerParametersValues
-	$sqls[1] = "SHOW STATUS";		// TODO Use function getServerStatusValues
-	$base=1;
-}
-else if ($conf->db->type == 'pgsql')
-{
-	$sqls[0] = "select name,setting from pg_settings";
-	$base=2;
-}
-else if ($conf->db->type == 'mssql')
-{
-	//$sqls[0] = "";
-	//$base=3;
-}
+$listofvars=$db->getServerParametersValues();
+$listofstatus=$db->getServerStatusValues();
+$arraylist=array('listofvars','listofstatus');
 
-if (! $base)
+if (! count($listofvars) && ! count($listofstatus))
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 }
 else
 {
-	foreach($sqls as $sql)
+	foreach($arraylist as $listname)
 	{
 		print '<br>';
 		print '<table class="noborder" width="100%">';
@@ -96,7 +81,7 @@ else
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';
 		print '<td>'.$langs->trans("Value").'</td>';
 		print '</tr>'."\n";
-
+	
 		// arraytest is an array of test to do
 		$arraytest=array();
 		if (preg_match('/mysql/i',$db->type))
@@ -106,34 +91,33 @@ else
 				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_general_ci')
 			);
 		}
+	
+		$listtouse=array();
+		if ($listname == 'listofvars') $listtouse=$listofvars;
+		if ($listname == 'listofstatus') $listtouse=$listofstatus;
 
-		$resql = $db->query($sql);
-		if ($resql)
+		$var=true;
+		foreach($listtouse as $param => $paramval)
 		{
-			$var=True;
-			while ($row = $db->fetch_row($resql))
+			$var=!$var;
+			print '<tr '.$bc[$var].'>';
+			print '<td>';
+			print $param;
+			print '</td>';
+			print '<td>';
+			$show=0;$text='';
+			foreach($arraytest as $key => $val)
 			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-				print $row[0];
-				print '</td>';
-				print '<td>';
-				$show=0;$text='';
-				foreach($arraytest as $key => $val)
-				{
-					if ($key != $row[0]) continue;
-					$val2=${$val['var']};
-					$text='Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2?$val2:"'' (=".$val['valifempty'].")").'</b>';
-					$show=1;
-				}
-				if ($show==0) print $row[1];
-				if ($show==1) print $form->textwithpicto($row[1],$text);
-				if ($show==2) print $form->textwithpicto($row[1],$text,1,'warning');
-				print '</td>';
-				print '</tr>'."\n";
+				if ($key != $param) continue;
+				$val2=${$val['var']};
+				$text='Should be in line with value of param <b>'.$val['var'].'</b> thas is <b>'.($val2?$val2:"'' (=".$val['valifempty'].")").'</b>';
+				$show=1;
 			}
-			$db->free($resql);
+			if ($show==0) print $paramval;
+			if ($show==1) print $form->textwithpicto($paramval,$text);
+			if ($show==2) print $form->textwithpicto($paramval,$text,1,'warning');
+			print '</td>';
+			print '</tr>'."\n";
 		}
 		print '</table>'."\n";
 	}

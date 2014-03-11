@@ -35,6 +35,7 @@ AddNewColumn=Ajouter nouvelle colonne
 TitleChoice=Libellé du choix
 ExportSpreadsheet=Exporter feuille de résultats
 ExpireDate=Date expiration
+# NbOfSurveys=Number of surveys
 NbOfVoters=Nombre de votants
 SurveyResults=Résultats
 PollAdminDesc=Vous êtes habilité à modifier toutes les lignes de votes par le bouton "Éditer". Vous pouvez supprimer une colonne ou ligne avec %s. Vous pouvez aussi ajouter une nouvelle colonne avec %s.

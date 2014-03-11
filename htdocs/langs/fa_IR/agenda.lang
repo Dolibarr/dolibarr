@@ -52,6 +52,7 @@ InterventionValidatedInDolibarr=التحقق من صحة التدخل %s
 # SupplierOrderSentByEMail=Supplier order %s sent by EMail
 # SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
 # ShippingSentByEMail=Shipping %s sent by EMail
+# ShippingValidated= Shipping %s validated
 # InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= طرف ثالث خلق
 DateActionPlannedStart= تاريخ البدء المخطط

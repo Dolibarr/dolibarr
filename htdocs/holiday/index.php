@@ -249,7 +249,7 @@ if ($id > 0)
 }
 else {
 	print '</div>';
-} 
+}
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';
@@ -299,7 +299,7 @@ if($user->rights->holiday->lire_tous)
     $form->select_users($search_valideur,"search_valideur",1,"",0,$valideurarray,'');
     print '</td>';
 }
-else 
+else
 {
     print '<td class="liste_titre">&nbsp;</td>';
 }
@@ -366,7 +366,7 @@ if (! empty($holiday->holiday))
 		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
 		print '<td align="right">';
-		$nbopenedday=num_open_day($infos_CP['date_debut'], $infos_CP['date_fin'], 0, 1, $infos_CP['halfday']);
+		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
 		print '<td align="right" colspan="2">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 		print '</tr>'."\n";

@@ -17,13 +17,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 /**
  *  \file       htdocs/admin/project.php
  *  \ingroup    project
  *  \brief      Page to setup project module
-*/
+ */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -47,7 +47,7 @@ $type='project';
 
 /*
  * Actions
-*/
+ */
 
 if ($action == 'updateMask')
 {
@@ -286,15 +286,13 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
-print "<br>";
-
 $head=project_admin_prepare_head();
 
-dol_fiche_head($head, 'project', $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'project', $langs->trans("Project"), 0, 'project');
 
 /*
  * Projects Numbering model
-*/
+ */
 
 print_titre($langs->trans("ProjectsNumberingModules"));
 

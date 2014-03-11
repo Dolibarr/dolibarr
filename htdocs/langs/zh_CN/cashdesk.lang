@@ -37,3 +37,4 @@ ShowCompany=显示公司
 ShowStock=显示仓库
 DeleteArticle=点击删除此文章
 FilterRefOrLabelOrBC=搜索 (REF /标签)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

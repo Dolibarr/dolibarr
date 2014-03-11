@@ -52,6 +52,7 @@ InvoiceSentByEMail=Afnemersfactuur %s verzonden per e-mail
 SupplierOrderSentByEMail=Leveranciersopdracht %s verzonden per e-mail
 SupplierInvoiceSentByEMail=Leveranciersfactuur %s verzonden per e-mail
 ShippingSentByEMail=Verzendkosten %s per e-mail
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Interventie %s per e-mail
 NewCompanyToDolibarr= Derde aangemaakt
 DateActionPlannedStart= Geplande startdatum

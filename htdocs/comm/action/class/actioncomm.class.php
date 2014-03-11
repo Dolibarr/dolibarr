@@ -64,9 +64,9 @@ class ActionComm extends CommonObject
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
 
-    var $societe;		// Company linked to action (optionnal)
-    var $contact;		// Contact linked tot action (optionnal)
-    var $fk_project;	// Id of project (optionnal)
+    var $societe;		// Company linked to action (optional)
+    var $contact;		// Contact linked to action (optional)
+    var $fk_project;	// Id of project (optional)
 
 
     // Properties for links to other objects

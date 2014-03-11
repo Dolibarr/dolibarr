@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=Faktura
 Bills=Faktury
-BillsCustomers=Klientów faktury
+BillsCustomers=Faktury Klientów
 BillsCustomer=Klienta faktura
 BillsSuppliers=Dostawców faktur
 BillsCustomersUnpaid=Należne wpłaty klientów faktury
@@ -47,7 +47,7 @@ Invoices=Faktury
 InvoiceLine=Faktura linii
 InvoiceCustomer=Klient faktury
 CustomerInvoice=Klient faktury
-CustomersInvoices=Klientów faktury
+CustomersInvoices=Faktury Klientów
 SupplierInvoice=Dostawca faktury
 SuppliersInvoices=Dostawców faktur
 SupplierBill=Dostawca faktury

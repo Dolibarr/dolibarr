@@ -35,6 +35,7 @@ AddNewColumn=Añadir nueva columna
 TitleChoice=Título de la opción
 ExportSpreadsheet=Exportar resultados a una hoja de cálculo
 ExpireDate=Fecha límite
+# NbOfSurveys=Number of surveys
 NbOfVoters=Núm. de votantes
 SurveyResults=Resultados
 PollAdminDesc=Está autorizado para cambiar todas las líneas de la encuesta con el botón "Editar". Puede, también, eliminar una columna o una línea con %s. También puede añadir una nueva columna con %s.

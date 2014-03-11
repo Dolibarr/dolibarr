@@ -315,6 +315,7 @@ class Societe extends CommonObject
         $contact->statut            = 1;
         $contact->priv              = 0;
         $contact->country_id        = $this->country_id;
+        $contact->state_id          = $this->state_id;
         $contact->address           = $this->address;
         $contact->email             = $this->email;
         $contact->zip               = $this->zip;

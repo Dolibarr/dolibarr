@@ -42,6 +42,17 @@ if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->e
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 
+// Pricing Rules
+$select_pricing_rules=array(
+'PRODUCT_PRICE_UNIQ'=>$langs->trans('PriceCatalogue'),
+'PRODUIT_MULTIPRICES'=>$langs->trans('MultiPricesAbility'),
+'PRODUIT_CUSTOMER_PRICES'=>$langs->trans('PriceByCustomer')
+);
+if ($conf->global->MAIN_FEATURES_LEVEL==2) {
+	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY'] = $langs->trans('PriceByQuantity');
+	$select_pricing_rules['PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES'] = $langs->trans('MultiPricesAbility') . '+' . $langs->trans('PriceByQuantity');
+}
+
 
 /*
  * Actions
@@ -96,12 +107,33 @@ else if ($action == 'multiprix_num')
 {
 	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $value,'chaine',0,'',$conf->entity);
 }
-if ($action == 'multiprix')
+if ($action == 'pricingrule')
 {
-	$multiprix = GETPOST('activate_multiprix','alpha');
+	$princingrules = GETPOST('princingrule','alpha');
+	foreach ($select_pricing_rules as $rule=>$label) {
 
-	$res = dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $multiprix,'chaine',0,'',$conf->entity);
-	$res =dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "5",'chaine',0,'',$conf->entity);
+		if ($rule==$princingrules) {
+			if ( $princingrules =='PRODUCT_PRICE_UNIQ') {
+				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0,'chaine',0,'',$conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0,'chaine',0,'',$conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0,'chaine',0,'',$conf->entity);
+			} else {
+				$multirule=explode('&',$princingrules);
+				if (is_array($multirule) && count($multirule)>0) {
+					foreach($multirule as $rulesselected) {
+						$res = dolibarr_set_const($db, $rulesselected, 1,'chaine',0,'',$conf->entity);
+					}
+				} else {
+					$res = dolibarr_set_const($db, $rule, 1,'chaine',0,'',$conf->entity);
+				}
+			}
+		} else {
+			if (strpos($rule,'&')===false) {
+				$res = dolibarr_set_const($db, $rule, 0,'chaine',0,'',$conf->entity);
+			}
+		}
+		
+	}	
 }
 else if ($action == 'sousproduits')
 {
@@ -278,15 +310,20 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
  * Formulaire parametres divers
  */
 
-// multiprix activation/desactivation
+
 $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="multiprix">';
+print '<input type="hidden" name="action" value="pricingrule">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("MultiPricesAbility").'</td>';
+print '<td>'.$langs->trans("PricingRule").'</td>';
 print '<td width="60" align="right">';
-print $form->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
+$current_rule = 'PRODUCT_PRICE_UNIQ';
+if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRICES';
+if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
+if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
+if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES)))$current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES';
+print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

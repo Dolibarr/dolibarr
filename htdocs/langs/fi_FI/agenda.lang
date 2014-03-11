@@ -52,6 +52,7 @@ InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
 SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
 SupplierInvoiceSentByEMail=Toimittaja lasku %s lähetetään sähköpostilla
 ShippingSentByEMail=Toimitus %s lähetetään sähköpostilla
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s lähetetään sähköpostilla
 NewCompanyToDolibarr= Kolmannen osapuolen luonut
 DateActionPlannedStart= SUUNNITELTU ALKAMISPÄIVÄ

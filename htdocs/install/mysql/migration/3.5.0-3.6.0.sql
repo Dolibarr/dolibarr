@@ -18,10 +18,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
-
 ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 
-ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1 AFTER canedit;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 -- ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
 -- ALTER TABLE llx_opensurvey_sondage DROP INDEX idx_id_sondage_admin;
 -- ALTER TABLE llx_opensurvey_sondage DROP COLUMN id_sondage_admin;
@@ -33,6 +33,7 @@ ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN mailsonde mailsonde tinyint NOT
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN titre titre TEXT NOT NULL;
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT NULL;
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
 
 ALTER TABLE llx_facture_rec CHANGE COLUMN usenewprice usenewprice INTEGER DEFAULT 0;
 
@@ -957,3 +958,100 @@ INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, accoun
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '793', '79', 'Perte à reporter', '1');
 INSERT INTO llx_accountingaccount (fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUE ('PCMN-BASE', 'PROD', 'XXXXXX', '794', '79', 'Intervention d''associés (ou du propriétaire) dans la perte', '1');
 
+
+ALTER TABLE llx_projet_task ADD COLUMN  entity integer DEFAULT 1 NOT NULL AFTER ref;
+
+create table llx_product_customer_price
+(
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
+  datec					datetime,
+  tms					timestamp,
+  fk_product			integer NOT NULL,
+  fk_soc				integer NOT NULL,	   
+  price						double(24,8) DEFAULT 0,
+  price_ttc					double(24,8) DEFAULT 0,
+  price_min					double(24,8) DEFAULT 0,
+  price_min_ttc				double(24,8) DEFAULT 0,
+  price_base_type			varchar(3)   DEFAULT 'HT',
+  tva_tx					double(6,3),
+  recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
+  localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
+  fk_user				integer,
+  import_key			varchar(14)                  -- Import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_customer_price ADD INDEX idx_product_customer_price_fk_user (fk_user);
+
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
+
+ALTER TABLE llx_product_customer_price ADD UNIQUE INDEX uk_customer_price_fk_product_fk_soc (fk_product, fk_soc);
+
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product(rowid) ON DELETE CASCADE;
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid) ON DELETE CASCADE;
+
+
+create table llx_product_customer_price_log
+(
+  rowid                       integer AUTO_INCREMENT PRIMARY KEY,
+ entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
+  datec                       datetime,
+  fk_product			integer NOT NULL,
+  fk_soc				integer NOT NULL,	   
+  price						double(24,8) DEFAULT 0,
+  price_ttc					double(24,8) DEFAULT 0,
+  price_min					double(24,8) DEFAULT 0,
+  price_min_ttc				double(24,8) DEFAULT 0,
+  price_base_type			varchar(3)   DEFAULT 'HT',
+  tva_tx					double(6,3),
+  recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
+  localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
+  fk_user				integer,
+ import_key			varchar(14)                  -- Import key
+)ENGINE=innodb;
+
+--Batch number managment
+ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
+
+CREATE TABLE IF NOT EXISTS `llx_product_batch` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `fk_product_stock` int(11) NOT NULL,
+  `eatby` datetime DEFAULT NULL,
+  `sellby` datetime DEFAULT NULL,
+  `batch` varchar(30) DEFAULT NULL,
+  `qty` double NOT NULL DEFAULT '0',
+  `import_key` varchar(14) DEFAULT NULL,
+  KEY `ix_fk_product_stock` (`fk_product_stock`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `llx_expeditiondet_batch` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fk_expeditiondet` int(11) NOT NULL,
+  `eatby` date DEFAULT NULL,
+  `sellby` date DEFAULT NULL,
+  `batch` varchar(30) DEFAULT NULL,
+  `qty` double NOT NULL DEFAULT '0',
+  `fk_origin_stock` int(11) NOT NULL,
+  KEY `ix_fk_expeditiondet` (`fk_expeditiondet`)
+) ENGINE=InnoDB;
+
+--Salary payment in tax module
+CREATE TABLE IF NOT EXISTS `llx_payment_salary` (
+  `rowid` integer AUTO_INCREMENT PRIMARY KEY,
+  `tms` timestamp,
+  `fk_user` integer NOT NULL,
+  `datep` date,
+  `datev` date,
+  `amount` real NOT NULL DEFAULT 0,
+  `label` varchar(255),
+  `datesp` date,                       -- date de début de la période
+  `dateep` date,                       -- date de fin de la période    
+  `entity` integer DEFAULT 1 NOT NULL,	-- multi company id
+  `note` text,
+  `fk_bank` integer,  
+  `fk_user_creat` integer,
+  `fk_user_modif` integer
+)ENGINE=innodb;

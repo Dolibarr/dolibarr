@@ -268,8 +268,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					{
 						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
 						// because assignement on task can be done only on contact of project.
-						// If assignement was done and after, was removed from contact of project, then we can hide the line. 
-						$showline=0;	 
+						// If assignement was done and after, was removed from contact of project, then we can hide the line.
+						$showline=0;
 					}
 				}
 			}
@@ -288,8 +288,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Project
 				if ($showproject)
 				{
+					// Project ref
 					print "<td>";
-					//var_dump($taskrole);
 					if ($showlineingray) print '<i>';
 					$projectstatic->id=$lines[$i]->fk_project;
 					$projectstatic->ref=$lines[$i]->projectref;
@@ -297,6 +297,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					if ($lines[$i]->public || in_array($lines[$i]->fk_project,$projectsArrayId)) print $projectstatic->getNomUrl(1);
 					else print $projectstatic->getNomUrl(1,'nolink');
 					if ($showlineingray) print '</i>';
+					print "</td>";
+
+					// Status
+					print '<td>';
+					$projectstatic->statut=$lines[$i]->projectstatus;
+					print $projectstatic->getLibStatut(2);
 					print "</td>";
 				}
 
@@ -398,7 +404,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	{
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
-		if ($showproject) print '<td></td>';
+		if ($showproject) print '<td></td><td></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -501,7 +507,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 			// Time spent
 			print '<td align="right">';
-			if ($lines[$i]->duration) 
+			if ($lines[$i]->duration)
 			{
 				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 				print convertSecondToTime($lines[$i]->duration,'allhourmin');
