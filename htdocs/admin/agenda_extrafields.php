@@ -74,7 +74,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Agenda"));
+dol_fiche_head($head, 'attributes', $langs->trans("Agenda"), 0, 'action');
 
 print $langs->trans("DefineHereComplementaryAttributes", $langs->transnoentitiesnoconv("Agenda")).'<br>'."\n";
 print '<br>';
