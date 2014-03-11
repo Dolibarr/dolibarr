@@ -478,7 +478,7 @@ class PaymentSalary extends CommonObject
                     $linkaddedforthirdparty=array();
                     foreach ($this->amounts as $key => $value)
                     {
-                        $sal = new PaymentSalary ($this->db);
+                        $sal = new PaymentSalary($this->db);
                                 
                         $sal->fetch($key);
                         $sal->fetch_user($this->fk_user);
