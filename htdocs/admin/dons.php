@@ -155,6 +155,7 @@ print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -233,10 +234,14 @@ if (is_resource($handle))
                 $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                 $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
                 $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
-                $text='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
                 print '<td align="center">';
-                print $form->textwithpicto(' &nbsp; '.$text,$htmltooltip,-1,0);
+                print $form->textwithpicto('',$htmltooltip,-1,0);
                 print '</td>';
+				
+				// Preview
+				print '<td align="center">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'" target="specimen">'.img_object($langs->trans("Preview"),'generic').'</a>';
+				print '</td>';
 
                 print "</tr>\n";
             }
