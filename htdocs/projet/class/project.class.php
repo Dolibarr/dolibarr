@@ -65,8 +65,8 @@ class Project extends CommonObject
         $this->db = $db;
         $this->societe = new Societe($db);
 
-        $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
-        $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
+        $this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+        $this->statuts = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
     }
 
     /**
@@ -1330,7 +1330,7 @@ class Project extends CommonObject
 					print 'Some orphelins were found and modified to be parent so records are visible again: ';
 					print join(',',$listofid);
 				}
-				
+
 				return $nb;
 			}
 			else
