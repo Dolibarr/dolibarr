@@ -383,7 +383,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 
 	$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
 	<script type="text/javascript">
-		$(function() {
+		$(document).ready(function() {
 			var input = '.json_encode($input).';
 			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 			var code = \''.$code.'\';
