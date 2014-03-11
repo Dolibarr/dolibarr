@@ -1039,7 +1039,7 @@ CREATE TABLE IF NOT EXISTS `llx_expeditiondet_batch` (
 ) ENGINE=InnoDB;
 
 --Salary payment in tax module
-CREATE TABLE IF NOT EXISTS `llx_salaries` (
+CREATE TABLE IF NOT EXISTS `llx_payment_salary` (
   `rowid` integer AUTO_INCREMENT PRIMARY KEY,
   `tms` timestamp,
   `fk_user` integer NOT NULL,

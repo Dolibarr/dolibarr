@@ -22,7 +22,7 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salaries.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 $langs->load("compta");
 
@@ -39,14 +39,14 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 llxHeader();
 
-$salstatic = new Salaries($db);
+$salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
         
 
-print_fiche_titre($langs->trans("SalPayments"));
+print_fiche_titre($langs->trans("SalariesPayments"));
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm";
-$sql.= " FROM ".MAIN_DB_PREFIX."salaries as s, ".MAIN_DB_PREFIX."user as u";
+$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE u.rowid = s.fk_user";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " ORDER BY dm DESC";

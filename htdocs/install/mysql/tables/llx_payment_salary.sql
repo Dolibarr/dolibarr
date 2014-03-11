@@ -16,7 +16,7 @@
 --
 -- ===================================================================
 
-create table llx_salaries
+create table llx_payment_salary
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,

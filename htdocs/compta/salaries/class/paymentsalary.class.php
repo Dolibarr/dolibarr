@@ -16,9 +16,9 @@
  */
 
 /**
- *      \file       htdocs/compta/salaries/class/salaries.class.php
+ *      \file       htdocs/compta/salaries/class/paymentsalary.class.php
  *      \ingroup    tax
- *      \brief		  Class for tax module salaries
+ *      \brief		  Class for tax module salary payment
  */
 
 // Put here all includes required by your class file
@@ -28,10 +28,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 /**
  *  Put here description of your class
  */
-class Salaries extends CommonObject
+class PaymentSalary extends CommonObject
 {
-	//public $element='salaries';			//!< Id that identify managed objects
-	//public $table_element='salaries';	//!< Name of table without prefix where object is stored
+	//public $element='payment_salary';			//!< Id that identify managed objects
+	//public $table_element='payment_salary';	//!< Name of table without prefix where object is stored
 
   var $id;
   var $ref;
@@ -59,8 +59,8 @@ class Salaries extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->element = 'salaries';
-        $this->table_element = 'salaries';
+        $this->element = 'payment_salary';
+        $this->table_element = 'payment_salary';
         return 1;
     }
 
@@ -90,7 +90,7 @@ class Salaries extends CommonObject
   		// Put here code to add control on parameters values
   
       // Insert request
-  		$sql = "INSERT INTO ".MAIN_DB_PREFIX."salaries(";
+  		$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary(";
   		$sql.= "tms,";
       $sql.= "fk_user,";
   		$sql.= "datep,";
@@ -125,12 +125,12 @@ class Salaries extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."salaries");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('SALARIES_CREATE',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('PAYMENT_SALARY_CREATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
@@ -174,7 +174,7 @@ class Salaries extends CommonObject
   		}
 
       // Update request
-      $sql = "UPDATE ".MAIN_DB_PREFIX."salaries SET";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."payment_salary SET";
 
     	$sql.= " tms=".$this->db->idate($this->tms).",";
     	$sql.= " fk_user='".$this->fk_user."',";
@@ -205,7 +205,7 @@ class Salaries extends CommonObject
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('SALARIES_MODIFY',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('PAYMENT_SALARY_MODIFY',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
     	}
@@ -243,7 +243,7 @@ class Salaries extends CommonObject
     		$sql.= " b.fk_type,";
     		$sql.= " b.rappro";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX."salaries as s";
+        $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 		    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
         $sql.= " WHERE s.rowid = ".$id;
 
@@ -298,7 +298,7 @@ class Salaries extends CommonObject
 
 		$error=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."salaries";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
 		$sql.= " WHERE rowid=".$this->id;
 
 	  dol_syslog(get_class($this)."::delete sql=".$sql);
@@ -313,7 +313,7 @@ class Salaries extends CommonObject
     // Appel des triggers
     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     $interface=new Interfaces($this->db);
-    $result=$interface->run_triggers('SALARIES_DELETE',$this,$user,$langs,$conf);
+    $result=$interface->run_triggers('PAYMENT_SALARY_DELETE',$this,$user,$langs,$conf);
     if ($result < 0) { $error++; $this->errors=$interface->errors; }
     // Fin appel triggers
 
@@ -389,7 +389,7 @@ class Salaries extends CommonObject
         }
 
         // Insertion dans table des paiement salaires
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."salaries (fk_user";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (fk_user";
         $sql.= ", datep";
         $sql.= ", datev";
         $sql.= ", amount";
@@ -419,12 +419,12 @@ class Salaries extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."salaries");    // TODO devrait s'appeler payment_sal
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");    // TODO devrait s'appeler payment_salary
 
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('SALARIES_ADDPAYMENT',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('PAYMENT_SALARY_ADDPAYMENT',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
@@ -441,7 +441,7 @@ class Salaries extends CommonObject
 					          if ($result <= 0) dol_print_error($this->db);
                     
                     // Insert payment into llx_bank
-                    // Add link 'payment_sal' in bank_url between payment and bank transaction
+                    // Add link 'payment_salary' in bank_url between payment and bank transaction
                     $bank_line_id = $acc->addline(
                         $this->datep,
                         $this->paymenttype,
@@ -464,10 +464,10 @@ class Salaries extends CommonObject
           						$ok=0;
           					}
                         
-                    // Add link 'payment_sal' in bank_url between payment and bank transaction
+                    // Add link 'payment_salary' in bank_url between payment and bank transaction
                     $url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
                     
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalPayment)", "payment_sal");
+                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
                     if ($result <= 0)
                     {
                         $this->error=$acc->error;
@@ -478,7 +478,7 @@ class Salaries extends CommonObject
                     $linkaddedforthirdparty=array();
                     foreach ($this->amounts as $key => $value)
                     {
-                        $sal = new Salaries ($this->db);
+                        $sal = new PaymentSalary ($this->db);
                                 
                         $sal->fetch($key);
                         $sal->fetch_user($this->fk_user);
@@ -534,7 +534,7 @@ class Salaries extends CommonObject
    */
 	function update_fk_bank($id_bank)
 	{
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'salaries SET fk_bank = '.$id_bank;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'payment_salary SET fk_bank = '.$id_bank;
 		$sql.= ' WHERE rowid = '.$this->id;
 		$result = $this->db->query($sql);
 		if ($result)
@@ -566,7 +566,7 @@ class Salaries extends CommonObject
 		$lienfin='</a>';
 
 		$picto='payment';
-		$label=$langs->trans("ShowSalPayment").': '.$this->ref;
+		$label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';

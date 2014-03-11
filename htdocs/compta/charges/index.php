@@ -28,7 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salaries.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("compta");
@@ -61,7 +61,7 @@ if (! $sortorder) $sortorder="DESC";
 $tva_static = new Tva($db);
 $socialcontrib=new ChargeSociales($db);
 $payment_sc_static=new PaymentSocialContribution($db);
-$sal_static = new Salaries($db);
+$sal_static = new PaymentSalary($db);
 
 llxHeader('',$langs->trans("TaxAndDividendsArea"));
 
@@ -83,15 +83,15 @@ if (GETPOST("mode") != 'sconly')
 	print "<br>";
 }
 
-// Salaries
+// Payment Salary
 if (empty($_GET["mode"]) || $_GET["mode"] != 'sconly')
 {
-  $sal = new Salaries($db);
+  $sal = new PaymentSalary($db);
 
-	print_fiche_titre($langs->trans("SalPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
+	print_fiche_titre($langs->trans("SalariesPayments").($year?' ('.$langs->trans("Year").' '.$year.')':''), '', '');
 
 	$sql = "SELECT s.rowid, s.amount, s.label, s.datev as dm";
-	$sql.= " FROM ".MAIN_DB_PREFIX."salaries as s";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 	$sql.= " WHERE s.entity = ".$conf->entity;
 	if ($year > 0)
 	{

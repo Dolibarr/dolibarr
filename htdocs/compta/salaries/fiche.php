@@ -23,7 +23,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salaries.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("compta");
@@ -38,10 +38,10 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-$sal = new Salaries($db);
+$sal = new PaymentSalary($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('taxsalcard'));
+$hookmanager->initHooks(array('taxsalarycard'));
 
 
 
@@ -144,7 +144,7 @@ $form = new Form($db);
 
 if ($id)
 {
-  $salpayment = new Salaries($db);
+  $salpayment = new PaymentSalary($db);
 	$result = $salpayment->fetch($id);
 	if ($result <= 0)
 	{
@@ -177,7 +177,7 @@ if ($action == 'create')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->trans("NewSalPayment"));
+    print_fiche_titre($langs->trans("NewSalaryPayment"));
 
     print '<table class="border" width="100%">';
 
@@ -196,7 +196,7 @@ if ($action == 'create')
     print '</td></tr>';
 
   	// Label
-  	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalPayment")).'"></td></tr>';
+  	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
   
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
@@ -252,7 +252,7 @@ if ($id)
 	$head[$h][2] = 'card';
 	$h++;
 
-	dol_fiche_head($head, 'card', $langs->trans("SalPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
 
 
 	print '<table class="border" width="100%">';
