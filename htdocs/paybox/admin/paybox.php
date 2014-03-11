@@ -93,16 +93,6 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'setup');
 
-$h = 0;
-$head = array();
-
-$head[$h][0] = DOL_URL_ROOT."/paybox/admin/paybox.php";
-$head[$h][1] = $langs->trans("Account");
-$head[$h][2] = 'payboxaccount';
-$h++;
-
-dol_fiche_head($head, 'payboxaccount', '');
-
 print $langs->trans("PayBoxDesc")."<br>\n";
 
 print '<br>';

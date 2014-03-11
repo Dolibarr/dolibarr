@@ -120,18 +120,6 @@ llxHeader('',$langs->trans("DonationsSetup"),'DonConfiguration');
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("DonationsSetup"),$linkback,'setup');
-print '<br>';
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/dons.php";
-$head[$h][1] = $langs->trans("Donations");
-$head[$h][2] = 'Donation';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
 
 // Document templates
 print '<br>';
