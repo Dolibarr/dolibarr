@@ -47,17 +47,15 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
-if ($ref)
+if ($id > 0 || $ref)
 {
-	$object->fetch(0,$ref);
+	$object->fetch($id,$ref);
 	$id=$object->id;
-}
+	$ref=$object->ref;
 
-// fetch optionals attributes and labels
-if (!empty($id)) {
+	// fetch optionals attributes and labels
 	$extralabels_projet=$extrafields_project->fetch_name_optionals_label($object->table_element);
 	$extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->table_element);
-
 }
 
 // Security check
@@ -295,7 +293,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 
 	// List of projects
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfTask").'</td><td>';
-	print $formother->selectProjectTasks('',$projectid?$projectid:$object->id, 'task_parent', 0, 0, 1, 1);
+	print $formother->selectProjectTasks(GETPOST('task_parent'),$projectid?$projectid:$object->id, 'task_parent', 0, 0, 1, 1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
@@ -351,11 +349,11 @@ else
 {
 	/*
 	 * Fiche projet en mode visu
-	*/
+	 */
 
 	/*
 	 * Actions
-	*/
+	 */
 	print '<div class="tabsAction">';
 
 	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
@@ -424,12 +422,12 @@ else
 	if (count($tasksarray) > 0)
 	{
 		// Show all lines in taskarray (recursive function to go down on tree)
-		$j=0;
+		$j=0; $level=0;
 		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $id, 1);
 	}
 	else
 	{
-		print '<tr><td colspan="'.(! empty($object->id) ? "5" : "4").'">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr><td colspan="9">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 	print "</table>";
 

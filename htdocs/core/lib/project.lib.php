@@ -285,7 +285,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
-				// Project
 				if ($showproject)
 				{
 					// Project ref
@@ -299,7 +298,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					if ($showlineingray) print '</i>';
 					print "</td>";
 
-					// Status
+					// Project status
 					print '<td>';
 					$projectstatic->statut=$lines[$i]->projectstatus;
 					print $projectstatic->getLibStatut(2);
@@ -389,7 +388,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, 0, $showalsopublicproj);
+				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
 				$level--;
 				$total += $lines[$i]->duration;
 			}
@@ -400,7 +399,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if ($total>0)
+	if ($total>0 && $level==0)
 	{
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -410,9 +409,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total, 'allhourmin').'</td>';
 		print '<td></td>';
+		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
 	}
 
