@@ -130,10 +130,8 @@ if ($agentid > 0) {
 	else
 	    $sql .= " AND sc.fk_user = ".$agentid;
 }
-if (!empty($startdate))
-  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
-if (!empty($enddate))
-  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
+if (!empty($startdate)) $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
+if (!empty($enddate))   $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
 $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
