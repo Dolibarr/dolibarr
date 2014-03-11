@@ -481,6 +481,8 @@ class FormOther
             {
                 $var = !$var;
 
+				//var_dump($selectedtask."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);
+
                 // Break on a new project
                 if ($parent == 0)
                 {
@@ -508,10 +510,10 @@ class FormOther
                 }
 
                 // Print task
-                if ($lines[$i]->id > 0)
+                if ($lines[$i]->id >= 0)
                 {
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
-                    if ($lines[$i]->id == $selectedtask) print ' selected="selected"';
+                    if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected="selected"';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
                     if (empty($lines[$i]->public))
