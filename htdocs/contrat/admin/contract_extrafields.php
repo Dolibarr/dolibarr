@@ -74,6 +74,7 @@ $head=contract_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Contracts"), 0, 'contract');
 
+$textobject = $langs->transnoentitiesnoconv('Contracts');
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
