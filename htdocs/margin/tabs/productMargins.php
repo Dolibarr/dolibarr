@@ -129,13 +129,13 @@ if ($id > 0 || ! empty($ref))
 
 
 		$sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
-		$sql.= " f.facnumber, f.total as total_ht,";
+		$sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
+		$sql.= " f.datef, f.paye, f.fk_statut as statut,";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
 		$sql.= " sum(d.total_ht) as selling_price,";
-        $sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
-		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";
+		$sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
 		$sql.= $db->ifsql('f.type =2','sum(d.qty * d.buy_price_ht *-1)','sum(d.qty * d.buy_price_ht)')." as buying_price,";
         $sql.= $db->ifsql('f.type =2','sum(-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty)))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge" ;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -148,10 +148,10 @@ if ($id > 0 || ! empty($ref))
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if (! empty($socid)) $sql.= " AND f.fk_soc = $socid";
 		$sql .= " AND d.buy_price_ht IS NOT NULL";
-		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
-			$sql .= " AND d.buy_price_ht <> 0";
-		$sql.= " GROUP BY f.rowid";
-		$sql.= " ORDER BY $sortfield $sortorder ";
+		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+		$sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
+		$sql.= " ORDER BY ".$sortfield." ".$sortorder;
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 		dol_syslog('margin:tabs:productMargins.php sql='.$sql,LOG_DEBUG);

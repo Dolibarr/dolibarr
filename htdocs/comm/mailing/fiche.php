@@ -993,9 +993,10 @@ else
 			print '<td colspan="3" bgcolor="'.($object->bgcolor?(preg_match('/^#/',$object->bgcolor)?'':'#').$object->bgcolor:'white').'">';
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff')
 			{
+				$readonly=1;
 				// Editeur wysiwyg
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_readonly','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,1);
+				$doleditor=new DolEditor('body',$object->body,'',320,'dolibarr_mailings','',false,true,empty($conf->global->FCKEDITOR_ENABLE_MAILING)?0:1,20,120,$readonly);
 				$doleditor->Create();
 			}
 			else print dol_htmlentitiesbr($object->body);

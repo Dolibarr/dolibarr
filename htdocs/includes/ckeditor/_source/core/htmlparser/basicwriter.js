@@ -1,48 +1,55 @@
-﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
+﻿/**
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
+ */
 
-CKEDITOR.htmlParser.basicWriter = CKEDITOR.tools.createClass(
-{
-	$ : function()
-	{
-		this._ =
-		{
-			output : []
+/**
+ * TODO
+ *
+ * @class
+ * @todo
+ */
+CKEDITOR.htmlParser.basicWriter = CKEDITOR.tools.createClass( {
+	/**
+	 * Creates a basicWriter class instance.
+	 *
+	 * @constructor
+	 */
+	$: function() {
+		this._ = {
+			output: []
 		};
 	},
 
-	proto :
-	{
+	proto: {
 		/**
 		 * Writes the tag opening part for a opener tag.
+		 *
+		 *		// Writes '<p'.
+		 *		writer.openTag( 'p', { class : 'MyClass', id : 'MyId' } );
+		 *
 		 * @param {String} tagName The element name for this tag.
 		 * @param {Object} attributes The attributes defined for this tag. The
-		 *		attributes could be used to inspect the tag.
-		 * @example
-		 * // Writes "&lt;p".
-		 * writer.openTag( 'p', { class : 'MyClass', id : 'MyId' } );
+		 * attributes could be used to inspect the tag.
 		 */
-		openTag : function( tagName, attributes )
-		{
+		openTag: function( tagName, attributes ) {
 			this._.output.push( '<', tagName );
 		},
 
 		/**
 		 * Writes the tag closing part for a opener tag.
+		 *
+		 *		// Writes '>'.
+		 *		writer.openTagClose( 'p', false );
+		 *
+		 *		// Writes ' />'.
+		 *		writer.openTagClose( 'br', true );
+		 *
 		 * @param {String} tagName The element name for this tag.
 		 * @param {Boolean} isSelfClose Indicates that this is a self-closing tag,
-		 *		like "br" or "img".
-		 * @example
-		 * // Writes "&gt;".
-		 * writer.openTagClose( 'p', false );
-		 * @example
-		 * // Writes " /&gt;".
-		 * writer.openTagClose( 'br', true );
+		 * like `<br>` or `<img>`.
 		 */
-		openTagClose : function( tagName, isSelfClose )
-		{
+		openTagClose: function( tagName, isSelfClose ) {
 			if ( isSelfClose )
 				this._.output.push( ' />' );
 			else
@@ -52,14 +59,14 @@ CKEDITOR.htmlParser.basicWriter = CKEDITOR.tools.createClass(
 		/**
 		 * Writes an attribute. This function should be called after opening the
 		 * tag with {@link #openTagClose}.
+		 *
+		 *		// Writes ' class="MyClass"'.
+		 *		writer.attribute( 'class', 'MyClass' );
+		 *
 		 * @param {String} attName The attribute name.
 		 * @param {String} attValue The attribute value.
-		 * @example
-		 * // Writes ' class="MyClass"'.
-		 * writer.attribute( 'class', 'MyClass' );
 		 */
-		attribute : function( attName, attValue )
-		{
+		attribute: function( attName, attValue ) {
 			// Browsers don't always escape special character in attribute values. (#4683, #4719).
 			if ( typeof attValue == 'string' )
 				attValue = CKEDITOR.tools.htmlEncodeAttr( attValue );
@@ -69,71 +76,71 @@ CKEDITOR.htmlParser.basicWriter = CKEDITOR.tools.createClass(
 
 		/**
 		 * Writes a closer tag.
+		 *
+		 *		// Writes '</p>'.
+		 *		writer.closeTag( 'p' );
+		 *
 		 * @param {String} tagName The element name for this tag.
-		 * @example
-		 * // Writes "&lt;/p&gt;".
-		 * writer.closeTag( 'p' );
 		 */
-		closeTag : function( tagName )
-		{
+		closeTag: function( tagName ) {
 			this._.output.push( '</', tagName, '>' );
 		},
 
 		/**
 		 * Writes text.
-		 * @param {String} text The text value
-		 * @example
-		 * // Writes "Hello Word".
-		 * writer.text( 'Hello Word' );
+		 *
+		 *		// Writes 'Hello Word'.
+		 *		writer.text( 'Hello Word' );
+		 *
+		 * @param {String} text The text value.
 		 */
-		text : function( text )
-		{
+		text: function( text ) {
 			this._.output.push( text );
 		},
 
 		/**
 		 * Writes a comment.
+		 *
+		 *		// Writes '<!-- My comment -->'.
+		 *		writer.comment( ' My comment ' );
+		 *
 		 * @param {String} comment The comment text.
-		 * @example
-		 * // Writes "&lt;!-- My comment --&gt;".
-		 * writer.comment( ' My comment ' );
 		 */
-		comment : function( comment )
-		{
+		comment: function( comment ) {
 			this._.output.push( '<!--', comment, '-->' );
 		},
 
 		/**
 		 * Writes any kind of data to the ouput.
-		 * @example
-		 * writer.write( 'This is an &lt;b&gt;example&lt;/b&gt;.' );
+		 *
+		 *		writer.write( 'This is an <b>example</b>.' );
+		 *
+		 * @param {String} data
 		 */
-		write : function( data )
-		{
+		write: function( data ) {
 			this._.output.push( data );
 		},
 
 		/**
 		 * Empties the current output buffer.
-		 * @example
-		 * writer.reset();
+		 *
+		 *		writer.reset();
 		 */
-		reset : function()
-		{
+		reset: function() {
 			this._.output = [];
 			this._.indent = false;
 		},
 
 		/**
 		 * Empties the current output buffer.
-		 * @param {Boolean} reset Indicates that the {@link reset} function is to
-		 *		be automatically called after retrieving the HTML.
+		 *
+		 *		var html = writer.getHtml();
+		 *
+		 * @param {Boolean} reset Indicates that the {@link #reset} method is to
+		 * be automatically called after retrieving the HTML.
 		 * @returns {String} The HTML written to the writer so far.
-		 * @example
-		 * var html = writer.getHtml();
 		 */
-		getHtml : function( reset )
-		{
+		getHtml: function( reset ) {
 			var html = this._.output.join( '' );
 
 			if ( reset )
@@ -142,4 +149,4 @@ CKEDITOR.htmlParser.basicWriter = CKEDITOR.tools.createClass(
 			return html;
 		}
 	}
-});
+} );

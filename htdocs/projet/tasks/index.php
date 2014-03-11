@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,8 @@ $langs->load('users');
 
 $id=GETPOST('id','int');
 $search_project=GETPOST('search_project');
+if (! isset($_GET['search_status']) && ! isset($_POST['search_status'])) $search_status=1;
+else $search_status=GETPOST('search_status');
 
 
 // Security check
@@ -85,17 +87,17 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1,$so
 
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
-$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project);
+$tasksarray=$taskstatic->getTasksArray(0, 0, $projectstatic->id, $socid, 0, $search_project, $search_status);
 // We load also tasks limited to a particular user
 $tasksrole=($mine ? $taskstatic->getUserRolesForProjectsOrTasks(0,$user,$projectstatic->id,0) : '');
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="mode" value="'.GETPOST('mode').'">';
-
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Project").'</td>';
+print '<td>'.$langs->trans("Status").'</td>';
 print '<td width="80">'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
 print '<td align="center">'.$langs->trans("DateStart").'</td>';
@@ -113,15 +115,31 @@ print '<tr class="liste_titre">';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_project" value="'.$search_project.'" size="8">';
 print '</td>';
+print '<td class="liste_titre">';
+$listofstatus=array(-1=>'&nbsp;');
+foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
+print $form->selectarray('search_status', $listofstatus, $search_status);
+print '</td>';
 print '<td class="liste_titre" colspan="7">';
 print '&nbsp;';
 print '</td>';
 print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 print "</tr>\n";
 
-// Show all lines in taskarray (recursive function to go down on tree)
-$j=0; $level=0;
-$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
+if (count($tasksarray) > (empty($conf->global->PROJECT_MAX_NB_TASKS)?1000:$conf->global->PROJECT_MAX_NB_TASKS))
+{
+	print '<tr '.$bc[0].'>';
+	print '<td colspan="9">';
+	print $langs->trans("TooManyDataPleaseUseMoreFilters");
+	print '</td></tr>';
+}
+else
+{
+	// Show all lines in taskarray (recursive function to go down on tree)
+	$j=0; $level=0;
+	$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 1, $tasksrole, $projectsListId, 0);
+}
+
 print "</table>";
 
 print '</form>';

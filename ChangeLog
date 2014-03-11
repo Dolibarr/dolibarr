@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
+- New: Update ckeditor to version 4.
 - New: Add form search customer order on commercial main page.
 - New: Can input barcode during product creation step.
 - New: Add autonumbering of barcode value for products.
@@ -24,11 +25,13 @@ For users:
 - New: Increase length of url into bookmark module.
 - New: Add an admin page to make a mass init of barcode values for all products.
 - New: Automatic events for sending mails showing info about mail linked objects. 
-- New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty)
+- New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty).
 - New: Add filter on text and status into survey list. Can also sorter on id, text and date end.
-- New: Add option MAIN_FAVICON_URL
-- Fix: Project Task numbering rule customs rule works
-- New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags
+- New: Add option MAIN_FAVICON_URL.
+- New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags.
+- New: Add filter on project status into task list. By default, only "opened" project are visible.
+- New: Status "validated" for project are renamed into "opened".
+- Fix: Project Task numbering customs rule works.
 
 TODO
 - New: Predefined product and free product use same form.

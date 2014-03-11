@@ -30,14 +30,10 @@
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
 
 <?php
-if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	$coldisplay=2;
-} else {
-	$coldisplay=0;
-}
- ?>
+$coldisplay=-1; // We remove first td
+?>
 <tr <?php echo $bc[$var]; ?>>
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><?php $coldisplay+=(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))?2:1; ?>
 	<div id="line_<?php echo $line->id; ?>"></div>
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
@@ -138,28 +134,29 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	    <?php if ($user->rights->margins->creer) {
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 				  {
-				    $margin_rate = (isset($_POST["marginRate"])?$_POST["marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
+				    $margin_rate = (isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:(($line->pa_ht == 0)?'':price($line->marge_tx)));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap">'.$margin_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right" class="nowrap"><input type="text" size="2" name="marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
+						echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.$margin_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES))
 				  {
-				    $mark_rate = (isset($_POST["markRate"])?$_POST["markRate"]:price($line->marque_tx));
+				    $mark_rate = (isset($_POST["np_markRate"])?$_POST["np_markRate"]:price($line->marque_tx));
 				    // if credit note, dont allow to modify margin
 					if ($line->subprice < 0)
 						echo '<td align="right" class="nowrap">'.$mark_rate.'<span class="hideonsmartphone">%</span></td>';
 					else
-						echo '<td align="right" class="nowrap"><input type="text" size="2" name="markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
+						echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.$mark_rate.'"><span class="hideonsmartphone">%</span></td>';
 					$coldisplay++;
 				  }
 			  }
 		} ?>
 
-	<td align="center" colspan="5" valign="middle">
+	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
+	<td align="center" colspan="4" valign="middle"><?php $coldisplay+=4; ?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
@@ -383,6 +380,17 @@ if (! empty($conf->margin->enabled))
 ?>
 	jQuery(document).ready(function()
 	{
+		/* Add rule to clear margin when we change price_ht or buying_price, so when we change sell or buy price, margin will be recalculated after submitting form */
+		jQuery("#price_ht").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#buying_price").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+
+		/* Init field buying_price and fournprice */
 		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php', {'idprod': <?php echo $line->fk_product?$line->fk_product:0; ?>}, function(data) {
 		if (data && data.length > 0) {
 			var options = '';
@@ -419,6 +427,7 @@ if (! empty($conf->margin->enabled))
 		}
 		}, 'json');
 
+		/* Add rules to reset price_ht from margin info */
 		<?php
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		{
@@ -446,15 +455,16 @@ if (! empty($conf->margin->enabled))
 	});
 
 
-	// TODO This works for french numbers only
+	/* If margin rate field empty, do nothing. */
+	/* Force content of price_ht to 0 or if a discount is set recalculate it from margin rate */
 	function checkEditLine(e, npRate)
 	{
 		var buying_price = $("input[name='buying_price']:first");
 		var remise = $("input[name='remise_percent']:first");
 
 		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '')
-			return true;
+		if (rate.val() == '') return true;
+
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
 			alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
