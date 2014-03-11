@@ -767,7 +767,7 @@ $objectlignestatic=new ContratLigne($db);
  *********************************************************************/
 if ($action == 'create')
 {
-    dol_fiche_head('', '', $langs->trans("AddContract"), 0, 'contract');
+	print_fiche_titre($langs->trans('AddContract'));
 
     dol_htmloutput_errors($mesg,'');
 
