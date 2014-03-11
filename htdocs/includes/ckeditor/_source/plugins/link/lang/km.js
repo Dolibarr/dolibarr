@@ -1,0 +1,65 @@
+﻿/*
+Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+For licensing, see LICENSE.md or http://ckeditor.com/license
+*/
+CKEDITOR.plugins.setLang( 'link', 'km', {
+	acccessKey: 'សោរ​ចូល',
+	advanced: 'កម្រិត​ខ្ពស់',
+	advisoryContentType: 'ប្រភេទអត្ថបទ​ប្រឹក្សា',
+	advisoryTitle: 'ចំណងជើង​ប្រឹក្សា',
+	anchor: {
+		toolbar: 'យុថ្កា',
+		menu: 'កែ​យុថ្កា',
+		title: 'លក្ខណៈ​យុថ្កា',
+		name: 'ឈ្មោះ​យុថ្កា',
+		errorName: 'សូម​បញ្ចូល​ឈ្មោះ​យុថ្កា',
+		remove: 'ដក​យុថ្កា​ចេញ'
+	},
+	anchorId: 'តាម ID ធាតុ',
+	anchorName: 'តាម​ឈ្មោះ​យុថ្កា',
+	charset: 'Linked Resource Charset', // MISSING
+	cssClasses: 'Stylesheet Classes',
+	emailAddress: 'អាសយដ្ឋាន​អ៊ីមែល',
+	emailBody: 'តួ​អត្ថបទ',
+	emailSubject: 'ប្រធានបទ​សារ',
+	id: 'Id',
+	info: 'ព័ត៌មាន​ពី​តំណ',
+	langCode: 'កូដ​ភាសា',
+	langDir: 'ទិសដៅភាសា',
+	langDirLTR: 'ពីឆ្វេងទៅស្តាំ(LTR)',
+	langDirRTL: 'ពីស្តាំទៅឆ្វេង(RTL)',
+	menu: 'កែ​តំណ',
+	name: 'ឈ្មោះ',
+	noAnchors: '(មិន​មាន​យុថ្កា​នៅ​ក្នុង​ឯកសារ​អត្ថថបទ​ទេ)',
+	noEmail: 'សូម​បញ្ចូល​អាសយដ្ឋាន​អ៊ីមែល',
+	noUrl: 'សូម​បញ្ចូល​តំណ URL',
+	other: '<ផ្សេង​ទៀត>',
+	popupDependent: 'Dependent (Netscape)',
+	popupFeatures: 'Popup Window Features', // MISSING
+	popupFullScreen: 'ពេញ​អេក្រង់ (IE)',
+	popupLeft: 'ទីតាំងខាងឆ្វេង',
+	popupLocationBar: 'របារ​ទីតាំង',
+	popupMenuBar: 'របារ​ម៉ឺនុយ',
+	popupResizable: 'អាច​ប្ដូរ​ទំហំ',
+	popupScrollBars: 'របារ​រំកិល',
+	popupStatusBar: 'របារ​ស្ថានភាព',
+	popupToolbar: 'របារ​ឧបករណ៍',
+	popupTop: 'ទីតាំង​កំពូល',
+	rel: 'សម្ពន្ធ​ភាព',
+	selectAnchor: 'រើស​យក​យុថ្កា​មួយ',
+	styles: 'ស្ទីល',
+	tabIndex: 'Tab Index', // MISSING
+	target: 'គោលដៅ',
+	targetFrame: '<ស៊ុម>',
+	targetFrameName: 'ឈ្មោះ​ស៊ុម​ជា​គោល​ដៅ',
+	targetPopup: '<វីនដូ​ផុស​ឡើង>',
+	targetPopupName: 'ឈ្មោះ​វីនដូត​ផុស​ឡើង',
+	title: 'តំណ',
+	toAnchor: 'ត​ភ្ជាប់​ទៅ​យុថ្កា​ក្នុង​អត្ថបទ',
+	toEmail: 'អ៊ីមែល',
+	toUrl: 'URL',
+	toolbar: 'តំណ',
+	type: 'ប្រភេទ​តំណ',
+	unlink: 'ផ្ដាច់​តំណ',
+	upload: 'ផ្ទុក​ឡើង'
+} );

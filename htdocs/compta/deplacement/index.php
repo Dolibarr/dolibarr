@@ -60,7 +60,6 @@ llxHeader('',$langs->trans("ListOfFees"),$help_url);
 
 
 
-
 $totalnb=0;
 $sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
@@ -90,13 +89,11 @@ if ($result)
 
 print_fiche_titre($langs->trans("ExpensesArea"));
 
-print '<table width="100%" class="notopnoleftnoright">';
 
-// Left area
-print '<tr><td class="notopnoleft" width="30%" valign="top">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-
+// Statistics
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
@@ -124,8 +121,8 @@ print '</tr>';
 print '</table>';
 
 
-// Right area
-print '</td><td valign="top">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
 
 $max=10;
 
@@ -189,6 +186,9 @@ if ($result)
     print '</table><br>';
 }
 else dol_print_error($db);
+
+
+print '</div></div></div>';
 
 
 llxFooter();

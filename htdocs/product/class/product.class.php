@@ -359,7 +359,7 @@ class Product extends CommonObject
 					$sql.= ", '".$this->accountancy_code_buy."'";
 					$sql.= ", '".$this->accountancy_code_sell."'";
 					$sql.= ", '".$this->canvas."'";
-					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : $this->finished);
+					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ")";
 
@@ -598,7 +598,7 @@ class Product extends CommonObject
 			$sql.= ", tosell = " . $this->status;
 			$sql.= ", tobuy = " . $this->status_buy;
 			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
-			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : $this->finished);
+			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
 			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -2643,7 +2643,7 @@ class Product extends CommonObject
 	 */
 	function getLibStatut($mode=0, $type=0)
 	{
-		switch ($type) 
+		switch ($type)
 		{
 		case 0:
 			return $this->LibStatut($this->status,$mode,$type);
@@ -2673,7 +2673,7 @@ class Product extends CommonObject
 
 		if ($type == 2)
 		{
-			switch ($mode) 
+			switch ($mode)
 			{
 				case 0:
 					return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
@@ -2682,7 +2682,7 @@ class Product extends CommonObject
 				case 2:
 					return $this->LibStatut($status,3,2).' '.$this->LibStatut($status,1,2);
 				case 3:
-					if ($status == 0 ) 
+					if ($status == 0 )
 					{
 						return img_picto($langs->trans('ProductStatusNotOnBatch'),'statut5');
 					}

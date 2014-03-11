@@ -1042,7 +1042,6 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
     color: #888;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1050,9 +1049,6 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {
@@ -2063,8 +2059,6 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
-	padding: 0.1em 0.7em !important;
-	margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
 	-webkit-border-radius:0px 5px 0px 5px !important;
 	border-radius:0px 5px 0px 5px !important;

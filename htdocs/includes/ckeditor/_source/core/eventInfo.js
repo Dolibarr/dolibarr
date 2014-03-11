@@ -1,7 +1,7 @@
-﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
+﻿/**
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
+ */
 
 /**
  * @fileOverview Defines the "virtual" {@link CKEDITOR.eventInfo} class, which
@@ -10,123 +10,106 @@ For licensing, see LICENSE.html or http://ckeditor.com/license
  */
 
 /**
- * (Virtual Class) Do not call this constructor. This class is not really part
- * of the API.
- * @class Virtual class that illustrates the features of the event object to be
+ * Virtual class that illustrates the features of the event object to be
  * passed to event listeners by a {@link CKEDITOR.event} based object.
- * @name CKEDITOR.eventInfo
- * @example
- * // Do not do this.
- * var myEvent = new CKEDITOR.eventInfo();  // Error: CKEDITOR.eventInfo is undefined
+ *
+ * This class is not really part of the API.
+ *
+ * @class CKEDITOR.eventInfo
+ * @abstract
  */
 
 /**
  * The event name.
- * @name CKEDITOR.eventInfo.prototype.name
- * @field
- * @type String
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         alert( <b>event.name</b> );  // "someEvent"
- *     });
- * someObject.fire( 'someEvent' );
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			alert( event.name ); // 'someEvent'
+ *		} );
+ *		someObject.fire( 'someEvent' );
+ *
+ * @property {String} name
  */
 
 /**
  * The object that publishes (sends) the event.
- * @name CKEDITOR.eventInfo.prototype.sender
- * @field
- * @type Object
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         alert( <b>event.sender</b> == someObject );  // "true"
- *     });
- * someObject.fire( 'someEvent' );
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			alert( event.sender == someObject ); // true
+ *		} );
+ *		someObject.fire( 'someEvent' );
+ *
+ * @property sender
  */
 
 /**
  * The editor instance that holds the sender. May be the same as sender. May be
  * null if the sender is not part of an editor instance, like a component
  * running in standalone mode.
- * @name CKEDITOR.eventInfo.prototype.editor
- * @field
- * @type CKEDITOR.editor
- * @example
- * myButton.on( 'someEvent', function( event )
- *     {
- *         alert( <b>event.editor</b> == myEditor );  // "true"
- *     });
- * myButton.fire( 'someEvent', null, <b>myEditor</b> );
+ *
+ *		myButton.on( 'someEvent', function( event ) {
+ *			alert( event.editor == myEditor ); // true
+ *		} );
+ *		myButton.fire( 'someEvent', null, myEditor );
+ *
+ * @property {CKEDITOR.editor} editor
  */
 
 /**
  * Any kind of additional data. Its format and usage is event dependent.
- * @name CKEDITOR.eventInfo.prototype.data
- * @field
- * @type Object
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         alert( <b>event.data</b> );  // "Example"
- *     });
- * someObject.fire( 'someEvent', <b>'Example'</b> );
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			alert( event.data ); // 'Example'
+ *		} );
+ *		someObject.fire( 'someEvent', 'Example' );
+ *
+ * @property data
  */
 
 /**
  * Any extra data appended during the listener registration.
- * @name CKEDITOR.eventInfo.prototype.listenerData
- * @field
- * @type Object
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         alert( <b>event.listenerData</b> );  // "Example"
- *     }
- *     , null, <b>'Example'</b> );
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			alert( event.listenerData ); // 'Example'
+ *		}, null, 'Example' );
+ *
+ * @property listenerData
  */
 
 /**
  * Indicates that no further listeners are to be called.
- * @name CKEDITOR.eventInfo.prototype.stop
- * @function
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         <b>event.stop()</b>;
- *     });
- * someObject.on( 'someEvent', function( event )
- *     {
- *         // This one will not be called.
- *     });
- * alert( someObject.fire( 'someEvent' ) );  // "false"
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			event.stop();
+ *		} );
+ *		someObject.on( 'someEvent', function( event ) {
+ *			// This one will not be called.
+ *		} );
+ *		alert( someObject.fire( 'someEvent' ) ); // false
+ *
+ * @method stop
  */
 
 /**
  * Indicates that the event is to be cancelled (if cancelable).
- * @name CKEDITOR.eventInfo.prototype.cancel
- * @function
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         <b>event.cancel()</b>;
- *     });
- * someObject.on( 'someEvent', function( event )
- *     {
- *         // This one will not be called.
- *     });
- * alert( someObject.fire( 'someEvent' ) );  // "true"
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			event.cancel();
+ *		} );
+ *		someObject.on( 'someEvent', function( event ) {
+ *			// This one will not be called.
+ *		} );
+ *		alert( someObject.fire( 'someEvent' ) ); // true
+ *
+ * @method cancel
  */
 
 /**
  * Removes the current listener.
- * @name CKEDITOR.eventInfo.prototype.removeListener
- * @function
- * @example
- * someObject.on( 'someEvent', function( event )
- *     {
- *         <b>event.removeListener()</b>;
- *			// Now this function won't be called again by 'someEvent'
- *     });
+ *
+ *		someObject.on( 'someEvent', function( event ) {
+ *			event.removeListener();
+ *			// Now this function won't be called again by 'someEvent'.
+ *		} );
+ *
+ * @method removeListener
  */
