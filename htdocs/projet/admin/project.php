@@ -288,7 +288,7 @@ print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
 $head=project_admin_prepare_head();
 
-dol_fiche_head($head, 'project', $langs->trans("Project"), 0, 'project');
+dol_fiche_head($head, 'project', $langs->trans("Projects"), 0, 'project');
 
 /*
  * Projects Numbering model
@@ -403,7 +403,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -671,7 +671,7 @@ print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
