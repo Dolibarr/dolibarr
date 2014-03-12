@@ -262,7 +262,9 @@ if ($action == 'add' && $user->rights->contrat->creer)
 								// Define output language
 								if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 								{
-									$prod = new Product($db, $lines[$i]->fk_product);
+									$prod = new Product($db);
+									$prod->id=$lines[$i]->fk_product;
+									$prod->getMultiLangs();
 
 									$outputlangs = $langs;
 									$newlang='';

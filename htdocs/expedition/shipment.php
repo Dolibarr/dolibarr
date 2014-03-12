@@ -153,7 +153,7 @@ if ($id > 0 || ! empty($ref))
 		if ($action == 'cloture')
 		{
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
-			
+
 		}
 
 		// Onglet commande
@@ -409,7 +409,11 @@ if ($id > 0 || ! empty($ref))
 					if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 					{
 						$commande->fetch_thirdparty();
-						$prod = new Product($db, $objp->fk_product);
+
+						$prod = new Product($db);
+						$prod->id=$objp->fk_product;
+						$prod->getMultiLangs();
+
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
