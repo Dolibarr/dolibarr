@@ -140,21 +140,6 @@ print '</div></div></div>';
 // Tasks for all resources of all opened projects and time spent for each task/resource
 print '<div class="fichecenter">';
 
-print '<br>';
-
-print_fiche_titre($langs->trans("TimeSpent"),'','').'<br>';
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
-print '<th>'.$langs->trans('Projects').'</th>';
-print '<th>'.$langs->trans('Task').'</th>';
-print '<th>'.$langs->trans('DateStart').'</th>';
-print '<th>'.$langs->trans('DateEnd').'</th>';
-print '<th>'.$langs->trans('TimeSpent').'</th>';
-print '</tr>';
-
-
 $sql = "SELECT p.title, p.rowid as projectid, t.label, t.rowid as taskid, u.rowid as userid, t.planned_workload, t.dateo, t.datee, SUM(tasktime.task_duration) as timespent";
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
@@ -179,13 +164,27 @@ if ( $resql )
 
 	if ($num > (empty($conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA)?1000:$conf->global->PROJECT_LIMIT_TASK_PROJECT_AREA))
 	{
-		print '<tr '.$bc[0].'>';
+/*		print '<tr '.$bc[0].'>';
 		print '<td colspan="9">';
 		print $langs->trans("TooManyDataPleaseUseMoreFilters");
-		print '</td></tr>';
+		print '</td></tr>';*/
 	}
 	else
 	{
+		print '<br>';
+
+		print_fiche_titre($langs->trans("TimeSpent"),'','').'<br>';
+
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<th>'.$langs->trans('TaskRessourceLinks').'</th>';
+		print '<th>'.$langs->trans('Projects').'</th>';
+		print '<th>'.$langs->trans('Task').'</th>';
+		print '<th>'.$langs->trans('DateStart').'</th>';
+		print '<th>'.$langs->trans('DateEnd').'</th>';
+		print '<th>'.$langs->trans('TimeSpent').'</th>';
+		print '</tr>';
+
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -222,14 +221,15 @@ if ( $resql )
 			$i++;
 		}
 
-		$db->free($resql);
+		print "</table>";
 	}
+
+	$db->free($resql);
 }
 else
 {
 	dol_print_error($db);
 }
-print "</table>";
 
 print '</div>';
 
