@@ -137,7 +137,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"));
+dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), 0, 'action');
 
 print $langs->trans("AgendaAutoActionDesc")."<br>\n";
 print $langs->trans("OnlyActiveElementsAreShown").'<br>';

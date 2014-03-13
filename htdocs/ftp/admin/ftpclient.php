@@ -155,7 +155,7 @@ else
 	print '<form name="ftpconfig" action="ftpclient.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-	print '<table class="nobordernopadding" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans("NewFTPClient").'</td>';
 	print '<td>'.$langs->trans("Example").'</td>';
@@ -199,15 +199,12 @@ else
 	print '<td>'.$langs->trans("No").'</td>';
 	print '</tr>';
 	
-	?>
-	<tr><td colspan="3" align="center">
-	<input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>">
+	print '</table>';
+	
+	?><br><center><input type="submit" class="button" value="<?php echo $langs->trans("Add") ?>"></center>
 	<input type="hidden" name="action" value="add">
 	<input type="hidden" name="numero_entry" value="<?php echo ($lastftpentry+1) ?>">
-	</td>
-	</tr>
 	<?php
-	print '</table>';
 	print '</form>';
 	?>
 
@@ -215,7 +212,7 @@ else
 
 	<?php
 
-	print '<table class="nobordernopadding" width="100%">'."\n";
+	print '<table class="noborder" width="100%">'."\n";
 
 	$sql ="select name, value, note from ".MAIN_DB_PREFIX."const";
 	$sql.=" WHERE name like 'FTP_SERVER_%'";
@@ -277,7 +274,7 @@ else
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
-			print "<td width=\"100\">".$langs->trans("Passive")."</td>";
+			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
 			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
 			print "</tr>";
 

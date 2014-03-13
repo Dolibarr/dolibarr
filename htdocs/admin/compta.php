@@ -104,16 +104,6 @@ print_fiche_titre($langs->trans('ComptaSetup'),$linkback,'setup');
 
 print '<br>';
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/compta.php";
-$head[$h][1] = $langs->trans("Accountancy");
-$head[$h][2] = 'Compta';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
 print '<table class="noborder" width="100%">';
 
 // Cas du parametre COMPTA_MODE

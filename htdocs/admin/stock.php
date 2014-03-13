@@ -101,17 +101,6 @@ llxHeader('',$langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
-print '<br>';
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/stock.php";
-$head[$h][1] = $langs->trans("Miscellaneous");
-$head[$h][2] = 'general';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 $form=new Form($db);
 $var=true;
