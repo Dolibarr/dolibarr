@@ -97,6 +97,7 @@ class Societe extends CommonObject
     var $localtax1_assuj;
     var $localtax2_assuj;
 
+    var $managers;
     var $capital;
     var $typent_id;
     var $typent_code;
@@ -2566,6 +2567,7 @@ class Societe extends CommonObject
     	$this->idprof5=empty($conf->global->MAIN_INFO_PROFID5)?'':$conf->global->MAIN_INFO_PROFID5;
     	$this->idprof6=empty($conf->global->MAIN_INFO_PROFID6)?'':$conf->global->MAIN_INFO_PROFID6;
     	$this->tva_intra=empty($conf->global->MAIN_INFO_TVAINTRA)?'':$conf->global->MAIN_INFO_TVAINTRA;	// VAT number, not necessarly INTRA.
+    	$this->managers=empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS)?'':$conf->global->MAIN_INFO_SOCIETE_MANAGERS;
     	$this->capital=empty($conf->global->MAIN_INFO_CAPITAL)?'':$conf->global->MAIN_INFO_CAPITAL;
     	$this->forme_juridique_code=empty($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)?'':$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
     	$this->email=empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?'':$conf->global->MAIN_INFO_SOCIETE_MAIL;

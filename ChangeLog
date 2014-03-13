@@ -5,7 +5,7 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Update ckeditor to version 4.
-- New: Add form search customer order on commercial main page.
+- New: Add form "search customer order" on commercial main page.
 - New: Can input barcode during product creation step.
 - New: Add autonumbering of barcode value for products.
 - New: Can create contract from an order.
@@ -13,25 +13,26 @@ For users:
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
        use the "print" view on screen.
-- New: Add a menu entry to a barcode generation page.
+- New: Add a page/tool for mass barcode generation.
 - New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
        to automatically add timestamp and user line into edition field when editing a note.
 - New: Add button cancel into edition of notes.
 - New: Improved Opensurvey module and added options to disable comments and disable
        public votes.
 - New: The box "balance of bank accounts" show all opened accounts.
-- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
+- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE to add sale represnative into public
+       note of generated documents.
 - New: Add warning if supplier payment is higher that due amount.
 - New: Increase length of url into bookmark module.
-- New: Add an admin page to make a mass init of barcode values for all products.
-- New: Automatic events for sending mails showing info about mail linked objects. 
+- New: Automatic events sending mails add info about linked objects into email content. 
 - New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty).
-- New: Add filter on text and status into survey list. Can also sorter on id, text and date end.
+- New: Add filter on text and status into survey list. Can also sort on id, text and date end.
 - New: Add option MAIN_FAVICON_URL.
 - New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags.
 - New: Add filter on project status into task list. By default, only "opened" project are visible.
 - New: Status "validated" for project are renamed into "opened".
 - New: Add barcode fields into user database.
+- New: Add manager name (ceo, director, president...) into main company information page.
 - Fix: Project Task numbering customs rule works.
 
 TODO
