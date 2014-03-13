@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->load("companies");
 $langs->load("admin");
 $langs->load("members");
+$langs->load('interventions');
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -64,6 +65,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 llxHeader();
 
+$textobject=$langs->transnoentitiesnoconv("Interventions");
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');

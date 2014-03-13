@@ -288,7 +288,7 @@ print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
 $head=project_admin_prepare_head();
 
-dol_fiche_head($head, 'project', $langs->trans("Project"), 0, 'project');
+dol_fiche_head($head, 'project', $langs->trans("Projects"), 0, 'project');
 
 /*
  * Projects Numbering model
@@ -403,7 +403,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -534,6 +534,7 @@ print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
 print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -605,9 +606,16 @@ foreach ($dirmodels as $reldir)
 							// Info
 							$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 							$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-							$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+							if ($module->type == 'pdf')
+							{
+								$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+							}
 							$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 							$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+							
+							print '<td align="center">';
+							print $form->textwithpicto('',$htmltooltip,1,0);
+							print '</td>';
 
 							// Preview
 							print '<td align="center">';
@@ -671,7 +679,8 @@ print '  <td width="100">'.$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -743,9 +752,16 @@ foreach ($dirmodels as $reldir)
 							// Info
 							$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
 							$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
-							$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+							if ($module->type == 'pdf')
+							{
+								$htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+							}
 							$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 							$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+							
+							print '<td align="center">';
+							print $form->textwithpicto('',$htmltooltip,1,0);
+							print '</td>';
 
 							// Preview
 							print '<td align="center">';

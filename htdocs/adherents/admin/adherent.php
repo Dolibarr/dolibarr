@@ -115,7 +115,7 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
+dol_fiche_head($head, 'general', $langs->trans("Members"), 0, 'user');
 
 
 dol_htmloutput_mesg($mesg);
