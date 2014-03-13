@@ -558,6 +558,9 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
+* Fri Feb 14 2014 Laurent Destailleur 3.5.2-0.3
+- Upstream release
+
 * Fri Feb 7 2014 Laurent Destailleur 3.5.1-0.3
 - Upstream release
 
