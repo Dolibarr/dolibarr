@@ -31,6 +31,7 @@ For users:
 - New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags.
 - New: Add filter on project status into task list. By default, only "opened" project are visible.
 - New: Status "validated" for project are renamed into "opened".
+- New: Add barcode fields into user database.
 - Fix: Project Task numbering customs rule works.
 
 TODO
@@ -90,11 +91,11 @@ Fix: Enable extrafields for customer order, proposal and invoice lines. This fea
 Fix: user right on Holiday for month report nor working.
 Fix: [ bug #1250 ] "Supplier Ref. product" sidebar search box does not work
 Fix: Bad space in predefined messages. 
-Fix: Signature was not added for email sent from thirdparty page.
+Fix: [ bug #1256 ] Signature was not added for email sent from thirdparty page.
 Fix: Action event SHIPPING_VALIDATE is not implemented
 Fix: The customer code was set to uppercase when using numbering module leopard. We
      must keep data safe of any change.
-Fix: Loading actions extrafields fails.
+Fix: [ bug #1291 ] Loading actions extrafields fails.
 Fix: [ bug #1123 ] Paid deposit invoices are always shown as partially paid when fully paid
 Fix: Corrected project contact types translation.
 Fix: [ bug #1206 ] PMP price is bad calculated.
@@ -102,6 +103,7 @@ Fix: [ bug #520 ] Product statistics and detailed lists are wrong.
 Fix: [ bug #1240 ] traduction.
 Fix: [ bug #1238 ] When creating accompte with a %, free product are used for calculation.
 Fix: [ bug #1280 ] service with not end of date was tagged as expired.
+Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:

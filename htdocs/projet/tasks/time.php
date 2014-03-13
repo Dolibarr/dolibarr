@@ -60,12 +60,12 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	$timespent_durationmin = GETPOST('timespent_durationmin','int');
 	if (empty($timespent_durationhour) && empty($timespent_durationmin))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
 		$error++;
 	}
 	if (empty($_POST["userid"]))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorUserNotAffectedToTask').'</div>';
+		setEventMessage($langs->trans('ErrorUserNotAffectedToTask'),'errors');
 		$error++;
 	}
 
@@ -82,11 +82,12 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 		$result=$object->addTimeSpent($user);
 		if ($result >= 0)
 		{
-
+			setEventMessage($langs->trans("RecordSaved"));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error),'errors');
+			$error++;
 		}
 	}
 	else
@@ -101,7 +102,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
 		$error++;
 	}
 
@@ -120,11 +121,12 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 		$result=$object->updateTimeSpent($user);
 		if ($result >= 0)
 		{
-
+			setEventMessage($langs->trans("RecordSaved"));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error),'errors');
+			$error++;
 		}
 	}
 	else
@@ -141,7 +143,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	if (!$result)
 	{
 		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		setEventMessage($langs->trans($object->error),'errors');
+		$error++;
 		$action='';
 	}
 }

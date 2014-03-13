@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
+ * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +56,13 @@ class MouvementStock
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$datem			Force date of movement
+	 *	@param		date	$eatby			eat-by date
+	 *	@param		date	$sellby			sell-by date
+	 *	@param		string	$batch			batch number
+	 *	@param		boolean	$skip_sellby	If set to true, stock mouvement is done without impacting batch record
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='')
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
 	{
 		global $conf, $langs;
 
@@ -132,6 +137,7 @@ class MouvementStock
 						$num = 1;
 						$oldqtywarehouse = $obj->reel;
 						$oldpmpwarehouse = $obj->pmp;
+						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
 				}
@@ -193,7 +199,17 @@ class MouvementStock
 					$this->error=$this->db->lasterror();
 					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -3;
+				} else if(empty($fk_product_stock)){
+					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
+
+				}
+
+			// Update detail stock for sell-by date
+			if (($product->hasbatch()) && (! $error) && (! $skip_sellby)){
+				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby,'sellby'=>$sellby,'batchnumber'=>$batch);
+				$result=$this->_create_batch($param_batch, $qty);
+				if ($result<0) $error++;
 			}
 
 			if (! $error)
@@ -314,9 +330,21 @@ class MouvementStock
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem,'','','',true);
 	}
 
+	/**
+	 *	Decrease stock for batch record
+	 *
+	 * 	@param		int		$id_stock_dluo		Id product_dluo
+	 * 	@param		int		$qty			Quantity
+	 * 	@return		int						<0 if KO, >0 if OK
+	 */
+	function livraison_batch($id_stock_dluo, $qty)
+	{
+		$ret=$this->_create_batch($id_stock_dluo, (0 - $qty));
+		return $ret;
+	}
 
 	/**
 	 *	Increase stock for product and subproducts
@@ -327,11 +355,14 @@ class MouvementStock
 	 * 	@param		int		$qty			Quantity
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
+	 *	@param		date	$eatby			eat-by date
+	 *	@param		date	$sellby			sell-by date
+	 *	@param		string	$batch			batch number
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
+	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $eatby='', $sellby='', $batch='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', $eatby, $sellby, $batch);
 	}
 
 
@@ -383,6 +414,59 @@ class MouvementStock
 			dol_print_error($this->db);
 			return -1;
 		}
+	}
+
+	/**
+	 * Create or update batch record
+	 *
+	 * @param	variant		$dluo	Could be either int if id of product_batch or array with at leat fk_product_stock
+	 * @param	int			$qty	Quantity of product with batch number
+	 * @return 	int   				<0 if KO, else return productbatch id
+	 */
+	function _create_batch($dluo, $qty ) {
+		$pdluo=New Productbatch($this->db);
+		
+		//Try to find an existing record with batch same batch number or id
+		if (is_numeric($dluo)) {
+			$result=$pdluo->fetch($dluo);
+		} else if (is_array($dluo)) {
+			if (isset($dluo['fk_product_stock'])) {
+				$vfk_product_stock=$dluo['fk_product_stock'];
+				$veatby = $dluo['eatby'];
+				$vsellby = $dluo['sellby'];
+				$vbatchnumber = $dluo['batchnumber'];
+				$result = $pdluo->find($vfk_product_stock,$veatby,$vsellby,$vbatchnumber);
+			} else {
+				dol_syslog(get_class($this)."::_create_batch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				$result = -1;
+			}
+		} else {
+			dol_syslog(get_class($this)."::_create_batch error invalid param dluo".$error, LOG_ERR);
+			$result =  -1;
+		}
+
+		//batch record found so we update it
+		if ($result>0) {
+			if ($pdluo->id >0) {
+				$pdluo->qty +=$qty;
+				if ($pdluo->qty == 0) {
+					$result=$pdluo->delete(0,1);
+				} else {
+					$result=$pdluo->update(0,1);
+				}
+			} else {
+				$pdluo->fk_product_stock=$vfk_product_stock;
+				$pdluo->qty = $qty;
+				$pdluo->eatby = $veatby;
+				$pdluo->sellby = $vsellby;
+				$pdluo->batch = $vbatchnumber;
+				$result=$pdluo->create(0,1);
+			}
+			return $result;
+		} else {
+			return -1;
+		}
+
 	}
 	
 }

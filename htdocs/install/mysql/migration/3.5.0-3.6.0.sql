@@ -991,11 +991,13 @@ ALTER TABLE llx_product_customer_price ADD UNIQUE INDEX uk_customer_price_fk_pro
 ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product(rowid) ON DELETE CASCADE;
 ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid) ON DELETE CASCADE;
 
+ALTER TABLE llx_user ADD COLUMN barcode varchar(255) DEFAULT NULL;
+ALTER TABLE llx_user ADD COLUMN fk_barcode_type integer DEFAULT 0;
 
 create table llx_product_customer_price_log
 (
   rowid                       integer AUTO_INCREMENT PRIMARY KEY,
- entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
+  entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec                       datetime,
   fk_product			integer NOT NULL,
   fk_soc				integer NOT NULL,	   
@@ -1015,43 +1017,43 @@ create table llx_product_customer_price_log
 --Batch number managment
 ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
 
-CREATE TABLE IF NOT EXISTS `llx_product_batch` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `fk_product_stock` int(11) NOT NULL,
-  `eatby` datetime DEFAULT NULL,
-  `sellby` datetime DEFAULT NULL,
-  `batch` varchar(30) DEFAULT NULL,
-  `qty` double NOT NULL DEFAULT '0',
-  `import_key` varchar(14) DEFAULT NULL,
-  KEY `ix_fk_product_stock` (`fk_product_stock`)
+CREATE TABLE IF NOT EXISTS llx_product_batch (
+  rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_product_stock int(11) NOT NULL,
+  eatby datetime DEFAULT NULL,
+  sellby datetime DEFAULT NULL,
+  batch varchar(30) DEFAULT NULL,
+  qty double NOT NULL DEFAULT '0',
+  import_key varchar(14) DEFAULT NULL,
+  KEY ix_fk_product_stock (fk_product_stock)
 ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS `llx_expeditiondet_batch` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `fk_expeditiondet` int(11) NOT NULL,
-  `eatby` date DEFAULT NULL,
-  `sellby` date DEFAULT NULL,
-  `batch` varchar(30) DEFAULT NULL,
-  `qty` double NOT NULL DEFAULT '0',
-  `fk_origin_stock` int(11) NOT NULL,
-  KEY `ix_fk_expeditiondet` (`fk_expeditiondet`)
+CREATE TABLE IF NOT EXISTS llx_expeditiondet_batch (
+  rowid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fk_expeditiondet int(11) NOT NULL,
+  eatby date DEFAULT NULL,
+  sellby date DEFAULT NULL,
+  batch varchar(30) DEFAULT NULL,
+  qty double NOT NULL DEFAULT '0',
+  fk_origin_stock int(11) NOT NULL,
+  KEY ix_fk_expeditiondet (fk_expeditiondet)
 ) ENGINE=InnoDB;
 
 --Salary payment in tax module
-CREATE TABLE IF NOT EXISTS `llx_payment_salary` (
-  `rowid` integer AUTO_INCREMENT PRIMARY KEY,
-  `tms` timestamp,
-  `fk_user` integer NOT NULL,
-  `datep` date,
-  `datev` date,
-  `amount` real NOT NULL DEFAULT 0,
-  `label` varchar(255),
-  `datesp` date,                       -- date de début de la période
-  `dateep` date,                       -- date de fin de la période    
-  `entity` integer DEFAULT 1 NOT NULL,	-- multi company id
-  `note` text,
-  `fk_bank` integer,  
-  `fk_user_creat` integer,
-  `fk_user_modif` integer
+CREATE TABLE IF NOT EXISTS llx_payment_salary (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_user integer NOT NULL,
+  datep date,
+  datev date,
+  amount real NOT NULL DEFAULT 0,
+  label varchar(255),
+  datesp date,                       -- date de début de la période
+  dateep date,                       -- date de fin de la période    
+  entity integer DEFAULT 1 NOT NULL,	-- multi company id
+  note text,
+  fk_bank integer,  
+  fk_user_creat integer,
+  fk_user_modif integer
 )ENGINE=innodb;

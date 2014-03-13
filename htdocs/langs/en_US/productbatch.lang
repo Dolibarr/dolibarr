@@ -5,3 +5,7 @@ ProductStatusNotOnBatch= Not Managed
 ProductStatusOnBatchShort= Managed
 ProductStatusNotOnBatchShort= Not Managed
 Batch=Batch
+atleast1batchfield= Eat-by date or Sell-by date or Batch number
+batch_number= Batch number
+l_eatby= Eat-by date
+l_sellby= Sell-by date
