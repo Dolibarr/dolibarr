@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/FunctionsTest.php
+ *      \file       test/phpunit/FunctionsLibTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -48,7 +48,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsTest extends PHPUnit_Framework_TestCase
+class FunctionsLibTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
