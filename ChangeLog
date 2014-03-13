@@ -41,6 +41,7 @@ Fix: [ bug #1240 ] traduction.
 Fix: [ bug #1238 ] When creating accompte with a %, free product are used for calculation.
 Fix: [ bug #1280 ] service with not end of date was tagged as expired.
 Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference
+New: Added es_CL language
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
