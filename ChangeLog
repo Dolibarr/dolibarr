@@ -31,6 +31,7 @@ For users:
 - New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags.
 - New: Add filter on project status into task list. By default, only "opened" project are visible.
 - New: Status "validated" for project are renamed into "opened".
+- New: Add barcode fields into user database.
 - Fix: Project Task numbering customs rule works.
 
 TODO
