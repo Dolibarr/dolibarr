@@ -1203,11 +1203,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
-                $jsckeditor='ckeditor_basic.js';
+                $jsckeditor='ckeditor.js';
                 if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
                 {
                 	$pathckeditor=constant('JS_CKEDITOR');
-                	$jsckeditor='ckeditor.js';
                 }
                 print '<script type="text/javascript">';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
