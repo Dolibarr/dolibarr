@@ -584,7 +584,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (! $object->paye)	// protection against multiple submit
+	if (!empty($object->paye))	// protection against multiple submit
 	{
 		// Boucle sur chaque taux de tva
 		$i=0;
@@ -601,8 +601,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 		if ($object->type == 2)     $discount->description='(CREDIT_NOTE)';
 		elseif ($object->type == 3) $discount->description='(DEPOSIT)';
 		else {
-			$this->error="CantConvertToReducAnInvoiceOfThisType";
-			return -1;
+			setEventMessage($langs->trans('CantConvertToReducAnInvoiceOfThisType'),'errors');
 		}
 		$discount->tva_tx=abs($object->total_ttc);
 		$discount->fk_soc=$object->socid;
@@ -617,6 +616,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			$discount->tva_tx=abs($tva_tx);
 
 			$result=$discount->create($user);
+
 			if ($result < 0)
 			{
 				$error++;
@@ -624,24 +624,24 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			}
 		}
 
-		if (! $error)
+		if (empty($error))
 		{
 			// Classe facture
 			$result=$object->set_paid($user);
-			if ($result > 0)
+			if ($result >= 0)
 			{
 				//$mesgs[]='OK'.$discount->id;
 				$db->commit();
 			}
 			else
 			{
-				$mesgs[]='<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error,'errors');
 				$db->rollback();
 			}
 		}
 		else
 		{
-			$mesgs[]='<div class="error">'.$discount->error.'</div>';
+			setEventMessage($discount->error,'errors');
 			$db->rollback();
 		}
 	}
@@ -3687,7 +3687,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == 3 && $object->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer)
+				if ($object->type == 3 && $object->statut == 2 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
