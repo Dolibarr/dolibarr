@@ -560,7 +560,7 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
-
+		
         if (empty($this->country_id))           $this->country_id = 0;
 
         //Gencod
@@ -610,7 +610,7 @@ class Product extends CommonObject
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
-			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'');
+			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
 	        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
