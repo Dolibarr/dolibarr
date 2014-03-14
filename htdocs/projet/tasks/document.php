@@ -110,6 +110,7 @@ if ($id > 0 || ! empty($ref))
 
 include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
+
 /*
  * View
  */
@@ -229,9 +230,11 @@ if ($object->id > 0)
 
 	print '<br>';
 
-	$modulepart = 'projet';
+	$param='';
+	if ($withproject) $param .= '&withproject=1';
+	$modulepart = 'project_task';
 	$permission = $user->rights->projet->creer;
-	$param = '&id=' . $object->id;
+	$relativepathwithnofile=dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/';
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
