@@ -203,8 +203,9 @@ if (empty($reshook))
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
-
+			
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
+            $object->url					= GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode            = GETPOST('customcode');
             $object->country_id            = GETPOST('country_id');
@@ -278,6 +279,7 @@ if (empty($reshook))
                 $object->ref                    = $ref;
                 $object->libelle                = GETPOST('libelle');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
+            	$object->url					= GETPOST('url');
                 $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
                 $object->customcode             = GETPOST('customcode');
                 $object->country_id             = GETPOST('country_id');
@@ -805,11 +807,16 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
-        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
+        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
         $doleditor->Create();
 
         print "</td></tr>";
 
+        // Public URL
+        print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
+        print '</td></tr>';    
+        
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
@@ -1057,13 +1064,18 @@ else
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
-	        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+            // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
             $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
             $doleditor->Create();
 
             print "</td></tr>";
             print "\n";
 
+            // Public Url
+            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
+            print '</td></tr>';
+            
             // Stock
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
@@ -1321,6 +1333,11 @@ else
 
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
+
+            // Public URL
+            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="2">';
+			print dol_print_url($object->url);
+            print '</td></tr>';
 
             // Nature
             if($object->type!=1)

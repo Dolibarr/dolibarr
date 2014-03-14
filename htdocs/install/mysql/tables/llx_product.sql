@@ -54,6 +54,7 @@ create table llx_product
   fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
+  url						varchar(255),
   barcode					varchar(255) DEFAULT NULL,
   fk_barcode_type			integer      DEFAULT 0,
   accountancy_code_sell		varchar(15),                    -- Selling accountancy code

@@ -33,6 +33,7 @@ For users:
 - New: Status "validated" for project are renamed into "opened".
 - New: Add barcode fields into user database.
 - New: Add manager name (ceo, director, president...) into main company information page.
+- New: Add field url as product properties.
 - Fix: Project Task numbering customs rule works.
 
 TODO

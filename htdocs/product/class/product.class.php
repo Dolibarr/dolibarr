@@ -610,7 +610,8 @@ class Product extends CommonObject
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
-	        $sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
+			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'');
+			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
 	        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
 			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
@@ -1277,7 +1278,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, label, description, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -1305,6 +1306,7 @@ class Product extends CommonObject
 				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
+				$this->url						= $obj->url;
 				$this->note						= $obj->note;
 
 				$this->type						= $obj->fk_product_type;

@@ -667,6 +667,7 @@ OriginFileName=Original filename
 SetDemandReason=Set source
 ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
+PublicUrl=Public URL
 
 # Week day
 Monday=Monday
