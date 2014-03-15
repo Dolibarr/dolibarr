@@ -1329,6 +1329,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr",$this->ref));
 						else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
@@ -1794,6 +1795,7 @@ class Facture extends CommonInvoice
 						if ($this->lines[$i]->fk_product > 0)
 						{
 							$mouvP = new MouvementStock($this->db);
+							$mouvP->origin = &$this;
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
@@ -1916,6 +1918,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
 						else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
