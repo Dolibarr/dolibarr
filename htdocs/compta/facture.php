@@ -670,6 +670,19 @@ else if ($action == 'add' && $user->rights->facture->creer) {
                  
 			}
             
+            if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0) {
+                    
+                $facture_source = new Facture($db); // fetch origin object if not previously defined
+                if($facture_source->fetch($object->fk_facture_source)>0) {
+                    $totalpaye = $facture_source->getSommePaiement();
+                    $totalcreditnotes = $facture_source->getSumCreditNotesUsed();
+                    $totaldeposits = $facture_source->getSumDepositsUsed();
+                    $remain_to_pay = abs($facture_source->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits);
+                    
+                    $object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');      
+                }
+            }
+            
 			// Add predefined lines
 			/*
              TODO delete 
@@ -2058,7 +2071,8 @@ if ($action == 'create')
 		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
 		print $desc;
         
-        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\')  }" /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+        print '<br />&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
         
 		print '</td></tr>' . "\n";
 	}
