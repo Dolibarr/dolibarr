@@ -1061,3 +1061,7 @@ CREATE TABLE llx_payment_salary (
   fk_user_creat integer,
   fk_user_modif integer
 )ENGINE=innodb;
+
+--New 1074 : Stock mouvement link to origin
+ALTER TABLE llx_stock_mouvement ADD fk_origin INT NOT NULL ;
+ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR( 32 ) NOT NULL ;
