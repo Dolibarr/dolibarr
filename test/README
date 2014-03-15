@@ -27,7 +27,7 @@ If not using Eclipse, to install PHPUnit manually:
 > sudo pear install --alldeps phpunit/PHPUnit
 
 * Run Unit tests: 
-> cd test
+> cd test/phpunit
 > phpunit MyFileTest.php
 If using Eclipse, select the test and click on menu "Run external tools and choose PHPUnit".
 
