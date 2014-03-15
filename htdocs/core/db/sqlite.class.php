@@ -674,20 +674,6 @@ class DoliDBSqlite extends DoliDB
         return dol_print_date($param,"%Y%m%d%H%M%S");
     }
 
-	/**
-	 *	Format a SQL IF
-	 *
-	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *	@param	string	$resok          resultat si test egal
-	 *	@param	string	$resko          resultat si test non egal
-	 *	@return	string          		SQL string
-	 */
-    function ifsql($test,$resok,$resko)
-    {
-        return 'IF('.$test.','.$resok.','.$resko.')';
-    }
-
-
     /**
      *	Renvoie la derniere requete soumise par la methode query()
      *
