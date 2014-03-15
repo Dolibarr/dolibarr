@@ -1,6 +1,6 @@
 <?php
 /* Module to manage resources into Dolibarr ERP/CRM
- * Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ class modResource extends DolibarrModules
 		// (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module Resource";
 		// Possible values for version are: 'development', 'experimental' or version
-		$this->version = '0.1';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -101,7 +101,7 @@ class modResource extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/resource/temp");
-		$this->dirs = array("/resource");
+		//$this->dirs = array("/resource");
 
 		// Config pages. Put here list of php pages
 		// stored into resource/admin directory, used to setup module.
@@ -115,7 +115,7 @@ class modResource extends DolibarrModules
 		// Minimum version of PHP required by module
 		$this->phpmin = array(5, 3);
 		// Minimum version of Dolibarr required by module
-		$this->need_dolibarr_version = array(3, 4);
+		$this->need_dolibarr_version = array(3, 5);
 		$this->langfiles = array("resource@resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
