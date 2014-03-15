@@ -1496,7 +1496,7 @@ class User extends CommonObject
 		$outputlangs->load("users");
 		$outputlangs->load("other");
 
-		$subject = $outputlangs->trans("SubjectNewPassword");
+		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword");
 
 		// Define $urlwithroot
 		//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
