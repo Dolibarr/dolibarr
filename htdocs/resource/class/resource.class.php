@@ -208,9 +208,13 @@ class Resource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all_used($sortorder="ASC", $sortfield="t.rowid", $limit=25, $offset=1, $filter='')
+    function fetch_all_used($sortorder, $sortfield, $limit, $offset=1, $filter='')
     {
     	global $conf;
+    	
+    	if ( ! $sortorder) $sortorder="ASC";
+    	if ( ! $sortfield) $sortfield="t.rowid";
+    	
     	$sql="SELECT ";
     	$sql.= " t.rowid,";
     	$sql.= " t.resource_id,";
