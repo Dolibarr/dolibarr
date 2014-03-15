@@ -14,3 +14,4 @@ RessourceLineSuccessfullyUpdated=Resource successfully updated
 RessourceLineSuccessfullyDeleted=Resource successfully deleted
 
 ShowResourcePlanning=Show resource planning
+NoResourceInDatabase=No resource in database
