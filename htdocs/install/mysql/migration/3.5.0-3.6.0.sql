@@ -1003,7 +1003,7 @@ create table llx_product_customer_price
   datec					datetime,
   tms					timestamp,
   fk_product			integer NOT NULL,
-  fk_soc				integer NOT NULL,	   
+  fk_soc				integer NOT NULL,
   price						double(24,8) DEFAULT 0,
   price_ttc					double(24,8) DEFAULT 0,
   price_min					double(24,8) DEFAULT 0,
@@ -1011,7 +1011,7 @@ create table llx_product_customer_price
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),
   recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
-  localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
   fk_user				    integer,
   import_key			    varchar(14)                  -- Import key
@@ -1038,7 +1038,7 @@ create table llx_product_customer_price_log
   entity				integer DEFAULT 1 NOT NULL,	   -- multi company id
   datec                       datetime,
   fk_product			integer NOT NULL,
-  fk_soc				integer NOT NULL,	   
+  fk_soc				integer NOT NULL,
   price						double(24,8) DEFAULT 0,
   price_ttc					double(24,8) DEFAULT 0,
   price_min					double(24,8) DEFAULT 0,
@@ -1046,7 +1046,7 @@ create table llx_product_customer_price_log
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),
   recuperableonly           integer NOT NULL DEFAULT 0,   -- Other NPR VAT
-  localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
   fk_user				integer,
  import_key			varchar(14)                  -- Import key
@@ -1091,10 +1091,10 @@ CREATE TABLE llx_payment_salary (
   num_payment varchar(50),
   label varchar(255),
   datesp date,                       -- date de début de la période
-  dateep date,                       -- date de fin de la période    
+  dateep date,                       -- date de fin de la période
   entity integer DEFAULT 1 NOT NULL,	-- multi company id
   note text,
-  fk_bank integer,  
+  fk_bank integer,
   fk_user_creat integer,
   fk_user_modif integer
 )ENGINE=innodb;
@@ -1155,3 +1155,35 @@ create table llx_categorie_lang
 
 ALTER TABLE llx_categorie_lang ADD UNIQUE INDEX uk_category_lang (fk_category, lang);
 ALTER TABLE llx_categorie_lang ADD CONSTRAINT fk_category_lang_fk_category 	FOREIGN KEY (fk_category) REFERENCES llx_categorie (rowid);
+
+-- Resource module
+CREATE TABLE llx_resource
+(
+  rowid           		integer AUTO_INCREMENT PRIMARY KEY,
+  entity          		integer,
+  ref             		varchar(255),
+  description     		text,
+  fk_code_type_resource varchar(32),
+  note_public     		text,
+  note_private    		text,
+  tms         			timestamp
+)ENGINE=innodb;
+
+ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);
+
+CREATE TABLE llx_element_resources
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  resource_id     integer,
+  resource_type	  varchar(64),
+  element_id	  integer,
+  element_type    varchar(64),
+  busy			  integer,
+  mandatory		  integer,
+  fk_user_create   integer,
+  tms             timestamp
+)ENGINE=innodb;
+
+ALTER TABLE llx_element_resources ADD UNIQUE INDEX idx_element_resources_idx1 (resource_id, resource_type, element_id, element_type);
+ALTER TABLE llx_element_resources ADD INDEX idx_element_element_element_id (element_id);
+-- Pas de contraite sur resource_id et element_id car pointe sur differentes tables

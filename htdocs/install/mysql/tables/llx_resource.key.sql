@@ -15,5 +15,4 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-ALTER TABLE llx_place ADD CONSTRAINT fk_place_fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
-ALTER TABLE llx_place ADD INDEX fk_socpeople_place (fk_socpeople);
+ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);
