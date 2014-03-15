@@ -50,7 +50,7 @@ $sortfield			= GETPOST('sortfield','alpha');
 $page				= GETPOST('page','int');
 */
 
-if( ! $user->rights->place->read)
+if( ! $user->rights->resource->read)
 	accessforbidden();
 
 $object=new Resource($db);
@@ -100,7 +100,7 @@ else
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		$act = $object->fetchObjectByElement($element_id,$element);
+		$act = fetchObjectByElement($element_id,$element);
 		if(is_object($act)) {
 
 			$head=actions_prepare_head($act);
@@ -135,7 +135,7 @@ else
 	 */
 	if($element_id && $element == 'societe')
 	{
-		$socstatic = $object->fetchObjectByElement($element_id,$element);
+		$socstatic = fetchObjectByElement($element_id,$element);
 		if(is_object($socstatic)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 			$head = societe_prepare_head($socstatic);
@@ -148,11 +148,11 @@ else
 			//$linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
 
 			// Name
-        print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
-        print '<td colspan="3">';
-        print $form->showrefnav($socstatic, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        print '</td>';
-        print '</tr>';
+	        print '<tr><td width="25%">'.$langs->trans('ThirdPartyName').'</td>';
+	        print '<td colspan="3">';
+	        print $form->showrefnav($socstatic, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	        print '</td>';
+	        print '</tr>';
 			print '</table>';
 
 			print '</div>';
@@ -173,7 +173,7 @@ else
 		$resources=(array) $resources;	// To be sure $resources is an array
 		foreach($resources as $resource_obj)
 		{
-			$element_prop = $object->getElementProperties($resource_obj);
+			$element_prop = getElementProperties($resource_obj);
 			//var_dump($element_prop);
 
 			print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));

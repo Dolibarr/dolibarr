@@ -1656,3 +1656,124 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		return $totalnb;
 	}
 }
+
+/**
+ *	Get an array with properties of an element
+*
+* @param string $element_type Element type. ex : project_task or object@modulext or object_under@module
+* @return array (module, classpath, element, subelement, classfile, classname)
+*/
+function getElementProperties($element_type)
+{
+    // Parse element/subelement (ex: project_task)
+    $module = $element = $subelement = $element_type;
+
+    // If we ask an resource form external module (instead of default path)
+    if (preg_match('/^([^@]+)@([^@]+)$/i',$element_type,$regs))
+    {
+        $element = $subelement = $regs[1];
+        $module 	= $regs[2];
+    }
+
+    //print '<br />1. element : '.$element.' - module : '.$module .'<br />';
+    if ( preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+    {
+        $module = $element = $regs[1];
+        $subelement = $regs[2];
+    }
+
+    $classfile = strtolower($subelement);
+    $classname = ucfirst($subelement);
+    $classpath = $module.'/class';
+
+    // For compat
+    if($element_type == "action") {
+        $classpath = 'comm/action/class';
+        $subelement = 'Actioncomm';
+        $module = 'agenda';
+    }
+
+    // To work with non standard path
+    if ($element_type == 'facture' || $element_type == 'invoice') {
+        $classpath = 'compta/facture/class';
+        $module='facture';
+        $subelement='facture';
+    }
+    if ($element_type == 'commande' || $element_type == 'order') {
+        $classpath = 'commande/class';
+        $module='commande';
+        $subelement='commande';
+    }
+    if ($element_type == 'propal')  {
+        $classpath = 'comm/propal/class';
+    }
+    if ($element_type == 'shipping') {
+        $classpath = 'expedition/class';
+        $subelement = 'expedition';
+        $module = 'expedition_bon';
+    }
+    if ($element_type == 'delivery') {
+        $classpath = 'livraison/class';
+        $subelement = 'livraison';
+        $module = 'livraison_bon';
+    }
+    if ($element_type == 'contract') {
+        $classpath = 'contrat/class';
+        $module='contrat';
+        $subelement='contrat';
+    }
+    if ($element_type == 'member') {
+        $classpath = 'adherents/class';
+        $module='adherent';
+        $subelement='adherent';
+    }
+    if ($element_type == 'cabinetmed_cons') {
+        $classpath = 'cabinetmed/class';
+        $module='cabinetmed';
+        $subelement='cabinetmedcons';
+    }
+    if ($element_type == 'fichinter') {
+        $classpath = 'fichinter/class';
+        $module='ficheinter';
+        $subelement='fichinter';
+    }
+    $classfile = strtolower($subelement);
+    $classname = ucfirst($subelement);
+
+    $element_properties = array(
+        'module' => $module,
+        'classpath' => $classpath,
+        'element' => $element,
+        'subelement' => $subelement,
+        'classfile' => $classfile,
+        'classname' => $classname
+    );
+    return $element_properties;
+}
+
+/**
+ * Fetch an object with element_type and its id
+ * Inclusion classes is automatic
+ *
+ * @param	int		$element_id
+ * @param	string	$element_type
+ * @return 	object || 0 || -1 if error
+ */
+function fetchObjectByElement($element_id,$element_type) {
+
+    global $conf;
+
+    $element_prop = getElementProperties($element_type);
+    if (is_array($element_prop) && $conf->$element_prop['module']->enabled)
+    {
+        dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
+
+        $objectstat = new $element_prop['classname']($this->db);
+        $ret = $objectstat->fetch($element_id);
+        if ($ret >= 0)
+        {
+            return $objectstat;
+        }
+    }
+    return 0;
+}
