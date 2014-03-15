@@ -42,21 +42,20 @@ class ActionsResource
 	}
 
 	/**
-	 * doActions 
+	 * doActions for resource module
 	 * 
-	 * @param array $parameters	parameters
-	 * @param object &$object	object
-	 * @param string &$action 	action
-	 * @return void
+	 * @param array $parameters parameters
+	 * @param Object $object object
+	 * @param string $action action
 	 */
-	function doActions($parameters, &$object, &$action) {
-
+	function doActions($parameters, &$object, &$action) 
+	{
 		global $langs,$user;
 		$langs->load('resource');
-
+		
 		if (in_array('element_resource',explode(':',$parameters['context'])))
 		{
-			// Efface une ressource
+			// Delete a resource linked to an element
 			if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
 			{
 				$res = $object->fetch(GETPOST('lineid'));

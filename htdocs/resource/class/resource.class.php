@@ -61,12 +61,95 @@ class Resource extends CommonObject
     }
 
     /**
+     *  Create object into database
+     *
+     *  @param	User	$user        User that creates
+     *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
+     *  @return int      		   	 <0 if KO, Id of created object if OK
+     */
+    function create($user, $notrigger=0)
+    {
+    	global $conf, $langs;
+    	$error=0;
+    
+    	// Clean parameters
+    
+    	if (isset($this->ref)) $this->ref=trim($this->ref);
+    	if (isset($this->description)) $this->description=trim($this->description);
+    	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
+    	if (isset($this->note_public)) $this->note_public=trim($this->note_public);
+    	if (isset($this->note_private)) $this->note_private=trim($this->note_private);
+    
+    
+    	// Insert request
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."resource(";
+    
+    	$sql.= " entity,";
+    	$sql.= "ref,";
+    	$sql.= "description,";
+    	$sql.= "fk_code_type_resource,";
+    	$sql.= "note_public,";
+    	$sql.= "note_private";
+    
+    	$sql.= ") VALUES (";
+    
+    	$sql.= $conf->entity.", ";
+    	$sql.= " ".(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").",";
+    	$sql.= " ".(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").",";
+    	$sql.= " ".(! isset($this->fk_code_type_resource)?'NULL':"'".$this->db->escape($this->fk_code_type_resource)."'").",";
+    	$sql.= " ".(! isset($this->note_public)?'NULL':"'".$this->db->escape($this->note_public)."'").",";
+    	$sql.= " ".(! isset($this->note_private)?'NULL':"'".$this->db->escape($this->note_private)."'");
+
+    	$sql.= ")";
+    
+    	$this->db->begin();
+    
+    	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+    	$resql=$this->db->query($sql);
+    	if (! $resql) {
+    		$error++; $this->errors[]="Error ".$this->db->lasterror();
+    	}
+    
+    	if (! $error)
+    	{
+    		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."place");
+    
+    		if (! $notrigger)
+    		{   
+    			//// Call triggers
+    			//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    			//$interface=new Interfaces($this->db);
+    			//$result=$interface->run_triggers('RESOURCE_CREATE',$this,$user,$langs,$conf);
+    			//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+    			//// End call triggers
+    		}
+    	}
+    
+    	// Commit or rollback
+    	if ($error)
+    	{
+    		foreach($this->errors as $errmsg)
+    		{
+    			dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+    			$this->error.=($this->error?', '.$errmsg:$errmsg);
+    		}
+    		$this->db->rollback();
+    		return -1*$error;
+    	}
+    	else
+    	{
+    		$this->db->commit();
+    		return $this->id;
+    	}
+    }
+    
+    /**
      *    Load object in memory from database
      *    
      *    @param      int	$id          id object
      *    @return     int         <0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch_element_resource($id)
     {
     	global $langs;
     	$sql = "SELECT";
@@ -299,13 +382,13 @@ class Resource extends CommonObject
 
 
     /**
-     *  Update object into database
+     *  Update element resource into database
      *
      *  @param	User	$user        User that modifies
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    function update_element_resource($user=0, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -318,9 +401,6 @@ class Resource extends CommonObject
 		if (isset($this->busy)) $this->busy=trim($this->busy);
 		if (isset($this->mandatory)) $this->mandatory=trim($this->mandatory);
 
-
-		// Check parameters
-		// Put here code to add a control on parameters values
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
