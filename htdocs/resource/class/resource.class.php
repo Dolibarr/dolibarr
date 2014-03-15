@@ -373,51 +373,6 @@ class Resource extends CommonObject
     }
 
 
-    /**
-     *	Add resources to the actioncom object
-     *
-     *	@param		int		$element_id			Element id
-     *	@param		string	$element_type		Element type
-     *	@param		int		$resource_id		Resource id
-     *	@param		string	$resource_type		Resource type
-     *	@param		array	$resource   		Resources linked with element
-     *	@return		int					<=0 if KO, >0 if OK
-     */
-    function add_element_resource($element_id,$element_type,$resource_id,$resource_element,$busy=0,$mandatory=0)
-    {
-	    	$this->db->begin();
-
-	    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_resources (";
-	    	$sql.= "resource_id";
-	    	$sql.= ", resource_type";
-	    	$sql.= ", element_id";
-	    	$sql.= ", element_type";
-	    	$sql.= ", busy";
-			$sql.= ", mandatory";
-	    	$sql.= ") VALUES (";
-	    	$sql.= $resource_id;
-	    	$sql.= ", '".$resource_element."'";
-	    	$sql.= ", '".$element_id."'";
-	    	$sql.= ", '".$element_type."'";
-	    	$sql.= ", '".$busy."'";
-	    	$sql.= ", '".$mandatory."'";
-	    	$sql.= ")";
-
-	    	dol_syslog(get_class($this)."::add_element_resource sql=".$sql, LOG_DEBUG);
-	    	if ($this->db->query($sql))
-	    	{
-	    		$this->db->commit();
-	    		return 1;
-	    	}
-	    	else
-	    	{
-	    		$this->error=$this->db->lasterror();
-	    		$this->db->rollback();
-	    		return  0;
-	    	}
-    	}
-
-
     /*
      * Return an array with resources linked to the element
      *

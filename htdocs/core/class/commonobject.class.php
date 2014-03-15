@@ -3317,6 +3317,7 @@ abstract class CommonObject
 		}
 		// TODO : add other elements
 		
+		
 		$element_properties = array(
 				'module' => $module,
 				'classpath' => $classpath,
@@ -3353,6 +3354,47 @@ abstract class CommonObject
 			}
 		}
 		return 0;
+	}
+	
+	/**
+	 *	Add resources to the current object
+	 *
+	 *	@param		int	$resource_id		Resource id
+	 *	@param		string	$resource_element	Resource element
+	 *	@return		int	<=0 if KO, >0 if OK
+	 */
+	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
+	{
+		$this->db->begin();
+	
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_resources (";
+		$sql.= "resource_id";
+		$sql.= ", resource_type";
+		$sql.= ", element_id";
+		$sql.= ", element_type";
+		$sql.= ", busy";
+		$sql.= ", mandatory";
+		$sql.= ") VALUES (";
+		$sql.= $resource_id;
+		$sql.= ", '".$resource_element."'";
+		$sql.= ", '".$this->id."'";
+		$sql.= ", '".$this->element."'";
+		$sql.= ", '".$busy."'";
+		$sql.= ", '".$mandatory."'";
+		$sql.= ")";
+	
+		dol_syslog(get_class($this)."::add_element_resource sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return  0;
+		}
 	}
 	
 	
