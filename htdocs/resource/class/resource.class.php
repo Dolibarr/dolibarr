@@ -145,6 +145,122 @@ class Resource extends CommonObject
     
     /**
      *    Load object in memory from database
+     *
+     *    @param      int	$id          id object
+     *    @return     int         <0 if KO, >0 if OK
+     */
+    function fetch($id)
+    {
+    	global $langs;
+    	$sql = "SELECT";
+    	$sql.= " t.rowid,";
+    	$sql.= " t.entity,";
+    	$sql.= " t.ref,";
+    	$sql.= " t.description,";
+    	$sql.= " t.fk_code_type_resource,";
+    	$sql.= " t.note_public,";
+    	$sql.= " t.note_private,";
+    	$sql.= " t.tms";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
+    	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
+    
+    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		if ($this->db->num_rows($resql))
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    
+    			$this->id						=	$obj->rowid;
+    			$this->entity					=	$obj->entity;
+    			$this->ref						=	$obj->ref;
+    			$this->description				=	$obj->description;
+    			$this->fk_code_type_resource	=	$obj->fk_code_type_resource;
+    			$this->note_public				=	$obj->note_public;
+    			$this->note_private				=	$obj->note_private;
+    			$this->fk_user_create			=	$obj->fk_user_create;
+    
+    		}
+    		$this->db->free($resql);
+    
+    		return $this->id;
+    	}
+    	else
+    	{
+    		$this->error="Error ".$this->db->lasterror();
+    		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+    		return -1;
+    	}
+    }
+    
+    /**
+     *  Update object into database
+     *
+     *  @param	User	$user        User that modifies
+     *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
+     *  @return int     		   	 <0 if KO, >0 if OK
+     */
+    function update($user=0, $notrigger=0)
+    {
+    	global $conf, $langs;
+    	$error=0;
+    
+    	// Clean parameters
+    	if (isset($this->ref)) $this->ref=trim($this->ref);
+    	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
+    	if (isset($this->description)) $this->description=trim($this->description);
+    
+    	// Update request
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."resource SET";
+    	$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
+    	$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
+    	$sql.= " fk_code_type_resource=".(isset($this->fk_code_type_resource)?"'".$this->db->escape($this->fk_code_type_resource)."'":"null").",";
+    	$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
+    	$sql.= " WHERE rowid=".$this->id;
+    
+    	$this->db->begin();
+    
+    	dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    
+    	if (! $error)
+    	{
+    		if (! $notrigger)
+    		{
+    			// Uncomment this and change MYOBJECT to your own tag if you
+    			// want this action calls a trigger.
+    
+    			//// Call triggers
+    			//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    			//$interface=new Interfaces($this->db);
+    			//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
+    			//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+    			//// End call triggers
+    		}
+    	}
+    
+    	// Commit or rollback
+    	if ($error)
+    	{
+    		foreach($this->errors as $errmsg)
+    		{
+    			dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+    			$this->error.=($this->error?', '.$errmsg:$errmsg);
+    		}
+    		$this->db->rollback();
+    		return -1*$error;
+    	}
+    	else
+    	{
+    		$this->db->commit();
+    		return 1;
+    	}
+    }
+    
+    /**
+     *    Load object in memory from database
      *    
      *    @param      int	$id          id object
      *    @return     int         <0 if KO, >0 if OK
@@ -401,7 +517,6 @@ class Resource extends CommonObject
 		if (isset($this->busy)) $this->busy=trim($this->busy);
 		if (isset($this->mandatory)) $this->mandatory=trim($this->mandatory);
 
-
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_resources SET";
 		$sql.= " resource_id=".(isset($this->resource_id)?"'".$this->db->escape($this->resource_id)."'":"null").",";
@@ -411,8 +526,7 @@ class Resource extends CommonObject
 		$sql.= " busy=".(isset($this->busy)?$this->busy:"null").",";
 		$sql.= " mandatory=".(isset($this->mandatory)?$this->mandatory:"null").",";
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
-
-
+		
         $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -548,6 +662,46 @@ class Resource extends CommonObject
     	{
     		$this->error=$this->db->lasterror();
     		dol_syslog(get_class($this)."::delete_resource error=".$this->error, LOG_ERR);
+    		return -1;
+    	}
+    }
+    
+    /**
+     *      Load in cache resource type code (setup in dictionary)
+     *
+     *      @return     int             Nb lignes chargees, 0 si deja chargees, <0 si ko
+     */
+    function load_cache_code_type_resource()
+    {
+    	global $langs;
+    
+    	if (count($this->cache_code_type_resource)) return 0;    // Cache deja charge
+    
+    	$sql = "SELECT rowid, code, libelle, active";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";
+    	$sql.= " WHERE active > 0";
+    	$sql.= " ORDER BY rowid";
+    	dol_syslog(get_class($this)."::load_cache_code_type_resource sql=".$sql,LOG_DEBUG);
+    	$resql = $this->db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $this->db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+    			$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+    			$this->cache_code_type_resource[$obj->rowid]['code'] =$obj->code;
+    			$this->cache_code_type_resource[$obj->rowid]['libelle']=$label;
+    			$this->cache_code_type_resource[$obj->rowid]['active'] =$obj->active;
+    			$i++;
+    		}
+    		return $num;
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
     		return -1;
     	}
     }
