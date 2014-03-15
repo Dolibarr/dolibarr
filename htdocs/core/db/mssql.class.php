@@ -195,17 +195,6 @@ class DoliDBMssql extends DoliDB
 		return $version['computed'];
 	}
 
-
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-	function getVersionArray()
-	{
-		return explode('.',$this->getVersion());
-	}
-
 	/**
 	 *	Return version of database client driver
 	 *

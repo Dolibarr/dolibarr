@@ -126,6 +126,16 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 *	Return version of database server into an array
+	 *
+	 *	@return	        array  		Version array
+	 */
+	function getVersionArray()
+	{
+		return explode('.',$this->getVersion());
+	}
+
+	/**
 	 * Define sort criteria of request
 	 *
 	 * @param	string	$sortfield  List of sort fields

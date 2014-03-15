@@ -225,16 +225,6 @@ class DoliDBMysqli extends DoliDB
         return mysqli_get_server_info($this->db);
     }
 
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-    function getVersionArray()
-    {
-        return explode('.',$this->getVersion());
-    }
-
     /**
      *	Return version of database client driver
      *

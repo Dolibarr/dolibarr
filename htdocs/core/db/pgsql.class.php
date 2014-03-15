@@ -429,16 +429,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-	function getVersionArray()
-	{
-		return explode('.',$this->getVersion());
-	}
-
-	/**
 	 *	Return version of database client driver
 	 *
 	 *	@return	        string      Version string
