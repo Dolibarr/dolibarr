@@ -106,15 +106,15 @@ class PaymentSalary extends CommonObject
   
           $sql.= ") VALUES (";
   
-  		$sql.= " ".$this->db->idate($this->tms).",";
+  		$sql.= " '".$this->db->idate($this->tms).",";
   		$sql.= " '".$this->fk_user."',";
-		  $sql.= " ".$this->db->idate($this->datep).",";
-  		$sql.= " ".$this->db->idate($this->datev).",";
+		$sql.= " '".$this->db->idate($this->datep)."',";
+  		$sql.= " '".$this->db->idate($this->datev)."',";
   		$sql.= " '".$this->amount."',";
   		$sql.= " '".$this->label."',";
-  		$sql.= " ".$this->db->idate($this->datesp).",";
-  		$sql.= " ".$this->db->idate($this->dateep).",";
-  	  $sql.= " '".$this->note."',";
+  		$sql.= " '".$this->db->idate($this->datesp)."',";
+  		$sql.= " '".$this->db->idate($this->dateep)."',";
+		$sql.= " '".$this->note."',";
   		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
   		$sql.= " '".$this->fk_user_creat."',";
   		$sql.= " '".$this->fk_user_modif."'";

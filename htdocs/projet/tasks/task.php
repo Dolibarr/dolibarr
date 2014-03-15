@@ -429,7 +429,12 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Progress
-			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+			print $object->progress.' %';
+			print '</td></tr>';
+
+			// Progress
+			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
 			print $object->progress.' %';
 			print '</td></tr>';
 

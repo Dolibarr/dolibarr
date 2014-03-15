@@ -516,7 +516,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 $sql.= " AND pa.datep <= '".$db->idate(dol_get_last_day($y,12,false))."'";
             }
             if ($q) $sql.= " AND (date_format(pa.datep,'%m') > ".(($q-1)*3)." AND date_format(pa.datep,'%m') <= ".($q*3).")";
-            if ($date_start && $date_end) $sql.= " AND pa.datep >= ".$db->idate($date_start)." AND pa.datep <= ".$db->idate($date_end);
+            if ($date_start && $date_end) $sql.= " AND pa.datep >= '".$db->idate($date_start)."' AND pa.datep <= '".$db->idate($date_end)."'";
             $sql.= " AND (d.product_type = 1";                              // Limit to services
             $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
             $sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";

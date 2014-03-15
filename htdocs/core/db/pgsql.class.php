@@ -534,24 +534,29 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
+		global $conf;
+		
 		$query = trim($query);
 
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query,$type,($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
-/*		$loop=true;
-		while ($loop)
+		if (! empty($conf->global->MAIN_DB_AUTOFIX_BAD_SQL_REQUEST))
 		{
-			if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/',$query))
+			// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
+			$loop=true;
+			while ($loop)
 			{
-				$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/','\\1\'\\2\'',$query);
-				dol_syslog("Warning: Bad formed request converted into ".$query,LOG_WARNING);
+				if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/',$query))
+				{
+					$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/','\\1\'\\2\'',$query);
+					dol_syslog("Warning: Bad formed request converted into ".$query,LOG_WARNING);
+				}
+				else $loop=false;
 			}
-			else $loop=false;
 		}
-*/
+		
 		if ($usesavepoint && $this->transaction_opened)
 		{
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
