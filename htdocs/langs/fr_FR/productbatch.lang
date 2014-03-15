@@ -15,4 +15,4 @@ printBatch= Lot: %s
 printEatby= DLC: %s
 printSellby= DLUO: %s
 printQty= Qté: %d
-
+add_dispatch_batch= Ajouter une ligne de dispatch DLUO
