@@ -323,15 +323,6 @@ class DoliDBSqlite extends DoliDB
         return $this->db;
     }
 
-    /**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-     */
-    function getLabel()
-    {
-        return $this->label;
-    }
 
     /**
 	 *	Return version of database server

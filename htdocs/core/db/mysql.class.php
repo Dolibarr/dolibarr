@@ -202,16 +202,6 @@ class DoliDBMysql extends DoliDB
 	}
 
 	/**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-	 */
-	function getLabel()
-	{
-		return $this->label;
-	}
-
-	/**
 	 *	Return version of database server
 	 *
 	 *	@return	        string      Version string

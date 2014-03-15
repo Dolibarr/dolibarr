@@ -136,6 +136,16 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Return label of manager
+	 *
+	 * @return			string      Label
+	 */
+	function getLabel()
+	{
+		return $this->label;
+	}
+
+	/**
 	 * Define sort criteria of request
 	 *
 	 * @param	string	$sortfield  List of sort fields
