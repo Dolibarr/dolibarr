@@ -24,3 +24,9 @@ RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 
 MenuResourceAdd=Nouvelle ressource
+
+TitleResourceCard=Resource card
+ResourceSingular=Resource
+
+ResourceName=Resource name
+ResourceType=Resource type
