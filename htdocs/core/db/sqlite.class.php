@@ -674,24 +674,6 @@ class DoliDBSqlite extends DoliDB
         return dol_print_date($param,"%Y%m%d%H%M%S");
     }
 
-    /**
-     *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
-     * 	19700101020000 -> 3600 with TZ+1 and gmt=0
-     * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
-     *
-     * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
-     *	@return	date				Date TMS
-     */
-    function jdate($string, $gm=false)
-    {
-        $string=preg_replace('/([^0-9])/i','',$string);
-        $tmp=$string.'000000';
-        $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
-        return $date;
-    }
-
-
 	/**
 	 *	Format a SQL IF
 	 *
