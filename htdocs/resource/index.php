@@ -31,10 +31,8 @@ if (! $res) die("Include of main fails");
 
 require 'class/resource.class.php';
 
-
-
 // Load traductions files requiredby by page
-$langs->load("resource@resource");
+$langs->load("resource");
 $langs->load("companies");
 $langs->load("other");
 
@@ -73,7 +71,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if( ! $user->rights->place->read)
+if( ! $user->rights->resource->read)
 	accessforbidden();
 
 /***************************************************
