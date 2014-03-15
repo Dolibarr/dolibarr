@@ -34,8 +34,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBPgsql extends DoliDB
 {
-    //! Database handler
-    var $db;
     //! Database type
 	public $type='pgsql';            // Name of manager
     //! Database label
@@ -46,28 +44,8 @@ class DoliDBPgsql extends DoliDB
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
-
-	//! Resultset of last request
+	//! Resultset of last query
 	private $_results;
-
-	var $connected;               // 1 si connecte, 0 sinon
-	var $database_selected;       // 1 si base selectionne, 0 sinon
-	var $database_name;			//! Nom base selectionnee
-	var $database_user;	   		//! Nom user base
-	//! >=1 if a transaction is opened, 0 otherwise
-	var $transaction_opened;
-	var $lastquery;
-	// Saved last error
-	var $lastqueryerror;
-	var $lasterror;
-	var $lasterrno;
-
-	var $unescapeslashquot=0;              // By default we do not force the unescape of \'. This is used only to process sql with mysql escaped data.
-	var $standard_conforming_strings=1;    // Database has option standard_conforming_strings to on
-
-	var $ok;
-	var $error;
-
 
 	/**
 	 *	Constructor.

@@ -31,42 +31,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMysqli extends DoliDB
 {
-    //! Database handler
-    var $db;
     //! Database type
     public $type='mysqli';
     //! Database label
     static $label='MySQL';
-    //! Charset used to force charset when creating database
-    var $forcecharset='utf8';	// latin1, utf8. Can't be static as it may be forced with a dynamic value
-    //! Collate used to force collate when creating database
-    var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci. Can't be static as it may be forced with a dynamic value
     //! Version min database
     static $versionmin=array(4,1,0);
-	//! Resultset of last request
+	//! Resultset of last query
 	private $_results;
-    //! 1 if connected, 0 else
-    var $connected;
-    //! 1 if database selected, 0 else
-    var $database_selected;
-    //! Database name selected
-    var $database_name;
-    //! Nom user base
-    var $database_user;
-	//! >=1 if a transaction is opened, 0 otherwise
-    var $transaction_opened;
-    //! Last executed request
-    var $lastquery;
-    //! Last failed executed request
-    var $lastqueryerror;
-    //! Message erreur mysql
-    var $lasterror;
-    //! Message erreur mysql
-    var $lasterrno;
-
-    var $ok;
-    var $error;
-
 
     /**
 	 *	Constructor.

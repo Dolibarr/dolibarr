@@ -35,9 +35,9 @@ abstract class DoliDB implements Database
     //! Database label
     static $label;
     //! Charset used to force charset when creating database
-    public $forcecharset;
+    public $forcecharset='utf8';
     //! Collate used to force collate when creating database
-    public $forcecollate;
+    public $forcecollate='utf8_general_ci';
     //! Min database version
     static $versionmin;
     //! Resultset of last query

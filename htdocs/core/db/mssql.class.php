@@ -30,8 +30,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMssql extends DoliDB
 {
-	//! Database handler
-	var $db;
 	//! Database type
 	public $type='mssql';
 	//! Database label
@@ -42,30 +40,8 @@ class DoliDBMssql extends DoliDB
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(2000);
-	//! Resultset of last request
+	//! Resultset of last query
 	private $_results;
-	//! 1 si connecte, 0 sinon
-	var $connected;
-	//! 1 si base selectionne, 0 sinon
-	var $database_selected;
-	//! Nom base selectionnee
-	var $database_name;
-	//! Nom user base
-	var $database_user;
-	//! >=1 if a transaction is opened, 0 otherwise
-	var $transaction_opened;
-	//! Derniere requete executee
-	var $lastquery;
-	//! Derniere requete executee avec echec
-	var $lastqueryerror;
-	//! Message erreur mysql
-	var $lasterror;
-	//! Message erreur mysql
-	var $lasterrno;
-
-	var $ok;
-	var $error;
-
 
     /**
 	 *	Constructor.
