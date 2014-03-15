@@ -92,7 +92,7 @@ class modResource extends DolibarrModules
 			// Set this to 1 if module has its own models directory
 			//'models' => 0,
 			// Set this to relative path of css if module has its own css file
-			'css' => '/resource/css/resource.css.php',
+			//'css' => '/resource/css/resource.css.php',
 			// Set here all hooks context managed by module
 			'hooks' => array('actioncard','actioncommdao','element_resource')
 			// Set here all workflow context managed by module
