@@ -146,6 +146,16 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 *	Return last request executed with query()
+	 *
+	 *	@return	string					Last query
+	 */
+	function lastquery()
+	{
+		return $this->lastquery;
+	}
+
+	/**
 	 * Define sort criteria of request
 	 *
 	 * @param	string	$sortfield  List of sort fields

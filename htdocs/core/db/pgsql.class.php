@@ -723,17 +723,6 @@ class DoliDBPgsql extends DoliDB
 		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
 	}
 
-
-	/**
-	 * Renvoie la derniere requete soumise par la methode query()
-	 *
-	 * @return	    lastquery
-	 */
-	function lastquery()
-	{
-		return $this->lastquery;
-	}
-
 	/**
 	 * Renvoie la derniere requete en erreur
 	 *

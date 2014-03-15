@@ -588,16 +588,6 @@ class DoliDBSqlite extends DoliDB
         return $this->db->quote($stringtoencode);
     }
 
-    /**
-     *	Renvoie la derniere requete soumise par la methode query()
-     *
-     *	@return	    lastquery
-     */
-    function lastquery()
-    {
-        return $this->lastquery;
-    }
-
 	/**
 	 *	Return last query in error
 	 *

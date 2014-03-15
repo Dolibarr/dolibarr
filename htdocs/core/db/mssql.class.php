@@ -509,16 +509,6 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
-	 *	Return last request executed with query()
-	 *
-	 *	@return	string					Last query
-	 */
-	function lastquery()
-	{
-		return $this->lastquery;
-	}
-
-	/**
 	 *	Return last query in error
 	 *
 	 *	@return	    string	lastqueryerror
