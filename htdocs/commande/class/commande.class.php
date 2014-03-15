@@ -1104,7 +1104,7 @@ class Commande extends CommonOrder
             }
 			
 			$product_type=$type;
-			if ($fk_product)
+			if (!empty($fk_product))
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);

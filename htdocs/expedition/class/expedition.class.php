@@ -710,12 +710,33 @@ class Expedition extends CommonObject
 	 */
 	function addline($entrepot_id, $id, $qty)
 	{
+		global $conf, $langs;
+		
 		$num = count($this->lines);
 		$line = new ExpeditionLigne($this->db);
 
 		$line->entrepot_id = $entrepot_id;
 		$line->origin_line_id = $id;
 		$line->qty = $qty;
+		
+		if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT) {
+			$orderline = new OrderLine($this->db);
+			$orderline->fetch($id);
+			$fk_product = $orderline->fk_product;
+			
+			if (!empty($orderline->fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+				
+				if($product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
+			}
+		}
 
 		$this->lines[$num] = $line;
 	}
