@@ -94,12 +94,23 @@ class MouvementStock
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
+			if(!empty($this->origin)) {
+				$origintype = $this->origin->element;
+				$fk_origin = $this->origin->id;
+			} else {
+				$origintype = '';
+				$fk_origin = 0;
+			}
+			
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
+			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price, fk_origin, origintype)";
 			$sql.= " VALUES ('".$this->db->idate($now)."', ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " '".$this->db->escape($label)."',";
-			$sql.= " '".price2num($price)."')";
+			$sql.= " '".price2num($price)."',";
+			$sql.= " '".$fk_origin."',";
+			$sql.= " '".$origintype."'";
+			$sql.= ")";
 
 			dol_syslog(get_class($this)."::_create sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -469,5 +480,36 @@ class MouvementStock
 
 	}
 	
+	function get_origin($fk_origin, $origintype) {
+		switch ($origintype) {
+			case 'commande':
+				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$origin = new Commande($this->db);
+				break;
+			case 'shipping':
+				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+				$origin = new Expedition($this->db);
+				break;
+			case 'facture':
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				$origin = new Facture($this->db);
+				break;
+			case 'order_supplier':
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+				$origin = new CommandeFournisseur($this->db);
+				break;
+			case 'invoice_supplier':
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+				$origin = new FactureFournisseur($this->db);
+				break;
+			
+			default:
+				return '';
+				break;
+		}
+		
+		$origin->fetch($fk_origin);
+		return $origin->getNomUrl(1);
+	}
 }
 ?>
