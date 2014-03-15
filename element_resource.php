@@ -180,16 +180,18 @@ else
 
 			//print '/'.$modresources.'/class/'.$resource_obj.'.class.php<br />';
 
+			$path = '';
+			if(strpos($resource_obj,'@'))
+				$path .= '/'.$element_prop['module'];
+
 			$linked_resources = $object->getElementResources($element,$element_id,$resource_obj);
 
 			if ( $mode == 'add' && $resource_obj == $resource_type)
 			{
 				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php'.'<BR>';
 
-				$path = $element_prop['module'];
-				if(strpos($element_prop['module'],'@'))
-					$path .= '/'.$element_prop['module'];
-				
+
+
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php')))
 				{
@@ -207,9 +209,9 @@ else
 				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php';
 
 				// If we have a specific template we use it
-				if(file_exists(dol_buildpath('/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
+				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php')))
 				{
-					$res=@include dol_buildpath('/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
+					$res=@include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_view.tpl.php');
 
 				}
 				else
