@@ -28,6 +28,7 @@ InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and replace 
 InvoiceAvoir=Credit note
 InvoiceAvoirAsk=Credit note to correct invoice
 InvoiceAvoirDesc=The <b>credit note</b> is a negative invoice used to solve fact that an invoice has an amount that differs than amount really paid (because customer paid too much by error, or will not paid completely since he returned some products for example).
+invoiceAvoirWithLines=Create Credit Note with lines from the origin invoice
 ReplaceInvoice=Replace invoice %s
 ReplacementInvoice=Replacement invoice
 ReplacedByInvoice=Replaced by invoice %s
