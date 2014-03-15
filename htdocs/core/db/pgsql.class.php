@@ -541,7 +541,7 @@ class DoliDBPgsql extends DoliDB
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
 		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
-		$loop=true;
+/*		$loop=true;
 		while ($loop)
 		{
 			if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/',$query))
@@ -551,7 +551,7 @@ class DoliDBPgsql extends DoliDB
 			}
 			else $loop=false;
 		}
-
+*/
 		if ($usesavepoint && $this->transaction_opened)
 		{
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
