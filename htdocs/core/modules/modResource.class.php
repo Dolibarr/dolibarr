@@ -73,7 +73,7 @@ class modResource extends DolibarrModules
 		// use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue@module'
-		$this->picto = 'resource@resource'; // mypicto@resource
+		$this->picto = 'resource'; // mypicto@resource
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /resource/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /resource/core/modules/barcode)
@@ -116,7 +116,7 @@ class modResource extends DolibarrModules
 		$this->phpmin = array(5, 3);
 		// Minimum version of Dolibarr required by module
 		$this->need_dolibarr_version = array(3, 5);
-		$this->langfiles = array("resource@resource"); // langfiles@resource
+		$this->langfiles = array("resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)

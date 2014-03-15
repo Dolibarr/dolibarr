@@ -23,7 +23,6 @@
 /**
  * Actions class file for resources
  * 
- * \class ActionsResource
  */
 class ActionsResource
 {
@@ -47,13 +46,13 @@ class ActionsResource
 	 * 
 	 * @param array $parameters	parameters
 	 * @param object &$object	object
-	 * @param string &$action action
+	 * @param string &$action 	action
 	 * @return void
 	 */
 	function doActions($parameters, &$object, &$action) {
 
 		global $langs,$user;
-		$langs->load('resource@resource');
+		$langs->load('resource');
 
 		if (in_array('element_resource',explode(':',$parameters['context'])))
 		{
