@@ -161,8 +161,8 @@ class modResource extends DolibarrModules
 		// (reresource 'x' by type of category (0=product, 1=supplier, 2=customer, 3=member)
 
 		$this->tabs = array(
-			'action:+resources:Resources:resource@resource:$user->rights->resource->read:/resource/element_resource.php?element=action&element_id=__ID__',
-			'thirdparty:+resources:Resources:resource@resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
+			'action:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=action&element_id=__ID__',
+			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
 		);
 
 		/* Example:
@@ -240,6 +240,12 @@ class modResource extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$r++;
+		
+		$this->rights[$r][0] = 1101204;
+		$this->rights[$r][1] = 'Link resources';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'link';
+		$r++;
 
 
 		// Add here list of permission defined by
@@ -270,7 +276,7 @@ class modResource extends DolibarrModules
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
 			'url'=> '/resource/index.php',
-			'langs'=> 'resource@resource',
+			'langs'=> 'resource',
 			'position'=> 100,
 			'enabled'=> '1',
 			'perms'=> '$user->rights->resource->read',
