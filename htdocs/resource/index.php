@@ -148,18 +148,6 @@ else
 
 }
 
-
-
-// Action Bar
-print '<div class="tabsAction">';
-print '<div class="inline-block divButAction">';
-print '<a href="resource_planning.php" class="butAction">'.$langs->trans('ShowResourcePlanning').'</a>';
-print '</div>';
-print '</div>';
-
-
-
-
 llxFooter();
 
 $db->close();

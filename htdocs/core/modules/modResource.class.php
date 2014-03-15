@@ -278,23 +278,6 @@ class modResource extends DolibarrModules
 		);
 		$r++;
 
-		// Menus declaration
-		$this->menu[$r]=array(
-			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource',
-			'type'=>'left',
-			'titre'=> 'MenuResourcePlanning',
-			'mainmenu'=>'tools',
-			'leftmenu'=> '',
-			'url'=> '/resource/resource_planning.php',
-			'langs'=> 'resource@resource',
-			'position'=> 101,
-			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
-			'user'=> 0
-		);
-		$r++;
-
-
 		// Exports
 		$r = 1;
 
