@@ -595,7 +595,7 @@ class pdf_einstein extends ModelePDFCommandes
             $posy=$pdf->GetY()+1;
         }
 		*/
-		if (! empty($object->date_livraison))
+		/*if (! empty($object->date_livraison))
 		{
             $pdf->SetXY($this->marge_gauche, $posy);
             $pdf->SetFont('','B', $default_font_size - 2);
@@ -608,7 +608,7 @@ class pdf_einstein extends ModelePDFCommandes
             $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
 
             $posy=$pdf->GetY()+1;
-		}
+		}*/
 		/* TODO
 		else if (! empty($object->availability_code))
 		{
