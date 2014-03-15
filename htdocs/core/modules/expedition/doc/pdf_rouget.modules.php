@@ -240,7 +240,7 @@ class pdf_rouget extends ModelePdfExpedition
 					$pageposbefore=$pdf->getPage();
 
 					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY,0,1);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxqtyordered-10,3,$this->posxdesc,$curY,0,1);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
