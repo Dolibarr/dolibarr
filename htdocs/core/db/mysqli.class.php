@@ -560,16 +560,6 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     *	Renvoie le code derniere erreur
-     *
-     *	@return	    string	lasterrno
-     */
-    function lasterrno()
-    {
-        return $this->lasterrno;
-    }
-
-    /**
      *	Return generic error code of last operation.
      *
      *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)

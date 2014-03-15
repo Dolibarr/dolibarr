@@ -692,16 +692,6 @@ class DoliDBSqlite extends DoliDB
         return $this->lasterror;
     }
 
-	/**
-	 *	Return last error code
-	 *
-	 *	@return	    string	lasterrno
-	 */
-    function lasterrno()
-    {
-        return $this->lasterrno;
-    }
-
     /**
      *	Renvoie le code erreur generique de l'operation precedente.
      *

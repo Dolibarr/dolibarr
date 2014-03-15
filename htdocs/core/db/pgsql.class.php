@@ -797,16 +797,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 * 	Renvoie le code derniere erreur
-	 *
-	 * 	@return	    string	lasterrno
-	 */
-	function lasterrno()
-	{
-		return $this->lasterrno;
-	}
-
-	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
 	 * @return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)

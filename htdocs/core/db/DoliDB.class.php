@@ -90,6 +90,16 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 *	Return last error code
+	 *
+	 *	@return	    string	lasterrno
+	 */
+	function lasterrno()
+	{
+		return $this->lasterrno;
+	}
+
+	/**
 	 * Define sort criteria of request
 	 *
 	 * @param	string	$sortfield  List of sort fields
