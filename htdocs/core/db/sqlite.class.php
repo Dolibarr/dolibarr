@@ -598,16 +598,6 @@ class DoliDBSqlite extends DoliDB
         return $this->lastqueryerror;
     }
 
-	/**
-	 *	Return last error label
-	 *
-	 *	@return	    string	lasterror
-	 */
-    function lasterror()
-    {
-        return $this->lasterror;
-    }
-
     /**
      *	Renvoie le code erreur generique de l'operation precedente.
      *

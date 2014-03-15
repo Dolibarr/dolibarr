@@ -185,6 +185,16 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 *	Return last error label
+	 *
+	 *	@return	    string	lasterror
+	 */
+	function lasterror()
+	{
+		return $this->lasterror;
+	}
+
+	/**
 	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
 	 * 	19700101020000 -> 3600 with TZ+1 and gmt=0
 	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1

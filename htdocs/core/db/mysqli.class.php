@@ -465,16 +465,6 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     *	Renvoie le libelle derniere erreur
-     *
-     *	@return	    string	lasterror
-     */
-    function lasterror()
-    {
-        return $this->lasterror;
-    }
-
-    /**
      *	Return generic error code of last operation.
      *
      *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
