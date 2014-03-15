@@ -210,5 +210,15 @@ abstract class DoliDB implements Database
 		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
 		return $date;
 	}
+
+	/**
+	 *	Return last query in error
+	 *
+	 *	@return	    string	lastqueryerror
+	 */
+	function lastqueryerror()
+	{
+		return $this->lastqueryerror;
+	}
 }
 

@@ -509,16 +509,6 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
-	 *	Return last query in error
-	 *
-	 *	@return	    string	lastqueryerror
-	 */
-	function lastqueryerror()
-	{
-		return $this->lastqueryerror;
-	}
-
-	/**
      *	Return generic error code of last operation.
      *
      *	@return	string		Error code (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)

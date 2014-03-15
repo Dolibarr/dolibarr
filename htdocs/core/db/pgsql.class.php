@@ -724,16 +724,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 * Renvoie la derniere requete en erreur
-	 *
-	 * @return	    string	lastqueryerror
-	 */
-	function lastqueryerror()
-	{
-		return $this->lastqueryerror;
-	}
-
-	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
 	 * @return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)

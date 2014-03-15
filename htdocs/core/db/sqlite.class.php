@@ -588,16 +588,6 @@ class DoliDBSqlite extends DoliDB
         return $this->db->quote($stringtoencode);
     }
 
-	/**
-	 *	Return last query in error
-	 *
-	 *	@return	    string	lastqueryerror
-	 */
-    function lastqueryerror()
-    {
-        return $this->lastqueryerror;
-    }
-
     /**
      *	Renvoie le code erreur generique de l'operation precedente.
      *
