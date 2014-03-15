@@ -105,7 +105,7 @@ class modResource extends DolibarrModules
 
 		// Config pages. Put here list of php pages
 		// stored into resource/admin directory, used to setup module.
-		$this->config_page_url = array("admin_resource.php@resource");
+		//$this->config_page_url = array("admin_resource.php@resource");
 
 		// Dependencies
 		// List of modules id that must be enabled if this module is enabled
