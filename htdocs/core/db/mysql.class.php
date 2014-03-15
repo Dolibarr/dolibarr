@@ -518,19 +518,6 @@ class DoliDBMysql extends DoliDB
 		return addslashes($stringtoencode);
 	}
 
-
-	/**
-	 *  Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
-	 *  Function to use to build INSERT, UPDATE or WHERE predica
-	 *
-	 *  @param	    string	$param      Date TMS to convert
-	 *  @return	string      		Date in a string YYYYMMDDHHMMSS
-	 */
-	function idate($param)
-	{
-		return dol_print_date($param,"%Y%m%d%H%M%S");
-	}
-
 	/**
 	 *	Return last request executed with query()
 	 *
