@@ -75,7 +75,7 @@ print $script_file." launched with mode ".$mode." default lang=".$langs->default
 
 if ($mode != 'confirm') $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
-$sql  = "SELECT DISTINCT c.ref, c.fk_soc, cd.date_fin_validite, cd.total_ttc, cd.description as description, p.label as plabel, s.nom as name, s.email, s.default_lang,";
+$sql  = "SELECT DISTINCT c.ref, c.fk_soc, cd.date_fin_validite, cd.total_ttc, cd.description as description, p.label as plabel, s.rowid, s.nom as name, s.email, s.default_lang,";
 $sql.= " u.rowid as uid, u.lastname, u.firstname, u.email, u.lang";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."contrat AS c, ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product, ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ".MAIN_DB_PREFIX."user AS u";
