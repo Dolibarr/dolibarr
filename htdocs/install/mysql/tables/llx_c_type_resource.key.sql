@@ -1,6 +1,6 @@
--- ============================================================================
--- Copyright (C) 2014 Jean-François Ferry <jfefe@aternatik.fr>
--- 
+-- ========================================================================
+-- Copyright (C) 2014     Laurent Destailleur  <eldy@users.sourceforge.net>
+--
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 3 of the License, or
@@ -14,13 +14,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ============================================================================
+-- ========================================================================
 
 
-ALTER TABLE llx_element_resources ADD UNIQUE INDEX idx_element_resources_idx1 (resource_id, resource_type, element_id, element_type);
+ALTER TABLE llx_c_type_contact ADD UNIQUE INDEX uk_c_type_contact_id (element, source, code);
 
-	
-ALTER TABLE llx_element_resources ADD INDEX idx_element_element_element_id (element_id);
-
--- Pas de contraite sur resource_id et element_id car pointe sur differentes tables
-	

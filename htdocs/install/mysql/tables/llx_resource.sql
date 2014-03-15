@@ -1,4 +1,4 @@
--- Module to manage reources into Dolibarr ERP/CRM
+-- Module to manage resources into Dolibarr ERP/CRM
 -- Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
 --
 -- This program is free software: you can redistribute it and/or modify
@@ -16,13 +16,12 @@
 
 CREATE TABLE llx_resource
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer,
-  ref             varchar(255),
-  description     text,
-  lat             float(10,6),
-  lng             float(10,6),
-  note_public     text,
-  note_private    text,
-  tms         timestamp
+  rowid           		integer AUTO_INCREMENT PRIMARY KEY,
+  entity          		integer,
+  ref             		varchar(255),
+  description     		text,
+  fk_code_type_resource varchar(32),
+  note_public     		text,
+  note_private    		text,
+  tms         			timestamp
 )ENGINE=innodb;

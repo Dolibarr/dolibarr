@@ -1,4 +1,4 @@
--- Module to manage locations, buildings, floors and rooms into Dolibarr ERP/CRM
+-- Module to manage resources into Dolibarr ERP/CRM
 -- Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
 --
 -- This program is free software: you can redistribute it and/or modify
