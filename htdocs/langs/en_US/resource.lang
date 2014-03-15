@@ -4,7 +4,6 @@ MenuResourcePlanning=Resource planning
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 
-NoResourceInDatabase=Aucune resource en base de données.
 NoResourceLinked=No resource linked
 
 ResourcePageIndex=Resources list
@@ -15,3 +14,13 @@ RessourceLineSuccessfullyDeleted=Resource successfully deleted
 
 ShowResourcePlanning=Show resource planning
 NoResourceInDatabase=No resource in database
+
+AddResource=Add a resource
+ResourceFormLabel_ref=Ref / title
+ResourceFormLabel_description=Description
+
+ResourceCreatedWithSuccess=Resource successfully created
+RessourceLineSuccessfullyDeleted=Resource line successfully deleted
+RessourceLineSuccessfullyUpdated=Resource line successfully updated
+
+MenuResourceAdd=Nouvelle ressource
