@@ -31,6 +31,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
 /**
@@ -1233,9 +1234,12 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$entrepot	Id of warehouse to add product
      * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment	Comment for stock movement
+	 * @param	date		$eatby		eat-by date
+	 * @param	date		$sellby		sell-by date
+	 * @param	string		$batch		Lot number
      * @return 	int						<0 if KO, >0 if OK
      */
-    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='')
+    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
     {
         global $conf;
         $error = 0;
@@ -1288,7 +1292,7 @@ class CommandeFournisseur extends CommonOrder
                 if ($product > 0)
                 {
                 	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
-                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
+                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;
