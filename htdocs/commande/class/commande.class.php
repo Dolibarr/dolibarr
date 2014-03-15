@@ -1110,7 +1110,7 @@ class Commande extends CommonOrder
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
 				
-				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product->stock_reel < $qty) {
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
 					return -3;
