@@ -16,8 +16,8 @@
  */
 
 /**
- *  \file      	place/class/resource.class.php
- *  \ingroup    place
+ *  \file      	resource/class/resource.class.php
+ *  \ingroup    resource
  *  \brief      Class file for resource object
 
  */
@@ -47,8 +47,6 @@ class Resource extends CommonObject
 	var $mandatory;
 	var $fk_user_create;
 	var $tms='';
-
-
 
 
     /**
@@ -374,84 +372,6 @@ class Resource extends CommonObject
 		}
     }
 
-
-    /**
-     *
-     *
-     * @param string $element_type Element type project_task
-     * @return array
-     */
-    function getElementProperties($element_type)
-    {
-    	// Parse element/subelement (ex: project_task)
-    	$module = $element = $subelement = $element_type;
-
-    	// If we ask an resource form external module (instead of default path)
-    	if (preg_match('/^([^@]+)@([^@]+)$/i',$element_type,$regs))
-    	{
-    		$element = $subelement = $regs[1];
-    		$module 	= $regs[2];
-    	}
-
-    	//print '<br />1. element : '.$element.' - module : '.$module .'<br />';
-
-    	if ( preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
-    	{
-    		$module = $element = $regs[1];
-    		$subelement = $regs[2];
-    	}
-
-    	$classfile = strtolower($subelement);
-    	$classname = ucfirst($subelement);
-    	$classpath = $module.'/class';
-
-
-    	// For compat
-    	if($element_type == "action") {
-    		$classpath = 'comm/action/class';
-    		$subelement = 'Actioncomm';
-    		$classfile = strtolower($subelement);
-    		$classname = ucfirst($subelement);
-    		$module = 'agenda';
-    	}
-
-
-    	$element_properties = array(
-    		'module' => $module,
-    		'classpath' => $classpath,
-    		'element' => $element,
-    		'subelement' => $subelement,
-    		'classfile' => $classfile,
-    		'classname' => $classname
-    	   );
-    	return $element_properties;
-    }
-
-    /**
-     * Fetch an object with element_type and his id
-     * Inclusion classes is automatic
-     *
-     *
-     */
-    function fetchObjectByElement($element_id,$element_type) {
-
-		global $conf;
-
-		$element_prop = $this->getElementProperties($element_type);
-
-		if (is_array($element_prop) && $conf->$element_prop['module']->enabled)
-		{
-			dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
-
-			$objectstat = new $element_prop['classname']($this->db);
-			$ret = $objectstat->fetch($element_id);
-			if ($ret >= 0)
-			{
-				return $objectstat;
-			}
-		}
-		return 0;
-	}
 
     /**
      *	Add resources to the actioncom object
