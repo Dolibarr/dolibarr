@@ -20,6 +20,11 @@
  *       \brief      Place module actions
  */
 
+/**
+ * Actions class file for resources
+ * 
+ * \class ActionsResource
+ */
 class ActionsResource
 {
 
@@ -37,6 +42,14 @@ class ActionsResource
 		$this->db = $db;
 	}
 
+	/**
+	 * doActions 
+	 * 
+	 * @param array $parameters	parameters
+	 * @param object &$object	object
+	 * @param string &$action action
+	 * @return void
+	 */
 	function doActions($parameters, &$object, &$action) {
 
 		global $langs,$user;

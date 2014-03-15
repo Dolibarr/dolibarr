@@ -18,20 +18,17 @@
 /**
  *       \file       place/class/html.place.class.php
  *       \ingroup    core
- *       \brief      Fichier de la classe permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Class file to manage forms into resource module
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
 
 
 /**
+ * Classe permettant la gestion des formulaire du module resource
  *
- * Classe permettant la gestion des formulaire du module place
- *
- * @package resource
-
-* \remarks Utilisation: $formresource = new FormResource($db)
-* \remarks $formplace->proprietes=1 ou chaine ou tableau de valeurs
-*/
+ * \remarks Utilisation: $formresource = new FormResource($db)
+ * \remarks $formplace->proprietes=1 ou chaine ou tableau de valeurs
+ */
 class FormResource
 {
     var $db;
@@ -45,7 +42,7 @@ class FormResource
 	/**
 	* Constructor
 	*
-	* @param DoliDB $DB Database handler
+	* @param DoliDB $db Database handler
 	*/
     function __construct($db)
     {

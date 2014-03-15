@@ -62,7 +62,8 @@ class Resource extends CommonObject
 
     /**
      *    Load object in memory from database
-     *    @param      id          id object
+     *    
+     *    @param      int	$id          id object
      *    @return     int         <0 if KO, >0 if OK
      */
     function fetch($id)
@@ -154,7 +155,7 @@ class Resource extends CommonObject
    			}
    		}
    		$sql.= " GROUP BY t.rowid";
-   		$sql.= " ORDER BY $sortfield $sortorder " . $this->db->plimit( $limit + 1 ,$offset);
+   		$sql.= " ORDER BY $sortfield $sortorder " . $this->db->plimit($limit+1,$offset);
    		dol_syslog(get_class($this)."::fetch_all sql=".$sql, LOG_DEBUG);
 
    		$resql=$this->db->query($sql);
@@ -207,7 +208,7 @@ class Resource extends CommonObject
      *  @param	array		$filter    	  filter output
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch_all_used($sortorder="ASC",$sortfield="t.rowid",$limit, $offset, $filter='')
+    function fetch_all_used($sortorder="ASC", $sortfield="t.rowid", $limit=25, $offset=1, $filter='')
     {
     	global $conf;
     	$sql="SELECT ";
@@ -235,7 +236,7 @@ class Resource extends CommonObject
     		}
     	}
     	$sql.= " GROUP BY t.resource_id";
-    	$sql.= " ORDER BY $sortfield $sortorder " . $this->db->plimit( $limit + 1 ,$offset);
+    	$sql.= " ORDER BY " . $sortfield . "  " . $sortorder . " " . $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all sql=".$sql, LOG_DEBUG);
 
     	$resql=$this->db->query($sql);
@@ -276,9 +277,7 @@ class Resource extends CommonObject
 
     /**
      * Fetch all resources available, declared by modules
-     *
      * Load available resource in array $this->available_resources
-     *
      *
      * @return int 	number of available resources declared by modules
      */
