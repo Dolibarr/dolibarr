@@ -275,7 +275,7 @@ class modResource extends DolibarrModules
 			'titre'=> 'MenuResourceIndex',
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
-			'url'=> '/resource/index.php',
+			'url'=> '/resource/index.php',	
 			'langs'=> 'resource',
 			'position'=> 100,
 			'enabled'=> '1',
@@ -283,6 +283,21 @@ class modResource extends DolibarrModules
 			'user'=> 0
 		);
 		$r++;
+		
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
+			'type'=> 'left', // Toujours un menu gauche
+			'titre'=> 'MenuResourceAdd',
+			'mainmenu'=> 'tools',
+			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
+			'url'=> '/resource/add.php',
+			'langs'=> 'resource',
+			'position'=> 101,
+			'enabled'=> '1',
+			'perms'=> '$user->rights->resource->read',
+			'target'=> '',
+			'user'=> 0
+		);
 
 		// Exports
 		$r = 1;
