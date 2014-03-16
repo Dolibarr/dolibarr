@@ -805,9 +805,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$newmenu->add("/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuTaxAndDividends"), 0, $user->rights->tax->charges->lire, '', $mainmenu, 'tax');
 				// Salaries
-				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_sal&amp;mainmenu=accountancy",$langs->trans("Salaries"),1,$user->rights->tax->charges->lire, '', $mainmenu, 'tax_vat');
-				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/fiche.php?leftmenu=tax_sal&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
-				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_sal",$langs->trans("Payments"),2,$user->rights->tax->charges->lire);
+				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary&amp;mainmenu=accountancy",$langs->trans("Salaries"),1,$user->rights->tax->charges->lire, '', $mainmenu, 'tax_salary');
+				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/fiche.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
+				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->tax->charges->lire);
 				global $mysoc;
 				// Social contributions        
         if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
