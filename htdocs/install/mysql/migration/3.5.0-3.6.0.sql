@@ -1065,3 +1065,7 @@ CREATE TABLE llx_payment_salary (
 --New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin INT NOT NULL ;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR( 32 ) NOT NULL ;
+
+--NEw 1300 : Add THM on user
+ALTER TABLE llx_user ADD thm FLOAT NOT NULL ;
+ALTER TABLE llx_projet_task_time ADD thm FLOAT NOT NULL ;
