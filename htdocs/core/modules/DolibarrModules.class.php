@@ -114,7 +114,7 @@ abstract class DolibarrModules
                 $sql=str_replace('__ENTITY__', $conf->entity, $sql);
 
                 dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror." sql=".$sql, LOG_DEBUG);
-                $result=$this->db->query($sql);
+                $result=$this->db->query($sql, $ignoreerror);
                 if (! $result)
                 {
                     if (! $ignoreerror)
