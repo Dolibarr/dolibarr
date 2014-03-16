@@ -23,7 +23,6 @@ override_dh_install:
 	rm -f  build.xml
 	rm -f  quickbuild.xml
 	rm -f  pom.xml
-	rm -f  README.md
 
 	rm -f  htdocs/install/mssql/README
 	rm -f  htdocs/install/mysql/README
