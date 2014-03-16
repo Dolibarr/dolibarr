@@ -1039,7 +1039,7 @@ else
                     $idGroupValid = $cp->getConfCP('userGroup');
 
                     $validator = new UserGroup($db,$idGroupValid);
-                    $valideur = $validator->listUsersForGroup();
+                    $valideur = $validator->listUsersForGroup('',1);
 
                     print '<td>';
                     $form->select_users($cp->fk_validator,"valideur",1,"",0,$valideur,'');

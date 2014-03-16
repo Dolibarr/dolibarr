@@ -74,12 +74,15 @@ class AllTests
 		$suite->addTestSuite('JsonLibTest');
 		require_once dirname(__FILE__).'/ImagesLibTest.php';
 		$suite->addTestSuite('ImagesLibTest');
-		require_once dirname(__FILE__).'/FunctionsTest.php';
-		$suite->addTestSuite('FunctionsTest');
-		require_once dirname(__FILE__).'/Functions2Test.php';
-		$suite->addTestSuite('Functions2Test');
+		require_once dirname(__FILE__).'/FunctionsLibTest.php';
+		$suite->addTestSuite('FunctionsLibTest');
+		require_once dirname(__FILE__).'/Functions2LibTest.php';
+		$suite->addTestSuite('Functions2LibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
 		$suite->addTestSuite('XCalLibTest');
+
+		require_once dirname(__FILE__).'/LangTest.php';
+		$suite->addTestSuite('LangTest');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
@@ -165,6 +168,9 @@ class AllTests
 
         require_once dirname(__FILE__).'/ScriptsTest.php';
         $suite->addTestSuite('ScriptsTest');
+
+        require_once dirname(__FILE__).'/FormAdminTest.php';
+        $suite->addTestSuite('FormAdminTest');
 
         require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
         $suite->addTestSuite('ModulesTest');

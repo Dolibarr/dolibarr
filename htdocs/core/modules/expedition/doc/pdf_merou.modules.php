@@ -474,7 +474,7 @@ class pdf_merou extends ModelePdfExpedition
 		else
 		{
 			$text=$this->emetteur->name;
-			$pdf->MultiCell(100, 3, $outputlangs->convToOutputCharset($text), 0, 'L');
+			$pdf->MultiCell(70, 3, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
 
 		//*********************Entete****************************
