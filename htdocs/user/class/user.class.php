@@ -207,7 +207,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
-        $this->skype		= $obj->skype;
+				$this->skype		= $obj->skype;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -218,7 +218,7 @@ class User extends CommonObject
 				$this->lang			= $obj->lang;
 				$this->entity		= $obj->entity;
 				$this->accountancy_code		= $obj->accountancy_code;
-				$this->thm		= $obj->thm;
+				$this->thm			= $obj->thm;
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -1138,7 +1138,6 @@ class User extends CommonObject
 		$this->zip			= empty($this->zip)?'':$this->zip;
 		$this->town			= empty($this->town)?'':$this->town;
 		$this->accountancy_code = trim($this->accountancy_code);
-		$this->thm = price2num($this->thm);
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1169,7 +1168,7 @@ class User extends CommonObject
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
-		$sql.= ", thm = ".$this->thm;
+		$sql.= ", thm = ".(isset($this->thm)?$this->thm:"null");	// If not set, we use null
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
