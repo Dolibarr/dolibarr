@@ -1065,3 +1065,16 @@ CREATE TABLE llx_payment_salary (
 --New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin INT NOT NULL ;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR( 32 ) NOT NULL ;
+
+
+-- New : extrafield on categories
+create table llx_categories_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_categories_extrafields ADD INDEX idx_categories_extrafields (fk_object);
+

@@ -27,6 +27,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
 
 $langs->load("categories");
 
@@ -49,6 +51,7 @@ $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
 $result=$object->fetch($id);
+$object->fetch_optionals($id,$extralabels);
 if ($result <= 0)
 {
 	dol_print_error($db,$object->error);
@@ -57,6 +60,8 @@ if ($result <= 0)
 
 $type=$object->type;
 
+$extrafields = new ExtraFields($db);
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
  *	Actions
@@ -165,6 +170,12 @@ print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print nl2br($object->description);
 print '</td></tr>';
+
+$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+if (empty($reshook) && ! empty($extrafields->attribute_label))
+{
+	print $object->showOptionals($extrafields);
+}
 
 print '</table>';
 
