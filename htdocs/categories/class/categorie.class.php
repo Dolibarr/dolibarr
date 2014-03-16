@@ -402,6 +402,19 @@ class Categorie extends CommonObject
 			}
 			else
 			{
+				// Removed extrafields
+				if (! $error)
+				{
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->deleteExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+						}
+					}
+				}
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
