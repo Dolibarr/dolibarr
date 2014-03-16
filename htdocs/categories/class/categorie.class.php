@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 class Categorie
 {
 	public $element='category';
-	public $table_element='category';
+	public $table_element='categories';
 
 	var $id;
 	var $fk_parent;
