@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("categories");
 
@@ -50,7 +51,10 @@ if ($id == "")
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
+$object = new Categorie($db);
 
+$extrafields = new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
  * Actions
@@ -85,6 +89,8 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	}
 	if (empty($categorie->error))
 	{
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$categorie);
+		
 		if ($categorie->update($user) > 0)
 		{
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id.'&type='.$type);
@@ -115,7 +121,6 @@ print_fiche_titre($langs->trans("ModifCat"));
 dol_htmloutput_errors($mesg);
 
 
-$object = new Categorie($db);
 $object->fetch($id);
 
 $form = new Form($db);
@@ -152,6 +157,12 @@ print '</td></tr>';
 print '<tr><td>'.$langs->trans("In").'</td><td>';
 print $form->select_all_categories($type,$object->fk_parent,'parent',64,$object->id);
 print '</td></tr>';
+
+$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+if (empty($reshook) && ! empty($extrafields->attribute_label))
+{
+	print $object->showOptionals($extrafields,'edit');
+}
 
 print '</table>';
 print '<br>';

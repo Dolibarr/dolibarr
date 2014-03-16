@@ -27,9 +27,12 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("categories");
 
+$extrafields = new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -59,6 +62,7 @@ if ($origin)
 
 if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
 
+$object = new Categorie($db);
 
 /*
  *	Actions
@@ -112,7 +116,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		}
 	}
 
-	$object = new Categorie($db);
+	
 
 	$object->label			= $label;
 	$object->description	= dol_htmlcleanlastbr($description);
@@ -121,6 +125,8 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	$object->type			= $type;
 
 	if ($parent != "-1") $object->fk_parent = $parent;
+	
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 	if (! $object->label)
 	{
@@ -238,6 +244,12 @@ if ($user->rights->categorie->creer)
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $form->select_all_categories($type, $catorigin);
 		print '</td></tr>';
+		
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
+		{
+			print $object->showOptionals($extrafields,'edit');
+		}
 
 		print '</table>';
 
