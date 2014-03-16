@@ -28,6 +28,7 @@
  *	\brief      File of class to manage categories
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -36,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 /**
  *	Class to manage categories
  */
-class Categorie
+class Categorie extends CommonObject
 {
 	public $element='category';
 	public $table_element='categories';
