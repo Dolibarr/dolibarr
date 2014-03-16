@@ -31,42 +31,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMysqli extends DoliDB
 {
-    //! Database handler
-    var $db;
     //! Database type
     public $type='mysqli';
     //! Database label
     static $label='MySQL';
-    //! Charset used to force charset when creating database
-    var $forcecharset='utf8';	// latin1, utf8. Can't be static as it may be forced with a dynamic value
-    //! Collate used to force collate when creating database
-    var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci. Can't be static as it may be forced with a dynamic value
     //! Version min database
     static $versionmin=array(4,1,0);
-	//! Resultset of last request
+	//! Resultset of last query
 	private $_results;
-    //! 1 if connected, 0 else
-    var $connected;
-    //! 1 if database selected, 0 else
-    var $database_selected;
-    //! Database name selected
-    var $database_name;
-    //! Nom user base
-    var $database_user;
-	//! >=1 if a transaction is opened, 0 otherwise
-    var $transaction_opened;
-    //! Last executed request
-    var $lastquery;
-    //! Last failed executed request
-    var $lastqueryerror;
-    //! Message erreur mysql
-    var $lasterror;
-    //! Message erreur mysql
-    var $lasterrno;
-
-    var $ok;
-    var $error;
-
 
     /**
 	 *	Constructor.
@@ -233,16 +205,6 @@ class DoliDBMysqli extends DoliDB
         return $this->db;
     }
 
-	/**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-	 */
-	function getLabel()
-	{
-		return $this->label;
-	}
-
     /**
 	 *	Return version of database server
 	 *
@@ -251,16 +213,6 @@ class DoliDBMysqli extends DoliDB
     function getVersion()
     {
         return mysqli_get_server_info($this->db);
-    }
-
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-    function getVersionArray()
-    {
-        return explode('.',$this->getVersion());
     }
 
     /**
@@ -289,33 +241,6 @@ class DoliDBMysqli extends DoliDB
             return mysqli_close($this->db);
         }
         return false;
-    }
-
-
-    /**
-	 * Start transaction
-	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
-     */
-    function begin()
-    {
-        if (! $this->transaction_opened)
-        {
-            $ret=$this->query("BEGIN");
-            if ($ret)
-            {
-                $this->transaction_opened++;
-                dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
-            }
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened++;
-			dol_syslog('',0,1);
-            return 1;
-        }
     }
 
     /**
@@ -527,89 +452,6 @@ class DoliDBMysqli extends DoliDB
     function escape($stringtoencode)
     {
         return addslashes($stringtoencode);
-    }
-
-    /**
-	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
-     *   Function to use to build INSERT, UPDATE or WHERE predica
-     *
-     *   @param	    string	$param      Date TMS to convert
-     *   @return	string      		Date in a string YYYYMMDDHHMMSS
-     */
-    function idate($param)
-    {
-        return dol_print_date($param,"%Y%m%d%H%M%S");
-    }
-
-    /**
-     *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
-     * 	19700101020000 -> 3600 with TZ+1 and gmt=0
-     * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
-     *
-     * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
-     *	@return	date				Date TMS
-     */
-    function jdate($string, $gm=false)
-    {
-        $string=preg_replace('/([^0-9])/i','',$string);
-        $tmp=$string.'000000';
-        $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
-        return $date;
-    }
-
-    /**
-     *  Format a SQL IF
-     *
-	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *	@param	string	$resok          resultat si test egal
-	 *	@param	string	$resko          resultat si test non egal
-     *	@return	string          		SQL string
-     */
-    function ifsql($test,$resok,$resko)
-    {
-        return 'IF('.$test.','.$resok.','.$resko.')';
-    }
-
-
-    /**
-	 *	Return last request executed with query()
-	 *
-	 *	@return	string					Last query
-     */
-    function lastquery()
-    {
-        return $this->lastquery;
-    }
-
-    /**
-     *	Renvoie la derniere requete en erreur
-     *
-     *	@return	    string	lastqueryerror
-     */
-    function lastqueryerror()
-    {
-        return $this->lastqueryerror;
-    }
-
-    /**
-     *	Renvoie le libelle derniere erreur
-     *
-     *	@return	    string	lasterror
-     */
-    function lasterror()
-    {
-        return $this->lasterror;
-    }
-
-    /**
-     *	Renvoie le code derniere erreur
-     *
-     *	@return	    string	lasterrno
-     */
-    function lasterrno()
-    {
-        return $this->lasterrno;
     }
 
     /**

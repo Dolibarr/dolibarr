@@ -643,8 +643,50 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 
 			$id = $object->create($user);
 
+			if(GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0) {
+			    
+                $facture_source = new Facture($db); // fetch origin object
+                if($facture_source->fetch($object->fk_facture_source)>0) {
+                
+                    foreach($facture_source->lines as $line) {
+                      
+                        $line->fk_facture = $object->id;  
+                        
+                        $line->subprice =-$line->subprice; // invert price for object
+                        $line->pa_ht = -$line->pa_ht;
+                        $line->total_ht=-$line->total_ht;
+                        $line->total_tva=-$line->total_tva;
+                        $line->total_ttc=-$line->total_ttc;
+                        $line->total_localtax1=-$line->total_localtax1;
+                        $line->total_localtax2=-$line->total_localtax2;
+                        
+                        $line->insert();
+                        
+                        $object->lines[] = $line; // insert new line in current object
+                    }
+                 
+                    $object->update_price(1);   
+                }
+                 
+			}
+            
+            if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0) {
+                    
+                $facture_source = new Facture($db); // fetch origin object if not previously defined
+                if($facture_source->fetch($object->fk_facture_source)>0) {
+                    $totalpaye = $facture_source->getSommePaiement();
+                    $totalcreditnotes = $facture_source->getSumCreditNotesUsed();
+                    $totaldeposits = $facture_source->getSumDepositsUsed();
+                    $remain_to_pay = abs($facture_source->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits);
+                    
+                    $object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');      
+                }
+            }
+            
 			// Add predefined lines
-			for($i = 1; $i <= $NBLINES; $i ++) {
+			/*
+             TODO delete 
+             for($i = 1; $i <= $NBLINES; $i ++) {
 				if ($_POST ['idprod' . $i]) {
 					$product = new Product($db);
 					$product->fetch($_POST ['idprod' . $i]);
@@ -652,7 +694,7 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 					$endday = dol_mktime(12, 0, 0, $_POST ['date_end' . $i . 'month'], $_POST ['date_end' . $i . 'day'], $_POST ['date_end' . $i . 'year']);
 					$result = $object->addline($product->description, $product->price, $_POST ['qty' . $i], $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, $_POST ['idprod' . $i], $_POST ['remise_percent' . $i], $startday, $endday, 0, 0, '', $product->price_base_type, $product->price_ttc, $product->type);
 				}
-			}
+			}*/
 		}
 	}
 
@@ -2000,12 +2042,12 @@ if ($action == 'create')
 	if (empty($origin) && $socid > 0)
 	{
 		// Credit note
-		print '<tr height="18"><td valign="middle">';
+		print '<tr height="18"><td valign="top">';
 		print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked=true' : '');
 		if (! $optionsav)
 			print ' disabled="disabled"';
 		print '>';
-		print '</td><td valign="middle">';
+		print '</td><td valign="top">';
 		print '<script type="text/javascript" language="javascript">
 		jQuery(document).ready(function() {
 			jQuery("#fac_avoir").click(function() {
@@ -2028,6 +2070,10 @@ if ($action == 'create')
 		$text .= '</select>';
 		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
 		print $desc;
+        
+        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+        print '<br />&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+        
 		print '</td></tr>' . "\n";
 	}
 

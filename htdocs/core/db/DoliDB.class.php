@@ -35,9 +35,9 @@ abstract class DoliDB implements Database
     //! Database label
     static $label;
     //! Charset used to force charset when creating database
-    public $forcecharset;
+    public $forcecharset='utf8';
     //! Collate used to force collate when creating database
-    public $forcecollate;
+    public $forcecollate='utf8_general_ci';
     //! Min database version
     static $versionmin;
     //! Resultset of last query
@@ -64,7 +64,96 @@ abstract class DoliDB implements Database
     public $ok;
     public $error;
 
+	/**
+	 *	Format a SQL IF
+	 *
+	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
+	 *	@param	string	$resok          resultat si test egal
+	 *	@param	string	$resko          resultat si test non egal
+	 *	@return	string          		SQL string
+	 */
+	function ifsql($test,$resok,$resko)
+	{
+		return 'IF('.$test.','.$resok.','.$resko.')';
+	}
 
+	/**
+	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
+	 *   Function to use to build INSERT, UPDATE or WHERE predica
+	 *
+	 *   @param	    string	$param      Date TMS to convert
+	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 */
+	function idate($param)
+	{
+		return dol_print_date($param,"%Y%m%d%H%M%S");
+	}
+
+	/**
+	 *	Return last error code
+	 *
+	 *	@return	    string	lasterrno
+	 */
+	function lasterrno()
+	{
+		return $this->lasterrno;
+	}
+
+	/**
+	 * Start transaction
+	 *
+	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
+	 */
+	function begin()
+	{
+		if (! $this->transaction_opened)
+		{
+			$ret=$this->query("BEGIN");
+			if ($ret)
+			{
+				$this->transaction_opened++;
+				dol_syslog("BEGIN Transaction",LOG_DEBUG);
+				dol_syslog('',0,1);
+			}
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened++;
+			dol_syslog('',0,1);
+			return 1;
+		}
+	}
+
+	/**
+	 *	Return version of database server into an array
+	 *
+	 *	@return	        array  		Version array
+	 */
+	function getVersionArray()
+	{
+		return explode('.',$this->getVersion());
+	}
+
+	/**
+	 * Return label of manager
+	 *
+	 * @return			string      Label
+	 */
+	function getLabel()
+	{
+		return $this->label;
+	}
+
+	/**
+	 *	Return last request executed with query()
+	 *
+	 *	@return	string					Last query
+	 */
+	function lastquery()
+	{
+		return $this->lastquery;
+	}
 
 	/**
 	 * Define sort criteria of request
@@ -93,6 +182,43 @@ abstract class DoliDB implements Database
 		{
 			return '';
 		}
+	}
+
+	/**
+	 *	Return last error label
+	 *
+	 *	@return	    string	lasterror
+	 */
+	function lasterror()
+	{
+		return $this->lasterror;
+	}
+
+	/**
+	 *	Convert (by PHP) a PHP server TZ string date into a Timestamps date (GMT if gm=true)
+	 * 	19700101020000 -> 3600 with TZ+1 and gmt=0
+	 * 	19700101020000 -> 7200 whaterver is TZ if gmt=1
+	 *
+	 * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
+	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
+	 *	@return	date				Date TMS
+	 */
+	function jdate($string, $gm=false)
+	{
+		$string=preg_replace('/([^0-9])/i','',$string);
+		$tmp=$string.'000000';
+		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4),$gm);
+		return $date;
+	}
+
+	/**
+	 *	Return last query in error
+	 *
+	 *	@return	    string	lastqueryerror
+	 */
+	function lastqueryerror()
+	{
+		return $this->lastqueryerror;
 	}
 }
 

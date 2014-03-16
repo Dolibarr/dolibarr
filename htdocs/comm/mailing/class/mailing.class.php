@@ -102,7 +102,7 @@ class Mailing extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
 		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES (".$this->db->idate($now).", ".$user->id.", ".$conf->entity.")";
+		$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", ".$conf->entity.")";
 
 		if (! $this->titre)
 		{
@@ -334,7 +334,7 @@ class Mailing extends CommonObject
 		$now=dol_now();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-		$sql .= " SET statut = 1, date_valid = ".$this->db->idate($now).", fk_user_valid=".$user->id;
+		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog("Mailing::valid sql=".$sql, LOG_DEBUG);

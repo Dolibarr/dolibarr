@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014      Cï¿½dric Gross         <c.gross@kreiz-it.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -349,7 +349,7 @@ if ($id > 0 || ! empty($ref))
 							print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
 
 							if ( !(empty($conf->productbatch->enabled)) && $objp->tobatch==1) {
-								print '<td colspan="2" align="center">'.img_picto_common($langs->trans('add_dispatch_batch'),'treemenu/plustop2.gif','onClick="AddLineBatch('.$i.')"').'</td>';
+								print '<td colspan="2" align="center">'.img_picto_common($langs->trans('AddDispatchBatchLine'),'treemenu/plustop2.gif','onClick="AddLineBatch('.$i.')"').'</td>';
 								print '</tr>';
 								print '<tr '.$bc[$var].' name="dluo'.$suffix.'"><td width="5%">';
 								print '<input name="product'.$suffix.'" type="hidden" value="'.$objp->fk_product.'">';

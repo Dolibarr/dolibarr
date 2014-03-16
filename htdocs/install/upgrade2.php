@@ -2569,7 +2569,7 @@ function migrate_project_user_resp($db,$langs,$conf)
                     $sql2.= ", fk_c_type_contact";
                     $sql2.= ", fk_socpeople";
                     $sql2.= ") VALUES (";
-                    $sql2.= $db->idate(dol_now());
+                    $sql2.= "'".$db->idate(dol_now())."'";
                     $sql2.= ", '4'";
                     $sql2.= ", ".$obj->rowid;
                     $sql2.= ", '160'";
@@ -2664,7 +2664,7 @@ function migrate_project_task_actors($db,$langs,$conf)
                     $sql2.= ", fk_c_type_contact";
                     $sql2.= ", fk_socpeople";
                     $sql2.= ") VALUES (";
-                    $sql2.= $db->idate(dol_now());
+                    $sql2.= "'".$db->idate(dol_now())."'";
                     $sql2.= ", '4'";
                     $sql2.= ", ".$obj->fk_projet_task;
                     $sql2.= ", '180'";

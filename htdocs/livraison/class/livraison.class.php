@@ -121,7 +121,7 @@ class Livraison extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".$this->socid;
 		$sql.= ", '".$this->db->escape($this->ref_customer)."'";
-		$sql.= ", ".$this->db->idate($now);
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_delivery?"'".$this->db->idate($this->date_delivery)."'":"null");
 		$sql.= ", ".($this->fk_delivery_address > 0 ? $this->fk_delivery_address : "null");
@@ -392,7 +392,7 @@ class Livraison extends CommonObject
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison SET";
 					$sql.= " ref='".$this->db->escape($numref)."'";
 					$sql.= ", fk_statut = 1";
-					$sql.= ", date_valid = ".$this->db->idate($now);
+					$sql.= ", date_valid = '".$this->db->idate($now)."'";
 					$sql.= ", fk_user_valid = ".$user->id;
 					$sql.= " WHERE rowid = ".$this->id;
 					$sql.= " AND fk_statut = 0";

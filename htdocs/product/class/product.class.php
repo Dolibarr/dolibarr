@@ -302,9 +302,9 @@ class Product extends CommonObject
 		$this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-        if ($this->barcode == -1)  $this->get_barcode($this,$this->barcode_type_code);
+		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
-        // Check more parameters
+		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
 
@@ -582,7 +582,7 @@ class Product extends CommonObject
         if ($result >= 0)
         {
 	        // For automatic creation
-	        if ($this->barcode == -1) $this->get_barcode($this,$this->barcode_type_code);
+	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
@@ -3259,16 +3259,18 @@ class Product extends CommonObject
 	}
 
     /**
-     *  Attribut un code barre a partir du module de controle des codes.
+     *  Get a barcode from the module to generate barcode values.
      *  Return value is stored into this->barcode
      *
      *	@param	Product		$object		Object product or service
-     *	@param	int			$type		Barcode type (ean, isbn, ...)
+     *	@param	string		$type		Barcode type (ean, isbn, ...)
      *  @return void
      */
     function get_barcode($object,$type='')
     {
         global $conf;
+        
+        $result='';
         if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
         {
             $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
@@ -3280,10 +3282,11 @@ class Product extends CommonObject
             $var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
             $mod = new $var;
 
-            $this->barcode = $mod->getNextValue($object,$type);
+            $result=$mod->getNextValue($object,$type);
 
-            dol_syslog(get_class($this)."::get_barcode barcode=".$this->barcode." module=".$var);
+            dol_syslog(get_class($this)."::get_barcode barcode=".$result." module=".$var);
         }
+        return $result;
     }
 
     /**

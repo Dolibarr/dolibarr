@@ -767,8 +767,8 @@ class Task extends CommonObject
         dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql) )
         {
-            $task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
-            $ret = $task_id;
+            $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
+            $ret = $tasktme_id;
 
             if (! $notrigger)
             {
@@ -792,6 +792,21 @@ class Task extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
             $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
             $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
+            if (! $this->db->query($sql) )
+            {
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
+                $ret = -2;
+            }
+        }
+		
+		if ($ret >= 0)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+            $sql.= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";
+            $sql.= " WHERE rowid = ".$tasktime_id;
 
             dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
             if (! $this->db->query($sql) )

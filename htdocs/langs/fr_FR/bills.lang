@@ -28,6 +28,7 @@ InvoiceReplacementDesc=La <b>facture de remplacement</b> sert à annuler et remp
 InvoiceAvoir=Facture avoir
 InvoiceAvoirAsk=Facture avoir pour correction de la facture
 InvoiceAvoirDesc=La <b>facture d'avoir</b> est une facture négative destinée à compenser un montant de facture qui diffère du montant réellement versé (suite à un trop versé par le client par erreur ou un manque non versé par le client suite à un retour produit par exemple).
+invoiceAvoirWithLines=Créer la facture d'avoir avec les lignes de la facture d'origine
 ReplaceInvoice=Remplace la facture %s
 ReplacementInvoice=Remplacement facture
 ReplacedByInvoice=Remplacée par la facture %s

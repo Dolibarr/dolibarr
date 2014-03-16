@@ -223,6 +223,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$numlines=count($lines);
 
 	$total=0;
+	$total_planned=0;
 
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
@@ -391,6 +392,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
 				$level--;
 				$total += $lines[$i]->duration;
+				$total_planned += $lines[$i]->planned_workload;
+				// TODO fix totals in recursive calls
 			}
 		}
 		else
@@ -407,10 +410,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		print '<td></td>';
+		print '<td align="center" class="nowrap liste_total">'.convertSecondToTime($total_planned, 'allhourmin').'</td>';
 		print '<td></td>';
 		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total, 'allhourmin').'</td>';
-		print '<td></td>';
+		print '<td align="right" class="nowrap liste_total">';
+		if($total_planned) print round(100 * $total / $total_planned,2).' %';
+		print '</td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
 	}

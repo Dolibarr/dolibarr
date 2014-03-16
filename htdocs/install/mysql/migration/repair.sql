@@ -100,4 +100,5 @@ update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 
 
+-- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 

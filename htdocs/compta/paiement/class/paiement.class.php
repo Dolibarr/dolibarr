@@ -578,7 +578,7 @@ class Paiement extends CommonObject
         if (!empty($date) && $this->statut!=1)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET datep = ".$this->db->idate($date);
+            $sql.= " SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id;
 
             dol_syslog(get_class($this)."::update_date sql=".$sql);

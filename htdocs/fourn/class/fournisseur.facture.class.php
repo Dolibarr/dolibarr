@@ -906,6 +906,7 @@ class FactureFournisseur extends CommonInvoice
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
                         // We increase stock for product
                         $up_ht_disc=$this->lines[$i]->pu_ht;
                         if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');

@@ -1329,6 +1329,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr",$this->ref));
 						else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
@@ -1794,6 +1795,7 @@ class Facture extends CommonInvoice
 						if ($this->lines[$i]->fk_product > 0)
 						{
 							$mouvP = new MouvementStock($this->db);
+							$mouvP->origin = &$this;
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
@@ -1916,6 +1918,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
 						else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
@@ -2000,7 +2003,7 @@ class Facture extends CommonInvoice
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type= self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
 	{
-		global $mysoc;
+		global $mysoc, $conf, $langs;
 
 		$facid=$this->id;
 
@@ -2067,11 +2070,17 @@ class Facture extends CommonInvoice
 			}
 
 			$product_type=$type;
-			if ($fk_product)
+			if (!empty($fk_product))
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
+				
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE && $product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
 			}
 
 			// Insert line

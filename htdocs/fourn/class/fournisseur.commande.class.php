@@ -636,6 +636,7 @@ class CommandeFournisseur extends CommonOrder
                         if ($this->lines[$i]->fk_product > 0)
                         {
                             $mouvP = new MouvementStock($this->db);
+                            $mouvP->origin = &$this;
                             // We decrement stock of product (and sub-products)
 	                        $up_ht_disc=$this->lines[$i]->subprice;
     	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
@@ -877,7 +878,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
-		//$sql.= ", ".$this->db->idate($now);
+		//$sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", " . $this->source;
@@ -1292,7 +1293,8 @@ class CommandeFournisseur extends CommonOrder
                 if ($product > 0)
                 {
                 	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
-                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
+                	$mouv->origin = &$this;
+					$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;

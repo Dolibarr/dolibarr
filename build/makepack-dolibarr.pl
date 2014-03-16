@@ -350,16 +350,14 @@ if ($nboftargetok) {
 	    	print "Copy $SOURCE into $BUILDROOT/$PROJECT\n";
 	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/$PROJECT"`;
 
-	    	print "Copy $SOURCE/build/debian/apache/.htaccess into $BUILDROOT/$PROJECT/build/debian/apache/.htaccess\n";
-	    	$ret=`cp -pr "$SOURCE/build/debian/apache/.htaccess" "$BUILDROOT/$PROJECT/build/debian/apache/.htaccess"`;
+	    	#print "Copy $SOURCE/build/debian/apache/.htaccess into $BUILDROOT/$PROJECT/build/debian/apache/.htaccess\n";
+	    	#$ret=`cp -pr "$SOURCE/build/debian/apache/.htaccess" "$BUILDROOT/$PROJECT/build/debian/apache/.htaccess"`;
 	    }
 	    print "Clean $BUILDROOT\n";
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git`;
-	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitmodules`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
@@ -367,7 +365,7 @@ if ($nboftargetok) {
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/quickbuild.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/README.md`;
+        $ret=`mv  $BUILDROOT/$PROJECT/README.md $BUILDROOT/$PROJECT/README`;
         
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/Doli*-*`;

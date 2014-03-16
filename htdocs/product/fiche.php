@@ -94,6 +94,9 @@ $hookmanager->initHooks(array('productcard'));
  * Actions
  */
 
+$createbarcode=empty($conf->barcode->enabled)?0:1;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) $createbarcode=0;
+
 $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -109,15 +112,15 @@ if (empty($reshook))
     }
 
     // Barcode type
-    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
+    if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
-    	$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
+        $result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
     // Barcode value
-    if ($action ==	'setbarcode' && $user->rights->barcode->creer)
+    if ($action ==	'setbarcode' && $createbarcode)
     {
     	$result=$object->check_barcode(GETPOST('barcode'));
 
@@ -354,7 +357,8 @@ if (empty($reshook))
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
-
+                $object->barcode = -1;
+                
                 if ($object->check())
                 {
                     $id = $object->create($user);
@@ -401,8 +405,16 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
-                            setEventMessage($langs->trans($object->error), 'errors');
-                            dol_print_error($db,$object->error);
+                            if (count($object->errors)) 
+                            {
+                            	setEventMessage($object->errors, 'errors');
+                            	dol_print_error($db,$object->errors);
+                            }
+                            else 
+                            {
+                            	setEventMessage($langs->trans($object->error), 'errors');
+                            	dol_print_error($db,$object->error);
+                            }
                         }
                     }
                 }
@@ -780,8 +792,8 @@ else
 			print '</td></tr>';
 		}
 
-
-        $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+        $showbarcode=empty($conf->barcode->enabled)?0:1;
+        if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
         if ($showbarcode)
         {
@@ -1038,7 +1050,8 @@ else
 			}
 
             // Barcode
-            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
 	        if ($showbarcode)
 	        {
@@ -1207,7 +1220,8 @@ else
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
-            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
             // En mode visu
             print '<table class="border" width="100%"><tr>';
