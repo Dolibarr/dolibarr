@@ -1,0 +1,45 @@
+-------- ChangeLog Theme Oblyon --------
+
+Version 1.3.1
+ - Fix: icons display problem (leftmenu)
+ 
+Version 1.3
+ - Extra: Added Cashdesk icons (oblyon/img/cashdesk)
+ - Add sort-asc and sort-desc icons
+ - Add Skype icon
+ - Compatiblility with DoliDroid for Dolibarr v3.5 and v3.4.x (thank's to Eldy)
+ - Correct size icons (left menu)
+ - Add reports module icon
+
+Version 1.2
+ - Stylized Cashdesk module interface 
+ - Removed Message of the day style (troubles in other pages)
+ - Fixed Background color for vertical menu when menus managers are different
+ - Stylized notification area
+ - Minor styling fixes
+ - Finalized thumb logo Oblyon
+ - Extra: Added weather icons (oblyon/img/weather)
+
+Version 1.1
+ - Message of the day stylized 
+ - Removed navigation bar in "print" mode. Fix margins.
+ - Simplification of the help area. helpdoc.png changed
+ - Added grip_title.png and close_title.png icons (v3.5)
+ - Stylized statistics box (v3.5)
+ - Stylized graphs (colors can be easily changed in graph-color.php)
+ - Changed fonts (mostly Open Sans)
+ - Added variables in style.css.php to change fonts
+ - Added Scanner, BitTorrent, Cron and "Comptabilite Expert" icons
+   	Icons coming from external modules are now visible 
+ - Generic icon modified (only one now)
+ - Added ChangeLog
+
+ - Visual Corrections
+ - Minor bugs fixes
+
+Version 1.0.1
+ - Fixed warning PHP message 
+ - Logo Oblyon modified
+
+Version 1.0
+ - Initial release
