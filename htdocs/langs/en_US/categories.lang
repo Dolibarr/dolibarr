@@ -105,3 +105,5 @@ CatProdLinks=Products
 CatCusLinks=Customer/Prospects
 CatSupLinks=Suppliers
 DeleteFromCat=Remove from category
+DeletePicture=Picture delete
+ConfirmDeletePicture=Confirm picture deletion?
