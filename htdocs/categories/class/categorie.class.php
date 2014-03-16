@@ -103,6 +103,8 @@ class Categorie extends CommonObject
 				$this->visible		= $res['visible'];
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
+				
+				$this->fetch_optionals($this->id,$extralabels);
 
 				$this->db->free($resql);
 
@@ -131,7 +133,7 @@ class Categorie extends CommonObject
 	 */
 	function create($user='')
 	{
-		global $conf,$langs;
+		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
 
 		$error=0;
@@ -189,6 +191,24 @@ class Categorie extends CommonObject
 			if ($id > 0)
 			{
 				$this->id = $id;
+				
+				// Actions on extra fields (by external module or standard code)
+				// FIXME le hook fait double emploi avec le trigger !!
+				$hookmanager->initHooks(array('HookModuleNamedao'));
+				$parameters=array('socid'=>$this->id);
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook))
+				{
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->insertExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+						}
+					}
+				}
+				else if ($reshook < 0) $error++;
 
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -225,7 +245,7 @@ class Categorie extends CommonObject
 	 */
 	function update($user='')
 	{
-		global $conf, $langs;
+		global $conf, $langs,$hookmanager;
 
 		$error=0;
 
@@ -258,8 +278,28 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::update sql=".$sql);
 		if ($this->db->query($sql))
 		{
+			
+			// Actions on extra fields (by external module or standard code)
+			// FIXME le hook fait double emploi avec le trigger !!
+			$hookmanager->initHooks(array('HookCategorydao'));
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
+			
 			$this->db->commit();
 
+			
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
