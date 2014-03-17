@@ -294,7 +294,7 @@ class Product extends CommonObject
 		$this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-        if ($this->barcode == -1)  $this->get_barcode($this,$this->barcode_type_code);
+		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 		$sql = "SELECT count(*) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -467,7 +467,7 @@ class Product extends CommonObject
         $this->barcode=trim($this->barcode);
 
         // For automatic creation
-        if ($this->barcode == -1) $this->get_barcode($this,$this->barcode_type_code);
+	    if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
@@ -3079,6 +3079,8 @@ class Product extends CommonObject
     function get_barcode($object,$type='')
     {
         global $conf;
+        
+        $result='';
         if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
         {
             $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
@@ -3090,10 +3092,12 @@ class Product extends CommonObject
             $var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
             $mod = new $var;
 
-            $this->barcode = $mod->getNextValue($object,$type);
+            $result=$mod->getNextValue($object,$type);
+            $this->barcode = $result;
 
-            dol_syslog(get_class($this)."::get_barcode barcode=".$this->barcode." module=".$var);
+            dol_syslog(get_class($this)."::get_barcode barcode=".$result." module=".$var);
         }
+        return $result;
     }
 
     /**
