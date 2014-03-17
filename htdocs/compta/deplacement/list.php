@@ -96,7 +96,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.lastname","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.amount","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","","&socid=$socid",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"], '');
     print "</tr>\n";
 
