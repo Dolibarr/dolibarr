@@ -39,6 +39,7 @@ For users:
 - New: Add manager name (ceo, director, president...) into main company information page.
 - New: Add field url as product properties.
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
+- New: Can define custom fields for catagories.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented
 

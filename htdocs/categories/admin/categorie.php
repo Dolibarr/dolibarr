@@ -70,15 +70,17 @@ if (preg_match('/del_(.*)/',$action,$reg))
  * View
  */
 
-llxHeader('',$langs->trans("CategoriesSetup"));
-
+$help_url='EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+
+llxHeader('',$langs->trans("Categories"),$help_url);
+
 print_fiche_titre($langs->trans("CategoriesSetup"),'','setup');
 
 
 $head=categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Security"));
+dol_fiche_head($head, 'setup', $langs->trans("Categories"), 0, 'category');
 
 
 print '<table class="noborder" width="100%">';

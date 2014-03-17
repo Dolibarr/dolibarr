@@ -58,8 +58,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 $textobject=$langs->transnoentitiesnoconv("Categories");
 
-$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
-llxHeader('',$langs->trans("CompanySetup"),$help_url);
+$help_url='EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
+llxHeader('',$langs->trans("Categories"),$help_url);
 
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -67,7 +67,7 @@ print_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'setup');
 
 $head = categoriesadmin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes_categories', $langs->trans("Categories"), 0, 'categoriesadmin');
+dol_fiche_head($head, 'attributes_categories', $langs->trans("Categories"), 0, 'category');
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
