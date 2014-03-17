@@ -58,7 +58,7 @@ class DeplacementStats extends Stats
 
 		$object=new Deplacement($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element;
-		$this->field='km';
+		$this->field='amount';
 
 		$this->where = " fk_statut > 0";
 		$this->where.= " AND entity = ".$conf->entity;

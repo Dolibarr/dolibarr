@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@fidurex.fr> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -554,7 +555,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
     $langs->load("boxes");
 
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.km";
+	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE u.rowid = d.fk_user";
@@ -575,7 +576,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",$max).'</td>';
-        print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
+        print '<td align="right">'.$langs->trans("Amount").'</td>';
 		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
         print '<td width="16">&nbsp;</td>';
 		print '</tr>';
@@ -596,7 +597,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				print '<tr '.$bc[$var].'>';
                 print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(1).'</td>';
-                print '<td align="right">'.$objp->km.'</td>';
+                print '<td align="right">'.$objp->amount.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
                 print '<td>'.$deplacementstatic->LibStatut($objp->fk_statut,3).'</td>';
 				print '</tr>';

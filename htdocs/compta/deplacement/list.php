@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2003		   Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004		   Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		   Juanjo Menent        <jmenent@2byte.es> 
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@fidurex.fr> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ $tripandexpense_static=new Deplacement($db);
 llxHeader();
 
 $sql = "SELECT s.nom, s.rowid as socid,";				// Ou
-$sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
+$sql.= " d.rowid, d.type, d.dated as dd, d.amount,";		// Comment
 $sql.= " d.fk_statut,";
 $sql.= " u.lastname, u.firstname";							// Qui
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -95,7 +96,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.dated","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.lastname","","&socid=$socid",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&socid=$socid",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.km","","&socid=$socid",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("FeesKilometersOrAmout"),$_SERVER["PHP_SELF"],"d.amount","","&socid=$socid",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('',$_SERVER["PHP_SELF"], '');
     print "</tr>\n";
 
@@ -138,7 +139,7 @@ if ($resql)
         print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->firstname.' '.$obj->name.'</a></td>';
         if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
         else print '<td>&nbsp;</td>';
-        print '<td align="right">'.$obj->km.'</td>';
+        print '<td align="right">'.$obj->amount.'</td>';
 
         $tripandexpense_static->statut=$obj->fk_statut;
         print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';

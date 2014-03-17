@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003		    Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004		    Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2014 Alexandre Spangaro    <alexandre.spangaro@fidurex.fr> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,7 @@ llxHeader('',$langs->trans("ListOfFees"),$help_url);
 
 
 $totalnb=0;
-$sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
+$sql = "SELECT count(d.rowid) as nb, sum(d.amount) as amount, d.type";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
 $sql.= " WHERE d.entity = ".$conf->entity;
 $sql.= " GROUP BY d.type";
@@ -76,7 +77,7 @@ if ($result)
     {
         $objp = $db->fetch_object($result);
 
-        $somme[$objp->type] = $objp->km;
+        $somme[$objp->type] = $objp->amount;
         $nb[$objp->type] = $objp->nb;
         $totalnb += $objp->nb;
         $i++;
@@ -128,7 +129,7 @@ $max=10;
 
 $langs->load("boxes");
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.amount, d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE u.rowid = d.fk_user";
@@ -149,7 +150,7 @@ if ($result)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-    print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
+    print '<td align="right">'.$langs->trans("Amount").'</td>';
     print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
     print '<td width="16">&nbsp;</td>';
     print '</tr>';
@@ -170,7 +171,7 @@ if ($result)
             print '<tr '.$bc[$var].'>';
             print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(1).'</td>';
-            print '<td align="right">'.$obj->km.'</td>';
+            print '<td align="right">'.$obj->amount.'</td>';
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
             print '</tr>';

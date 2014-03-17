@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2003		    Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class Deplacement extends CommonObject
 	var $dated;
 	var $fk_user_author;
 	var $fk_user;
-	var $km;
+	var $amount;
 	var $note;			// TODO obsolete
 	var $note_private;
 	var $note_public;
@@ -168,10 +168,10 @@ class Deplacement extends CommonObject
 		global $langs;
 
 		// Clean parameters
-		$this->km=price2num($this->km);
+		$this->amount=price2num($this->amount);
 
 		// Check parameters
-		if (! is_numeric($this->km)) $this->km = 0;
+		if (! is_numeric($this->amount)) $this->amount = 0;
         if (empty($this->date))
         {
             $this->error='ErrorBadParameter';
@@ -191,7 +191,7 @@ class Deplacement extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
-		$sql .= " SET km = ".$this->km;		// This is a distance or amount
+		$sql .= " SET amount = ".$this->amount;		// This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_statut = '".$this->statut."'";
@@ -226,7 +226,7 @@ class Deplacement extends CommonObject
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, fk_user, type, fk_statut, km, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
+		$sql = "SELECT rowid, fk_user, type, fk_statut, amount, fk_soc, dated, note_private, note_public, fk_projet, extraparams";
 		$sql.= " FROM ".MAIN_DB_PREFIX."deplacement";
 		$sql.= " WHERE rowid = ".$id;
 
@@ -241,7 +241,7 @@ class Deplacement extends CommonObject
 			$this->date			= $this->db->jdate($obj->dated);
 			$this->fk_user		= $obj->fk_user;
 			$this->socid		= $obj->fk_soc;
-			$this->km			= $obj->km;
+			$this->amount			= $obj->amount;
 			$this->type			= $obj->type;
 			$this->statut	    = $obj->fk_statut;
 			$this->note_private	= $obj->note_private;
