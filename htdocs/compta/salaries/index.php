@@ -25,6 +25,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 $langs->load("compta");
+$langs->load("salaries");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -41,7 +42,7 @@ llxHeader();
 
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
-        
+
 
 print_fiche_titre($langs->trans("SalariesPayments"));
 

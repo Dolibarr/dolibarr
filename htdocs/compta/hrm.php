@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004		Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2013-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,107 +18,90 @@
  */
 
 /**
- *  \file       htdocs/compta/deplacement/index.php
- *  \brief      Page list of expenses
+ *   	\file       htdocs/compta/hrm.php
+ *		\ingroup    hrm
+ *		\brief      Home page for HRM area.
  */
 
-require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require('../main.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+$langs->load('users');
+$langs->load('holidays');
+$langs->load('tripss');
 
-// Security check
-$socid = GETPOST('socid','int');
-if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'deplacement','','');
+// Protection if external user
+if ($user->societe_id > 0) accessforbidden();
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="d.dated";
-$limit = $conf->liste_limit;
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 
 /*
  * View
  */
 
-$tripandexpense_static=new Deplacement($db);
-
-//$help_url='EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones';
-$help_url='';
-llxHeader('',$langs->trans("ListOfFees"),$help_url);
+$holiday = new Holiday($db);
+$holidaystatic=new Holiday($db);
 
 
+llxHeader(array(),$langs->trans('HRMArea'));
 
-$totalnb=0;
-$sql = "SELECT count(d.rowid) as nb, sum(d.km) as km, d.type";
-$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d";
-$sql.= " WHERE d.entity = ".$conf->entity;
-$sql.= " GROUP BY d.type";
-$sql.= " ORDER BY d.type";
-
-$result = $db->query($sql);
-if ($result)
-{
-    $num = $db->num_rows($result);
-    $i = 0;
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
-
-        $somme[$objp->type] = $objp->km;
-        $nb[$objp->type] = $objp->nb;
-        $totalnb += $objp->nb;
-        $i++;
-    }
-    $db->free($result);
-} else {
-    dol_print_error($db);
-}
-
-
-print_fiche_titre($langs->trans("ExpensesArea"));
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-// Statistics
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
-print "</tr>\n";
-
-$listoftype=$tripandexpense_static->listOfTypes();
-foreach ($listoftype as $code => $label)
+if (! empty($conf->holiday->enabled))
 {
-    $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?(int) $nb[$code]:0));
+	$user_id = $user->id;
+
+	$nbaquis=$holiday->getCPforUser($user_id);
+	$nbdeduced=$holiday->getConfCP('nbHolidayDeducted');
+	$nb_holiday = $nbaquis / $nbdeduced;
+
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Holidays").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print '<td colspan="3">';
+    print $langs->trans('SoldeCPUser',round($nb_holiday,2)).($nbdeduced != 1 ? ' ('.$nbaquis.' / '.$nbdeduced.')' : '');
+    print '</td>';
+    print '</tr>';
+    print '</table><br>';
 }
 
-if ($conf->use_javascript_ajax)
+
+/*
+ * Search expenses
+ */
+if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 {
-    print '<tr><td align="center" colspan="4">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
-    print '</td></tr>';
+	$langs->load("trips");
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
+    print "<tr ".$bc[0].">";
+    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    print '</tr>';
+    print "</table></form><br>";
 }
-
-print '<tr class="liste_total">';
-print '<td>'.$langs->trans("Total").'</td>';
-print '<td align="right">'.$totalnb.'</td>';
-print '</tr>';
-
-print '</table>';
-
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -190,6 +172,7 @@ else dol_print_error($db);
 
 
 print '</div></div></div>';
+
 
 
 llxFooter();
