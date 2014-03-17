@@ -40,6 +40,7 @@ For users:
 - New: Add field url as product properties.
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
 - Fix: Project Task numbering customs rule works.
+- Fix: Add actions events not implemented
 
 TODO
 - New: Predefined product and free product use same form.
