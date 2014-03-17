@@ -198,9 +198,7 @@ body {
 	background-color: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color:#232323;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size:<?php print $fontsize ?>px;
-	<?php } ?>
    	font-family:<?php print $fontlist ?>;
     <?php print 'direction:'.$langs->trans("DIRECTION").";\n"; ?>
 }
@@ -2127,9 +2125,7 @@ li.ui-li-divider .ui-link {
 	padding-left: 10px;
 	padding-right: 10px;
 	white-space: normal;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 }
 .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 34px;

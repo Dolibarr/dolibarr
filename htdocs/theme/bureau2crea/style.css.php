@@ -86,9 +86,7 @@ $colorshadowtitle='000';
 body {
 /*	background-color: #FFFFFF; */
 	color: #101010;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-    <?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
