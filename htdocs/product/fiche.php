@@ -322,6 +322,7 @@ if (empty($reshook))
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
+                $object->barcode = -1;
 
                 if ($object->check())
                 {
