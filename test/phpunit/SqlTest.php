@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/LangTest.php
+ *      \file       test/phpunit/SqlTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -57,7 +57,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class LangTest extends PHPUnit_Framework_TestCase
+class SqlTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -131,7 +131,7 @@ class LangTest extends PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    public function testLang()
+    public function testSql()
     {
     	global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -139,36 +139,21 @@ class LangTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-        include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
-		foreach($filesarray as $key => $code)
+		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/install/mysql/tables');
+		foreach($filesarray as $key => $file)
 		{
-			if (! preg_match('/^[a-z]+_[A-Z]+$/',$code)) continue;
+			if (! preg_match('/\.sql$/',$file)) continue;
 
-			print 'Check language file for code='.$code."\n";
-			$tmplangs=new Translate('',$conf);
-    		$langcode=$code;
-        	$tmplangs->setDefaultLang($langcode);
-			$tmplangs->load("main");
+			print 'Check sql file '.$file."\n";
+			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$file);
 
-			$result=$tmplangs->trans("SeparatorDecimal");
-			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result,array('.',',','/',' ','','None'));
+			$result=strpos($filecontent,'`');
+			print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
+			$this->assertTrue($result===false);
 
-			$result=$tmplangs->trans("SeparatorThousand");
-			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result,array('.',',','/',' ','','None','SeparatorThousand'));	// SeparatorThousand is returned when SeparatorThousand=Space
-
-			// Test java string contains only d,M,y,/,-,. and not m,...
-			$result=$tmplangs->trans("FormatDateShortJava");
-			print __METHOD__." FormatDateShortJava=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result);
-			$result=$tmplangs->trans("FormatDateShortJavaInput");
-			print __METHOD__." FormatDateShortJavaInput=".$result."\n";
-			$this->assertRegExp('/^[dMy\/\-\.]+$/',$result);
-
-			unset($tmplangs);
+			$result=strpos($filecontent,'int(');
+			print __METHOD__." Result for checking we don't have back 'int(' instead of integer = ".$result."\n";
+			$this->assertTrue($result===false);
 		}
 
         return;
