@@ -28,6 +28,9 @@ InvoiceReplacementDesc=<b>استبدال الفاتورة</b> يستخدم لا�
 InvoiceAvoir=علما الائتمان
 InvoiceAvoirAsk=علما الائتمان لتصحيح الفاتورة
 InvoiceAvoirDesc=<b>الفضل</b> في <b>المذكرة</b> سلبية الفاتورة تستخدم لحل كون فاتورة بمبلغ قد يختلف عن المبلغ المدفوع فعلا (لأنه دفع الكثير من العملاء عن طريق الخطأ ، أو لن تدفع بالكامل منذ عودته لبعض المنتجات على سبيل المثال).
+# invoiceAvoirWithLines=Create Credit Note with lines from the origin invoice
+# invoiceAvoirWithPaymentRestAmount=Create Credit Note with the amount of origin invoice payment's lake
+# invoiceAvoirLineWithPaymentRestAmount=Credit Note amount of invoice payment's lake
 ReplaceInvoice=يستعاض عن فاتورة ٪ ق
 ReplacementInvoice=استبدال الفاتورة
 ReplacedByInvoice=بعبارة فاتورة ق ٪
@@ -222,8 +225,6 @@ DispenseMontantLettres=ليه factures rédigées قدم المساواة طرا
 NonPercuRecuperable=غير القابلة للاسترداد
 SetConditions=تحدد شروط الدفع
 SetMode=حدد طريقة الدفع
-SetDate= في الموعد المحدد
-# SelectDate=Select a date
 Billed=فواتير
 RepeatableInvoice=محددة مسبقا فاتورة
 RepeatableInvoices=محددة مسبقا والفواتير

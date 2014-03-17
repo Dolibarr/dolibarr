@@ -194,7 +194,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
 			)			
 	{
-		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$predef= '_predef';
 		$idprod=GETPOST('idprod', 'int');
 		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
 		$price_ht = '';
@@ -202,7 +202,6 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	}
 	$qty = GETPOST('qty'.$predef);
 	$remise_percent=GETPOST('remise_percent'.$predef);
-
     if (GETPOST('addline_libre') && GETPOST('pu') < 0 && $qty < 0)
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');

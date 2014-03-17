@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 require_once('../../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 // Security check
@@ -62,39 +63,39 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 	} else {
 		$_SESSION["mailsonde"] = false;
 	}
-	
+
 	if (GETPOST('allow_comments') == 'on') {
 		$_SESSION['allow_comments'] = true;
 	} else {
 		$_SESSION['allow_comments'] = false;
 	}
-	
+
 	if (GETPOST('allow_spy') == 'on') {
 		$_SESSION['allow_spy'] = true;
 	} else {
 		$_SESSION['allow_spy'] = false;
 	}
-	
+
 	$testdate = false;
-	
-	if (GETPOST('champdatefin'))
+	$champdatefin = dol_mktime(0,0,0,GETPOST('champdatefinmonth'),GETPOST('champdatefinday'),GETPOST('champdatefinyear'));
+
+	if (GETPOST('champdatefin') && $champdatefin)	// A date was provided
 	{
-		$registredate=explode("/",$_POST["champdatefin"]);
-		if (is_array($registredate) && count($registredate) === 3) {
-			$time = mktime(0,0,0,$registredate[1],$registredate[0],$registredate[2]);
-			
-			if ($time !== false && date('d/m/Y', $time) === $_POST["champdatefin"]) {
-				//Expire date is not before today
-				if ($time - dol_now() > 0) {
-					$testdate = true;
-					$_SESSION['champdatefin'] = $time;
-				}
-			}
+		// Expire date is not before today
+		if ($champdatefin - dol_now() > 0)
+		{
+			$testdate = true;
+			$_SESSION['champdatefin'] = dol_print_date($champdatefin,'dayrfc');
+		}
+		else
+		{
+			$testdate = true;
+			//setEventMessage($langs->trans('ExpiredDate'),'errors');
 		}
 	}
-	
-	if (!$testdate) {
-		setEventMessage($langs->trans('ErrorOpenSurveyDateFormat'), 'errors');
+
+	if (! $testdate) {
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("ExpireDate")), 'errors');
 	}
 
 	if ($titre && $testdate)
@@ -141,19 +142,15 @@ if (! $_SESSION["titre"] && (GETPOST('creation_sondage_date') || GETPOST('creati
 }
 
 print '</tr>'."\n";
-print '<tr><td>'. $langs->trans("Description") .'</td><td><textarea name="commentaires" rows="7" cols="40">'.$_SESSION["commentaires"].'</textarea></td>'."\n";
+print '<tr><td>'. $langs->trans("Description") .'</td><td>';
+$doleditor=new DolEditor('commentaires', $_SESSION["commentaires"],'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
+$doleditor->Create(0,'');
+print '</td>'."\n";
 print '</tr>'."\n";
 
 print '<tr><td class="fieldrequired">'.  $langs->trans("ExpireDate")  .'</td><td>';
 
-if (!GETPOST('champdatefin')) {
-	//172800 = 48 hours
-	$champdatefin = time() + 172800;
-} else {
-	$champdatefin = -1;
-}
-
-print $form->select_date($champdatefin,'champdatefin','','','',"add",1,0);
+print $form->select_date($champdatefin?$champdatefin:-1,'champdatefin','','','',"add",1,0);
 
 print '</tr>'."\n";
 print '</table>'."\n";
@@ -171,12 +168,12 @@ if ($_SESSION["mailsonde"]) $cochemail="checked";
 
 print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
 
-if ($_SESSION['allow_comments']) $allow_comments = "checked";
+if ($_SESSION['allow_comments']) $allow_comments = 'checked="checked"';
+if (isset($_POST['allow_comments'])) $allow_comments=GETPOST('allow_comments')?'checked="checked"':'';
+print '<input type="checkbox" name="allow_comments" '.$allow_comments.'"> '.$langs->trans('CanComment').'<br />'."\n";
 
-print '<input type="checkbox" name="allow_comments" '.$allow_comments.'> '.$langs->trans('CanComment').'<br />'."\n";
-
-if ($_SESSION['allow_spy']) $allow_spy = "checked";
-
+if ($_SESSION['allow_spy']) $allow_spy = 'checed="checked"';
+if (isset($_POST['allow_spy'])) $allow_spy=GETPOST('allow_spy')?'checked="checked"':'';
 print '<input type="checkbox" name="allow_spy" '.$allow_spy.'> '.$langs->trans('CanSeeOthersVote').'<br />'."\n";
 
 if (GETPOST('choix_sondage'))

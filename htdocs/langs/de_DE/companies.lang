@@ -307,7 +307,7 @@ LastContacts=Letzte Kontakte
 MyContacts=Meine Kontakte
 Phones=Telefone
 Capital=Kapital
-CapitalOf=Hauptstadt von %s
+CapitalOf=Kapital %s
 EditCompany=Unternehmen bearbeiten
 EditDeliveryAddress=Lieferadresse bearbeiten
 ThisUserIsNot=Dieser Benutzer ist kein Lead, Kunde oder Lieferant
@@ -403,7 +403,6 @@ ProductsIntoElements=Liste von Produkten in
 CurrentOutstandingBill=Aktuell ausstehende Rechnung
 OutstandingBill=Max. für ausstehende Rechnung
 OutstandingBillReached=Maximum für ausstehende Rechnung erreicht
-# Monkey
 MonkeyNumRefModelDesc=Zurück NUMERO mit Format %syymm-nnnn für den Kunden-Code und syymm%-nnnn für die Lieferanten-Code ist, wenn JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und kein Zurück mehr gibt, auf 0 gesetzt.
-# Leopard
 LeopardNumRefModelDesc=Kunden / Lieferanten-Code ist frei. Dieser Code kann jederzeit geändert werden.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

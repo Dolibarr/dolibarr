@@ -80,12 +80,12 @@ ActivateCheckRead=Επιτρέπετε τη χρήση του "Unsubcribe" σύ�
 ActivateCheckReadKey=Κλειδί χρήσης για την κρυπτογράφηση του URL για "Διαβάστε Παραλαβή" και "Διαγραφή" χαρακτηριστικό
 EMailSentToNRecipients=EMail αποστέλλονται στους παραλήπτες %s.
 # EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
-# MailTopicSendRemindUnpaidInvoices=Remind of invoice %s (%s)
-# SendRemind=Send remind by EMails
-# RemindSent=%S remind(s) sent
+# MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+# SendRemind=Send reminder by EMails
+# RemindSent=%s reminder(s) sent
 # AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
-# NoRemindSent=No remind by EMail sent
-# ResultOfMassSending=Result of mass remind sending by EMail
+# NoRemindSent=No EMail reminder sent
+# ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Επαφές για όλα τα στοιχεία (πελάτης, προοπτική, προμηθευτής, ...)

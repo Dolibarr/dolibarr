@@ -102,3 +102,17 @@ update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
+
+-- Sequence to removed duplicated values of barcode. Use serveral times if you still have duplicate.
+create table tmp_product as (select * from llx_product);
+select barcode, max(rowid) from tmp_product where barcode is not null group by barcode having count(rowid) >= 2;
+update llx_product set barcode = null where barcode is not null and (barcode, rowid) in (select barcode, max(rowid) from tmp_product where barcode is not null group by barcode having count(rowid) >= 2);
+drop table tmp_product;
+
+-- Sequence to removed duplicated values of barcode. Use serveral times if you still have duplicate.
+create table tmp_societe as (select * from llx_societe);
+select barcode, max(rowid) from tmp_societe where barcode is not null group by barcode having count(rowid) >= 2;
+update llx_societe set barcode = null where barcode is not null and (barcode, rowid) in (select barcode, max(rowid) from tmp_societe where barcode is not null group by barcode having count(rowid) >= 2);
+drop table tmp_societe;
+
+

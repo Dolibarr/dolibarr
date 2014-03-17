@@ -403,7 +403,6 @@ ProductsIntoElements=Elenco dei prodotti
 CurrentOutstandingBill=Fatture scadute
 OutstandingBill=Max. fattura in sospeso
 OutstandingBillReached=Raggiunto il massimo numero di fatture scadute
-# Monkey
 MonkeyNumRefModelDesc=Restituisce un numero con formato %syymm-nnnn per codice cliente e %syymm-nnnn per il fornitore, in cui yy è  l'anno, mm è il mese e nnnn è una sequenza progressiva che non ritorna a 0.
-# Leopard
 LeopardNumRefModelDesc=Codice cliente/fornitore libero. Questo codice può essere modificato in qualsiasi momento.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

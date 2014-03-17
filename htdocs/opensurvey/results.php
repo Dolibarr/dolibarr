@@ -395,6 +395,11 @@ for ($i = 0; $i < $nbcolonnes; $i++)
  * View
  */
 
+if ($object->fk_user_creat) {
+	$userstatic = new User($db);
+	$userstatic->fetch($object->fk_user_creat);
+}
+
 $form=new Form($db);
 
 $result=$object->fetch(0,$numsondage);
@@ -435,7 +440,7 @@ $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).(! empty($socid)
 // Ref
 print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($object, 'sondage', $linkback, 1, 'id_sondage', 'id_sondage');
+print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';
 print '</tr>';
 
@@ -444,6 +449,33 @@ $type=($object->format=="A")?'classic':'date';
 print '<tr><td>'.$langs->trans("Type").'</td><td colspan="2">';
 print img_picto('',dol_buildpath('/opensurvey/img/'.($type == 'classic'?'chart-32.png':'calendar-32.png'),1),'width="16"',1);
 print ' '.$langs->trans($type=='classic'?"TypeClassic":"TypeDate").'</td></tr>';
+
+// Title
+print '<tr><td>';
+$adresseadmin=$object->mail_admin;
+print $langs->trans("Title") .'</td><td colspan="2">';
+if ($action == 'edit')
+{
+	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
+}
+else print dol_htmlentities($object->titre);
+print '</td></tr>';
+
+// Expire date
+print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
+if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire');
+else print dol_print_date($object->date_fin,'day');
+print '</td></tr>';
+
+// Author
+print '<tr><td>';
+print $langs->trans("Author") .'</td><td colspan="2">';
+if ($object->fk_user_creat) {
+	print $userstatic->getLoginUrl(1);
+} else {
+	print dol_htmlentities($object->nom_admin);
+}
+print '</td></tr>';
 
 // Link
 print '<tr><td>'.img_picto('','object_globe.png').' '.$langs->trans("UrlForSurvey",'').'</td><td>';

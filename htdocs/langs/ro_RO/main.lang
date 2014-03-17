@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Nu se poate deschide fișierul % s
 ErrorCanNotCreateDir=Nu se poate crea dir %s
 ErrorCanNotReadDir=Nu se poate  citi dir %s
 ErrorConstantNotDefined=Parametrul %s nedefinit
-ErrorUnknown=Eroare necunoscută
+# ErrorUnknown=Unknown error
 ErrorSQL=Eroare SQL
 ErrorLogoFileNotFound=Fișierul logo '% s' nu a fost găsit
 ErrorGoToGlobalSetup=Du-te la Configurare "Societate / Fundație" pentru a rezolva aceasta
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Eroare, nici un  tip de contribuții s
 ErrorFailedToSaveFile=Eroare,  salvarea fişierului eşuată.
 ErrorOnlyPngJpgSupported=Eroare, numai formatele .jpg  şi .png sunt acceptate.
 ErrorImageFormatNotSupported=PHP dvs nu acceptă funcții pentru a converti imagini de acest format.
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=Vezi şi %s
 BackgroundColorByDefault=Culoarea de fundal implicită
 FileWasNotUploaded=Un fișier este selectat pentru atașament, dar nu a fost încă încărcat. Clic pe "Ataşează fișier" pentru aceasta.
@@ -667,6 +669,7 @@ OriginFileName=Nume fişier original
 SetDemandReason=Setează sursa
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Luni

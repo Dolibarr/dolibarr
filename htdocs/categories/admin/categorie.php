@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("cateogries");
+$langs->load("categories");
 
 $action=GETPOST("action");
 
@@ -95,7 +95,7 @@ $form = new Form($db);
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
 
 print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax)

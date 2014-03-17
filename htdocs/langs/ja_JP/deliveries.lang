@@ -23,3 +23,4 @@ GoodStatusDeclaration=、良好な状態で上記の品物を受け取ってい�
 Deliverer=配達：
 Sender=差出人
 Recipient=受信者
+# ErrorStockIsNotEnough=There's not enough stock

@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=%s 파일을 열 수 없습니다
 ErrorCanNotCreateDir=%s 디렉토리를 만들 수 없습니다
 ErrorCanNotReadDir=%s 디렉토리를 읽을 수 없습니다
 ErrorConstantNotDefined=%s 매개변수를 지정할 수 없습니다
-ErrorUnknown=알 수 없는 오류
+# ErrorUnknown=Unknown error
 ErrorSQL=SQL 오류
 ErrorLogoFileNotFound='%s' 로고 파일이 없습니다
 ErrorGoToGlobalSetup='회사/재단' 설정에서 수정하세요
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=오류, '%s' 국가의 사회 기여 �
 ErrorFailedToSaveFile=오류, 파일을 저장할 수 없습니다.
 ErrorOnlyPngJpgSupported=오류, .png 및 .jpg 이미지 파일 양식만을 지원합니다.
 ErrorImageFormatNotSupported=PHP가 이 형식의 이미지를 변환하는 데 필요한 함수를 지원하지 않습니다.
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=또한 %s
 BackgroundColorByDefault=기본 배경
 FileWasNotUploaded=첨부할 파일을 선택했지만 바로 업로드할 수는 없습니다. 업로드하려면 "파일 첨부"를 클릭하십시오.
@@ -667,6 +669,7 @@ Size=크기
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=월요일

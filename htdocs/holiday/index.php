@@ -233,7 +233,7 @@ else
 {
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num);
 
-	print '<div class="tabBar">';
+	dol_fiche_head('');
 }
 
 
@@ -248,7 +248,7 @@ if ($id > 0)
 	print '</br>';
 }
 else {
-	print '</div>';
+	dol_fiche_end();
 }
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";

@@ -85,6 +85,8 @@ class AllTests
 
 		require_once dirname(__FILE__).'/LangTest.php';
 		$suite->addTestSuite('LangTest');
+		require_once dirname(__FILE__).'/SqlTest.php';
+		$suite->addTestSuite('SqlTest');
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
@@ -148,6 +150,8 @@ class AllTests
         $suite->addTestSuite('ChargeSocialesTest');
         require_once dirname(__FILE__).'/HolidayTest.php';
         $suite->addTestSuite('HolidayTest');
+        require_once dirname(__FILE__).'/EntrepotTest.php';
+        $suite->addTestSuite('EntrepotTest');
 
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');

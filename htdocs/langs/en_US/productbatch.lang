@@ -15,3 +15,4 @@ printBatch= Batch: %s
 printEatby= Eat-by: %s
 printSellby= Sell-by: %s
 printQty= Qty: %d
+AddDispatchBatchLine=Add a line for Shelf Life dispatching

@@ -18,7 +18,7 @@
 /**
  *	    \file       htdocs/compta/salaries/fiche.php
  *      \ingroup    tax
- *		  \brief      Page of salaries payments
+ *		\brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -29,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("compta");
 $langs->load("banks");
 $langs->load("bills");
+$langs->load("users");
+$langs->load("salaries");
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
@@ -164,15 +166,15 @@ if ($action == 'create')
     	$pastmonth = 12;
     	$pastmonthyear--;
     }
-    
+
     $datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
     $dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
-    
+
     if (empty($datesp) || empty($dateep)) // We define date_start and date_end
     {
     	$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
     }
-  
+
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
@@ -189,15 +191,16 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
     print $form->select_date($datev,"datev",'','','','add');
     print '</td></tr>';
-    
+
+    // Employee
     print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
+    print '<td class="fieldrequired">'.$langs->trans("Employee").'</td><td>';
     print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
     print '</td></tr>';
 
   	// Label
   	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
-  
+
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
     print $form->select_date($datesp,"datesp",'','','','add');
@@ -209,31 +212,31 @@ if ($action == 'create')
 
   	// Amount
   	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
-  
+
     // Bank
     if (! empty($conf->banque->enabled))
     {
   	    print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
-  
+
   	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
   	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
   	    print "</td>\n";
   	    print "</tr>";
   	}
-  
+
     // Other attributes
     $parameters=array('colspan' => ' colspan="1"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-  
+
     print '</table>';
-  
+
   	print "<br>";
-  
+
   	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
-  
+
     print '</form>';
 }
 
@@ -261,7 +264,7 @@ if ($id)
 	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $salpayment->ref;
 	print '</td></tr>';
-  
+
   // Person
   print '<tr><td>'.$langs->trans("Person").'</td><td>';
   $usersal=new User($db);
@@ -280,7 +283,7 @@ if ($id)
 	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td colspan="3">';
 	print dol_print_date($salpayment->dateep,'day');
 	print '</td></tr>';
-  
+
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
 	print dol_print_date($salpayment->datep,'day');

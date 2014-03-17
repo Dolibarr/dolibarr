@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Nie można otworzyć pliku %s
 ErrorCanNotCreateDir=Nie można utworzyć %s reż
 ErrorCanNotReadDir=Nie można odczytać %s reż
 ErrorConstantNotDefined=Parametr %s nie zostało zdefiniowane
-ErrorUnknown=Unkown błąd
+# ErrorUnknown=Unknown error
 ErrorSQL=Błąd SQL
 ErrorLogoFileNotFound=Logo file ' %s' nie został odnaleziony
 ErrorGoToGlobalSetup=Idź do "Firma / Fundacja" Aby rozwiązać ten problem z konfiguracją
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Błąd, nie typ społeczny wkład okre
 ErrorFailedToSaveFile=Błąd, nie udało się zapisać pliku.
 ErrorOnlyPngJpgSupported=Błąd tylko. Png i. Obrazu w formacie jpg plików są obsługiwane.
 ErrorImageFormatNotSupported=PHP nie obsługuje funkcje do konwersji obrazów tego formatu.
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=domyślny kolor tła
 FileWasNotUploaded=Wybraniu pliku do zamocowania, ale jeszcze nie wysłał. Kliknij na &quot;Dołącz plik&quot; w tej sprawie.
@@ -667,6 +669,7 @@ BySalesRepresentative=Przez przedstawiciela handlowego
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Poniedziałek
