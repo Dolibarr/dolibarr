@@ -403,7 +403,6 @@ ProductsIntoElements=Lijst van producten in
 CurrentOutstandingBill=Huidige openstaande rekening
 OutstandingBill=Max. voor openstaande rekening
 OutstandingBillReached=Maximum bereikt voor openstaande rekening
-# Monkey
 MonkeyNumRefModelDesc=Geeft een nummer als %syymm-nnnn voor afnemerscodes en %sjjmm-nnnn voor leverancierscodes waar jj het jaar is, mm de maand en nnnn een opeenvolgend nummer vanaf 0.
-# Leopard
 LeopardNumRefModelDesc=Afnemers- / leverancierscode is vrij. Deze code kan te allen tijde worden gewijzigd.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

@@ -79,36 +79,6 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
     }
 }
 
-/*
-else if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
-{
-    $object->fetch($id);
-    if ($object->fk_statut == '1') 	// Not blocked...
-    {
-        $mesg='<div class="error">'.$langs->trans("Error").'</div>';
-        $action='';
-        $error++;
-    }
-    else
-    {
-        $result = $object->fetch($id);
-
-        $object->fk_statut	= '1';
-
-        $result = $object->update($user);
-
-        if ($result > 0)
-        {
-            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
-            exit;
-        }
-        else
-        {
-            $mesg=$object->error;
-        }
-    }
-}*/
-
 else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
     $result=$object->delete($id);
@@ -296,7 +266,7 @@ if ($action == 'create')
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
     print $doleditor->Create(1);
 
     print '</td></tr>';
@@ -308,7 +278,7 @@ if ($action == 'create')
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
         print $doleditor->Create(1);
 
         print '</td></tr>';
@@ -392,7 +362,7 @@ else if ($id)
             print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
 
-            $doleditor = new DolEditor('note_public', $object->note_public, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
             print $doleditor->Create(1);
 
             print "</td></tr>";
@@ -403,7 +373,7 @@ else if ($id)
                 print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
-                $doleditor = new DolEditor('note_private', $object->note_private, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
                 print $doleditor->Create(1);
 
                 print "</td></tr>";

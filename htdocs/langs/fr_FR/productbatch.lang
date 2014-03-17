@@ -15,4 +15,3 @@ printBatch= Lot: %s
 printEatby= DLC: %s
 printSellby= DLUO: %s
 printQty= Qté: %d
-

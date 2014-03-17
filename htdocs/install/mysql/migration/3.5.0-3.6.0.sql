@@ -980,18 +980,17 @@ create table llx_product_customer_price
   recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
-  fk_user				integer,
-  import_key			varchar(14)                  -- Import key
+  fk_user				    integer,
+  import_key			    varchar(14)                  -- Import key
 )ENGINE=innodb;
 
 ALTER TABLE llx_product_customer_price ADD INDEX idx_product_customer_price_fk_user (fk_user);
-
-ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
-
+ALTER TABLE llx_product_customer_price ADD INDEX idx_product_customer_price_fk_soc (fk_soc);
 ALTER TABLE llx_product_customer_price ADD UNIQUE INDEX uk_customer_price_fk_product_fk_soc (fk_product, fk_soc);
 
-ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product(rowid) ON DELETE CASCADE;
-ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid) ON DELETE CASCADE;
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product(rowid);
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 
 ALTER TABLE llx_user ADD COLUMN barcode varchar(255) DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN fk_barcode_type integer DEFAULT 0;
@@ -1011,7 +1010,7 @@ create table llx_product_customer_price_log
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
   tva_tx					double(6,3),
-  recuperableonly           integer NOT NULL DEFAULT '0',   -- Other NPR VAT
+  recuperableonly           integer NOT NULL DEFAULT 0,   -- Other NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 1 
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Other local VAT 2
   fk_user				integer,
@@ -1028,7 +1027,7 @@ CREATE TABLE llx_product_batch (
   eatby datetime DEFAULT NULL,
   sellby datetime DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
-  qty double NOT NULL DEFAULT '0',
+  qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL,
   KEY ix_fk_product_stock (fk_product_stock)
 ) ENGINE=InnoDB;
@@ -1039,7 +1038,7 @@ CREATE TABLE llx_expeditiondet_batch (
   eatby date DEFAULT NULL,
   sellby date DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
-  qty double NOT NULL DEFAULT '0',
+  qty double NOT NULL DEFAULT 0,
   fk_origin_stock integer NOT NULL,
   KEY ix_fk_expeditiondet (fk_expeditiondet)
 ) ENGINE=InnoDB;
@@ -1070,6 +1069,18 @@ ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR( 32 ) NOT NULL ;
 ALTER TABLE llx_user ADD thm FLOAT NOT NULL ;
 ALTER TABLE llx_projet_task_time ADD thm FLOAT NOT NULL ;
 
+
+-- New : extrafield on categories
+create table llx_categories_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_categories_extrafields ADD INDEX idx_categories_extrafields (fk_object);
+
 --Payment in expense note module
 ALTER TABLE llx_deplacement CHANGE COLUMN km amount real NOT NULL DEFAULT 0;
 
@@ -1087,3 +1098,4 @@ CREATE TABLE llx_payment_expensenote (
   fk_user_creat integer,
   fk_user_modif integer
 )ENGINE=innodb;
+

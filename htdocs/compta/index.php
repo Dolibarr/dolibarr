@@ -140,24 +140,6 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
     print "</table></form><br>";
 }
 
-/*
- * Search expenses
- */
-if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
-{
-	$langs->load("trips");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
-    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
-}
-
 /**
  * Draft customers invoices
  */

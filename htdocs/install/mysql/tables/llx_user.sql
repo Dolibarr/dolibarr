@@ -54,6 +54,7 @@ create table llx_user
   fk_socpeople      integer,
   fk_member         integer,
   fk_user           integer,               -- Hierarchic parent
+  thm				double(24,8),
   note              text DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,

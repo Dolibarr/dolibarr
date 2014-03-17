@@ -403,7 +403,6 @@ ProductsIntoElements=Seotud toodete nimekiri
 CurrentOutstandingBill=Hetkel maksmata summa
 OutstandingBill=Suurim võimalik maksmata arve
 OutstandingBillReached=Jõudis maksmata summa maksimumini
-# Monkey
 MonkeyNumRefModelDesc=Tagasta arv formaadiga %syymm-nnnn kliendikoodi jaoks ja %syymm-nnnn hankija koodi jaoks, kus yy on aasta, mm on kuu ja nnnn on katkestuseta jada, mille väärtus pole kunagi 0.
-# Leopard
 LeopardNumRefModelDesc=Kood on vaba, seda saab igal ajal muuta.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

@@ -192,11 +192,11 @@ if ($testmodifier)
 	for ($i=0;$i<$nbcolonnes;$i++)
 	{
 		//var_dump($_POST["choix$i"]);
-		if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1')
+		if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '1')
 		{
 			$nouveauchoix.="1";
 		}
-		else if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+		else if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
 		{
 			$nouveauchoix.="2";
 		}
@@ -257,13 +257,12 @@ print '<div class="corps"> '."\n";
 
 //affichage du titre du sondage
 $titre=str_replace("\\","",$object->titre);
-print '<strong>'.dol_htmlentities($titre).'</strong><br>'."\n";
+print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
 
 //affichage des commentaires du sondage
 if ($object->commentaires)
 {
-	$commentaires=dol_nl2br(dol_htmlentities($object->commentaires));
-	print $commentaires;
+	print dol_htmlentitiesbr($object->commentaires);
 	print '<br>'."\n";
 }
 

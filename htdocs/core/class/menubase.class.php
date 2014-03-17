@@ -547,7 +547,6 @@ class Menubase
                 	$tmpcond=$menu['enabled'];
                 	if ($leftmenu == 'all') $tmpcond=preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/','1==1',$tmpcond);	// Force part of condition to true
                     $enabled = verifCond($tmpcond);
-                    //if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION) && empty($conf->dol_use_jmobile) && preg_match('/^\$leftmenu/',$menu['enabled'])) $enabled=1;
                 }
 
                 // Define $title

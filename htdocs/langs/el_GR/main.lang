@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Αποτυχία ανοίγματος αρχείου %s
 ErrorCanNotCreateDir=Αποτυχία δημιουργίας φακέλου %s
 ErrorCanNotReadDir=Αποτυχία ανάγνωσης φακέλου %s
 ErrorConstantNotDefined=Parameter %s not defined
-ErrorUnknown=Άγνωστο Λάθος
+# ErrorUnknown=Unknown error
 ErrorSQL=Σφάλμα SQL
 ErrorLogoFileNotFound=Το λογότυπο  '%s' δεν βρέθηκε
 ErrorGoToGlobalSetup=Πηγαίνετε στο 'Εταιρία/Οργανισμός' Ρυθμίσεις για να το διορθώσετε
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Σφάλμα, δεν οριστήκε 
 ErrorFailedToSaveFile=Σφάλμα, αποτυχία αποθήκευσης αρχείου
 ErrorOnlyPngJpgSupported=Σφάλμα, υποστηρίζονται μόνο οι τύποι αρχείων .png και .jpg
 ErrorImageFormatNotSupported=Η έκδοση (αρθρώματα) της PHP που έχετε, δεν υποστηρίζει μετατροπές εικόνων αυτού του τύπου
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=Δείτε επίσης %s
 BackgroundColorByDefault=Προκαθορισμένο χρώμα φόντου
 FileWasNotUploaded=Επιλέχθηκε ένα αρχείο για επισύναψη, αλλά δεν έχει μεταφερθεί ακόμη. Πατήστε στο "Επισύναψη Αρχείου".
@@ -667,6 +669,7 @@ OriginFileName=Αρχική Ονομασία
 SetDemandReason=Ρυθμίστε την πηγή
 ViewPrivateNote=Προβολή σημειώσεων
 XMoreLines=%s γραμμή (ές) κρυμμένη
+# PublicUrl=Public URL
 
 # Week day
 Monday=Δευτέρα

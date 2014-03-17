@@ -107,3 +107,7 @@ CatSupLinks=Suppliers
 DeleteFromCat=Remove from category
 DeletePicture=Picture delete
 ConfirmDeletePicture=Confirm picture deletion?
+ExtraFieldsCategories=Complementary attributes
+CategoriesSetup=Categories setup
+CategorieRecursiv=Link with parent category automatically
+CategorieRecursivHelp=If activated, product will also linked to parent category when adding into a subcategory

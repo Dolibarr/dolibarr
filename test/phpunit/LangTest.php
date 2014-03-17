@@ -171,7 +171,7 @@ class LangTest extends PHPUnit_Framework_TestCase
 			unset($tmplangs);
 		}
 
-        return $result;
+        return;
     }
 }
 ?>

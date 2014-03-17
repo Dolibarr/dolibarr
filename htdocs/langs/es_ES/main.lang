@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Imposible abrir el archivo %s
 ErrorCanNotCreateDir=Imposible crear el directorio %s
 ErrorCanNotReadDir=Imposible leer el directorio %s
 ErrorConstantNotDefined=Parámetro %s no definido
-ErrorUnknown=Error desconocido
+# ErrorUnknown=Unknown error
 ErrorSQL=Error de SQL
 ErrorLogoFileNotFound=El archivo logo '%s' no se encuentra
 ErrorGoToGlobalSetup=Vaya a la Configuración ' Empresa/Institución ' para corregir
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Error, ningún tipo de carga social de
 ErrorFailedToSaveFile=Error, el registro del archivo falló.
 ErrorOnlyPngJpgSupported=Error, solamente se soportan los formatos de imagen jpg y png.
 ErrorImageFormatNotSupported=Su PHP no soporta las funciones de conversión de este formato de imagen.
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=Ver también %s
 BackgroundColorByDefault=Color de fondo
 FileWasNotUploaded=Un archivo ha sido seleccionado para adjuntarlo, pero aún no se ha subido. Haga clic en "Adjuntar este archivo" para ello.
@@ -667,6 +669,7 @@ OriginFileName=Nombre del archivo origen
 SetDemandReason=Definir origen
 ViewPrivateNote=Ver notas
 XMoreLines=%s línea(s) ocultas
+# PublicUrl=Public URL
 
 # Week day
 Monday=Lunes

@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Nem sikerült a %s fájlt megnyitni
 ErrorCanNotCreateDir=Nem lehet a(z) %s könyvtárat létrehozni
 ErrorCanNotReadDir=Nem sikerült a(z) %s könyvtárat olvasni
 ErrorConstantNotDefined=%s paraméter nincs definiálva
-ErrorUnknown=Ismeretlen hiba
+# ErrorUnknown=Unknown error
 ErrorSQL=SQL Hiba
 ErrorLogoFileNotFound='%s' logo fájl nincs meg
 ErrorGoToGlobalSetup=Menj a 'Cég/Alapítván' beállításokhoz a javítás érdekében
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Hiba, nincs szociális hozzájárulás
 ErrorFailedToSaveFile=Hiba, nem sikerült a fájl mentése.
 ErrorOnlyPngJpgSupported=Hiba, csak .jpg és .png képfájlok vannak támogatva.
 ErrorImageFormatNotSupported=A PHP-ja nem támogatja a kép konvertálási funkciókat erre a formátumra.
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=Alapértelmezett háttérszin
 FileWasNotUploaded=Egy fájl ki lett választva csatolásra, de még nincs feltöltve. Kattintson a "Fájl Csatolása" gombra.
@@ -667,6 +669,7 @@ BySalesRepresentative=Az értékesítési képviselő
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Hétfő

@@ -403,7 +403,6 @@ ProductsIntoElements=Lista informacija o proizvodu
 CurrentOutstandingBill=Trenutni neplaćeni račun
 OutstandingBill=Max. za neplaćeni račun
 OutstandingBillReached=Dostugnut je max. za neplaćeni račun
-# Monkey
 MonkeyNumRefModelDesc=Vratiti broj sa formatom %syymm-nnnn za šifru kupca i $syymm-nnnn za šifru dobavljača gdje je yy godina, mm mjesec i nnnn niz bez prekida i bez vraćanja za 0.
-# Leopard
 LeopardNumRefModelDesc=Ova šifra je slobodna. Ova šifra se može mijenjati bilo kad.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

@@ -403,7 +403,6 @@ ProductsIntoElements=Lista informacji o produktach
 CurrentOutstandingBill=Biężący, niezapłacony rachunek
 OutstandingBill=Maksymalna kwota niezapłaconego rachunku
 OutstandingBillReached=Osiągnieto maksimum niezapłaconych rachunków
-# Monkey
 MonkeyNumRefModelDesc=Wróć NUMERO z formatu %syymm-nnnn klienta i kod %syymm-nnnn dla dostawcy kod yy gdzie jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0.\nZwraca numer w formacie %syymm-nnnn dla kodu klienta i %syymm-nnnn dla kodu dostawcy, gdzie yy to rok, mm to miesiąc i nnnn jest sekwencją bez przerwy, bez powrotu do 0.
-# Leopard
 LeopardNumRefModelDesc=Dowolny kod Klienta / Dostawcy. Ten kod może być modyfikowany w dowolnym momencie.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

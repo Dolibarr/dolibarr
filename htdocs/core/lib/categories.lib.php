@@ -78,6 +78,11 @@ function categoriesadmin_prepare_head()
 	$head[$h][1] = $langs->trans("Setup");
 	$head[$h][2] = 'setup';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/categories/admin/categorie_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsCategories");
+	$head[$h][2] = 'attributes_categories';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

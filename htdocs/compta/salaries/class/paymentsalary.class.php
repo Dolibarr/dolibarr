@@ -17,8 +17,8 @@
 
 /**
  *      \file       htdocs/compta/salaries/class/paymentsalary.class.php
- *      \ingroup    tax
- *      \brief		  Class for tax module salary payment
+ *      \ingroup    salaries
+ *      \brief		Class for salaries module payment
  */
 
 // Put here all includes required by your class file
@@ -76,7 +76,7 @@ class PaymentSalary extends CommonObject
     	global $conf, $langs;
 
   		$error=0;
-  
+
   		// Clean parameters
       $this->fk_user=trim($this->fk_user);
   		$this->amount=trim($this->amount);
@@ -85,10 +85,10 @@ class PaymentSalary extends CommonObject
   		$this->fk_bank=trim($this->fk_bank);
   		$this->fk_user_creat=trim($this->fk_user_creat);
   		$this->fk_user_modif=trim($this->fk_user_modif);
-  
+
   		// Check parameters
   		// Put here code to add control on parameters values
-  
+
       // Insert request
   		$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary(";
   		$sql.= "tms,";
@@ -103,9 +103,9 @@ class PaymentSalary extends CommonObject
   		$sql.= "fk_bank,";
   		$sql.= "fk_user_creat,";
   		$sql.= "fk_user_modif";
-  
+
           $sql.= ") VALUES (";
-  
+
   		$sql.= " '".$this->db->idate($this->tms).",";
   		$sql.= " '".$this->fk_user."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
@@ -118,7 +118,7 @@ class PaymentSalary extends CommonObject
   		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
   		$sql.= " '".$this->fk_user_creat."',";
   		$sql.= " '".$this->fk_user_modif."'";
-  
+
   		$sql.= ")";
 
 	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -146,7 +146,7 @@ class PaymentSalary extends CommonObject
 
     /**
      * Update database
-     * 
+     *
      * @param   User	$user        	User that modify
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
@@ -156,7 +156,7 @@ class PaymentSalary extends CommonObject
     	global $conf, $langs;
 
   		$error=0;
-  
+
   		// Clean parameters
   		$this->fk_user=trim($this->fk_user);
   		$this->amount=trim($this->amount);
@@ -165,7 +165,7 @@ class PaymentSalary extends CommonObject
   		$this->fk_bank=trim($this->fk_bank);
   		$this->fk_user_creat=trim($this->fk_user_creat);
   		$this->fk_user_modif=trim($this->fk_user_modif);
-  
+
   		// Check parameters
   		if (empty($this->fk_user) || $this->fk_user < 0)
   		{
@@ -216,7 +216,7 @@ class PaymentSalary extends CommonObject
 
     /**
      *  Load object in memory from database
-     *  
+     *
      *  @param	int		$id         id object
      *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
@@ -226,7 +226,7 @@ class PaymentSalary extends CommonObject
     	global $langs;
         $sql = "SELECT";
     		$sql.= " s.rowid,";
-    
+
     		$sql.= " s.tms,";
     		$sql.= " s.fk_user,";
     		$sql.= " s.datep,";
@@ -288,7 +288,7 @@ class PaymentSalary extends CommonObject
 
  	/**
 	 *  Delete object in database
-	 *  
+	 *
      *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
@@ -360,7 +360,7 @@ class PaymentSalary extends CommonObject
 
         // Clean parameters
         $this->amount=price2num(trim($this->amount));
-        
+
         // Check parameters
     		if (! $this->label)
     		{
@@ -369,7 +369,7 @@ class PaymentSalary extends CommonObject
     		}
         if ($this->fk_user < 0 || $this->fk_user == '')
         {
-            $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Person"));
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Employee"));
             return -4;
         }
         if ($this->amount < 0 || $this->amount == '')
@@ -439,19 +439,19 @@ class PaymentSalary extends CommonObject
                     $acc = new Account($this->db);
 					          $result=$acc->fetch($this->accountid);
 					          if ($result <= 0) dol_print_error($this->db);
-                    
+
                     // Insert payment into llx_bank
                     // Add link 'payment_salary' in bank_url between payment and bank transaction
                     $bank_line_id = $acc->addline(
                         $this->datep,
                         $this->paymenttype,
                         $this->label,
-                        -abs($this->amount), 
+                        -abs($this->amount),
                         '',
                         '',
                         $user
                     );
-                    
+
                     // Mise a jour fk_bank dans llx_paiement.
                     // On connait ainsi le paiement qui a genere l'ecriture bancaire
                     if ($bank_line_id > 0)
@@ -463,26 +463,26 @@ class PaymentSalary extends CommonObject
           						$this->error=$acc->error;
           						$ok=0;
           					}
-                        
+
                     // Add link 'payment_salary' in bank_url between payment and bank transaction
                     $url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
-                    
+
                     $result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
                     if ($result <= 0)
                     {
                         $this->error=$acc->error;
                     	  $ok=0;
                     }
-                    
+
                     // Add link 'user' in bank_url between operation and bank transaction
                     $linkaddedforthirdparty=array();
                     foreach ($this->amounts as $key => $value)
                     {
                         $sal = new PaymentSalary($this->db);
-                                
+
                         $sal->fetch($key);
                         $sal->fetch_user($this->fk_user);
-                                
+
                         if (! in_array($sal->user->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                         {
                             $result=$acc->add_url_line(
@@ -492,14 +492,14 @@ class PaymentSalary extends CommonObject
                             $sal->user->lastname,
                             'user'
                             );
-                        
+
                             if ($result <= 0) dol_print_error($this->db);
                             $linkaddedforthirdparty[$sal->user->id]=$sal->user->id;  // Mark as done for this thirdparty
                         }
-              
+
                     }
                 }
-      				
+
               if ($ok)
       				{
       					$this->db->commit();
