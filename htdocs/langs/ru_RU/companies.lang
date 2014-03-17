@@ -403,7 +403,6 @@ ActivityStateFilter=Статус активности
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Вернуть номер с форматом %syymm-NNNN для кода покупателя и %syymm NNNN-код для кода поставщиков, где yy - это год, мм - месяц и NNNN - непрерывная последовательность без возврата к 0.
-# Leopard
 LeopardNumRefModelDesc=Код покупателю/поставщику не присваивается. Он может быть изменен в любое время.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

@@ -34,7 +34,7 @@ ErrorFailedToOpenFile='%s' Dosyası açılamadı
 ErrorCanNotCreateDir='%s' Dizini oluşturulamıyor
 ErrorCanNotReadDir='%s' Dizini okunamıyor
 ErrorConstantNotDefined=%s Parametresi tanımlı değil
-ErrorUnknown=Bilinmeyen hata
+# ErrorUnknown=Unknown error
 ErrorSQL=SQL Hatası
 ErrorLogoFileNotFound='%s' Logo dosyası bulunamadı
 ErrorGoToGlobalSetup='Firma/Dernek' ayarlarına giderek düzeltiniz.
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Hata, ülke %s için herhangi bir sosy
 ErrorFailedToSaveFile=Hata, dosya kaydedilemedi.
 ErrorOnlyPngJpgSupported=Hata yalnızca .Png ve .jpg görüntü dosya formatları desteklenmektedir.
 ErrorImageFormatNotSupported=PHP bu biçimdeki görüntüleri dönüştürecek işlevleri desteklemez.
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=See also %s
 BackgroundColorByDefault=Varsayılan arkaplan rengi
 FileWasNotUploaded=Bu ekleme için bir dosya seçildi ama henüz gönderilmedi. Bunun için “Dosya ekle” ye tıklayın.
@@ -667,6 +669,7 @@ OriginFileName=Özgün dosya adı
 SetDemandReason=Kaynağı ayarlayın
 ViewPrivateNote=Notları izle
 XMoreLines=%s gizli satır(lar)
+# PublicUrl=Public URL
 
 # Week day
 Monday=Pazartesi

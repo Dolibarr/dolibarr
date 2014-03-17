@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Misslyckades med att öppna filen %s
 ErrorCanNotCreateDir=Kan inte skapa dir %s
 ErrorCanNotReadDir=Kan inte läsa dir %s
 ErrorConstantNotDefined=Parameter %s inte definierat
-ErrorUnknown=Okänt fel
+# ErrorUnknown=Unknown error
 ErrorSQL=SQL Error
 ErrorLogoFileNotFound=Logo fil &quot;%s&quot; hittades inte
 ErrorGoToGlobalSetup=Gå till &quot;bolaget / stiftelsen setup att åtgärda detta
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Fel, inga sociala bidrag typ som anges
 ErrorFailedToSaveFile=Fel, inte för att spara filen.
 ErrorOnlyPngJpgSupported=Fel, bara. Png och. Jpg-bild-fil stöds.
 ErrorImageFormatNotSupported=Din PHP stöder inte funktioner för att konvertera bilder av detta format.
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=Standard bakgrundsfärg
 FileWasNotUploaded=En fil är vald för infästning, men ännu inte lagt upp. Klicka på &quot;Bifoga fil&quot; för detta.
@@ -667,6 +669,7 @@ BySalesRepresentative=Genom säljare
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Måndag

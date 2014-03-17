@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=無法打開檔案 : %s
 ErrorCanNotCreateDir=無法建立目錄 : %s
 ErrorCanNotReadDir=無法讀取目錄 : %s
 ErrorConstantNotDefined=不是定義的參數%
-ErrorUnknown=未知的錯誤
+# ErrorUnknown=Unknown error
 ErrorSQL=SQL錯誤
 ErrorLogoFileNotFound=徽標文件'%s'沒有找到
 ErrorGoToGlobalSetup=到'公司/基金會的設置來解決此
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=錯誤，沒有社會貢獻類型定�
 ErrorFailedToSaveFile=錯誤，無法保存文件。
 ErrorOnlyPngJpgSupported=錯誤，只。PNG和。jpg圖像文件格式支持。
 ErrorImageFormatNotSupported=你的PHP不支持函數來轉換這種格式的圖像。
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=默認的背景顏色
 FileWasNotUploaded=一個文件被選中的附件，但還沒有上傳。點擊“附加文件”為這一點。
@@ -667,6 +669,7 @@ BySalesRepresentative=按業務代表
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=星期一

@@ -123,10 +123,10 @@ BankCode=Code banque
 DeskCode=Code guichet
 BankAccountNumber=Numéro de compte
 BankAccountNumberKey=Clé RIB
-# SpecialCode=Special code
-# ExportStringFilter=%% allows replacing one or more characters in the text
-# ExportDateFilter='AAAA' 'AAAAMM' 'AAAAMMJJ': filters by one year/month/day<br>'AAAA+AAAA' 'AAAAMM+AAAAMM' 'AAAAMMJJ+AAAAMMJJ': filters over a range of years/months/days<br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ': filters on the following years/months/days<br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ': filters on the previous years/months/days
-# ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
+SpecialCode=Code spécial
+ExportStringFilter=%% permet de remplacer 1 ou plusieurs caractères dans le texte
+ExportDateFilter='YYYY' 'YYYYMM' 'YYYYMMDD': filtre pour une année/mois/jour<br>'YYYY+YYYY' 'YYYYMM+YYYYMM' 'YYYYMMDD+YYYYMMDD': filtre pour une plage année/mois/jour<br>'&gt;YYYY' '&gt;YYYYMM' '&gt;YYYYMMDD': filtre pour une date supérieure à une année/mois/jour donnée<br>'&lt;YYYY' '&lt;YYYYMM' '&lt;YYYYMMDD': filtre pour une date inférieure à une année/mois/jour donnée
+ExportNumericFilter='NNNNN' filtres sur une valeur<br>'NNNNN+NNNNN' filtres sur une place de valeurs<br>'&gt;NNNNN' filtres sur les valeurs plus petites<br>'&gt;NNNNN' filtres sur les valeurs plus grandes
 ## filters
 SelectFilterFields=Si vous voulez filtrer sur certaines valeurs, saisissez ces valeurs.
 FilterableFields=Champs filtrables

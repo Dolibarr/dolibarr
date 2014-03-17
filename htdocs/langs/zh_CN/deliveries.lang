@@ -23,3 +23,4 @@ GoodStatusDeclaration=上述货物已收到良好的条件，
 Deliverer=发货人：
 Sender=寄件人
 Recipient=接受者
+# ErrorStockIsNotEnough=There's not enough stock

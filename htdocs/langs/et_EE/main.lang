@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Ei suutnud avada faili %s
 ErrorCanNotCreateDir=Ei suutnud luua kausta %s
 ErrorCanNotReadDir=Ei suuda lugeda kausta %s
 ErrorConstantNotDefined=Parameeter %s on määratlemata
-ErrorUnknown=Tundmatu viga
+# ErrorUnknown=Unknown error
 ErrorSQL=SQLi viga
 ErrorLogoFileNotFound=Ei leidnud logo faili '%s'
 ErrorGoToGlobalSetup=Kasuta selle parandamiseks 'Ettevõte/Ühendus' halduspaneeli
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Viga: riigi '%s' jaoks ei ole määrat
 ErrorFailedToSaveFile=Viga: faili salvestamine ebaõnnestus.
 ErrorOnlyPngJpgSupported=Viga: toetatud on vaid .png ja .jpg formaadis pildifailid.
 ErrorImageFormatNotSupported=Sinu PHP ei toeta antud formaadis piltide teisendamiseks tarvilikke funktsioone.
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=Vaata lisaks %s
 BackgroundColorByDefault=Vaikimisi taustavärv
 FileWasNotUploaded=Fail on valitud manustamiseks, kuid on veel üles laadimata. Klõpsa &quot;Lisa fail&quot; nupul selle lisamiseks.
@@ -667,6 +669,7 @@ OriginFileName=Faili algne nimi
 SetDemandReason=Määratle allikas
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Esmaspäev
