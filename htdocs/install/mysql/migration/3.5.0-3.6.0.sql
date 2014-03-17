@@ -1066,6 +1066,24 @@ CREATE TABLE llx_payment_salary (
 ALTER TABLE llx_stock_mouvement ADD fk_origin INT NOT NULL ;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR( 32 ) NOT NULL ;
 
---NEw 1300 : Add THM on user
+--New 1300 : Add THM on user
 ALTER TABLE llx_user ADD thm FLOAT NOT NULL ;
 ALTER TABLE llx_projet_task_time ADD thm FLOAT NOT NULL ;
+
+--Payment in expense note module
+ALTER TABLE llx_deplacement CHANGE COLUMN km amount real NOT NULL DEFAULT 0;
+
+CREATE TABLE llx_payment_expensenote (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_user integer NOT NULL,
+  datep date,
+  datev date,
+  amount real NOT NULL DEFAULT 0,
+  label varchar(255),
+  entity integer DEFAULT 1 NOT NULL,	-- multi company id
+  note text,
+  fk_bank integer,  
+  fk_user_creat integer,
+  fk_user_modif integer
+)ENGINE=innodb;
