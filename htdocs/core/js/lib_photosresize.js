@@ -1,4 +1,4 @@
-// Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2009-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,23 +19,29 @@
 // \brief      File that include javascript functions for croping feature
 //
 
+/* Enable jcrop plugin onto id cropbox */
 jQuery(function() {
    jQuery('#cropbox').Jcrop({
       onSelect: updateCoords, 
       onChange: updateCoords
    });
 });
-     
+
+/* Update fields that store new size */
 function updateCoords(c)
 {
-	jQuery('#x').val(c.x);
-	jQuery('#y').val(c.y);
-	jQuery('#x2').val(c.x2);
-	jQuery('#y2').val(c.y2);
-	jQuery('#w').val(c.w);
-	jQuery('#h').val(c.h);
+	//alert(parseInt(jQuery("#ratioforcrop").val()));
+	ratio=1;
+	if (parseInt(jQuery("#ratioforcrop").val()) > 0) ratio = parseInt(jQuery("#ratioforcrop").val());
+	jQuery('#x').val(Math.ceil(c.x * ratio));
+	jQuery('#y').val(Math.ceil(c.y * ratio));
+	jQuery('#x2').val(Math.ceil(c.x2 * ratio));
+	jQuery('#y2').val(Math.ceil(c.y2 * ratio));
+	jQuery('#w').val(Math.ceil(c.w * ratio));
+	jQuery('#h').val(Math.ceil(c.h * ratio));
 };
 
+/* checkCoords */
 function checkCoords()
 {
    if (parseInt(jQuery('#w').val())) return true;
