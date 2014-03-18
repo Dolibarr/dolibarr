@@ -103,16 +103,18 @@ update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 -- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
 
 
--- Sequence to removed duplicated values of barcode. Use serveral times if you still have duplicate.
-create table tmp_product as (select * from llx_product);
-select barcode, max(rowid) from tmp_product where barcode is not null group by barcode having count(rowid) >= 2;
-update llx_product set barcode = null where barcode is not null and (barcode, rowid) in (select barcode, max(rowid) from tmp_product where barcode is not null group by barcode having count(rowid) >= 2);
-drop table tmp_product;
+-- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+--select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
+create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
+--select * from tmp_product_double;
+update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);
+drop table tmp_product_double;
 
--- Sequence to removed duplicated values of barcode. Use serveral times if you still have duplicate.
-create table tmp_societe as (select * from llx_societe);
-select barcode, max(rowid) from tmp_societe where barcode is not null group by barcode having count(rowid) >= 2;
-update llx_societe set barcode = null where barcode is not null and (barcode, rowid) in (select barcode, max(rowid) from tmp_societe where barcode is not null group by barcode having count(rowid) >= 2);
-drop table tmp_societe;
+-- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+--select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
+create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
+--select * from tmp_societe_double;
+update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
+drop table tmp_societe_double;
 
 
