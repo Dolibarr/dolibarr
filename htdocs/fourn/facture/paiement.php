@@ -233,7 +233,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 $supplierstatic=new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
-llxHeader('', $langs->trans('ListPayment'));
+llxHeader('',$langs->trans('ListPayment'));
 
 $form=new Form($db);
 
