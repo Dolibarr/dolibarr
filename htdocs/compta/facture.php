@@ -584,7 +584,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (!empty($object->paye))	// protection against multiple submit
+	if (! $object->paye)	// protection against multiple submit
 	{
 		// Boucle sur chaque taux de tva
 		$i=0;
