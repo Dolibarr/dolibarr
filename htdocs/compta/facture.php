@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -26,10 +26,11 @@
  */
 
 /**
- * \file htdocs/compta/facture.php
+ * \file 	htdocs/compta/facture.php
  * \ingroup facture
- * \brief Page to create/see an invoice
+ * \brief 	Page to create/see an invoice
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
@@ -81,8 +82,7 @@ $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($co
 
 // Security check
 $fieldid = (! empty($ref) ? 'facnumber' : 'rowid');
-if ($user->societe_id)
-	$socid = $user->societe_id;
+if ($user->societe_id) $socid = $user->societe_id;
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 // Nombre de ligne pour choix de produit/service predefinis
@@ -1753,6 +1753,7 @@ if ($action == 'update_extras') {
 }
 
 
+
 /*
  * View
  */
@@ -1782,6 +1783,7 @@ jQuery(document).ready(function() {
  *
  * ********************************************************************
  */
+
 if ($action == 'create')
 {
 	$facturestatic = new Facture($db);
@@ -1860,8 +1862,7 @@ if ($action == 'create')
 	print '<form name="add" action="' . $_SERVER ["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($soc->id > 0)
-		print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
+	if ($soc->id > 0) print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
@@ -1875,7 +1876,8 @@ if ($action == 'create')
 
 	// Thirdparty
 	print '<td class="fieldrequired">' . $langs->trans('Customer') . '</td>';
-	if ($soc->id > 0) {
+	if ($soc->id > 0)
+	{
 		print '<td colspan="2">';
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
@@ -1883,14 +1885,16 @@ if ($action == 'create')
 		$outstandigBills = $soc->get_OutstandingBill();
 		print ' (' . $langs->trans('CurrentOutstandingBill') . ': ';
 		print price($outstandigBills, '', $langs, 0, 0, - 1, $conf->currency);
-		if ($soc->outstanding_limit != '') {
-			if ($outstandigBills > $soc->outstanding_limit)
-				print img_warning($langs->trans("OutstandingBillReached"));
+		if ($soc->outstanding_limit != '')
+		{
+			if ($outstandigBills > $soc->outstanding_limit) print img_warning($langs->trans("OutstandingBillReached"));
 			print ' / ' . price($soc->outstanding_limit);
 		}
 		print ')';
 		print '</td>';
-	} else {
+	}
+	else
+	{
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 1);
 		print '</td>';
@@ -1986,17 +1990,6 @@ if ($action == 'create')
 	print $desc;
 	print '</td></tr>' . "\n";
 
-	// Proforma
-	if (! empty($conf->global->FACTURE_USE_PROFORMAT))
-	{
-		print '<tr height="18"><td width="16px" valign="middle">';
-		print '<input type="radio" name="type" value="4"' . (GETPOST('type') == 4 ? ' checked="checked"' : '') . '>';
-		print '</td><td valign="middle">';
-		$desc = $form->textwithpicto($langs->trans("InvoiceProForma"), $langs->transnoentities("InvoiceProFormaDesc"), 1);
-		print $desc;
-		print '</td></tr>' . "\n";
-	}
-
 	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid))))
 	{
 		// Deposit
@@ -2055,43 +2048,68 @@ if ($action == 'create')
 		print $desc;
 		print '</td></tr>' . "\n";
 	}
-
-	if (empty($origin) && $socid > 0)
+	else
 	{
-		// Credit note
-		print '<tr height="18"><td valign="top">';
-		print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked=true' : '');
-		if (! $optionsav)
-			print ' disabled="disabled"';
-		print '>';
-		print '</td><td valign="top">';
-		print '<script type="text/javascript" language="javascript">
-		jQuery(document).ready(function() {
-			jQuery("#fac_avoir").click(function() {
-				jQuery("#radio_creditnote").attr(\'checked\',\'checked\');
-			});
-		});
-		</script>';
-		$text = $langs->transnoentities("InvoiceAvoirAsk") . ' ';
-		// $text.='<input type="text" value="">';
-		$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
-		if (! $optionsav)
-			$text .= ' disabled="disabled"';
-		$text .= '>';
-		if ($optionsav) {
-			$text .= '<option value="-1"></option>';
-			$text .= $optionsav;
-		} else {
-			$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
-		}
-		$text .= '</select>';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
+		print '<tr height="18"><td valign="middle">';
+		print '<input type="radio" name="type" id="radio_replacement" value="0" disabled="disabled">';
+		print '</td><td valign="middle">';
+		$text = $langs->trans("InvoiceReplacement") . ' ';
+		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1);
 		print $desc;
-
-        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-        print '<br />&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
-
 		print '</td></tr>' . "\n";
+	}
+
+	if (empty($origin))
+	{
+		if ($socid > 0)
+		{
+			// Credit note
+			print '<tr height="18"><td valign="top">';
+			print '<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked=true' : '');
+			if (! $optionsav)
+				print ' disabled="disabled"';
+			print '>';
+			print '</td><td valign="top">';
+			print '<script type="text/javascript" language="javascript">
+			jQuery(document).ready(function() {
+				jQuery("#fac_avoir").click(function() {
+					jQuery("#radio_creditnote").attr(\'checked\',\'checked\');
+				});
+			});
+			</script>';
+			$text = $langs->transnoentities("InvoiceAvoirAsk") . ' ';
+			// $text.='<input type="text" value="">';
+			$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
+			if (! $optionsav)
+				$text .= ' disabled="disabled"';
+			$text .= '>';
+			if ($optionsav) {
+				$text .= '<option value="-1"></option>';
+				$text .= $optionsav;
+			} else {
+				$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
+			}
+			$text .= '</select>';
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
+			print $desc;
+
+	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+	        print '<br />&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+
+			print '</td></tr>' . "\n";
+		}
+		else
+		{
+			print '<tr height="18"><td valign="middle">';
+			print '<input type="radio" name="type" id="radio_creditnote" value="0" disabled="disabled">';
+			print '</td><td valign="middle">';
+			$text = $langs->trans("InvoiceAvoir") . ' ';
+			$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
+			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
+			print $desc;
+			print '</td></tr>' . "\n";
+		}
 	}
 
 	print '</table>';
