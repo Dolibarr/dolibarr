@@ -484,14 +484,15 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes') {
 }
 
 // Convertir en reduc
-else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer) {
+else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
+{
 	$db->begin();
 
 	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (! $object->paye) 	// protection against multiple submit
+	if (empty($object->paye))	// protection against multiple submit
 	{
 		// Boucle sur chaque taux de tva
 		$i = 0;
@@ -509,8 +510,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 		elseif ($object->type == Facture::TYPE_DEPOSIT)
 			$discount->description = '(DEPOSIT)';
 		else {
-			$this->error = "CantConvertToReducAnInvoiceOfThisType";
-			return - 1;
+			setEventMessage($langs->trans('CantConvertToReducAnInvoiceOfThisType'),'errors');
 		}
 		$discount->tva_tx = abs($object->total_ttc);
 		$discount->fk_soc = $object->socid;
@@ -524,24 +524,31 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			$discount->tva_tx = abs($tva_tx);
 
 			$result = $discount->create($user);
-			if ($result < 0) {
-				$error ++;
+			if ($result < 0)
+			{
+				$error++;
 				break;
 			}
 		}
 
-		if (! $error) {
+		if (empty($error))
+		{
 			// Classe facture
 			$result = $object->set_paid($user);
-			if ($result > 0) {
-				// $mesgs[]='OK'.$discount->id;
+			if ($result >= 0)
+			{
+				//$mesgs[]='OK'.$discount->id;
 				$db->commit();
-			} else {
-				$mesgs [] = '<div class="error">' . $object->error . '</div>';
+			}
+			else
+			{
+				setEventMessage($object->error,'errors');
 				$db->rollback();
 			}
-		} else {
-			$mesgs [] = '<div class="error">' . $discount->error . '</div>';
+		}
+		else
+		{
+			setEventMessage($discount->error,'errors');
 			$db->rollback();
 		}
 	}
@@ -644,14 +651,14 @@ else if ($action == 'add' && $user->rights->facture->creer) {
 			$id = $object->create($user);
 
 			if(GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0) {
-			    
+
                 $facture_source = new Facture($db); // fetch origin object
                 if($facture_source->fetch($object->fk_facture_source)>0) {
-                
+
                     foreach($facture_source->lines as $line) {
-                      
-                        $line->fk_facture = $object->id;  
-                        
+
+                        $line->fk_facture = $object->id;
+
                         $line->subprice =-$line->subprice; // invert price for object
                         $line->pa_ht = -$line->pa_ht;
                         $line->total_ht=-$line->total_ht;
@@ -659,33 +666,33 @@ else if ($action == 'add' && $user->rights->facture->creer) {
                         $line->total_ttc=-$line->total_ttc;
                         $line->total_localtax1=-$line->total_localtax1;
                         $line->total_localtax2=-$line->total_localtax2;
-                        
+
                         $line->insert();
-                        
+
                         $object->lines[] = $line; // insert new line in current object
                     }
-                 
-                    $object->update_price(1);   
+
+                    $object->update_price(1);
                 }
-                 
+
 			}
-            
+
             if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0) {
-                    
+
                 $facture_source = new Facture($db); // fetch origin object if not previously defined
                 if($facture_source->fetch($object->fk_facture_source)>0) {
                     $totalpaye = $facture_source->getSommePaiement();
                     $totalcreditnotes = $facture_source->getSumCreditNotesUsed();
                     $totaldeposits = $facture_source->getSumDepositsUsed();
                     $remain_to_pay = abs($facture_source->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits);
-                    
-                    $object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');      
+
+                    $object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');
                 }
             }
-            
+
 			// Add predefined lines
 			/*
-             TODO delete 
+             TODO delete
              for($i = 1; $i <= $NBLINES; $i ++) {
 				if ($_POST ['idprod' . $i]) {
 					$product = new Product($db);
@@ -2070,10 +2077,10 @@ if ($action == 'create')
 		$text .= '</select>';
 		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
 		print $desc;
-        
+
         print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
         print '<br />&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
-        
+
 		print '</td></tr>' . "\n";
 	}
 
@@ -3340,7 +3347,7 @@ if ($action == 'create')
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $object->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer) {
+				if ($object->type == Facture::TYPE_DEPOSIT && $object->statut == 2 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id)) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 			}

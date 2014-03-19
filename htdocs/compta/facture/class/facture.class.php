@@ -1472,7 +1472,8 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *  Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
+	 *  Tag la facture comme paye completement (si close_code non renseigne) => this->fk_statut=2, this->paye=1
+	 *  ou partiellement (si close_code renseigne) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
 	 *  @param	User	$user      	Objet utilisateur qui modifie
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
@@ -1496,6 +1497,7 @@ class Facture extends CommonInvoice
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
+			dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1511,8 +1513,7 @@ class Facture extends CommonInvoice
 			else
 			{
 				$error++;
-				$this->error=$this->db->error();
-				dol_print_error($this->db);
+				$this->error=$this->db->lasterror();
 			}
 
 			if (! $error)
@@ -2075,7 +2076,7 @@ class Facture extends CommonInvoice
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
-				
+
 				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE && $product_type == 0 && $product->stock_reel < $qty) {
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();

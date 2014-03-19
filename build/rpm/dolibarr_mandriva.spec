@@ -339,5 +339,11 @@ fi
 * Mon Feb 7 2014 Laurent Destailleur 3.6.0-0.2.b
 - Upstream release
 
+* Fri Feb 14 2014 Laurent Destailleur 3.5.2-0.3
+- Upstream release
+
+* Fri Feb 7 2014 Laurent Destailleur 3.5.1-0.3
+- Upstream release
+
 * Mon Dec 30 2013 Laurent Destailleur 3.5.0-0.3
 - Initial version (#723326)
