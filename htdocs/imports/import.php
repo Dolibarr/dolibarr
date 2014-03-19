@@ -482,7 +482,7 @@ if ($step == 3 && $datatoimport)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		
+
 	}
 
 	print '<table width="100%" class="border">';
@@ -1307,7 +1307,10 @@ if ($step == 5 && $datatoimport)
         $result=$obj->import_open_file($pathfile,$langs);
         if ($result > 0)
         {
-            $sourcelinenb=0; $endoffile=0;
+            global $tablewithentity_cache;
+            $tablewithentity_cache=array();
+        	$sourcelinenb=0; $endoffile=0;
+
             // Loop on each input file record
             while ($sourcelinenb < $nboflines && ! $endoffile)
             {
@@ -1621,7 +1624,10 @@ if ($step == 6 && $datatoimport)
 	$result=$obj->import_open_file($pathfile,$langs);
 	if ($result > 0)
 	{
+        global $tablewithentity_cache;
+        $tablewithentity_cache=array();
 		$sourcelinenb=0; $endoffile=0;
+
 		while ($sourcelinenb < $nboflines && ! $endoffile)
 		{
 			$sourcelinenb++;
