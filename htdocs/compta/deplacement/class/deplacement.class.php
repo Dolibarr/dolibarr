@@ -191,7 +191,7 @@ class Deplacement extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
-		$sql .= " SET amount = ".$this->amount;		// This is a distance or amount
+		$sql .= " SET amount = ".$this->amount;
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->type."'";
 		$sql .= " , fk_statut = '".$this->statut."'";
