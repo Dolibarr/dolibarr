@@ -335,7 +335,8 @@ class ImportCsv extends ModeleImports
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
 	{
 		global $langs,$conf,$user;
-        global $thirdparty_static;    // Specifi to thirdparty import
+        global $thirdparty_static;    	// Specific to thirdparty import
+		global $tablewithentity_cache;	// Cache to avoid to call  desc at each rows on tables
 
 		$error=0;
 		$warning=0;
@@ -370,6 +371,25 @@ class ImportCsv extends ModeleImports
 				$listvalues='';
 				$i=0;
 				$errorforthistable=0;
+
+				// Define $tablewithentity_cache[$tablename] if not already defined
+				if (! isset($tablewithentity_cache[$tablename]))	// keep this test with "isset"
+				{
+					dol_syslog("Check if table ".$tablename." has an entity field");
+					$resql=$this->db->DDLDescTable($tablename,'entity');
+					if ($resql)
+					{
+						$obj=$this->db->fetch_object($resql);
+						if ($obj) $tablewithentity_cache[$tablename]=1;		// table contains entity field
+						else $tablewithentity_cache[$tablename]=0;			// table does not contains entity field
+					}
+					else dol_print_error($this->db);;
+				}
+				else
+				{
+					//dol_syslog("Table ".$tablename." check for entity into cache is ".$tablewithentity_cache[$tablename]);
+				}
+
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
 				foreach($sort_array_match_file_to_database as $key => $val)
@@ -581,7 +601,7 @@ class ImportCsv extends ModeleImports
 					    //var_dump($objimport->array_import_convertvalue); exit;
 
 						// Build SQL request
-						if (! tablewithentity($tablename))
+						if (empty($tablewithentity[$tablename]))
 						{
 							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
 							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
@@ -643,26 +663,5 @@ function cleansep($value)
 {
 	return str_replace(array(',',';'),'/',$value);
 };
-
-/**
- * Returns if a table contains entity column
- *
- * @param  string 	$table	Table name
- * @return int				1 if table contains entity, 0 if not and -1 if error
- */
-function tablewithentity($table)
-{
-	global $db;
-	
-	$resql=$db->DDLDescTable($table,'entity');
-	if ($resql)
-	{
-		$i=0;
-		$obj=$db->fetch_object($resql);
-		if ($obj) return 1;
-		else return 0;
-	}
-	else return -1; 
-}
 
 ?>
