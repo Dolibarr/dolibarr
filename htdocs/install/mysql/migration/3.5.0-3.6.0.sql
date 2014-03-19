@@ -1092,3 +1092,14 @@ create table llx_categories_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_categories_extrafields ADD INDEX idx_categories_extrafields (fk_object);
+
+update llx_product set barcode = null where barcode in ('', '-1', '0');
+update llx_societe set barcode = null where barcode in ('', '-1', '0');
+
+-- Add missing unique keys
+ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
+ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
+ALTER TABLE llx_societe ADD INDEX idx_societe_barcode (barcode);
+ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_barcode (barcode, fk_barcode_type, entity);
+
+
