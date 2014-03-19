@@ -6,17 +6,18 @@ English Dolibarr ChangeLog
 For users:
 - New: Update ckeditor to version 4.
 - New: Add form "search customer order" on commercial main page.
-- New: Can input barcode during product creation step.
-- New: Add autonumbering of barcode value for products.
 - New: Can create contract from an order.
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
        use the "print" view on screen.
-- New: Add a page/tool for mass barcode generation.
 - New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
        to automatically add timestamp and user line into edition field when editing a note.
 - New: Add button cancel into edition of notes.
+- New: Improved Barcode module:
+       Can input barcode during product creation step.
+       Add autonumbering of barcode value for products.
+       Add a page/tool for mass barcode generation.
 - New: Improved Opensurvey module:
        Added options to disable comments and disable public votes.
        Limit dates use calendar popup.
@@ -39,9 +40,9 @@ For users:
 - New: Add manager name (ceo, director, president...) into main company information page.
 - New: Add field url as product properties.
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
-- New: Can define custom fields for catagories.
+- New: Can define custom fields for categories.
 - Fix: Project Task numbering customs rule works.
-- Fix: Add actions events not implemented
+- Fix: Add actions events not implemented.
 
 TODO
 - New: Predefined product and free product use same form.
