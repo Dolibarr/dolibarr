@@ -401,14 +401,14 @@ class modSociete extends DolibarrModules
 			's.fk_typent'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/ctypent.class.php','class'=>'Ctypent','method'=>'fetch','dict'=>'DictionnaryCompanyType'),
 			's.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cpays.class.php','class'=>'Cpays','method'=>'fetch','dict'=>'DictionnaryCountry'),
 			's.fk_stcomm'=>array('rule'=>'zeroifnull'),
-		    's.code_client'=>array('rule'=>'getcustomercodeifnull'),
-		    's.code_fournisseur'=>array('rule'=>'getsuppliercodeifnull'),
-		    's.code_compta'=>array('rule'=>'getcustomeraccountancycodeifnull'),
-		    's.code_compta_fournisseur'=>array('rule'=>'getsupplieraccountancycodeifnull')
+		    's.code_client'=>array('rule'=>'getcustomercodeifauto'),
+		    's.code_fournisseur'=>array('rule'=>'getsuppliercodeifauto'),
+		    's.code_compta'=>array('rule'=>'getcustomeraccountancycodeifauto'),
+		    's.code_compta_fournisseur'=>array('rule'=>'getsupplieraccountancycodeifauto')
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r]=array('s.status'=>'^[0|1]','s.client'=>'^[0|1|2|3]','s.fournisseur'=>'^[0|1]','s.fk_typent'=>'id@'.MAIN_DB_PREFIX.'c_typent','s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$this->import_examplevalues_array[$r]=array('s.nom'=>"MyBigCompany",'s.status'=>"0 (closed) or 1 (active)",'s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'s.code_client'=>"CU01-0001 or auto",'s.code_fournisseur'=>"SU01-0001 or auto",'s.address'=>"61 jump street",'s.zip'=>"123456",'s.town'=>"Big town",'s.fk_pays'=>'US, FR, DE...','s.phone'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note_private'=>"This is an example of private note for record",'s.note_public'=>"This is an example of public note for record",'s.fk_typent'=>"2",'s.fk_effectif'=>"3","s.fk_forme_juridique"=>"1",'s.fk_prospectlevel'=>'PL_MEDIUM','s.fk_stcomm'=>'0','s.default_lang'=>'en_US','s.barcode'=>'123456789');
+		$this->import_examplevalues_array[$r]=array('s.nom'=>"MyBigCompany",'s.status'=>"0 (closed) or 1 (active)",'s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)','s.fournisseur'=>'0 or 1','s.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'s.code_client'=>"CU01-0001 or empty or 'auto'",'s.code_fournisseur'=>"SU01-0001 or empty or 'auto'",'s.address'=>"61 jump street",'s.zip'=>"123456",'s.town'=>"Big town",'s.fk_pays'=>'US, FR, DE...','s.phone'=>"0101010101",'s.fax'=>"0101010102",'s.url'=>"http://mycompany.com",'s.email'=>"test@mycompany.com",'s.siret'=>"",'s.siren'=>"",'s.ape'=>"",'s.idprof4'=>"",'s.tva_intra'=>"FR0123456789",'s.capital'=>"10000",'s.note_private'=>"This is an example of private note for record",'s.note_public'=>"This is an example of public note for record",'s.fk_typent'=>"2",'s.fk_effectif'=>"3","s.fk_forme_juridique"=>"1",'s.fk_prospectlevel'=>'PL_MEDIUM','s.fk_stcomm'=>'0','s.default_lang'=>'en_US','s.barcode'=>'123456789');
 
 		// Import list of contact and attributes
 		$r++;

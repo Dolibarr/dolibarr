@@ -162,7 +162,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$file=dirname(__FILE__).'/Example_import_company_1.csv';
 		$result=dol_count_nb_of_line($file);
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(2,$result);
+		$this->assertEquals(3,$result);
 
 		return $result;
     }
