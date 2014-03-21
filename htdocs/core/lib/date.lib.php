@@ -69,8 +69,7 @@ function get_tz_array()
  */
 function getServerTimeZoneString()
 {
-    if (function_exists('date_default_timezone_get')) return @date_default_timezone_get();
-    else return '';
+    return @date_default_timezone_get();
 }
 
 /**
@@ -96,7 +95,7 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
-    	dol_print_error('','PHP version must be 5.2+');
+    	dol_print_error('','PHP version must be 5.3+');
     	/*
         // Method 2 (does not include daylight, not supported by adodb)
         if ($refgmtdate == 'now')
@@ -125,45 +124,6 @@ function getServerTimeZoneInt($refgmtdate='now')
     $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
 }
-
-/**
- * Return server timezone string
- *
- * @return string			Parent company timezone string ('Europe/Paris')
- *
-function getParentCompanyTimeZoneString()
-{
-    if (function_exists('date_default_timezone_get')) return @date_default_timezone_get();
-    else return '';
-}
-*/
-
-/**
- * Return parent company timezone int.
- * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
- *
- * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
- * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
- *
-function getParentCompanyTimeZoneInt($refgmtdate='now')
-{
-    global $conf;
-    if (class_exists('DateTime'))
-    {
-        // Method 1 (include daylight)
-        $localtz = new DateTimeZone(getParentCompanyTimeZoneString());
-        $localdt = new DateTime($refgmtdate, $localtz);
-        $tmp=-1*$localtz->getOffset($localdt);
-    }
-    else
-    {
-    	dol_print_error('','PHP version must be 5.2+');
-        // Method 2 (does not include daylight)
-        $tmp=dol_mktime(0,0,0,1,1,1970);
-    }
-    $tz=($tmp<0?1:-1)*abs($tmp/3600);
-    return $tz;
-}*/
 
 
 /**

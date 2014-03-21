@@ -1027,14 +1027,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 	{
 		if (empty($gm) || $gm === 'server')
 		{
-			// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
-			// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
-			if (! empty($conf->global->MAIN_SERVER_TZ))
-			{
-				if ($conf->global->MAIN_SERVER_TZ != 'auto') $default_timezone=$conf->global->MAIN_SERVER_TZ;
-				else $default_timezone=@date_default_timezone_get();
-			}
-			else $default_timezone=@date_default_timezone_get();
+			$default_timezone=@date_default_timezone_get();
 			$localtz = new DateTimeZone($default_timezone);
 		}
 		else if ($gm === 'user')
