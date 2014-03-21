@@ -69,7 +69,7 @@ function get_tz_array()
  */
 function getServerTimeZoneString()
 {
-    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
+    if (function_exists('date_default_timezone_get')) return @date_default_timezone_get();
     else return '';
 }
 
@@ -133,7 +133,7 @@ function getServerTimeZoneInt($refgmtdate='now')
  *
 function getParentCompanyTimeZoneString()
 {
-    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
+    if (function_exists('date_default_timezone_get')) return @date_default_timezone_get();
     else return '';
 }
 */
@@ -479,7 +479,7 @@ function dol_get_next_week($day, $week, $month, $year)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
  *  @return		timestamp				Date for first day
@@ -494,7 +494,7 @@ function dol_get_first_day($year,$month=1,$gm=false)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *	@return		timestamp				Date for first day
  */
 function dol_get_last_day($year,$month=12,$gm=false)
@@ -521,7 +521,7 @@ function dol_get_last_day($year,$month=12,$gm=false)
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		int		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *	@return		array				year,month, week,first_day,prev_year,prev_month,prev_day
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
