@@ -41,7 +41,7 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
 $account=$_GET["account"];
 $mode='standard';
