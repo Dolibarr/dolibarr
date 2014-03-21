@@ -1015,7 +1015,11 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 
 	if (method_exists('DateTime','getTimestamp') && empty($conf->global->MAIN_OLD_DATE))
 	{
-		if (empty($gm)) $localtz = new DateTimeZone(date_default_timezone_get());
+		if (empty($gm))
+		{
+			$default_timezone=@date_default_timezone_get();
+			$localtz = new DateTimeZone($default_timezone);
+		}
 		else $localtz = new DateTimeZone('UTC');
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
