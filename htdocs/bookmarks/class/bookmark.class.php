@@ -116,7 +116,7 @@ class Bookmark
         if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
-        $sql.= " ".$this->db->idate($now).",";
+        $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->url."', '".$this->target."',";
         $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
         $sql.= ", '".$conf->entity."'";

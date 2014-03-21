@@ -144,9 +144,8 @@ if ($object->id > 0)
 	print "</table>\n";
 	print "</div>\n";
 
-	$modulepart = 'projet';
+	$modulepart = 'project';
 	$permission = ($userWrite > 0);
-	$param = '&id=' . $object->id;
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }

@@ -289,12 +289,13 @@ if ($result)
 	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
+	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-	print '<td class="liste_titre"><input class="flat" type="text" size="16" name="search_town" value="'.$search_town.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="10" name="search_town" value="'.$search_town.'"></td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
-	print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	print '&nbsp;'.$langs->trans('Year').': ';
+	//print $langs->trans('Month').': ';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
@@ -376,15 +377,8 @@ if ($result)
 
 		// Date proposal
 		print '<td align="center">';
-		$y = dol_print_date($db->jdate($objp->dp),'%Y');
-		$m = dol_print_date($db->jdate($objp->dp),'%m');
-		$mt= dol_print_date($db->jdate($objp->dp),'%b');
-		$d = dol_print_date($db->jdate($objp->dp),'%d');
-		print $d."\n";
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-		print $mt."</a>\n";
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-		print $y."</a></td>\n";
+		print dol_print_date($db->jdate($obj->dp), 'day');
+		print "</td>\n";
 
 		// Date end validity
 		if ($objp->dfv)

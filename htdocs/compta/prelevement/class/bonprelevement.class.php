@@ -967,7 +967,7 @@ class BonPrelevement extends CommonObject
                          */
                         $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
                         $sql.= " SET traite = 1";
-                        $sql.= ", date_traite = ".$this->db->idate($now);
+                        $sql.= ", date_traite = '".$this->db->idate($now)."'";
                         $sql.= ", fk_prelevement_bons = ".$prev_id;
                         $sql.= " WHERE rowid = ".$fac[1];
 

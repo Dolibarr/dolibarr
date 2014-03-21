@@ -2,7 +2,7 @@
 InstallEasy=فقط اتبع التعليمات خطوة بخطوة.
 MiscellaneousChecks=التحقق من الشروط الأساسية
 DolibarrWelcome=مرحبا بكم في Dolibarr
-ConfFileExists=فایل پیکربندی <b>%s</b> موجود است 
+ConfFileExists=فایل پیکربندی <b>%s</b> موجود است
 ConfFileDoesNotExists=ملفات <b>ل ٪</b> لا وجود له!
 ConfFileDoesNotExistsAndCouldNotBeCreated=ملفات <b>ل ٪</b> لا وجود له وأنه لا يمكن خلق!
 ConfFileCouldBeCreated=ملفات <b>ل ٪</b> ويمكن أن تنشأ.

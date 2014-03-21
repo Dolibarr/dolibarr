@@ -65,8 +65,8 @@ class Project extends CommonObject
         $this->db = $db;
         $this->societe = new Societe($db);
 
-        $this->statuts_short = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
-        $this->statuts = array(0 => 'Draft', 1 => 'Validated', 2 => 'Closed');
+        $this->statuts_short = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
+        $this->statuts = array(0 => 'Draft', 1 => 'Opened', 2 => 'Closed');
     }
 
     /**
@@ -781,27 +781,6 @@ class Project extends CommonObject
 
         $now=dol_now();
 
-        // Charge tableau des produits prodids
-        $prodids = array();
-
-        $sql = "SELECT rowid";
-        $sql.= " FROM " . MAIN_DB_PREFIX . "product";
-        $sql.= " WHERE tosell = 1";
-        $sql.= " AND entity = " . $conf->entity;
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num_prods = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num_prods)
-            {
-                $i++;
-                $row = $this->db->fetch_row($resql);
-                $prodids[$i] = $row[0];
-            }
-        }
-
         // Initialise parametres
         $this->id = 0;
         $this->ref = 'SPECIMEN';
@@ -1330,7 +1309,7 @@ class Project extends CommonObject
 					print 'Some orphelins were found and modified to be parent so records are visible again: ';
 					print join(',',$listofid);
 				}
-				
+
 				return $nb;
 			}
 			else

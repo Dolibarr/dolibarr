@@ -127,7 +127,7 @@ class Events // extends CommonObject
 		$sql.= " ".$conf->entity.",";
 		$sql.= " '".$_SERVER['REMOTE_ADDR']."',";
 		$sql.= " ".($_SERVER['HTTP_USER_AGENT']?"'".dol_trunc($_SERVER['HTTP_USER_AGENT'],250)."'":'NULL').",";
-		$sql.= " ".$this->db->idate($this->dateevent).",";
+		$sql.= " '".$this->db->idate($this->dateevent)."',";
 		$sql.= " ".($user->id?"'".$user->id."'":'NULL').",";
 		$sql.= " '".$this->db->escape($this->description)."'";
 		$sql.= ")";

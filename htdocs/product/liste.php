@@ -260,7 +260,7 @@ else
     	}
     	else
     	{
-    		print '<form action="liste.php" method="post" name="formulaire">';
+    		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
     		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     		print '<input type="hidden" name="action" value="list">';
     		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -277,7 +277,7 @@ else
     	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
     	 	if ($user->rights->fournisseur->lire) $colspan++;
     	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
-    	 	
+
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
@@ -361,10 +361,10 @@ else
     			print '</td>';
     		}
 
-    		print '<td align="center">';  		
+    		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
             print '</td >';
-            
+
             print '<td align="center">';
             print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
@@ -492,7 +492,7 @@ else
                 print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 
                 print '<td>&nbsp;</td>';
-                
+
                 print "</tr>\n";
     			$i++;
     		}

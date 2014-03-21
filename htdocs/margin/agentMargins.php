@@ -84,7 +84,7 @@ dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 print '<table class="border" width="100%">';
 
-print '<tr><td width="20%">'.$langs->trans('CommercialAgent').'</td>';
+print '<tr><td width="20%">'.$langs->trans('SalesRepresentative').'</td>';
 print '<td colspan="4">';
 print $form->select_dolusers($agentid,'agentid',1);
 print '</td></tr>';
@@ -130,10 +130,8 @@ if ($agentid > 0) {
 	else
 	    $sql .= " AND sc.fk_user = ".$agentid;
 }
-if (!empty($startdate))
-  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
-if (!empty($enddate))
-  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
+if (!empty($startdate)) $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
+if (!empty($enddate))   $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
 $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
@@ -157,7 +155,7 @@ if ($result)
 	if ($agentid > 0)
 		print_liste_field_titre($langs->trans("Customer"),$_SERVER["PHP_SELF"],"s.nom","","&amp;agentid=".$agentid,'',$sortfield,$sortorder);
 	else
-		print_liste_field_titre($langs->trans("CommercialAgent"),$_SERVER["PHP_SELF"],"u.lastname","","&amp;agentid=".$agentid,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("SalesRepresentative"),$_SERVER["PHP_SELF"],"u.lastname","","&amp;agentid=".$agentid,'',$sortfield,$sortorder);
 
 	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;agentid=".$agentid,'align="right"',$sortfield,$sortorder);

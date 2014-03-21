@@ -87,12 +87,12 @@ class modProjet extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
-		$r++;
 		$this->const[$r][0] = "PROJECT_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/projects";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
+		$r++;
 		
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
@@ -108,7 +108,6 @@ class modProjet extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 		
-		$r++;
 		$this->const[$r][0] = "PROJECT_TASK_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/tasks";
@@ -187,8 +186,8 @@ class modProjet extends DolibarrModules
 		
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','s.fk_pays'=>'Country',
 		's.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.code_compta'=>'CustomerAccountancyCode','s.code_compta_fournisseur'=>'SupplierAccountancyCode',
-		'p.rowid'=>"ProjectId",'p.ref'=>"ProjectRef",'p.datec'=>"DateCreation",'p.dateo'=>"DateDebutProjet",'p.datee'=>"DateFinProjet",'p.fk_statut'=>'ProjectStatus','p.description'=>"projectNote",
-		'pt.rowid'=>'RefTask','pt.dateo'=>"TaskDateo",'pt.datee'=>"TaskDatee",'pt.duration_effective'=>"DurationEffective",'pt.planned_workload'=>"DurationPlanned",'pt.progress'=>"Progress",'pt.description'=>"TaskDesc",
+		'p.rowid'=>"ProjectId",'p.ref'=>"RefProject",'p.datec'=>"DateCreation",'p.dateo'=>"DateStart",'p.datee'=>"DateEnd",'p.fk_statut'=>'Status','p.description'=>"Description",
+		'pt.rowid'=>'RefTask','pt.dateo'=>"TaskDateStart",'pt.datee'=>"TaskDateEnd",'pt.duration_effective'=>"DurationEffective",'pt.planned_workload'=>"PlannedWorkload",'pt.progress'=>"Progress",'pt.description'=>"TaskDescription",
 		'ptt.task_date'=>'TaskTimeDate','ptt.task_duration'=>"TimesSpent",'ptt.fk_user'=>"TaskTimeUser",'ptt.note'=>"TaskTimeNote");
 
 		$this->export_TypeFields_array[$r]=array('s.rowid'=>"List:societe:nom",'s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','s.fk_pays'=>'List:c_pays:libelle',
@@ -197,10 +196,10 @@ class modProjet extends DolibarrModules
 		'pt.dateo'=>"Date",'pt.datee'=>"Date",'pt.duration_effective'=>"Duree",'pt.planned_workload'=>"Number",'pt.progress'=>"Number",'pt.description'=>"Text",
 		'ptt.task_date'=>'Date','ptt.task_duration'=>"Duree",'ptt.fk_user'=>"List:user:Name",'ptt.note'=>"Text");
 
-		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company',
-		's.tel'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
-		'f.rowid'=>"project",'f.ref'=>"project",'f.datec'=>"project",'f.duree'=>"project",'f.fk_statut'=>"project",'f.description'=>"project",
-		'pt.rowid'=>'task','pt.dateo'=>"task",'pt.datee'=>"task",'pt.duration_effective'=>"task",'pt.planned_workload'=>"task",'pt.progress'=>"task",'pt.description'=>"task",
+		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','s.fk_pays'=>'company',
+		's.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company',
+		'p.rowid'=>"project",'p.ref'=>"project",'p.datec'=>"project",'p.dateo'=>"project",'p.datee'=>"project",'p.duree'=>"project",'p.fk_statut'=>"project",'p.description'=>"project",
+		'pt.rowid'=>'projecttask','pt.dateo'=>"projecttask",'pt.datee'=>"projecttask",'pt.duration_effective'=>"projecttask",'pt.planned_workload'=>"projecttask",'pt.progress'=>"projecttask",'pt.description'=>"projecttask",
 		'ptt.task_date'=>'task_time','ptt.task_duration'=>"task_time",'ptt.fk_user'=>"task_time",'ptt.note'=>"task_time");
 		
 		

@@ -141,7 +141,7 @@ class Task extends CommonObject
                 // End call triggers
             }
         }
-        
+
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -311,7 +311,7 @@ class Task extends CommonObject
                 // End call triggers
             }
         }
-        
+
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -535,9 +535,10 @@ class Task extends CommonObject
      * @param	int		$socid				Third party id
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
+     * @param	string	$filteronprojstatus	Filter on project status
      * @return 	array						Array of tasks
      */
-    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='')
+    function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1)
     {
         global $conf;
 
@@ -546,7 +547,7 @@ class Task extends CommonObject
         //print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
         // List of tasks (does not care about permissions. Filtering will be done later)
-        $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public,";
+        $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut,";
         $sql.= " t.rowid as taskid, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress,";
         $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.ref as ref_task,t.rang";
         if ($mode == 0)
@@ -567,6 +568,7 @@ class Task extends CommonObject
             if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
         }
         if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
+        if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
 
         //print $sql;
@@ -606,6 +608,7 @@ class Task extends CommonObject
                     $tasks[$i]->fk_project		= $obj->projectid;
                     $tasks[$i]->projectref		= $obj->ref;
                     $tasks[$i]->projectlabel	= $obj->plabel;
+                    $tasks[$i]->projectstatus	= $obj->fk_statut;
                     $tasks[$i]->label			= $obj->label;
                     $tasks[$i]->description		= $obj->description;
                     $tasks[$i]->fk_parent		= $obj->fk_task_parent;
@@ -764,8 +767,8 @@ class Task extends CommonObject
         dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
         if ($this->db->query($sql) )
         {
-            $task_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
-            $ret = $task_id;
+            $tasktime_id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_time");
+            $ret = $tasktme_id;
 
             if (! $notrigger)
             {
@@ -789,6 +792,21 @@ class Task extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
             $sql.= " SET duration_effective = duration_effective + '".price2num($this->timespent_duration)."'";
             $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
+            if (! $this->db->query($sql) )
+            {
+                $this->error=$this->db->lasterror();
+                dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
+                $ret = -2;
+            }
+        }
+		
+		if ($ret >= 0)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+            $sql.= " SET thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";
+            $sql.= " WHERE rowid = ".$tasktime_id;
 
             dol_syslog(get_class($this)."::addTimeSpent sql=".$sql, LOG_DEBUG);
             if (! $this->db->query($sql) )
@@ -1018,7 +1036,7 @@ class Task extends CommonObject
 		// Load source object
 		$clone_task->fetch($fromid);
 		$origin_task->fetch($fromid);
-		
+
 		$defaultref='';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
 		if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))

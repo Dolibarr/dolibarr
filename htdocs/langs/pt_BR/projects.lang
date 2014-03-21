@@ -98,12 +98,12 @@ CantRemoveProject=Este projeto não pode ser eliminado porque está referenciado
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Chefe de projeto
 TypeContact_project_external_PROJECTLEADER=Chefe de projeto
-# TypeContact_project_internal_CONTRIBUTOR=Contributor
-# TypeContact_project_external_CONTRIBUTOR=Contributor
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 # TypeContact_project_task_internal_TASKEXECUTIVE=Task executive
 # TypeContact_project_task_external_TASKEXECUTIVE=Task executive
-# TypeContact_project_task_internal_CONTRIBUTOR=Contributor
-# TypeContact_project_task_external_CONTRIBUTOR=Contributor
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Elements to referring the project
 # AddElement=Refering
 # Documents models

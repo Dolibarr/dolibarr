@@ -30,8 +30,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMssql extends DoliDB
 {
-	//! Database handler
-	var $db;
 	//! Database type
 	public $type='mssql';
 	//! Database label
@@ -42,30 +40,8 @@ class DoliDBMssql extends DoliDB
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(2000);
-	//! Resultset of last request
+	//! Resultset of last query
 	private $_results;
-	//! 1 si connecte, 0 sinon
-	var $connected;
-	//! 1 si base selectionne, 0 sinon
-	var $database_selected;
-	//! Nom base selectionnee
-	var $database_name;
-	//! Nom user base
-	var $database_user;
-	//! >=1 if a transaction is opened, 0 otherwise
-	var $transaction_opened;
-	//! Derniere requete executee
-	var $lastquery;
-	//! Derniere requete executee avec echec
-	var $lastqueryerror;
-	//! Message erreur mysql
-	var $lasterror;
-	//! Message erreur mysql
-	var $lasterrno;
-
-	var $ok;
-	var $error;
-
 
     /**
 	 *	Constructor.
@@ -198,16 +174,6 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-	 */
-	function getLabel()
-	{
-		return $this->label;
-	}
-
-	/**
 	 *	Return version of database server
 	 *
 	 *	@return	        string      Version string
@@ -217,17 +183,6 @@ class DoliDBMssql extends DoliDB
 		$resql=$this->query("SELECT @@VERSION");
 		$version=$this->fetch_array($resql);
 		return $version['computed'];
-	}
-
-
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-	function getVersionArray()
-	{
-		return explode('.',$this->getVersion());
 	}
 
 	/**
@@ -551,75 +506,6 @@ class DoliDBMssql extends DoliDB
 	function idate($param)
 	{
 		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
-	}
-
-	/**
-	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-	 * 	19700101020000 -> 3600 with TZ+1
-	 *
-	 * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@return		date				Date TMS
-	 */
-	function jdate($string)
-	{
-		$string=preg_replace('/([^0-9])/i','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
-		return $date;
-	}
-
-	/**
-	 *	Format a SQL IF
-	 *
-	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *	@param	string	$resok          resultat si test egal
-	 *	@param	string	$resko          resultat si test non egal
-	 *	@return	string          		SQL string
-	 */
-	function ifsql($test,$resok,$resko)
-	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
-	}
-
-
-	/**
-	 *	Return last request executed with query()
-	 *
-	 *	@return	string					Last query
-	 */
-	function lastquery()
-	{
-		return $this->lastquery;
-	}
-
-	/**
-	 *	Return last query in error
-	 *
-	 *	@return	    string	lastqueryerror
-	 */
-	function lastqueryerror()
-	{
-		return $this->lastqueryerror;
-	}
-
-	/**
-	 *	Return last error label
-	 *
-	 *	@return	    string	lasterror
-	 */
-	function lasterror()
-	{
-		return $this->lasterror;
-	}
-
-	/**
-	 *	Return last error code
-	 *
-	 *	@return	    string	lasterrno
-	 */
-	function lasterrno()
-	{
-		return $this->lasterrno;
 	}
 
 	/**

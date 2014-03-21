@@ -79,6 +79,13 @@ MailtoEMail=超链接的电子邮件
 ActivateCheckRead=允许使用“取消订阅”链接
 ActivateCheckReadKey=“读回执”和“取消订阅”功能键用于加密URL使用
 EMailSentToNRecipients=电子邮件发送到 %s 的收件人。
+# EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+# MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+# SendRemind=Send reminder by EMails
+# RemindSent=%s reminder(s) sent
+# AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+# NoRemindSent=No EMail reminder sent
+# ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（联系客户，潜在客户，供应商，...）

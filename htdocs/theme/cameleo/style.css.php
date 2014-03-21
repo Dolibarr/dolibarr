@@ -84,9 +84,7 @@ body {
 	/*background: #ffffff url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1); ?>) 0 0 no-repeat;*/
 <?php } ?>
 	color: #101010;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-    <?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -1349,7 +1347,7 @@ div.divButAction { margin-bottom: 1.4em; }
 
 .butActionRefused {
     background: #FFe7ec;
-	color: #666;
+	color: #aaa !important;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
@@ -1606,6 +1604,7 @@ tr.pair td.nohover {
     -webkit-box-shadow: 4px 4px 4px #DDD;
     box-shadow: 4px 4px 4px #DDD;
     margin-bottom: 8px !important;*/
+    background: #FFFFFF;
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 5px;
@@ -2199,8 +2198,6 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1); ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
-	padding: 0.1em 0.7em !important;
-	margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
 	-webkit-border-radius:0px 5px 0px 5px !important;
 	border-radius:0px 5px 0px 5px !important;
@@ -2378,9 +2375,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {

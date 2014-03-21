@@ -23,3 +23,4 @@ GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή
 Deliverer=Διανομέας :
 Sender=Αποστολέας
 Recipient=Παραλήπτης
+# ErrorStockIsNotEnough=There's not enough stock

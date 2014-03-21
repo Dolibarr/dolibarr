@@ -97,6 +97,7 @@ class Societe extends CommonObject
     var $localtax1_assuj;
     var $localtax2_assuj;
 
+    var $managers;
     var $capital;
     var $typent_id;
     var $typent_code;
@@ -315,6 +316,7 @@ class Societe extends CommonObject
         $contact->statut            = 1;
         $contact->priv              = 0;
         $contact->country_id        = $this->country_id;
+        $contact->state_id          = $this->state_id;
         $contact->address           = $this->address;
         $contact->email             = $this->email;
         $contact->zip               = $this->zip;
@@ -1228,9 +1230,9 @@ class Societe extends CommonObject
             }
 
             // Ecrit trace dans historique des remises
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
             $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-            $sql.= " VALUES (".$this->db->idate($now).", ".$this->id.", '".$remise."',";
+            $sql.= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$remise."',";
             $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";
@@ -1239,7 +1241,7 @@ class Societe extends CommonObject
             if (! $resql)
             {
                 $this->db->rollback();
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
                 return -1;
             }
 
@@ -2565,6 +2567,7 @@ class Societe extends CommonObject
     	$this->idprof5=empty($conf->global->MAIN_INFO_PROFID5)?'':$conf->global->MAIN_INFO_PROFID5;
     	$this->idprof6=empty($conf->global->MAIN_INFO_PROFID6)?'':$conf->global->MAIN_INFO_PROFID6;
     	$this->tva_intra=empty($conf->global->MAIN_INFO_TVAINTRA)?'':$conf->global->MAIN_INFO_TVAINTRA;	// VAT number, not necessarly INTRA.
+    	$this->managers=empty($conf->global->MAIN_INFO_SOCIETE_MANAGERS)?'':$conf->global->MAIN_INFO_SOCIETE_MANAGERS;
     	$this->capital=empty($conf->global->MAIN_INFO_CAPITAL)?'':$conf->global->MAIN_INFO_CAPITAL;
     	$this->forme_juridique_code=empty($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)?'':$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
     	$this->email=empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?'':$conf->global->MAIN_INFO_SOCIETE_MAIL;

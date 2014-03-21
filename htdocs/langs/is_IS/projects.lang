@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Project
 Projects=Verkefni
 SharedProject=Allir
@@ -30,11 +32,18 @@ TimeSpent=Tíma sem fer
 TimesSpent=Tími
 RefTask=Tilv. verkefni
 LabelTask=Merki verkefni
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Nýr tími
 MyTimeSpent=Minn tími var
 MyTasks=verkefni mitt
 Tasks=Verkefni
 Task=Verkefni
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Ný verkefni
 AddTask=Bæta við verkefni
 AddDuration=Bæta við lengd
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=Ef sumir hlutir (nótum röð ...), sem tilheyra
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Project leiðtogi
 TypeContact_project_external_PROJECTLEADER=Project leiðtogi
-TypeContact_project_internal_CONTRIBUTOR=Framlög
-TypeContact_project_external_CONTRIBUTOR=Framlög
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Verkefni framkvæmdastjóri
 TypeContact_project_task_external_TASKEXECUTIVE=Verkefni framkvæmdastjóri
-TypeContact_project_task_internal_CONTRIBUTOR=Framlög
-TypeContact_project_task_external_CONTRIBUTOR=Framlög
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

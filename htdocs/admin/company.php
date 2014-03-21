@@ -139,7 +139,7 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
             }
         }
     }
-
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS",$_POST["MAIN_INFO_SOCIETE_MANAGERS"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"],'chaine',0,'',$conf->entity);
@@ -377,6 +377,11 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $langs->load("companies");
 
+    // Managing Director(s)
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ManagingDirectors").'</td><td>';
+    print '<input name="MAIN_INFO_SOCIETE_MANAGERS" size="80" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
+    
     // Capital
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
@@ -500,9 +505,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print '</table>';
 
 
-    /*
-     *  Debut d'annee fiscale
-     */
+    // Fiscal year start
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -517,9 +520,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print "</table>";
 
 
-    /*
-     *  Options fiscale
-     */
+    // Fiscal options
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -741,6 +742,11 @@ else
     print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
+    // Managing Director(s)
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ManagingDirectors").'</td><td>';
+    print $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '</td></tr>';
+    
     // Capital
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';

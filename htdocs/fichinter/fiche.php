@@ -226,7 +226,9 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 								// Define output language
 								if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
 								{
-									$prod = new Product($db, $lines[$i]->fk_product);
+									$prod = new Product($db);
+									$prod->id=$lines[$i]->fk_product;
+									$prod->getMultiLangs();
 
 									$outputlangs = $langs;
 									$newlang='';
@@ -991,7 +993,7 @@ if ($action == 'create')
 		// Contract
 		if ($conf->contrat->enabled)
 		{
-			$langs->load("contrat");
+			$langs->load("contracts");
 			print '<tr><td valign="top">'.$langs->trans("Contract").'</td><td>';
 			$numcontrat=$formcontract->select_contract($soc->id,GETPOST('contratid','int'),'contratid',0,1);
 			if ($numcontrat==0)

@@ -200,7 +200,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'order', $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'order', $langs->trans("Suppliers"), 0, 'company');
 
 
 // Supplier order numbering module

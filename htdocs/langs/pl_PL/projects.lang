@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Project
 Projects=Projekty
 SharedProject=Współużytkowane projektu
@@ -30,11 +32,18 @@ TimeSpent=Czas spędzony
 TimesSpent=Czas spędzony
 RefTask=Nr ref. zadanie
 LabelTask=Wytwórnia zadanie
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Nowy czas spędzony
 MyTimeSpent=Mój czas spędzony
 MyTasks=Moje zadania
 Tasks=Zadania
 Task=Zadanie
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Nowe zadania
 AddTask=Dodaj zadanie
 AddDuration=Dodaj czas
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=Jeżeli pewne obiekty (faktura, zamówienie, ...
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Kierownik projektu
 TypeContact_project_external_PROJECTLEADER=Kierownik projektu
-TypeContact_project_internal_CONTRIBUTOR=Współpracownik
-TypeContact_project_external_CONTRIBUTOR=Współpracownik
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=zadań wykonawczych
 TypeContact_project_task_external_TASKEXECUTIVE=zadań wykonawczych
-TypeContact_project_task_internal_CONTRIBUTOR=Współpracownik
-TypeContact_project_task_external_CONTRIBUTOR=Współpracownik
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

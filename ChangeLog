@@ -4,34 +4,51 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
-- New: Can input barcode during product creation step.
-- New: Add autonumbering of barcode value for products.
+- New: Update ckeditor to version 4.
+- New: Add form "search customer order" on commercial main page.
 - New: Can create contract from an order.
 - New: Add list of orders products in tab "consumption" on thirdparties.
 - New: Add graph stats for suppliers orders in tab "stats" on products.
 - New: Add option MAIN_HIDE_INACTIVETAB_ON_PRINT to hide inactive tabs when you
        use the "print" view on screen.
-- New: Add a menu entry to a barcode generation page.
 - New: Add option MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES and MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES
-       to automatically add timestamp and user line into editionf field when editing a note.
+       to automatically add timestamp and user line into edition field when editing a note.
 - New: Add button cancel into edition of notes.
-- New: Improved Opensurvey module and added options to disable comments and disable
-       public votes.
+- New: Improved Barcode module:
+       Can input barcode during product creation step.
+       Add autonumbering of barcode value for products.
+       Add a page/tool for mass barcode generation.
+- New: Improved Opensurvey module:
+       Added options to disable comments and disable public votes.
+       Limit dates use calendar popup.
+       Description of survey use wysiwig editor.
+       More information shown on result tab.
+       Renamed "survey" into "poll" (better translation).
+- New: Add filter on text and status into survey list. Can also sort on id, text and date end.
 - New: The box "balance of bank accounts" show all opened accounts.
-- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE.
+- New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE to add sale represnative into public
+       note of generated documents.
 - New: Add warning if supplier payment is higher that due amount.
 - New: Increase length of url into bookmark module.
-- New: Add an admin page to make a mass init of barcode values for all products.
-- New: Automatic events for sending mails showing info about mail linked objects. 
-- New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty)
-- Fix: Project Task numbering rule customs rule works
+- New: Automatic events sending mails add info about linked objects into email content. 
+- New: Price management enhancement (multiprice level, price by customer, if MAIN_FEATURES_LEVEL=2 Price by qty).
+- New: Add option MAIN_FAVICON_URL.
+- New: Created {line_price_ht_locale}, {line_price_vat_locale} and {line_price_ttc_locale} ODT tags.
+- New: Add filter on project status into task list. By default, only "opened" project are visible.
+- New: Status "validated" for project are renamed into "opened".
+- New: Add barcode fields into user database.
+- New: Add manager name (ceo, director, president...) into main company information page.
+- New: Add field url as product properties.
+- New: More options to create a credit note (can be filled autatically according to remain to pay).
+- New: Can define custom fields for categories.
+- Fix: Project Task numbering customs rule works.
+- Fix: Add actions events not implemented.
 
 TODO
 - New: Predefined product and free product use same form.
 - New: [ task #926 ] Add extrafield feature on order lines.
 - New: [ task #927 ] Add extrafield feature on Proposal lines.
 - New: [ task #928 ] Add extrafield feature on invoice lines.
-
 
 For translators:
 - Update language files.
@@ -54,8 +71,8 @@ Dolibarr better:
 
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
-- Remove the javascrit function ac_delay() that is not used anymore by core code.
-- Properties dictionnaries into module descriptor files has been renamed into dictionaries.
+- Remove the javascript function ac_delay() that is not used anymore by core code.
+- Properties "dictionaries" into module descriptor files has been renamed into "dictionaries".
 
 
 
@@ -64,7 +81,7 @@ Fix: Do not report trigger errors twice.
 Fix: Error when creating event was not reported.
 Fix: Bug of import of agenda when using https link
 Fix: Field nature not saved correctly
-Fix: Substituion of extra field was ko for order
+Fix: Substitution of extra field was ko for order
 Fix: Bad translation of date format for pt_BR.
 Fix: priority field of agenda record is smallint.
 Fix: Missing loading of lang in some pages.
@@ -73,7 +90,7 @@ Fix: Link to paypal was invalid into email text.
 Fix: ref and date of supplier invoice.
 Fix: Check on bank account.
 Fix: Problem with file upload and download.
-Fix: Page load not ending when large number of thirdparies. We 
+Fix: Page load not ending when large number of thirdparties. We 
      added option MAIN_DISABLE_AJAX_COMBOX to disable javascript
      combo feature that is root cause of problem.
 Fix: [ bug #1231 ] PDF always generated in interventions
@@ -84,8 +101,20 @@ Fix: Enable extrafields for customer order, proposal and invoice lines. This fea
 Fix: user right on Holiday for month report nor working.
 Fix: [ bug #1250 ] "Supplier Ref. product" sidebar search box does not work
 Fix: Bad space in predefined messages. 
-Fix: Signature was not added for email sent from thirdparty page.
+Fix: [ bug #1256 ] Signature was not added for email sent from thirdparty page.
 Fix: Action event SHIPPING_VALIDATE is not implemented
+Fix: The customer code was set to uppercase when using numbering module leopard. We
+     must keep data safe of any change.
+Fix: [ bug #1291 ] Loading actions extrafields fails.
+Fix: [ bug #1123 ] Paid deposit invoices are always shown as partially paid when fully paid
+Fix: Corrected project contact types translation.
+Fix: [ bug #1206 ] PMP price is bad calculated.
+Fix: [ bug #520 ] Product statistics and detailed lists are wrong.
+Fix: [ bug #1240 ] traduction.
+Fix: [ bug #1238 ] When creating accompte with a %, free product are used for calculation.
+Fix: [ bug #1280 ] service with not end of date was tagged as expired.
+Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference
+New: Added es_CL language
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
@@ -1489,7 +1518,7 @@ For developers:
 - Add Dolibarr triggers support on payments.
 - Add Dolibarr triggers on supplier and customers orders.
 - Webcalendar triggers for actions on Member module.
-- Support optionnal new javascript popup selector for date fields.
+- Support optional new javascript popup selector for date fields.
 - Support for several RSS boxes in external RSS module. Setup easier.
 - Can attach documents on Action, Orders, Invoices, Commercial proposals.
 - Can attach contacts on proposals, orders, contracts, invoices.

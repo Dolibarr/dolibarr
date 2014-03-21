@@ -52,6 +52,7 @@ InvoiceSentByEMail=電子メールで送信顧客の請求書%s
 SupplierOrderSentByEMail=電子メールで送信サプライヤの注文%s
 SupplierInvoiceSentByEMail=電子メールで送信サプライヤの請求書%s
 ShippingSentByEMail=電子メールで送信出荷%s
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=電子メールで送信介入%s
 NewCompanyToDolibarr= 第三者が作成した
 DateActionPlannedStart= 計画開始日

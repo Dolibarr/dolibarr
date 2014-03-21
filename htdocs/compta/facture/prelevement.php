@@ -183,13 +183,13 @@ if ($object->id > 0)
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
 	print $object->getLibType();
-	if ($object->type == 1)
+	if ($object->type == Facture::TYPE_REPLACEMENT)
 	{
 		$facreplaced=new Facture($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
 	}
-	if ($object->type == 2)
+	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new Facture($db);
 		$facusing->fetch($object->fk_facture_source);
@@ -228,7 +228,7 @@ if ($object->id > 0)
 	print '. ';
 	if ($absolute_discount > 0)
 	{
-		if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
+		if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
 		{
 			if ($object->statut == 0)
 			{
@@ -236,7 +236,7 @@ if ($object->id > 0)
 			}
 			else
 			{
-				if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
+				if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
 				{
 					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 					print '<br>'.$text.'.<br>';
@@ -260,9 +260,9 @@ if ($object->id > 0)
 	if ($absolute_creditnote > 0)
 	{
 		// If validated, we show link "add credit note to payment"
-		if ($object->statut != 1 || $object->type == 2 || $object->type == 3)
+		if ($object->statut != 1 || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_CREDIT_NOTE)
 		{
-			if ($object->statut == 0 && $object->type != 3)
+			if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT)
 			{
 				$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
 				print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
@@ -285,11 +285,11 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Date');
 	print '</td>';
-	if ($object->type != 2 && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editinvoicedate&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 
-	if ($object->type != 2)
+	if ($object->type != Facture::TYPE_CREDIT_NOTE)
 	{
 		if ($action == 'editinvoicedate')
 		{
@@ -312,10 +312,10 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
-	if ($object->type != 2 && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($object->type != 2)
+	if ($object->type != Facture::TYPE_CREDIT_NOTE)
 	{
 		if ($action == 'editpaymentterm')
 		{
@@ -338,10 +338,10 @@ if ($object->id > 0)
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($object->type != 2 && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($object->type != 2)
+	if ($object->type != Facture::TYPE_CREDIT_NOTE)
 	{
 		if ($action == 'editconditions')
 		{

@@ -125,13 +125,13 @@ if ($object->id > 0)
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
 	print $object->getLibType();
-	if ($object->type == 1)
+	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
 	{
 		$facreplaced=new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
 	}
-	if ($object->type == 2)
+	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 	{
 		$facusing=new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
@@ -183,7 +183,7 @@ if ($object->id > 0)
 }
 else
 {
-    print $langs->trans('UnkownError');
+    print $langs->trans('ErrorUnknown');
 }
 
 

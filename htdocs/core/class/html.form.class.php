@@ -10,10 +10,10 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin        <patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2010      Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2014 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2011      Herve Prot            <herve.prot@symeos.com>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -724,7 +724,7 @@ class Form
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
@@ -742,7 +742,7 @@ class Form
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
-     *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
+     *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x')
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
@@ -2413,7 +2413,7 @@ class Form
      *
      *  @param	string	$selected          Id account pre-selected
      *  @param  string	$htmlname          Name of select zone
-     *  @param  int		$statut            Status of searched accounts (0=open, 1=closed)
+     *  @param  int		$statut            Status of searched accounts (0=open, 1=closed, 2=both)
      *  @param  string	$filtre            To filter list
      *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *  @param  string	$moreattrib        To add more attribute on select
@@ -2425,10 +2425,10 @@ class Form
 
         $langs->load("admin");
 
-        $sql = "SELECT rowid, label, bank";
+        $sql = "SELECT rowid, label, bank, clos as status";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-        $sql.= " WHERE clos = '".$statut."'";
-        $sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
+        if ($statut != 2) $sql.= " AND clos = '".$statut."'";
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY label";
 
@@ -2458,6 +2458,7 @@ class Form
                         print '<option value="'.$obj->rowid.'">';
                     }
                     print $obj->label;
+                    if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;
                 }
@@ -3195,7 +3196,7 @@ class Form
      *  @param	string	$page       	Page
      *  @param  string	$selected   	Id preselected
      *  @param  string	$htmlname		Name of HTML select
-     *  @param  string	$filter         Optionnal filters criteras
+     *  @param  string	$filter         optional filters criteras
      *	@param	int		$showempty		Add an empty field
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
@@ -3485,7 +3486,7 @@ class Form
 
 
     /**
-     *	Show a HTML widget to input a date or combo list for day, month, years and optionnaly hours and minutes
+     *	Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes
      *  Fields are preselected with :
      *            	- set_time date (Local PHP server timestamps or date format YYYY-MM-DD or YYYY-MM-DD HH:MM)
      *            	- local date of PHP server if set_time is ''

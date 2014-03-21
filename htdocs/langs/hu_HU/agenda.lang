@@ -52,6 +52,7 @@ InvoiceSentByEMail=Az ügyfél számlát postáztuk %s
 SupplierOrderSentByEMail=Szállító érdekében %s postáztuk
 SupplierInvoiceSentByEMail=Szállító számlát postáztuk %s
 ShippingSentByEMail=Szállítás %s postáztuk
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Beavatkozás %s postáztuk
 NewCompanyToDolibarr= Harmadik fél létrehozva
 DateActionPlannedStart= Tervezett indulási dátum

@@ -240,7 +240,7 @@ class pdf_rouget extends ModelePdfExpedition
 					$pageposbefore=$pdf->getPage();
 
 					// Description de la ligne produit
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,150,3,$this->posxdesc,$curY,0,1);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxqtyordered-10,3,$this->posxdesc,$curY,0,1);
 
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
@@ -264,6 +264,7 @@ class pdf_rouget extends ModelePdfExpedition
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);

@@ -154,7 +154,7 @@ class DiscountAbsolute
         $sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
         $sql.= " fk_facture_source";
         $sql.= ")";
-        $sql.= " VALUES (".$this->db->idate($this->datec!=''?$this->datec:dol_now()).", ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
+        $sql.= " VALUES ('".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
         $sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
         $sql.= ")";

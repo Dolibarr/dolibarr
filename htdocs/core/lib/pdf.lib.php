@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014		Cedric GROSS		<c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -946,6 +947,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 	$desc=(! empty($object->lines[$i]->desc)?$object->lines[$i]->desc:(! empty($object->lines[$i]->description)?$object->lines[$i]->description:''));
 	$ref_supplier=(! empty($object->lines[$i]->ref_supplier)?$object->lines[$i]->ref_supplier:(! empty($object->lines[$i]->ref_fourn)?$object->lines[$i]->ref_fourn:''));    // TODO Not yet saved for supplier invoices, only supplier orders
 	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');
+	$dbatch=(! empty($object->lines[$i]->detail_batch)?$object->lines[$i]->detail_batch:false);
 
 	if ($issupplierline) $prodser = new ProductFournisseur($db);
 	else $prodser = new Product($db);
@@ -1077,6 +1079,20 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		//print '>'.$outputlangs->charset_output.','.$period;
 		$libelleproduitservice.="__N__".$period;
 		//print $libelleproduitservice;
+	}
+
+	if ($dbatch) 
+	{
+		$format='day';
+		foreach ($dbatch as $detail)
+		{
+			$dte=array();
+			if ($detail->eatby) $dte[]=$outputlangs->transnoentitiesnoconv('printEatby',dol_print_date($detail->eatby, $format, false, $outputlangs));
+			if ($detail->sellby) $dte[]=$outputlangs->transnoentitiesnoconv('printSellby',dol_print_date($detail->sellby, $format, false, $outputlangs));
+			if ($detail->batch) $dte[]=$outputlangs->transnoentitiesnoconv('printBatch',$detail->batch);
+			$dte[]=$outputlangs->transnoentitiesnoconv('printQty',$detail->dluo_qty);
+			$libelleproduitservice.= "__N__  ".implode($dte,"-");
+		}
 	}
 
 	// Now we convert \n into br

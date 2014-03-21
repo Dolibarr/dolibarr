@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Projekt
 Projects=Projektid
 SharedProject=Kõik
@@ -30,11 +32,18 @@ TimeSpent=Aega kulutatud
 TimesSpent=Aega kulutatud
 RefTask=Ülesande viide
 LabelTask=Ülesande nimi
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Aeg kulutatud uuesti
 MyTimeSpent=Minu poolt kulutatud aeg
 MyTasks=Minu ülesanded
 Tasks=Ülesanded
 Task=Ülesanne
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Uus ülesanne
 AddTask=Lisa ülesanne
 AddDuration=Lisa kestus
@@ -100,12 +109,12 @@ ProjectCreatedInDolibarr=Projekt %s on loodud
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektijuht
 TypeContact_project_external_PROJECTLEADER=Projektijuht
-TypeContact_project_internal_CONTRIBUTOR=Osavõtja
-TypeContact_project_external_CONTRIBUTOR=Osavõtja
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Ülesande täitja
 TypeContact_project_task_external_TASKEXECUTIVE=Ülesande täitja
-TypeContact_project_task_internal_CONTRIBUTOR=Osavõtja
-TypeContact_project_task_external_CONTRIBUTOR=Osavõtja
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Vali element
 AddElement=Seosta elemendiga
 # Documents models

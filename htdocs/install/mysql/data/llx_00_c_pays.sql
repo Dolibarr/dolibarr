@@ -278,3 +278,4 @@ insert into llx_c_pays (rowid,code,libelle) values (243, 'JE', 'Jersey'        )
 insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Monténégro'    );
 insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthélemy');
 insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  );
+insert into llx_c_pays (rowid,code,libelle) values (247, 'BU', 'Burundi'  );

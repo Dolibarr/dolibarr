@@ -70,7 +70,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
-print '<table summary="bookmarklist" class="notopnoleftnoright" width="100%">';
+print '<table summary="bookmarklist" class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -80,9 +80,7 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("NbOfBoomarkToShow").'</td><td>';
 print '<input size="3" type="text" name="BOOKMARKS_SHOW_IN_MENU" value="'.$conf->global->BOOKMARKS_SHOW_IN_MENU.'">';
 print '</td></tr>';
-
-print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-print '</table></form>';
+print '</table><br /><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center></form>';
 
 dol_htmloutput_mesg($mesg);
 

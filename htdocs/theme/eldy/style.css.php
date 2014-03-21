@@ -228,9 +228,7 @@ body {
 	background: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color: #101010;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -447,7 +445,7 @@ td.showDragHandle {
 	float: none;
 	vertical-align: top;
 }
-#id-<?php echo $right; ?> {
+#id-right {	/* This must stay id-right ant not be replaced with echo $right */
 	width: 100%;
 }
 
@@ -480,7 +478,7 @@ div.fichehalfright {
 	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-left: 16px;\n"; }
+	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
@@ -513,7 +511,7 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	height: <?php print ($heightmenu2+1); ?>px;
-	padding-right: 100px;
+	padding-<?php echo $right; ?>: 100px;
 	background: <?php echo $colorbackvmenu; ?>;
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
     <?php if ($usecss3) { ?>
@@ -2280,7 +2278,7 @@ li.cal_event       { border: none; list-style-type: none; }
 	       background-color:white;
 	       border:1px solid #888;
 	       margin:0px;
-	       padding:0px;
+/*	       padding:0px; This make combo crazy */
 	     }
 .ui-autocomplete ul {
 	       list-style-type:none;
@@ -2504,8 +2502,6 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #C0C0C0 !important;
-	padding: 0.1em 0.7em !important;
-	margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
 	-webkit-border-radius:0px 5px 0px 5px !important;
 	border-radius:0px 5px 0px 5px !important;
@@ -2717,9 +2713,11 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
+	<?php if (! empty($dol_use_jmobile)) { ?>
+	font-size: 13px;
+	<?php } else { ?>
 	font-size: <?php print $fontsize ?>px;
-    <?php } ?>
+	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
@@ -2817,7 +2815,7 @@ ul.ulmenu {
 
 /* Style for first level menu with jmobile */
 .ui-bar-b, .lilevel0 {
-	border: 1px solid #456f9a;
+	border: 1px solid #5f5f7a !important;
     background: rgb(<?php echo $colorbacktitle1; ?>);
     background-repeat: repeat-x;
 	<?php if ($usecss3) { ?>

@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,7 @@ $langs->load("products");
 $langs->load("other");
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
+if ($conf->productbatch->enabled) $langs->load("productbatch");
 
 $mesg=''; $error=0; $errors=array(); $_error=0;
 
@@ -92,6 +94,9 @@ $hookmanager->initHooks(array('productcard'));
  * Actions
  */
 
+$createbarcode=empty($conf->barcode->enabled)?0:1;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) $createbarcode=0;
+
 $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -107,15 +112,15 @@ if (empty($reshook))
     }
 
     // Barcode type
-    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
+    if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
-    	$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
+        $result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
     // Barcode value
-    if ($action ==	'setbarcode' && $user->rights->barcode->creer)
+    if ($action ==	'setbarcode' && $createbarcode)
     {
     	$result=$object->check_barcode(GETPOST('barcode'));
 
@@ -197,11 +202,13 @@ if (empty($reshook))
             $object->type               	 = $type;
             $object->status             	 = GETPOST('statut');
             $object->status_buy            = GETPOST('statut_buy');
+			$object->status_batch          	= GETPOST('status_batch');
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
-
+			
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
+            $object->url					= GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode            = GETPOST('customcode');
             $object->country_id            = GETPOST('country_id');
@@ -275,11 +282,13 @@ if (empty($reshook))
                 $object->ref                    = $ref;
                 $object->libelle                = GETPOST('libelle');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
+            	$object->url					= GETPOST('url');
                 $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
                 $object->customcode             = GETPOST('customcode');
                 $object->country_id             = GETPOST('country_id');
                 $object->status                 = GETPOST('statut');
                 $object->status_buy             = GETPOST('statut_buy');
+                $object->status_batch	        = GETPOST('status_batch');
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 $object->duration_value         = GETPOST('duration_value');
@@ -348,7 +357,8 @@ if (empty($reshook))
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
-
+                $object->barcode = -1;
+                
                 if ($object->check())
                 {
                     $id = $object->create($user);
@@ -395,8 +405,16 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
-                            setEventMessage($langs->trans($object->error), 'errors');
-                            dol_print_error($db,$object->error);
+                            if (count($object->errors)) 
+                            {
+                            	setEventMessage($object->errors, 'errors');
+                            	dol_print_error($db,$object->errors);
+                            }
+                            else 
+                            {
+                            	setEventMessage($langs->trans($object->error), 'errors');
+                            	dol_print_error($db,$object->error);
+                            }
                         }
                     }
                 }
@@ -763,10 +781,19 @@ else
         // To buy
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-        print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy"'));
+        print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy'));
         print '</td></tr>';
 
-        $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+	    // batch number management
+		if ($conf->productbatch->enabled) {
+			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
+			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
+			print '</td></tr>';
+		}
+
+        $showbarcode=empty($conf->barcode->enabled)?0:1;
+        if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
         if ($showbarcode)
         {
@@ -792,11 +819,16 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
-        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
+        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
         $doleditor->Create();
 
         print "</td></tr>";
 
+        // Public URL
+        print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
+        print '</td></tr>';    
+        
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
@@ -1009,8 +1041,17 @@ else
             print '</select>';
             print '</td></tr>';
 
+			// Batch number managment
+			if ($conf->productbatch->enabled) {
+				print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
+				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
+				print '</td></tr>';
+			}
+
             // Barcode
-            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
 	        if ($showbarcode)
 	        {
@@ -1036,13 +1077,18 @@ else
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
-	        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+            // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
             $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
             $doleditor->Create();
 
             print "</td></tr>";
             print "\n";
 
+            // Public Url
+            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
+            print '</td></tr>';
+            
             // Stock
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
@@ -1174,7 +1220,8 @@ else
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
-            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
             // En mode visu
             print '<table class="border" width="100%"><tr>';
@@ -1291,8 +1338,20 @@ else
             print $object->getLibStatut(2,1);
             print '</td></tr>';
 
+			// Batch number management (to batch)
+			if ($conf->productbatch->enabled) {
+				print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Lot").')</td><td colspan="2">';
+				print $object->getLibStatut(2,2);
+				print '</td></tr>';
+			}
+
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
+
+            // Public URL
+            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="2">';
+			print dol_print_url($object->url);
+            print '</td></tr>';
 
             // Nature
             if($object->type!=1)

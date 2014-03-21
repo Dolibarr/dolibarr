@@ -95,6 +95,8 @@ class Cronjob extends CommonObject
     	global $conf, $langs;
 		$error=0;
 
+		$now=dol_now();
+		
 		// Clean parameters
 
 		if (isset($this->label)) $this->label=trim($this->label);
@@ -189,7 +191,7 @@ class Cronjob extends CommonObject
 
 		$sql.= ") VALUES (";
 
-		$sql.= " ".$this->db->idate(dol_now()).",";
+		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(! isset($this->jobtype)?'NULL':"'".$this->db->escape($this->jobtype)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
 		$sql.= " ".(! isset($this->command)?'NULL':"'".$this->db->escape($this->command)."'").",";

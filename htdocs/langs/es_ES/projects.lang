@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+RefProject=Ref. proyecto
+ProjectId=Id proyecto
 Project=Proyecto
 Projects=Proyectos
 SharedProject=Proyecto compartido
@@ -30,11 +32,18 @@ TimeSpent=Tiempo dedicado
 TimesSpent=Tiempos dedicados
 RefTask=Ref. tarea
 LabelTask=Etiqueta tarea
+TaskTimeSpent=Tiempo dedicado en tareas
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Nuevo  tiempo dedicado
 MyTimeSpent=Mi tiempo dedicado
 MyTasks=Mis tareas
 Tasks=Tareas
 Task=Tarea
+TaskDateStart=Fecha inicio
+TaskDateEnd=Fecha finalización
+TaskDescription=Descripción tarea
 NewTask=Nueva tarea
 AddTask=Añadir tarea
 AddDuration=Indicar duración
@@ -100,12 +109,12 @@ ProjectCreatedInDolibarr=Proyecto %s creado
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto
-TypeContact_project_internal_CONTRIBUTOR=Participante
-TypeContact_project_external_CONTRIBUTOR=Participante
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Participante
+TypeContact_project_external_PROJECTCONTRIBUTOR=Participante
 TypeContact_project_task_internal_TASKEXECUTIVE=Responsable
 TypeContact_project_task_external_TASKEXECUTIVE=Responsable
-TypeContact_project_task_internal_CONTRIBUTOR=Participante
-TypeContact_project_task_external_CONTRIBUTOR=Participante
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Participante
+TypeContact_project_task_external_TASKCONTRIBUTOR=Participante
 SelectElement=Seleccione elemento
 AddElement=Vincular a elmento
 # Documents models

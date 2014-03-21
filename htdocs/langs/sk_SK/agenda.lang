@@ -52,6 +52,7 @@ InvoiceSentByEMail=%s faktúre Zákazníka zaslaná e-mailom
 SupplierOrderSentByEMail=%s Dodávateľ objednávka zaslaná e-mailom
 SupplierInvoiceSentByEMail=%s dodávateľskej faktúry zasielané e-mailom
 ShippingSentByEMail=Prepravné %s zaslaná e-mailom
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervenčné %s zaslaná e-mailom
 NewCompanyToDolibarr= Tretia strana vytvorená
 DateActionPlannedStart= Plánovaný dátum začatia

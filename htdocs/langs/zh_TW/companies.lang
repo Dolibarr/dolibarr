@@ -403,7 +403,6 @@ ActivityStateFilter=活動狀態
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=用以下固定的方式回傳編號:<br> %syymm-nnnn 為客戶編號生成格式。<br> %syymm-nnnn 為供應商編號生成格式。<br>   yy 是年、mm是月、nnnn是一個不為0的序號。
-# Leopard
 LeopardNumRefModelDesc=客戶/供應商編號規則不受限制，此編碼可以隨時修改。(可開啟Elephant or Monkey模組來設定編碼規則)
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

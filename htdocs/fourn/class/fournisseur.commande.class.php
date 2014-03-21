@@ -31,6 +31,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
 /**
@@ -224,7 +225,8 @@ class CommandeFournisseur extends CommonOrder
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->subprice            = $objp->subprice;
+                    $line->subprice            = $objp->subprice;	  // deprecated
+                    $line->pu_ht	           = $objp->subprice;	  // Unit price HT
                     $line->remise_percent      = $objp->remise_percent;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
@@ -410,86 +412,6 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->error='Not Authorized';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
-
-    /**
-     *	Set draft status
-     *  TODO This method seems to be never called.
-     *
-     *	@param	User	$user			Object user that modify
-     *	@param	int		$idwarehouse	Id warehouse to use for stock change.
-     *	@return	int						<0 if KO, >0 if OK
-     */
-    function set_draft($user, $idwarehouse=-1)
-    {
-        global $conf,$langs;
-
-        $error=0;
-
-        // Protection
-        if ($this->statut == 0)
-        {
-            dol_syslog(get_class($this)."::set_draft already draft status", LOG_WARNING);
-            return 0;
-        }
-
-        if (! $user->rights->fournisseur->commande->valider)
-        {
-            $this->error='Permission denied';
-            return -1;
-        }
-
-        $this->db->begin();
-
-        $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
-        $sql.= " SET fk_statut = 0";
-        $sql.= " WHERE rowid = ".$this->id;
-
-        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            // If stock is incremented on validate order, we must redecrement it
-            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER))
-            {
-                require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
-                $num=count($this->lines);
-                for ($i = 0; $i < $num; $i++)
-                {
-                    if ($this->lines[$i]->fk_product > 0)
-                    {
-                        $mouvP = new MouvementStock($this->db);
-                        // We increment stock of product (and sub-products)
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
-                        if ($result < 0) { $error++; }
-                    }
-                }
-
-                if (!$error)
-                {
-                    $this->statut=0;
-                    $this->db->commit();
-                    return $result;
-                }
-                else
-                {
-                    $this->error=$mouvP->error;
-                    $this->db->rollback();
-                    return $result;
-                }
-            }
-
-            $this->statut=0;
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            dol_syslog($this->error, LOG_ERR);
             return -1;
         }
     }
@@ -714,8 +636,11 @@ class CommandeFournisseur extends CommonOrder
                         if ($this->lines[$i]->fk_product > 0)
                         {
                             $mouvP = new MouvementStock($this->db);
+                            $mouvP->origin = &$this;
                             // We decrement stock of product (and sub-products)
-                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderApprovedInDolibarr",$this->ref));
+	                        $up_ht_disc=$this->lines[$i]->subprice;
+    	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr",$this->ref));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -953,7 +878,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
-		//$sql.= ", ".$this->db->idate($now);
+		//$sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", " . $this->source;
@@ -1308,11 +1233,14 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$product	Id of product to dispatch
      * @param 	double		$qty		Qty to dispatch
      * @param 	int			$entrepot	Id of warehouse to add product
-     * @param 	double		$price		Price for PMP value calculation
+     * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment	Comment for stock movement
+	 * @param	date		$eatby		eat-by date
+	 * @param	date		$sellby		sell-by date
+	 * @param	string		$batch		Lot number
      * @return 	int						<0 if KO, >0 if OK
      */
-    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='')
+    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
     {
         global $conf;
         $error = 0;
@@ -1364,7 +1292,9 @@ class CommandeFournisseur extends CommonOrder
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
-                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
+                	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
+                	$mouv->origin = &$this;
+					$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;

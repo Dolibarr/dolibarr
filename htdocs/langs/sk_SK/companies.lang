@@ -403,7 +403,6 @@ ProductsIntoElements=Zoznam výrobkov do
 # CurrentOutstandingBill=Current outstanding bill
 OutstandingBill=Max. za vynikajúce účet
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Späť numero vo formáte %syymm-nnnn pre zákazníka kódu a %syymm-NNNN s dodávateľmi kódu, kde yy je rok, MM je mesiac a nnnn je sekvencia bez prerušenia a bez návratu na 0.
-# Leopard
 LeopardNumRefModelDesc=Kód je zadarmo. Tento kód je možné kedykoľvek zmeniť.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

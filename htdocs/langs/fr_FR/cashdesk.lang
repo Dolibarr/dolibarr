@@ -37,4 +37,4 @@ ShowCompany=Voir société
 ShowStock=Voir entrepôt
 DeleteArticle=Cliquez pour enlever cet article
 FilterRefOrLabelOrBC=Recherche (Ref/Lib.)
-UserNeedPermissionToEditStockToUsePos=La configuration du module stock demande une réduction du stock sur facturation, aussi l'utilisateur du Point De Vente doit avoir les droits de modifier les stocks
+UserNeedPermissionToEditStockToUsePos=Vous avez demandé de réduire le stock sur création de facture, aussi l'utilisateur qui utilise le Point De Vente doit avoir la permission d'éditer le stock.

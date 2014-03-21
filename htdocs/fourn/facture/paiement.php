@@ -34,6 +34,7 @@ require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
+$langs->load('compta');
 
 $action     = GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
@@ -232,7 +233,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 $supplierstatic=new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
-llxHeader();
+llxHeader('',$langs->trans('ListPayment'));
 
 $form=new Form($db);
 

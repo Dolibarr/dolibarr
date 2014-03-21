@@ -253,6 +253,7 @@ class Commande extends CommonOrder
                     if ($this->lines[$i]->fk_product > 0)
                     {
                         $mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
                         // We decrement stock of product (and sub-products)
                         $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));
                         if ($result < 0) { $error++; }
@@ -1037,7 +1038,7 @@ class Commande extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
     {
-    	global $mysoc;
+    	global $mysoc, $conf, $langs;
     	
     	$commandeid=$this->id;
 
@@ -1102,6 +1103,20 @@ class Commande extends CommonOrder
                 $rangmax = $this->line_max($fk_parent_line);
                 $rangtouse = $rangmax + 1;
             }
+			
+			$product_type=$type;
+			if (!empty($fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($fk_product);
+				$product_type=$product->type;
+				
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
+			}
 
             // TODO A virer
             // Anciens indicateurs: $price, $remise (a ne plus utiliser)
@@ -1126,6 +1141,7 @@ class Commande extends CommonOrder
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
             $this->line->fk_product=$fk_product;
+			$this->line->product_type=$product_type;
             $this->line->fk_remise_except=$fk_remise_except;
             $this->line->remise_percent=$remise_percent;
             $this->line->subprice=$pu_ht;

@@ -43,6 +43,7 @@ InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status
 InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Order %s validated
 OrderApprovedInDolibarr=Order %s approved
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Order %s go back to draft status
 OrderCanceledInDolibarr=Order %s canceled
 InterventionValidatedInDolibarr=Intervention %s validated

@@ -37,3 +37,4 @@ ShowCompany=Εμφάνιση εταιρείας
 ShowStock=Εμφάνιση αποθήκης
 DeleteArticle=Κάντε κλικ για να καταργήσετε αυτό το προϊόν
 FilterRefOrLabelOrBC=Αναζήτηση (Κωδ. / Ετικέτα)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

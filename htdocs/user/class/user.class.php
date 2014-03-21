@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,6 +100,7 @@ class User extends CommonObject
 	var $parentof;					// To store an array of all parents for all ids.
 
 	var $accountancy_code;				// Accountancy code in prevision of the complete accountancy module
+	var $thm;							// Average cost of employee
 
 
 	/**
@@ -154,6 +155,7 @@ class User extends CommonObject
 		$sql.= " u.photo as photo,";
 		$sql.= " u.openid as openid,";
 		$sql.= " u.accountancy_code,";
+		$sql.= " u.thm,";
 		$sql.= " u.ref_int, u.ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
@@ -205,7 +207,7 @@ class User extends CommonObject
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email		= $obj->email;
-        $this->skype		= $obj->skype;
+				$this->skype		= $obj->skype;
 				$this->job			= $obj->job;
 				$this->signature	= $obj->signature;
 				$this->admin		= $obj->admin;
@@ -216,6 +218,7 @@ class User extends CommonObject
 				$this->lang			= $obj->lang;
 				$this->entity		= $obj->entity;
 				$this->accountancy_code		= $obj->accountancy_code;
+				$this->thm			= $obj->thm;
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -1165,6 +1168,7 @@ class User extends CommonObject
 		$sql.= ", job = '".$this->db->escape($this->job)."'";
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", thm = ".(isset($this->thm)?$this->thm:"null");	// If not set, we use null
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
@@ -1496,7 +1500,7 @@ class User extends CommonObject
 		$outputlangs->load("users");
 		$outputlangs->load("other");
 
-		$subject = $outputlangs->trans("SubjectNewPassword");
+		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword");
 
 		// Define $urlwithroot
 		//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -1762,7 +1766,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionnaly the picto)
+	 *  Return a link to the user card (with optionaly the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
 	 *	@param	int		$withpicto		Include picto in link (0=No picto, 1=Inclut le picto dans le lien, 2=Picto seul)

@@ -52,6 +52,7 @@ InvoiceSentByEMail=Kundenrechnung %s per E-Mail versendet
 SupplierOrderSentByEMail=Lieferantenbestellung %s per E-Mail versendet
 SupplierInvoiceSentByEMail=Lieferantenrechnung %s per E-Mail versendet
 ShippingSentByEMail=Lieferschein %s per E-Mail versendet
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Service %s per E-Mail versendet
 NewCompanyToDolibarr= Partner erstellt
 DateActionPlannedStart= Geplantes Startdatum

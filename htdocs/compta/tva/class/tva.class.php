@@ -100,9 +100,9 @@ class Tva extends CommonObject
 
         $sql.= ") VALUES (";
 
-		$sql.= " ".$this->db->idate($this->tms).",";
-		$sql.= " ".$this->db->idate($this->datep).",";
-		$sql.= " ".$this->db->idate($this->datev).",";
+		$sql.= " '".$this->db->idate($this->tms)."',";
+		$sql.= " '".$this->db->idate($this->datep)."',";
+		$sql.= " '".$this->db->idate($this->datev)."',";
 		$sql.= " '".$this->amount."',";
 		$sql.= " '".$this->label."',";
 		$sql.= " '".$this->note."',";

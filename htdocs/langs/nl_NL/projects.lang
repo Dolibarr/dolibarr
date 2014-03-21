@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Project
 Projects=Projecten
 SharedProject=Iedereen
@@ -30,11 +32,18 @@ TimeSpent=Bestede tijd
 TimesSpent=Bestede tijd
 RefTask=Ref. taak
 LabelTask=Label taak
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Nieuwe bestede tijd
 MyTimeSpent=Mijn bestede tijd
 MyTasks=Mijn taken
 Tasks=Taken
 Task=Taak
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Nieuwe taak
 AddTask=Taak toevoegen
 AddDuration=Duur toevoegen
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=Als sommige objecten (factuur, order, ...), die 
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projectmanager
 TypeContact_project_external_PROJECTLEADER=Projectleider
-TypeContact_project_internal_CONTRIBUTOR=Bijdrager
-TypeContact_project_external_CONTRIBUTOR=Bijdrager
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Verantwoordelijke
 TypeContact_project_task_external_TASKEXECUTIVE=Verantwoordelijke
-TypeContact_project_task_internal_CONTRIBUTOR=Bijdrager
-TypeContact_project_task_external_CONTRIBUTOR=Bijdrager
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

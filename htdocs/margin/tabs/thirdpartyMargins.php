@@ -127,12 +127,11 @@ if ($socid > 0)
 
 
 		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
-		$sql.= " f.facnumber, f.total as total_ht,";
+		$sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
+		$sql.= " f.datef, f.paye, f.fk_statut as statut,";
 		$sql.= " sum(d.total_ht) as selling_price,";
-
-		$sql.= $db->ifsql('f.type =2','sum(d.qty * d.buy_price_ht *-1)','sum(d.qty * d.buy_price_ht)')." as buying_price,";
-        $sql.= $db->ifsql('f.type =2','sum(-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty)))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge," ;
-		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
+		$sql.= " ".$db->ifsql('f.type =2','sum(d.qty * d.buy_price_ht *-1)','sum(d.qty * d.buy_price_ht)')." as buying_price,";
+        $sql.= " ".$db->ifsql('f.type =2','sum(-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty)))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -142,10 +141,9 @@ if ($socid > 0)
 		$sql.= " AND d.fk_facture = f.rowid";
 		$sql.= " AND f.fk_soc = $socid";
 		$sql .= " AND d.buy_price_ht IS NOT NULL";
-		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
-			$sql .= " AND d.buy_price_ht <> 0";
-		$sql.= " GROUP BY f.rowid";
-		$sql.= " ORDER BY $sortfield $sortorder ";
+		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+		$sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+		$sql.= " ORDER BY ".$sortfield." ".$sortorder;
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -175,7 +173,7 @@ if ($socid > 0)
 
 			$cumul_achat = 0;
 			$cumul_vente = 0;
-			
+
 			$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 			if ($num > 0)
@@ -195,7 +193,7 @@ if ($socid > 0)
 						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
 						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 					}
-					
+
 					$var=!$var;
 
 					print "<tr ".$bc[$var].">";

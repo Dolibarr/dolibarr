@@ -125,7 +125,7 @@ print '<br>';
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'extsites', $langs->trans("Agenda"));
+dol_fiche_head($head, 'extsites', $langs->trans("Agenda"), 0, 'action');
 
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";

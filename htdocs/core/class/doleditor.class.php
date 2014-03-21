@@ -146,7 +146,7 @@ class DolEditor
      */
     function Create($noprint=0,$morejs='')
     {
-    	global $conf;
+    	global $conf,$langs;
 
         $found=0;
 		$out='';
@@ -169,9 +169,7 @@ class DolEditor
             	if (! defined('REQUIRE_CKEDITOR')) define('REQUIRE_CKEDITOR','1');
 
             	//$skin='kama';
-            	//$skin='office2003';
-            	//$skin='v2';
-            	$skin='kama';
+            	$skin='moono'; 	// default with cdeditor 4
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 
@@ -190,6 +188,8 @@ class DolEditor
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
             						height: '.$this->height.',
                                     skin: \''.$skin.'\',
+                                    language: \''.$langs->defaultlang.'\',
+                                    textDirection: \''.$langs->trans("DIRECTION").'\',
                                     on :
                                             {
                                                 instanceReady : function( ev )
@@ -215,13 +215,13 @@ class DolEditor
                     //$out.= '    filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/fckeditor/editor/filemanagerdol/connectors/php/upload.php?Type=Image\',';
                     $out.= "\n";
                     // To use filemanager with ckfinder (Non free) and ckfinder directory is inside htdocs/includes
-/*                  $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
+					/* $out.= '    filebrowserBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html\',
                                filebrowserImageBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Images\',
                                filebrowserFlashBrowseUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/ckfinder.html?Type=Flash\',
                                filebrowserUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files\',
                                filebrowserImageUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images\',
                                filebrowserFlashUploadUrl : \''.DOL_URL_ROOT.'/includes/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash\','."\n";
-*/
+					*/
                     $out.= '    filebrowserWindowWidth : \'900\',
                                filebrowserWindowHeight : \'500\',
                                filebrowserImageWindowWidth : \'900\',

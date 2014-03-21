@@ -403,7 +403,6 @@ ActivityStateFilter=Sysselsättningsstatus
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Återgå numero med format %syymm-nnnn för kund nummer och %syymm-nnnn för leverantör kod där YY är år, mm månaden och nnnn är en sekvens utan avbrott och utan återvändo till 0.
-# Leopard
 LeopardNumRefModelDesc=Kund / leverantör kod är gratis. Denna kod kan ändras när som helst.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

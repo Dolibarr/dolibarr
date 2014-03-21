@@ -23,3 +23,4 @@ GoodStatusDeclaration=Czy otrzymane towary powyżej w dobrym stanie,
 Deliverer=Dostawca:
 Sender=Nadawca
 Recipient=Odbiorca
+# ErrorStockIsNotEnough=There's not enough stock

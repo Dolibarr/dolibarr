@@ -403,7 +403,6 @@ ProductsIntoElements=Listado de productos en %s
 CurrentOutstandingBill=Riesgo alcanzado
 OutstandingBill=Importe máximo para facturas pendientes
 OutstandingBillReached=Importe máximo alcanzado
-# Monkey
 MonkeyNumRefModelDesc=Devuelve un número bajo el formato %syymm-nnnn para los códigos de clientes y %syymm-nnnn para los códigos de los proveedores, donde yy es el año, mm el mes y nnnn un contador secuencial sin ruptura y sin volver a 0.
-# Leopard
 LeopardNumRefModelDesc=Código de cliente/proveedor libre sin verificación. Puede ser modificado en cualquier momento.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

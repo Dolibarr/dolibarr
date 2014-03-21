@@ -79,6 +79,13 @@ MailtoEMail=mailto email (hyperlink)
 ActivateCheckRead=Activar confirmación de lectura y opción de desuscripción
 ActivateCheckReadKey=Clave usada para encriptar la URL de la confirmación de lectura y la función de desuscripción
 EMailSentToNRecipients=E-Mail enviado a %s destinatarios.
+EachInvoiceWillBeAttachedToEmail=Se creará y adjuntará a cada e-mail un documento usando el modelo de factura por defecto.
+# MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+# SendRemind=Send reminder by EMails
+# RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=Todos los terceros seleccionados y si hay e-mail definido (se enviará un e-mail por factura)
+# NoRemindSent=No EMail reminder sent
+# ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)

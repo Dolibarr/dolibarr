@@ -43,20 +43,22 @@ create table llx_product
   price_min					double(24,8) DEFAULT 0,
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
-  tva_tx					double(6,3),
-  recuperableonly           integer NOT NULL DEFAULT '0',   -- French NPR VAT
+  tva_tx					double(6,3),					  -- Default VAT rate of product
+  recuperableonly           integer NOT NULL DEFAULT '0',  -- French NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1 
   localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
   fk_user_author			integer,
-  tosell					tinyint      DEFAULT 1,
-  tobuy						tinyint      DEFAULT 1,
-  fk_product_type			integer      DEFAULT 0,			-- Type 0 for regular product, 1 for service, 9 for other (used by external module)
+  tosell					tinyint      DEFAULT 1,	            -- Product you sell
+  tobuy						tinyint      DEFAULT 1,            -- Product you buy
+  tobatch					tinyint      DEFAULT 0 NOT NULL,  -- Is it a product that need a batch or eat-by management
+  fk_product_type			integer      DEFAULT 0,			-- Type of product: 0 for regular product, 1 for service, 9 for other (used by external module)
   duration					varchar(6),
   seuil_stock_alerte		integer      DEFAULT 0,
+  url						varchar(255),
   barcode					varchar(255) DEFAULT NULL,
   fk_barcode_type			integer      DEFAULT 0,
-  accountancy_code_sell		varchar(15),					-- Selling accountancy code
-  accountancy_code_buy		varchar(15),					-- Buying accountancy code
+  accountancy_code_sell		varchar(15),                    -- Selling accountancy code
+  accountancy_code_buy		varchar(15),                    -- Buying accountancy code
   partnumber				varchar(32),                    -- Not used. Used by external modules.
   weight					float        DEFAULT NULL,
   weight_units				tinyint      DEFAULT NULL,
@@ -70,7 +72,7 @@ create table llx_product
   pmp						double(24,8) DEFAULT 0 NOT NULL,
   canvas					varchar(32)  DEFAULT NULL,
   finished					tinyint      DEFAULT NULL,
-  hidden					tinyint      DEFAULT 0,			-- Need permission see also hidden products
+  hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.
   import_key				varchar(14),					-- Import key
   desiredstock              integer      DEFAULT 0
 )ENGINE=innodb;

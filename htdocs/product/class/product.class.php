@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2007-2011 Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013	     Cedric GROSS	        <c.gross@kreiz-it.fr>
+ * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
@@ -29,6 +29,7 @@
  *	\brief      File of class to manage predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
 /**
@@ -96,6 +97,8 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
+	// We must manage batch number, sell-by date and so on : '1':yes '0':no
+	var $status_batch;
 
 	var $customcode;       // Customs code
     var $country_id;       // Country origin id
@@ -169,6 +172,7 @@ class Product extends CommonObject
 		$this->seuil_stock_alerte = 0;
 		$this->desiredstock = 0;
 		$this->canvas = '';
+		$this->status_batch=0;
 	}
 
 	/**
@@ -298,9 +302,9 @@ class Product extends CommonObject
 		$this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-        if ($this->barcode == -1)  $this->get_barcode($this,$this->barcode_type_code);
+		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
-        // Check more parameters
+		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
 
@@ -337,6 +341,7 @@ class Product extends CommonObject
 					$sql.= ", accountancy_code_sell";
 					$sql.= ", canvas";
 					$sql.= ", finished";
+					$sql.= ", tobatch";
 					$sql.= ") VALUES (";
 					$sql.= "'".$this->db->idate($now)."'";
 					$sql.= ", ".$conf->entity;
@@ -355,7 +360,8 @@ class Product extends CommonObject
 					$sql.= ", '".$this->accountancy_code_buy."'";
 					$sql.= ", '".$this->accountancy_code_sell."'";
 					$sql.= ", '".$this->canvas."'";
-					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : $this->finished);
+					$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
+					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ")";
 
 					dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -554,7 +560,7 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
-
+		
         if (empty($this->country_id))           $this->country_id = 0;
 
         //Gencod
@@ -576,7 +582,7 @@ class Product extends CommonObject
         if ($result >= 0)
         {
 	        // For automatic creation
-	        if ($this->barcode == -1) $this->get_barcode($this,$this->barcode_type_code);
+	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
@@ -592,7 +598,8 @@ class Product extends CommonObject
 
 			$sql.= ", tosell = " . $this->status;
 			$sql.= ", tobuy = " . $this->status_buy;
-			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : $this->finished);
+			$sql.= ", tobatch = " . ((empty($this->status_batch) || $this->status_batch < 0) ? '0' : $this->status_batch);
+			$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
 			$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 			$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 			$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -603,7 +610,8 @@ class Product extends CommonObject
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
-	        $sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
+			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
+			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
 	        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
 			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
@@ -1270,12 +1278,12 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, label, description, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
-		$sql.= " datec, tms, import_key, entity, desiredstock";
+		$sql.= " datec, tms, import_key, entity, desiredstock, tobatch";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
 		else
@@ -1298,11 +1306,13 @@ class Product extends CommonObject
 				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
+				$this->url						= $obj->url;
 				$this->note						= $obj->note;
 
 				$this->type						= $obj->fk_product_type;
 				$this->status					= $obj->tosell;
 				$this->status_buy				= $obj->tobuy;
+				$this->status_batch				= $obj->tobatch;
 
 	            $this->customcode				= $obj->customcode;
 	            $this->country_id				= $obj->fk_country;
@@ -2631,15 +2641,23 @@ class Product extends CommonObject
 	 *	Return label of status of object
 	 *
 	 *	@param      int	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@param      int	$type       0=Shell, 1=Buy
+	 *	@param      int	$type       0=Sell, 1=Buy, 2=Batch Number management
 	 *	@return     string      	Label of status
 	 */
 	function getLibStatut($mode=0, $type=0)
 	{
-		if($type==0)
+		switch ($type)
+		{
+		case 0:
 			return $this->LibStatut($this->status,$mode,$type);
-		else
+		case 1:
 			return $this->LibStatut($this->status_buy,$mode,$type);
+		case 2:
+			return $this->LibStatut($this->status_batch,$mode,$type);
+		default:
+			//Simulate previous behavior but should return an error string
+			return $this->LibStatut($this->status_buy,$mode,$type);
+		}
 	}
 
 	/**
@@ -2647,14 +2665,42 @@ class Product extends CommonObject
 	 *
 	 *	@param      int		$status     Statut
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy"
+	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 	 *	@return     string      		Label of status
 	 */
 	function LibStatut($status,$mode=0,$type=0)
 	{
 		global $langs;
 		$langs->load('products');
+		if ($conf->productbatch->enabled) $langs->load("productbatch");
 
+		if ($type == 2)
+		{
+			switch ($mode)
+			{
+				case 0:
+					return ($status == 0 ? $langs->trans('ProductStatusNotOnBatch') : $langs->trans('ProductStatusOnBatch'));
+				case 1:
+					return ($status == 0 ? $langs->trans('ProductStatusNotOnBatchShort') : $langs->trans('ProductStatusOnBatchShort'));
+				case 2:
+					return $this->LibStatut($status,3,2).' '.$this->LibStatut($status,1,2);
+				case 3:
+					if ($status == 0 )
+					{
+						return img_picto($langs->trans('ProductStatusNotOnBatch'),'statut5');
+					}
+					else
+					{
+						return img_picto($langs->trans('ProductStatusOnBatch'),'statut4');
+					}
+				case 4:
+					return $this->LibStatut($status,3,2).' '.$this->LibStatut($status,0,2);
+				case 5:
+					return $this->LibStatut($status,1,2).' '.$this->LibStatut($status,3,2);
+				default:
+					return $langs->trans('Unknown');
+			}
+		}
 		if ($mode == 0)
 		{
 			if ($status == 0) return ($type==0 ? $langs->trans('ProductStatusNotOnSellShort'):$langs->trans('ProductStatusNotOnBuyShort'));
@@ -2753,7 +2799,7 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('warehouse', 1).")";
@@ -2774,6 +2820,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
+					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
@@ -3212,16 +3259,18 @@ class Product extends CommonObject
 	}
 
     /**
-     *  Attribut un code barre a partir du module de controle des codes.
+     *  Get a barcode from the module to generate barcode values.
      *  Return value is stored into this->barcode
      *
      *	@param	Product		$object		Object product or service
-     *	@param	int			$type		Barcode type (ean, isbn, ...)
+     *	@param	string		$type		Barcode type (ean, isbn, ...)
      *  @return void
      */
     function get_barcode($object,$type='')
     {
         global $conf;
+        
+        $result='';
         if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
         {
             $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
@@ -3233,10 +3282,11 @@ class Product extends CommonObject
             $var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
             $mod = new $var;
 
-            $this->barcode = $mod->getNextValue($object,$type);
+            $result=$mod->getNextValue($object,$type);
 
-            dol_syslog(get_class($this)."::get_barcode barcode=".$this->barcode." module=".$var);
+            dol_syslog(get_class($this)."::get_barcode barcode=".$result." module=".$var);
         }
+        return $result;
     }
 
     /**
@@ -3261,10 +3311,63 @@ class Product extends CommonObject
         $this->country_id=1;
         $this->tosell=1;
         $this->tobuy=1;
+		$this->tobatch=0;
         $this->type=0;
         $this->note='This is a comment (private)';
 
         $this->barcode=-1;	// Create barcode automatically
     }
+
+    /**
+     * Return if object has a sell-by date or eat-by date
+     *
+     * @return  boolean     True if it's has
+     */
+	function hasbatch()
+	{
+		return ($this->status_batch == 1 ? true : false);
+	}
+
+	/**
+	 *  Adjust stock in a warehouse for product with batch number
+	 *
+	 *  @param  	User	$user           user asking change
+	 *  @param  	int		$id_entrepot    id of warehouse
+	 *  @param  	double	$nbpiece        nb of units
+	 *  @param  	int		$movement       0 = add, 1 = remove
+	 * 	@param		string	$label			Label of stock movement
+	 * 	@param		double	$price			Price to use for stock eval
+	 * 	@param		date	$dlc			eat-by date
+	 * 	@param		date	$dluo			sell-by date
+	 * 	@param		string	$lot			Lot number
+	 * 	@return     int     				<0 if KO, >0 if OK
+	 */
+	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='')
+	{
+		if ($id_entrepot)
+		{
+			$this->db->begin();
+
+			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
+
+			$op[0] = "+".trim($nbpiece);
+			$op[1] = "-".trim($nbpiece);
+
+			$movementstock=new MouvementStock($this->db);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,'',$dlc,$dluo,$lot);
+
+			if ($result >= 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				dol_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
 }
 ?>

@@ -109,9 +109,7 @@ body {
 	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -1042,7 +1040,6 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
     color: #888;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1050,9 +1047,6 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {
@@ -2063,8 +2057,6 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
     border: 1px solid #ACBCBB !important;
-	padding: 0.1em 0.7em !important;
-	margin: 0em 0.5em !important;
     -moz-border-radius:0px 5px 0px 5px !important;
 	-webkit-border-radius:0px 5px 0px 5px !important;
 	border-radius:0px 5px 0px 5px !important;
@@ -2310,9 +2302,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {

@@ -81,7 +81,7 @@ If you want to build/test package locally:
     bzr init
     bzr add
     bzr commit -m "Init control files"
-    bzr push lp:~yourlogin/+junk/debian-[dev|beta|stable]    (put here any branch name)
+    bzr push lp:~yourlogin/+junk/debian-[dev|beta|stable]    (put here any branch name or just bzr push if into a known branch)
 - or download it from launchpad bazaar:
     cd bzr
     bzr branch lp:~yourlogin/+junk/debian-[dev|beta|stable]

@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -523,7 +523,9 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 	$error=0;
 
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre'))
+	if (GETPOST('addline_libre')
+			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
 	{
 		$predef='';
 		$idprod=0;
@@ -531,7 +533,9 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 		$price_ht = GETPOST('price_ht');
 		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
 	}
-	if (GETPOST('addline_predefined'))
+	if (GETPOST('addline_predefined')
+			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)			
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -820,7 +824,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                 {
                     if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
                     else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
-                    $actiontypecode='AC_SUP_ORD';
+                    $actiontypecode='AC_SUP_INV';
                     $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto.".\n";
                     if ($message)
                     {
@@ -1518,13 +1522,13 @@ else
         // Type
         print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
         print $object->getLibType();
-        if ($object->type == 1)
+        if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
         {
             $facreplaced=new FactureFournisseur($db);
             $facreplaced->fetch($object->fk_facture_source);
             print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
         }
-        if ($object->type == 2)
+        if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
         {
             $facusing=new FactureFournisseur($db);
             $facusing->fetch($object->fk_facture_source);
@@ -2166,7 +2170,7 @@ else
 			}
 
  	 		// Reopen a standard paid invoice
-            if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
             {
                 if (! $facidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
                 {

@@ -52,6 +52,7 @@ InvoiceSentByEMail=Arve %s on saadetud e-postiga
 SupplierOrderSentByEMail=Ostutellimus %s on saadetud e-postiga
 SupplierInvoiceSentByEMail=Ostuarve %s on saadetud e-postiga
 ShippingSentByEMail=Saadetis %s on saadetud e-postiga
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Sekkumine %s on saadetud e-postiga
 NewCompanyToDolibarr= Kolmas isik loodud
 DateActionPlannedStart= Plaanitav alguskuupäev

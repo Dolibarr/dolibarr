@@ -53,7 +53,7 @@ create table llx_propal
   total					double(24,8) DEFAULT 0,			-- montant total ttc apres remise globale
 
   fk_account			integer,						-- bank account
-  fk_currency			varchar(2),						-- currency code
+  fk_currency			varchar(3),						-- currency code
   fk_cond_reglement		integer,						-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  

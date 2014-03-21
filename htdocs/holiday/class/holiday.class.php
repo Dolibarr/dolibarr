@@ -44,8 +44,10 @@ class Holiday extends CommonObject
     var $fk_user;
     var $date_create='';
     var $description;
-    var $date_debut='';
-    var $date_fin='';
+    var $date_debut='';			// Date start in PHP server TZ
+    var $date_fin='';			// Date end in PHP server TZ
+    var $date_debut_gmt='';		// Date start in GMT
+    var $date_fin_gmt='';		// Date end in GMT
     var $halfday='';
     var $statut='';			// 1=draft, 2=validated, 3=approved
     var $fk_validator;
@@ -214,6 +216,8 @@ class Holiday extends CommonObject
                 $this->description = $obj->description;
                 $this->date_debut = $this->db->jdate($obj->date_debut);
                 $this->date_fin = $this->db->jdate($obj->date_fin);
+                $this->date_debut_gmt = $this->db->jdate($obj->date_debut,1);
+                $this->date_fin_gmt = $this->db->jdate($obj->date_fin,1);
                 $this->halfday = $obj->halfday;
                 $this->statut = $obj->statut;
                 $this->fk_validator = $obj->fk_validator;
@@ -317,6 +321,8 @@ class Holiday extends CommonObject
                 $tab_result[$i]['description'] = $obj->description;
                 $tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
                 $tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
+                $tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut,1);
+                $tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin,1);
                 $tab_result[$i]['halfday'] = $obj->halfday;
                 $tab_result[$i]['statut'] = $obj->statut;
                 $tab_result[$i]['fk_validator'] = $obj->fk_validator;
@@ -426,6 +432,8 @@ class Holiday extends CommonObject
                 $tab_result[$i]['description'] = $obj->description;
                 $tab_result[$i]['date_debut'] = $this->db->jdate($obj->date_debut);
                 $tab_result[$i]['date_fin'] = $this->db->jdate($obj->date_fin);
+                $tab_result[$i]['date_debut_gmt'] = $this->db->jdate($obj->date_debut,1);
+                $tab_result[$i]['date_fin_gmt'] = $this->db->jdate($obj->date_fin,1);
                 $tab_result[$i]['halfday'] = $obj->halfday;
                 $tab_result[$i]['statut'] = $obj->statut;
                 $tab_result[$i]['fk_validator'] = $obj->fk_validator;

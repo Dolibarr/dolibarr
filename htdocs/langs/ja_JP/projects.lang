@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=プロジェクト
 Projects=プロジェクト
 SharedProject=皆
@@ -30,11 +32,18 @@ TimeSpent=に費や​​された時間は
 TimesSpent=に費や​​された時間は
 RefTask=REF。タスク
 LabelTask=ラベルタスク
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=新たに費やされた時間は
 MyTimeSpent=私の時間を費やし
 MyTasks=私の仕事
 Tasks=タスク
 Task=タスク
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=新しいタスク
 AddTask=タスクを追加する
 AddDuration=期間を追加します。
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=いくつかのオブジェクト（請求書、
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=プロジェクトリーダー
 TypeContact_project_external_PROJECTLEADER=プロジェクトリーダー
-TypeContact_project_internal_CONTRIBUTOR=貢献者
-TypeContact_project_external_CONTRIBUTOR=貢献者
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=タスクの幹部
 TypeContact_project_task_external_TASKEXECUTIVE=タスクの幹部
-TypeContact_project_task_internal_CONTRIBUTOR=貢献者
-TypeContact_project_task_external_CONTRIBUTOR=貢献者
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

@@ -53,7 +53,7 @@ create table llx_societe
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
-  fk_currency			   integer		   DEFAULT 0,					-- currency
+  fk_currency			   varchar(3),									-- default currency
   siren	                   varchar(128),                         		-- IDProf1: siren or RCS for france
   siret                    varchar(128),                         		-- IDProf2: siret for france
   ape                      varchar(128),                         		-- IDProf3: code ape for france

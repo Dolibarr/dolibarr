@@ -178,17 +178,12 @@ $sql.= " AND f.fk_soc = s.rowid";
 $sql.= " AND d.fk_product = p.rowid";
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND d.fk_facture = f.rowid";
-if ($id > 0)
-	$sql.= " AND d.fk_product =".$id;
-if (!empty($startdate))
-  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
-if (!empty($enddate))
-  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
+if ($id > 0) $sql.= " AND d.fk_product =".$id;
+if (!empty($startdate)) $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
+if (!empty($enddate)) $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
-	$sql .= " AND d.buy_price_ht <> 0";
-if ($id > 0)
-  $sql.= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, d.fk_product, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+$sql.= " GROUP BY p.label, p.rowid, p.fk_product_type, p.ref, d.fk_product, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
 $sql.= " ORDER BY ".$sortfield." ".$sortorder;
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);

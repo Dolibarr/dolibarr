@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Dự án
 Projects=Các dự án
 SharedProject=Mọi người
@@ -30,11 +32,18 @@ TimeSpent=Thời gian đã qua
 TimesSpent=Thời gian đã qua
 RefTask=Tác vụ tham chiếu
 LabelTask=Nhãn của tác vụ
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Thời gian đã qua mới
 MyTimeSpent=Thời gian đã qua của tôi
 MyTasks=Tác vụ của tôi
 Tasks=Tác vụ
 Task=Tác vụ
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Tác vụ mới
 AddTask=Thêm tác vụ
 AddDuration=Thêm độ dài thời gian
@@ -100,12 +109,12 @@ ProjectCreatedInDolibarr=Đã tạo dự án %s
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Người lãnh đạo dự án
 TypeContact_project_external_PROJECTLEADER=Người lãnh đạo dự án
-TypeContact_project_internal_CONTRIBUTOR=Người đóng góp
-TypeContact_project_external_CONTRIBUTOR=Người đóng góp
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Thi hành tác vụ
 TypeContact_project_task_external_TASKEXECUTIVE=Thi hành tác vụ
-TypeContact_project_task_internal_CONTRIBUTOR=Người đóng góp
-TypeContact_project_task_external_CONTRIBUTOR=Người đóng góp
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

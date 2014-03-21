@@ -30,7 +30,7 @@ create table llx_actioncomm
   datea				datetime,						-- deprecated
   datea2			datetime,						-- deprecated
 
-  fk_action			integer,						-- type of action (optionnal link with llx_c_actioncomm or null)
+  fk_action			integer,						-- type of action (optional link with llx_c_actioncomm or null)
   code				varchar(32) NULL,				-- code of action for automatic action
   label				varchar(128) NOT NULL,			-- label/title of event
   

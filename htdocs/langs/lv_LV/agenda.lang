@@ -52,6 +52,7 @@ InvoiceSentByEMail=Klienta rēķins %s nosūtīts pa e-pastu
 SupplierOrderSentByEMail=Piegādātāja pasūtījums %s nosūtīts pa e-pastu
 SupplierInvoiceSentByEMail=Piegādātāja rēķins %s nosūtīts pa e-pastu
 ShippingSentByEMail=Piegāde %s nosūtīta pa pastu
+# ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervences %s nosūtīta pa pastu
 NewCompanyToDolibarr= Trešā puses izveidota
 DateActionPlannedStart= Plānotais sākuma datums

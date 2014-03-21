@@ -34,8 +34,6 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBPgsql extends DoliDB
 {
-    //! Database handler
-    var $db;
     //! Database type
 	public $type='pgsql';            // Name of manager
     //! Database label
@@ -46,28 +44,8 @@ class DoliDBPgsql extends DoliDB
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
 	static $versionmin=array(8,4,0);	// Version min database
-
-	//! Resultset of last request
+	//! Resultset of last query
 	private $_results;
-
-	var $connected;               // 1 si connecte, 0 sinon
-	var $database_selected;       // 1 si base selectionne, 0 sinon
-	var $database_name;			//! Nom base selectionnee
-	var $database_user;	   		//! Nom user base
-	//! >=1 if a transaction is opened, 0 otherwise
-	var $transaction_opened;
-	var $lastquery;
-	// Saved last error
-	var $lastqueryerror;
-	var $lasterror;
-	var $lasterrno;
-
-	var $unescapeslashquot=0;              // By default we do not force the unescape of \'. This is used only to process sql with mysql escaped data.
-	var $standard_conforming_strings=1;    // Database has option standard_conforming_strings to on
-
-	var $ok;
-	var $error;
-
 
 	/**
 	 *	Constructor.
@@ -425,16 +403,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-	 */
-	function getLabel()
-	{
-		return $this->label;
-	}
-
-	/**
 	 *	Return version of database server
 	 *
 	 *	@return	        string      Version string
@@ -448,16 +416,6 @@ class DoliDBPgsql extends DoliDB
 		  return $liste['server_version'];
 		}
 		return '';
-	}
-
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-	function getVersionArray()
-	{
-		return explode('.',$this->getVersion());
 	}
 
 	/**
@@ -576,24 +534,29 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
+		global $conf;
+		
 		$query = trim($query);
 
 		// Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query,$type,($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
-		$loop=true;
-		while ($loop)
+		if (! empty($conf->global->MAIN_DB_AUTOFIX_BAD_SQL_REQUEST))
 		{
-			if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/',$query))
+			// Fix bad formed requests. If request contains a date without quotes, we fix this but this should not occurs.
+			$loop=true;
+			while ($loop)
 			{
-				$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/','\\1\'\\2\'',$query);
-				dol_syslog("Warning: Bad formed request converted into ".$query,LOG_WARNING);
+				if (preg_match('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/',$query))
+				{
+					$query=preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/','\\1\'\\2\'',$query);
+					dol_syslog("Warning: Bad formed request converted into ".$query,LOG_WARNING);
+				}
+				else $loop=false;
 			}
-			else $loop=false;
 		}
-
+		
 		if ($usesavepoint && $this->transaction_opened)
 		{
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
@@ -753,21 +716,6 @@ class DoliDBPgsql extends DoliDB
 	}
 
 	/**
-	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-	 * 	19700101020000 -> 3600 with TZ+1
-	 *
-	 * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@return		date				Date TMS
-	 */
-	function jdate($string)
-	{
-		$string=preg_replace('/([^0-9])/i','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
-		return $date;
-	}
-
-	/**
      *  Format a SQL IF
      *
 	 *  @param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
@@ -778,47 +726,6 @@ class DoliDBPgsql extends DoliDB
 	function ifsql($test,$resok,$resko)
 	{
 		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
-	}
-
-
-	/**
-	 * Renvoie la derniere requete soumise par la methode query()
-	 *
-	 * @return	    lastquery
-	 */
-	function lastquery()
-	{
-		return $this->lastquery;
-	}
-
-	/**
-	 * Renvoie la derniere requete en erreur
-	 *
-	 * @return	    string	lastqueryerror
-	 */
-	function lastqueryerror()
-	{
-		return $this->lastqueryerror;
-	}
-
-	/**
-	 * Renvoie le libelle derniere erreur
-	 *
-	 * @return	    string	lasterror
-	 */
-	function lasterror()
-	{
-		return $this->lasterror;
-	}
-
-	/**
-	 * 	Renvoie le code derniere erreur
-	 *
-	 * 	@return	    string	lasterrno
-	 */
-	function lasterrno()
-	{
-		return $this->lasterrno;
 	}
 
 	/**
@@ -1137,15 +1044,15 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * 	Create a user to connect to database
 	 *
-	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
-	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
-	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_host 		Ip server
+	 *	@param	string	$dolibarr_main_db_user 		Name of user to create
+	 *	@param	string	$dolibarr_main_db_pass 		Password of user to create
 	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
 	 *	@return	int									<0 if KO, >=0 if OK
 	 */
 	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
 	{
-		$sql = "create user \"".addslashes($dolibarr_main_db_user)."\" with password '".addslashes($dolibarr_main_db_pass)."'";
+		$sql = "CREATE USER '".$this->escape($dolibarr_main_db_user)."' with password '".$this->escape($dolibarr_main_db_pass)."'";
 
 		dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
 		$resql=$this->query($sql);
@@ -1401,8 +1308,7 @@ class DoliDBPgsql extends DoliDB
 		$resql=$this->query($resql);
 		if ($resql)
 		{
-			$obj=$this->fetch_object($resql);
-			$result[$obj->name]=$obj->setting;
+			while ($obj=$this->fetch_object($resql)) $result[$obj->name]=$obj->setting;
 		}
 
 		return $result;

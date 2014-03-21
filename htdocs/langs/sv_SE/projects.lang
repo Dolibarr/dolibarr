@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Projekt
 Projects=Projekt
 SharedProject=Alla
@@ -30,11 +32,18 @@ TimeSpent=Tid som tillbringas
 TimesSpent=Tid
 RefTask=Ref. uppgift
 LabelTask=Label uppgift
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Ny tid
 MyTimeSpent=Min tid
 MyTasks=Mina uppgifter
 Tasks=Uppgifter
 Task=Uppgift
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Ny uppgift
 AddTask=Lägg till uppgift
 AddDuration=Lägg varaktighet
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=Om vissa objekt (faktura, order, ...), som tillh
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektledare
 TypeContact_project_external_PROJECTLEADER=Projektledare
-TypeContact_project_internal_CONTRIBUTOR=Medarbetare
-TypeContact_project_external_CONTRIBUTOR=Medarbetare
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Uppgift verkställande
 TypeContact_project_task_external_TASKEXECUTIVE=Uppgift verkställande
-TypeContact_project_task_internal_CONTRIBUTOR=Medarbetare
-TypeContact_project_task_external_CONTRIBUTOR=Medarbetare
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models

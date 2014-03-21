@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - projects
+# RefProject=Ref. project
+# ProjectId=Project Id
 Project=Prosjekt
 Projects=Prosjekter
 SharedProject=Alle
@@ -30,11 +32,18 @@ TimeSpent=Tid brukt
 TimesSpent=Tid brukt
 RefTask=Ref. oppgave
 LabelTask=Oppgave
+# TaskTimeSpent=Time spent on tasks
+# TaskTimeUser=User
+# TaskTimeNote=Note
+# TaskTimeDate=Date
 NewTimeSpent=Ny tid brukt
 MyTimeSpent=Mitt tidsforbruk
 MyTasks=Mine oppgaver
 Tasks=Oppgaver
 Task=Oppgave
+# TaskDateStart=Task start date
+# TaskDateEnd=Task end date
+# TaskDescription=Task description
 NewTask=Ny oppgave
 AddTask=Legg til oppgave
 AddDuration=Legg til varighet
@@ -100,12 +109,12 @@ IfNeedToUseOhterObjectKeepEmpty=Dersom noen objekter (faktura, orden, ...), som 
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Prosjektleder
 TypeContact_project_external_PROJECTLEADER=Prosjektleder
-TypeContact_project_internal_CONTRIBUTOR=Bidragsyter
-TypeContact_project_external_CONTRIBUTOR=Bidragsyter
+# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
+# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
 TypeContact_project_task_internal_TASKEXECUTIVE=Oppgave Executive
 TypeContact_project_task_external_TASKEXECUTIVE=Oppgave Executive
-TypeContact_project_task_internal_CONTRIBUTOR=Bidragsyter
-TypeContact_project_task_external_CONTRIBUTOR=Bidragsyter
+# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
+# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 # SelectElement=Select element
 # AddElement=Link to element
 # Documents models
