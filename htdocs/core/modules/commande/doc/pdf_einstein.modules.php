@@ -593,20 +593,6 @@ class pdf_einstein extends ModelePDFCommandes
             $posy=$pdf->GetY()+1;
         }
 		*/
-		if (! empty($object->date_livraison))
-		{
-            $pdf->SetXY($this->marge_gauche, $posy);
-            $pdf->SetFont('','B', $default_font_size - 2);
-            $text=$outputlangs->transnoentities("DeliveryDate").':';
-            $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
-
-			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY($posxval, $posy);
-            $text=dol_print_date($object->date_livraison,'day','',$outputlangs);
-            $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
-
-            $posy=$pdf->GetY()+1;
-		}
 		/* TODO
 		else if (! empty($object->availability_code))
 		{
@@ -619,7 +605,7 @@ class pdf_einstein extends ModelePDFCommandes
             $posy=$pdf->GetY()+1;
 		}*/
 
-	    // Show shipping date
+	    // Show planed date of delivery
         if ($object->date_livraison)
 		{
             $outputlangs->load("sendings");
