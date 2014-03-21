@@ -75,7 +75,6 @@ function getServerTimeZoneString()
 
 /**
  * Return server timezone int.
- * If $conf->global->MAIN_OLD_DATE is set or PHP too old, we use old behaviour: All convertions does not take care of dayling saving time.
  *
  * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
  * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
@@ -83,7 +82,7 @@ function getServerTimeZoneString()
 function getServerTimeZoneInt($refgmtdate='now')
 {
     global $conf;
-    if (method_exists('DateTimeZone','getOffset') && empty($conf->global->MAIN_OLD_DATE))
+    if (method_exists('DateTimeZone','getOffset'))
     {
         // Method 1 (include daylight)
         $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
@@ -97,11 +96,13 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	dol_print_error('','PHP version must be 5.2+');
+    	/*
         // Method 2 (does not include daylight, not supported by adodb)
         if ($refgmtdate == 'now')
         {
             if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use new PHP with not MAIN_OLD_DATE.
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
@@ -111,7 +112,7 @@ function getServerTimeZoneInt($refgmtdate='now')
         elseif ($refgmtdate == 'summer')
         {
             if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use new PHP with not MAIN_OLD_DATE.
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref='08'; $dayref='01';
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
@@ -119,6 +120,7 @@ function getServerTimeZoneInt($refgmtdate='now')
             return 'unknown';    // For true result
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
+        */
     }
     $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
@@ -146,7 +148,7 @@ function getParentCompanyTimeZoneString()
 function getParentCompanyTimeZoneInt($refgmtdate='now')
 {
     global $conf;
-    if (class_exists('DateTime') && empty($conf->global->MAIN_OLD_DATE))
+    if (class_exists('DateTime'))
     {
         // Method 1 (include daylight)
         $localtz = new DateTimeZone(getParentCompanyTimeZoneString());
@@ -155,6 +157,7 @@ function getParentCompanyTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	dol_print_error('','PHP version must be 5.2+');
         // Method 2 (does not include daylight)
         $tmp=dol_mktime(0,0,0,1,1,1970);
     }
