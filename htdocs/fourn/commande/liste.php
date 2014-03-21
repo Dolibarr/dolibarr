@@ -32,11 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("orders");
 
-$sref=GETPOST('search_ref');
-$snom=GETPOST('search_nom');
-$suser=GETPOST('search_user');
-$sttc=GETPOST('search_ttc');
+
 $search_ref=GETPOST('search_ref');
+$search_refsupp=GETPOST('search_refsupp');
 $search_nom=GETPOST('search_nom');
 $search_user=GETPOST('search_user');
 $search_ttc=GETPOST('search_ttc');
@@ -81,7 +79,7 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
+$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -91,21 +89,21 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
 $sql.= " AND cf.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($sref)
+if ($search_ref)
 {
-	$sql .= natural_search('cf.ref', $sref);
+	$sql .= natural_search('cf.ref', $search_ref);
 }
-if ($snom)
+if ($search_nom)
 {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('s.nom', $search_nom);
 }
-if ($suser)
+if ($search_user)
 {
-	$sql.= " AND u.login LIKE '%".$db->escape($suser)."%'";
+	$sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
-if ($sttc)
+if ($search_ttc)
 {
-	$sql .= " AND total_ttc = ".price2num($sttc);
+	$sql .= " AND total_ttc = ".price2num($search_ttc);
 }
 if ($sall)
 {
@@ -116,6 +114,10 @@ if ($socid) $sql.= " AND s.rowid = ".$socid;
 if (GETPOST('statut'))
 {
 	$sql .= " AND fk_statut =".GETPOST('statut','int');
+}
+if ($search_refsupp)
+{
+	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
 }
 
 $sql.= " ORDER BY $sortfield $sortorder ";
@@ -133,11 +135,13 @@ if ($resql)
 	if ($search_nom)   $param.="&search_nom=".$search_nom;
 	if ($search_user)  $param.="&search_user=".$search_user;
 	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
+	if ($search_refsupp) $param.="&search_refsupp=".$search_refsupp;
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"cf.ref_supplier","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","",$param,$sortfield,$sortorder);
@@ -147,10 +151,11 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_refsupp" value="'.$search_refsupp.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$search_user.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
 	print '<td colspan="2" class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
@@ -174,6 +179,10 @@ if ($resql)
 		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td>'."\n";
+		
+		// Ref Supplier
+		print '<td>'.$obj->ref_supplier.'</td>'."\n";
+		
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
