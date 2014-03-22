@@ -24,6 +24,7 @@ For users:
        Description of survey use wysiwig editor.
        More information shown on result tab.
        Renamed "survey" into "poll" (better translation).
+       Move poll menu into tools menu.
 - New: Add filter on text and status into survey list. Can also sort on id, text and date end.
 - New: The box "balance of bank accounts" show all opened accounts.
 - New: Add option MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE to add sale represnative into public

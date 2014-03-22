@@ -47,6 +47,8 @@ ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN date_fin date_fin DATETIME NOT 
 ALTER TABLE llx_opensurvey_sondage CHANGE COLUMN format format VARCHAR(2) NOT NULL;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN sujet TEXT;
 
+DELETE FROM llx_menu where module='opensurvey';
+
 ALTER TABLE llx_facture_rec CHANGE COLUMN usenewprice usenewprice INTEGER DEFAULT 0;
 
 -- Uniformize index name to match http://wiki.dolibarr.org/index.php/Language_and_development_rules#SQL_rules

@@ -217,9 +217,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 
 
 	// Tools
-	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
-	'perms'=>(! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run)),
-	'module'=>'mailing|export|import');
+	$tmpentry=array('enabled'=>(! empty($conf->opensurvey->enabled) || ! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
+	'perms'=>(! empty($user->rights->opensurvey->read) || ! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run)),
+	'module'=>'opensurvey|mailing|export|import');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -1115,6 +1115,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		if ($mainmenu == 'tools')
 		{
 
+      if (! empty($conf->opensurvey->enabled))
+			{
+				$langs->load("opensurvey");
+
+				$newmenu->add("/opensurvey/index.php?leftmenu=opensurvey", $langs->trans("Survey"), 0, $user->rights->opensurvey->read, '', $mainmenu, 'opensurvey');
+				$newmenu->add("/opensurvey/wizard/index.php?leftmenu=opensurvey", $langs->trans("NewSurvey"), 1, $user->rights->opensurvey->write);
+				$newmenu->add("/opensurvey/list.php?leftmenu=opensurvey", $langs->trans("List"), 1, $conf->opensurvey->enabled);
+			}
+      
 			if (! empty($conf->mailing->enabled))
 			{
 				$langs->load("mails");
