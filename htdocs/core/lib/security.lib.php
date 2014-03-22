@@ -125,6 +125,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
     $params = explode('&', $dbtablename);
     $dbtablename=(! empty($params[0]) ? $params[0] : '');
     $sharedelement=(! empty($params[1]) ? $params[1] : '');
+    $sharedelement=(! empty($params[1]) ? $params[1] : $params[0]);
 
 	$listofmodules=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
 

@@ -311,7 +311,7 @@ $sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND a.entity IN ('.getEntity().')';
+$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
