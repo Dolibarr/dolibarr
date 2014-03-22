@@ -1,0 +1,3 @@
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear un pedido de cliente automáticamente a la firma de una cotización
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear una factura a cliente automáticamente a la firma de una cotización
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar como facturada la cotización cuando el pedido de cliente relacionado se clasifique como pagado

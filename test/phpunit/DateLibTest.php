@@ -313,15 +313,6 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-		$conf->global->MAIN_OLD_DATE=1;
-
-		$stime='19700102';
-		$result=dol_stringtotime($stime);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(86400,$result);
-
-		$conf->global->MAIN_OLD_DATE=0;
-
 		$stime='19700102';
 		$result=dol_stringtotime($stime);
 		print __METHOD__." result=".$result."\n";
