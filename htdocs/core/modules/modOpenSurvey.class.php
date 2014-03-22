@@ -122,6 +122,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->menus = array();			// List of menus to add
 		$r=0;
 
+    /* Move to tools menu
 		$this->menu[$r]=array(	'fk_menu'=>0,		    						// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',
 								'titre'=>'Surveys',
@@ -177,6 +178,7 @@ class modOpenSurvey extends DolibarrModules
 								'user'=>0);
 		$r++;
 	}
+  */
 
 	/**
 	 *	Function called when module is enabled.
