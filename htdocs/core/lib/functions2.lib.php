@@ -1755,25 +1755,26 @@ function getElementProperties($element_type)
  * Fetch an object with element_type and its id
  * Inclusion classes is automatic
  *
- * @param	int		$element_id
- * @param	string	$element_type
+ * @param	int     $element_id Element id
+ * @param	string  $element_type Element type
  * @return 	object || 0 || -1 if error
  */
 function fetchObjectByElement($element_id,$element_type) {
 
     global $conf;
+	global $db,$conf;
 
     $element_prop = getElementProperties($element_type);
     if (is_array($element_prop) && $conf->$element_prop['module']->enabled)
     {
         dol_include_once('/'.$element_prop['classpath'].'/'.$element_prop['classfile'].'.class.php');
 
-        $objectstat = new $element_prop['classname']($this->db);
-        $ret = $objectstat->fetch($element_id);
-        if ($ret >= 0)
-        {
-            return $objectstat;
-        }
-    }
-    return 0;
+		$objectstat = new $element_prop['classname']($db);
+		$ret = $objectstat->fetch($element_id);
+		if ($ret >= 0)
+		{
+			return $objectstat;
+		}
+	}
+	return 0;
 }
