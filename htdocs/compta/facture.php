@@ -579,14 +579,21 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes')
 // Convertir en reduc
 else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
 {
-	$db->begin();
-
 	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (!empty($object->paye))	// protection against multiple submit
+	// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
+	$discountcheck=new DiscountAbsolute($db);
+	$result=$discountcheck->fetch(0,$object->id);
+
+	$canconvert=0;
+	if ($object->type == 3 && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
+	if ($object->type == 2 && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+	if ($canconvert)
 	{
+		$db->begin();
+
 		// Boucle sur chaque taux de tva
 		$i=0;
 		foreach($object->lines as $line)
@@ -1981,9 +1988,10 @@ if ($action == 'update_extras')
 }
 
 
+
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formother=new FormOther($db);
@@ -2186,6 +2194,7 @@ if ($action == 'create')
 		$options.='</option>';
 	}
 
+	// Show link for credit note
 	$facids=$facturestatic->list_qualified_avoir_invoices($soc->id);
 	if ($facids < 0)
 	{
@@ -3593,7 +3602,10 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Reopen a standard paid invoice
-			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+			if ((($object->type == 0 || $object->type == 1)
+				|| ($object->type == 2 && empty($discount->id))
+				|| ($object->type == 3 && empty($discount->id)))
+				 && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 			{
 				if (! $objectidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
 				{
@@ -3680,23 +3692,32 @@ else if ($id > 0 || ! empty($ref))
 				// For credit note only
 				if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a></div>';
+					if ($resteapayer == 0)
+					{
+						print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a></div>';
+					}
 				}
+
 				// For credit note
 				if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == 3 && $object->statut == 2 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
+				if ($object->type == 3 && $object->paye == 1 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
 			}
 
-			// Classify paid (if not deposit and not credit note. Such invoice are "converted")
-			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement &&
-				(($object->type != 2 && $object->type != 3 && $resteapayer <= 0) || ($object->type == 2 && $resteapayer >= 0)) )
+			// Classify paid
+			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != 2 && $object->type != 3 && $resteapayer <= 0) || ($object->type == 2 && $resteapayer >= 0))
+				|| ($object->type == 3 && $object->paye == 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
+			)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
 			}
