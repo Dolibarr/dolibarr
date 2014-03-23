@@ -29,4 +29,6 @@ TitleResourceCard=Resource card
 ResourceSingular=Resource
 
 ResourceName=Resource name
-ResourceType=Resource type
+ResourceType=Type of resource
+
+DictionaryResourceType=Type of resources

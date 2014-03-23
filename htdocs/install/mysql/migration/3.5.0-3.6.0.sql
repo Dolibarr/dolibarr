@@ -1187,3 +1187,13 @@ CREATE TABLE llx_element_resources
 ALTER TABLE llx_element_resources ADD UNIQUE INDEX idx_element_resources_idx1 (resource_id, resource_type, element_id, element_type);
 ALTER TABLE llx_element_resources ADD INDEX idx_element_element_element_id (element_id);
 -- Pas de contraite sur resource_id et element_id car pointe sur differentes tables
+
+create table llx_c_type_resource
+(
+  rowid      	integer     PRIMARY KEY,
+  code          varchar(32) NOT NULL,
+  label 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, code);

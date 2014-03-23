@@ -677,7 +677,7 @@ class Resource extends CommonObject
     
     	if (count($this->cache_code_type_resource)) return 0;    // Cache deja charge
     
-    	$sql = "SELECT rowid, code, libelle, active";
+    	$sql = "SELECT rowid, code, label, active";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";
     	$sql.= " WHERE active > 0";
     	$sql.= " ORDER BY rowid";
@@ -691,9 +691,9 @@ class Resource extends CommonObject
     		{
     			$obj = $this->db->fetch_object($resql);
     			// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-    			$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+    			$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
     			$this->cache_code_type_resource[$obj->rowid]['code'] =$obj->code;
-    			$this->cache_code_type_resource[$obj->rowid]['libelle']=$label;
+    			$this->cache_code_type_resource[$obj->rowid]['label']=$label;
     			$this->cache_code_type_resource[$obj->rowid]['active'] =$obj->active;
     			$i++;
     		}
