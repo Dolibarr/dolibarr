@@ -121,16 +121,7 @@ class modResource extends DolibarrModules
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example:
-		$this->const = array(
-			0=>array(
-					'PLACE_DEFAULT_ZOOM_FOR_MAP',
-					'chaine',
-					'1',
-					'This is a constant to defined default zoom into link to OSM map',
-					1
-			)
-
-		);
+		$this->const = array();
 
 		// Array to add new pages in new tabs
 		// Example:
@@ -164,47 +155,6 @@ class modResource extends DolibarrModules
 			'action:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=action&element_id=__ID__',
 			'thirdparty:+resources:Resources:resource:$user->rights->resource->read:/resource/element_resource.php?element=societe&element_id=__ID__'
 		);
-
-		/* Example:
-		  // This is to avoid warnings
-		  if (! isset($conf->resource->enabled)) $conf->resource->enabled=0;
-		  $this->dictionnaries=array(
-		  'langs'=>'resource@resource',
-		  // List of tables we want to see into dictonnary editor
-		  'tabname'=>array(
-		  MAIN_DB_PREFIX."table1",
-		  MAIN_DB_PREFIX."table2",
-		  MAIN_DB_PREFIX."table3"
-		  ),
-		  // Label of tables
-		  'tablib'=>array("Table1","Table2","Table3"),
-		  // Request to select fields
-		  'tabsql'=>array(
-		  'SELECT f.rowid as rowid, f.code, f.label, f.active'
-		  . ' FROM ' . MAIN_DB_PREFIX . 'table1 as f',
-		  'SELECT f.rowid as rowid, f.code, f.label, f.active'
-		  . ' FROM ' . MAIN_DB_PREFIX . 'table2 as f',
-		  'SELECT f.rowid as rowid, f.code, f.label, f.active'
-		  . ' FROM ' . MAIN_DB_PREFIX . 'table3 as f'
-		  ),
-		  // Sort order
-		  'tabsqlsort'=>array("label ASC","label ASC","label ASC"),
-		  // List of fields (result of select to show dictionnary)
-		  'tabfield'=>array("code,label","code,label","code,label"),
-		  // List of fields (list of fields to edit a record)
-		  'tabfieldvalue'=>array("code,label","code,label","code,label"),
-		  // List of fields (list of fields for insert)
-		  'tabfieldinsert'=>array("code,label","code,label","code,label"),
-		  // Name of columns with primary key (try to always name it 'rowid')
-		  'tabrowid'=>array("rowid","rowid","rowid"),
-		  // Condition to show each dictionnary
-		  'tabcond'=>array(
-		  $conf->resource->enabled,
-		  $conf->resource->enabled,
-		  $conf->resource->enabled
-		  )
-		  );
-		 */
 
 		// Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
