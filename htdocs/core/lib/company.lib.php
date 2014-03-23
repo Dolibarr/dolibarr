@@ -726,7 +726,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 					$coords .= "<br />".addslashes($object->country);
 			}
 
-            print '<td align="center"><a href="#" onclick="return copyToClipboard(\''.$coords.'\');">';
+            print '<td align="center">';	// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+            print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.$coords.'\');">';
             print img_picto($langs->trans("Address"), 'object_address.png');
             print '</a></td>';
 
@@ -771,15 +772,15 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "<br>\n";
 ?>
-<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;">
-</div>
+<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;"></div>
 <?php
 	print '<script type="text/javascript">
+	$("#dialog").dialog()
 			function copyToClipboard (text) {
 			  text = text.replace(/<br \/>/g,"\n");
 			  var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br/><br/>'.$langs->trans('HelpCopyToClipboard').'";
 			  $("#dialog").html(newElem);
-			  $( "#dialog" ).dialog();
+			  $("#dialog").dialog();
 			  $("#coords").select();
 			  return false;
 			}
