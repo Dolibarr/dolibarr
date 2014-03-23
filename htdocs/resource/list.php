@@ -1,6 +1,6 @@
 <?php
-/* Module to manage locations, buildings, floors and rooms into Dolibarr ERP/CRM
- * Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Module to manage resources into Dolibarr ERP/CRM
+ * Copyright (C) 2013-2014	Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- *   	\file       place/index.php
- *		\ingroup    place
- *		\brief      Page to manage place object
+ *   	\file       resource/index.php
+ *		\ingroup    resource
+ *		\brief      Page to manage resource objects
  */
 
 
@@ -51,12 +51,10 @@ $page		= GETPOST('page','int');
 
 $object = new Resource($db);
 
-$hookmanager->initHooks(array('element_resource'));
+$hookmanager->initHooks(array('resource_list'));
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-
 
 if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.rowid";
@@ -87,13 +85,13 @@ llxHeader('',$pagetitle,'');
 
 $form=new Form($db);
 
-print_fiche_titre($pagetitle,'','resource_32.png@resource');
+print_fiche_titre($pagetitle,'','resource.png@resource');
 
-	// Confirmation suppression resource line
-	if ($action == 'delete_resource')
-	{
-		print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_resource",'','',1);
-	}
+// Confirmation suppression resource line
+if ($action == 'delete_resource')
+{
+	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_resource",'','',1);
+}
 
 // Load object list
 $ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset);
@@ -111,8 +109,9 @@ else
 
 	print '<table class="noborder" width="100%">'."\n";
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Resource'),$_SERVER['PHP_SELF'],'t.resource_id','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Element'),$_SERVER['PHP_SELF'],'t.element_id','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Id'),$_SERVER['PHP_SELF'],'t.rowid','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Edit'));
 	print '</tr>';
 
@@ -125,18 +124,20 @@ else
 			$style='style="background: orange;"';
 
 		print '<tr '.$bc[$var].' '.$style.'><td>';
-		//print $resource->getNomUrl(1);
-		if(is_object($resource->objresource))
-			print $resource->objresource->getNomUrl(1);
+		print $resource->id;
 		print '</td>';
 
 		print '<td>';
-		if(is_object($resource->objelement))
-			print $resource->objelement->getNomUrl(1);
+		print $resource->ref;
+		print '</td>';
+		
+		print '<td>';
+		print $resource->type_label;
 		print '</td>';
 
 		print '<td>';
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete_resource&element='.$resource->element_type.'&element_id='.$resource->element_id.'&lineid='.$resource->id.'">'.$langs->trans('Delete').'</a>';
+		print '<a href="card.php?id='.$resource->id.'">'.$langs->trans('View').'</a> ';
+		print '<a href="card.php?action=edit&id='.$resource->id.'">'.$langs->trans('Edit').'</a>';
 		print '</td>';
 
 		print '</tr>';
@@ -145,6 +146,28 @@ else
 	print '</table>';
 
 }
+
+/*
+ * Boutons actions
+*/
+print '<div class="tabsAction">';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+// modified by hook
+if (empty($reshook))
+{
+	if ($action != "edit" )
+	{
+		// Edit resource
+		if($user->rights->resource->write)
+		{
+			print '<div class="inline-block divButAction">';
+			print '<a href="add.php" class="butAction">'.$langs->trans('AddResource').'</a>';
+			print '</div>';
+		}
+	}
+}
+print '</div>';
 
 llxFooter();
 

@@ -57,6 +57,7 @@ if( ! $user->rights->resource->read)
 
 $object = new Resource($db);
 
+$hookmanager->initHooks(array('resource_card'));
 
 /*******************************************************************
 * ACTIONS
@@ -172,26 +173,24 @@ if ( $object->fetch($id) > 0 )
 		 */
 		print '<table width="100%" class="border">';
 
-		// Ref
-		print '<tr>';
-		print '<td  width="20%">' . $langs->trans("ResourceName") . '</td>';
-		print '<td   width="30%">';
-		print $object->ref;
+		print '<tr><td style="width:35%">'.$langs->trans("ResourceName").'</td><td>';
+		$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
+		print $form->showrefnav($object, 'id', $linkback,1,"rowid");
 		print '</td>';
 		print '</tr>';
 
 		// Resource type
 		print '<tr>';
-		print '<td  width="20%">' . $langs->trans("ResourceType") . '</td>';
-		print '<td   width="30%">';
+		print '<td>' . $langs->trans("ResourceType") . '</td>';
+		print '<td>';
 		print $object->type_label;
 		print '</td>';
 		print '</tr>';
 		
 		// Description
 		print '<tr>';
-		print '<td  width="20%">' . $langs->trans("Description") . '</td>';
-		print '<td   width="30%">';
+		print '<td>' . $langs->trans("Description") . '</td>';
+		print '<td>';
 		print $object->description;
 		print '</td>';
 		print '</tr>';
@@ -205,7 +204,6 @@ if ( $object->fetch($id) > 0 )
 	 * Boutons actions
 	*/
 	print '<div class="tabsAction">';
-	
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
