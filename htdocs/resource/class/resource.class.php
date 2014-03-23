@@ -46,6 +46,7 @@ class Resource extends CommonObject
 	var $busy;
 	var $mandatory;
 	var $fk_user_create;
+	var $type_label;
 	var $tms='';
 
 
@@ -160,8 +161,10 @@ class Resource extends CommonObject
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.note_public,";
     	$sql.= " t.note_private,";
-    	$sql.= " t.tms";
+    	$sql.= " t.tms,";
+    	$sql.= " ty.label as type_label";
     	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
     
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
@@ -178,8 +181,8 @@ class Resource extends CommonObject
     			$this->description				=	$obj->description;
     			$this->fk_code_type_resource	=	$obj->fk_code_type_resource;
     			$this->note_public				=	$obj->note_public;
-    			$this->note_private				=	$obj->note_private;
-    			$this->fk_user_create			=	$obj->fk_user_create;
+    			$this->note_private				=	$obj->note_private;    			
+    			$this->type_label				=	$obj->type_label;
     
     		}
     		$this->db->free($resql);
