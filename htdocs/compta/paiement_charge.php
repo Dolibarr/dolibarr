@@ -241,7 +241,7 @@ if ($_GET["action"] == 'create')
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
+	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
 	$var=True;
@@ -274,7 +274,7 @@ if ($_GET["action"] == 'create')
 
 		print '<td align="right">'.price($objp->amount-$sumpaid)."</td>";
 
-		print '<td align="right">';
+		print '<td align="center">';
 		if ($sumpaid < $objp->amount)
 		{
 			$namef = "amount_".$objp->id;
