@@ -30,6 +30,7 @@ if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
 require_once 'class/resource.class.php';
+require_once 'class/html.formresource.class.php';
 
 // Load traductions files requiredby by page
 $langs->load("resource");
@@ -108,10 +109,10 @@ if ($action == 'confirm_add_resource')
 /***************************************************
 * VIEW
 *
-* Put here all code to build page
 ****************************************************/
 
 $form=new Form($db);
+$formresource = new FormResource($db);
 
 if ( !$action ) 
 {
@@ -135,6 +136,12 @@ if ( !$action )
 	print '<input type="text" name="'.$field.'" value="'.$$field.'" />';
 	print '</td>';
 	print '</tr>';
+	
+	// Type
+	print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
+	print '<td>';
+	$ret = $formresource->select_types_resource($object->fk_code_type_resource,'fk_code_type_resource','',2);
+	print '</td></tr>';
 
 	// Description
 	$field = 'description';
