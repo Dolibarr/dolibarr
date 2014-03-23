@@ -1190,7 +1190,7 @@ ALTER TABLE llx_element_resources ADD INDEX idx_element_element_element_id (elem
 
 create table llx_c_type_resource
 (
-  rowid      	integer     PRIMARY KEY,
+  rowid      	integer  AUTO_INCREMENT PRIMARY KEY,
   code          varchar(32) NOT NULL,
   label 	    varchar(64)	NOT NULL,
   active  	    tinyint DEFAULT 1  NOT NULL
