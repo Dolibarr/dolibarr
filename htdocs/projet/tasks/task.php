@@ -87,8 +87,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
-		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+		$object->date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
+		$object->date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 		$object->progress = $_POST['progress'];
 
 		// Fill array 'array_options' with data from add form
@@ -326,12 +326,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print $form->select_date($object->date_start,'dateo');
+			print $form->select_date($object->date_start,'dateo',1,1);
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
+			print $form->select_date($object->date_end?$object->date_end:-1,'datee',1,1);
 			print '</td></tr>';
 
 			// Planned workload
@@ -415,12 +415,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
-			print dol_print_date($object->date_start,'day');
+			print dol_print_date($object->date_start,'dayhour');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
-			print dol_print_date($object->date_end,'day');
+			print dol_print_date($object->date_end,'dayhour');
 			print '</td></tr>';
 
 			// Planned workload

@@ -330,12 +330,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Date start
 				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_start,'day');
+				print dol_print_date($lines[$i]->date_start,'dayhour');
 				print '</td>';
 
 				// Date end
 				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_end,'day');
+				print dol_print_date($lines[$i]->date_end,'dayhour');
 				print '</td>';
 
 				// Planned Workload (in working hours)
@@ -480,12 +480,12 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 			// Date start
 			print '<td align="center">';
-			print dol_print_date($lines[$i]->date_start,'day');
+			print dol_print_date($lines[$i]->date_start,'dayhour');
 			print '</td>';
 
 			// Date end
 			print '<td align="center">';
-			print dol_print_date($lines[$i]->date_end,'day');
+			print dol_print_date($lines[$i]->date_end,'dayhour');
 			print '</td>';
 
 			// Planned Workload
