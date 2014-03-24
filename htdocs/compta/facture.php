@@ -51,6 +51,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $langs->load('bills');
 $langs->load('companies');
+$langs->load('compta');
 $langs->load('products');
 $langs->load('banks');
 $langs->load('main');
