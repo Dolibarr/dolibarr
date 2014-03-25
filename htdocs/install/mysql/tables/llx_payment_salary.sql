@@ -24,6 +24,8 @@ create table llx_payment_salary
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
   amount          real NOT NULL DEFAULT 0,
+  fk_typepayment  integer NOT NULL,
+  num_payment     varchar(50),
   label           varchar(255),
   datesp          date,                       -- date de début de la période
   dateep          date,                       -- date de fin de la période    

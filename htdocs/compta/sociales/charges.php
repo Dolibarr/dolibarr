@@ -226,7 +226,7 @@ if ($action == 'create')
     print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 
-    print '<td align="right"><input type="text" size="6" name="amount" class="flat"></td>';
+    print '<td align="right"><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
 
     print '<td align="center">';
     print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);

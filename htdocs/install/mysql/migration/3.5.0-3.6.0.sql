@@ -1044,6 +1044,7 @@ CREATE TABLE llx_expeditiondet_batch (
 ) ENGINE=InnoDB;
 
 --Salary payment in tax module
+--DROP TABLE llx_payment_salary
 CREATE TABLE llx_payment_salary (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
@@ -1051,6 +1052,8 @@ CREATE TABLE llx_payment_salary (
   datep date,
   datev date,
   amount real NOT NULL DEFAULT 0,
+  fk_typepayment integer NOT NULL,
+  num_payment varchar(50),
   label varchar(255),
   datesp date,                       -- date de début de la période
   dateep date,                       -- date de fin de la période    
