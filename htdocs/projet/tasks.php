@@ -304,7 +304,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	var_dump($date_start);
 	print $form->select_date(($date_start?$date_start:''),'dateo',1,1,0,'',1,1);
 	print '</td></tr>';
 
