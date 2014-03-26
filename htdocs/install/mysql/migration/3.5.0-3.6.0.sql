@@ -1094,3 +1094,5 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_barcode (barcode);
 ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_barcode (barcode, fk_barcode_type, entity);
 
 
+ALTER TABLE llx_tva ADD COLUMN fk_typepayment integer NULL;	-- table may already contains data
+ALTER TABLE llx_tva ADD COLUMN num_payment varchar(50);

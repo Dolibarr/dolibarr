@@ -245,10 +245,15 @@ if ($conf->tax->enabled)
 			// Date payment
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
 	        // Type payment
-    	    print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';	
+    	    print '<td>';
+    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+    	    print $obj->num_payment.'</td>';	
 			// Paid
-			print '<td align="right">'.price($obj->totalpaye).'</td>';
+			print '<td align="right">';
+			if ($obj->totalpaye) print price($obj->totalpaye);
+			print '</td>';
 			print '</tr>';
+			
 			$total = $total + $obj->total;
 			$totalnb = $totalnb + $obj->nb;
 			$totalpaye = $totalpaye + $obj->totalpaye;
