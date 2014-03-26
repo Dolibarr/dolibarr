@@ -702,7 +702,7 @@ else
         	}
 		}
 
-        print '<form action="fiche.php" method="post">';
+        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
@@ -742,7 +742,6 @@ else
         print '</td></tr>';
 
         $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
-
         if ($showbarcode)
         {
 	        print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
@@ -842,15 +841,17 @@ else
             print '</td></tr>';
         }
 
-        // Customs code
-        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td></tr>';
-
-        // Origin country
-        print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-        print $form->select_country(GETPOST('country_id','int'),'country_id');
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-        print '</td></tr>';
-
+        // Custom code
+        if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        {
+	        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td>';
+	        // Origin country
+	        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+	        print $form->select_country(GETPOST('country_id','int'),'country_id');
+	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	        print '</td></tr>';
+        }
+        
         // Other attributes
         $parameters=array('colspan' => 0);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1046,15 +1047,17 @@ else
                 print '</td></tr>';
             }
 
-            // Customs code
-            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2"><input name="customcode" size="10" value="'.$object->customcode.'"></td></tr>';
-
-            // Origin country
-            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">';
-            print $form->select_country($object->country_id,'country_id');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
-            print '</td></tr>';
-
+	        // Custom code
+    	    if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        	{
+	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
+	            // Origin country
+	            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+	            print $form->select_country($object->country_id,'country_id');
+	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	            print '</td></tr>';
+        	}
+        	
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1103,10 +1106,11 @@ else
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
 
-            $nblignes=8;
+            $nblignes=7;
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
             if ($showbarcode) $nblignes+=2;
             if ($object->type!=1) $nblignes++;
+            if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) $nblignes+=2;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
 
@@ -1273,12 +1277,15 @@ else
                 print "</td></tr>\n";
             }
 
-            // Customs code
-            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
-
-            // Origin country code
-            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
-
+        	// Custom code
+        	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        	{
+	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
+			
+            	// Origin country code
+            	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
+        	}
+        	
             // Other attributes
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
