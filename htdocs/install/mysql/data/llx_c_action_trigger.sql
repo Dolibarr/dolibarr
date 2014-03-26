@@ -1,12 +1,13 @@
--- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
--- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
--- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
--- Copyright (C) 2013 	   Cedric Gross         <c.gross@kreiz-it.fr>
+-- Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+-- Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
+-- Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+-- Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+-- Copyright (C) 2004       Guillaume Delecourt     <guillaume.delecourt@opensides.be>
+-- Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+-- Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+-- Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+-- Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
+-- Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
