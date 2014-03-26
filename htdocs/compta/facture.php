@@ -1841,7 +1841,9 @@ if ($action == 'create')
 	}
 	$absolute_discount = $soc->getAvailableDiscounts();
 
-	if (! empty($conf->use_javascript_ajax)) {
+	if (! empty($conf->use_javascript_ajax)) 
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');
 	}
@@ -1849,8 +1851,7 @@ if ($action == 'create')
 	print '<form name="add" action="' . $_SERVER ["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($soc->id > 0)
-		print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
+	if ($soc->id > 0) print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
 	print '<input name="facnumber" type="hidden" value="provisoire">';
 	print '<input name="ref_client" type="hidden" value="' . $ref_client . '">';
 	print '<input name="ref_int" type="hidden" value="' . $ref_int . '">';
