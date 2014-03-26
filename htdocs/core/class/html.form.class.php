@@ -732,9 +732,9 @@ class Form
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array())
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
     {
-		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
+		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
     }
 
     /**
@@ -752,7 +752,7 @@ class Form
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=20)
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0)
     {
         global $conf,$user,$langs;
 
@@ -774,26 +774,25 @@ class Form
 			$sql.=" AND (";
         	if (! empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
         	{
-        		$sql.="(s.name LIKE '".$filterkey."%'";
-        		$sql.=")";
+        		$sql.="(s.name LIKE '".$this->db->escape($filterkey)."%')";
         	}
         	else
         	{
         		// For natural search
         		$scrit = explode(' ', $filterkey);
         		foreach ($scrit as $crit) {
-        			$sql.=" AND (s.name LIKE '%".$crit."%'";
-        			$sql.=")";
+        			$sql.=" AND (s.name LIKE '%".$this->db->escape($crit)."%')";
         		}
         	}
         	if (! empty($conf->barcode->enabled))
         	{
-        		$sql .= " OR s.barcode LIKE '".$filterkey."'";
+        		$sql .= " OR s.barcode LIKE '".$this->db->escape($filterkey)."%'";
         	}
         	$sql.=")";
         }
-        $sql.= " ORDER BY nom ASC";
-
+        $sql.=$this->db->order("nom","ASC");
+		if ($limit > 0) $sql.=$this->db->plimit($limit);
+		
         dol_syslog(get_class($this)."::select_thirdparty_list sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
