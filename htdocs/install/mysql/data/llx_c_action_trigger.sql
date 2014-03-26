@@ -59,3 +59,7 @@ insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (28,'BILL_UNVALIDATE','Customer invoice unvalidated','Executed when a customer invoice status set back to draft','facture',10);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (30,'PROJECT_CREATE','Project creation','Executed when a project is created','project',30);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (31,'PROPAL_CLOSE_SIGNED','Customer proposal closed signed','Executed when a customer proposal is closed signed','propal',31);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (32,'PROPAL_CLOSE_REFUSED','Customer proposal closed refused','Executed when a customer proposal is closed refused','propal',32);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (33,'BILL_SUPPLIER_CANCELED','Supplier invoice cancelled','Executed when a supplier invoice is cancelled','invoice_supplier',33);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (34,'MEMBER_MODIFY','Member modified','Executed when a member is modified','member',34);
