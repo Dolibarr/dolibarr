@@ -764,8 +764,9 @@ class FormFile
 					if (empty($relativepath))
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
-						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;
-						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;
+						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2).$relativepath;	// TODO Call using a defined value for $relativepath
+						if ($object->element == 'member') $relativepath=get_exdir($object->id,2).$relativepath;				// TODO Call using a defined value for $relativepath
+						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
 
 					$var=!$var;
@@ -1052,9 +1053,10 @@ class FormFile
      * @param 	int			$permtodelete	Deletion is allowed
      * @param 	string		$action			Action
      * @param 	string		$selected		???
+     * @param	string		$param			More param to add into URL
      * @return 	int							Number of links
      */
-    public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null)
+    public function listOfLinks($object, $permtodelete=1, $action=null, $selected=null, $param='')
     {
         global $user, $conf, $langs, $user;
         global $bc;
@@ -1071,17 +1073,17 @@ class FormFile
             $sortfield = null;
         }
         $res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
-        $param = (isset($object->id)?'&id=' . $object->id : '');
+        $param .= (isset($object->id)?'&id=' . $object->id : '');
 
         // Show list of associated links
         print_titre($langs->trans("LinkedFiles"));
 
-        print '<form action="' . $_SERVER['PHP_SELF'] . '" method="POST">';
+        print '<form action="' . $_SERVER['PHP_SELF'] . ($param?'?'.$param:'') . '" method="POST">';
 
         print '<table width="100%" class="liste">';
         print '<tr class="liste_titre">';
         print_liste_field_titre(
-            $langs->trans("Documents2"),
+            $langs->trans("Links"),
             $_SERVER['PHP_SELF'],
             "name",
             "",
@@ -1135,34 +1137,34 @@ class FormFile
                 print '<input type="hidden" name="action" value="confirm_updateline">';
                 print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
                 print '</td>';
-                print '<td align="right">';
+                print '<td>';
                 print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
                 print '</td>';
                 print '<td align="center">' . dol_print_date(dol_now(), "dayhour", "tzuser") . '</td>';
                 print '<td align="right"></td>';
-                print '<td align="right" colspan="2"><input type="submit" name="save" class="button" value="' . $langs->trans('Save') . '">';
-                print '<input type="submit" name="cancel" class="button" value="' . $langs->trans('Cancel') . '">';
+                print '<td align="right" colspan="2">';
+                print '<input type="submit" name="save" class="button" value="' . dol_escape_htmltag($langs->trans('Save')) . '">';
+                print '<input type="submit" name="cancel" class="button" value="' . dol_escape_htmltag($langs->trans('Cancel')) . '">';
                 print '</td>';
             }
-            else {
+            else
+			{
                 print '<td>';
-                print '<a data-ajax="false" href="'. $link->url . '" target="_blank">';
+                print '<a data-ajax="false" href="' . $link->url . '" target="_blank">';
                 print $link->label;
                 print '</a>';
-                print "</td>\n";
+                print '</td>'."\n";
                 print '<td align="right"></td>';
                 print '<td align="center">' . dol_print_date($link->datea, "dayhour", "tzuser") . '</td>';
                 print '<td align="center"></td>';
                 print '<td align="right" colspan="2">';
-                print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id
-                        . '&id=' . $object->id . '" class="editfilelink" >' . img_edit().'</a>';
+                print '<a href="' . $_SERVER['PHP_SELF'] . '?action=update&linkid=' . $link->id . $param . '" class="editfilelink" >' . img_edit() . '</a>';	// id= is included into $param
                 if ($permtodelete) {
-                    print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id
-                            . '&id=' . $object->id . '" class="deletefilelink" >' . img_delete() . '</a>';
+                    print ' &nbsp; <a href="'. $_SERVER['PHP_SELF'] .'?action=delete&linkid=' . $link->id . $param . '" class="deletefilelink">' . img_delete() . '</a>';	// id= is included into $param
                 } else {
                     print '&nbsp;';
                 }
-                print "</td>";
+                print '</td>';
             }
             print "</tr>\n";
         }

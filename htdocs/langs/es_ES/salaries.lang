@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
-# Employee=Employee
-# NewSalaryPayment=New salary payment
-# SalaryPayment=Salary payment
-# SalariesPayments=Salaries payments
-# ShowSalaryPayment=Show salary payment
+Employee=Empleado
+NewSalaryPayment=Nuevo pago
+SalaryPayment=Pago de salario
+SalariesPayments=Pagos de salarios
+ShowSalaryPayment=Ver pago

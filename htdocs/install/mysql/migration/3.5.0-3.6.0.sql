@@ -17,6 +17,18 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+-- delete foreign key that should never exists
+ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
+ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
+ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_currency;
+ALTER TABLE llx_facture DROP FOREIGN KEY fk_societe_fk_currency;
+
+ALTER TABLE llx_propal MODIFY COLUMN fk_currency varchar(3) NULL;
+ALTER TABLE llx_commande MODIFY COLUMN fk_currency varchar(3) NULL;
+ALTER TABLE llx_facture MODIFY COLUMN fk_currency varchar(3) NULL;
+ALTER TABLE llx_societe MODIFY COLUMN fk_currency varchar(3) NULL;
+
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 

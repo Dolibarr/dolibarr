@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C)    2013    Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C)    2013    Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,17 @@
  */
 
 $langs->load("link");
+if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 
 /*
- * Confirm suppression
+ * Confirm form to delete
  */
 
 if ($action == 'delete')
 {
 	$langs->load("companies");	// Need for string DeleteFile+ConfirmDeleteFiles
 	$ret = $form->form_confirm(
-			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int'),
+			$_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode(GETPOST("urlfile")) . '&linkid=' . GETPOST('linkid', 'int') . (empty($param)?'':$param),
 			$langs->trans('DeleteFile'),
 			$langs->trans('ConfirmDeleteFile'),
 			'confirm_deletefile',
@@ -58,11 +59,11 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    '',
+    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
     $permission
 );
 
 print "<br>";
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'));
+$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
 print "<br>";
