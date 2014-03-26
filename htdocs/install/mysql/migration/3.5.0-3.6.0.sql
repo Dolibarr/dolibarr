@@ -1029,7 +1029,7 @@ create table llx_product_customer_price_log
  import_key			varchar(14)                  -- Import key
 )ENGINE=innodb;
 
---Batch number managment
+-- Batch number management
 ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
 
 CREATE TABLE llx_product_batch (
@@ -1055,7 +1055,7 @@ CREATE TABLE llx_expeditiondet_batch (
   KEY ix_fk_expeditiondet (fk_expeditiondet)
 ) ENGINE=InnoDB;
 
---Salary payment in tax module
+-- Salary payment in tax module
 --DROP TABLE llx_payment_salary
 CREATE TABLE llx_payment_salary (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -1076,11 +1076,11 @@ CREATE TABLE llx_payment_salary (
   fk_user_modif integer
 )ENGINE=innodb;
 
---New 1074 : Stock mouvement link to origin
+-- New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin integer;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR(32);
 
---New 1300 : Add THM on user
+-- New 1300 : Add THM on user
 ALTER TABLE llx_user ADD thm double(24,8);
 ALTER TABLE llx_projet_task_time ADD thm double(24,8);
 
