@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Recursively deduplicate file lines on a per file basis
 # Useful to deduplicate language files
 #
