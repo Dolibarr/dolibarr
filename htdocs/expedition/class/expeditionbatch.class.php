@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       expedtion/class/productbatch.class.php
+ *  \file       expedition/class/productbatch.class.php
  *  \ingroup    productbatch
  *  \brief      This file implements CRUD method for managing product's shipment
  *				with batch record 
