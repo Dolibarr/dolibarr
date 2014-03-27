@@ -856,7 +856,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-				if (empty($conf->productbatch->enabled) ||  ! $product->hasbatch()) {
+				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')] ))) {
                 // Quantity to send
                 print '<td align="center">';
                 if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
@@ -897,27 +897,27 @@ if ($action == 'create')
                 print "</tr>\n";
 
                 // Show subproducts of product
-                if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
-                {
-                    $product->get_sousproduits_arbo();
-                    $prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-                    if(count($prods_arbo) > 0)
-                    {
-                        foreach($prods_arbo as $key => $value)
-                        {
-                            //print $value[0];
-                            $img='';
-                            if ($value['stock'] < $value['stock_alert'])
-                            {
-                                $img=img_warning($langs->trans("StockTooLow"));
-                            }
-                            print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
-                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
-                                </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-                                <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-                        }
-                    }
-                }
+					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
+					{
+						$product->get_sousproduits_arbo();
+						$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+						if(count($prods_arbo) > 0)
+						{
+							foreach($prods_arbo as $key => $value)
+							{
+								//print $value[0];
+								$img='';
+								if ($value['stock'] < $value['stock_alert'])
+								{
+									$img=img_warning($langs->trans("StockTooLow"));
+								}
+								print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									<a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
+									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+									<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+							}
+						}
+					}
 				} else {
 					print '<td></td><td></td></tr>';
 					$subj=0;
