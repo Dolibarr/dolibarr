@@ -240,7 +240,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     // Ecrase $pu par celui	du produit
     // Ecrase $desc	par	celui du produit
     // Ecrase $txtva  par celui du produit
-    if ((GETPOST('addline_predefined') || GETPOST('idprodfournprice'))  && ( GETPOST('pu')!==''))	// With combolist idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+    if (GETPOST('addline_predefined') || GETPOST('idprodfournprice'))	// With combolist idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
     {
     	$idprod=0;
     	$productsupplier = new ProductFournisseur($db);
