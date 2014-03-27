@@ -24,7 +24,6 @@ Notify_ORDER_SENTBYMAIL=Customer order sent by mail
 Notify_COMPANY_CREATE=Third party created
 Notify_COMPANY_SENTBYMAIL=Mails sent from third party card
 Notify_PROPAL_SENTBYMAIL=Commercial proposal sent by mail
-Notify_ORDER_SENTBYMAIL=Envío pedido por e-mail
 Notify_BILL_PAYED=Customer invoice payed
 Notify_BILL_CANCEL=Customer invoice canceled
 Notify_BILL_SENTBYMAIL=Customer invoice sent by mail
