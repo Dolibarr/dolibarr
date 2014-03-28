@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -461,8 +462,12 @@ if ($result) {
 } else {
 	dol_print_error($db);
 }
-
-
+$action = "balance";
+$object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
+$parameters["mode"] = $modecompta;
+// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('externalbalance'));
+$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 /*
  * Show result array

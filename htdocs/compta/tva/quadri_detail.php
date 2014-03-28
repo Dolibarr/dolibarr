@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +319,16 @@ else
 	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
 	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
-
+	
+	$action = "tvadetail";
+	$parameters["mode"] = $modetax;
+	$parameters["start"] = $date_start;
+	$parameters["end"] = $date_end;
+	$object = array(&$x_coll, &$x_paye, &$x_both);
+	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	$hookmanager->initHooks(array('externalbalance'));
+	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	
 	foreach(array_keys($x_coll) as $rate)
 	{
 		$subtot_coll_total_ht = 0;

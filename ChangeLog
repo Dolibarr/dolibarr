@@ -65,6 +65,7 @@ For developers:
        action buttons into an element.
 - New: Normalize code for barcode generation to match other modules.
 - New: Uniformize code for contacts forms.
+- New: Add some hooks for financial reports.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:

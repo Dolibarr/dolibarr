@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,6 +154,15 @@ for ($m = 1 ; $m < 13 ; $m++ )
 {
     $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
     $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+    
+    $action = "tva";
+    $object = array(&$coll_listsell, &$coll_listbuy);
+    $parameters["mode"] = $modetax;
+    $parameters["year"] = $y;
+    $parameters["month"] = $m;
+    // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+    $hookmanager->initHooks(array('externalbalance'));
+    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     if (! is_array($coll_listbuy) && $coll_listbuy == -1)
     {

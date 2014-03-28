@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011 		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,6 +135,15 @@ for ($m = 1 ; $m < 13 ; $m++ )
 {
     $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
     $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+    
+    $action = "tva";
+    $object = array(&$coll_listsell, &$coll_listbuy);
+    $parameters["mode"] = $modetax;
+    $parameters["year"] = $y;
+    $parameters["month"] = $m;
+    // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+    $hookmanager->initHooks(array('externalbalance'));
+    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     if (! is_array($coll_listbuy) && $coll_listbuy == -1)
     {
@@ -181,7 +191,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
         print '<td align="right">'.$langs->trans("SubTotal").':</td>';
         print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td>';
         print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
-        print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
+        print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
         print '<td>&nbsp;</td></tr>';
         $i = 0;
         $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
