@@ -116,6 +116,7 @@ Fix: [ bug #1280 ] service with not end of date was tagged as expired.
 Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference
 Fix: [ bug #1306 ] Fatal error when adding an external calendar
 New: Added es_CL language
+Fix: Margin tabs bad data show
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
