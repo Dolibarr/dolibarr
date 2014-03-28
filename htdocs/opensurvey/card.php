@@ -243,7 +243,7 @@ if (!$object->fk_user_creat) {
 	{
 		print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
 	}
-	else print dol_print_email($object->mail_admin);
+	else print dol_print_email($object->mail_admin, 0, 0, 1);
 	print '</td></tr>';
 }
 
@@ -381,6 +381,8 @@ if ($object->allow_comments) {
 }
 
 print '</form>';
+
+print '<br>';
 
 llxFooterSurvey();
 

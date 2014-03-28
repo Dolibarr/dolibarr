@@ -1056,6 +1056,7 @@ CREATE TABLE llx_expeditiondet_batch (
 ) ENGINE=InnoDB;
 
 --Salary payment in tax module
+--DROP TABLE llx_payment_salary
 CREATE TABLE llx_payment_salary (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
@@ -1063,6 +1064,8 @@ CREATE TABLE llx_payment_salary (
   datep date,
   datev date,
   amount real NOT NULL DEFAULT 0,
+  fk_typepayment integer NOT NULL,
+  num_payment varchar(50),
   label varchar(255),
   datesp date,                       -- date de début de la période
   dateep date,                       -- date de fin de la période    
@@ -1103,3 +1106,5 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_barcode (barcode);
 ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_barcode (barcode, fk_barcode_type, entity);
 
 
+ALTER TABLE llx_tva ADD COLUMN fk_typepayment integer NULL;	-- table may already contains data
+ALTER TABLE llx_tva ADD COLUMN num_payment varchar(50);

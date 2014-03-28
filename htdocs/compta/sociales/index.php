@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -78,12 +78,14 @@ llxHeader();
 
 $sql = "SELECT cs.rowid as id, cs.fk_type as type, ";
 $sql.= " cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode,";
-$sql.= " c.libelle as type_lib";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
+$sql.= " c.libelle as type_lib,";
+$sql.= " SUM(pc.amount) as alreadypayed";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
+$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 $sql.= " WHERE cs.fk_type = c.id";
 $sql.= " AND cs.entity = ".$conf->entity;
-if (GETPOST("search_label")) $sql.=" AND cs.libelle LIKE '%".GETPOST("search_label")."%'";
+if (GETPOST("search_label")) $sql.=" AND cs.libelle LIKE '%".$db->escape(GETPOST("search_label"))."%'";
 if ($year > 0)
 {
     $sql .= " AND (";
@@ -100,6 +102,7 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND cs.fk_type=".$typeid;
 }
+$sql.= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
@@ -207,7 +210,7 @@ if ($resql)
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
-			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5).'</a></td>';
+			print '<td align="right" class="nowrap">'.$chargesociale_static->LibStatut($obj->paye,5,$obj->alreadypayed).'</a></td>';
 
 			print '</tr>';
 			$i++;

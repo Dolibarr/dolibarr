@@ -180,15 +180,18 @@ if ($conf->tax->enabled)
 	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pc.datep","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT c.id, c.libelle as lib,";
 	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
-	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye";
+	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment,";
+	$sql.= " pct.code as payment_code";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 	$sql.= " WHERE cs.fk_type = c.id";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)
@@ -241,19 +244,27 @@ if ($conf->tax->enabled)
 			print '<td>'.$payment_sc_static->getNomUrl(1)."</td>\n";
 			// Date payment
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day').'</td>';
+	        // Type payment
+    	    print '<td>';
+    	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
+    	    print $obj->num_payment.'</td>';	
 			// Paid
-			print '<td align="right">'.price($obj->totalpaye).'</td>';
+			print '<td align="right">';
+			if ($obj->totalpaye) print price($obj->totalpaye);
+			print '</td>';
 			print '</tr>';
+			
 			$total = $total + $obj->total;
 			$totalnb = $totalnb + $obj->nb;
 			$totalpaye = $totalpaye + $obj->totalpaye;
 			$i++;
 		}
-	    print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").'</td>';
-	    print '<td align="right">'.price($total)."</td>";
-	    print '<td align="center">&nbsp;</td>';
-	    print '<td align="center">&nbsp;</td>';
-	    print '<td align="right">'.price($totalpaye)."</td>";
+	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
+	    print '<td align="right" class="liste_total">'.price($total)."</td>";
+	    print '<td align="center" class="liste_total">&nbsp;</td>';
+	    print '<td align="center" class="liste_total">&nbsp;</td>';
+	    print '<td align="center" class="liste_total">&nbsp;</td>';
+	    print '<td align="right" class="liste_total">'.price($totalpaye)."</td>";
 		print "</tr>";
 	}
 	else

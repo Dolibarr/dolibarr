@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ class modOpenSurvey extends DolibarrModules
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(3,4,0);	// Minimum version of Dolibarr required by module
 
 		// Constants
 		$this->const = array();			// List of parameters
@@ -121,7 +121,7 @@ class modOpenSurvey extends DolibarrModules
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
 		$r=0;
-
+		/*
 		$this->menu[$r]=array(	'fk_menu'=>0,		    						// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',
 								'titre'=>'Surveys',
@@ -133,14 +133,14 @@ class modOpenSurvey extends DolibarrModules
 								'perms'=>'$user->rights->opensurvey->read',
 								'target'=>'',
 								'user'=>0);
-		$r++;
+		$r++;*/
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',
 								'titre'=>'Survey',
-								'mainmenu'=>'opensurvey',
+								'mainmenu'=>'tools',
 								'leftmenu'=>'opensurvey',
-								'url'=>'/opensurvey/index.php?mainmenu=opensurvey&leftmenu=opensurvey',
+								'url'=>'/opensurvey/index.php?mainmenu=tools&leftmenu=opensurvey',
 								'langs'=>'opensurvey',
 								'position'=>200,
                 				'enabled'=>'$conf->opensurvey->enabled',         // Define condition to show or hide menu entry. Use '$conf->NewsSubmitter->enabled' if entry must be visible if module is enabled.
@@ -149,10 +149,10 @@ class modOpenSurvey extends DolibarrModules
 								'user'=>0);
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=opensurvey,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',
 								'titre'=>'NewSurvey',
-								'mainmenu'=>'opensurvey',
+								'mainmenu'=>'tools',
 								'leftmenu'=>'opensurvey_new',
 								'url'=>'/opensurvey/wizard/index.php',
 								'langs'=>'opensurvey',
@@ -163,10 +163,10 @@ class modOpenSurvey extends DolibarrModules
 								'user'=>0);
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=opensurvey,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=opensurvey',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',
 								'titre'=>'List',
-								'mainmenu'=>'opensurvey',
+								'mainmenu'=>'tools',
 								'leftmenu'=>'opensurvey_list',
 								'url'=>'/opensurvey/list.php',
 								'langs'=>'opensurvey',

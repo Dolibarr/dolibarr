@@ -102,7 +102,7 @@ class ChargeSociales extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }
@@ -317,28 +317,31 @@ class ChargeSociales extends CommonObject
     }
 
     /**
-     *    Retourne le libelle du statut d'une charge (impaye, payee)
+     *  Retourne le libelle du statut d'une charge (impaye, payee)
      *
-     *    @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-     *    @return	string        		Label
+     *  @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+     *  @return	string        			Label
      */
-    function getLibStatut($mode=0)
+    function getLibStatut($mode=0,$alreadypayed=-1)
     {
-        return $this->LibStatut($this->paye,$mode);
+        return $this->LibStatut($this->paye,$mode,$alreadypayed);
     }
 
     /**
-     *    Renvoi le libelle d'un statut donne
+     *  Renvoi le libelle d'un statut donne
      *
-     *    @param	int		$statut        	Id statut
-     *    @param    int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-     *    @return   string        			Label
+     *  @param	int		$statut        	Id statut
+     *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+     *  @return string        			Label
      */
-    function LibStatut($statut,$mode=0)
+    function LibStatut($statut,$mode=0,$alreadypayed=-1)
     {
         global $langs;
         $langs->load('customers');
-
+        $langs->load('bills');
+        
         if ($mode == 0)
         {
             if ($statut ==  0) return $langs->trans("Unpaid");
@@ -361,12 +364,14 @@ class ChargeSociales extends CommonObject
         }
         if ($mode == 4)
         {
-            if ($statut ==  0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+            if ($statut ==  0 && $alreadypayed <= 0) return img_picto($langs->trans("Unpaid"), 'statut1').' '.$langs->trans("Unpaid");
+            if ($statut ==  0 && $alreadypayed > 0) return img_picto($langs->trans("BillStatusStarted"), 'statut3').' '.$langs->trans("BillStatusStarted");
             if ($statut ==  1) return img_picto($langs->trans("Paid"), 'statut6').' '.$langs->trans("Paid");
         }
         if ($mode == 5)
         {
-            if ($statut ==  0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            if ($statut ==  0 && $alreadypayed <= 0) return $langs->trans("Unpaid").' '.img_picto($langs->trans("Unpaid"), 'statut1');
+            if ($statut ==  0 && $alreadypayed > 0) return $langs->trans("BillStatusStarted").' '.img_picto($langs->trans("BillStatusStarted"), 'statut3');
             if ($statut ==  1) return $langs->trans("Paid").' '.img_picto($langs->trans("Paid"), 'statut6');
         }
 

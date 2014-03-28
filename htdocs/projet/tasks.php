@@ -83,8 +83,8 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	$date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-	$date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyeassskr'],'user');
+	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 
 	if (empty($_POST["cancel"]))
 	{
@@ -232,12 +232,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'day');
+	print dol_print_date($object->date_start,'dayhour');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'day');
+	print dol_print_date($object->date_end,'dayhour');
 	print '</td></tr>';
 
 	// Other options
@@ -302,12 +302,12 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print $form->select_date(($date_start?$date_start:''),'dateo',0,0,0,'',1,1);
+	print $form->select_date(($date_start?$date_start:''),'dateo',1,1,0,'',1,1);
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print $form->select_date(($date_end?$date_end:-1),'datee',0,0,0,'',1,1);
+	print $form->select_date(($date_end?$date_end:-1),'datee',1,1,0,'',1,1);
 	print '</td></tr>';
 
 	// planned workload

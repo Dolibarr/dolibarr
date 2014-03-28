@@ -336,7 +336,8 @@ else if ($action == 'set_ref_client' && $user->rights->facture->creer) {
 }
 
 // Classify to validated
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider) {
+else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider) 
+{
 	$idwarehouse = GETPOST('idwarehouse');
 
 	$object->fetch($id);
@@ -345,8 +346,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 	// Check parameters
 
 	// Check for mandatory prof id
-	for($i = 1; $i < 5; $i ++) {
-
+	for($i = 1; $i < 6; $i ++) 
+	{
 		$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
 		$idprof = 'idprof' . $i;
 		if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory)) {
@@ -374,9 +375,11 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 		}
 	}
 
-	if (! $error) {
+	if (! $error) 
+	{
 		$result = $object->validate($user, '', $idwarehouse);
-		if ($result >= 0) {
+		if ($result >= 0) 
+		{
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -393,7 +396,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 				facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 		} else {
-			setEventMessage($object->error, 'errors');
+			if (count($object->errors)) setEventMessage($object->errors, 'errors');
+			else setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -1878,7 +1882,9 @@ if ($action == 'create')
 	}
 	$absolute_discount = $soc->getAvailableDiscounts();
 
-	if (! empty($conf->use_javascript_ajax)) {
+	if (! empty($conf->use_javascript_ajax)) 
+	{
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');
 	}
