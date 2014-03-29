@@ -2915,16 +2915,17 @@ class Form
     }
 
     /**
-     *    Show a form to select a date
+     *    Show a form + html select a date
      *
      *    @param	string		$page        Page
      *    @param	string		$selected    Date preselected
-     *    @param    string		$htmlname    Name of input html field
+     *    @param    string		$htmlname    Html name of date input fields or 'none'
      *    @param    int			$displayhour Display hour selector
      *    @param    int			$displaymin	 Display minutes selector
      *    @return	void
+     *    @see		select_date
      */
-    function form_date($page, $selected, $htmlname,$displayhour=0,$displaymin=0)
+    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0)
     {
         global $langs;
 
@@ -3437,13 +3438,13 @@ class Form
 
 
     /**
-     *	Show a HTML widget to input a date or combo list for day, month, years and optionnaly hours and minutes
+     *	Show a HTML widget to input a date or combo list for day, month, years and optionnaly hours and minutes.
      *  Fields are preselected with :
-     *            	- set_time date (Local PHP server timestamps or date format YYYY-MM-DD or YYYY-MM-DD HH:MM)
-     *            	- local date of PHP server if set_time is ''
-     *            	- Empty (fields empty) if set_time is -1 (in this case, parameter empty must also have value 1)
+     *            	- set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')
+     *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
+     *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
      *
-     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp)
+     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date.
      *	@param	string		$prefix			Prefix for fields name
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes
@@ -3455,6 +3456,7 @@ class Form
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
      * 	@return	mixed						Nothing or string if nooutput is 1
+     *  @see	form_date
      */
     function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0, $disabled=0, $fullday='')
     {
@@ -3467,7 +3469,11 @@ class Form
         if($m == '') $m=0;
         if($empty == '') $empty=0;
 
-        if (! $set_time && $empty == 0) $set_time = dol_now('tzuser');
+        if ($set_time === '' && $empty == 0) 
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        	$set_time = dol_now('tzuser')-(getServerTimeZoneInt('now')*3600); // set_time must be relative to PHP server timezone
+        }
 
         // Analysis of the pre-selection date
         if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))

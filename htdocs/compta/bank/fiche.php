@@ -325,7 +325,7 @@ if ($action == 'create')
 
 	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
 	print '<td colspan="3">';
-	$form->select_date(time(), 're', 0, 0, 0, 'formsoc');
+	$form->select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';

@@ -131,11 +131,8 @@ Example 1 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tag
 Example 2 : Table using tags: table/thead/tbody/tr/td + dataTable<br>
 
 <script type="text/javascript">
-/*$(document).ready(function(){
-    $('#abc').dataTable();
-});*/
 $(document).ready(function(){
-    $('#def').dataTable();
+    $('#idtableexample2').dataTable();
 });
 
 /*
@@ -179,7 +176,7 @@ $('xxxth').replaceWith(
 */
 </script>
 
-<table id="def">
+<table id="idtableexample2">
 	<thead>
     <tr>
         <th>snake</th>
