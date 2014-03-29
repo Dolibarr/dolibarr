@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,13 +173,18 @@ $sql.= " WHERE f.fk_soc = s.rowid";
 $sql.= " AND f.fk_statut > 0";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
-if ($client) $sql.= " AND f.fk_soc = ".$socid;
-if (!empty($startdate)) $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
-if (!empty($enddate)) $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
+if ($client)
+  $sql.= " AND f.fk_soc = ".$socid;
+if (!empty($startdate))
+  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
+if (!empty($enddate))
+  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
-if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
-$sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
-$sql.= " ORDER BY ".$sortfield." ".$sortorder;
+if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
+	$sql .= " AND d.buy_price_ht <> 0";
+if ($client) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+else $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
+$sql.= " ORDER BY $sortfield $sortorder ";
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
