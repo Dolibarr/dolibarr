@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -729,6 +730,16 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujeti
     print '</tr>';
 }
 
+$action = "balanceclient";
+$object = array(&$total_ht, &$total_ttc);
+$parameters["mode"] = $modecompta;
+$parameters["date_start"] = $date_start;
+$parameters["date_end"] = $date_end;
+$parameters["bc"] = $bc;
+// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('externalbalance'));
+$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+print $hookmanager->resPrint;
 
 if ($mysoc->tva_assuj != 'franchise')	// Assujeti
 {
