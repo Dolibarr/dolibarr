@@ -270,14 +270,15 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-  display: table;
-  table-layout: fixed;
-  margin-top: 6px;
+	display: table;
+	table-layout: fixed;
+	margin-top: 6px;
+	margin-bottom: 6px;
 }
 #id-right, #id-left {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
+	display: table-cell;
+	float: none;
+	vertical-align: top;
 }
 #id-<?php echo $right; ?> {
 	width: 100%;

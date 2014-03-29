@@ -217,7 +217,7 @@ a:hover, a:active {
 <?php if (empty($dol_use_jmobile)) { ?>
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
-	padding: 1px;
+	padding: 2px;
 }
 input, textarea {
     font-size:<?php print $fontsize ?>px;
@@ -1003,13 +1003,14 @@ a.tab:hover {color:#333333;}
 /* ============================================================================== */
 
 #id-container {
-  display: table;
-  table-layout: fixed;
+	margin-bottom: 6px;
+	display: table;
+	table-layout: fixed;
 }
 #id-right, #id-left {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
+	display: table-cell;
+	float: none;
+	vertical-align: top;
 }
 #id-<?php echo $right; ?> {
 	width: 100%;
@@ -1942,7 +1943,7 @@ a.none, a.none:active, a.none:visited, a.none:hover {
 .ui-button-icon-only .ui-button-text { height:8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding:2px 0px 6px 0px; }
 .ui-button-text { line-height:1em !important; }
-.ui-autocomplete-input { margin:0; padding:1px; }
+.ui-autocomplete-input { margin:0; }
 
 
 /* ============================================================================== */
