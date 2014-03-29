@@ -641,7 +641,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     if ($search_status!='') $sql .= " AND p.statut = ".$db->escape($search_status);
-    if ($search_name)   $sql .= " AND (p.lastname LIKE '%".$db->escape(strtolower($search_name))."%' OR p.firstname LIKE '%".$db->escape(strtolower($search_name))."%')";
+    if ($search_name)   $sql .= " AND (p.lastname LIKE '%".$db->escape($search_name)."%' OR p.firstname LIKE '%".$db->escape($search_name)."%')";
     $sql.= " ORDER BY $sortfield $sortorder";
 
     dol_syslog('core/lib/company.lib.php :: show_contacts sql='.$sql,LOG_DEBUG);
@@ -726,7 +726,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 					$coords .= "<br />".addslashes($object->country);
 			}
 
-            print '<td align="center"><a href="#" onclick="return copyToClipboard(\''.$coords.'\');">';
+            print '<td align="center">';	// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+            print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.$coords.'\');">';
             print img_picto($langs->trans("Address"), 'object_address.png');
             print '</a></td>';
 
@@ -736,7 +737,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '<td align="center">';
                 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
                 {
-                	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
                 	print '</a> ';
                 }
@@ -771,15 +772,15 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "<br>\n";
 ?>
-<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;">
-</div>
+<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;"></div>
 <?php
 	print '<script type="text/javascript">
+	$("#dialog").dialog()
 			function copyToClipboard (text) {
 			  text = text.replace(/<br \/>/g,"\n");
 			  var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br/><br/>'.$langs->trans('HelpCopyToClipboard').'";
 			  $("#dialog").html(newElem);
-			  $( "#dialog" ).dialog();
+			  $("#dialog").dialog();
 			  $("#coords").select();
 			  return false;
 			}
