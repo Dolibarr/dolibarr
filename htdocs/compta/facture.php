@@ -504,7 +504,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$object->fetch_lines();
+	//$object->fetch_lines();	// Already done into fetch
 
 	// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
 	$discountcheck=new DiscountAbsolute($db);
