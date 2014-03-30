@@ -1515,6 +1515,8 @@ table.valid {
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
+
 .ui-datepicker-title {
     margin:0 !important;
     line-height:28px;
