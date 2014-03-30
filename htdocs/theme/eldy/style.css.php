@@ -437,6 +437,7 @@ td.showDragHandle {
 
 #id-container {
 	margin-top: 8px;
+	margin-bottom: 8px;
 	display: table;
 	table-layout: fixed;
 }
@@ -2483,7 +2484,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; padding: 1px; }
+.ui-autocomplete-input { margin: 0; }
 
 
 /* ============================================================================== */
@@ -2512,6 +2513,11 @@ a.cke_dialog_ui_button
 .cke_dialog_ui_hbox_last
 {
 	vertical-align: bottom ! important;
+}
+.cke_editable
+{
+	line-height: 1.4 !important;
+	margin: 6px !important;
 }
 
 

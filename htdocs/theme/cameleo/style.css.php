@@ -108,7 +108,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
 	font-family: <?php print $fontlist ?>;
 	background: #FDFDFD;
     border: 1px solid #ACBCBB;
-    padding: 1px 1px 1px 1px;
+    padding: 2px;
     margin: 0px 0px 0px 0px;
 }
 <?php } ?>
@@ -269,13 +269,14 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-  display: table;
-  table-layout: fixed;
+	margin-bottom: 8px;
+	display: table;
+  	table-layout: fixed;
 }
 #id-right, #id-left {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
+	display: table-cell;
+	float: none;
+	vertical-align: top;
 }
 #id-<?php echo $right; ?> {
 	width: 100%;

@@ -504,7 +504,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 {
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-	$object->fetch_lines();
+	//$object->fetch_lines();	// Already done into fetch
 
 	// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
 	$discountcheck=new DiscountAbsolute($db);
@@ -677,13 +677,14 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 			$id = $object->create($user);
 
-			if(GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0) {
-
+			if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0) 
+			{
                 $facture_source = new Facture($db); // fetch origin object
-                if($facture_source->fetch($object->fk_facture_source)>0) {
+                if ($facture_source->fetch($object->fk_facture_source)>0) 
+                {
 
-                    foreach($facture_source->lines as $line) {
-
+                    foreach($facture_source->lines as $line) 
+                    {
                         $line->fk_facture = $object->id;
 
                         $line->subprice =-$line->subprice; // invert price for object
@@ -733,14 +734,16 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard invoice or Deposit invoice created from a Predefined invoice
-	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0) {
+	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0) 
+	{
 		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture)) {
 			$error ++;
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
 		}
 
-		if (! $error) {
+		if (! $error) 
+		{
 			$object->socid = GETPOST('socid', 'int');
 			$object->type = $_POST['type'];
 			$object->number = $_POST['facnumber'];
@@ -759,8 +762,10 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard or deposit or proforma invoice
-	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0) {
-		if (GETPOST('socid', 'int') < 1) {
+	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0) 
+	{
+		if (GETPOST('socid', 'int') < 1) 
+		{
 			$error ++;
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
 		}
@@ -771,7 +776,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
 		}
 
-		if (! $error) {
+		if (! $error) 
+		{
 			// Si facture standard
 			$object->socid = GETPOST('socid', 'int');
 			$object->type = GETPOST('type');
@@ -2014,7 +2020,7 @@ if ($action == 'create')
 
 	// Standard invoice
 	print '<tr height="18"><td width="16px" valign="middle">';
-	print '<input type="radio" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked="checked"' : '') . '>';
+	print '<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked="checked"' : '') . '>';
 	print '</td><td valign="middle">';
 	$desc = $form->textwithpicto($langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1);
 	print $desc;
@@ -2101,10 +2107,18 @@ if ($action == 'create')
 				print ' disabled="disabled"';
 			print '>';
 			print '</td><td valign="top">';
+			// Show credit note options only if we checked credit note
 			print '<script type="text/javascript" language="javascript">
 			jQuery(document).ready(function() {
-				jQuery("#fac_avoir").click(function() {
-					jQuery("#radio_creditnote").attr(\'checked\',\'checked\');
+				if (! jQuery("#radio_creditnote").attr(\'checked\'))
+				{
+					jQuery("#credit_note_options").hide();
+				}
+				jQuery("#radio_creditnote").click(function() {
+					jQuery("#credit_note_options").show();
+				});
+				jQuery("#radio_standard, #radio_replacement, #radio_deposit").click(function() {
+					jQuery("#credit_note_options").hide();
 				});
 			});
 			</script>';
@@ -2124,9 +2138,11 @@ if ($action == 'create')
 			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1);
 			print $desc;
 
+			print '<div id="credit_note_options">';
 	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-	        print '<br />&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
-
+	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+			print '</div>';
+			
 			print '</td></tr>' . "\n";
 		}
 		else
