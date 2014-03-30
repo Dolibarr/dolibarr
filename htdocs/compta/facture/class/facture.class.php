@@ -1252,6 +1252,16 @@ class Facture extends CommonInvoice
 			}
 			// Fin appel triggers
 		}
+		
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error deleteExtraFields ".$this->error, LOG_ERR);
+			}
+		}
 
 		if (! $error)
 		{
