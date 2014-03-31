@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=イベント
 ActionsArea=イベントエリア（アクションとタスク）
 Agenda= 議題
@@ -10,7 +10,7 @@ LocalAgenda=ローカルカレンダー
 AffectedTo= 影響を受ける
 DoneBy= によって行われ
 Events= イベント
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=自分のイベント
 OtherEvents=その他のイベント
 ListOfActions=イベントのリスト
@@ -40,9 +40,10 @@ ActionsEvents= Dolibarrが自動的に議題でアクションを作成する対
 PropalValidatedInDolibarr= 提案%sは、検証
 InvoiceValidatedInDolibarr= 請求書%sは、検証
 InvoiceBackToDraftInDolibarr=請求書%sはドラフトの状態に戻って
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= 注文%sは、検証
 OrderApprovedInDolibarr=注文%sは、承認された
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=注文%sは、ドラフトの状態に戻って
 OrderCanceledInDolibarr=ご注文はキャンセル%s
 InterventionValidatedInDolibarr=介入%sは、検証
@@ -52,7 +53,7 @@ InvoiceSentByEMail=電子メールで送信顧客の請求書%s
 SupplierOrderSentByEMail=電子メールで送信サプライヤの注文%s
 SupplierInvoiceSentByEMail=電子メールで送信サプライヤの請求書%s
 ShippingSentByEMail=電子メールで送信出荷%s
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=電子メールで送信介入%s
 NewCompanyToDolibarr= 第三者が作成した
 DateActionPlannedStart= 計画開始日
@@ -68,8 +69,8 @@ AgendaUrlOptions4=ユーザー<b>%s</b>に影響を受けたアクションに�
 AgendaUrlOptions5=ユーザー<b>%s</b>によって行われたアクションへの出力を制限する<b>logind = %s。</b>
 AgendaShowBirthdayEvents=誕生日の連絡先を表示する
 AgendaHideBirthdayEvents=誕生日の接点を隠す
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=輸出カレンダー

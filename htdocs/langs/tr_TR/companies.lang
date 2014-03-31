@@ -405,4 +405,4 @@ OutstandingBill=Ödenmemiş fatura için ençok tutar
 OutstandingBillReached=En yüksek ödenmemiş fatura tutarına ulaşıldı
 MonkeyNumRefModelDesc=Sayı biçimini müşteri için %syymm-nnn, tedarikçi için %syymm-nnn gösterir, yy yıl, mm ay ve nnnn ise 0 olmayan bir dizidir
 LeopardNumRefModelDesc=Müşteri/tedarikçi kodu serbesttir. Bu kod herhangi bir zamanda değiştirilebilir.
-# ManagingDirectors=Manager(s) name (CEO, director, president...)
+ManagingDirectors=Yönetici(lerin) adı (CEO, müdür, başkan...)

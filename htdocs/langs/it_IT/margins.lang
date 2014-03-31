@@ -18,12 +18,11 @@ MarginDetails=Specifiche del margine
 
 ProductMargins=Margini per prodotto
 CustomerMargins=Margini per cliente
-AgentMargins=Margini per agente
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Prodotto o servizio
 AllProducts=Tutti i prodotti e servizi
 ChooseProduct/Service=Scegli prodotto o servizio
-CommercialAgent=Agente commerciale
 
 StartDate=Data di avvio
 EndDate=Data di fine
