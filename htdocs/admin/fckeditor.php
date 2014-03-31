@@ -167,7 +167,26 @@ else
     $editor=new DolEditor('formtestfield',isset($conf->global->FCKEDITOR_TEST)?$conf->global->FCKEDITOR_TEST:'Test','',200,$mode,'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
     $editor->Create();
     print '<center><br><input class="button" type="submit" name="save" value="'.$langs->trans("Save").'"></center>'."\n";
+    print '<div id="divforlog"></div>';
     print '</form>'."\n";
+
+    // Add env of ckeditor
+    // This is to show how CKEditor detect browser to understand why editor is disabled or not
+    if (1 == 2)		// Change this to enable output
+    {
+	    print '<br><script language="javascript">
+	    function jsdump(obj, id) {
+		    var out = \'\';
+		    for (var i in obj) {
+		        out += i + ": " + obj[i] + "<br>\n";
+		    }
+
+		    jQuery("#"+id).html(out);
+		}
+
+	    jsdump(CKEDITOR.env, "divforlog");
+	    </script>';
+    }
 
     /*
      print '<!-- Result -->';
