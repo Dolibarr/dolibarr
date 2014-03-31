@@ -41,6 +41,7 @@ For users:
 - New: Add field url as product properties.
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
 - New: Can define custom fields for categories.
+- New: Prepare generation of SEPA files into module withdrawal.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
 
