@@ -530,7 +530,7 @@ if ($action == 'edit' || $action == 'updateedit')
     $var=true;
 
     $var=!$var;
-    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($conf->global->FACTURE_TVAOPTION != "franchise"?" checked":"")."> ".$langs->trans("VATIsUsed")."</label></td>";
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsUsedDesc")."</td></tr>";
@@ -539,7 +539,7 @@ if ($action == 'edit' || $action == 'updateedit')
     print "</td></tr>\n";
 
     $var=!$var;
-    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($conf->global->FACTURE_TVAOPTION == "franchise"?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsNotUsedDesc")."</td></tr>";
@@ -913,7 +913,7 @@ else
     $var=true;
 
     $var=!$var;
-    print "<tr ".$bc[$var]."><td width=\"140\"><label><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" disabled value=\"reel\"".($conf->global->FACTURE_TVAOPTION != "franchise"?" checked":"")."> ".$langs->trans("VATIsUsed")."</label></td>";
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" disabled value=\"1\"".(empty($conf->global->FACTURE_TVAOPTION)?"":" checked")."> ".$langs->trans("VATIsUsed")."</label></td>";
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsUsedDesc")."</td></tr>";
@@ -922,7 +922,7 @@ else
     print "</td></tr>\n";
 
     $var=!$var;
-    print "<tr ".$bc[$var]."><td width=\"140\"><label><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" disabled value=\"franchise\"".($conf->global->FACTURE_TVAOPTION == "franchise"?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
+    print "<tr ".$bc[$var]."><td width=\"140\"><label><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" disabled value=\"0\"".(empty($conf->global->FACTURE_TVAOPTION)?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
     print '<td colspan="2">';
     print "<table>";
     print "<tr><td>".$langs->trans("VATIsNotUsedDesc")."</td></tr>";

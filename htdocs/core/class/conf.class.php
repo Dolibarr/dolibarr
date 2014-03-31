@@ -235,7 +235,15 @@ class Conf
 		if (empty($this->global->MAIN_MENUFRONT_STANDARD)) $this->global->MAIN_MENUFRONT_STANDARD="eldy_menu.php";
 		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
 		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
-
+		// Clean var use vat for company
+		if (! isset($conf->global->FACTURE_TVAOPTION)) $conf->global->FACTURE_TVAOPTION=1;
+		else if (! empty($conf->global->FACTURE_TVAOPTION) && ! is_numeric($conf->global->FACTURE_TVAOPTION))
+		{
+			// Old value of option, we clean to use new value (0 or 1)
+			if ($conf->global->FACTURE_TVAOPTION != "franchise") $conf->global->FACTURE_TVAOPTION=1;
+			else $conf->global->FACTURE_TVAOPTION=0;
+		}
+		
 		// Variable globales LDAP
 		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME='';
 		if (! isset($this->global->LDAP_KEY_USERS)) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
