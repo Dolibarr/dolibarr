@@ -99,8 +99,6 @@ MailingModuleDescContactsByCompanyCategory=Contacts/addresses of third parties (
 MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
 MailingModuleDescMembersCategories=Foundation members (by categories)
 MailingModuleDescContactsByFunction=Contacts/addresses of third parties (by position/function)
-
-
 LineInFile=Line %s in file
 RecipientSelectionModules=Defined requests for recipient's selection
 MailSelectedRecipients=Selected recipients
@@ -128,7 +126,6 @@ TagCheckMail=Track mail opening
 TagUnsubscribe=Unsubscribe link
 TagSignature=Signature sending user
 TagMailtoEmail=Recipient EMail
-
 # Module Notifications
 Notifications=Notifications
 NoNotificationsWillBeSent=No email notifications are planned for this event and company

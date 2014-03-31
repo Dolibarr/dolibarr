@@ -34,7 +34,6 @@ ReturnCP=Return to previous page
 ErrorUserViewCP=You are not authorized to read this request for holidays.
 InfosCP=Information of the demand of holidays
 InfosWorkflowCP=Information Workflow
-DateCreateCP=Creation date
 RequestByCP=Requested by
 TitreRequestCP=Sheet of holidays
 NbUseDaysCP=Number of days of holidays consumed
@@ -130,7 +129,6 @@ ErrorMailNotSend=An error occurred while sending email:
 NoCPforMonth=No leave this month.
 nbJours=Number days
 TitleAdminCP=Configuration of Holidays
-
 #Messages
 Hello=Hello
 HolidaysToValidate=Validate holidays
@@ -143,7 +141,6 @@ HolidaysRefused=Denied holidays
 HolidaysRefusedBody=Your request for holidays for %s to %s has been denied for the following reason :
 HolidaysCanceled=Canceled holidays
 HolidaysCanceledBody=Your request for holidays for %s to %s has been canceled.
-
 Permission20001=Read/create/modify their holidays
 Permission20002=Read/modify all requests of holidays
 Permission20003=Delete their holidays requests
