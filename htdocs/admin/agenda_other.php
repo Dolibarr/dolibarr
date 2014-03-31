@@ -84,7 +84,7 @@ print "<br>\n";
 
 $head=agenda_prepare_head();
 
-dol_fiche_head($head, 'other', $langs->trans("Agenda"));
+dol_fiche_head($head, 'other', $langs->trans("Agenda"), 0, 'action');
 
 print_titre($langs->trans("OtherOptions"));
 

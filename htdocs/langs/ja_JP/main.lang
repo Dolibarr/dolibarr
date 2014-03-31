@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=ファイル%sを開くのに失敗しました
 ErrorCanNotCreateDir=DIR %sを作成することはできません
 ErrorCanNotReadDir=DIR %sを読み取ることはできません
 ErrorConstantNotDefined=パラメータが定義されていない%s
-ErrorUnknown=UNKOWNエラー
+# ErrorUnknown=Unknown error
 ErrorSQL=SQLエラー
 ErrorLogoFileNotFound=ロゴファイル '%s'が見つかりませんでした
 ErrorGoToGlobalSetup=&quot;会社/財団この問題を解決するためのセットアップに行く
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=エラー、国%s 'に対して定義�
 ErrorFailedToSaveFile=エラーは、ファイルを保存に失敗しました。
 ErrorOnlyPngJpgSupported=エラーのみ。pngおよび。jpgイメージ形式のファイルがサポートされています。
 ErrorImageFormatNotSupported=あなたのPHPは、この形式の画像を変換する関数をサポートしていません。
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=デフォルトの背景色
 FileWasNotUploaded=ファイルが添付ファイルが選択されているが、まだアップロードされませんでした。このために &quot;添付ファイル&quot;をクリックしてください。
@@ -667,6 +669,7 @@ BySalesRepresentative=営業担当者によって
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=月曜日

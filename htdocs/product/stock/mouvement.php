@@ -120,7 +120,7 @@ $formproduct=new FormProduct($db);
 
 $sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
 $sql.= " e.label as stock, e.rowid as entrepot_id,";
-$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label,";
+$sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label, m.fk_origin, m.origintype,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product as p,";
@@ -418,6 +418,7 @@ if ($resql)
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductRef"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ProductLabel"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
@@ -439,6 +440,10 @@ if ($resql)
     // Label of movement
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
+    print '</td>';
+    // Origin of movement
+    print '<td class="liste_titre" align="left">';
+    print '&nbsp; ';
     print '</td>';
     // Product Ref
     print '<td class="liste_titre" align="left">';
@@ -470,6 +475,11 @@ if ($resql)
         $objp = $db->fetch_object($resql);
 
         $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
+		if(!empty($objp->fk_origin)) {
+			$origin = $movement->get_origin($objp->fk_origin, $objp->origintype);
+		} else {
+			$origin = '';
+		}
 
         $var=!$var;
         print "<tr ".$bc[$var].">";
@@ -479,6 +489,8 @@ if ($resql)
         print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
         // Label of movement
         print '<td>'.$objp->label.'</td>';
+		// Origin of movement
+        print '<td>'.$origin.'</td>';
 		// Product ref
         print '<td>';
         $productstatic->id=$objp->rowid;
@@ -525,8 +537,8 @@ if ($resql)
     		$productidselected=$key;
     		$productlabelselected=$val;
     	}
-		$datebefore=dol_get_first_day($year, $month?$month:1, true);
-		$dateafter=dol_get_last_day($year, $month?$month:12, true);
+		$datebefore=dol_get_first_day($year?$year:strftime("%Y",time()), $month?$month:1, true);
+		$dateafter=dol_get_last_day($year?$year:strftime("%Y",time()), $month?$month:12, true);
     	$balancebefore=$movement->calculateBalanceForProductBefore($productidselected, $datebefore);
     	$balanceafter=$movement->calculateBalanceForProductBefore($productidselected, $dateafter);
 

@@ -17,14 +17,16 @@
 
 /**
  *	    \file       htdocs/compta/salaries/index.php
- *      \ingroup    tax
- *		  \brief      List of salaries payments
+ *      \ingroup    salaries
+ *		\brief     	List of salaries payments
  */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 $langs->load("compta");
+$langs->load("salaries");
+$langs->load("bills");
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -41,12 +43,15 @@ llxHeader();
 
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
-        
+
 
 print_fiche_titre($langs->trans("SalariesPayments"));
 
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm";
-$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s, ".MAIN_DB_PREFIX."user as u";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.num_payment,";
+$sql.= " pst.code as payment_code";
+$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id,";
+$sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE u.rowid = s.fk_user";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " ORDER BY dm DESC";
@@ -64,6 +69,7 @@ if ($result)
     print "<td>".$langs->trans("Person")."</td>";
     print "<td>".$langs->trans("Label")."</td>";
     print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
+    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var=1;
@@ -77,20 +83,23 @@ if ($result)
         $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
         $salstatic->id=$obj->rowid;
-		    $salstatic->ref=$obj->rowid;
+		$salstatic->ref=$obj->rowid;
         print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-		    print "<td>".$userstatic->getNomUrl(1)."</td>\n";
+		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
         print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
-        $total = $total + $obj->amount;
-
-        print "<td align=\"right\">".price($obj->amount)."</td>";
+        // Type
+        print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
+		// Amount
+        print "<td align=\"right\">".price($obj->amount,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
         print "</tr>\n";
 
+        $total = $total + $obj->amount;
+        
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
+    print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
+    print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td></tr>";
 
     print "</table>";
     $db->free($result);

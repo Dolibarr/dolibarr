@@ -403,7 +403,6 @@ ActivityStateFilter=Status aktivnosti
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Predlaga kodo kupca v formatu %syymm-nnnn in kodo dobavitelja v formatu %syymm-nnnn kjer je yy leto, mm mesec in nnnn zaporedna številka brez presledka, večja od 0.
-# Leopard
 LeopardNumRefModelDesc=Koda kupca / dobavitelja po želji. Lahko jo kadarkoli spremenite.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

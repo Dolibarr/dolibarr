@@ -194,7 +194,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
 			)			
 	{
-		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$predef= '_predef';
 		$idprod=GETPOST('idprod', 'int');
 		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
 		$price_ht = '';
@@ -202,7 +202,6 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	}
 	$qty = GETPOST('qty'.$predef);
 	$remise_percent=GETPOST('remise_percent'.$predef);
-
     if (GETPOST('addline_libre') && GETPOST('pu') < 0 && $qty < 0)
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
@@ -213,8 +212,9 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
         $error++;
     }
-    if (! GETPOST('addline_predefined') && (! GETPOST('pu') || GETPOST('pu')=='')) // Unit price can be 0 but not ''
+    if (! GETPOST('addline_predefined') && ( GETPOST('pu')==='')) // Unit price can be 0 but not ''
     {
+    	
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
         $error++;
     }
@@ -293,7 +293,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     		setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
     	}
     }
-    else
+    else if( GETPOST('pu')!=='' || GETPOST('amountttc')!=='' )
 	{
     	$type=$_POST["type"];
     	$desc=$_POST['dp_desc'];
@@ -320,7 +320,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     			$ttc = price2num($_POST['amountttc']);
     			$ht = $ttc / (1 + ($tauxtva / 100));
     			$price_base_type = 'HT';
-    			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
+			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
     		}
     	}
     }

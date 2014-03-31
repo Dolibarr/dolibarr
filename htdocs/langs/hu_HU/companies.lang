@@ -403,7 +403,6 @@ ActivityStateFilter=Gazdasági aktivitás
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Vissza a numero formátumban %syymm-nnnn kódot, és az ügyfelek %syymm-nnnn kódot, ahol a szállító yy év, hónap és mm nnnn sorozata szünet nélkül, és nincs visszaút 0-ra.
-# Leopard
 LeopardNumRefModelDesc=Vevő / szállító kód ingyenes. Ez a kód lehet bármikor módosítható.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

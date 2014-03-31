@@ -25,3 +25,6 @@ ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
 ALTER TABLE llx_product ADD INDEX idx_product_import_key (import_key);
 ALTER TABLE llx_product ADD INDEX idx_product_seuil_stock_alerte (seuil_stock_alerte);
+
+ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
+

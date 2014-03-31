@@ -28,6 +28,7 @@
  *	\brief      File of class to manage categories
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -36,10 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 /**
  *	Class to manage categories
  */
-class Categorie
+class Categorie extends CommonObject
 {
 	public $element='category';
-	public $table_element='category';
+	public $table_element='categories';
 
 	var $id;
 	var $fk_parent;
@@ -102,6 +103,8 @@ class Categorie
 				$this->visible		= $res['visible'];
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
+				
+				$this->fetch_optionals($this->id,$extralabels);
 
 				$this->db->free($resql);
 
@@ -130,7 +133,7 @@ class Categorie
 	 */
 	function create($user='')
 	{
-		global $conf,$langs;
+		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
 
 		$error=0;
@@ -188,6 +191,24 @@ class Categorie
 			if ($id > 0)
 			{
 				$this->id = $id;
+				
+				// Actions on extra fields (by external module or standard code)
+				// FIXME le hook fait double emploi avec le trigger !!
+				$hookmanager->initHooks(array('HookModuleNamedao'));
+				$parameters=array('socid'=>$this->id);
+				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook))
+				{
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->insertExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+						}
+					}
+				}
+				else if ($reshook < 0) $error++;
 
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -224,7 +245,7 @@ class Categorie
 	 */
 	function update($user='')
 	{
-		global $conf, $langs;
+		global $conf, $langs,$hookmanager;
 
 		$error=0;
 
@@ -257,8 +278,28 @@ class Categorie
 		dol_syslog(get_class($this)."::update sql=".$sql);
 		if ($this->db->query($sql))
 		{
+			
+			// Actions on extra fields (by external module or standard code)
+			// FIXME le hook fait double emploi avec le trigger !!
+			$hookmanager->initHooks(array('HookCategorydao'));
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
+			
 			$this->db->commit();
 
+			
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
@@ -361,6 +402,19 @@ class Categorie
 			}
 			else
 			{
+				// Removed extrafields
+				if (! $error)
+				{
+					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					{
+						$result=$this->deleteExtraFields();
+						if ($result < 0)
+						{
+							$error++;
+							dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
+						}
+					}
+				}
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);

@@ -74,7 +74,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
                 setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
             }
         }
-        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id.($withproject?'&withproject=1':''));
         exit;
     }
 }

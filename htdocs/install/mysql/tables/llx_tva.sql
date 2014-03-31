@@ -24,6 +24,8 @@ create table llx_tva
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
   amount          real NOT NULL DEFAULT 0,
+  fk_typepayment  integer NULL,
+  num_payment     varchar(50),
   label           varchar(255),
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,

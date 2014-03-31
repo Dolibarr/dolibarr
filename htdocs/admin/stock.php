@@ -77,6 +77,16 @@ if($action)
 	if($action == 'STOCK_USE_VIRTUAL_STOCK') {
 	    $res = dolibarr_set_const($db, "STOCK_USE_VIRTUAL_STOCK", GETPOST('STOCK_USE_VIRTUAL_STOCK','alpha'),'chaine',0,'',$conf->entity);
 	}
+	
+	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_INVOICE') {
+	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_INVOICE", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_INVOICE','alpha'),'chaine',0,'',$conf->entity);
+	}
+	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_ORDER') {
+	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_ORDER", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_ORDER','alpha'),'chaine',0,'',$conf->entity);
+	}
+	if($action == 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT') {
+	    $res = dolibarr_set_const($db, "STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT", GETPOST('STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT','alpha'),'chaine',0,'',$conf->entity);
+	}
 
 	if (! $res > 0) $error++;
 
@@ -101,17 +111,6 @@ llxHeader('',$langs->trans("StockSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("StockSetup"),$linkback,'setup');
-print '<br>';
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/stock.php";
-$head[$h][1] = $langs->trans("Miscellaneous");
-$head[$h][2] = 'general';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 
 $form=new Form($db);
 $var=true;
@@ -245,6 +244,60 @@ if (! empty($conf->fournisseur->enabled))
 	print "</form>\n</td>\n</tr>\n";
 }
 
+print '</table>';
+
+// Optio to force stock to be enough before adding a line into document
+print '<br>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("RuleForStockAvailability")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print '</tr>'."\n";
+
+if($conf->invoice->enabled) {
+	$var = !$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_INVOICE\">";
+	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_INVOICE",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print "</td>\n";
+	print "</tr>\n";
+}
+
+if($conf->order->enabled) {
+	$var = !$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_ORDER\">";
+	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_ORDER",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print "</td>\n";
+	print "</tr>\n";
+}
+
+if($conf->expedition->enabled) {
+	$var = !$var;
+	print "<tr ".$bc[$var].">";
+	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
+	print '<td width="160" align="right">';
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT\">";
+	print $form->selectyesno("STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT",$conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT,1);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print '</form>';
+	print "</td>\n";
+	print "</tr>\n";
+}
 print '</table>';
 
 

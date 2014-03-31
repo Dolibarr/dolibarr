@@ -219,7 +219,11 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						$object = new $origin($db);
 						$object->fetch($origin_id);
 						$object->fetch_thirdparty();
-						$prod = new Product($db, $objp->fk_product);
+
+						$prod = new Product($db);
+						$prod->id=$objp->fk_product;
+						$prod->getMultiLangs();
+
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];

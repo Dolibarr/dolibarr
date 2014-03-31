@@ -403,7 +403,6 @@ ActivityStateFilter=Status de atividade
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Devolve um número baixo o formato %syymm-nnnn para os códigos de clientes e %syymm-nnnn para os códigos dos Fornecedores, donde yy é o ano, mm o mês e nnnn um contador sequêncial sem ruptura e sem Voltar a 0.
-# Leopard
 LeopardNumRefModelDesc=Código de cliente/fornecedor livre sem verificação. pode ser modificado em qualquer momento.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

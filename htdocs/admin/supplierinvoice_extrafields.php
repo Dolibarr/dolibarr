@@ -37,7 +37,7 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
-$langs->load("orders");
+$langs->load("bills");
 $langs->load("suppliers");
 
 $extrafields = new ExtraFields($db);
@@ -67,7 +67,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("SuppliersInvoices");
+$textobject=$langs->transnoentitiesnoconv("BillsSuppliers");
 
 llxHeader('',$langs->trans("SuppliersSetup"));
 
@@ -77,7 +77,7 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'supplierinvoice', $langs->trans("ModuleSetup"), 0, 'invoice');
+dol_fiche_head($head, 'supplierinvoice', $langs->trans("Suppliers"), 0, 'company');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

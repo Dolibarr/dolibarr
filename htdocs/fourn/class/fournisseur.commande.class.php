@@ -31,6 +31,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
 /**
@@ -635,6 +636,7 @@ class CommandeFournisseur extends CommonOrder
                         if ($this->lines[$i]->fk_product > 0)
                         {
                             $mouvP = new MouvementStock($this->db);
+                            $mouvP->origin = &$this;
                             // We decrement stock of product (and sub-products)
 	                        $up_ht_disc=$this->lines[$i]->subprice;
     	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
@@ -876,7 +878,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
-		//$sql.= ", ".$this->db->idate($now);
+		//$sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", ".$user->id;
         $sql.= ", 0";
         $sql.= ", " . $this->source;
@@ -1233,9 +1235,12 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$entrepot	Id of warehouse to add product
      * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment	Comment for stock movement
+	 * @param	date		$eatby		eat-by date
+	 * @param	date		$sellby		sell-by date
+	 * @param	string		$batch		Lot number
      * @return 	int						<0 if KO, >0 if OK
      */
-    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='')
+    function DispatchProduct($user, $product, $qty, $entrepot, $price=0, $comment='', $eatby='', $sellby='', $batch='')
     {
         global $conf;
         $error = 0;
@@ -1288,7 +1293,8 @@ class CommandeFournisseur extends CommonOrder
                 if ($product > 0)
                 {
                 	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
-                    $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
+                	$mouv->origin = &$this;
+					$result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment, $eatby, $sellby, $batch);
                     if ($result < 0)
                     {
                         $this->error=$mouv->error;

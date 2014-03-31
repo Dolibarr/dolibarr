@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Lỗi mở tệp %s
 ErrorCanNotCreateDir=Không thể tạo thư mục %s
 ErrorCanNotReadDir=Không thể đọc thư mục %s
 ErrorConstantNotDefined=Thông số %s chưa được khai báo
-ErrorUnknown=Lỗi không xác định
+# ErrorUnknown=Unknown error
 ErrorSQL=Lỗi SQL
 ErrorLogoFileNotFound=Không tìm thấy tệp logo '%s'
 # ErrorGoToGlobalSetup=Go to 'Company/Foundation' setup to fix this
@@ -60,6 +60,8 @@ ErrorLogoFileNotFound=Không tìm thấy tệp logo '%s'
 # ErrorFailedToSaveFile=Error, failed to save file.
 # ErrorOnlyPngJpgSupported=Error, only .png and .jpg image format file are supported.
 # ErrorImageFormatNotSupported=Your PHP does not support functions to convert images of this format.
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 # BackgroundColorByDefault=Default background color
 # FileWasNotUploaded=A file is selected for attachment but was not yet uploaded. Click on "Attach file" for this.
@@ -667,6 +669,7 @@ Unknown=Chưa rõ
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 # Monday=Monday

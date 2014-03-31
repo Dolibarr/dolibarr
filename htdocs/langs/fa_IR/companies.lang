@@ -403,7 +403,6 @@ ActivityCeased=مغلقة
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=عودة número مع الشكل nnnn - ٪ syymm الزبون ورمز وnnnn - ٪ syymm مورد للقانون حيث السنة هو السنة ، هو شهر ملم وnnnn هو تسلسل بلا كسر وعدم العودة إلى 0.
-# Leopard
 LeopardNumRefModelDesc=العميل / المورد مدونة مجانية. هذا القانون يمكن تعديلها في أي وقت.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

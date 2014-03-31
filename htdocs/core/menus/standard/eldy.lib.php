@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
@@ -134,9 +134,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	}
 
 	// Financial
-	$tmpentry=array('enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->deplacement->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled)),
-	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->plancompte->lire) || ! empty($user->rights->facture->lire) || ! empty($user->rights->deplacement->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire)),
-	'module'=>'comptabilite|accounting|facture|deplacement|don|tax');
+	$tmpentry=array('enabled'=>(! empty($conf->comptabilite->enabled) || ! empty($conf->accounting->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->don->enabled) || ! empty($conf->tax->enabled)),
+	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->plancompte->lire) || ! empty($user->rights->facture->lire) || ! empty($user->rights->don->lire) || ! empty($user->rights->tax->charges->lire)),
+	'module'=>'comptabilite|accounting|facture|don|tax');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -195,9 +195,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	}
 
 	// HRM
-	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled)),
-	'perms'=>(! empty($user->rights->holiday->write)),
-	'module'=>'holiday');
+	$tmpentry=array('enabled'=>(! empty($conf->holiday->enabled) || ! empty($conf->deplacement->enabled)),
+	'perms'=>(! empty($user->rights->holiday->write) || ! empty($user->rights->deplacement->lire)),
+	'module'=>'holiday|deplacement');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -209,9 +209,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		$idsel='hrm';
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/holiday/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
+		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/compta/hrm.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		if (empty($noout)) print_end_menu_entry($showmode);
-		$menu->add('/holiday/index.php?mainmenu=holiday&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
+		$menu->add('/compta/hrm.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
 	}
 
 
@@ -790,27 +790,23 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				//if ($leftmenu=="donations") $newmenu->add("/compta/dons/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 			}
 
-			// Trips and expenses
-			if (! empty($conf->deplacement->enabled))
-			{
-				$langs->load("trips");
-				$newmenu->add("/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("TripsAndExpenses"), 0, $user->rights->deplacement->lire, '', $mainmenu, 'tripsandexpenses');
-				if (empty($leftmenu) || $leftmenu=="tripsandexpenses") $newmenu->add("/compta/deplacement/fiche.php?action=create&amp;leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("New"), 1, $user->rights->deplacement->creer);
-				if (empty($leftmenu) || $leftmenu=="tripsandexpenses") $newmenu->add("/compta/deplacement/list.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("List"), 1, $user->rights->deplacement->lire);
-				if (empty($leftmenu) || $leftmenu=="tripsandexpenses") $newmenu->add("/compta/deplacement/stats/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("Statistics"), 1, $user->rights->deplacement->lire);
-			}
-
 			// Taxes and social contributions
-			if (! empty($conf->tax->enabled))
+			if (! empty($conf->tax->enabled) || ! empty($conf->salaries->enabled))
 			{
-				$newmenu->add("/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuTaxAndDividends"), 0, $user->rights->tax->charges->lire, '', $mainmenu, 'tax');
-				// Salaries
-				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_sal&amp;mainmenu=accountancy",$langs->trans("Salaries"),1,$user->rights->tax->charges->lire, '', $mainmenu, 'tax_vat');
-				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/fiche.php?leftmenu=tax_sal&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
-				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_sal",$langs->trans("Payments"),2,$user->rights->tax->charges->lire);
 				global $mysoc;
-				// Social contributions        
-        if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
+
+				$newmenu->add("/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuSpecialExpenses"), 0, $user->rights->tax->charges->lire, '', $mainmenu, 'tax');
+
+				// Salaries
+				if (! empty($conf->salaries->enabled))
+				{
+					$langs->load("salaries");
+					if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary&amp;mainmenu=accountancy",$langs->trans("Salaries"),1,$user->rights->salaries->read, '', $mainmenu, 'tax_salary');
+					if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/fiche.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->create);
+					if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
+				}
+				// Social contributions
+        		if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
 				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
 				if (empty($leftmenu) || preg_match('/^tax/i',$leftmenu)) $newmenu->add("/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
 				// VAT
@@ -1089,17 +1085,26 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		*/
 		if ($mainmenu == 'hrm')
 		{
+			// Holiday module
 			if (! empty($conf->holiday->enabled))
 			{
 				$langs->load("holiday");
 
-				// HRM: Holiday module
 				$newmenu->add("/holiday/index.php?&leftmenu=hrm", $langs->trans("CPTitreMenu"), 0, $user->rights->holiday->write, '', $mainmenu, 'hrm');
 				$newmenu->add("/holiday/fiche.php?&action=request", $langs->trans("MenuAddCP"), 1,$user->rights->holiday->write);
 				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->define_holiday);
 				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->view_log);
 				$newmenu->add("/holiday/month_report.php?&action=request", $langs->trans("MenuReportMonth"), 1, $user->rights->holiday->month_report);
+			}
 
+			// Trips and expenses
+			if (! empty($conf->deplacement->enabled))
+			{
+				$langs->load("trips");
+				$newmenu->add("/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("TripsAndExpenses"), 0, $user->rights->deplacement->lire, '', $mainmenu, 'tripsandexpenses');
+				$newmenu->add("/compta/deplacement/fiche.php?action=create&amp;leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("New"), 1, $user->rights->deplacement->creer);
+				$newmenu->add("/compta/deplacement/list.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("List"), 1, $user->rights->deplacement->lire);
+				$newmenu->add("/compta/deplacement/stats/index.php?leftmenu=tripsandexpenses&amp;mainmenu=hrm", $langs->trans("Statistics"), 1, $user->rights->deplacement->lire);
 			}
 		}
 

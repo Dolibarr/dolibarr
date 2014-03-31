@@ -222,7 +222,14 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 	$numlines=count($lines);
 
-	$total=0;
+	// We declare counter as global because we want to edit them into recursive call
+	global $total_projectlinesa_spent,$total_projectlinesa_planned,$total_projectlinesa_spent_if_planned;
+	if ($level == 0)
+	{
+		$total_projectlinesa_spent=0;
+		$total_projectlinesa_planned=0;
+		$total_projectlinesa_spent_if_planned=0;
+	}
 
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
@@ -285,7 +292,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
-				// Project
 				if ($showproject)
 				{
 					// Project ref
@@ -299,7 +305,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					if ($showlineingray) print '</i>';
 					print "</td>";
 
-					// Status
+					// Project status
 					print '<td>';
 					$projectstatic->statut=$lines[$i]->projectstatus;
 					print $projectstatic->getLibStatut(2);
@@ -336,12 +342,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				// Date start
 				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_start,'day');
+				print dol_print_date($lines[$i]->date_start,'dayhour');
 				print '</td>';
 
 				// Date end
 				print '<td align="center">';
-				print dol_print_date($lines[$i]->date_end,'day');
+				print dol_print_date($lines[$i]->date_end,'dayhour');
 				print '</td>';
 
 				// Planned Workload (in working hours)
@@ -389,9 +395,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, 0, $showalsopublicproj);
+				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
 				$level--;
-				$total += $lines[$i]->duration;
+				$total_projectlinesa_spent += $lines[$i]->duration;
+				$total_projectlinesa_planned += $lines[$i]->planned_workload;
+				if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
 			}
 		}
 		else
@@ -400,7 +408,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if ($total>0)
+	if (($total_projectlinesa_planned > 0 || $total_projectlinesa_spent > 0) && $level==0)
 	{
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -408,11 +416,17 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
+		print '<td align="center" class="nowrap liste_total">';
+		print convertSecondToTime($total_projectlinesa_planned, 'allhourmin');
+		print '</td>';
 		print '<td></td>';
-		print '<td></td>';
+		print '<td align="right" class="nowrap liste_total">';
+		print convertSecondToTime($total_projectlinesa_spent, 'allhourmin');
+		print '</td>';
+		print '<td align="right" class="nowrap liste_total">';
+		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent_if_planned / $total_projectlinesa_planned,2).' %';
+		print '</td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total, 'allhourmin').'</td>';
-		print '<td></td>';
 		print '</tr>';
 	}
 
@@ -486,12 +500,12 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 			// Date start
 			print '<td align="center">';
-			print dol_print_date($lines[$i]->date_start,'day');
+			print dol_print_date($lines[$i]->date_start,'dayhour');
 			print '</td>';
 
 			// Date end
 			print '<td align="center">';
-			print dol_print_date($lines[$i]->date_end,'day');
+			print dol_print_date($lines[$i]->date_end,'dayhour');
 			print '</td>';
 
 			// Planned Workload

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
  *
@@ -37,13 +37,19 @@ $langs->load('banks');
 $langs->load('companies');
 
 // Security check
-$id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$id=GETPOST("id");
+$action=GETPOST("action");
+$confirm=GETPOST('confirm');
 if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
-$mesg='';
+$paiement = new PaymentSocialContribution($db);
+if ($id > 0) 
+{
+	$result=$paiement->fetch($id);
+	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
+}
 
 
 /*
@@ -51,12 +57,10 @@ $mesg='';
  */
 
 // Delete payment
-if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->supprimer)
+if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->charges->supprimer)
 {
 	$db->begin();
 
-	$paiement = new PaymentSocialContribution($db);
-	$paiement->fetch($_REQUEST['id']);
 	$result = $paiement->delete($user);
 	if ($result > 0)
 	{
@@ -66,19 +70,19 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes' && 
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		setEventMessage($paiement->error, 'errors');
         $db->rollback();
 	}
 }
 
 // Create payment
-if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && $user->rights->tax->charges->creer)
+if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->charges->creer)
 {
 	$db->begin();
 
-	$paiement = new PaymentSocialContribution($db);
-	$paiement->id = $_REQUEST['id'];
-	if ($paiement->valide() > 0)
+	$result=$paiement->valide();
+	
+	if ($result > 0)
 	{
 		$db->commit();
 
@@ -102,7 +106,7 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 	}
 	else
 	{
-		$mesg='<div class="error">'.$paiement->error.'</div>';
+		setEventMessage($paiement->error);
 		$db->rollback();
 	}
 }
@@ -115,14 +119,6 @@ if ($_REQUEST['action'] == 'confirm_valide' && $_REQUEST['confirm'] == 'yes' && 
 llxHeader();
 
 $socialcontrib=new ChargeSociales($db);
-$paiement = new PaymentSocialContribution($db);
-
-$result=$paiement->fetch($_GET['id']);
-if ($result <= 0)
-{
-	dol_print_error($db,'Payment '.$_GET['id'].' not found in database');
-	exit;
-}
 
 $form = new Form($db);
 
@@ -144,7 +140,7 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), 0,
 /*
  * Confirmation de la suppression du paiement
  */
-if ($_GET['action'] == 'delete')
+if ($action == 'delete')
 {
 	print $form->formconfirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 	
@@ -153,15 +149,12 @@ if ($_GET['action'] == 'delete')
 /*
  * Confirmation de la validation du paiement
  */
-if ($_GET['action'] == 'valide')
+if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
 	print $form->formconfirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 	
 }
-
-
-if ($mesg) print $mesg.'<br>';
 
 
 print '<table class="border" width="100%">';
@@ -182,8 +175,7 @@ print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$lan
 print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->num_paiement.'</td></tr>';
 
 // Montant
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
-
+print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
@@ -262,7 +254,7 @@ if ($resql)
 			// Expected to pay
 			print '<td align="right">'.price($objp->sc_amount).'</td>';
 			// Status
-			print '<td align="center">'.$socialcontrib->getLibStatut(4).'</td>';
+			print '<td align="center">'.$socialcontrib->getLibStatut(4,$objp->amount).'</td>';
 			// Amount payed
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
@@ -323,7 +315,8 @@ if ($_GET['action'] == '')
 print '</div>';
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

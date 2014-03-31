@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011	Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,6 +154,17 @@ print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+
+$action = "tvaclient";
+$object = &$coll_list;
+$parameters["mode"] = $modetax;
+$parameters["start"] = $date_start;
+$parameters["end"] = $date_end;
+$parameters["direction"] = 'sell';
+// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('externalbalance'));
+$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 if (is_array($coll_list))
 {
 	$var=true;
@@ -160,7 +172,7 @@ if (is_array($coll_list))
 	$i = 1;
 	foreach($coll_list as $coll)
 	{
-		if(($min == 0 or ($min > 0 && $coll->amount > $min)) && $coll->localtax2>0)
+		if(($min == 0 or ($min > 0 && $coll->amount > $min)) && $coll->localtax2!=0)
 		{
 			$var=!$var;
 			$intra = str_replace($find,$replace,$coll->tva_intra);
@@ -222,6 +234,8 @@ print "</tr>\n";
 $company_static=new Societe($db);
 
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
+$parameters["direction"] = 'buy';
+$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if (is_array($coll_list))
 {
 	$var=true;
@@ -229,7 +243,7 @@ if (is_array($coll_list))
 	$i = 1;
 	foreach($coll_list as $coll)
 	{
-		if(($min == 0 or ($min > 0 && $coll->amount > $min)) && $coll->localtax2>0)
+		if(($min == 0 or ($min > 0 && $coll->amount > $min)) && $coll->localtax2!=0)
 		{
 			$var=!$var;
 			$intra = str_replace($find,$replace,$coll->tva_intra);

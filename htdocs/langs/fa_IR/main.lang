@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=فشل في فتح الملف ٪ ق
 ErrorCanNotCreateDir=لا يمكن إنشاء دير ق
 ErrorCanNotReadDir=لا يمكن قراءة دير ق
 ErrorConstantNotDefined=معلمة ٪s ق لم تحدد
-ErrorUnknown=Unkown خطأ
+# ErrorUnknown=Unknown error
 ErrorSQL=خطأ SQL
 ErrorLogoFileNotFound=شعار ملف '٪ ق' لم يتم العثور على
 ErrorGoToGlobalSetup=اذهب إلى 'شركة / مؤسسة' الإعداد لتثبيت هذا
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=خطأ ، لا يوجد نوع الم�
 ErrorFailedToSaveFile=خطأ ، وفشلت في انقاذ الملف.
 ErrorOnlyPngJpgSupported=خطأ فقط. بابوا نيو غينيا ، وجيه. شكل صورة ملف الدعم.
 ErrorImageFormatNotSupported=PHP الخاص بك لا يدعم وظائف لتحويل الصور من هذا الشكل.
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=لون الخلفية الافتراضي
 FileWasNotUploaded=يتم تحديد ملف مرفق لكنه لم يكن بعد تحميلها. انقر على "ملف إرفاق" لهذا الغرض.
@@ -667,6 +669,7 @@ CreateDraft=إنشاء مشروع
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 # Monday=Monday

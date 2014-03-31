@@ -94,6 +94,9 @@ $hookmanager->initHooks(array('productcard'));
  * Actions
  */
 
+$createbarcode=empty($conf->barcode->enabled)?0:1;
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->creer_advance)) $createbarcode=0;
+
 $parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 $error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -109,15 +112,15 @@ if (empty($reshook))
     }
 
     // Barcode type
-    if ($action ==	'setfk_barcode_type' && $user->rights->barcode->creer)
+    if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
-    	$result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
+        $result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
 
     // Barcode value
-    if ($action ==	'setbarcode' && $user->rights->barcode->creer)
+    if ($action ==	'setbarcode' && $createbarcode)
     {
     	$result=$object->check_barcode(GETPOST('barcode'));
 
@@ -203,8 +206,9 @@ if (empty($reshook))
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
-
+			
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
+            $object->url					= GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
             $object->customcode            = GETPOST('customcode');
             $object->country_id            = GETPOST('country_id');
@@ -278,6 +282,7 @@ if (empty($reshook))
                 $object->ref                    = $ref;
                 $object->libelle                = GETPOST('libelle');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
+            	$object->url					= GETPOST('url');
                 $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
                 $object->customcode             = GETPOST('customcode');
                 $object->country_id             = GETPOST('country_id');
@@ -352,7 +357,8 @@ if (empty($reshook))
                 $object->status = 0;
                 $object->status_buy = 0;
                 $object->id = null;
-
+                $object->barcode = -1;
+                
                 if ($object->check())
                 {
                     $id = $object->create($user);
@@ -399,8 +405,16 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
-                            setEventMessage($langs->trans($object->error), 'errors');
-                            dol_print_error($db,$object->error);
+                            if (count($object->errors)) 
+                            {
+                            	setEventMessage($object->errors, 'errors');
+                            	dol_print_error($db,$object->errors);
+                            }
+                            else 
+                            {
+                            	setEventMessage($langs->trans($object->error), 'errors');
+                            	dol_print_error($db,$object->error);
+                            }
                         }
                     }
                 }
@@ -731,7 +745,7 @@ else
         	}
 		}
 
-        print '<form action="fiche.php" method="post">';
+        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="type" value="'.$type.'">'."\n";
@@ -770,16 +784,17 @@ else
         print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy'));
         print '</td></tr>';
 
-	    // batch number management
-		if ($conf->productbatch->enabled) {
+	    // Batch number management
+		if ($conf->productbatch->enabled) 
+		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
 			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
 			print '</td></tr>';
 		}
 
-
-        $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+        $showbarcode=empty($conf->barcode->enabled)?0:1;
+        if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
         if ($showbarcode)
         {
@@ -805,11 +820,16 @@ else
         // Description (used in invoice, propal...)
         print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
-        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 90);
+        $doleditor = new DolEditor('desc', GETPOST('desc'), '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
         $doleditor->Create();
 
         print "</td></tr>";
 
+        // Public URL
+        print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
+        print '</td></tr>';    
+        
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
@@ -872,14 +892,17 @@ else
             print '</td></tr>';
         }
 
-        // Customs code
-        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td>';
-        // Origin country
-        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
-        print $form->select_country(GETPOST('country_id','int'),'country_id');
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-        print '</td></tr>';
-
+        // Custom code
+        if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        {
+	        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td>';
+	        // Origin country
+	        print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+	        print $form->select_country(GETPOST('country_id','int'),'country_id');
+	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	        print '</td></tr>';
+        }
+        
         // Other attributes
         $parameters=array('colspan' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1031,7 +1054,8 @@ else
 			}
 
             // Barcode
-            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
 	        if ($showbarcode)
 	        {
@@ -1057,13 +1081,18 @@ else
             // Description (used in invoice, propal...)
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 
-	        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+            // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
             $doleditor = new DolEditor('desc', $object->description, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
             $doleditor->Create();
 
             print "</td></tr>";
             print "\n";
 
+            // Public Url
+            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
+			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
+            print '</td></tr>';
+            
             // Stock
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
@@ -1131,14 +1160,17 @@ else
                 print '</td></tr>';
             }
 
-            // Customs code
-            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
-            // Origin country
-            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
-            print $form->select_country($object->country_id,'country_id');
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-            print '</td></tr>';
-
+	        // Custom code
+    	    if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        	{
+	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
+	            // Origin country
+	            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
+	            print $form->select_country($object->country_id,'country_id');
+	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+	            print '</td></tr>';
+        	}
+        	
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1195,7 +1227,8 @@ else
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
             $showphoto=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
-            $showbarcode=(! empty($conf->barcode->enabled) && $user->rights->barcode->lire);
+            $showbarcode=empty($conf->barcode->enabled)?0:1;
+            if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 
             // En mode visu
             print '<table class="border" width="100%"><tr>';
@@ -1210,10 +1243,11 @@ else
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$object->libelle.'</td>';
 
-            $nblignes=8;
+            $nblignes=7;
             if (! empty($conf->produit->enabled) && ! empty($conf->service->enabled)) $nblignes++;
             if ($showbarcode) $nblignes+=2;
             if ($object->type!=1) $nblignes++;
+            if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) $nblignes+=2;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
 
@@ -1322,6 +1356,11 @@ else
             // Description
             print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">'.(dol_textishtml($object->description)?$object->description:dol_nl2br($object->description,1,true)).'</td></tr>';
 
+            // Public URL
+            print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="2">';
+			print dol_print_url($object->url);
+            print '</td></tr>';
+
             // Nature
             if($object->type!=1)
             {
@@ -1394,12 +1433,15 @@ else
                 print "</td></tr>\n";
             }
 
-            // Customs code
-            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
-
-            // Origin country code
-            print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
-
+        	// Custom code
+        	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        	{
+	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
+			
+            	// Origin country code
+            	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
+        	}
+        	
             // Other attributes
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

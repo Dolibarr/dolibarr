@@ -29,6 +29,7 @@
  *	\brief      File of class to manage predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 
 /**
@@ -301,9 +302,9 @@ class Product extends CommonObject
 		$this->db->begin();
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
-        if ($this->barcode == -1)  $this->get_barcode($this,$this->barcode_type_code);
+		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
-        // Check more parameters
+		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
 
@@ -559,7 +560,7 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
-
+		
         if (empty($this->country_id))           $this->country_id = 0;
 
         //Gencod
@@ -581,7 +582,7 @@ class Product extends CommonObject
         if ($result >= 0)
         {
 	        // For automatic creation
-	        if ($this->barcode == -1) $this->get_barcode($this,$this->barcode_type_code);
+	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql.= " SET label = '" . $this->db->escape($this->libelle) ."'";
@@ -609,7 +610,8 @@ class Product extends CommonObject
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
-	        $sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
+			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
+			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
 	        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
 			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
@@ -1276,7 +1278,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, label, description, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, label, description, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -1304,6 +1306,7 @@ class Product extends CommonObject
 				$this->libelle					= $obj->label;		// TODO deprecated
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
+				$this->url						= $obj->url;
 				$this->note						= $obj->note;
 
 				$this->type						= $obj->fk_product_type;
@@ -2796,7 +2799,7 @@ class Product extends CommonObject
 	{
 		$this->stock_reel = 0;
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
+		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('warehouse', 1).")";
@@ -2817,6 +2820,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
+					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
@@ -3255,16 +3259,18 @@ class Product extends CommonObject
 	}
 
     /**
-     *  Attribut un code barre a partir du module de controle des codes.
+     *  Get a barcode from the module to generate barcode values.
      *  Return value is stored into this->barcode
      *
      *	@param	Product		$object		Object product or service
-     *	@param	int			$type		Barcode type (ean, isbn, ...)
+     *	@param	string		$type		Barcode type (ean, isbn, ...)
      *  @return void
      */
     function get_barcode($object,$type='')
     {
         global $conf;
+        
+        $result='';
         if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
         {
             $dirsociete=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
@@ -3276,10 +3282,11 @@ class Product extends CommonObject
             $var = $conf->global->BARCODE_PRODUCT_ADDON_NUM;
             $mod = new $var;
 
-            $this->barcode = $mod->getNextValue($object,$type);
+            $result=$mod->getNextValue($object,$type);
 
-            dol_syslog(get_class($this)."::get_barcode barcode=".$this->barcode." module=".$var);
+            dol_syslog(get_class($this)."::get_barcode barcode=".$result." module=".$var);
         }
+        return $result;
     }
 
     /**
@@ -3319,6 +3326,48 @@ class Product extends CommonObject
 	function hasbatch()
 	{
 		return ($this->status_batch == 1 ? true : false);
+	}
+
+	/**
+	 *  Adjust stock in a warehouse for product with batch number
+	 *
+	 *  @param  	User	$user           user asking change
+	 *  @param  	int		$id_entrepot    id of warehouse
+	 *  @param  	double	$nbpiece        nb of units
+	 *  @param  	int		$movement       0 = add, 1 = remove
+	 * 	@param		string	$label			Label of stock movement
+	 * 	@param		double	$price			Price to use for stock eval
+	 * 	@param		date	$dlc			eat-by date
+	 * 	@param		date	$dluo			sell-by date
+	 * 	@param		string	$lot			Lot number
+	 * 	@return     int     				<0 if KO, >0 if OK
+	 */
+	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='')
+	{
+		if ($id_entrepot)
+		{
+			$this->db->begin();
+
+			require_once DOL_DOCUMENT_ROOT .'/product/stock/class/mouvementstock.class.php';
+
+			$op[0] = "+".trim($nbpiece);
+			$op[1] = "-".trim($nbpiece);
+
+			$movementstock=new MouvementStock($this->db);
+			$result=$movementstock->_create($user,$this->id,$id_entrepot,$op[$movement],$movement,$price,$label,'',$dlc,$dluo,$lot);
+
+			if ($result >= 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				dol_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
 	}
 }
 ?>

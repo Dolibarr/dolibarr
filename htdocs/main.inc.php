@@ -1177,6 +1177,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
             	// We must force not using ajax because cache of jquery does not load js of other pages.
             	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
+            	// Note: dol_use_jmobile=1 use jmobile without ajax, dol_use_jmobile=2 use jmobile with ajax
             	if (empty($conf->dol_use_jmobile) || ($conf->dol_use_jmobile != 2 && $conf->dol_use_jmobile != 3))
             	{
             		print '<script type="text/javascript">
@@ -1203,11 +1204,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
-                $jsckeditor='ckeditor_basic.js';
+                $jsckeditor='ckeditor.js';
                 if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
                 {
                 	$pathckeditor=constant('JS_CKEDITOR');
-                	$jsckeditor='ckeditor.js';
                 }
                 print '<script type="text/javascript">';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
@@ -1352,22 +1352,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 				}
     		</script>';
         }
-
-        /* This make menu bugged
-        if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION) && empty($conf->dol_use_jmobile))
-        {
-            print "\n".'<script type="text/javascript">
-					jQuery(document).ready(function () {
-						jQuery( ".vmenu" ).accordion({
-							autoHeight: false,
-							event: "mouseover",
-							//collapsible: true,
-							//active: 2,
-							header: "> .blockvmenupair > .menu_titre"
-						});
-					});
-					</script>';
-        } */
 
         // Wrapper to show tooltips
         print "\n".'<script type="text/javascript">

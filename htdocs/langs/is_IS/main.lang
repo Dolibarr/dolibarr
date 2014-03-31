@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Tókst ekki að opna skrána %s
 ErrorCanNotCreateDir=Get ekki búið til dir %s
 ErrorCanNotReadDir=Get ekki lesið dir %s
 ErrorConstantNotDefined=Viðfang %s  ekki skilgreint
-ErrorUnknown=Unkown villa
+# ErrorUnknown=Unknown error
 ErrorSQL=SQL Villa
 ErrorLogoFileNotFound=%s  Logo skrá 'fannst ekki
 ErrorGoToGlobalSetup=Fara á "Fyrirtæki / skipulag Foundation" til að laga þetta
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Villa, engin félagsleg framlag tegund
 ErrorFailedToSaveFile=Villa tókst að vista skrána.
 ErrorOnlyPngJpgSupported=Villa, eini. PNG og. Jpg mynd snið skrá eru studd.
 ErrorImageFormatNotSupported=Your PHP styður ekki virka til að breyta myndum af þessu sniði.
+# SetDate=Set date
+# SelectDate=Select a date
 # SeeAlso=See also %s
 BackgroundColorByDefault=Default bakgrunnslit
 FileWasNotUploaded=A-skrá er valin fyrir viðhengi en var ekki enn upp. Smelltu á "Hengja skrá" fyrir þessu.
@@ -667,6 +669,7 @@ BySalesRepresentative=Með sölufulltrúa
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Mánudagur

@@ -28,7 +28,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Classe de description et activation du module Barcode
+ *	Class to describe Barcode
  */
 class modBarcode extends DolibarrModules
 {
@@ -77,22 +77,16 @@ class modBarcode extends DolibarrModules
 		$this->rights_class = 'barcode';
 
 		$this->rights[1][0] = 300; // id de la permission
-		$this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
+		$this->rights[1][1] = 'Read barcodes'; // libelle de la permission
 		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire';
+		$this->rights[1][4] = 'lire_advance';
 
 		$this->rights[2][0] = 301; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les codes barres'; // libelle de la permission
+		$this->rights[2][1] = 'Create/modify barcodes'; // libelle de la permission
 		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[2][4] = 'creer';
-
-		$this->rights[4][0] = 302; // id de la permission
-		$this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
-		$this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[4][4] = 'supprimer';
+		$this->rights[2][4] = 'creer_advance';
 
         // Main menu entries
         $r=0;

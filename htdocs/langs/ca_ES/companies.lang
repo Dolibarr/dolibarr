@@ -403,7 +403,6 @@ ProductsIntoElements=Llistat de productes en %s
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Retorna un número sota el format %syymm-nnnn per als codis de clients  i %syymm-nnnn per als codis dels proveïdors, on yy és l'any, mm el mes i nnnn un comptador seqüencial sense ruptura i sense tornar a 0.
-# Leopard
 LeopardNumRefModelDesc=Codi de client/proveïdor lliure sense verificació. Pot ser modificat en qualsevol moment.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

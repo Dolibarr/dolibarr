@@ -15,14 +15,14 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ============================================================================
-CREATE TABLE `llx_product_batch` (
-  `rowid` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `fk_product_stock` int(11) NOT NULL,
-  `eatby` datetime DEFAULT NULL,
-  `sellby` datetime DEFAULT NULL,
-  `batch` varchar(30) DEFAULT NULL,
-  `qty` double NOT NULL DEFAULT 0,
-  `import_key` varchar(14) DEFAULT NULL
+CREATE TABLE llx_product_batch (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_product_stock integer NOT NULL,
+  eatby datetime DEFAULT NULL,
+  sellby datetime DEFAULT NULL,
+  batch varchar(30) DEFAULT NULL,
+  qty double NOT NULL DEFAULT 0,
+  import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
 

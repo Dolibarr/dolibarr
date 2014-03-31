@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013	   Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -425,6 +425,34 @@ class InterfaceActionsAuto
 
             $object->sendtoid=0;
             $ok=1;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_APPROVE')
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			$langs->load("orders");
+			$langs->load("agenda");
+		
+			$object->actiontypecode='AC_OTH_AUTO';
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderApprovedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("OrderApprovedInDolibarr",$object->ref);
+			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+		
+			$object->sendtoid=0;
+			$ok=1;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_REFUSE')
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			$langs->load("orders");
+			$langs->load("agenda");
+		
+			$object->actiontypecode='AC_OTH_AUTO';
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderRefusedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("OrderRefusedInDolibarr",$object->ref);
+			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+		
+			$object->sendtoid=0;
+			$ok=1;
 		}
         elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
         {

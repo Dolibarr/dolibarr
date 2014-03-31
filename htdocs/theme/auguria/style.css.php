@@ -109,9 +109,7 @@ body {
 	background: #ffffff url(<?php echo $img_head; ?>) 0 0 no-repeat;
 <?php } ?>
 	color: #101010;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
     font-family: <?php print $fontlist ?>;
     margin-top: 0;
     margin-bottom: 0;
@@ -272,14 +270,15 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-  display: table;
-  table-layout: fixed;
-  margin-top: 6px;
+	display: table;
+	table-layout: fixed;
+	margin-top: 6px;
+	margin-bottom: 6px;
 }
 #id-right, #id-left {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
+	display: table-cell;
+	float: none;
+	vertical-align: top;
 }
 #id-<?php echo $right; ?> {
 	width: 100%;
@@ -1727,6 +1726,8 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
+
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;
@@ -2304,9 +2305,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 10px;
 	padding-right: 10px;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {

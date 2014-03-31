@@ -758,5 +758,15 @@ SSLCertificateKeyFile "WAMPROOT/myserver.key"
 #ExpiresByType application/javascript A2592000
     
 
+# To protect Dolibarr with HTTP Auth
+#<Location /dolibarr>
+#       Options +Indexes
+#       AuthUserFile /var/www/.htpasswd
+#       AuthName "Zone authent basic Dolibarr"
+#       AuthType Basic
+#       require user test
+#</Location>
+
+
 # Declare alias for Dolibarr, PHPMyAdmin and other softwares
 Include "WAMPROOT/alias/*.conf"

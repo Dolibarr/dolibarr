@@ -143,8 +143,8 @@ class RemiseCheque extends CommonObject
 		$sql.= ", nbcheque";
 		$sql.= ", ref_ext";
 		$sql.= ") VALUES (";
-		$sql.= $this->db->idate($now);
-		$sql.= ", ".$this->db->idate($now);
+		$sql.= "'".$this->db->idate($now)."'";
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$account_id;
 		$sql.= ", 0";

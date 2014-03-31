@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/FunctionsTest.php
+ *      \file       test/phpunit/FunctionsLibTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -48,7 +48,7 @@ if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FunctionsTest extends PHPUnit_Framework_TestCase
+class FunctionsLibTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -367,6 +367,14 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
      */
     public function testDolMkTime()
     {
+    	global $conf;
+
+    	$savtz=date_default_timezone_get();
+
+		// Some test for UTC TZ
+    	date_default_timezone_set('UTC');
+
+    	// Check bad hours
         $result=dol_mktime(25,0,0,1,1,1970,1,1);    // Error (25 hours)
         print __METHOD__." result=".$result."\n";
         $this->assertEquals('',$result);
@@ -390,7 +398,22 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
         $result=dol_mktime(2,0,0,1,1,1970,0);                // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
         print __METHOD__." result=".$result."\n";
         $tz=getServerTimeZoneInt('winter');                  // +1 in Europe/Paris at this time (this time is winter)
-        $this->assertEquals(7200-($tz*3600),$result);        // Should be 7200 if we are at greenwich winter
+        $this->assertEquals(7200-($tz*3600),$result);        // 7200 if we are at greenwich winter, 7200-($tz*3600) at local winter
+
+        // Some test for local TZ Europe/Paris
+        date_default_timezone_set('Europe/Paris');
+        
+        // Check that tz for paris in winter is used
+        $result=dol_mktime(2,0,0,1,1,1970,'server');         // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(3600,$result);        			 // 7200 if we are at greenwich winter, 3600 at Europe/Paris
+        
+        // Check that daylight saving time is used
+        $result=dol_mktime(2,0,0,6,1,2014,0);         		// 2014-06-01 02:00:00 = 1401588000-3600(location)-3600(daylight) in local area Europe/Paris = 1401588000 GMT
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals(1401588000-3600-3600,$result);  // 1401588000 are at greenwich summer, 1401588000-3600(location)-3600(daylight) at Europe/Paris summer
+        
+        date_default_timezone_set($savtz);
     }
 
 
@@ -574,11 +597,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
         // Test RULE 2 (FR-FR)
         $vat=get_default_tva($companyfr,$companyfr,0);
-        $this->assertEquals(19.6,$vat);
+        $this->assertEquals(20,$vat);
 
         // Test RULE 2 (FR-MC)
         $vat=get_default_tva($companyfr,$companymc,0);
-        $this->assertEquals(19.6,$vat);
+        $this->assertEquals(20,$vat);
 
         // Test RULE 3 (FR-IT)
         $vat=get_default_tva($companyfr,$companyit,0);
@@ -586,7 +609,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase
 
         // Test RULE 4 (FR-IT)
         $vat=get_default_tva($companyfr,$notcompanyit,0);
-        $this->assertEquals(19.6,$vat);
+        $this->assertEquals(20,$vat);
 
         // Test RULE 5 (FR-US)
         $vat=get_default_tva($companyfr,$companyus,0);

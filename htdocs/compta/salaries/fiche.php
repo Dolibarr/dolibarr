@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,8 @@
 
 /**
  *	    \file       htdocs/compta/salaries/fiche.php
- *      \ingroup    tax
- *		  \brief      Page of salaries payments
+ *      \ingroup    salaries
+ *		\brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -29,6 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("compta");
 $langs->load("banks");
 $langs->load("bills");
+$langs->load("users");
+$langs->load("salaries");
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action');
@@ -57,50 +60,73 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-    $db->begin();
+	$error=0;
 
-    $datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
-    $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
-    $datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
-    $dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
+	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
+	$datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
+	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
+	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 
+	$sal->accountid=GETPOST("accountid");
+	$sal->fk_user=GETPOST("fk_user");
+	$sal->datev=$datev;
+	$sal->datep=$datep;
+	$sal->amount=price2num(GETPOST("amount"));
+	$sal->label=GETPOST("label");
+	$sal->datesp=$datesp;
+	$sal->dateep=$dateep;
+	$sal->type_payment=GETPOST("paymenttype");
+	$sal->num_payment=GETPOST('num_payment');
 
-    $sal->accountid=$_POST["accountid"];
-    $sal->paymenttype=$_POST["paiementtype"];
-    $sal->fk_user=$_POST["fk_user"];
-    $sal->datev=$datev;
-    $sal->datep=$datep;
-    $sal->amount=$_POST["amount"];
-	  $sal->label=$_POST["label"];
-    $sal->datesp=$datesp;
-    $sal->dateep=$dateep;
+	if (empty($sal->fk_user) || $sal->fk_user < 0)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Employee")),'errors');
+		$error++;
+	}
+	if (empty($sal->type_payment) || $sal->type_payment < 0)
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentMode")),'errors');
+		$error++;
+	}
+	if (empty($sal->amount))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount")),'errors');
+		$error++;
+	}
 
-    $ret=$sal->addPayment($user);
-    if ($ret > 0)
-    {
-        $db->commit();
-        header("Location: index.php");
-        exit;
-    }
-    else
-    {
-        $db->rollback();
-        setEventMessage($sal->error, 'errors');
-        $action="create";
-    }
+	if (! $error)
+	{
+		$db->begin();
+	  
+		$ret=$sal->create($user);
+		if ($ret > 0)
+		{
+			$db->commit();
+			header("Location: index.php");
+			exit;
+		}
+		else
+		{
+			$db->rollback();
+			setEventMessage($sal->error, 'errors');
+			$action="create";
+		}
+	}
+
+	$action='create';
 }
 
 if ($action == 'delete')
 {
-    $result=$sal->fetch($id);
+	$result=$sal->fetch($id);
 
 	if ($sal->rappro == 0)
 	{
-	    $db->begin();
+		$db->begin();
 
-	    $ret=$sal->delete($user);
-	    if ($ret > 0)
-	    {
+		$ret=$sal->delete($user);
+		if ($ret > 0)
+		{
 			if ($sal->fk_bank)
 			{
 				$accountline=new AccountLine($db);
@@ -120,23 +146,23 @@ if ($action == 'delete')
 				$db->rollback();
 				setEventMessage($sal->error,'errors');
 			}
-	    }
-	    else
-	    {
-	        $db->rollback();
-	        setEventMessage($sal->error,'errors');
-	    }
+		}
+		else
+		{
+			$db->rollback();
+			setEventMessage($sal->error,'errors');
+		}
 	}
 	else
 	{
-        setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
+		setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
 	}
 }
 
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader();
 
@@ -144,7 +170,7 @@ $form = new Form($db);
 
 if ($id)
 {
-  $salpayment = new PaymentSalary($db);
+	$salpayment = new PaymentSalary($db);
 	$result = $salpayment->fetch($id);
 	if ($result <= 0)
 	{
@@ -156,85 +182,93 @@ if ($id)
 // Formulaire saisie salaire
 if ($action == 'create')
 {
-    $year_current = strftime("%Y",dol_now());
-    $pastmonth = strftime("%m",dol_now()) - 1;
-    $pastmonthyear = $year_current;
-    if ($pastmonth == 0)
-    {
-    	$pastmonth = 12;
-    	$pastmonthyear--;
-    }
-    
-    $datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
-    $dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
-    
-    if (empty($datesp) || empty($dateep)) // We define date_start and date_end
-    {
-    	$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
-    }
-  
-    print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="add">';
+	$year_current = strftime("%Y",dol_now());
+	$pastmonth = strftime("%m",dol_now()) - 1;
+	$pastmonthyear = $year_current;
+	if ($pastmonth == 0)
+	{
+		$pastmonth = 12;
+		$pastmonthyear--;
+	}
 
-    print_fiche_titre($langs->trans("NewSalaryPayment"));
+	$datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
+	$dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
-    print '<table class="border" width="100%">';
+	if (empty($datesp) || empty($dateep)) // We define date_start and date_end
+	{
+		$datesp=dol_get_first_day($pastmonthyear,$pastmonth,false); $dateep=dol_get_last_day($pastmonthyear,$pastmonth,false);
+	}
 
-    print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add');
-    print '</td></tr>';
+	print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="add">';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add');
-    print '</td></tr>';
-    
-    print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-    print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
-    print '</td></tr>';
+	print_fiche_titre($langs->trans("NewSalaryPayment"));
 
-  	// Label
-  	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
-  
-    print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
-    print $form->select_date($datesp,"datesp",'','','','add');
-    print '</td></tr>';
+	print '<table class="border" width="100%">';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateEndPeriod").'</td><td>';
-    print $form->select_date($dateep,"dateep",'','','','add');
-    print '</td></tr>';
+	print "<tr>";
+	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	print $form->select_date($datep,"datep",'','','','add');
+	print '</td></tr>';
 
-  	// Amount
-  	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
-  
-    // Bank
-    if (! empty($conf->banque->enabled))
-    {
-  	    print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-        $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
-        print '</td></tr>';
-  
-  	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-  	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
-  	    print "</td>\n";
-  	    print "</tr>";
-  	}
-  
-    // Other attributes
-    $parameters=array('colspan' => ' colspan="1"');
-    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-  
-    print '</table>';
-  
-  	print "<br>";
-  
-  	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
-  
-    print '</form>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
+	print $form->select_date($datev,"datev",'','','','add');
+	print '</td></tr>';
+
+	// Employee
+	print "<tr>";
+	print '<td class="fieldrequired">'.$langs->trans("Employee").'</td><td>';
+	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+	print '</td></tr>';
+
+	// Label
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
+
+	print "<tr>";
+	print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
+	print $form->select_date($datesp,"datesp",'','','','add');
+	print '</td></tr>';
+
+	print '<tr><td class="fieldrequired">'.$langs->trans("DateEndPeriod").'</td><td>';
+	print $form->select_date($dateep,"dateep",'','','','add');
+	print '</td></tr>';
+
+	// Amount
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+
+	// Bank
+	if (! empty($conf->banque->enabled))
+	{
+		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
+		print '</td></tr>';
+
+	}
+
+	// TYpe payment
+	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
+	print "</td>\n";
+	print "</tr>";
+	 
+	// Number
+	print '<tr><td>'.$langs->trans('Numero');
+	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+	 
+	// Other attributes
+	$parameters=array('colspan' => ' colspan="1"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
+	print '</table>';
+
+	print "<br>";
+
+	print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
+	print '</form>';
 }
 
 
@@ -261,18 +295,18 @@ if ($id)
 	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $salpayment->ref;
 	print '</td></tr>';
-  
-  // Person
-  print '<tr><td>'.$langs->trans("Person").'</td><td>';
-  $usersal=new User($db);
-  $usersal->fetch($salpayment->fk_user);
-  print $usersal->getNomUrl(1);
-  print '</td></tr>';
+
+	// Person
+	print '<tr><td>'.$langs->trans("Person").'</td><td>';
+	$usersal=new User($db);
+	$usersal->fetch($salpayment->fk_user);
+	print $usersal->getNomUrl(1);
+	print '</td></tr>';
 
 	// Label
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$salpayment->label.'</td></tr>';
 
-  print "<tr>";
+	print "<tr>";
 	print '<td>'.$langs->trans("DateStartPeriod").'</td><td colspan="3">';
 	print dol_print_date($salpayment->datesp,'day');
 	print '</td></tr>';
@@ -280,7 +314,7 @@ if ($id)
 	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td colspan="3">';
 	print dol_print_date($salpayment->dateep,'day');
 	print '</td></tr>';
-  
+
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
 	print dol_print_date($salpayment->datep,'day');
@@ -290,34 +324,34 @@ if ($id)
 	print dol_print_date($salpayment->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($salpayment->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($salpayment->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
 		if ($salpayment->fk_account > 0)
 		{
- 		   	$bankline=new AccountLine($db);
-    		$bankline->fetch($salpayment->fk_bank);
+			$bankline=new AccountLine($db);
+			$bankline->fetch($salpayment->fk_bank);
 
-	    	print '<tr>';
-	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			  print '<td colspan="3">';
-			  print $bankline->getNomUrl(1,0,'showall');
-	    	print '</td>';
-	    	print '</tr>';
+			print '<tr>';
+			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+			print '<td colspan="3">';
+			print $bankline->getNomUrl(1,0,'showall');
+			print '</td>';
+			print '</tr>';
 		}
 	}
 
-        // Other attributes
-        $parameters=array('colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$salpayment,$action);    // Note that $action and $object may have been modified by hook
+	// Other attributes
+	$parameters=array('colspan' => ' colspan="3"');
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$salpayment,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
 
 	print '</div>';
 
 	/*
-	* Boutons d'actions
+	 * Boutons d'actions
 	*/
 	print "<div class=\"tabsAction\">\n";
 	if ($salpayment->rappro == 0)
@@ -339,7 +373,8 @@ if ($id)
 }
 
 
-$db->close();
 
 llxFooter();
+
+$db->close();
 ?>

@@ -34,7 +34,7 @@ ErrorFailedToOpenFile=Impossible obrir el fitxer %s
 ErrorCanNotCreateDir=Impossible crear la carpeta %s
 ErrorCanNotReadDir=Impossible llegir la carpeta %s
 ErrorConstantNotDefined=Parámetre %s no definit
-ErrorUnknown=Error desconegut
+# ErrorUnknown=Unknown error
 ErrorSQL=Error de SQL
 ErrorLogoFileNotFound=El arxiu logo '%s' no es troba
 ErrorGoToGlobalSetup=Aneu a la Configuració 'Empresa/Institució' per corregir
@@ -60,6 +60,8 @@ ErrorNoSocialContributionForSellerCountry=Error, cap tipus de càrrega social de
 ErrorFailedToSaveFile=Error, el registre del fitxer ha fallat.
 ErrorOnlyPngJpgSupported=Error, només estan suportats els formats d'imatge jpg i png.
 ErrorImageFormatNotSupported=El seu PHP no suporta les funcions de conversió d'aquest format d'imatge.
+# SetDate=Set date
+# SelectDate=Select a date
 SeeAlso=Veure també %s
 BackgroundColorByDefault=Color de fons
 FileWasNotUploaded=Un arxiu ha estat seleccionat per adjuntar, però encara no ha estat pujat. Feu clic a "Adjuntar aquest arxiu" per a això.
@@ -667,6 +669,7 @@ toward=cap a
 # SetDemandReason=Set source
 # ViewPrivateNote=View notes
 # XMoreLines=%s line(s) hidden
+# PublicUrl=Public URL
 
 # Week day
 Monday=Dilluns

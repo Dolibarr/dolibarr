@@ -18,12 +18,11 @@ MarginDetails=Margin details
 
 ProductMargins=Product margins
 CustomerMargins=Customer margins
-AgentMargins=Agent margins
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Product or Service
 AllProducts=All products and services
 ChooseProduct/Service=Choose product or service
-CommercialAgent=Commercial agent
 
 StartDate=Start date
 EndDate=End date

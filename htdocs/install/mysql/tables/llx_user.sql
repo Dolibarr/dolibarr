@@ -54,6 +54,7 @@ create table llx_user
   fk_socpeople      integer,
   fk_member         integer,
   fk_user           integer,               -- Hierarchic parent
+  thm				double(24,8),
   note              text DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
@@ -64,5 +65,7 @@ create table llx_user
   photo             varchar(255),     -- filename or url of photo
   lang              varchar(6),
   color				varchar(6),
+  barcode			varchar(255) DEFAULT NULL,
+  fk_barcode_type	integer      DEFAULT 0,
   accountancy_code  varchar(24) NULL 
 )ENGINE=innodb;

@@ -866,7 +866,6 @@ class Facture extends CommonInvoice
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
-				//$this->remise				= $obj->remise;
 				$this->total_ht				= $obj->total;
 				$this->total_tva			= $obj->tva;
 				$this->total_localtax1		= $obj->localtax1;
@@ -947,7 +946,7 @@ class Facture extends CommonInvoice
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
-		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
@@ -1007,10 +1006,6 @@ class Facture extends CommonInvoice
 				$line->special_code		= $objp->special_code;
 				$line->fk_parent_line	= $objp->fk_parent_line;
 
-				// Ne plus utiliser
-				//$line->price            = $objp->price;
-				//$line->remise           = $objp->remise;
-
 				$this->lines[$i] = $line;
 
 				$i++;
@@ -1069,7 +1064,6 @@ class Facture extends CommonInvoice
 		$sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
 		$sql.= " remise_percent=".(isset($this->remise_percent)?$this->remise_percent:"null").",";
 		$sql.= " remise_absolue=".(isset($this->remise_absolue)?$this->remise_absolue:"null").",";
-		//$sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
 		$sql.= " close_code=".(isset($this->close_code)?"'".$this->db->escape($this->close_code)."'":"null").",";
 		$sql.= " close_note=".(isset($this->close_note)?"'".$this->db->escape($this->close_note)."'":"null").",";
 		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
@@ -1276,6 +1270,16 @@ class Facture extends CommonInvoice
 			}
 			// Fin appel triggers
 		}
+		
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error deleteExtraFields ".$this->error, LOG_ERR);
+			}
+		}
 
 		if (! $error)
 		{
@@ -1329,6 +1333,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr",$this->ref));
 						else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceDeleteDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
@@ -1471,7 +1476,8 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *  Tag la facture comme paye completement (close_code non renseigne) ou partiellement (close_code renseigne) + appel trigger BILL_PAYED
+	 *  Tag la facture comme paye completement (si close_code non renseigne) => this->fk_statut=2, this->paye=1
+	 *  ou partiellement (si close_code renseigne) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
 	 *
 	 *  @param	User	$user      	Objet utilisateur qui modifie
 	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet (cas escompte par exemple)
@@ -1495,6 +1501,7 @@ class Facture extends CommonInvoice
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
+			dol_syslog(get_class($this)."::set_paid sql=".$sql, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1510,8 +1517,7 @@ class Facture extends CommonInvoice
 			else
 			{
 				$error++;
-				$this->error=$this->db->error();
-				dol_print_error($this->db);
+				$this->error=$this->db->lasterror();
 			}
 
 			if (! $error)
@@ -1794,6 +1800,7 @@ class Facture extends CommonInvoice
 						if ($this->lines[$i]->fk_product > 0)
 						{
 							$mouvP = new MouvementStock($this->db);
+							$mouvP->origin = &$this;
 							// We decrease stock for product
 							if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
@@ -1916,6 +1923,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0)
 					{
 						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));
 						else $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceBackToDraftInDolibarr",$this->ref));	// we use 0 for price, to not change the weighted average value
@@ -2000,7 +2008,7 @@ class Facture extends CommonInvoice
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type= self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
 	{
-		global $mysoc;
+		global $mysoc, $conf, $langs;
 
 		$facid=$this->id;
 
@@ -2067,11 +2075,17 @@ class Facture extends CommonInvoice
 			}
 
 			$product_type=$type;
-			if ($fk_product)
+			if (!empty($fk_product))
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
+
+				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE && $product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
 			}
 
 			// Insert line
@@ -2213,16 +2227,6 @@ class Facture extends CommonInvoice
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
-			// Old properties: $price, $remise (deprecated)
-			$price = $pu;
-			$remise = 0;
-			if ($remise_percent > 0)
-			{
-				$remise = round(($pu * $remise_percent / 100),2);
-				$price = ($pu - $remise);
-			}
-			$price    = price2num($price);
-
 			// Update line into database
 			$this->line=new FactureLigne($this->db);
 
@@ -2265,10 +2269,6 @@ class Facture extends CommonInvoice
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
-
-			// A ne plus utiliser
-			//$this->line->price=$price;
-			//$this->line->remise=$remise;
 
 			if (is_array($array_option) && count($array_option)>0) {
 				$this->line->array_options=$array_option;
@@ -2381,7 +2381,7 @@ class Facture extends CommonInvoice
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_percent = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
-			$sql.= ' AND fk_statut = 0 ;';
+			$sql.= ' AND fk_statut = 0';
 
 			if ($this->db->query($sql))
 			{
@@ -2416,7 +2416,7 @@ class Facture extends CommonInvoice
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
-			$sql.= ' AND fk_statut = 0 ;';
+			$sql.= ' AND fk_statut = 0';
 
 			dol_syslog(get_class($this)."::set_remise_absolue sql=$sql");
 

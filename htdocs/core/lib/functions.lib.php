@@ -997,9 +997,9 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$month			Month (1 to 12)
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
- *	@param	int			$gm				1=Input informations are GMT values, otherwise local to server TZ
+ *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	int					Date as a timestamp, '' if error
+ *	@return	int							Date as a timestamp, '' if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
  */
 function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
@@ -1023,17 +1023,28 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 		if ($second< 0 || $second > 60) return '';
 	}
 
-	if (method_exists('DateTime','getTimestamp') && empty($conf->global->MAIN_OLD_DATE))
+	if (method_exists('DateTime','getTimestamp'))
 	{
-		if (empty($gm)) $localtz = new DateTimeZone(date_default_timezone_get());
+		if (empty($gm) || $gm === 'server')
+		{
+			$default_timezone=@date_default_timezone_get();
+			$localtz = new DateTimeZone($default_timezone);
+		}
+		else if ($gm === 'user')
+		{
+			$default_timezone=(empty($_SESSION["dol_tz_string"])?'UTC':$_SESSION["dol_tz_string"]);
+			$localtz = new DateTimeZone($default_timezone);
+		}
 		else $localtz = new DateTimeZone('UTC');
 		$dt = new DateTime(null,$localtz);
 		$dt->setDate($year,$month,$day);
 		$dt->setTime((int) $hour, (int) $minute, (int) $second);
-		$date=$dt->getTimestamp();
+		$date=$dt->getTimestamp();	// should include daylight saving time
 	}
 	else
 	{
+		dol_print_error('','PHP version must be 5.3+');
+		/*
 		$usealternatemethod=false;
 		if ($year <= 1970) $usealternatemethod=true;		// <= 1970
 		if ($year >= 2038) $usealternatemethod=true;		// >= 2038
@@ -1045,14 +1056,14 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 		else
 		{
 			$date=mktime($hour,$minute,$second,$month,$day,$year);
-		}
+		}*/
 	}
 	return $date;
 }
 
 
 /**
- *	Return date for now. We should always use this function without parameters (that means GMT time)
+ *	Return date for now. In mot cases, we use this function without parameters (that means GMT time).
  *
  * 	@param	string		$mode	'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
@@ -1062,7 +1073,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  */
 function dol_now($mode='gmt')
 {
-	// Note that gmmktime and mktime return same value (GMT) whithout parameters
+	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
 	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
@@ -1077,7 +1088,7 @@ function dol_now($mode='gmt')
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
-	else if ($mode == 'tzuser')				// Time for now with user timezone is added
+	else if ($mode == 'tzuser')				// Time for now with user timezone added
 	{
 		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
@@ -1151,7 +1162,7 @@ function dol_print_url($url,$target='_blank',$max=32)
  * @param	string		$email			EMail to show (only email, without 'Name of recipient' before)
  * @param 	int			$cid 			Id of contact if known
  * @param 	int			$socid 			Id of third party if known
- * @param 	int			$addlink		0=no link to create action
+ * @param 	int			$addlink		0=no link, 1=email has a html email link (+ link to create action if constant AGENDA_ADDACTIONFOREMAIL is on)
  * @param	int			$max			Max number of characters to show
  * @param	int			$showinvalid	Show warning if syntax email is wrong
  * @return	string						HTML Link
@@ -2223,10 +2234,10 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 
 	if ($infoonimgalt)
 	{
-		return img_picto($text, 'star', 'class="hideonsmartphone"');
+		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), 'star', 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), 'info', 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -2236,10 +2247,10 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
  *	Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
  *	renvoyer leur erreur par l'intermediaire de leur propriete "error".
  *
- *	@param	 DoliDB	$db      	Database handler
- *	@param  string	$error		String or array of errors strings to show
- *	@return void
- *  @see    dol_htmloutput_errors
+ *	@param	 	DoliDB	$db      	Database handler
+ *	@param  	mixed	$error		String or array of errors strings to show
+ *	@return 	void
+ *  @see    	dol_htmloutput_errors
  */
 function dol_print_error($db='',$error='')
 {
@@ -2689,7 +2700,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
- *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'XXX'=add currency symbols for XXX currency)
+ *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
  *
  *		@see	price2num					Revert function of price
@@ -2751,6 +2762,8 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	$cursymbolbefore=$cursymbolafter='';
 	if ($currency_code)
 	{
+		if ($currency_code == 'auto') $currency_code=$conf->currency;
+
 		$listofcurrenciesbefore=array('USD');
 		if (in_array($currency_code,$listofcurrenciesbefore)) $cursymbolbefore.=$outlangs->getCurrencySymbol($currency_code);
 		else $cursymbolafter.=$outlangs->getCurrencySymbol($currency_code);

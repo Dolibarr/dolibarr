@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  requi
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -48,6 +50,7 @@ $langs->load('orders');
 $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
+if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
 
 $origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
 $origin_id 	= GETPOST('id','int')?GETPOST('id','int'):'';
@@ -126,7 +129,31 @@ if ($action == 'add')
     for ($i = 0; $i < $num; $i++)
     {
         $qty = "qtyl".$i;
-        if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+		$j=0;
+		$sub_qty=array();
+		$subtotalqty=0;
+		$idl="idl".$i;
+		$batch="batchl".$i."_0";
+		if (isset($_POST[$batch])) {
+			//shipment line with batch-enable product
+			$qty .= '_'.$j;
+			while (isset($_POST[$batch])) {
+				$sub_qty[$j]['q']=GETPOST($qty,'int');
+				$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
+				$subtotalqty+=$sub_qty[$j]['q'];
+				$j++;
+				$batch="batchl".$i."_".$j;
+				$qty = "qtyl".$i.'_'.$j;
+				
+			}
+			$batch_line[$i]['detail']=$sub_qty;
+			$batch_line[$i]['qty']=$subtotalqty;
+			$batch_line[$i]['ix_l']=GETPOST($idl,'int');
+			$totalqty+=$subtotalqty;
+		} else {
+			//Standard product
+			if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+		}
     }
 
     if ($totalqty > 0)
@@ -135,20 +162,31 @@ if ($action == 'add')
         for ($i = 0; $i < $num; $i++)
         {
             $qty = "qtyl".$i;
-            if (GETPOST($qty,'int') > 0)
-            {
-                $ent = "entl".$i;
-                $idl = "idl".$i;
-                $entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-				if ($entrepot_id < 0) $entrepot_id='';
+			if (! isset($batch_line[$i])) {
+				if (GETPOST($qty,'int') > 0)
+				{
+					$ent = "entl".$i;
+					$idl = "idl".$i;
+					$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+					if ($entrepot_id < 0) $entrepot_id='';
 
-                $ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
-                if ($ret < 0)
-                {
-                    $mesg='<div class="error">'.$object->error.'</div>';
-                    $error++;
-                }
-            }
+					$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
+					if ($ret < 0)
+					{
+						$mesg='<div class="error">'.$object->error.'</div>';
+						$error++;
+					}
+				}
+			} else {
+				if ($batch_line[$i]['qty']>0) {
+					$ret=$object->addline_batch($batch_line[$i]);
+					if ($ret < 0)
+					{
+						$mesg='<div class="error">'.$object->error.'</div>';
+						$error++;
+					}
+				}
+			}
         }
 
         if (! $error)
@@ -653,7 +691,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
             print $form->selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
-            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print "</td></tr>\n";
 
             // Tracking number
@@ -711,12 +749,18 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("QtyToShip");
+				if (empty($conf->productbatch->enabled)) {
                 print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
                 print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+				}
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
+					if (empty($conf->productbatch->enabled)) {
                     print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
+					} else {
+						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' / '.$langs->trans("Stock").'</td>';
+					}
                 }
                 print "</tr>\n";
             }
@@ -812,67 +856,91 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                // Quantity to send
-                print '<td align="center">';
-                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                {
-                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-                }
-                else print $langs->trans("NA");
-                print '</td>';
-
-                // Stock
-                if (! empty($conf->stock->enabled))
-                {
-                    print '<td align="left">';
-                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                    {
-                        // Show warehouse combo list
-                    	$ent = "entl".$indiceAsked;
-                    	$idl = "idl".$indiceAsked;
-                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
-                        {
-                            //print $stock.' '.$quantityToBeDelivered;
-                            if ($stock < $quantityToBeDelivered)
-                            {
-                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
-                            }
-                        }
-                    }
-                    else
-                    {
-                        print $langs->trans("Service");
-                    }
-                    print '</td>';
-                }
-
-                print "</tr>\n";
-
-                // Show subproducts of product
-                if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
-                {
-                    $product->get_sousproduits_arbo();
-                    $prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-                    if(count($prods_arbo) > 0)
-                    {
-                        foreach($prods_arbo as $key => $value)
-                        {
-                            //print $value[0];
-                            $img='';
-                            if ($value['stock'] < $value['stock_alert'])
-                            {
-                                $img=img_warning($langs->trans("StockTooLow"));
-                            }
-                            print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
-                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
-                                </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-                                <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-                        }
-                    }
-                }
+				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')]))) 
+				{
+	                // Quantity to send
+	                print '<td align="center">';
+	                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                {
+	                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+	                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+	                }
+	                else print $langs->trans("NA");
+	                print '</td>';
+	
+	                // Stock
+	                if (! empty($conf->stock->enabled))
+	                {
+	                    print '<td align="left">';
+	                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                    {
+	                        // Show warehouse combo list
+	                    	$ent = "entl".$indiceAsked;
+	                    	$idl = "idl".$indiceAsked;
+	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+	                        {
+	                            //print $stock.' '.$quantityToBeDelivered;
+	                            if ($stock < $quantityToBeDelivered)
+	                            {
+	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
+	                            }
+	                        }
+	                    }
+	                    else
+	                    {
+	                        print $langs->trans("Service");
+	                    }
+	                    print '</td>';
+	                }
+	
+	                print "</tr>\n";
+	
+	                // Show subproducts of product
+					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
+					{
+						$product->get_sousproduits_arbo();
+						$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+						if(count($prods_arbo) > 0)
+						{
+							foreach($prods_arbo as $key => $value)
+							{
+								//print $value[0];
+								$img='';
+								if ($value['stock'] < $value['stock_alert'])
+								{
+									$img=img_warning($langs->trans("StockTooLow"));
+								}
+								print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									<a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
+									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+									<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+							}
+						}
+					}
+				} else {
+					print '<td></td><td></td></tr>';
+					$subj=0;
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+					foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_batch as $dbatch) {
+						//var_dump($dbatch);
+						$substock=$dbatch->qty +0 ;
+						print '<tr><td colspan="3" ></td><td align="center">';
+						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
+						print '</td>';
+						
+						print '<td align="left">';
+						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+						print $langs->trans("DetailBatchFormat", dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->batch, $dbatch->qty);
+						if ($defaultqty<=0) {
+							$defaultqty=0;
+						} else {
+							$defaultqty -=min($defaultqty,$substock);
+						}
+						$subj++;
+					}
+				}
 
                 $indiceAsked++;
             }
@@ -1152,7 +1220,7 @@ else if ($id || $ref)
 			print '<input type="hidden" name="action" value="setshipping_method_id">';
 			$object->fetch_delivery_methods();
 			print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
-			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}
@@ -1206,6 +1274,11 @@ else if ($id || $ref)
 		if (! empty($conf->stock->enabled))
 		{
 			print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			print '<td align="left">'.$langs->trans("Batch").'</td>';
 		}
 
 		print "</tr>\n";
@@ -1315,6 +1388,20 @@ else if ($id || $ref)
 				print '</td>';
 			}
 
+			// Batch number managment
+			if (! empty($conf->productbatch->enabled)) {  
+				if (isset($lines[$i]->detail_batch) ) {
+					print '<td align="center">';
+					$detail = '';
+					foreach ($lines[$i]->detail_batch as $dbatch) {
+						$detail.= $langs->trans("DetailBatchFormat",dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->batch,$dbatch->dluo_qty).'<br/>';
+					}
+					print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
+					print '</td>';
+				} else {
+					print '<td></td>';
+				}
+			}
 			print "</tr>";
 
 			$var=!$var;

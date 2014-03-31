@@ -729,12 +729,13 @@ class Form
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *	@param	int		$limit			Maximum number of elements
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array())
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0)
     {
-		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
+		return $this->select_thirdparty_list($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events, '', 0, $limit);
     }
 
     /**
@@ -752,7 +753,7 @@ class Form
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=20)
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0)
     {
         global $conf,$user,$langs;
 
@@ -774,33 +775,33 @@ class Form
 			$sql.=" AND (";
         	if (! empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
         	{
-        		$sql.="(s.name LIKE '".$filterkey."%'";
-        		$sql.=")";
+        		$sql.="(s.name LIKE '".$this->db->escape($filterkey)."%')";
         	}
         	else
         	{
         		// For natural search
         		$scrit = explode(' ', $filterkey);
         		foreach ($scrit as $crit) {
-        			$sql.=" AND (s.name LIKE '%".$crit."%'";
-        			$sql.=")";
+        			$sql.=" AND (s.name LIKE '%".$this->db->escape($crit)."%')";
         		}
         	}
         	if (! empty($conf->barcode->enabled))
         	{
-        		$sql .= " OR s.barcode LIKE '".$filterkey."'";
+        		$sql .= " OR s.barcode LIKE '".$this->db->escape($filterkey)."%'";
         	}
         	$sql.=")";
         }
-        $sql.= " ORDER BY nom ASC";
-
+        $sql.=$this->db->order("nom","ASC");
+		if ($limit > 0) $sql.=$this->db->plimit($limit);
+		
         dol_syslog(get_class($this)."::select_thirdparty_list sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
             if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
             {
-                $out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
             }
 
             // Construct $out and $outarray
@@ -2964,16 +2965,17 @@ class Form
     }
 
     /**
-     *    Show a form to select a date
+     *    Show a form + html select a date
      *
      *    @param	string		$page        Page
      *    @param	string		$selected    Date preselected
-     *    @param    string		$htmlname    Name of input html field
+     *    @param    string		$htmlname    Html name of date input fields or 'none'
      *    @param    int			$displayhour Display hour selector
      *    @param    int			$displaymin	 Display minutes selector
      *    @return	void
+     *    @see		select_date
      */
-    function form_date($page, $selected, $htmlname,$displayhour=0,$displaymin=0)
+    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0)
     {
         global $langs;
 
@@ -3486,13 +3488,13 @@ class Form
 
 
     /**
-     *	Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes
+     *	Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
      *  Fields are preselected with :
-     *            	- set_time date (Local PHP server timestamps or date format YYYY-MM-DD or YYYY-MM-DD HH:MM)
-     *            	- local date of PHP server if set_time is ''
-     *            	- Empty (fields empty) if set_time is -1 (in this case, parameter empty must also have value 1)
+     *            	- set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')
+     *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
+     *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
      *
-     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp)
+     *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date.
      *	@param	string		$prefix			Prefix for fields name
      *	@param	int			$h				1=Show also hours
      *	@param	int			$m				1=Show also minutes
@@ -3504,6 +3506,7 @@ class Form
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
      * 	@return	mixed						Nothing or string if nooutput is 1
+     *  @see	form_date
      */
     function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0, $disabled=0, $fullday='')
     {
@@ -3516,7 +3519,11 @@ class Form
         if($m == '') $m=0;
         if($empty == '') $empty=0;
 
-        if (! $set_time && $empty == 0) $set_time = dol_now('tzuser');
+        if ($set_time === '' && $empty == 0) 
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+        	$set_time = dol_now('tzuser')-(getServerTimeZoneInt('now')*3600); // set_time must be relative to PHP server timezone
+        }
 
         // Analysis of the pre-selection date
         if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))

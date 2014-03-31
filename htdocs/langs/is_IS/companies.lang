@@ -403,7 +403,6 @@ ActivityStateFilter=Virkni stöðu
 # CurrentOutstandingBill=Current outstanding bill
 # OutstandingBill=Max. for outstanding bill
 # OutstandingBillReached=Reached max. for outstanding bill
-# Monkey
 MonkeyNumRefModelDesc=Fara aftur numero með snið %s yymm-NNNN fyrir kóða viðskiptavina og %s yymm-NNNN fyrir númer birgja þar sem YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0.
-# Leopard
 LeopardNumRefModelDesc=Viðskiptavinur / birgir númerið er ókeypis. Þessi kóði getur breytt hvenær sem er.
+# ManagingDirectors=Manager(s) name (CEO, director, president...)

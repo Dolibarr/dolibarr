@@ -6,6 +6,11 @@
 
 -- Requests to clean corrupted database
 
+-- delete foreign key that should never exists
+ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
+ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
+ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_currency;
+
 delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber in ('(PROV)','ErrorBadMask'));
 delete from llx_facture where facnumber in ('(PROV)','ErrorBadMask');
 delete from llx_commandedet where fk_commande in (select rowid from llx_commande where ref in ('(PROV)','ErrorBadMask'));
@@ -99,5 +104,25 @@ ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseu
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 
+
+-- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
+
+
+update llx_product set barcode = null where barcode in ('', '-1', '0');
+update llx_societe set barcode = null where barcode in ('', '-1', '0');
+
+-- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+--select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
+create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
+--select * from tmp_product_double;
+update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);
+drop table tmp_product_double;
+
+-- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+--select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
+create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
+--select * from tmp_societe_double;
+update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
+drop table tmp_societe_double;
 
 

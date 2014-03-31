@@ -9,6 +9,12 @@ export DH_OPTIONS=-v
 
 %:
 	dh $@
+
+override_dh_auto_clean:
+# Do nothing. Added to disable launchpad to use bugged dh_auto_clean search for ant
+
+override_dh_auto_build:
+# Do nothing. Added to disable launchpad to use bugged dh_auto_build search for ant
 	
 override_dh_install:
 	dh_install
@@ -23,7 +29,6 @@ override_dh_install:
 	rm -f  build.xml
 	rm -f  quickbuild.xml
 	rm -f  pom.xml
-	rm -f  README.md
 
 	rm -f  htdocs/install/mssql/README
 	rm -f  htdocs/install/mysql/README

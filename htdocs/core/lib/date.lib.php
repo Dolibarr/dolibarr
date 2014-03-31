@@ -69,13 +69,11 @@ function get_tz_array()
  */
 function getServerTimeZoneString()
 {
-    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
-    else return '';
+    return @date_default_timezone_get();
 }
 
 /**
  * Return server timezone int.
- * If $conf->global->MAIN_OLD_DATE is set or PHP too old, we use old behaviour: All convertions does not take care of dayling saving time.
  *
  * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
  * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
@@ -83,7 +81,7 @@ function getServerTimeZoneString()
 function getServerTimeZoneInt($refgmtdate='now')
 {
     global $conf;
-    if (method_exists('DateTimeZone','getOffset') && empty($conf->global->MAIN_OLD_DATE))
+    if (method_exists('DateTimeZone','getOffset'))
     {
         // Method 1 (include daylight)
         $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
@@ -97,11 +95,13 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	dol_print_error('','PHP version must be 5.3+');
+    	/*
         // Method 2 (does not include daylight, not supported by adodb)
         if ($refgmtdate == 'now')
         {
             if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use new PHP with not MAIN_OLD_DATE.
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
@@ -111,7 +111,7 @@ function getServerTimeZoneInt($refgmtdate='now')
         elseif ($refgmtdate == 'summer')
         {
             if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use new PHP with not MAIN_OLD_DATE.
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref='08'; $dayref='01';
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
@@ -119,48 +119,11 @@ function getServerTimeZoneInt($refgmtdate='now')
             return 'unknown';    // For true result
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
+        */
     }
     $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
 }
-
-/**
- * Return server timezone string
- *
- * @return string			Parent company timezone string ('Europe/Paris')
- *
-function getParentCompanyTimeZoneString()
-{
-    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
-    else return '';
-}
-*/
-
-/**
- * Return parent company timezone int.
- * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
- *
- * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
- * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
- *
-function getParentCompanyTimeZoneInt($refgmtdate='now')
-{
-    global $conf;
-    if (class_exists('DateTime') && empty($conf->global->MAIN_OLD_DATE))
-    {
-        // Method 1 (include daylight)
-        $localtz = new DateTimeZone(getParentCompanyTimeZoneString());
-        $localdt = new DateTime($refgmtdate, $localtz);
-        $tmp=-1*$localtz->getOffset($localdt);
-    }
-    else
-    {
-        // Method 2 (does not include daylight)
-        $tmp=dol_mktime(0,0,0,1,1,1970);
-    }
-    $tz=($tmp<0?1:-1)*abs($tmp/3600);
-    return $tz;
-}*/
 
 
 /**
@@ -476,7 +439,7 @@ function dol_get_next_week($day, $week, $month, $year)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
  *  @return		timestamp				Date for first day
@@ -491,7 +454,7 @@ function dol_get_first_day($year,$month=1,$gm=false)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *	@return		timestamp				Date for first day
  */
 function dol_get_last_day($year,$month=12,$gm=false)
@@ -518,7 +481,7 @@ function dol_get_last_day($year,$month=12,$gm=false)
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		int		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *	@return		array				year,month, week,first_day,prev_year,prev_month,prev_day
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)

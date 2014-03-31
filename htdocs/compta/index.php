@@ -139,24 +139,6 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
     print "</table></form><br>";
 }
 
-/*
- * Search expenses
- */
-if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
-{
-	$langs->load("trips");
-    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/deplacement/list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchATripAndExpense").'</td></tr>';
-    print "<tr ".$bc[0].">";
-    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
-    print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
-    print '</tr>';
-    print "</table></form><br>";
-}
-
 /**
  * Draft customers invoices
  */
@@ -544,74 +526,6 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		print '</table><br>';
 	}
 	else dol_print_error($db);
-}
-
-
-// Last trips and expenses
-if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
-{
-    include_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-
-    $langs->load("boxes");
-
-	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.fk_statut, d.rowid, d.dated as date, d.tms as dm, d.km";
-	$sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE u.rowid = d.fk_user";
-	$sql.= " AND d.entity = ".$conf->entity;
-	if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_soc = s. rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid)	$sql.= " AND d.fk_soc = ".$socid;
-	$sql.= $db->order("d.tms","DESC");
-	$sql.= $db->plimit($max, 0);
-
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$var=false;
-		$num = $db->num_rows($result);
-
-		$i = 0;
-
-		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",$max).'</td>';
-        print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-        print '<td width="16">&nbsp;</td>';
-		print '</tr>';
-		if ($num)
-		{
-			$total_ttc = $totalam = $total = 0;
-
-			$deplacementstatic=new Deplacement($db);
-			$userstatic=new User($db);
-			while ($i < $num && $i < $max)
-			{
-				$objp = $db->fetch_object($result);
-				$deplacementstatic->ref=$objp->rowid;
-				$deplacementstatic->id=$objp->rowid;
-				$userstatic->id=$objp->uid;
-				$userstatic->lastname=$objp->lastname;
-				$userstatic->firstname=$objp->firstname;
-				print '<tr '.$bc[$var].'>';
-                print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
-				print '<td>'.$userstatic->getNomUrl(1).'</td>';
-                print '<td align="right">'.$objp->km.'</td>';
-				print '<td align="right">'.dol_print_date($db->jdate($objp->dm),'day').'</td>';
-                print '<td>'.$deplacementstatic->LibStatut($objp->fk_statut,3).'</td>';
-				print '</tr>';
-				$var=!$var;
-				$i++;
-			}
-
-		}
-		else
-		{
-			print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
-		}
-		print '</table><br>';
-	}
-    else dol_print_error($db);
 }
 
 

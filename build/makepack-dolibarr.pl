@@ -20,7 +20,8 @@ $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
-"SF"=>"git ssh rsync"
+"SF"=>"git ssh rsync",
+"ASSO"=>"git ssh rsync"
 );
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
 "TGZ"=>"tar",
@@ -58,7 +59,8 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
-$PUBLISH="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
+$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
+$PUBLISHBETARC="ldestailleur\@asso.dolibarr.org:/home/dolibarr/dolibarr.org/files";
 if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
     print "Error: Missing environment variables.\n";
@@ -174,15 +176,15 @@ for (0..@ARGV-1) {
 }
 if ($ENV{"DESTIBETARC"} && $BUILD =~ /[a-z]/i)   { $DESTI = $ENV{"DESTIBETARC"}; }	# Force output dir if env DESTIBETARC is defined
 if ($ENV{"DESTISTABLE"} && $BUILD =~ /^[0-9]+$/) { $DESTI = $ENV{"DESTISTABLE"}; }	# Force output dir if env DESTISTABLE is defined
-if ($ENV{"PUBLISHBETARC"} && $BUILD =~ /[a-z]/i)   { $PUBLISH = $ENV{"PUBLISHBETARC"}; }	# Force target site for publishing if env PUBLISHBETARC is defined
-if ($ENV{"PUBLISHSTABLE"} && $BUILD =~ /^[0-9]+$/) { $PUBLISH = $ENV{"PUBLISHSTABLE"}; }	# Force target site for publishing if env PUBLISHSTABLE is defined
+if ($ENV{"PUBLISHBETARC"} && $BUILD =~ /[a-z]/i)   { $PUBLISHBETARC = $ENV{"PUBLISHBETARC"}; }	# Force target site for publishing if env PUBLISHBETARC is defined
+if ($ENV{"PUBLISHSTABLE"} && $BUILD =~ /^[0-9]+$/) { $PUBLISHSTABLE = $ENV{"PUBLISHSTABLE"}; }	# Force target site for publishing if env PUBLISHSTABLE is defined
 
 print "Makepack version $VERSION\n";
 print "Building/publishing package name: $PROJECT\n";
 print "Building/publishing package version: $MAJOR.$MINOR.$BUILD\n";
 print "Source directory (SOURCE): $SOURCE\n";
 print "Target directory (DESTI) : $DESTI\n";
-print "Publishing target (PUBLISH): $PUBLISH\n";
+#print "Publishing target (PUBLISH): $PUBLISH\n";
 
 
 # Choose package targets
@@ -190,24 +192,27 @@ print "Publishing target (PUBLISH): $PUBLISH\n";
 if ($target) {
 	if ($target eq "ALL") { 
 		foreach my $key (@LISTETARGET) {
-	    	if ($key ne 'SNAPSHOT' && $key ne 'SF') { $CHOOSEDTARGET{$key}=1; }
+	    	if ($key ne 'SNAPSHOT' && $key ne 'SF' && $key ne 'ASSO') { $CHOOSEDTARGET{$key}=1; }
 		}
 	}
-	if ($target ne "ALL" && $target ne "SF") { $CHOOSEDTARGET{uc($target)}=1; }
+	if ($target ne "ALL" && $target ne "SF" && $target ne "ASSO") { $CHOOSEDTARGET{uc($target)}=1; }
 	if ($target eq "SF") { $CHOOSEDPUBLISH{"SF"}=1; }
+	if ($target eq "ASSO") { $CHOOSEDPUBLISH{"ASSO"}=1; }
 }
 else {
     my $found=0;
     my $NUM_SCRIPT;
    	my $cpt=0;
     while (! $found) {
-    	printf(" %2d - %-12s    (%s)\n",$cpt,"ALL (1..9)","Need ".join(",",values %REQUIREMENTTARGET));
+    	printf(" %2d - %-14s  (%s)\n",$cpt,"ALL (1..9)","Need ".join(",",values %REQUIREMENTTARGET));
     	foreach my $target (@LISTETARGET) {
     		$cpt++;
-    		printf(" %2d - %-12s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
+    		printf(" %2d - %-14s  (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
     	}
+    	$cpt=98;
+    	printf(" %2d - %-14s  (%s)\n",$cpt,"ASSO (publish)","Need ".join(",",values %REQUIREMENTPUBLISH));
     	$cpt=99;
-    	printf(" %2d - %-12s    (%s)\n",$cpt,"SF (publish)","Need ".join(",",values %REQUIREMENTPUBLISH));
+    	printf(" %2d - %-14s  (%s)\n",$cpt,"SF (publish)","Need ".join(",",values %REQUIREMENTPUBLISH));
     
     	# Ask which target to build
     	print "Choose one package number or several separated with space (0 - ".$cpt."): ";
@@ -224,19 +229,25 @@ else {
     	}
     }
     print "\n";
-    if ($NUM_SCRIPT eq "99") {
-   		$CHOOSEDPUBLISH{"SF"}=1;
+    if ($NUM_SCRIPT eq "98") {
+   		$CHOOSEDPUBLISH{"ASSO"}=1;
     }
-    else {
-	    if ($NUM_SCRIPT eq "0") {
-	    	foreach my $key (@LISTETARGET) {
-	    		if ($key ne 'SNAPSHOT' && $key ne 'SF') { $CHOOSEDTARGET{$key}=1; }
-	        }
+    else 
+    {
+    	if ($NUM_SCRIPT eq "99") {
+	   		$CHOOSEDPUBLISH{"SF"}=1;
 	    }
 	    else {
-	   		foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
-	   			$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
-	   		}
+		    if ($NUM_SCRIPT eq "0") {
+		    	foreach my $key (@LISTETARGET) {
+		    		if ($key ne 'SNAPSHOT' && $key ne 'ASSO' && $key ne 'SF') { $CHOOSEDTARGET{$key}=1; }
+		        }
+		    }
+		    else {
+		   		foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
+		   			$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
+		   		}
+		    }
 	    }
     }
 }
@@ -301,10 +312,8 @@ foreach my $target (keys %CHOOSEDTARGET) {
 }
 foreach my $target (keys %CHOOSEDPUBLISH) {
     if ($CHOOSEDPUBLISH{$target} < 0) { next; }
-	if ($target eq 'SF')
-	{
-		$nbofpublishneedtag++;
-	}
+	if ($target eq 'ASSO') { $nbofpublishneedtag++; }
+	if ($target eq 'SF') { $nbofpublishneedtag++; }
 	$nboftargetok++;
 }
 
@@ -350,16 +359,14 @@ if ($nboftargetok) {
 	    	print "Copy $SOURCE into $BUILDROOT/$PROJECT\n";
 	    	$ret=`cp -pr "$SOURCE" "$BUILDROOT/$PROJECT"`;
 
-	    	print "Copy $SOURCE/build/debian/apache/.htaccess into $BUILDROOT/$PROJECT/build/debian/apache/.htaccess\n";
-	    	$ret=`cp -pr "$SOURCE/build/debian/apache/.htaccess" "$BUILDROOT/$PROJECT/build/debian/apache/.htaccess"`;
+	    	#print "Copy $SOURCE/build/debian/apache/.htaccess into $BUILDROOT/$PROJECT/build/debian/apache/.htaccess\n";
+	    	#$ret=`cp -pr "$SOURCE/build/debian/apache/.htaccess" "$BUILDROOT/$PROJECT/build/debian/apache/.htaccess"`;
 	    }
 	    print "Clean $BUILDROOT\n";
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.buildpath`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
-	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git`;
-	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitmodules`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore`;
+	    $ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/.travis.yml`;
@@ -367,7 +374,6 @@ if ($nboftargetok) {
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/build.xml`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/quickbuild.xml`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/pom.xml`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/README.md`;
         
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/build/Doli*-*`;
@@ -710,7 +716,7 @@ if ($nboftargetok) {
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/copyright`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.config`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.desktop`;
-            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.doc-base`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.docs`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.install`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.lintian-overrides`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.postrm`;
@@ -718,6 +724,7 @@ if ($nboftargetok) {
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.templates`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/dolibarr.templates.futur`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/rules`;
+            $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/README.Debian`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/README.howto`;
             $ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/debian/watch`;
             $ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/doap`;
@@ -746,11 +753,10 @@ if ($nboftargetok) {
             $ret=`cp -f  "$SOURCE/build/debian/control"        "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/copyright"      "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/dolibarr.desktop"        	"$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.doc-base"        	"$BUILDROOT/$PROJECT.tmp/debian"`;
+            $ret=`cp -f  "$SOURCE/build/debian/dolibarr.docs"        		"$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/dolibarr.install" 	        "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/dolibarr.lintian-overrides"  "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/dolibarr.xpm"  		      	"$BUILDROOT/$PROJECT.tmp/debian"`;
-            $ret=`cp -f  "$SOURCE/build/debian/README.source"  "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/rules"          "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -f  "$SOURCE/build/debian/watch"          "$BUILDROOT/$PROJECT.tmp/debian"`;
             $ret=`cp -fr "$SOURCE/build/debian/patches"        "$BUILDROOT/$PROJECT.tmp/debian"`;
@@ -950,14 +956,14 @@ if ($nboftargetok) {
         if ($CHOOSEDPUBLISH{$target} < 0) { next; }
     
 		print "\nList of files to publish\n";
-    	%filestoscan=(
+    	%filestoscansf=(
     		"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
     		"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
     		"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
     		"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
     		"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
     	);
-    	foreach my $file (sort keys %filestoscan)
+    	foreach my $file (sort keys %filestoscansf)
     	{
     		$found=0;
     		my $filesize = -s $file;
@@ -966,10 +972,14 @@ if ($nboftargetok) {
     		print "\n";
     	}
 
-    	if ($target eq 'SF') 
+    	if ($target eq 'SF' || $target eq 'ASSO') 
     	{
     		print "\n";
     		
+    		if ($target eq 'SF') { $PUBLISH = $PUBLISHSTABLE; }
+			if ($target eq 'ASSO' && $BUILD =~ /[a-z]/i)   { $PUBLISH = $PUBLISHBETARC.'/lastbuild'; }
+			if ($target eq 'ASSO' && $BUILD =~ /^[0-9]+$/) { $PUBLISH = $PUBLISHBETARC.'/stable'; }
+			
     		$NEWPUBLISH=$PUBLISH;
     		print "Publish to target $NEWPUBLISH. Click enter or CTRL+C...\n";
 
@@ -979,6 +989,8 @@ if ($nboftargetok) {
 
 			print "Create empty dir /tmp/emptydir. We need it to create target dir using rsync.\n";
             $ret=`mkdir -p "/tmp/emptydir/"`;
+            
+            %filestoscan=%filestoscansf;
             
 	    	foreach my $file (sort keys %filestoscan)
 	    	{
@@ -1004,6 +1016,7 @@ if ($nboftargetok) {
 				#$command="ssh eldy,dolibarr\@frs.sourceforge.net mkdir -p \"$destFolder\"";
 				#print "$command\n";	
 				#my $ret=`$command 2>&1`;
+
 				$command="rsync -s -e 'ssh' --recursive /tmp/emptydir/ \"".$destFolder."\"";
 				print "$command\n";	
 				my $ret=`$command 2>&1`;
