@@ -729,6 +729,7 @@ class Form
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
+     *	@param	int		$limit			Maximum number of elements
      * 	@return	string					HTML string with
 	 *  @deprecated						Use select_thirdparty instead
      */

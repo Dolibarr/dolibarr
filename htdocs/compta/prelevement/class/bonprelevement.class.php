@@ -1353,8 +1353,7 @@ class BonPrelevement extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code,
-						$obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->facnumber, $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
+					$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->facnumber, $obj->idfac, $obj->iban, $obj->bic, $obj->datec, $obj->drum);
 					$this->total = $this->total + $obj->somme;
 					$i++;
 				}
@@ -1545,10 +1544,9 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_bic			rib.bic AS bic,
      *	@param	string		$row_datec			soc.datec,
      *	@param	string		$row_drum			soc.rowid AS drum
-     *	@retrun	void
+     *	@return	void
      */
-    function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc,
-    	$row_somme, $row_facnumber, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
+    function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_facnumber, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
     {
 		$CrLf = "\n";
 		$Rowing = sprintf("%06d", $row_idfac);
@@ -1663,6 +1661,11 @@ class BonPrelevement extends CommonObject
     /**
      *	Write sender of request (me)
      *
+     *	@param	string	$configuration	conf
+     *	@param	date	$ladate			Date
+     *	@param	int		$nombre			0 or 1
+     *	@param	float	$total			Total
+     *	@param	string	$CrLf			End of line character
      *	@return	SEPA
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
@@ -1688,7 +1691,7 @@ class BonPrelevement extends CommonObject
 			$pays = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
-			$type = (nombre == 1) ? 'FRST' : 'RCUR' ;
+			$type = ($nombre == 1) ? 'FRST' : 'RCUR' ;
 			// SEPA Paiement Information
 			$XML_SEPA_INFO = '';
 			$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
