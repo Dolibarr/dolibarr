@@ -105,7 +105,8 @@ print '</td></tr>';
 print "</table>";
 print '</form>';
 
-$sql = "SELECT s.rowid as socid, s.nom, s.code_client, s.client, ";
+$sql = "SELECT";
+if ($agentid > 0) $sql.= " s.rowid as socid, s.nom, s.code_client, s.client,";
 $sql.= " u.rowid as agent, u.login, u.lastname, u.firstname,";
 $sql.= " sum(d.total_ht) as selling_price,";
 $sql.= " sum(".$db->ifsql('d.total_ht <=0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
@@ -137,9 +138,9 @@ if (!empty($enddate))
   $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
-if($agentid) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
+if ($agentid > 0) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, u.rowid, u.login, u.lastname, u.firstname";
 else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
-$sql.= " ORDER BY ".$sortfield." ".$sortorder;
+$sql.=$db->order($sortfield,$sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 

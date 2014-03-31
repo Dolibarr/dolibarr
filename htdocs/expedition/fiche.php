@@ -856,47 +856,48 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')] ))) {
-                // Quantity to send
-                print '<td align="center">';
-                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                {
-                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-                }
-                else print $langs->trans("NA");
-                print '</td>';
-
-                // Stock
-                if (! empty($conf->stock->enabled))
-                {
-                    print '<td align="left">';
-                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                    {
-                        // Show warehouse combo list
-                    	$ent = "entl".$indiceAsked;
-                    	$idl = "idl".$indiceAsked;
-                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
-                        {
-                            //print $stock.' '.$quantityToBeDelivered;
-                            if ($stock < $quantityToBeDelivered)
-                            {
-                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
-                            }
-                        }
-                    }
-                    else
-                    {
-                        print $langs->trans("Service");
-                    }
-                    print '</td>';
-                }
-
-                print "</tr>\n";
-
-                // Show subproducts of product
+				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')]))) 
+				{
+	                // Quantity to send
+	                print '<td align="center">';
+	                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                {
+	                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+	                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+	                }
+	                else print $langs->trans("NA");
+	                print '</td>';
+	
+	                // Stock
+	                if (! empty($conf->stock->enabled))
+	                {
+	                    print '<td align="left">';
+	                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                    {
+	                        // Show warehouse combo list
+	                    	$ent = "entl".$indiceAsked;
+	                    	$idl = "idl".$indiceAsked;
+	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+	                        {
+	                            //print $stock.' '.$quantityToBeDelivered;
+	                            if ($stock < $quantityToBeDelivered)
+	                            {
+	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
+	                            }
+	                        }
+	                    }
+	                    else
+	                    {
+	                        print $langs->trans("Service");
+	                    }
+	                    print '</td>';
+	                }
+	
+	                print "</tr>\n";
+	
+	                // Show subproducts of product
 					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 					{
 						$product->get_sousproduits_arbo();

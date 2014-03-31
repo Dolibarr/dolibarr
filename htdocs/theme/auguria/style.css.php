@@ -1726,6 +1726,8 @@ opacity: 1;
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
+
 .ui-datepicker-trigger {
 	vertical-align: middle;
 	cursor: pointer;

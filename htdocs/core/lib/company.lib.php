@@ -721,7 +721,15 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 					if (!empty($obj->town)) $coords .= $obj->town;
 					if (!empty($obj->country_id)) $coords .= "<br>".$country_code['label'];
 				}
-            	print '<a href="#" onclick="return copyToClipboard(\''.dol_escape_js($coords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
+				else if (!empty($object->address))
+				{
+					$coords .= dol_nl2br($object->address,1,true)."<br>";
+					if (!empty($object->zip))  $coords .= $object->zip.' ';
+					if (!empty($object->town)) $coords .= $object->town;
+					if (!empty($object->country_id)) $coords .= "<br>".$country_code['label'];
+				}
+				// hideonsmatphone because copyToClipboard call jquery dialog that does not work with jmobile
+				print '<a href="#" class="hideonsmartphone" onclick="return copyToClipboard(\''.dol_escape_js($coords).'\',\''.dol_escape_js($langs->trans("HelpCopyToClipboard")).'\');">';
             	print img_picto($langs->trans("Address"), 'object_address.png');
             	print '</a>';
             }
@@ -733,7 +741,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
                 print '<td align="center">';
                 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
                 {
-                	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+                	print '<a class="hideonsmartphone" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
                 	print img_object($langs->trans("Rendez-Vous"),"action_rdv");
                 	print '</a> ';
                 }
@@ -768,8 +776,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     print "<br>\n";
 ?>
-<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;">
-</div>
+<div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;"></div>
 <?php
 
     return $i;

@@ -1063,7 +1063,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 
 
 /**
- *	Return date for now. We should always use this function without parameters (that means GMT time)
+ *	Return date for now. In mot cases, we use this function without parameters (that means GMT time).
  *
  * 	@param	string		$mode	'gmt' => we return GMT timestamp,
  * 								'tzserver' => we add the PHP server timezone
@@ -1073,7 +1073,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
  */
 function dol_now($mode='gmt')
 {
-	// Note that gmmktime and mktime return same value (GMT) whithout parameters
+	// Note that gmmktime and mktime return same value (GMT) when used without parameters
 	//if ($mode == 'gmt') $ret=gmmktime(); // Strict Standards: gmmktime(): You should be using the time() function instead
 	if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
 	else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
@@ -1088,7 +1088,7 @@ function dol_now($mode='gmt')
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
 		$ret=dol_now('gmt')+($tzsecond*3600);
 	}*/
-	else if ($mode == 'tzuser')				// Time for now with user timezone is added
+	else if ($mode == 'tzuser')				// Time for now with user timezone added
 	{
 		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
