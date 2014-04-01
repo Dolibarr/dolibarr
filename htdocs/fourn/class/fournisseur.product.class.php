@@ -206,7 +206,7 @@ class ProductFournisseur extends Product
 				$result=$interface->run_triggers('UPDATE_BUYPRICE',$this,$user,$langs,$conf);
 				if ($result < 0)
 				{
-					$error++; $this->errors=$interface->errors;
+					$error++; $this->error=$interface->errors;
 				}
 
 				if (empty($error))
@@ -292,7 +292,7 @@ class ProductFournisseur extends Product
         				$result=$interface->run_triggers('CREATE_BUYPRICE',$this,$user,$langs,$conf);
         				if ($result < 0)
         				{
-        					$error++; $this->errors=$interface->errors;
+        					$error++; $this->error=$interface->errors;
         				}
 
         				if (empty($error))
