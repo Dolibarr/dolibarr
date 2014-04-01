@@ -29,6 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("other");
+$langs->load("compta");
+$langs->load("banks");
+$langs->load("bills");
 
 $year=$_GET["year"];
 if ($year == 0 )

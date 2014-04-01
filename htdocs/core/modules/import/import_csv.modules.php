@@ -250,7 +250,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Return array of next record in input file.
 	 *
-	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string)
+	 * 	@return		Array		Array of field values. Data are UTF8 encoded. [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=not empty string)
 	 */
 	function import_read_record()
 	{
@@ -383,7 +383,7 @@ class ImportCsv extends ModeleImports
 					{
 						// Set $newval with value to insert and set $listvalues with sql request part for insert
 						$newval='';
-						if ($arrayrecord[($key-1)]['type'] > 0) $newval=$arrayrecord[($key-1)]['val'];    // If type of field is not null or '' but string
+						if ($arrayrecord[($key-1)]['type'] > 0) $newval=$arrayrecord[($key-1)]['val'];    // If type of field into input file is not empty string (so defined into input file), we get value
 
 						// Make some tests on $newval
 
@@ -447,6 +447,7 @@ class ImportCsv extends ModeleImports
                                     {
                                         $this->thirpartyobject->get_codeclient(0,0);
                                         $newval=$this->thirpartyobject->code_client;
+                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_client='.$newval;
                                     }
                                 }
@@ -456,6 +457,7 @@ class ImportCsv extends ModeleImports
                                     {
                                         $newval=$this->thirpartyobject->get_codefournisseur(0,1);
                                         $newval=$this->thirpartyobject->code_fournisseur;
+                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_fournisseur='.$newval;
                                     }
                                 }
@@ -465,6 +467,7 @@ class ImportCsv extends ModeleImports
                                     {
                                         $this->thirpartyobject->get_codecompta('customer');
                                         $newval=$this->thirpartyobject->code_compta;
+                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_compta='.$newval;
                                     }
                                 }
@@ -474,6 +477,7 @@ class ImportCsv extends ModeleImports
                                     {
                                         $this->thirpartyobject->get_codecompta('supplier');
                                         $newval=$this->thirpartyobject->code_compta_fournisseur;
+                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_compta_fournisseur='.$newval;
                                     }
                                 }
@@ -540,6 +544,7 @@ class ImportCsv extends ModeleImports
 						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
 						$listfields.=$fieldname;
 
+						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
 						if (empty($newval) && $arrayrecord[($key-1)]['type'] < 0)       $listvalues.=($newval=='0'?$newval:"null");
 						elseif (empty($newval) && $arrayrecord[($key-1)]['type'] == 0) $listvalues.="''";
 						else															 $listvalues.="'".$this->db->escape($newval)."'";
@@ -653,7 +658,7 @@ function cleansep($value)
 function tablewithentity($table)
 {
 	global $db;
-	
+
 	$resql=$db->DDLDescTable($table,'entity');
 	if ($resql)
 	{
@@ -662,7 +667,7 @@ function tablewithentity($table)
 		if ($obj) return 1;
 		else return 0;
 	}
-	else return -1; 
+	else return -1;
 }
 
 ?>

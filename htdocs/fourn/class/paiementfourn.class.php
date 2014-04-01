@@ -305,8 +305,11 @@ class PaiementFourn extends Paiement
 			if ($bank_line_id)
 			{
     			$accline = new AccountLine($this->db);
-    			$accline->fetch($bank_line_id);
-				$result=$accline->delete();
+    			$result=$accline->fetch($bank_line_id);
+    			if ($result > 0) // If result = 0, record not found, we don't try to delete
+    			{
+    				$result=$accline->delete();
+    			}
     			if ($result < 0)
     			{
                     $this->error=$accline->error;

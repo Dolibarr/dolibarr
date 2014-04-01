@@ -940,7 +940,6 @@ td.photo {
 /* ============================================================================== */
 
 .toolbar {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$conf->theme.'/img/tmenu2.png',1); ?>) !important;
     background-repeat: repeat-x !important;
     border: 1px solid #BBB !important;
 }
