@@ -775,15 +775,14 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 <div id="dialog" title="<?php echo dol_escape_htmltag($langs->trans('Address')); ?>" style="display: none;"></div>
 <?php
 	print '<script type="text/javascript">
-	$("#dialog").dialog()
-			function copyToClipboard (text) {
+		function copyToClipboard (text) {
 			  text = text.replace(/<br \/>/g,"\n");
 			  var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br/><br/>'.$langs->trans('HelpCopyToClipboard').'";
 			  $("#dialog").html(newElem);
 			  $("#dialog").dialog();
 			  $("#coords").select();
 			  return false;
-			}
+		}
 	</script>';
 
     return $i;
