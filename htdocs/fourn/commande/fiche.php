@@ -508,6 +508,9 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         $result	= $object->approve($user, $idwarehouse);
         if ($result > 0)
         {
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            }
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
             exit;
         }
@@ -537,6 +540,9 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
     $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
     if ($result > 0)
     {
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        }
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
     }
