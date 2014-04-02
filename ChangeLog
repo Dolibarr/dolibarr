@@ -9,6 +9,7 @@ Fix: Bad get of localtaxes into contracts add lines.
 Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
 Fix: Agenda and Banks module were not working with multicompany module
+Fix: [ bug #1317 ] Removing a category does not remove all child categories
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).
