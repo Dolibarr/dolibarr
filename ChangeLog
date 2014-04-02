@@ -75,7 +75,9 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascript function ac_delay() that is not used anymore by core code.
-- Properties "dictionaries" into module descriptor files has been renamed into "dictionaries".
+- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Method form->select_currency() has been removed. Use instead print form->selectCurrency().
+- Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
 
 
 

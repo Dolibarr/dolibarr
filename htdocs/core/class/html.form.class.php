@@ -793,7 +793,7 @@ class Form
         }
         $sql.=$this->db->order("nom","ASC");
 		if ($limit > 0) $sql.=$this->db->plimit($limit);
-		
+
         dol_syslog(get_class($this)."::select_thirdparty_list sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1341,7 +1341,7 @@ class Form
         	$sql.=' ,pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
         	$sql.=' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx';
         }
-        
+
         // Multilang : we add translation
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
@@ -1617,12 +1617,12 @@ class Form
 			$opt.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
 			$outval.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
 		}
-		
+
 		//Price by customer
 		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			if (!empty($objp->idprodcustprice)) {
 				$found = 1;
-		
+
 				if ($objp->custprice_base_type == 'HT')
 				{
 					$opt.= price($objp->custprice,1).' '.$currencytext.' '.$langs->trans("HT");
@@ -1633,7 +1633,7 @@ class Form
 					$opt.= price($objp->custprice_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
 					$outval.= price($objp->custprice_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
 				}
-		
+
 				$outprice_ht=price($objp->custprice);
 				$outprice_ttc=price($objp->custprice_ttc);
 				$outpricebasetype=$objp->custprice_base_type;
@@ -2124,7 +2124,7 @@ class Form
      *		@param	int		$addempty		Add empty entry
      *		@return	void
      */
-    function select_availability($selected='',$htmlname='availid',$filtertype='',$addempty=0)
+    function selectAvailabilityDelay($selected='',$htmlname='availid',$filtertype='',$addempty=0)
     {
         global $langs,$user;
 
@@ -2154,7 +2154,7 @@ class Form
      *
      *      @return     int             Nb of lines loaded, 0 if already loaded, <0 if ko
      */
-    function load_cache_demand_reason()
+    function loadCacheInputReason()
     {
         global $langs;
 
@@ -2164,7 +2164,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this)."::load_cache_demand_reason sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::loadCacheInputReason sql=".$sql,LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2194,19 +2194,20 @@ class Form
     }
 
     /**
-     *      Return list of events that triggered an object creation
+	 *	Return list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
+	 *  List found into table c_input_reason loaded by loadCacheInputReason
      *
-     *      @param	int		$selected        Id or code of type origin to select by default
-     *      @param  string	$htmlname        Nom de la zone select
-     *      @param  string	$exclude         To exclude a code value (Example: SRC_PROP)
-     *		@param	int		$addempty		 Add an empty entry
-     *		@return	void
+     *  @param	int		$selected        Id or code of type origin to select by default
+     *  @param  string	$htmlname        Nom de la zone select
+     *  @param  string	$exclude         To exclude a code value (Example: SRC_PROP)
+     *	@param	int		$addempty		 Add an empty entry
+     *	@return	void
      */
-    function select_demand_reason($selected='',$htmlname='demandreasonid',$exclude='',$addempty=0)
+    function selectInputReason($selected='',$htmlname='demandreasonid',$exclude='',$addempty=0)
     {
         global $langs,$user;
 
-        $this->load_cache_demand_reason();
+        $this->loadCacheInputReason();
 
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0"'.(empty($selected)?' selected="selected"':'').'>&nbsp;</option>';
@@ -2904,7 +2905,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_availability($selected,$htmlname,-1,$addempty);
+            $this->selectAvailabilityDelay($selected,$htmlname,-1,$addempty);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2922,7 +2923,8 @@ class Form
     }
 
     /**
-     *  Show a select form to select origin
+	 *	Output HTML form to select list of input reason (events that triggered an object creation, like after sending an emailing, making an advert, ...)
+	 *  List found into table c_input_reason loaded by loadCacheInputReason
      *
      *  @param  string	$page        	Page
      *  @param  string	$selected    	Id condition pre-selectionne
@@ -2930,7 +2932,7 @@ class Form
      *	@param	int		$addempty		Add empty entry
      *  @return	void
      */
-    function form_demand_reason($page, $selected='', $htmlname='demandreason', $addempty=0)
+    function formInputReason($page, $selected='', $htmlname='demandreason', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
@@ -2940,7 +2942,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_demand_reason($selected,$htmlname,-1,$addempty);
+            $this->selectInputReason($selected,$htmlname,-1,$addempty);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -2949,7 +2951,7 @@ class Form
         {
             if ($selected)
             {
-                $this->load_cache_demand_reason();
+                $this->loadCacheInputReason();
                 foreach ($this->cache_demand_reason as $key => $val)
                 {
                     if ($val['id'] == $selected)
@@ -3256,7 +3258,7 @@ class Form
      *  @param  string	$htmlname    name of HTML select list
      * 	@return	void
      */
-    function selectcurrency($selected='',$htmlname='currency_id')
+    function selectCurrency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs,$user;
 
@@ -3519,7 +3521,7 @@ class Form
         if($m == '') $m=0;
         if($empty == '') $empty=0;
 
-        if ($set_time === '' && $empty == 0) 
+        if ($set_time === '' && $empty == 0)
         {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         	$set_time = dol_now('tzuser')-(getServerTimeZoneInt('now')*3600); // set_time must be relative to PHP server timezone

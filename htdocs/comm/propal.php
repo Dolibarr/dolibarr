@@ -1187,12 +1187,12 @@ if ($action == 'create') {
 
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
-	$form->select_demand_reason('', 'demand_reason_id', "SRC_PROP", 1);
+	$form->selectInputReason('', 'demand_reason_id', "SRC_PROP", 1);
 	print '</td></tr>';
 
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
-	$form->select_availability('', 'availability_id', '', 1);
+	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -1604,13 +1604,11 @@ if ($action == 'create') {
 		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	// print $object->demand_reason_id;
 	if ($action == 'editdemandreason') {
-		$form->form_demand_reason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+		$form->formInputReason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
-		$form->form_demand_reason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
+		$form->formInputReason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
 	}
-
 	print '</td>';
 	print '</tr>';
 

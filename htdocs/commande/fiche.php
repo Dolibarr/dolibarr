@@ -1446,12 +1446,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
-	$form->select_availability($availability_id, 'availability_id', '', 1);
+	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1);
 	print '</td></tr>';
 
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td colspan="2">';
-	$form->select_demand_reason($demand_reason_id, 'demand_reason_id', '', 1);
+	$form->selectInputReason($demand_reason_id, 'demand_reason_id', '', 1);
 	print '</td></tr>';
 
 	// Project
@@ -1929,9 +1929,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdemandreason') {
-			$form->form_demand_reason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+			$form->formInputReason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 		} else {
-			$form->form_demand_reason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
+			$form->formInputReason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
 		}
 		// Removed because using dictionary is an admin feature, not a user feature. Ther is already the "star" to show info to admin users.
 		// This is to avoid too heavy screens and have an uniform look and feel for all screens.

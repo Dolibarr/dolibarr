@@ -192,7 +192,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	}
 	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)			
+			)
 	{
 		$predef= '_predef';
 		$idprod=GETPOST('idprod', 'int');
@@ -214,7 +214,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     }
     if (! GETPOST('addline_predefined') && ( GETPOST('pu')==='')) // Unit price can be 0 but not ''
     {
-    	
+
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
         $error++;
     }
@@ -1987,7 +1987,7 @@ elseif (! empty($object->id))
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->select_methodes_commande(GETPOST('methodecommande'), "methodecommande", 1);
+			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';
