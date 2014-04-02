@@ -2627,7 +2627,7 @@ else if ($id > 0 || ! empty($ref))
 			//'text' => $langs->trans("ConfirmClone"),
 			//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 			//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-			array('type' => 'other', 'name' => 'idwarehouse',   'label' => $label,   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1,0,0,$langs->trans("NoStockAction"))));
+			array('type' => 'other', 'name' => 'idwarehouse',   'label' => $label,   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1,0,0,$langs->trans("NoStockAction"))));
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete',$formquestion,"yes",1);
 		}else {
 			$formconfirm=$form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$object->id,$langs->trans('DeleteBill'),$text,'confirm_delete','','',1);
@@ -2688,7 +2688,7 @@ else if ($id > 0 || ! empty($ref))
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
 				$label = $object->type==2?$langs->trans("SelectWarehouseForStockIncrease"):$langs->trans("SelectWarehouseForStockDecrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1);
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1);
 			}
 			$formquestion=array(
 			//'text' => $langs->trans("ConfirmClone"),
@@ -2731,7 +2731,7 @@ else if ($id > 0 || ! empty($ref))
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
 				$label=$object->type==2?$langs->trans("SelectWarehouseForStockDecrease"):$langs->trans("SelectWarehouseForStockIncrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1);
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1);
 			}
 			$formquestion=array(
 			//'text' => $langs->trans("ConfirmClone"),
