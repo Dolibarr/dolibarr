@@ -185,19 +185,19 @@ if ($testremplissage != "ok" && (isset($_POST["fin_sondage_autre"]) || isset($_P
 
 //message d'erreur si mauvaise date
 if ($testdate === false) {
-	print "<br><font color=\"#FF0000\">" . _("Date must be have the format DD/MM/YYYY") . "</font><br><br>"."\n";
+	print "<br><font color=\"#FF0000\">" . $langs->trans("Date must be have the format DD/MM/YYYY") . "</font><br><br>"."\n";
 }
 
 if ($erreur_injection) {
-	print "<font color=#FF0000>" . _("Characters \" < and > are not permitted") . "</font><br><br>\n";
+	print "<font color=#FF0000>" . $langs->trans("Characters \" < and > are not permitted") . "</font><br><br>\n";
 }
 
 if ((isset($_POST["fin_sondage_autre"]) || isset($_POST["fin_sondage_autre_x"])) && !$erreur && !$erreur_injection) {
 	//demande de la date de fin du sondage
 	print '<br>'."\n";
 	print '<div class=presentationdatefin>'."\n";
-	print '<br>'. _("Your poll will be automatically removed after 6 months.<br> You can fix another removal date for it.") .'<br><br>'."\n";
-	print _("Removal date (optional)") .' : <input type="text" name="champdatefin" value="'.$date_selected.'" size="10" maxlength="10"> '. _("(DD/MM/YYYY)") ."\n";
+	print '<br>'. $langs->trans("Your poll will be automatically removed after 6 months.<br> You can fix another removal date for it.") .'<br><br>'."\n";
+	print $langs->trans("Removal date (optional)") .' : <input type="text" name="champdatefin" value="'.$date_selected.'" size="10" maxlength="10"> '. $langs->trans("(DD/MM/YYYY)") ."\n";
 	print '</div>'."\n";
 	print '<div class=presentationdatefin>'."\n";
 	print '<font color=#FF0000>'. $langs->trans("InfoAfterCreate") .'</font>'."\n";
