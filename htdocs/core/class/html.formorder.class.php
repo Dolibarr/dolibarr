@@ -45,6 +45,29 @@ class FormOrder
 	}
 
 
+
+    /**
+     *    Return combo list of differents status of a orders
+     *
+     *    @param	string	$selected   Preselected value
+     *    @param	int		$short		Use short labels
+     *    @return	void
+     */
+    function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')
+    {
+        print '<select class="flat" name="'.$hmlname.'">';
+        print '<option value="-1">&nbsp;</option>';
+        $statustohow=array(0,1,2,3,4,5,6,9);	// 7 is same label than 6. 8 does not exist.
+        
+        foreach($statustohow as $key)
+        {
+			print '<option value="'.$key.'"'.($selected == $key?' selected="selected"':'').'>';
+			print CommandeFournisseur::LibStatut($key,$short);
+	        print '</option>';
+        }
+        print '</select>';
+    }
+	
 	/**
 	 *  Return list of way to order
 	 * 

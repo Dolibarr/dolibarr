@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
@@ -29,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 
 $langs->load("orders");
 
@@ -39,6 +40,8 @@ $search_nom=GETPOST('search_nom');
 $search_user=GETPOST('search_user');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
+$search_status=GETPOST('search_status','int');
+if ($search_status == '') $search_status=-1;
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -67,6 +70,7 @@ llxHeader('',$title);
 
 $commandestatic=new CommandeFournisseur($db);
 $formfile = new FormFile($db);
+$formorder = new FormOrder($db);
 
 
 if ($sortorder == "") $sortorder="DESC";
@@ -119,8 +123,13 @@ if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
 }
+if ($search_status >= 0) 
+{
+	if ($search_status == 6 || $search_status == 7) $sql.=" AND fk_statut IN (6,7)";
+	else $sql.=" AND fk_statut = ".$search_status;
+}
 
-$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -136,6 +145,7 @@ if ($resql)
 	if ($search_user)  $param.="&search_user=".$search_user;
 	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
 	if ($search_refsupp) $param.="&search_refsupp=".$search_refsupp;
+	if ($search_status >= 0)  $param.="&search_status=".$search_status;
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
@@ -147,6 +157,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -156,7 +167,11 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$search_user.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
-	print '<td colspan="2" class="liste_titre" align="right">';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
+	print '</td>';
+	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '</tr>';
@@ -212,7 +227,7 @@ if ($resql)
 		print '</td>';
 
 		// Statut
-		print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+		print '<td align="right" colspan="2">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
 
 		print "</tr>\n";
 		$i++;

@@ -99,8 +99,8 @@ class CommandeFournisseur extends CommonOrder
         $this->statuts[3] = 'StatusOrderOnProcess';
         $this->statuts[4] = 'StatusOrderReceivedPartially';
         $this->statuts[5] = 'StatusOrderReceivedAll';
-        $this->statuts[6] = 'StatusOrderCanceled';
-        $this->statuts[7] = 'StatusOrderCanceled';
+        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
+        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
         $this->statuts[9] = 'StatusOrderRefused';
     }
 
