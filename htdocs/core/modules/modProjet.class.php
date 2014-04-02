@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -228,6 +228,47 @@ class modProjet extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
+		//ODT template for project
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/projects/template_project.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/projects';
+		$dest=$dirodt.'/template_project.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
+		}
+
+		//ODT template for tasks
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/tasks/template_task_summary.odt';
+		$dirodt=DOL_DATA_ROOT.'/doctemplates/tasks';
+		$dest=$dirodt.'/template_task_summary.odt';
+
+		if (file_exists($src) && ! file_exists($dest))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result=dol_copy($src,$dest,0,0);
+			if ($result < 0)
+			{
+				$langs->load("errors");
+				$this->error=$langs->trans('ErrorFailToCopyFile',$src,$dest);
+				return 0;
+			}
+		}
+		
+		$sql = array(
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','invoice',".$conf->entity.")"
+		);
+		
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','project',".$conf->entity.")",
