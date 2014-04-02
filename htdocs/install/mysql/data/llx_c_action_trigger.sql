@@ -64,3 +64,6 @@ insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (32,'PROPAL_CLOSE_REFUSED','Customer proposal closed refused','Executed when a customer proposal is closed refused','propal',32);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (33,'BILL_SUPPLIER_CANCELED','Supplier invoice cancelled','Executed when a supplier invoice is cancelled','invoice_supplier',33);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (34,'MEMBER_MODIFY','Member modified','Executed when a member is modified','member',34);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (35,'TASK_CREATE','Task created','Executed when a project task is created','project',35);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (36,'TASK_MODIFY','Task modified','Executed when a project task is modified','project',36);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (37,'TASK_DELETE','Task deleted','Executed when a project task is deleted','project',37);
