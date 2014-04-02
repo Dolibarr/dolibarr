@@ -18,12 +18,11 @@ MarginDetails=Λεπτομέρειες Περιθωρίων
 
 ProductMargins=Περιθώρια προϊόντος
 CustomerMargins=Περιθώρια πελατών
-AgentMargins=Περιθώρια εκπρόσωπου
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Προϊόν ή Υπηρεσία
 AllProducts=Όλα τα προϊόντα και οι υπηρεσίες
 ChooseProduct/Service=Επιλέξτε προϊόν ή υπηρεσία
-CommercialAgent=Εμπορικός αντιπρόσωπος
 
 StartDate=Ημερ. έναρξης
 EndDate=Ημερ. λήξης

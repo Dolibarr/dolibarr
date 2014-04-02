@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
+Salary=Salaires
+Salaries=Salaires
 Employee=Employé
 NewSalaryPayment=Nouveau paiement de salaire
 SalaryPayment=Paiement de salaire

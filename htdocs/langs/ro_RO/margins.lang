@@ -18,12 +18,11 @@ MarginDetails=Detalii Marjă
 
 ProductMargins=Marjă Produs
 CustomerMargins=Marje Client
-AgentMargins=Marje Agent
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Produs sau serviciu
 AllProducts=Toate produsele şi serviciile
 ChooseProduct/Service=Alege produs sau serviciu
-CommercialAgent=Agent comercial
 
 StartDate=Dată început
 EndDate=Dată sfîrşit

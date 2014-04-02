@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Esdeveniments
 ActionsArea=Àrea d'esdeveniments (accions i tasques)
 Agenda= Agenda
@@ -43,6 +43,7 @@ InvoiceBackToDraftInDolibarr=Factura %s tornada a borrador
 InvoiceDeleteDolibarr=Factura %s eliminada
 OrderValidatedInDolibarr= Comanda %s validada
 OrderApprovedInDolibarr=Comanda %s aprovada
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Comanda %s tordada a borrador
 OrderCanceledInDolibarr=Commanda %s anul·lada
 InterventionValidatedInDolibarr=Intervenció %s validada
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
 ShippingSentByEMail=Expedició %s enviada per e-mail
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervenció %s enviada per e-mail
 NewCompanyToDolibarr= Tercer creat
 DateActionPlannedStart= Data d'inici prevista
@@ -69,7 +70,7 @@ AgendaUrlOptions5=<b>logind=%s</b> per a restringir insercions a accions realitz
 AgendaShowBirthdayEvents=Mostra aniversari dels contactes
 AgendaHideBirthdayEvents=Amaga aniversari dels contacte
 Busy=Ocupat
-# ExportDataset_event1=List of agenda events
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Exportar calendari

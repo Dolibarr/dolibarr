@@ -18,8 +18,8 @@ Permission23104 = Führe geplante Aufgabe aus
 # Admin
 #
 CronSetup= Jobverwaltungs-Konfiguration
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL zum Prüfen und Starten von Cronjobs wenn nötig
+OrToLaunchASpecificJob=Oder zum Prüfen und Starten von speziellen Jobs
 KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
 FileToLaunchCronJobs=Kommandozeile zum Starten von Cronjobs
 CronExplainHowToRunUnix=In Unix-Umgebungen sollte man crontab benutzen um die Kommandozeile jede Minute auszuführen
@@ -43,7 +43,7 @@ CronLastOutput=Ausgabe der letzten Ausführung
 CronLastResult=Letzter Resultatcode
 CronListOfCronJobs=Liste der geplanten Jobs
 CronCommand=Befehl
-# CronList=Jobs list
+CronList=Jobliste
 CronDelete= Lösche Cronjobs
 CronConfirmDelete= Möchten Sie diesen Cronjob wirklich löschen?
 CronExecute=Starte Job
@@ -89,11 +89,11 @@ CronTaskInactive=Dieser Job ist deaktiviert
 CronDtLastResult=Datum letztes Resultat
 CronId=ID
 CronClassFile=Klassen (filenames.class.php)
-# CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
-# CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
-# CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
-# CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
-# CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For exemple to fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value of module is <i>product</i>
+CronClassFileHelp=The file name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/<u>product.class.php</u>, the value of class file name is <i>product.class.php</i>
+CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of class file name is <i>Product</i>
+CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
+CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=Die auszuführende System-Kommandozeile
 
 #

@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - users
-# Employee=Employee
-# NewSalaryPayment=New salary payment
-# SalaryPayment=Salary payment
-# SalariesPayments=Salaries payments
-# ShowSalaryPayment=Show salary payment
+Salary=Salary
+Salaries=Salaries
+Employee=Angajat
+NewSalaryPayment=Plata noua salariu
+SalaryPayment=Plata salariu
+SalariesPayments=Plati salarii
+ShowSalaryPayment=Arata plata salariu

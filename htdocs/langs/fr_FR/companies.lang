@@ -405,4 +405,4 @@ OutstandingBill=Montant max. en attente
 OutstandingBillReached=Montant max. endetté
 MonkeyNumRefModelDesc=Renvoie le numéro sous la forme %syymm-nnnn pour les codes clients et %syymm-nnnn pour les codes fournisseurs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0.
 LeopardNumRefModelDesc=Code libre sans vérification. Peut être modifié à tout moment.
-# ManagingDirectors=Manager(s) name (CEO, director, president...)
+ManagingDirectors=Nom des gestionnaires (PDG, directeur, pésident...)

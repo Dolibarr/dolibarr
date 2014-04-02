@@ -405,4 +405,4 @@ OutstandingBill=Μέγιστο. για εκκρεμείς λογαριασμό
 OutstandingBillReached=Έφτασε στο όριο. για των εκκρεμεί λογαριασμό
 MonkeyNumRefModelDesc=Return numero with format %syymm-nnnn for customer code and %syymm-nnnn for supplier code where yy is year, mm is month and nnnn is a sequence with no break and no return to 0.
 LeopardNumRefModelDesc=Customer/supplier code is free. This code can be modified at any time.
-# ManagingDirectors=Manager(s) name (CEO, director, president...)
+ManagingDirectors=Διαχειριστής (ες) ονομασία (CEO, διευθυντής, πρόεδρος ...)
