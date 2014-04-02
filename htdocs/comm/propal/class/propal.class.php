@@ -2301,51 +2301,23 @@ class Propal extends CommonObject
      *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      *    	@return     string		Label
      */
-    function LibStatut($statut,$mode=1)
+     function LibStatut($statut,$mode=1)
     {
-        global $langs;
-        $langs->load("propal");
+	global $langs;
+	$langs->load("propal");
 
-        if ($mode == 0)
-        {
-            return $this->labelstatut[$statut];
-        }
-        if ($mode == 1)
-        {
-            return $this->labelstatut_short[$statut];
-        }
-        if ($mode == 2)
-        {
-            if ($statut==0) return img_picto($langs->trans('PropalStatusDraftShort'),'statut0').' '.$this->labelstatut_short[$statut];
-            if ($statut==1) return img_picto($langs->trans('PropalStatusOpenedShort'),'statut1').' '.$this->labelstatut_short[$statut];
-            if ($statut==2) return img_picto($langs->trans('PropalStatusSignedShort'),'statut3').' '.$this->labelstatut_short[$statut];
-            if ($statut==3) return img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5').' '.$this->labelstatut_short[$statut];
-            if ($statut==4) return img_picto($langs->trans('PropalStatusBilledShort'),'statut6').' '.$this->labelstatut_short[$statut];
-        }
-        if ($mode == 3)
-        {
-            if ($statut==0) return img_picto($langs->trans('PropalStatusDraftShort'),'statut0');
-            if ($statut==1) return img_picto($langs->trans('PropalStatusOpenedShort'),'statut1');
-            if ($statut==2) return img_picto($langs->trans('PropalStatusSignedShort'),'statut3');
-            if ($statut==3) return img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5');
-            if ($statut==4) return img_picto($langs->trans('PropalStatusBilledShort'),'statut6');
-        }
-        if ($mode == 4)
-        {
-            if ($statut==0) return img_picto($langs->trans('PropalStatusDraft'),'statut0').' '.$this->labelstatut[$statut];
-            if ($statut==1) return img_picto($langs->trans('PropalStatusOpened'),'statut1').' '.$this->labelstatut[$statut];
-            if ($statut==2) return img_picto($langs->trans('PropalStatusSigned'),'statut3').' '.$this->labelstatut[$statut];
-            if ($statut==3) return img_picto($langs->trans('PropalStatusNotSigned'),'statut5').' '.$this->labelstatut[$statut];
-            if ($statut==4) return img_picto($langs->trans('PropalStatusBilled'),'statut6').' '.$this->labelstatut[$statut];
-        }
-        if ($mode == 5)
-        {
-            if ($statut==0) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusDraftShort'),'statut0');
-            if ($statut==1) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusOpenedShort'),'statut1');
-            if ($statut==2) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusSignedShort'),'statut3');
-            if ($statut==3) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusNotSignedShort'),'statut5');
-            if ($statut==4) return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($langs->trans('PropalStatusBilledShort'),'statut6');
-        }
+	if ($statut==0) $statuttrans='statut0';
+	if ($statut==1) $statuttrans='statut1';
+	if ($statut==2) $statuttrans='statut3';
+	if ($statut==3) $statuttrans='statut5';
+	if ($statut==4) $statuttrans='statut6';
+
+	if ($mode == 0)	return $this->labelstatut[$statut];
+	if ($mode == 1)	return $this->labelstatut_short[$statut];
+	if ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
+	if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
+	if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
+	if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut_short[$statut],$statuttrans);
     }
 
 
