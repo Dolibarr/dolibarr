@@ -4051,7 +4051,7 @@ class Form
 
         if ($morehtml)
         {
-            $ret.='</td><td class="nobordernopadding" align="right">'.$morehtml;
+            $ret.='</td><td class="paddingrightonly" align="right">'.$morehtml;
         }
         if ($shownav && ($previous_ref || $next_ref))
         {
