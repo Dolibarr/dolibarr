@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=No error, we commit
-
 # Errors
 Error=Error
 Errors=Errors
@@ -135,7 +134,6 @@ ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authe
 ErrorWarehouseMustDiffers=Source and target warehouses must differs
 ErrorBadFormat=Bad format!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s. 
-
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=Warning, PHP option <b>safe_mode</b> is on so command must be stored inside a directory declared by php parameter <b>safe_mode_exec_dir</b>.
