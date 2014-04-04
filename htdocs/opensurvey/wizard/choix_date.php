@@ -229,7 +229,7 @@ if ((!issetAndNoEmpty('choixjourajout')) && !issetAndNoEmpty('choixjourretrait')
 }
 
 //mise a jour des valeurs de session si mois avant
-if (issetAndNoEmpty('moisavant')) {
+if (issetAndNoEmpty('moisavant_x')) {
 	if ($_SESSION["mois"] == 1) {
 		$_SESSION["mois"]   = 12;
 		$_SESSION["annee"]  = $_SESSION["annee"]-1;
@@ -251,13 +251,14 @@ if (issetAndNoEmpty('moisavant')) {
 }
 
 //mise a jour des valeurs de session si mois apres
-if (issetAndNoEmpty('moisapres')) {
+if (issetAndNoEmpty('moisapres_x')) {
 	if ($_SESSION["mois"] == 12) {
 		$_SESSION["mois"] = 1;
 		$_SESSION["annee"] += 1;
 	} else {
 		$_SESSION["mois"] += 1;
 	}
+	print 'toto';
 
 	//On sauvegarde les heures deja entrées
 	if (issetAndNoEmpty('totalchoixjour', $_SESSION) === true) 
@@ -274,7 +275,7 @@ if (issetAndNoEmpty('moisapres')) {
 }
 
 //mise a jour des valeurs de session si annee avant
-if (issetAndNoEmpty('anneeavant')) {
+if (issetAndNoEmpty('anneeavant_x')) {
 	$_SESSION["annee"] -= 1;
 
 	//On sauvegarde les heures deja entrées
@@ -291,7 +292,7 @@ if (issetAndNoEmpty('anneeavant')) {
 }
 
 //mise a jour des valeurs de session si annee apres
-if (issetAndNoEmpty('anneeapres')) {
+if (issetAndNoEmpty('anneeapres_x')) {
 	$_SESSION["annee"] += 1;
 
 	//On sauvegarde les heures deja entrées
