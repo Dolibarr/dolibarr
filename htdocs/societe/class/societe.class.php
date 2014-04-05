@@ -1022,7 +1022,7 @@ class Societe extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $entity=isset($this->entity)?$this->entity:$conf->entity;
-        
+
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
@@ -1159,7 +1159,7 @@ class Societe extends CommonObject
                     	dol_delete_dir_recursive($docdir);
                 	}
                 }
-                
+
                 return 1;
             }
             else
@@ -1168,7 +1168,8 @@ class Societe extends CommonObject
                 return -1;
             }
         }
-
+		else dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
+        return 0;
     }
 
     /**
