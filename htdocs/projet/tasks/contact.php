@@ -61,7 +61,8 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 
     if ($result > 0 && $id > 0)
     {
-  		$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+    	$idfortaskuser=GETPOST("contactid")>0?GETPOST("contactid"):GETPOST("userid");
+  		$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
     }
 
 	if ($result >= 0)
