@@ -4491,6 +4491,34 @@ function printCommonFooter($zone='private')
 }
 
 /**
+ * Split a string with 2 keys into key array.
+ * For example: "A=1;B=2;C=2" is exploded into array('A'=>1,'B'=>2,'C'=>3)
+ * 
+ * @param 	string	$string		String to explode
+ * @param 	string	$delimiter	Delimiter between each couple of data
+ * @param 	string	$kv			Delimiter between key and value
+ * @return	array				Array of data exploded
+ */
+function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
+{
+	if ($a = explode($delimiter, $string)) 
+	{
+		foreach ($a as $s) { // each part
+			if ($s) {
+				if ($pos = strpos($s, $kv)) { // key/value delimiter
+					$ka[trim(substr($s, 0, $pos))] = trim(substr($s, $pos + strlen($kv)));
+				} else { // key delimiter not found
+					$ka[] = trim($s);
+				}
+			}
+		}
+		return $ka;
+	}
+	return array();
+}
+
+
+/**
  *	Convert an array with RGB value into hex RGB value
  *
  *  @param	array	$arraycolor			Array
