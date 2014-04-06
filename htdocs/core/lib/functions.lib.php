@@ -2724,6 +2724,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
 	if ($outlangs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->transnoentitiesnoconv("SeparatorDecimal");
 	if ($outlangs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
+	else if ($thousand == 'Space') $thousand=' ';
 	//print "outlangs=".$outlangs->defaultlang." amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	//print "amount=".$amount."-";
@@ -2799,6 +2800,7 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
 	if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
 	if ($thousand == 'None') $thousand='';
+	elseif ($thousand == 'Space') $thousand=' ';
 	//print "amount=".$amount." html=".$form." trunc=".$trunc." nbdecimal=".$nbdecimal." dec='".$dec."' thousand='".$thousand."'<br>";
 
 	// Convert value to universal number format (no thousand separator, '.' as decimal separator)
@@ -4493,7 +4495,7 @@ function printCommonFooter($zone='private')
 /**
  * Split a string with 2 keys into key array.
  * For example: "A=1;B=2;C=2" is exploded into array('A'=>1,'B'=>2,'C'=>3)
- * 
+ *
  * @param 	string	$string		String to explode
  * @param 	string	$delimiter	Delimiter between each couple of data
  * @param 	string	$kv			Delimiter between key and value
@@ -4501,7 +4503,7 @@ function printCommonFooter($zone='private')
  */
 function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 {
-	if ($a = explode($delimiter, $string)) 
+	if ($a = explode($delimiter, $string))
 	{
 		foreach ($a as $s) { // each part
 			if ($s) {
