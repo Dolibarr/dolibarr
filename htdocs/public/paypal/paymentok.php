@@ -241,7 +241,7 @@ if ($PAYPALTOKEN)
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
 				$content="";
-				$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed");
+				$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\n";
 				$content.="\n";
 				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
