@@ -1,7 +1,7 @@
 # Dolibarr language file - en_AU - main
-# This file contains only line that must differs from en_US file
-SeparatorDecimal=.
-SeparatorThousand=,
+# This file contains only lines that must differs from en_US file
+SeparatorDecimal=,
+SeparatorThousand=Space
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy

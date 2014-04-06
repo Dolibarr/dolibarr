@@ -94,6 +94,7 @@ InformationLastAccessInError=Information sur le dernier accès en base en erreur
 DolibarrHasDetectedError=Dolibarr a détecté une erreur technique
 InformationToHelpDiagnose=Voici les informations qui pourront aider au diagnostic
 MoreInformation=Plus d'information
+TechnicalInformation=Technical information
 NotePublic=Note (publique)
 NotePrivate=Note (privée)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr a été configuré pour limiter la précision des prix unitaires à <b>%s</b> décimales.
