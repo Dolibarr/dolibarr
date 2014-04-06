@@ -233,6 +233,12 @@ if ($PAYPALTOKEN)
 			{
 				$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
+				// Define $urlwithroot
+				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+				
+				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
 				$content="";
 				$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed");
