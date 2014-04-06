@@ -220,26 +220,29 @@ if ($PAYPALTOKEN)
             $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
             $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
-            echo "DoExpressCheckoutPayment API call failed. ";
-            echo "Detailed Error Message: " . $ErrorLongMsg;
-            echo "Short Error Message: " . $ErrorShortMsg;
-            echo "Error Code: " . $ErrorCode;
-            echo "Error Severity Code: " . $ErrorSeverityCode;
+            echo "DoExpressCheckoutPayment API call failed.<br>\n";
+            echo "Detailed Error Message: " . $ErrorLongMsg."<br>\n";
+            echo "Short Error Message: " . $ErrorShortMsg."<br>\n";
+            echo "Error Code: " . $ErrorCode."<br>\n";
+            echo "Error Severity Code: " . $ErrorSeverityCode."<br>\n";
 
-            if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email;
+            if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
             
            	// Send an email
 			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 			{
 				$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 				$from=$conf->global->MAILING_EMAIL_FROM;
+				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
+				$content="";
+				$content.=$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed");
+				$content.="\n";
+				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+				$content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+				
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-				$mailfile = new CMailFile(
-					'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed"),
-					$sendto,
-					$from,
-					$langs->transnoentitiesnoconv("PaypalConfirmPaymentPageWasCalledButFailed")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt."\nErrorCode=".$ErrorCode."\nErrorLongMsg=".$ErrorLongMsg
-				);
+				$mailfile = new CMailFile($topic, $sendto, $from, $content);
 		
 				$result=$mailfile->sendfile();
 				if ($result)
