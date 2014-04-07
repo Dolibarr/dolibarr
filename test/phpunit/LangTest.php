@@ -158,7 +158,7 @@ class LangTest extends PHPUnit_Framework_TestCase
 
 			$result=$tmplangs->trans("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result,array('.',',','/',' ','','None','SeparatorThousand'));	// SeparatorThousand is returned when SeparatorThousand=Space
+			$this->assertContains($result,array('.',',','/',' ','','None','Space'));
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->trans("FormatDateShortJava");
