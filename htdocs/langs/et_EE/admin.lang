@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Kasutajad ja grupid
 Module0Desc=Kasutajate ja gruppide haldamine
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Ostukonto kood
 AgendaSetup=Tegevuste ja päevakava mooduli seadistamine
 PasswordTogetVCalExport=Ekspordilingi autoriseerimise võti
 PastDelayVCalExport=Ära ekspordi tegevusi, mis on vanemad kui
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=See moodul võimaldab lisada ikooni pärast telefoninumbreid. Klõps sellel ikoonil helistab allpool määratletud URLiga serverisse. See võimaldab näiteks Dolibarrist helistada kõnekeskuse süsteemi, mis helistab SIP-süsteemis olevale numbrile.
 ##### Point Of Sales (CashDesk) #####

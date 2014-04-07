@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=משתמשים להקות
 Module0Desc=משתמשים וניהול קבוצות
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=אירועים מודול ההתקנה סדר היום
 PasswordTogetVCalExport=מפתח לאשר הקישור יצוא
 PastDelayVCalExport=לא יצא אירוע מבוגרת
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=מודול זה מאפשר להוסיף סמל אחרי מספרי טלפון. לחץ על סמל זה נקרא שרת עם כתובת ה-URL מסוים אתה מגדיר להלן. זה יכול לשמש כדי להתקשר למוקד הטלפוני המערכת Dolibarr שיכול להתקשר למספר הטלפון על מערכת SIP למשל.
 ##### Point Of Sales (CashDesk) #####

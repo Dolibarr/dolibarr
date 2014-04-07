@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Åtgärder
 ActionsArea=Åtgärder område (händelser och uppgifter)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Lokal kalender
 AffectedTo= Påverkas i
 DoneBy= Utfärdat av
 Events= Evenemang
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=Mina aktiviteter
 OtherEvents=Övriga händelser
 ListOfActions=Lista över evenemang
@@ -40,9 +40,10 @@ ActionsEvents= Händelser som Dolibarr kommer att skapa en talan i agenda automa
 PropalValidatedInDolibarr= Förslag %s validerade
 InvoiceValidatedInDolibarr= Faktura %s validerade
 InvoiceBackToDraftInDolibarr=Faktura %s gå tillbaka till förslaget status
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Beställ %s validerade
 OrderApprovedInDolibarr=Ordningens %s godkänd
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Beställ %s gå tillbaka till förslaget status
 OrderCanceledInDolibarr=Beställ %s avbryts
 InterventionValidatedInDolibarr=Intervention %s validerade
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Kundfaktura %s via e-post
 SupplierOrderSentByEMail=Leverantör beställa %s via e-post
 SupplierInvoiceSentByEMail=Leverantörsfaktura %s via e-post
 ShippingSentByEMail=Frakt %s via e-post
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s via e-post
 NewCompanyToDolibarr= Tredje part har skapats
 DateActionPlannedStart= Planerat startdatum
@@ -68,8 +69,8 @@ AgendaUrlOptions4=<b>logint = %s</b> att begränsa produktionen till handlande p
 AgendaUrlOptions5=<b>logind = %s</b> att begränsa produktionen till åtgärder som utförts av användaren <b>%s.</b>
 AgendaShowBirthdayEvents=Visa födelsedag kontakter
 AgendaHideBirthdayEvents=Dölj födelsedag kontakter
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Export kalender

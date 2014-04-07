@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Kullanıcılar & gruplar
 Module0Desc=Kullanıcı ve grup yönetimi
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Alış hesap. kodu
 AgendaSetup=Eylem ve gündem modülü kurulumu
 PasswordTogetVCalExport=Verme bağlantısı yetki anahtarı
 PastDelayVCalExport=Daha büyük eylemi dışaaktarma
-AGENDA_USE_EVENT_TYPE=Etkinlik türü kullan (Yapılandırma->Sözlük->llx_c_actioncomm menüsünden yönetilir)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Bu modül, telefon numaraları ardına bir simge eklemenizi sağlar. Bu simgeye tıkladığınızda aşağıda tanımladığınız belirli bir URL ile bir sunucuyu arar. Bu Dolibarr’dan bir çağrı merkezi sisteminin aranması için kullanılır, örneğin SIP sistemindeki bir telefon numarası aranır.
 ##### Point Of Sales (CashDesk) #####

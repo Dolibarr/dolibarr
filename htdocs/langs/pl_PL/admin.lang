@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Użytkownicy i grupy
 Module0Desc=Użytkownicy i grupy zarządzania
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Działania i porządku konfiguracji modułu
 PasswordTogetVCalExport=Klucz do wywozu zezwolić na link
 PastDelayVCalExport=Nie starsze niż eksport przypadku
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Moduł ten pozwala dodać ikonę po numer telefonu Dolibarr kontakty. Kliknięcie na tę ikonę, będzie połączenie z serveur z danego adresu URL można zdefiniować poniżej. Może to być wykorzystane, aby połączyć się z Call Center z systemu Dolibarr, że mogą dzwonić na numer telefonu SIP system przykład.
 ##### Point Of Sales (CashDesk) #####

@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Utilizatori & grupuri
 Module0Desc=Utilizatori şi grupuri de management
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Cont cumpărare. cod
 AgendaSetup=Acţiuni de ordine de zi şi de modul de configurare
 PasswordTogetVCalExport=Cheia de a autoriza export link
 PastDelayVCalExport=Nu de export eveniment mai în vârstă decât
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Acest modul permite să adăugaţi o pictogramă după numărul de telefon de contact Dolibarr. Un clic pe această pictogramă, se va apela un serveur cu un URL particular definiţi mai jos. Acest lucru poate fi utilizat pentru a apela un sistem de call center din Dolibarr care pot apela numărul de telefon pe un sistem de SIP, de exemplu.
 ##### Point Of Sales (CashDesk) #####

@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
-
 # Errors
 Error=Hata
 Errors=Hatalar
@@ -135,7 +134,7 @@ ErrorOpenIDSetupNotComplete=Dolibarr yapılandırma dosyasını OpenID kimlik do
 ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
 ErrorBadFormat=Hatalı biçim!
 ErrorPaymentDateLowerThanInvoiceDate=Ödeme tarihi (%s) fatura tarihinden (%s) önce bu faturada %s olamaz.
-
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.

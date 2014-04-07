@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Utilizadores e Grupos
 Module0Desc=Gestão de Utilizadores e Grupos
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Módulo configuração de acções e agenda
 PasswordTogetVCalExport=Chave de autorização para exportação do link vcal.
 PastDelayVCalExport=Não exportar evento com mais de
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite juntar um icon depois do número de telefone de contactos ERP/CRM. Um click no icon, liga  a um servidor com uma URL . Pode ser usado para ligar a um sistema call center, ligando a um número de telefone de um sistema SIP, por Exemplo.
 ##### Point Of Sales (CashDesk) #####

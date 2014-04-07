@@ -389,7 +389,6 @@ AllBarcodeReset=Visas svītrkodu vērtības dzēstas
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Lietotāji un grupas
 Module0Desc=Lietotāju un grupu vadība
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Iegādāties kontu. kods
 AgendaSetup=Notikumi un kārtības modulis uzstādīšana
 PasswordTogetVCalExport=Galvenais atļaut eksporta saiti
 PastDelayVCalExport=Neeksportē notikums vecāki par
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Šis modulis ļauj pievienot ikonu pēc tālruņa numuriem. Uz šīs ikonas, noklikšķiniet sauksim serveri ar īpašu URL, noteikt turpmāk. To var izmantot, lai izsauktu zvanu centrs sistēmu no Dolibarr kas var telefona numuru, uz SIP sistēmu, piemēram,.
 ##### Point Of Sales (CashDesk) #####

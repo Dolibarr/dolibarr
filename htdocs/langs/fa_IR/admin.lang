@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=& مجموعات المستخدمين
 Module0Desc=إدارة المستخدمين والمجموعات
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=جدول الأعمال وحدة الإعداد
 PasswordTogetVCalExport=مفتاح ربط تصدير تأذن
 PastDelayVCalExport=لا تصدر الحدث الأكبر من
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=هذا النموذج يسمح لإضافة رمز بعد رقم هاتف Dolibarr الاتصالات. وهناك اضغط على هذه الأيقونة ، سوف يطلب من أحد serveur معينة مع تحديد عنوان لكم أدناه. ويمكن استخدام هذه الكلمة لدعوة من مركز نظام Dolibarr التي يمكن الاتصال على رقم الهاتف هذا المسبار النظام على سبيل المثال.
 ##### Point Of Sales (CashDesk) #####

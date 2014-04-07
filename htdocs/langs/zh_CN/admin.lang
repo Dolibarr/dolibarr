@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=用户和组
 Module0Desc=用户和组管理
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=采购账户代码
 AgendaSetup=事件及行程模块设置
 PasswordTogetVCalExport=导出链接的授权密钥
 PastDelayVCalExport=不要导出事件，如果事件日期旧于
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=此模块可以在电话号码后添加图标点击此图标将根据您设置的URL呼叫服务器。您可以用此从Dolibarr中拨打呼叫中心系统，例如来通过SIP系统呼叫电话号码。
 ##### Point Of Sales (CashDesk) #####

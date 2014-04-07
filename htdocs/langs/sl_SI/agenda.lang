@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Aktivnosti
 ActionsArea=Področje aktivnosti (dogodki in naloge)
 Agenda= Program
@@ -10,7 +10,7 @@ LocalAgenda=Lokalni koledar
 AffectedTo= Se nanaša na
 DoneBy= Izdelal
 Events= Dogodki
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=Moji dogodki
 OtherEvents=Drugi dogodki
 ListOfActions=Seznam dogodkov
@@ -40,9 +40,10 @@ ActionsEvents= Dogodki, za katere bo Dolibarr avtomatsko kreiral aktivnost v pro
 PropalValidatedInDolibarr= Potrjena ponudba %s
 InvoiceValidatedInDolibarr= Potrjen račun %s
 InvoiceBackToDraftInDolibarr=Račun %s se vrača v status osnutka
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Potrjeno naročilo %s
 OrderApprovedInDolibarr=Naročite %s odobril
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Naročite %s segajo v stanju osnutka
 OrderCanceledInDolibarr=Naročite %s odpovedana
 InterventionValidatedInDolibarr=Potrjena intervencija %s
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Račun kupcu %s poslan po elektronski pošti
 SupplierOrderSentByEMail=Naročilo dobavitelju %s poslano po elektronski pošti
 SupplierInvoiceSentByEMail=Račun odbavitelja %s poslan po elektronski pošti
 ShippingSentByEMail=Pošiljka %s poslana po EMailu
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervencija %s poslana po EMailu
 NewCompanyToDolibarr= Kreiran partner
 DateActionPlannedStart= Planiran začetni datum
@@ -68,8 +69,8 @@ AgendaUrlOptions4=<b>logint=%s</b> za omejitev izhoda na aktivnosti, ki se nana�
 AgendaUrlOptions5=<b>logind=%s</b> za omejitev izhoda na aktivnosti uporabnika <b>%s</b>.
 AgendaShowBirthdayEvents=Prikaži rojstni dan kontakta
 AgendaHideBirthdayEvents=Skrij rojstni dan kontakta
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Izvoz koledar

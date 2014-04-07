@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=И группами пользователей
 Module0Desc=Пользователи и группы управления
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Акции и повестки модуль настройки
 PasswordTogetVCalExport=Ключевые разрешить экспорт ссылке
 PastDelayVCalExport=Не экспортировать события старше
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Этот модуль позволяет добавлять иконки после телефонный номер Dolibarr контакты. Нажмите на эту иконку, будем называть serveur с определенным URL вы указываете ниже. Это может быть использовано для вызова Call Center с системой Dolibarr, что можете позвонить по телефону SIP системы например.
 ##### Point Of Sales (CashDesk) #####

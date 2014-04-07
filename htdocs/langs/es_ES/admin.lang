@@ -389,7 +389,6 @@ AllBarcodeReset=Todos los códigos de barras han sido eliminados
 NoBarcodeNumberingTemplateDefined=No hay establecida una numeración en la configuración del módulo de códigos de barras. 
 NoRecordWithoutBarcodeDefined=Sin registros sin códigos de barras definidos.
 
-
 # Modules
 Module0Name=Usuarios y grupos
 Module0Desc=Gestión de usuarios y grupos
@@ -465,8 +464,8 @@ Module400Name=Proyectos
 Module400Desc=Gestión de los proyectos en los otros módulos
 Module410Name=Webcalendar
 Module410Desc=Interfaz con el calendario Webcalendar
-Module500Name=Special expenses (tax, social contributions, dividends)
-Module500Desc=Management of special expenses like taxes, social contribution, dividends and salaries
+Module500Name=Gastos especiales (impuestos, gastos sociales, dividendos)
+Module500Desc=Gestión de los gastos especiales como impuestos, gastos sociales, dividendos y salarios
 Module510Name=Salarios
 Module510Desc=Manejo de salarios de empleados y sus pagos
 Module600Name=Notificaciones
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Código contable compras
 AgendaSetup=Módulo configuración de acciones y agenda
 PasswordTogetVCalExport=Clave de autorización vcal export link
 PastDelayVCalExport=No exportar los eventos de más de
-AGENDA_USE_EVENT_TYPE=Usar los tipos de eventos (administrables desde Configuración->Diccionarios->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####

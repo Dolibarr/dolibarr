@@ -286,7 +286,7 @@ InvoiceNotChecked=Ninguna factura está seleccionada
 CloneInvoice=Clonar factura
 ConfirmCloneInvoice=¿Está seguro de querer clonar esta factura?
 DisabledBecauseReplacedInvoice=Acción desactivada porque es una factura reemplazada
-DescTaxAndDividendsArea=This area presents a summary of all payments made for special expenses. Only records with payment during the fixed year are included here.
+DescTaxAndDividendsArea=Esta área muestra un resumen de todos los pagos realizados en gastos especiales. Solamente se incluyen los registros del año fijado
 NbOfPayments=Nº de pagos
 SplitDiscount=Dividir el dto. en dos
 ConfirmSplitDiscount=¿Está seguro de querer dividir el descuento de <b>%s</b> %s en 2 descuentos más pequeños?
@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50/50
 PaymentConditionPT_5050=Pago 50%% por adelantado, 50%% a la entrega
 FixAmount=Importe fijo
 VarAmount=Importe variable (%% total)
-
 # PaymentType
 PaymentTypeVIR=Transferencia bancaria
 PaymentTypeShortVIR=Transferencia

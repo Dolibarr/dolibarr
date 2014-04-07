@@ -23,14 +23,14 @@ InvoiceProFormaAsk=Proforma arve
 InvoiceProFormaDesc=<b>Proforma arve</b> on õige arve kujuga, kuid ei oma raamatupidamislikku tähendust.
 InvoiceReplacement=Parandusarve
 InvoiceReplacementAsk=Parandusarve asendab arve
-InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and replace completely an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
+InvoiceReplacementDesc=<b>Asendusarvet</b> kasutatakse tasumata arve tühistamiseks ja asendamiseks. <br><br> Tähelepanu: ainult tasumata arveid saab asendada.  Kui asendatav arve pole juba suletud, siis see suletakse automaatselt ja märgitakse tühistatuks.
 InvoiceAvoir=Kreeditarve
 InvoiceAvoirAsk=Kreeditarve parandab arve
 InvoiceAvoirDesc=<b>Kreeditarve</b> on negatiivne arve, mida kasutatakse sellise probleemi lahendamiseks, kus arve summa ja reaalselt tasutud summa erinevad (kuna klient maksis ekslikult liiga palju või ei maksnud kõike ära, kuna ta tagastas mõned tooted).
 invoiceAvoirWithLines=Create Credit Note with lines from the origin invoice
 invoiceAvoirWithPaymentRestAmount=Create Credit Note with the amount of origin invoice payment's lake
 invoiceAvoirLineWithPaymentRestAmount=Credit Note amount of invoice payment's lake
-ReplaceInvoice=Asenda arve %s
+ReplaceInvoice=Asendusarve arve %s
 ReplacementInvoice=Asendusarve
 ReplacedByInvoice=Asendatud arvega %s
 ReplacementByInvoice=Asendatud arvega
@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% ette, 50%% üleandmisel
 FixAmount=Fikseeritud summa
 VarAmount=Muutuv summa (%% kogusummast)
-
 # PaymentType
 PaymentTypeVIR=Panga makse
 PaymentTypeShortVIR=Panga makse
