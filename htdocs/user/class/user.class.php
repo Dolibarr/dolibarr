@@ -8,7 +8,7 @@
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -488,6 +488,7 @@ class User extends CommonObject
 	 *  Clear all permissions array of user
 	 *
 	 *  @return	void
+	 *  @see	getrights
 	 */
 	function clearrights()
 	{
@@ -503,6 +504,7 @@ class User extends CommonObject
 	 *
 	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
 	 *	@return	void
+	 *  @see	clearrights
 	 */
 	function getrights($moduletag='')
 	{
@@ -1013,7 +1015,7 @@ class User extends CommonObject
 		{
 			$newpass=$this->setPassword($user,$this->pass);
 			if (is_numeric($newpass) && $newpass < 0) $result=-2;
-			
+
 			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -1494,7 +1496,7 @@ class User extends CommonObject
 		$outputlangs->load("users");
 		$outputlangs->load("other");
 
-		$subject = $outputlangs->trans("SubjectNewPassword");
+		$subject = $outputlangs->transnoentitiesnoconv("SubjectNewPassword");
 
 		// Define $urlwithroot
 		//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));

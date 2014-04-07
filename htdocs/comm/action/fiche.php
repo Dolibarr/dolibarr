@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -116,14 +116,14 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
 
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")).'</div>';
 	}
 
 	// Initialisation objet cactioncomm
@@ -131,7 +131,7 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
 	}
 	else
 	{
@@ -167,8 +167,7 @@ if ($action == 'add_action')
 	$actioncomm->datep = $datep;
 	$actioncomm->datef = $datef;
 	$actioncomm->percentage = $percentage;
-	$actioncomm->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) *
-60;
+	$actioncomm->duree=((float) (GETPOST('dureehour') * 60) + (float) GETPOST('dureemin')) * 60;
 
 	$usertodo=new User($db);
 	if ($_POST["affectedto"] > 0)
@@ -262,8 +261,8 @@ if ($action == 'add_action')
 		{
 			$db->rollback();
 			$langs->load("errors");
-			$error=$langs->trans($actioncomm->error);
-			setEventMessage($error,'errors');
+			if (! empty($actioncomm->error)) setEventMessage($langs->trans($actioncomm->error), 'errors');
+			if (count($actioncomm->errors)) setEventMessage($actioncomm->errors, 'errors');
 			$action = 'create';
 		}
 	}
@@ -864,7 +863,7 @@ if ($id > 0)
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			print $actioncomm->showOptionals($extrafields,'edit');
+			print $act->showOptionals($extrafields,'edit');
 
 		}
 

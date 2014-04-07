@@ -268,8 +268,8 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					{
 						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
 						// because assignement on task can be done only on contact of project.
-						// If assignement was done and after, was removed from contact of project, then we can hide the line. 
-						$showline=0;	 
+						// If assignement was done and after, was removed from contact of project, then we can hide the line.
+						$showline=0;
 					}
 				}
 			}
@@ -285,7 +285,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
-				// Project
 				if ($showproject)
 				{
 					print "<td>";
@@ -383,7 +382,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, 0, $showalsopublicproj);
+				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
 				$level--;
 				$total += $lines[$i]->duration;
 			}
@@ -394,7 +393,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if ($total>0)
+	if ($total>0 && $level==0)
 	{
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -404,9 +403,9 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
-		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total, 'allhourmin').'</td>';
 		print '<td></td>';
+		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
 	}
 
@@ -501,7 +500,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 
 			// Time spent
 			print '<td align="right">';
-			if ($lines[$i]->duration) 
+			if ($lines[$i]->duration)
 			{
 				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 				print convertSecondToTime($lines[$i]->duration,'allhourmin');

@@ -2,6 +2,47 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.5.1 compared to 3.5.0 *****
+Fix: Do not report trigger errors twice.
+Fix: Error when creating event was not reported.
+Fix: Bug of import of agenda when using https link
+Fix: Field nature not saved correctly
+Fix: Substitution of extra field was ko for order
+Fix: Bad translation of date format for pt_BR.
+Fix: priority field of agenda record is smallint.
+Fix: Missing loading of lang in some pages.
+Fix: Write note in invoice when using pos module.
+Fix: Link to paypal was invalid into email text.
+Fix: ref and date of supplier invoice.
+Fix: Check on bank account.
+Fix: Problem with file upload and download.
+Fix: Page load not ending when large number of thirdparies. We 
+     added option MAIN_DISABLE_AJAX_COMBOX to disable javascript
+     combo feature that is root cause of problem.
+Fix: [ bug #1231 ] PDF always generated in interventions
+Fix: Be sure there is no duplicate default rib.
+Fix: Enable extrafields for customer order, proposal and invoice lines. This feature
+     was developed for 3.5 but was disabled (hidden) because of a bug not possible to
+     fix enough quickly for 3.5.0 release. 
+Fix: user right on Holiday for month report nor working.
+Fix: [ bug #1250 ] "Supplier Ref. product" sidebar search box does not work
+Fix: Bad space in predefined messages. 
+Fix: [ bug #1256 ] Signature was not added for email sent from thirdparty page.
+Fix: Action event SHIPPING_VALIDATE is not implemented
+Fix: The customer code was set to uppercase when using numbering module leopard. We
+     must keep data safe of any change.
+Fix: [ bug #1291 ] Loading actions extrafields fails.
+Fix: [ bug #1123 ] Paid deposit invoices are always shown as partially paid when fully paid
+Fix: Corrected project contact types translation.
+Fix: [ bug #1206 ] PMP price is bad calculated.
+Fix: [ bug #520 ] Product statistics and detailed lists are wrong.
+Fix: [ bug #1240 ] traduction.
+Fix: [ bug #1238 ] When creating accompte with a %, free product are used for calculation.
+Fix: [ bug #1280 ] service with not end of date was tagged as expired.
+Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference
+New: Added es_CL language
+
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
 - New: Add hidden option BANK_DISABLE_DIRECT_INPUT.

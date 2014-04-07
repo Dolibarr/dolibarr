@@ -86,7 +86,8 @@ class box_graph_product_distribution extends ModeleBoxes
 		$param_showinvoicenb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
 		$param_showpropalnb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
 		$param_showordernb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
-		if (GETPOST('DOL_AUTOSET_COOKIE'))
+		$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 		{
 			$year=GETPOST($param_year,'int');
 			$showinvoicenb=GETPOST($param_showinvoicenb,'alpha');
@@ -115,9 +116,9 @@ class box_graph_product_distribution extends ModeleBoxes
 		if ($showpropalnb)  $nbofgraph++;
 		if ($showordernb)   $nbofgraph++;
 
-		$paramtitle=$langs->trans("Products").'/'.$langs->trans("Services");
-		if (empty($conf->produit->enabled)) $paramtitle=$langs->trans("Services");
-		if (empty($conf->service->enabled)) $paramtitle=$langs->trans("Products");
+		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->service->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Products");
 
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation

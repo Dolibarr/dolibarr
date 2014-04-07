@@ -190,10 +190,10 @@ if (! empty($conf->margin->enabled)) {
 			if ($user->rights->margins->creer)
 			{
 				if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-					echo '<td align="right"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
+					echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
 				}
 				elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
-					echo '<td align="right"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
+					echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
 				}
 			}
 			else
@@ -608,47 +608,63 @@ function checkFreeLine(e, npRate)
 		return false;
 	}
 
-	var np_price = 0;
-	if (remise.val().replace(',','.') != 100)
+	var price = 0;
+	remisejs=price2numjs(remise.val());
+
+	if (remisejs != 100)
 	{
+		bpjs=price2numjs(buying_price.val());
+		ratejs=price2numjs(rate.val());
+
 		if (npRate == "np_marginRate")
-			np_price = ((buying_price.val().replace(',','.') * (1 + rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
-		else {
-			if (npRate == "np_markRate")
-				np_price = ((buying_price.val().replace(',','.') / (1 - rate.val().replace(',','.') / 100)) / (1 - remise.val().replace(',','.') / 100));
-		}
+			price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
+		else if (npRate == "np_markRate")
+			price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 	}
-	$("input[name='price_ht']:first").val(formatFloat(np_price));
+	$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+
 	update_price('price_ht', 'price_ttc');
 
 	return true;
 }
-function roundFloat(num) {
-	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
-	var main_rounding = <?php echo min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT); ?>;
 
-    var amount = num.toString().replace(',','.');	// should be useless
-	var nbdec = 0;
-	var rounding = main_rounding;
-	var pos = amount.indexOf('.');
+
+
+/* Function similar to price2num in PHP */
+function price2numjs(num)
+{
+	<?php
+	$dec=','; $thousand=' ';
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
+	if ($thousand == 'None') $thousand='';
+	print "var dec='".$dec."'; var thousand='".$thousand."';\n";
+	?>
+
+	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+	var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	var amount = num.toString();
+
+	// rounding for unit price
+	var rounding = main_rounding_unit;
+	var pos = amount.indexOf(dec);
 	var decpart = '';
-	if (pos >= 0)
-	    decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
-	nbdec = decpart.length;
-	if (nbdec > rounding)
-	    rounding = nbdec;
-    // Si on depasse max
-    if (rounding > main_max_dec_shown)
-    {
-        rounding = main_max_dec_shown;
-    }
-  	//amount = parseFloat(amount) + (1 / Math.pow(100, rounding));  // to avoid floating-point errors
+	if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+	var nbdec = decpart.length;
+	if (nbdec > rounding) rounding = nbdec;
+    // If rounding higher than max shown
+    if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
+
+	if (thousand != ',' && thousand != '.') amount=amount.replace(',','.');
+	amount=amount.replace(' ','');			// To avoid spaces
+	amount=amount.replace(thousand,'');		// Replace of thousand before replace of dec to avoid pb if thousand is .
+	amount=amount.replace(dec,'.');
+
 	return parseFloat(amount).toFixed(rounding);
 }
 
-function formatFloat(num) {
-	return roundFloat(num).replace('.', ',');
-}
 <?php } ?>
 });
 </script>

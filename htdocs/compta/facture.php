@@ -578,14 +578,21 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes')
 // Convertir en reduc
 else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->rights->facture->creer)
 {
-	$db->begin();
-
 	$object->fetch($id);
 	$object->fetch_thirdparty();
 	$object->fetch_lines();
 
-	if (! $object->paye)	// protection against multiple submit
+	// Check if there is already a discount (protection to avoid duplicate creation when resubmit post)
+	$discountcheck=new DiscountAbsolute($db);
+	$result=$discountcheck->fetch(0,$object->id);
+
+	$canconvert=0;
+	if ($object->type == 3 && $object->paye == 1 && empty($discountcheck->id)) $canconvert=1;	// we can convert deposit into discount if deposit is payed completely and not already converted (see real condition into condition used to show button converttoreduc)
+	if ($object->type == 2 && $object->paye == 0 && empty($discountcheck->id)) $canconvert=1;	// we can convert credit note into discount if credit note is not payed back and amount of payment is 0 (see real condition into condition used to show button converttoreduc)
+	if ($canconvert)
 	{
+		$db->begin();
+
 		// Boucle sur chaque taux de tva
 		$i=0;
 		foreach($object->lines as $line)
@@ -601,8 +608,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 		if ($object->type == 2)     $discount->description='(CREDIT_NOTE)';
 		elseif ($object->type == 3) $discount->description='(DEPOSIT)';
 		else {
-			$this->error="CantConvertToReducAnInvoiceOfThisType";
-			return -1;
+			setEventMessage($langs->trans('CantConvertToReducAnInvoiceOfThisType'),'errors');
 		}
 		$discount->tva_tx=abs($object->total_ttc);
 		$discount->fk_soc=$object->socid;
@@ -617,6 +623,7 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			$discount->tva_tx=abs($tva_tx);
 
 			$result=$discount->create($user);
+
 			if ($result < 0)
 			{
 				$error++;
@@ -624,24 +631,24 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			}
 		}
 
-		if (! $error)
+		if (empty($error))
 		{
 			// Classe facture
 			$result=$object->set_paid($user);
-			if ($result > 0)
+			if ($result >= 0)
 			{
 				//$mesgs[]='OK'.$discount->id;
 				$db->commit();
 			}
 			else
 			{
-				$mesgs[]='<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error,'errors');
 				$db->rollback();
 			}
 		}
 		else
 		{
-			$mesgs[]='<div class="error">'.$discount->error.'</div>';
+			setEventMessage($discount->error,'errors');
 			$db->rollback();
 		}
 	}
@@ -900,10 +907,14 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							{
 								$totalamount=0;
 								$lines = $srcobject->lines;
+
 								$numlines=count($lines);
 								for ($i=0; $i<$numlines; $i++)
 								{
-									$totalamount += $lines[$i]->total_ht;
+									$qualified=1;
+									if (empty($lines[$i]->qty)) $qualified=0;	// We discard qty=0, it is an option
+									if (! empty($lines[$i]->special_code)) $qualified=0;	// We discard special_code (frais port, ecotaxe, option, ...)
+									if ($qualified) $totalamount += $lines[$i]->total_ht;
 								}
 
 								if ($totalamount!=0)
@@ -963,7 +974,6 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 							$fk_parent_line=0;
 							$num=count($lines);
-
 							for ($i=0;$i<$num;$i++)
 							{
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
@@ -1145,7 +1155,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = '';
 		$tva_tx = '';
 	}
-    if (GETPOST('usenewaddlineform')) {
+    if (GETPOST('usenewaddlineform')) {	// TODO Remove this
         $idprod=GETPOST('idprod', 'int');
         $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
         $price_ht = GETPOST('price_ht');
@@ -1157,13 +1167,13 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
 	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
-	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
 	//Unset extrafield
 	if (is_array($extralabelsline))
 	{
 		// Get extra fields
 		foreach ($extralabelsline as $key => $value) {
-			unset($_POST["options_".$key]);
+			unset($_POST["options_".$key.$predef]);
 		}
 	}
 
@@ -1324,8 +1334,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
-		$buyingprice=(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
+		$fournprice=price2num(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
+		$buyingprice=price2num(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -1446,8 +1456,8 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 	$localtax2_rate=get_localtax($vat_rate,2,$object->client);
 
 	// Add buying price
-	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+	$fournprice=price2num(GETPOST('fournprice')?GETPOST('fournprice'):'');
+	$buyingprice=price2num(GETPOST('buying_price')?GETPOST('buying_price'):'');
 
 	//Extrafields
 	$extrafieldsline = new ExtraFields($db);
@@ -1977,9 +1987,10 @@ if ($action == 'update_extras')
 }
 
 
+
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formother=new FormOther($db);
@@ -2182,6 +2193,7 @@ if ($action == 'create')
 		$options.='</option>';
 	}
 
+	// Show link for credit note
 	$facids=$facturestatic->list_qualified_avoir_invoices($soc->id);
 	if ($facids < 0)
 	{
@@ -3589,7 +3601,10 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Reopen a standard paid invoice
-			if (($object->type == 0 || $object->type == 1) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
+			if ((($object->type == 0 || $object->type == 1)
+				|| ($object->type == 2 && empty($discount->id))
+				|| ($object->type == 3 && empty($discount->id)))
+				 && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 			{
 				if (! $objectidnext && $object->close_code != 'replaced')	// Not replaced by another invoice
 				{
@@ -3676,23 +3691,32 @@ else if ($id > 0 || ! empty($ref))
 				// For credit note only
 				if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a></div>';
+					if ($resteapayer == 0)
+					{
+						print '<div class="inline-block divButAction"><span class="butActionRefused" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPaymentBack').'</span></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a></div>';
+					}
 				}
+
 				// For credit note
 				if ($object->type == 2 && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == 3 && $object->statut == 1 && $resteapayer == 0 && $user->rights->facture->creer)
+				if ($object->type == 3 && $object->paye == 1 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
 			}
 
-			// Classify paid (if not deposit and not credit note. Such invoice are "converted")
-			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement &&
-				(($object->type != 2 && $object->type != 3 && $resteapayer <= 0) || ($object->type == 2 && $resteapayer >= 0)) )
+			// Classify paid
+			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != 2 && $object->type != 3 && $resteapayer <= 0) || ($object->type == 2 && $resteapayer >= 0))
+				|| ($object->type == 3 && $object->paye == 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
+			)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
 			}
@@ -3917,7 +3941,10 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->frommail = $user->email;
 		$formmail->withfrom=1;
 		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)
+		{
+			$liste[$key]=$value;
+		}
 		$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;

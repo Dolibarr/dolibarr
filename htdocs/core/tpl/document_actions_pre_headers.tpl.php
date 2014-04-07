@@ -16,6 +16,7 @@
  * or see http://www.gnu.org/
  */
 
+// Variable $upload_dir must be defined when entering here
 
 // Send file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC)) {
@@ -73,7 +74,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
                 setEventMessage($langs->trans("ErrorFailedToDeleteLink", $link->label), 'errors');
             }
         }
-        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+        header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id.($withproject?'&withproject=1':''));
         exit;
     }
 }

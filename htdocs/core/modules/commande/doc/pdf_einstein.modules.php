@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
@@ -109,7 +109,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$this->posxdiscount=162;
 		$this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
-		$this->posxpicture=$this->posxtva - 16;	// width of images
+		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$this->posxpicture-=20;
@@ -152,6 +152,7 @@ class pdf_einstein extends ModelePDFCommandes
 		$outputlangs->load("bills");
 		$outputlangs->load("products");
 		$outputlangs->load("orders");
+		$outputlangs->load("deliveries");
 
 		if ($conf->commande->dir_output)
 		{
@@ -226,6 +227,15 @@ class pdf_einstein extends ModelePDFCommandes
 					{
 						$this->atleastonediscount++;
 					}
+				}
+				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
 				}
 
 				// New page
@@ -303,7 +313,7 @@ class pdf_einstein extends ModelePDFCommandes
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pagenb+1);
+								$pdf->setPage($pageposafter+1);
 							}
 						}
 						else
@@ -399,6 +409,7 @@ class pdf_einstein extends ModelePDFCommandes
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -582,6 +593,62 @@ class pdf_einstein extends ModelePDFCommandes
             $posy=$pdf->GetY()+1;
         }
 		*/
+		if (! empty($object->date_livraison))
+		{
+            $pdf->SetXY($this->marge_gauche, $posy);
+            $pdf->SetFont('','B', $default_font_size - 2);
+            $text=$outputlangs->transnoentities("DeliveryDate").':';
+            $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
+
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+            $text=dol_print_date($object->date_livraison,'day','',$outputlangs);
+            $pdf->MultiCell(80, 3, $text, 0, 'L', 0);
+
+            $posy=$pdf->GetY()+1;
+		}
+		/* TODO
+		else if (! empty($object->availability_code))
+		{
+            $pdf->SetXY($this->marge_gauche, $posy);
+            $pdf->SetTextColor(200,0,0);
+            $pdf->SetFont('','B', $default_font_size - 2);
+            $pdf->MultiCell(80, 3, $outputlangs->transnoentities("AvailabilityPeriod").': '.,0,'L',0);
+            $pdf->SetTextColor(0,0,0);
+
+            $posy=$pdf->GetY()+1;
+		}*/
+
+	    // Show shipping date
+        if ($object->date_livraison)
+		{
+            $outputlangs->load("sendings");
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("DateDeliveryPlanned").':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$dlp=dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true);
+			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
+
+            $posy=$pdf->GetY()+1;
+		}
+        elseif ($object->availability_code || $object->availability)    // Show availability conditions
+		{
+			$pdf->SetFont('','B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("AvailabilityPeriod").':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
+			$pdf->SetTextColor(0,0,0);
+			$pdf->SetFont('','', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$lib_availability=$outputlangs->transnoentities("AvailabilityType".$object->availability_code)!=('AvailabilityType'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityType".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
+			$lib_availability=str_replace('\n',"\n",$lib_availability);
+			$pdf->MultiCell(80, 4, $lib_availability, 0, 'L');
+
+			$posy=$pdf->GetY()+1;
+		}
 
       	// Show payment mode
         if ($object->mode_reglement_code

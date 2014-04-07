@@ -338,7 +338,7 @@ class Product extends CommonObject
 				$sql.= ", ".$this->status;
 				$sql.= ", ".$this->status_buy;
 				$sql.= ", '".$this->canvas."'";
-				$sql.= ", ".((empty($this->finished) || $this->finished < 0)?'null':$this->finished);
+				$sql.= ", ".((! isset($this->finished) || $this->finished < 0 || $this->finished == '') ? 'null' : (int) $this->finished);
 				$sql.= ")";
 
 				dol_syslog(get_class($this)."::Create sql=".$sql);
@@ -474,7 +474,7 @@ class Product extends CommonObject
 
 		$sql.= ", tosell = " . $this->status;
 		$sql.= ", tobuy = " . $this->status_buy;
-		$sql.= ", finished = " . ((empty($this->finished) || $this->finished < 0) ? "null" : $this->finished);
+		$sql.= ", finished = " . ((! isset($this->finished) || $this->finished < 0) ? "null" : (int) $this->finished);
 		$sql.= ", weight = " . ($this->weight!='' ? "'".$this->weight."'" : 'null');
 		$sql.= ", weight_units = " . ($this->weight_units!='' ? "'".$this->weight_units."'": 'null');
 		$sql.= ", length = " . ($this->length!='' ? "'".$this->length."'" : 'null');
@@ -1351,7 +1351,7 @@ class Product extends CommonObject
 				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
 				//$res=$this->load_stock();
 				//return $res;
-				
+
 				return 1;
 			}
 			else

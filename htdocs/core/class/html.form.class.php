@@ -2364,7 +2364,7 @@ class Form
      *
      *  @param	string	$selected          Id account pre-selected
      *  @param  string	$htmlname          Name of select zone
-     *  @param  int		$statut            Status of searched accounts (0=open, 1=closed)
+     *  @param  int		$statut            Status of searched accounts (0=open, 1=closed, 2=both)
      *  @param  string	$filtre            To filter list
      *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *  @param  string	$moreattrib        To add more attribute on select
@@ -2376,10 +2376,10 @@ class Form
 
         $langs->load("admin");
 
-        $sql = "SELECT rowid, label, bank";
+        $sql = "SELECT rowid, label, bank, clos as status";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-        $sql.= " WHERE clos = '".$statut."'";
-        $sql.= " AND entity IN (".getEntity('bank_account', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
+        if ($statut != 2) $sql.= " AND clos = '".$statut."'";
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY label";
 
@@ -2409,6 +2409,7 @@ class Form
                         print '<option value="'.$obj->rowid.'">';
                     }
                     print $obj->label;
+                    if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;
                 }

@@ -88,17 +88,24 @@ if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->
 
 else if ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer)
 {
-    $object->fetch($id);
-    $result = $object->close_line($user, GETPOST('ligne'), GETPOST('dateend'), urldecode(GETPOST('comment')));
-
-    if ($result > 0)
-    {
-        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-        exit;
-    }
-    else {
-        $mesg=$object->error;
-    }
+	if (! GETPOST('dateend'))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")),'errors');
+	}
+	if (! $error)
+	{
+	    $object->fetch($id);
+	    $result = $object->close_line($user, GETPOST('ligne'), GETPOST('dateend'), urldecode(GETPOST('comment')));
+	    if ($result > 0)
+	    {
+	        header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+	        exit;
+	    }
+	    else {
+	        $mesg=$object->error;
+	    }
+	}
 }
 
 // Si ajout champ produit predefini
@@ -241,7 +248,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	                for ($i=0;$i<$num;$i++)
 	                {
 	                    $product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
-	                    
+
 						if ($product_type == 1) { //only services	// TODO Exclude also deee
 							// service prédéfini
 							if ($lines[$i]->fk_product > 0)
@@ -929,7 +936,7 @@ else
     {
         $result=$object->fetch($id,$ref);
         if ($result < 0) dol_print_error($db,$object->error);
-        $result=$object->fetch_lines();
+        $result=$object->fetch_lines();	// This also init $this->nbofserviceswait, $this->nbofservicesopened, $this->nbofservicesexpired=, $this->nbofservicesclosed
         if ($result < 0) dol_print_error($db,$object->error);
         $result=$object->fetch_thirdparty();
         if ($result < 0) dol_print_error($db,$object->error);
@@ -1514,7 +1521,7 @@ else
                     if ($objp->statut == 4)
                     {
                         print $langs->trans("DateEndReal").' ';
-                        $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline");
+                        $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1);
                     }
                 }
                 print '</td>';

@@ -123,6 +123,10 @@ BankCode=Bank code
 DeskCode=Desk code
 BankAccountNumber=Account number
 BankAccountNumberKey=Key
+SpecialCode=Special code
+ExportStringFilter=%% allows replacing one or more characters in the text
+ExportDateFilter='AAAA' 'AAAAMM' 'AAAAMMJJ': filters by one year/month/day<br>'AAAA+AAAA' 'AAAAMM+AAAAMM' 'AAAAMMJJ+AAAAMMJJ': filters over a range of years/months/days<br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ': filters on the following years/months/days<br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ': filters on the previous years/months/days
+ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
 FilterableFields=Champs Filtrables

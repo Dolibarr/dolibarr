@@ -81,6 +81,12 @@ class box_graph_propales_permonth extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
+		$dir=''; 	// We don't need a path because image file will not be saved into disk
+		$prefix='';
+		$socid=0;
+		if ($user->societe_id) $socid=$user->societe_id;
+		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
+
 		if ($user->rights->propal->lire)
 		{
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -89,7 +95,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
-			if (GETPOST('DOL_AUTOSET_COOKIE'))
+			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 			{
 				$endyear=GETPOST($param_year,'int');
 				$shownb=GETPOST($param_shownb,'alpha');
@@ -120,9 +127,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
-				$filenamenb = $dir."/propalsnbinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$year.'.png';
+				$filenamenb = $dir."/".$prefix."propalsnbinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$endyear.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -161,9 +168,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 				//$datatype2 = array('lines','bars');
 
-				$filenamenb = $dir."/propalsamountinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$year.'.png';
+				$filenamenb = $dir."/".$prefix."propalsamountinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();

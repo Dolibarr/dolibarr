@@ -1038,7 +1038,6 @@ div.tabsAction {
 
 
 a.tabTitle {
-    background: <? echo empty($dol_use_jmobile)?'#5088A9':'auto'; ?>;
     color: #888;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
@@ -1046,9 +1045,6 @@ a.tabTitle {
     margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
-    border-<?php print $right; ?>: 1px solid #555555;
-    border-<?php print $left; ?>: 1px solid #D8D8D8;
-    border-top: 1px solid #D8D8D8;
 }
 
 a.tab:link {

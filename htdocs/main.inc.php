@@ -261,7 +261,7 @@ if (! empty($conf->file->main_force_https))
 }
 
 
-// Loading of additional presentation includes 
+// Loading of additional presentation includes
 if (! defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';	    // Need 660ko memory (800ko in 2.2)
 if (! defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';	// Need 22ko memory
 
@@ -1084,7 +1084,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tiptip/jquery.tipTip.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             // jQuery Layout
-            if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
+            if (empty($conf->dol_use_jmobile) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT) || defined('REQUIRE_JQUERY_LAYOUT'))
             {
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/layout/jquery.layout-latest.js'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
@@ -1202,14 +1202,19 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor=DOL_URL_ROOT.'/includes/ckeditor/';
-                if (constant('JS_CKEDITOR')) $pathckeditor=JS_CKEDITOR;    // To use external ckeditor js lib
+                $jsckeditor='ckeditor_basic.js';
+                if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
+                {
+                	$pathckeditor=constant('JS_CKEDITOR');
+                	$jsckeditor='ckeditor.js';
+                }
                 print '<script type="text/javascript">';
                 print 'var CKEDITOR_BASEPATH = \''.$pathckeditor.'\';'."\n";
                 print 'var ckeditorConfig = \''.dol_buildpath($themesubdir.'/theme/'.$conf->theme.'/ckeditor/config.js',1).'\';'."\n";		// $themesubdir='' in standard usage
                 print 'var ckeditorFilebrowserBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print 'var ckeditorFilebrowserImageBrowseUrl = \''.DOL_URL_ROOT.'/core/filemanagerdol/browser/default/browser.php?Type=Image&Connector='.DOL_URL_ROOT.'/core/filemanagerdol/connectors/php/connector.php\';'."\n";
                 print '</script>'."\n";
-                print '<script type="text/javascript" src="'.$pathckeditor.'ckeditor_basic.js'.($ext?'?'.$ext:'').'"></script>'."\n";
+                print '<script type="text/javascript" src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
             }
 
             // Global js function
@@ -1293,7 +1298,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     if ($conf->use_javascript_ajax)
     {
-        if (! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
+        if (empty($conf->dol_use_jmobile) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
         {
             print '<script type="text/javascript">
 				jQuery(document).ready(function () {
@@ -1347,7 +1352,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     		</script>';
         }
 
-        if (! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION))
+        /* This make menu bugged
+        if ($conf->use_javascript_ajax && ! empty($conf->global->MAIN_MENU_USE_JQUERY_ACCORDION) && empty($conf->dol_use_jmobile))
         {
             print "\n".'<script type="text/javascript">
 					jQuery(document).ready(function () {
@@ -1360,7 +1366,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 						});
 					});
 					</script>';
-        }
+        } */
 
         // Wrapper to show tooltips
         print "\n".'<script type="text/javascript">
@@ -1377,7 +1383,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
      */
     print "\n".'<!-- Start top horizontal -->'."\n";
 
-    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
+    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div class="ui-layout-north"> <!-- Begin top layout -->'."\n";
 
     if (empty($conf->dol_hide_topmenu))
     {
@@ -1496,11 +1502,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    unset($form);
     }
 
-    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
+    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "</div><!-- End top layout -->\n";
 	print '<div style="clear: both;"></div>';
     print "<!-- End top horizontal menu -->\n\n";
 
-    if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
+    if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
 }
 
 
@@ -1530,7 +1536,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    // Instantiate hooks of thirdparty module
 	    $hookmanager->initHooks(array('searchform','leftblock'));
 
-    	if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
+    	if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
 		else print '<div id="id-left">';
 
 	    print "\n";
@@ -1708,8 +1714,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    $leftblock=$hookmanager->executeHooks('printLeftBlock',$parameters);    // Note that $action and $object may have been modified by some hooks
 	    print $leftblock;
 
-	    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
-		//XXX	    else print '</td>';
+	    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
 	    else print '</div>';	// End div id="id-left"
     }
 
@@ -1731,12 +1736,10 @@ function main_area($title='')
 {
     global $conf, $langs;
 
-    if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
+    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
     {
         print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-        //print '<table width="100%" class="notopnoleftnoright" summary="centermenutable" id="undertopmenu"><tr>';
     }
-	//XXX print '<td valign="top">'."\n";
 	if (empty($conf->dol_hide_leftmenu)) print '<div id="id-right">';
 
     print "\n";
@@ -1864,8 +1867,7 @@ if (! function_exists("llxFooter"))
         print '</div> <!-- end div class="fiche" -->'."\n";
         if (! empty($conf->dol_use_jmobile)) print '</div>';	// end data-role="page"
 
-		//XXX print "\n".'</td></tr></table> <!-- end right area -->'."\n";
-        if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
+        if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
 		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
 
         print "\n";

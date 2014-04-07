@@ -172,6 +172,7 @@ class DolEditor
             	//$skin='office2003';
             	//$skin='v2';
             	$skin='kama';
+                if (constant('JS_CKEDITOR')) $skin='moono';		// To use external ckeditor 4 js lib
 
             	$htmlencode_force=preg_match('/_encoded$/',$this->toolbarname)?'true':'false';
 

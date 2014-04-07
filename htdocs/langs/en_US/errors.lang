@@ -62,6 +62,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
 ErrorExportDuplicateProfil=This profil name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.

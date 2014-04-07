@@ -1302,7 +1302,7 @@ span.tabspan {
 
 div.divButAction { margin-bottom: 1.4em; }
 
-.butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionRefused, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	font-family: <?php print $fontlist ?>;
 	font-weight: bold;
 	/*background: url(<?php echo dol_buildpath($path.'/theme/bureau2crea/img/bg_btnBlue.jpg',1); ?>) repeat-x;*/
@@ -1345,7 +1345,7 @@ div.divButAction { margin-bottom: 1.4em; }
 
 .butActionRefused {
     background: #FFe7ec;
-	color: #666;
+	color: #aaa !important;
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
@@ -1602,6 +1602,7 @@ tr.pair td.nohover {
     -webkit-box-shadow: 4px 4px 4px #DDD;
     box-shadow: 4px 4px 4px #DDD;
     margin-bottom: 8px !important;*/
+    background: #FFFFFF;
     border: 1px solid #AAA;
     text-align: center;
     border-radius: 5px;
