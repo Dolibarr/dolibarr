@@ -289,8 +289,9 @@ fi
 # Restart mysql
 echo Restart mysql
 if [ -f /etc/init.d/mysqld ]; then
-  /etc/init.d/mysqld restart
-else
+  /sbin/service mysqld restart
+fi
+if [ -f /etc/init.d/mysql ]; then
   /sbin/service mysql restart
 fi
 

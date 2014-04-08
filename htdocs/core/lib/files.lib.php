@@ -510,6 +510,12 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	    return -3;
 	}
 	if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+	if (empty($newmask))	// This should no happen
+	{
+		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+		$newmask='0664';	
+	}
+	
 	@chmod($newpathofdestfile, octdec($newmask));
 
 	return 1;

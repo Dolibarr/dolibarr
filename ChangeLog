@@ -2,6 +2,48 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.2 compared to 3.5.1 *****
+Fix: Can't add user for a task.
+Fix: Autoselect of warehouse if there is only one warehouse.
+Fix: Install of odt template for project and tasks.
+Fix: [ bug #1318 ] Problem with enter key when adding an existing
+     product to a customer invoice.
+Fix: [ bug #1307 ] Quotes get removed from several inputs.
+Fix: [ bug #1317 ] Removing a category does not remove all child categories
+Fix: [ bug #1312 ] Call to undefined function _()
+Fix: Restore build for obs and launchpad.
+Fix: deleting files into backup system tools.
+Fix: Dump using php not not include lock on tables that are deleted.
+Fix: Fixed a problem with bank accounts sharing across entities.
+Fix: fields into group by of sql requests for module margins must be
+     same than fields into select.
+Fix: When select_date is called with '' as preselected date,
+     automatic user date was not correctly et (We must set a date into PHP
+     server timezone area)
+Fix: First param of select_date must always be forged with a dolibarr
+     date function and not time().
+Fix: fix can't add line with product in supplier order
+Fix: [bug #1309]   
+Fix: Solve pb of too many embedded tables     
+Fix: [ bug #1306 ] Fatal error when adding an external calendar
+Fix: A fix to manage automatic creation of code for import.
+Fix: Try to add code to provide easy way to fix warning on timezone not
+     defined.
+Fix: Several fix into workflow/condition for invoice payments or convert
+     into discount.
+Fix: Option MAIN_PDF_DASH_BETWEEN_LINES was not working when tcpdf was
+     making a pagebreak higher than 2 pages.     
+Fix: form to add images should not show link form.
+Fix: Correction when adding order line with price as '0'.
+Fix: [ bug #1283 ] ROUGET Shipment PDF.
+Fix: [ bug #1300 ]
+Fix: Miscellaneous problems on task tabs (withproject parameter lost and
+     download fails).
+Fix: Avoid home project page to hung when too many tasks opened.
+Fix: bug #1295: Error when creating an agenda extrafield with a number as reference
+Fix: Translation of number for pt_PT.
+Fix: Error on ajax_constantonoff function.
+     
 
 ***** ChangeLog for 3.5.1 compared to 3.5.0 *****
 Fix: Do not report trigger errors twice.
@@ -40,8 +82,11 @@ Fix: [ bug #520 ] Product statistics and detailed lists are wrong.
 Fix: [ bug #1240 ] traduction.
 Fix: [ bug #1238 ] When creating accompte with a %, free product are used for calculation.
 Fix: [ bug #1280 ] service with not end of date was tagged as expired.
-Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference
+Fix: [ bug #1295 ] Error when creating an agenda extrafield with a number as reference.
+Fix: [ bug #1306 ] Fatal error when adding an external calendar.
 New: Added es_CL language
+Fix: Margin tabs bad data show
+Fix: [ bug #1318 ] Problem with enter key when adding an existing product to a customer invoice.
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
@@ -187,6 +232,8 @@ Fix: Warning into bank conciliation feature.
 Fix: Bad get of localtaxes into contracts add lines.
 Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
+Fix: Agenda and Banks module were not working with multicompany module
+Fix: [ bug #1317 ] Removing a category does not remove all child categories
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).
