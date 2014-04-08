@@ -214,7 +214,7 @@ foreach ($listofreferent as $key => $value)
 		print '<br>';
 
 		print_titre($langs->trans($title));
-		
+
 		$selectList=$formproject->select_element($tablename);
 		if ($selectList)
 		{
@@ -223,7 +223,7 @@ foreach ($listofreferent as $key => $value)
 			print '<input type="hidden" name="action" value="addelement">';
 			print '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
 			print '<td>'.$selectList.'</td>';
-			print '<td><input type="submit" class="button" value="'.$langs->trans("AddElement").'"></td>';
+			print '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
 			print '</tr></table>';
 			print '</form>';
 		}
