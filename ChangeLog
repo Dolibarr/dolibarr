@@ -43,6 +43,7 @@ Fix: Avoid home project page to hung when too many tasks opened.
 Fix: bug #1295: Error when creating an agenda extrafield with a number as reference
 Fix: Translation of number for pt_PT.
 Fix: Error on ajax_constantonoff function.
+Fix: [ bug #1323 ] problème pour générer un odt depuis les taches dans projet.
      
 
 ***** ChangeLog for 3.5.1 compared to 3.5.0 *****
