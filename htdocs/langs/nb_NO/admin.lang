@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Bruker & grupper
 Module0Desc=Behandling av brukere og grupper
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Instillinger for modulen hendelser og agenda
 PasswordTogetVCalExport=Nøkkel for å autorisere eksportlenke
 PastDelayVCalExport=Må ikke eksportere hendelse eldre enn
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Denne modulen gir et telefonikon etter telefonnummeret til kontaktpersoner. Et trykk på dette ikonet vil kalle opp en egen server med en URL som du definerer nedenfor. Du kan da få et system som ringer opp kontaktpersonen automatisk for deg, for eksempel på et SIP-system.
 ##### Point Of Sales (CashDesk) #####

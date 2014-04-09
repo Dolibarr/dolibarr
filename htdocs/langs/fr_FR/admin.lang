@@ -389,7 +389,6 @@ AllBarcodeReset=Tous les codes-barre ont été supprimés
 NoBarcodeNumberingTemplateDefined=Aucun modèle de numérotation de code-barre n'a été activé dans la configuration du module code-barre.
 NoRecordWithoutBarcodeDefined=Aucun enregistrement sans code-barre défini.
 
-
 # Modules
 Module0Name=Utilisateurs & groupes
 Module0Desc=Gestion des utilisateurs et des groupes
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Code comptable achat
 AgendaSetup=Configuration du module actions et agenda
 PasswordTogetVCalExport=Clé pour autoriser le lien d'exportation
 PastDelayVCalExport=Ne pas exporter les événements de plus de
-AGENDA_USE_EVENT_TYPE=Utilisez les types d'événements (gérés dans Configuration->Dictionnaires->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Ce module permet d'ajouter la possibilité de cliquer sur les numéros de téléphones. Un clic provoque l'appel de l'URL définie dans ce paramétrage. Ceci permet de lancer des appels à un serveur de téléphonie depuis Dolibarr qui peut alors composer le numéro sur un système SIP par exemple.
 ##### Point Of Sales (CashDesk) #####

@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=Κανένα σφάλμα
-
 # Errors
 Error=Σφάλμα
 Errors=Λάθη
@@ -26,11 +25,11 @@ ErrorFromToAccountsMustDiffers=Πηγή και τους στόχους των τ
 ErrorBadThirdPartyName=Bad αξία για τους υπηκόους τρίτων όνομα κόμματος
 ErrorProdIdIsMandatory=Το %s είναι υποχρεωτικό
 ErrorBadCustomerCodeSyntax=Λάθος σύνταξη για τον κωδικό πελάτη
-# ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code
 ErrorCustomerCodeRequired=Κωδικός πελάτη απαιτείτε
-# ErrorBarCodeRequired=Bar code required
+ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Ο κωδικός πελάτη που έχει ήδη χρησιμοποιηθεί
-# ErrorBarCodeAlreadyUsed=Bar code already used
+ErrorBarCodeAlreadyUsed=Bar code already used
 ErrorPrefixRequired=Απαιτείται Πρόθεμα
 ErrorUrlNotValid=Η διεύθυνση της ιστοσελίδας είναι λανθασμένη
 ErrorBadSupplierCodeSyntax=Bad σύνταξη για τον κωδικό προμηθευτή
@@ -40,7 +39,7 @@ ErrorBadParameters=Λάθος παράμετρος
 ErrorBadValueForParameter=%s Λάθος τιμή για την παράμετρο λάθος %s
 ErrorBadImageFormat=Το αρχείο εικόνας δεν έχει μια μορφή που υποστηρίζεται
 ErrorBadDateFormat=«%s« Αξία έχει λάθος μορφή ημερομηνίας
-# ErrorWrongDate=Date is not correct!
+ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Αποτυχία εγγραφής στο %s κατάλογο
 ErrorFoundBadEmailInFile=Βρέθηκαν εσφαλμένη σύνταξη e-mail για %s γραμμές στο αρχείο (%s γραμμή παράδειγμα με e-mail = %s)
 ErrorUserCannotBeDelete=Ο χρήστης μπορεί να διαγραφεί. Μπορεί να συνδέεται με Dolibarr οντότητες.
@@ -66,16 +65,16 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> πεδίου δεν πρέπει να περιέχει ειδικούς χαρακτήρες.
-# ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=Δεν λογιστική μονάδα ενεργοποιηθεί
-# ErrorExportDuplicateProfil=This profile name already exists for this export set.
+ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP αντιστοίχιση δεν είναι πλήρης.
 ErrorLDAPMakeManualTest=Ένα αρχείο. Ldif έχει δημιουργηθεί σε %s κατάλογο. Προσπαθήστε να το φορτώσετε χειροκίνητα από την γραμμή εντολών για να έχουν περισσότερες πληροφορίες σχετικά με τα σφάλματα.
 ErrorCantSaveADoneUserWithZeroPercentage=Δεν μπορεί να σώσει μια ενέργεια με &quot;δεν statut ξεκίνησε&quot; αν πεδίο &quot;γίνεται από&quot; είναι επίσης γεμάτη.
 ErrorRefAlreadyExists=Κωδικός που χρησιμοποιείται για τη δημιουργία ήδη υπάρχει.
 ErrorPleaseTypeBankTransactionReportName=Πληκτρολογείστε όνομα απόδειξη της τράπεζας όπου συναλλαγής αναφέρεται (Format YYYYMM ή ΕΕΕΕΜΜΗΗ)
 ErrorRecordHasChildren=Απέτυχε η διαγραφή εγγραφών, δεδομένου ότι έχει κάποια παιδιού.
-# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
+ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Η Javascript πρέπει να είναι άτομα με ειδικές ανάγκες να μην έχουν αυτή τη δυνατότητα εργασίας. Για να ενεργοποιήσετε / απενεργοποιήσετε το Javascript, πηγαίνετε στο μενού Home-> Setup-> Εμφάνιση.
 ErrorPasswordsMustMatch=Και οι δύο πληκτρολογήσει τους κωδικούς πρόσβασης πρέπει να ταιριάζουν μεταξύ τους
 ErrorContactEMail=Ένα τεχνικό σφάλμα. Παρακαλούμε, επικοινωνήστε με τον διαχειριστή για μετά <b>%s</b> email en παρέχουν την <b>%s</b> κωδικό σφάλματος στο μήνυμά σας, ή ακόμα καλύτερα με την προσθήκη ενός αντιγράφου της οθόνης αυτής της σελίδας.
@@ -133,9 +132,9 @@ ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setu
 ErrorPHPNeedModule=Σφάλμα, η PHP σας πρέπει να έχει το module <b>%s</ b> εγκατεστημένο για να χρησιμοποιήσετε αυτήν τη δυνατότητα.
 ErrorOpenIDSetupNotComplete=Μπορείτε να ρυθμίσετε το Dolibarr αρχείο config να επιτρέψει OpenID ταυτότητα, αλλά το URL OpenID υπηρεσίας δεν ορίζεται σε συνεχή %s
 ErrorWarehouseMustDiffers=Η πηγή και ο στόχος των αποθηκών πρέπει να είναι διαφορετικός.
-# ErrorBadFormat=Bad format!
-# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
-
+ErrorBadFormat=Bad format!
+ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=Προειδοποίηση, PHP <b>safe_mode</b> επιλογή είναι τόσο εντολή αυτή πρέπει να αποθηκεύονται σε ένα κατάλογο που δηλώνονται από <b>safe_mode_exec_dir</b> παράμετρο php.

@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Usuaris y grups
 Module0Desc=Gestió d'usuaris i grups
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Codi comptable compres
 AgendaSetup=Mòdul configuració d'accions i agenda
 PasswordTogetVCalExport=Clau d'autorització vCal export link
 PastDelayVCalExport=No exportar els esdeveniments de més de
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Aquest mòdul permet afegir una icona després del número de telèfon de contactes Dolibarr. Un clic en aquesta icona, Truca a un servidor amb un URL que s'indica a continuació. Això pot ser usat per anomenar al sistema centre de Dolibarr que pot trucar al número de telèfon en un sistema SIP, per exemple.
 ##### Point Of Sales (CashDesk) #####

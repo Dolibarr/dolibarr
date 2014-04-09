@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Notendur & hópar
 Module0Desc=Notendur og hópar stjórnun
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Aðgerðir og dagskrá mát skipulag
 PasswordTogetVCalExport=Lykill að heimila útflutning hlekkur
 PastDelayVCalExport=Ekki flytja atburður eldri en
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Þessi eining leyfir þér að bæta við tákn eftir símanúmeri Dolibarr tengiliði. A smella á þetta tákn mun hringja í serveur með ákveðinni vefslóð sem þú tilgreinir hér að neðan. Þetta má nota til að hringja í miðju símtali kerfi frá Dolibarr að geta hringt í símanúmer á SIP kerfi til dæmis.
 ##### Point Of Sales (CashDesk) #####

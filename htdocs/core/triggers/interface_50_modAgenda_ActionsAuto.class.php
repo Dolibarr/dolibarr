@@ -633,14 +633,12 @@ class InterfaceActionsAuto
         	$ok=1;
         }
 
-		// If not found
-        /*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+		// The trigger was enabled but we are missing the implementation, let the log know
+		else
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.", LOG_WARNING);
 			return 0;
-        }
-        */
+		}
 
         // Add entry in event table
         if ($ok)

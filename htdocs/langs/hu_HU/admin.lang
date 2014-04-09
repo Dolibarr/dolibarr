@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Felhasználók és csoportok
 Module0Desc=A felhasználók és csoportok kezelése
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Rendezvények és napirend modul beállítási
 PasswordTogetVCalExport=Főbb kiviteli engedélyezésének linket
 PastDelayVCalExport=Ne export esetén, mint a régebbi
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Ez a modul lehetővé teszi, hogy egészítsék ki egy ikont telefonszámot. Egy kattintással erre az ikonra fogja hívni a szerver egy adott URL-t meg az alábbiakban. Ezt fel lehet használni, hogy hívja a call center rendszert Dolibarr hogy hívhatjuk a telefonszámot egy SIP rendszert pl.
 ##### Point Of Sales (CashDesk) #####

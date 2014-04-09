@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014      Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1465,7 +1465,7 @@ if ($action == 'create') {
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	if ($absolute_discount) {
 		if ($object->statut > 0) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
 		} else {
 			// Remise dispo de type non avoir
 			$filter = 'fk_facture_source IS NULL';
@@ -1474,7 +1474,7 @@ if ($action == 'create') {
 		}
 	}
 	if ($absolute_creditnote) {
-		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '. ';
+		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
 	}
 	if (! $absolute_discount && ! $absolute_creditnote)
 		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';

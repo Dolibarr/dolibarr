@@ -50,6 +50,7 @@ class FormOrder
      *
      *    @param	string	$selected   Preselected value
      *    @param	int		$short		Use short labels
+     *    @param	string	$hmlname	Name of HTML select element
      *    @return	void
      */
     function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')

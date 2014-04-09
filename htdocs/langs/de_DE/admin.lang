@@ -389,7 +389,6 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
-
 # Modules
 Module0Name=Benutzer und Gruppen
 Module0Desc=Benutzer- und Gruppenverwaltung
@@ -1439,7 +1438,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Agenda-Moduleinstellungen
 PasswordTogetVCalExport=Passwort für den VCal-Export
 PastDelayVCalExport=Keine Termine exportieren die älter sind als
-AGENDA_USE_EVENT_TYPE=Use events types (managed into Configuration->Dictionary->llx_c_actioncomm)
+AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
 ##### ClickToDial #####
 ClickToDialDesc=Dieses Modul fügt ein Symbols nach Telefonnummern ein, bei dessen der Server unter der unten definierten URL aufgerufen wird. Diese Funktion können Sie dazu verwenden, ein Callcenter-System innerhalb dolibarrs aufzurufen, das eine Telefonnummer z.B. über ein SIP-System, für Sie wählt.
 ##### Point Of Sales (CashDesk) #####

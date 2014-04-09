@@ -20,3 +20,6 @@ YouAreCurrentlyInSandboxMode=Actualment es troba en mode "sandbox"
 NewPaypalPaymentReceived=Nou pagament Paypal rebut
 NewPaypalPaymentFailed=Nou intent de pagament Paypal sense èxit
 PAYPAL_PAYONLINE_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
+ReturnURLAfterPayment=Return URL after payment
+ValidationOfPaypalPaymentFailed=Validation of Paypal payment failed
+PaypalConfirmPaymentPageWasCalledButFailed=Payment confirmation page for Paypal was called by Paypal but confirmation failed
