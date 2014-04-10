@@ -245,7 +245,10 @@ class Conf
 		if (empty($this->global->MAIN_MENU_SMARTPHONE)) $this->global->MAIN_MENU_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
 		if (empty($this->global->MAIN_MENUFRONT_SMARTPHONE)) $this->global->MAIN_MENUFRONT_SMARTPHONE="eldy_menu.php";	// Use eldy by default because smartphone does not work on all phones
 		// Clean var use vat for company
-		if (! isset($conf->global->FACTURE_TVAOPTION)) $conf->global->FACTURE_TVAOPTION=1;
+		if (! isset($conf->global->FACTURE_TVAOPTION)) {
+			$conf = new Conf();
+			$conf->global->FACTURE_TVAOPTION=1;
+		}
 		else if (! empty($conf->global->FACTURE_TVAOPTION) && ! is_numeric($conf->global->FACTURE_TVAOPTION))
 		{
 			// Old value of option, we clean to use new value (0 or 1)
