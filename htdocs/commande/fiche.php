@@ -545,7 +545,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
 		// Clean parameters
 		$date_start = dol_mktime(GETPOST('date_start' . $predef . 'hour'), GETPOST('date_start' . $predef . 'min'), 0, GETPOST('date_start' . $predef . 'month'), GETPOST('date_start' . $predef . 'day'), GETPOST('date_start' . $predef . 'year'));
-		$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), 0, 0, GETPOST('date_end' . $predef . 'min'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
+		$date_end = dol_mktime(GETPOST('date_end' . $predef . 'hour'), GETPOST('date_end' . $predef . 'min'), 0, GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
 		$price_base_type = (GETPOST('price_base_type', 'alpha') ? GETPOST('price_base_type', 'alpha') : 'HT');
 
 		// Ecrase $pu par celui du produit
