@@ -627,11 +627,11 @@ if ($resql)
 		print '<td align="right">'.(price2num($obj->pmp)?price(price2num($obj->pmp*$obj->reel,'MT')):'').'</td>'; // Ditto : Show PMP from movement or from product
         // Sell price
 		print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'));
+        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price,'MU'),1);
         else print $langs->trans("Variable");
         print '</td>'; // Ditto : Show PMP from movement or from product
         print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT')).'</td>'; // Ditto : Show PMP from movement or from product
+        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($product->price*$obj->reel,'MT'),1).'</td>'; // Ditto : Show PMP from movement or from product
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
@@ -661,14 +661,14 @@ print '<td class="liste_total" align="right">';
 print ($totalwithpmp?price($totalvalue/$totalwithpmp):'&nbsp;');
 print '</td>';
 print '<td class="liste_total" align="right">';
-print price(price2num($totalvalue,'MT'));
+print price(price2num($totalvalue,'MT'),1);
 print '</td>';
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total):'&nbsp;');
+if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'));
+if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'),1);
 else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";

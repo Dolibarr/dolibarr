@@ -425,14 +425,14 @@ else
 				print '<td class="nowrap" align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
-				print price(price2num($temp_ht,'MT'));
+				print price(price2num($temp_ht,'MT'),1);
 				print '</td>';
 
 				// VAT
 				print '<td class="nowrap" align="right">';
 				$temp_vat=$fields['vat'];
 				if ($type == 1) $temp_vat=$fields['vat']*$ratiopaymentinvoice;
-				print price(price2num($temp_vat,'MT'));
+				print price(price2num($temp_vat,'MT'),1);
 				//print price($fields['vat']);
 				print '</td>';
 				print '</tr>';
@@ -576,14 +576,14 @@ else
 				print '<td class="nowrap" align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
-				print price(price2num($temp_ht,'MT'));
+				print price(price2num($temp_ht,'MT'),1);
 				print '</td>';
 
 				// VAT
 				print '<td class="nowrap" align="right">';
 				$temp_vat=$fields['vat'];
 				if ($type == 1) $temp_vat=$fields['vat']*$ratiopaymentinvoice;
-				print price(price2num($temp_vat,'MT'));
+				print price(price2num($temp_vat,'MT'),1);
 				//print price($fields['vat']);
 				print '</td>';
 				print '</tr>';

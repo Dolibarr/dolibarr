@@ -1625,13 +1625,13 @@ class Form
 
 				if ($objp->custprice_base_type == 'HT')
 				{
-					$opt.= price($objp->custprice,1).' '.$currencytext.' '.$langs->trans("HT");
-					$outval.= price($objp->custprice,1).' '.$currencytextnoent.' '.$langs->transnoentities("HT");
+					$opt.= price($objp->custprice,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("HT");
+					$outval.= price($objp->custprice,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("HT");
 				}
 				else
 				{
-					$opt.= price($objp->custprice_ttc,1).' '.$currencytext.' '.$langs->trans("TTC");
-					$outval.= price($objp->custprice_ttc,1).' '.$currencytextnoent.' '.$langs->transnoentities("TTC");
+					$opt.= price($objp->custprice_ttc,1,$langs,0,0,-1,$conf->currency).' '.$langs->trans("TTC");
+					$outval.= price($objp->custprice_ttc,0,$langs,0,0,-1,$conf->currency).' '.$langs->transnoentities("TTC");
 				}
 
 				$outprice_ht=price($objp->custprice);
