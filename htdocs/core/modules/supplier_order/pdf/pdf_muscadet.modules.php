@@ -988,7 +988,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		else
 		{
 			$pdf->SetTextColor(255,0,0);
-			$pdf->MultiCell(100, 3, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
 		$posy+=2;

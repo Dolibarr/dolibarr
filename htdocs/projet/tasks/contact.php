@@ -61,7 +61,8 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 
     if ($result > 0 && $id > 0)
     {
-  		$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+    	$idfortaskuser=GETPOST("contactid")>0?GETPOST("contactid"):GETPOST("userid");
+  		$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
     }
 
 	if ($result >= 0)
@@ -299,7 +300,7 @@ if ($id > 0 || ! empty($ref))
 			print '<td colspan="1">';
 			// On recupere les id des users deja selectionnes
 			$contactsofproject=$projectstatic->getListContactId('internal');
-			$form->select_users($user->id,'userid',0,'',0,'',$contactsofproject);
+			$form->select_users($user->id,'contactid',0,'',0,'',$contactsofproject);
 			print '</td>';
 			print '<td>';
 			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');

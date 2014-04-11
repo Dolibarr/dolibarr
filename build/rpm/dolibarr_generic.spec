@@ -305,6 +305,11 @@ done >>%{name}.lang
 %post
 
 echo Run post script of packager dolibarr_generic.spec
+echo Detected constant fedora=0%{?fedora}
+echo Detected constant rhel_version=0%{?rhel_version}
+echo Detected constant centos_version=0%{?centos_version}
+echo Detected constant mdkversion=0%{?mdkversion}
+echo Detected constant suse_version=0%{?suse_version}
 
 # Define vars
 export docdir="/var/lib/dolibarr/documents"
@@ -465,9 +470,12 @@ echo Restart mysql server
 %else
 %if 0%{?suse_version}
 if [ -f /etc/init.d/mysqld ]; then
-  /etc/init.d/mysqld restart
-else
+  /sbin/service mysqld restart
+  #/etc/init.d/mysqld restart
+fi
+if [ -f /etc/init.d/mysql ]; then
   /sbin/service mysql restart
+  #/etc/init.d/mysql restart
 fi
 %else
 if [ -f /etc/init.d/mysqld ]; then

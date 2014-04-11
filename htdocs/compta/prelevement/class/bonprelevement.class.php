@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -671,9 +671,10 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Get number of invoices to withdrawal
+     *	TODO delete params banque and agence when not necesary
      *
-     *	@param	int		$banque		bank
-     *	@param	int		$agence		agence
+     *	@param	int		$banque		dolibarr mysoc bank
+     *	@param	int		$agence		dolibarr mysoc agence
      *	@return	int					<O if KO, number of invoices if OK
      */
     function NbFactureAPrelever($banque=0,$agence=0)
@@ -683,16 +684,16 @@ class BonPrelevement extends CommonObject
         $sql = "SELECT count(f.rowid)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-        if ($banque || $agence) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
+        //if ($banque || $agence) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
         $sql.= " WHERE f.fk_statut = 1";
         $sql.= " AND f.entity = ".$conf->entity;
         $sql.= " AND f.rowid = pfd.fk_facture";
         $sql.= " AND f.paye = 0";
         $sql.= " AND pfd.traite = 0";
         $sql.= " AND f.total_ttc > 0";
-        if ($banque || $agence) $sql.= " AND f.fk_soc = sr.rowid";
-        if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-        if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
+        //if ($banque || $agence) $sql.= " AND f.fk_soc = sr.rowid";
+        //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
+        //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
         $resql = $this->db->query($sql);
 
@@ -715,9 +716,10 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Create a withdraw
+     *  TODO delete params banque and agence when not necesary
      *
-     *	@param 	int		$banque		code of bank (to withdraw a specific bankof a specific customer. By default '')
-     *	@param	int		$agence		code of bank office (guichet) (to withdraw a specific bankof a specific customer. By default '')
+     *	@param 	int		$banque		dolibarr mysoc bank
+     *	@param	int		$agence		dolibarr mysoc bank office (guichet)
      *	@param	string	$mode		real=do action, simu=test only
      *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
      */
@@ -755,17 +757,17 @@ class BonPrelevement extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-            if ($banque || $agence) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
+            //if ($banque || $agence) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
             $sql.= " WHERE f.rowid = pfd.fk_facture";
             $sql.= " AND f.entity = ".$conf->entity;
             $sql.= " AND s.rowid = f.fk_soc";
-            if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
+            //if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
             $sql.= " AND f.fk_statut = 1";
             $sql.= " AND f.paye = 0";
             $sql.= " AND pfd.traite = 0";
             $sql.= " AND f.total_ttc > 0";
-            if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-            if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
+            //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
+            //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
             dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
             $resql = $this->db->query($sql);

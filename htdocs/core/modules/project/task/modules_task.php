@@ -111,7 +111,7 @@ abstract class ModeleNumRefTask
 
 	/**
 	 *  Renvoi prochaine valeur attribuee
-	 *	
+	 *
 	 *	@param	Societe		$objsoc		Object third party
 	 *	@param	Project		$project	Object project
 	 *	@return	string					Valeur
@@ -171,7 +171,7 @@ function task_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $h
 		}
 		else
 		{
-			$modele='baleine';
+			$modele='nodefault';
 		}
 	}
 
@@ -194,7 +194,7 @@ function task_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $h
     	    $file = $prefix."_".$modele.".modules.php";
 
     		// On verifie l'emplacement du modele
-	        $file=dol_buildpath($reldir."core/modules/project/pdf/".$file,0);
+	        $file=dol_buildpath($reldir."core/modules/project/task/pdf/".$file,0);
     		if (file_exists($file))
     		{
     			$filefound=1;

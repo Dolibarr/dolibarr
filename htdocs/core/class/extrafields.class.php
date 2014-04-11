@@ -776,6 +776,7 @@ class ExtraFields
 									$labeltoshow=dol_trunc($obj->$field_toshow,18).' ';
 								}
 							}
+							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 						}
 						else
 						{

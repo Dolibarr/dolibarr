@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
+ * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,13 +185,14 @@ if ($action == 'add' && $canadduser)
         $object->office_phone	= GETPOST("office_phone");
         $object->office_fax	    = GETPOST("office_fax");
         $object->user_mobile	= GETPOST("user_mobile");
-        $object->skype    	  = GETPOST("skype");
+        $object->skype          = GETPOST("skype");
         $object->email		    = GETPOST("email");
         $object->job			= GETPOST("job");
         $object->signature	    = GETPOST("signature");
         $object->accountancy_code = GETPOST("accountancy_code");
         $object->note			= GETPOST("note");
         $object->ldap_sid		= GETPOST("ldap_sid");
+        $object->fk_user        = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -327,7 +328,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             $object->email		= GETPOST("email");
             $object->job		= GETPOST("job");
             $object->signature	= GETPOST("signature");
-			      $object->accountancy_code	= GETPOST("accountancy_code");
+            $object->accountancy_code	= GETPOST("accountancy_code");
             $object->openid		= GETPOST("openid");
             $object->fk_user    = GETPOST("fk_user")>0?GETPOST("fk_user"):0;
 
@@ -864,7 +865,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print '<input size="20" type="text" name="office_fax" value="'.GETPOST('office_fax').'">';
     }
     print '</td></tr>';
-    
+
     // Skype
     if (! empty($conf->skype->enabled))
     {
@@ -1189,7 +1190,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
             print '<td>'.dol_print_phone($object->office_fax,'',0,0,1).'</td>';
             print '</tr>'."\n";
-            
+
             // Skype
             if (! empty($conf->skype->enabled))
             {
@@ -1808,7 +1809,7 @@ else
                 }
                 print '</td></tr>';
             }
-            
+
             // EMail
             print "<tr>".'<td valign="top"'.(! empty($conf->global->USER_MAIL_REQUIRED)?' class="fieldrequired"':'').'>'.$langs->trans("EMail").'</td>';
             print '<td>';
