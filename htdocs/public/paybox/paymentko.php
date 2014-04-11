@@ -74,13 +74,12 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 {
 	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
+
+	$urlback=$_SERVER["REQUEST_URI"];
+	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed");
+	$content=$langs->transnoentitiesnoconv("NewPayboxPaymentFailed")."\n".$fulltag;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile(
-		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed"),
-		$sendto,
-		$from,
-		$langs->transnoentitiesnoconv("NewPayboxPaymentFailed")."\n".$fulltag
-	);
+	$mailfile = new CMailFile($topic, $sendto, $from, $content);
 
 	$result=$mailfile->sendfile();
 	if ($result)

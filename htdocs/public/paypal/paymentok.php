@@ -180,7 +180,7 @@ if ($PAYPALTOKEN)
 				
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
-				$tmptag=dolExplodeIntoArray($tag,'.','=');
+				$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 				$content="";
 				if (! empty($tmptag['MEM']))
 				{
@@ -196,7 +196,7 @@ if ($PAYPALTOKEN)
 				$content.="\n";
 				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
-				$content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
+				$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 				
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$mailfile = new CMailFile($topic, $sendto, $from, $content);
