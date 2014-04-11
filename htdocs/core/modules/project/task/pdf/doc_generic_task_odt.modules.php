@@ -340,7 +340,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte.= '<br></div></div>';
-		
+
 		// Scan directories
 		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
@@ -526,7 +526,6 @@ class doc_generic_task_odt extends ModelePDFTask
 						else	// Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
-							$odfHandler->setVarsHeadFooter($key, $value, true, 'UTF-8');
 						}
 					}
 					catch(OdfException $e)

@@ -142,7 +142,7 @@ class InterfaceMailmanSpipsynchro
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	// We add subscription if we change category (new category may means more mailing-list to subscribe)
-    		if ($object->linkto->add_to_abo() < 0)
+    		if (is_object($object->linkto) && method_exists($object->linkto, 'add_to_abo') && $object->linkto->add_to_abo() < 0)
     		{
     			$this->error=$object->linkto->error;
     			$this->errors=$object->linkto->errors;
@@ -160,7 +160,7 @@ class InterfaceMailmanSpipsynchro
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
-        	if ($object->unlinkoff->del_to_abo() < 0)
+        	if (is_object($object->unlinkoff) && method_exists($object->unlinkoff, 'del_to_abo') && $object->unlinkoff->del_to_abo() < 0)
         	{
     			$this->error=$object->unlinkoff->error;
         		$this->errors=$object->unlinkoff->errors;
