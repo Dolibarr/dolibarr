@@ -23,4 +23,4 @@ GoodStatusDeclaration=Wir haben die oben genannten Waren in einwandfreiem Zustan
 Deliverer=Lieferant:
 Sender=Absender
 Recipient=Empfänger
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=Nicht genügend Bestand

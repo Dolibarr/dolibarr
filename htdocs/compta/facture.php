@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 
 $langs->load('bills');
 $langs->load('companies');
+$langs->load('compta');
 $langs->load('products');
 $langs->load('banks');
 $langs->load('main');
@@ -336,7 +337,7 @@ else if ($action == 'set_ref_client' && $user->rights->facture->creer) {
 }
 
 // Classify to validated
-else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider) 
+else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->facture->valider)
 {
 	$idwarehouse = GETPOST('idwarehouse');
 
@@ -346,7 +347,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 	// Check parameters
 
 	// Check for mandatory prof id
-	for($i = 1; $i < 6; $i ++) 
+	for($i = 1; $i < 6; $i ++)
 	{
 		$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
 		$idprof = 'idprof' . $i;
@@ -375,10 +376,10 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 		}
 	}
 
-	if (! $error) 
+	if (! $error)
 	{
 		$result = $object->validate($user, '', $idwarehouse);
-		if ($result >= 0) 
+		if ($result >= 0)
 		{
 			// Define output language
 			$outputlangs = $langs;
@@ -677,13 +678,13 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 			$id = $object->create($user);
 
-			if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0) 
+			if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
 			{
                 $facture_source = new Facture($db); // fetch origin object
-                if ($facture_source->fetch($object->fk_facture_source)>0) 
+                if ($facture_source->fetch($object->fk_facture_source)>0)
                 {
 
-                    foreach($facture_source->lines as $line) 
+                    foreach($facture_source->lines as $line)
                     {
                         $line->fk_facture = $object->id;
 
@@ -734,7 +735,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard invoice or Deposit invoice created from a Predefined invoice
-	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0) 
+	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
 	{
 		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 		if (empty($datefacture)) {
@@ -742,7 +743,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
 		}
 
-		if (! $error) 
+		if (! $error)
 		{
 			$object->socid = GETPOST('socid', 'int');
 			$object->type = $_POST['type'];
@@ -762,9 +763,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	}
 
 	// Standard or deposit or proforma invoice
-	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0) 
+	if (($_POST['type'] == 0 || $_POST['type'] == 3 || $_POST['type'] == 4) && $_POST['fac_rec'] <= 0)
 	{
-		if (GETPOST('socid', 'int') < 1) 
+		if (GETPOST('socid', 'int') < 1)
 		{
 			$error ++;
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
@@ -776,7 +777,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
 		}
 
-		if (! $error) 
+		if (! $error)
 		{
 			// Si facture standard
 			$object->socid = GETPOST('socid', 'int');
@@ -1042,7 +1043,9 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 	$error = 0;
 
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre'))
+	if (GETPOST('addline_libre')
+			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+	)
 	{
 		$predef = '';
 		$idprod = 0;
@@ -1050,7 +1053,9 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		$price_ht = GETPOST('price_ht');
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
-	if (GETPOST('addline_predefined'))
+	if (GETPOST('addline_predefined')
+			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+	)
 	{
 		$predef = (($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod = GETPOST('idprod', 'int');
@@ -1873,22 +1878,24 @@ if ($action == 'create')
 			$mode_reglement_id = (! empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (! empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 			$remise_percent = (! empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (! empty($soc->remise_percent) ? $soc->remise_percent : 0));
 			$remise_absolue = (! empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (! empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
 			$object->array_options = $objectsrc->array_options;
 		}
-	} else {
+		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';	// Dot not set 0 here (0 for a date is 1970)
+	}
+	else
+	{
 		$cond_reglement_id = $soc->cond_reglement_id;
 		$mode_reglement_id = $soc->mode_reglement_id;
 		$remise_percent = $soc->remise_percent;
 		$remise_absolue = 0;
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
+		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';	// Do not set 0 here (0 for a date is 1970)
 	}
 	$absolute_discount = $soc->getAvailableDiscounts();
 
-	if (! empty($conf->use_javascript_ajax)) 
+	if (! empty($conf->use_javascript_ajax))
 	{
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 		print ajax_combobox('fac_replacement');
@@ -2142,7 +2149,7 @@ if ($action == 'create')
 	        print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\'); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
 	        print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').attr(\'checked\',\'checked\');  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked="checked"':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 			print '</div>';
-			
+
 			print '</td></tr>' . "\n";
 		}
 		else
@@ -2458,7 +2465,7 @@ if ($action == 'create')
 								// 1),
 								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 								// => 1),
-								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'), 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"))));
+								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"))));
 			$formconfirm = $form->formconfirm($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', '', 1);
@@ -2509,7 +2516,7 @@ if ($action == 'create')
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
 				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockIncrease") : $langs->trans("SelectWarehouseForStockDecrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'), 'idwarehouse', '', 1);
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
 			}
 			$formquestion = array(
 								// 'text' => $langs->trans("ConfirmClone"),
@@ -2549,7 +2556,7 @@ if ($action == 'create')
 				$value = '<input type="hidden" id="idwarehouse" name="idwarehouse" value="' . key($warehouse_array) . '">';
 			} else {
 				$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
-				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse'), 'idwarehouse', '', 1);
+				$value = $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1);
 			}
 			$formquestion = array(
 								// 'text' => $langs->trans("ConfirmClone"),

@@ -183,7 +183,7 @@ if ($resql)
 	if ($type > 0)
 	{
 		$membertype=new AdherentType($db);
-		$result=$membertype->fetch($_REQUEST["type"]);
+		$result=$membertype->fetch(GETPOST("type"));
 		$titre.=" (".$membertype->libelle.")";
 	}
 
@@ -193,6 +193,7 @@ if ($resql)
 	if ($search_login) $param.="&search_login=".$search_login;
 	if ($search_email) $param.="&search_email=".$search_email;
 	if ($filter)       $param.="&filter=".$filter;
+	if ($type > 0)     $param.="&type=".$type;
 	print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	if ($sall)

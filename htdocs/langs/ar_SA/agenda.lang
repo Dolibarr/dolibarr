@@ -43,6 +43,7 @@ InvoiceBackToDraftInDolibarr=الفاتورة %s للذهاب بها إلى حا
 InvoiceDeleteDolibarr=تم حذف %s من الفاتورة
 OrderValidatedInDolibarr= تم توثيق %s من الطلب
 OrderApprovedInDolibarr=تم الموافقة على %s من الطلب
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=الطلب %s للذهاب بها إلى حالة المسودة
 OrderCanceledInDolibarr=تم إلغاء %s من الطلب
 InterventionValidatedInDolibarr=تم توثيق %s من التدخل
@@ -52,7 +53,7 @@ InvoiceSentByEMail=تم إرسال فاتروة العميل %s بواسطة ا�
 SupplierOrderSentByEMail=تم إرسال طلبية المزود %s بواسطة البريد الإلكتروني
 SupplierInvoiceSentByEMail=تم إرسال فاتروة المزود%s بواسطة البريد الإلكتروني
 ShippingSentByEMail=تم إرسال الشحنة %s بواسطة البريد الإلكتروني
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=تم إرسال التدخل %s بواسطة البريد الإلكتروني
 NewCompanyToDolibarr= تم إنشاء طرف ثالث أو خارجي
 DateActionPlannedStart= التاريخ المخطط للبدء

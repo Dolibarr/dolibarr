@@ -443,11 +443,11 @@ else
                     {
                         $pricemin=$objp->price;
                         print '<td align="right">';
-                        print price(price2num($pricemin,'MU'));
+                        print price(price2num($pricemin,'MU'),1);
                         print '</td>';
                         // Total sell min
                         print '<td align="right">';
-                        print price(price2num($pricemin*$objp->value,'MT'));
+                        print price(price2num($pricemin*$objp->value,'MT'),1);
                         print '</td>';
                     }
                     $totalvaluesell+=price2num($pricemin*$objp->value,'MT');

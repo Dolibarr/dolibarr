@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=没有错误，我们承诺
-
 # Errors
 Error=错误
 Errors=错误
@@ -26,11 +25,11 @@ ErrorFromToAccountsMustDiffers=源和目标的银行帐户必须是不同的。
 ErrorBadThirdPartyName=坏第三者名义价值
 ErrorProdIdIsMandatory=%s 是强制性的
 ErrorBadCustomerCodeSyntax=坏客户代码的语法
-# ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code
 ErrorCustomerCodeRequired=客户代码需要
-# ErrorBarCodeRequired=Bar code required
+ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=客户代码已被使用
-# ErrorBarCodeAlreadyUsed=Bar code already used
+ErrorBarCodeAlreadyUsed=Bar code already used
 ErrorPrefixRequired=前缀要求
 ErrorUrlNotValid=该网站的地址是不正确的
 ErrorBadSupplierCodeSyntax=对供应商的语法错误代码
@@ -40,7 +39,7 @@ ErrorBadParameters=错误的参数
 ErrorBadValueForParameter=错误值“参数不正确”%s %s'“
 ErrorBadImageFormat=图像文件有不支持的格式
 ErrorBadDateFormat=值“%s”有错误的日期格式
-# ErrorWrongDate=Date is not correct!
+ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=无法写在目录%s
 ErrorFoundBadEmailInFile=找到%S的语法不正确的电子邮件文件中的行（例如行%的电子邮件s =%s）的
 ErrorUserCannotBeDelete=用户不能被删除。也许它是相关联的Dolibarr实体。
@@ -64,18 +63,18 @@ ErrorSizeTooLongForVarcharType=尺寸长字符串类型（%s字符最大）
 ErrorNoValueForSelectType=请填写选择列表值
 ErrorNoValueForCheckBoxType=请填写复选框列表值
 ErrorNoValueForRadioType=请填写电台列表的值
-# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
+ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=菲尔德<b>%s</b>必须不包含特殊字符。
-# ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=没有一个会计模块激活
-# ErrorExportDuplicateProfil=This profile name already exists for this export set.
+ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP的匹配是不完整的。
 ErrorLDAPMakeManualTest=甲。LDIF文件已经生成在目录%s的尝试加载命令行手动有更多的错误信息。
 ErrorCantSaveADoneUserWithZeroPercentage=无法储存与行动“规约未启动”如果领域“做的”，也是填补。
 ErrorRefAlreadyExists=号的创作已经存在。
 ErrorPleaseTypeBankTransactionReportName=请输入银行收据的名字在交易报告（格式YYYYMM或采用YYYYMMDD）
 ErrorRecordHasChildren=删除记录失败，因为它有一些儿童。
-# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
+ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=不能禁用JavaScript必须有此功能的工作。要启用/禁用JavaScript，进入菜单首页->安装->“显示。
 ErrorPasswordsMustMatch=这两种类型的密码必须相互匹配
 ErrorContactEMail=一个技术性错误发生。请联系管理员，以下连接提供错误代码<b>%s</b>在您的邮件，甚至更好，加入了这个页面的屏幕拷贝的电子邮件<b>%s。</b>
@@ -129,13 +128,13 @@ ErrorFailedToValidatePasswordReset=重新初始化密码密码失败。重新初
 ErrorToConnectToMysqlCheckInstance=连接到数据库失败。检查MySQL服务器运行(在大多数情况下，您可以启动'sudo /etc/init.d/mysql start'的命令行)。
 ErrorFailedToAddContact=无法添加联系人
 ErrorDateMustBeBeforeToday=日期不能大于今天
-# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
-# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
-# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
-# ErrorWarehouseMustDiffers=Source and target warehouses must differs
-# ErrorBadFormat=Bad format!
-# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
-
+ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+ErrorWarehouseMustDiffers=Source and target warehouses must differs
+ErrorBadFormat=Bad format!
+ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
 # Warnings
 WarningMandatorySetupNotComplete=强制设置参数尚未定义
 WarningSafeModeOnCheckExecDir=警告，PHP的选项<b>safe_mode设置</b>为在此情况下命令必须在<b>safe_mode_exec_dir之</b>存储参数的PHP目录内宣布。
@@ -149,6 +148,6 @@ WarningNoDocumentModelActivated=没有模型，对文档生成，已被激活。
 WarningLockFileDoesNotExists=警告，一旦安装完成后，您必须进入目录<b>%s</b>添加一个<b>install.lock</b>文件来禁用安装/迁移工具，缺少这个文件是一个安全漏洞。
 WarningUntilDirRemoved=所有安全警告（可见由管理员用户只）将保持活跃，只要是存在的脆弱性（或常数MAIN_REMOVE_INSTALL_WARNING是在安装程序->其他设置添加）。
 WarningCloseAlways=即使源和目标之间金额不同进行警告，关闭。启用此功能时要小心。
-# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
-# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
-# WarningNotRelevant=Irrelevant operation for this dataset
+WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+WarningNotRelevant=Irrelevant operation for this dataset

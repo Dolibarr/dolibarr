@@ -166,8 +166,7 @@ Warning: Date must have format reported by "date -R"
 Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
 
 * We try to build package
-> rm -fr ../build-area
-> git-buildpackage -us -uc
+> rm -fr ../build-area; git-buildpackage -us -uc
 
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
 Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
@@ -230,20 +229,20 @@ from origin/upstream and origin/pristine.
 
 * Staying into git root directory, run
 > git-import-orig -vv ../dolibarr-3.3.4.tgz
+and enter version when requested.
 
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
 * Add an entry into debian/changelog
-> dch -v x.y.z-1 "My comment" will add entry.
-For example: dch -v x.y.z-1 "New upstream release." for a new version
+> dch -v x.y.z-w "My comment" will add entry.
+For example: dch -v x.y.z-w "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
 Then modify changelog to replace "unstable" with "UNRELEASED".
-
-Warning: Date must have format reported by "date -R"
-Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
+Then check/modify also the user/date signature:
+- Date must have format reported by "date -R"
+- Name and email must match value into debian/control file (Entry added here is used by next step).
 
 * We try to build package
-> rm -fr ../build-area
-> git-buildpackage -us -uc
+> rm -fr ../build-area; git-buildpackage -us -uc
 
 Note: You can use git-buildpackage -us -uc --git-ignore-new  if you want to test build with uncommited file
 Note: You can use git-buildpackage -us -uc -d                if you want to test build when dependencies does not match 
@@ -271,5 +270,4 @@ http://ftp-master.debian.org/new/
 http://packages.qa.debian.org
 
 * Package will be into release when test will be moved as stable.
-
 

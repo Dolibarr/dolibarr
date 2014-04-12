@@ -1160,7 +1160,8 @@ class Societe extends CommonObject
                 return -1;
             }
         }
-
+		else dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
+        return 0;
     }
 
     /**
@@ -2575,8 +2576,8 @@ class Societe extends CommonObject
     	$this->logo_small=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
     	$this->logo_mini=empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 
-    	// Define if company use vat or not (Do not use conf->global->FACTURE_TVAOPTION anymore)
-    	$this->tva_assuj=((isset($conf->global->FACTURE_TVAOPTION) && $conf->global->FACTURE_TVAOPTION=='franchise')?0:1);
+    	// Define if company use vat or not
+    	$this->tva_assuj=$conf->global->FACTURE_TVAOPTION;
 
     	// Define if company use local taxes
     	$this->localtax1_assuj=((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && ($conf->global->FACTURE_LOCAL_TAX1_OPTION=='1' || $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on'))?1:0);

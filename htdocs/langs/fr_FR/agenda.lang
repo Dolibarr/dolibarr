@@ -43,6 +43,7 @@ InvoiceBackToDraftInDolibarr=Facture %s repassée en brouillon
 InvoiceDeleteDolibarr=Facture %s supprimée
 OrderValidatedInDolibarr= Commande %s validée
 OrderApprovedInDolibarr=Commande %s approuvée
+OrderRefusedInDolibarr=Commande %s refusée
 OrderBackToDraftInDolibarr=Commande %s repassée en brouillon
 OrderCanceledInDolibarr=Commande %s annulée
 InterventionValidatedInDolibarr=Intervention %s validée

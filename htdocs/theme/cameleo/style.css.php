@@ -1378,6 +1378,13 @@ background-repeat: repeat-x;
 */
 
 
+.paddingrightonly {
+	border-collapse: collapse;
+	border: 0px;
+	margin-left: 0px;
+	padding-<?php print $left; ?>: 0px !important;
+	padding-<?php print $right; ?>: 4px !important;
+}
 .nocellnopadd {
 list-style-type:none;
 margin: 0px;
@@ -1472,7 +1479,7 @@ padding: 0px 0px;
 }
 table.nobordernopadding td {
 border: 0px;
-padding: 0px 0px !important;
+padding: 0px 0px;
 }
 
 /* For lists */
@@ -1815,6 +1822,8 @@ border-radius:6px;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
 	vertical-align: middle;

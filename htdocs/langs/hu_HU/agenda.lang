@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Cselekvés
 ActionsArea=Cselekvés terület (Események és Feladatok)
 Agenda= Napirend
@@ -10,7 +10,7 @@ LocalAgenda=Helyi naptár
 AffectedTo= Befolyásolhatja
 DoneBy= Által végzett
 Events= Események
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=Saját rendezvények
 OtherEvents=Egyéb események
 ListOfActions=Események listája
@@ -40,9 +40,10 @@ ActionsEvents= Events for which Dolibarr will create an action in agenda automat
 PropalValidatedInDolibarr= %s ajánlat érvényesítve
 InvoiceValidatedInDolibarr= %s számla érvényesítve
 InvoiceBackToDraftInDolibarr=Számla %s menj vissza a tervezett jogállását
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= %s megrendelés érvényesítve
 OrderApprovedInDolibarr=Rendelés %s jóváhagyott
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Rendelés %s menj vissza vázlat
 OrderCanceledInDolibarr=Rendelés %s törölt
 InterventionValidatedInDolibarr=%s közbenjárás érvényesítve
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Az ügyfél számlát postáztuk %s
 SupplierOrderSentByEMail=Szállító érdekében %s postáztuk
 SupplierInvoiceSentByEMail=Szállító számlát postáztuk %s
 ShippingSentByEMail=Szállítás %s postáztuk
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Beavatkozás %s postáztuk
 NewCompanyToDolibarr= Harmadik fél létrehozva
 DateActionPlannedStart= Tervezett indulási dátum
@@ -68,8 +69,8 @@ AgendaUrlOptions4=<b>logint=%s</b> kimenet szükítése a <b>%s</b> felhasznál�
 AgendaUrlOptions5=<b>logind=%s</b> kimenet szükítése a <b>%s</b> felhasználó által végzett cselekvésekre.
 AgendaShowBirthdayEvents=Kapcsolatok születésnapjának mutatása
 AgendaHideBirthdayEvents=Kapcsolatok születésnapjának elrejtése
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Export naptár

@@ -75,13 +75,12 @@ if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 {
 	$sendto=$conf->global->PAYPAL_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
+
+	$urlback=$_SERVER["REQUEST_URI"];
+	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentFailed");
+	$content=$langs->transnoentitiesnoconv("NewPaypalPaymentFailed")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile(
-		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentFailed"),
-		$sendto,
-		$from,
-		$langs->transnoentitiesnoconv("NewPaypalPaymentFailed")."\ntag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt
-	);
+	$mailfile = new CMailFile($topic, $sendto, $from, $content);
 
 	$result=$mailfile->sendfile();
 	if ($result)

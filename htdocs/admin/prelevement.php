@@ -51,6 +51,9 @@ if ($action == "set")
         if (! $res > 0) $error++;
     }
 
+    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
     $account = new Account($db, $id);
 
@@ -148,6 +151,13 @@ print '<tr class="impair"><td>'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td align="left">';
 print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
+
+// ICS
+print '<tr class="impair"><td>'.$langs->trans("ICS").'</td>';
+print '<td align="left">';
+print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="9" ></td>';
+print '</td></tr>';
+
 print '</table>';
 print '<br>';
 

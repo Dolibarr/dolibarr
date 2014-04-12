@@ -44,7 +44,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
 
 /*
@@ -256,7 +256,7 @@ if ($action == 'create')
 	print '<td colspan="3">';
 	$selectedcode=$account->account_currency_code;
 	if (! $selectedcode) $selectedcode=$conf->currency;
-	$form->select_currency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
+	print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 	//print $langs->trans("Currency".$conf->currency);
 	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 	print '</td></tr>';
@@ -325,7 +325,7 @@ if ($action == 'create')
 
 	print '<tr><td valign="top">'.$langs->trans("Date").'</td>';
 	print '<td colspan="3">';
-	$form->select_date(time(), 're', 0, 0, 0, 'formsoc');
+	$form->select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -374,7 +374,7 @@ else
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-			
+
 		}
 
 		print '<table class="border" width="100%">';
@@ -531,7 +531,7 @@ else
 		print '<td colspan="3">';
 		$selectedcode=$account->account_currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
-		$form->select_currency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
+		print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
 		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 		print '</td></tr>';

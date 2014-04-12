@@ -18,12 +18,11 @@ MarginDetails=Détails des marges réalisées
 
 ProductMargins=Marges par produit
 CustomerMargins=Marges par client
-AgentMargins=Marges par commercial
+SalesRepresentativeMargins=Marges commerciaux
 
 ProductService=Produit ou Service
 AllProducts=Tous les produits et services
 ChooseProduct/Service=Choisissez le produit ou le service
-CommercialAgent=Agent commercial
 
 StartDate=Date de début
 EndDate=Date de fin
