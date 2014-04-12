@@ -528,7 +528,6 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 	else dol_print_error($db);
 }
 
-
 /**
  * Social contributions to pay
  */
