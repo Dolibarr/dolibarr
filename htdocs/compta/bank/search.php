@@ -45,8 +45,8 @@ $credit=GETPOST("credit");
 $type=GETPOST("type");
 $account=GETPOST("account");
 $bid=GETPOST("bid","int");
-$search_dt_start=dol_mktime ( 0, 0, 0, GETPOST ( 'search_start_dtmonth', 'int' ), GETPOST ( 'search_start_dtday', 'int' ), GETPOST ( 'search_start_dtyear', 'int' ) );
-$search_dt_end=dol_mktime ( 0, 0, 0, GETPOST ( 'search_end_dtmonth', 'int' ), GETPOST ( 'search_end_dtday', 'int' ), GETPOST ( 'search_end_dtyear', 'int' ) );
+$search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), GETPOST('search_start_dtday', 'int'), GETPOST('search_start_dtyear', 'int'));
+$search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 
 $param='';
 if (!empty($description)) $param.='&description='.$description;
@@ -55,8 +55,10 @@ if (!empty($debit)) $param.='&debit='.$debit;
 if (!empty($credit)) $param.='&credit='.$credit;
 if (!empty($account)) $param.='&account='.$account;
 if (!empty($bid))  $param.='&bid='.$bid;
-if (dol_strlen($search_dt_start)>0)  $param.='&search_start_dtmonth='.GETPOST ( 'search_start_dtmonth', 'int' ).'&search_start_dtday='.GETPOST ( 'search_start_dtday', 'int' ).'&search_start_dtyear='.GETPOST ( 'search_start_dtyear', 'int' );
-if (dol_strlen($search_dt_end)>0)  $param.='&search_end_dtmonth='.GETPOST ( 'search_end_dtmonth', 'int' ).'&search_end_dtday='.GETPOST ( 'search_end_dtday', 'int' ).'&search_end_dtyear='.GETPOST ( 'search_end_dtyear', 'int' );
+if (dol_strlen($search_dt_start) > 0)
+	$param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
+if (dol_strlen($search_dt_end) > 0)
+	$param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -164,9 +166,9 @@ if ($resql)
 
 	print '<form method="post" action="search.php" name="search_form">';
 	
-	$moreforfilter .=  $langs->trans ( 'Period' ) . ' '. $langs->trans('DateOperationShort') . ': ';
-	$moreforfilter .=  $form->select_date($search_dt_start,'search_start_dt',0, 0, 1, "search_form", 1, 1, 1);
-	$moreforfilter .=  $langs->trans ( 'PeriodEndDate' ) . ':' . $form->select_date($search_dt_end,'search_end_dt',0, 0, 1, "search_form", 1, 1, 1);
+	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('DateOperationShort') . ': ';
+	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
+	$moreforfilter .= $langs->trans('PeriodEndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
 	
 	
 	if ($moreforfilter) {
@@ -308,10 +310,10 @@ if ($resql)
 	}
 	if ($num>0) {
 		print '<tr  class="liste_total">';
-		print '<td>' . $langs->trans ( 'Total' ) . '</td>';
+		print '<td>' . $langs->trans('Total') . '</td>';
 		print '<td colspan="6"></td>';
-		print '<td  align="right">'.price($total_debit*-1).'</td>';
-		print '<td  align="right">'.price($total_credit).'</td>';
+		print '<td  align="right">' . price($total_debit * - 1) . '</td>';
+		print '<td  align="right">' . price($total_credit) . '</td>';
 		print '<td></td>';
 		print '</tr>';
 	}
