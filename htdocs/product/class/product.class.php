@@ -1487,6 +1487,8 @@ class Product extends CommonObject
 				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
 				//$res=$this->load_stock();
 				//return $res;
+				// ok we don't load stock but we init the stock_warehouse array 
+				$this->stock_warehouse = Array();
 
 				return 1;
 			}
