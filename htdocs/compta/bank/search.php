@@ -82,7 +82,7 @@ $bankaccountstatic=new Account($db);
 llxHeader();
 
 $form = new Form($db);
-$formother = new FormOther ( $db );
+$formother = new FormOther($db);
 
 if ($vline) $viewline = $vline;
 else $viewline = 50;
