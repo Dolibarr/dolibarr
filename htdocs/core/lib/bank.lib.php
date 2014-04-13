@@ -30,7 +30,8 @@
  * @param   Object	$object		Object related to tabs
  * @return  array				Array of tabs to shoc
  */
-function bank_prepare_head($object) {
+function bank_prepare_head($object)
+{
     global $langs, $conf, $user;
     $h = 0;
     $head = array();
@@ -70,18 +71,21 @@ function bank_prepare_head($object) {
     $head[$h][2] = 'graph';
     $h++;
 
-    if ($object->courant != 2) {
-        $head[$h][0] = DOL_URL_ROOT . "/compta/bank/releve.php?account=" . $object->id;
-        $head[$h][1] = $langs->trans("AccountStatements");
-        $head[$h][2] = 'statement';
-        $h++;
-    }
+    if ($object->courant != 2)
+    {
+    	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
+	    $head[$h][1] = $langs->trans("AccountStatements");
+	    $head[$h][2] = 'statement';
+	    $h++;
+	}
 
-    // Show more tabs from modules
+	// Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank');
+
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
     return $head;
 }
@@ -92,7 +96,8 @@ function bank_prepare_head($object) {
  * 		@param	Account		$account    A bank account
  * 		@return int           			True if informations are valid, false otherwise
  */
-function checkBanForAccount($account) {
+function checkBanForAccount($account)
+{
     $country_code = $account->getCountryCode();
 
     // For compatibility between
@@ -127,7 +132,7 @@ function checkBanForAccount($account) {
     }
 
     if ($country_code == 'BE') { // Belgium rules
-        
+
     }
 
     if ($country_code == 'ES') { // Spanish rules
