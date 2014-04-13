@@ -45,6 +45,7 @@ For users:
 - New: Can filter on status for supplier order.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
+- New: Add filter date in bank writing list page 
 
 TODO
 - New: Predefined product and free product use same form.
