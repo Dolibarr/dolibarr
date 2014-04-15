@@ -757,7 +757,7 @@ class Form
     {
         global $conf,$user,$langs;
 
-        $out='';
+        $out=''; $num=0;
         $outarray=array();
 
         // On recherche les societes
@@ -858,6 +858,8 @@ class Form
         {
             dol_print_error($this->db);
         }
+
+        $this->result=array('nbofthirdparties'=>$num);
 
         if ($outputmode) return $outarray;
         return $out;

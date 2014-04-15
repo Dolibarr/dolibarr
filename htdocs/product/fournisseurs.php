@@ -42,6 +42,7 @@ $ref = GETPOST('ref', 'alpha');
 $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $socid=GETPOST('socid', 'int');
+$backtopage=GETPOST('backtopage','alpha');
 $error=0; $mesg = '';
 
 // If socid provided by ajax company selector
@@ -304,10 +305,14 @@ if ($id || $ref)
 					$events[]=array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php',1), 'htmlname' => 'tva_tx', 'params' => array());
 					print $form->select_company(GETPOST("id_fourn"),'id_fourn','fournisseur=1',1,0,0,$events);
 
-					if (is_object($hookmanager))
+					$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$product->id);
+				    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
+					if (empty($reshook))
 					{
-						$parameters=array('filtre'=>"fournisseur=1",'html_name'=>'id_fourn','selected'=>GETPOST("id_fourn"),'showempty'=>1,'prod_id'=>$product->id);
-					    $reshook=$hookmanager->executeHooks('formCreateThirdpartyOptions',$parameters,$object,$action);
+						if (empty($form->result))
+						{
+							print ' - <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$product->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+						}
 					}
 				}
 				print '</td></tr>';

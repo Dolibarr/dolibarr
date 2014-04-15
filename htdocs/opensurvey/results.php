@@ -511,7 +511,7 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
 	print '<form name="formulaire" action="" method="POST">'."\n";
-	print '<input type="hidden" name="backtourl" value="'.GETPOST('backtourl').'">';
+	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
 
 	print '<div class="center">'."\n";
 	print "<br><br>"."\n";
@@ -752,7 +752,7 @@ else
 		print '<td class="sujet">'.dol_htmlentities($tmp[0]).'</td>'."\n";
 	}
 
-	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtourl='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('',dol_buildpath('/opensurvey/img/add-16.png',1),'',1).'</a></td>'."\n";
+	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('',dol_buildpath('/opensurvey/img/add-16.png',1),'',1).'</a></td>'."\n";
 	print '</tr>'."\n";
 }
 

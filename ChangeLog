@@ -78,6 +78,10 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
 - Method form->select_currency() has been removed. Use instead print form->selectCurrency().
 - Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
+- The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
+  So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
+  default standard behaviour.
+
 
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
