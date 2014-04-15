@@ -357,7 +357,8 @@ class Resource extends CommonObject
     		}
     	}
     	$sql.= " GROUP BY t.rowid";
-    	$sql.= " ORDER BY $sortfield $sortorder " . $this->db->plimit($limit+1,$offset);
+    	$sql.= " ORDER BY $sortfield $sortorder ";
+    	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all sql=".$sql, LOG_DEBUG);
     
     	$resql=$this->db->query($sql);

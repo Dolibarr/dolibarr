@@ -104,7 +104,6 @@ if(!$ret) {
 }
 else
 {
-
 	$var=false;
 
 	print '<table class="noborder" width="100%">'."\n";

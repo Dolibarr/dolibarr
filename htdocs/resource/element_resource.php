@@ -29,6 +29,7 @@ if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
 require 'class/resource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load traductions files requiredby by page
 $langs->load("resource@resource");
@@ -76,7 +77,7 @@ $form=new Form($db);
 
 
 // Load available resource, declared by modules
-$ret = $object->fetch_all_available();
+$ret = $object->fetch_all("ASC",'rowid',0);
 if($ret == -1) {
 	dol_print_error($db,$object->error);
 	exit;
@@ -161,8 +162,9 @@ else
 
 
 
-	print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','resource_32@resource');
-
+	print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','resource.png@resource');
+	
+	
 
 	foreach ($object->available_resources as $modresources => $resources)
 	{
