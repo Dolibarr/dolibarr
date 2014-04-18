@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.3 compared to 3.5.2 *****
+Fix: Error on field accountancy code for export profile of invoices.
+
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
 Fix: Autoselect of warehouse if there is only one warehouse.
@@ -45,7 +48,6 @@ Fix: Translation of number for pt_PT.
 Fix: Error on ajax_constantonoff function.
 Fix: [ bug #1323 ] problème pour générer un odt depuis les taches dans projet.
 Fix: Can not make withdrawals 
-     
 
 ***** ChangeLog for 3.5.1 compared to 3.5.0 *****
 Fix: Do not report trigger errors twice.
