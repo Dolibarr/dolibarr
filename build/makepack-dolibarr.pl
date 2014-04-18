@@ -442,8 +442,8 @@ if ($nboftargetok) {
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jqueryFileTree/connectors/jqueryFileTree.pl`;    # Avoid errors into rpmlint
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/template`;  # Package not valid for most linux distributions (errors reported into compile.js). Package should be embed by modules to avoid problems.
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpmailer`;                # Package not valid for most linux distributions (errors reported into file LICENSE). Package should be embed by modules to avoid problems.
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# Keep this removal in case we embed libraries
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/adapters`;	# Keep this removal in case we embed libraries
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/adapters`;		# Keep this removal in case we embed libraries
+        #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
    	    
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
@@ -505,8 +505,9 @@ if ($nboftargetok) {
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT/\" \"$BUILDROOT/$FILENAMETGZ\"";
             $ret=`$cmd`;
 
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/build/exe`;
-
+		    $ret=`rm -fr $BUILDROOT/$FILENAMETGZ/build/exe`;
+			$ret=`rm -fr $BUILDROOT/$FILENAMETGZ/htdocs/includes/ckeditor/_source`;	# We can't remove it with exclude file, we need it for some tarball packages
+			
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-vcs --exclude-from \"$BUILDROOT/$PROJECT/build/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" --mode=go-w --group=500 --owner=500 -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
@@ -532,6 +533,9 @@ if ($nboftargetok) {
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEXZ\"";
             $ret=`$cmd`;
 
+		    $ret=`rm -fr $BUILDROOT/$FILENAMEXZ/build/exe`;
+			$ret=`rm -fr $BUILDROOT/$FILENAMEXZ/htdocs/includes/ckeditor/_source`;	# We can't remove it with exclude file, we need it for some tarball packages
+			
     		print "Compress $FILENAMEXZ into $FILENAMEXZ.xz...\n";
  
             print "Go to directory $BUILDROOT\n";
@@ -562,6 +566,9 @@ if ($nboftargetok) {
             print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$FILENAMEZIP\n";
     		$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$FILENAMEZIP\"";
             $ret=`$cmd`;
+
+		    $ret=`rm -fr $BUILDROOT/$FILENAMEZIP/build/exe`;
+			$ret=`rm -fr $BUILDROOT/$FILENAMEZIP/htdocs/includes/ckeditor/_source`;	# We can't remove it with exclude file, we need it for some tarball packages
 
     		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
  

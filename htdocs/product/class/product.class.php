@@ -2609,6 +2609,7 @@ class Product extends CommonObject
 	function load_stock()
 	{
 		$this->stock_reel = 0;
+		$this->stock_warehouse = array();
 
 		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
