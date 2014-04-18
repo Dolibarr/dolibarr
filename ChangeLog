@@ -84,6 +84,9 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 
 
+***** ChangeLog for 3.5.3 compared to 3.5.2 *****
+Fix: Error on field accountancy code for export profile of invoices.
+
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
 Fix: Autoselect of warehouse if there is only one warehouse.
