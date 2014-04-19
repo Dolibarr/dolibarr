@@ -391,31 +391,14 @@ class Project extends CommonObject
      * 	@param		string		$type		'propal','order','invoice','order_supplier','invoice_supplier'
      * 	@return		array					List of orders linked to project, <0 if error
      */
-    function get_element_list($type)
+    function get_element_list($type, $tablename)
     {
         $elements = array();
 
-        $sql = '';
-        if ($type == 'propal')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "propal WHERE fk_projet=" . $this->id;
-        if ($type == 'order')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "commande WHERE fk_projet=" . $this->id;
-        if ($type == 'invoice')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facture WHERE fk_projet=" . $this->id;
-        if ($type == 'invoice_predefined')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facture_rec WHERE fk_projet=" . $this->id;
-        if ($type == 'order_supplier')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "commande_fournisseur WHERE fk_projet=" . $this->id;
-        if ($type == 'invoice_supplier')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "facture_fourn WHERE fk_projet=" . $this->id;
-        if ($type == 'contract')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "contrat WHERE fk_projet=" . $this->id;
-        if ($type == 'intervention')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "fichinter WHERE fk_projet=" . $this->id;
-        if ($type == 'trip')
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "deplacement WHERE fk_projet=" . $this->id;
         if ($type == 'agenda')
             $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
+        else
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
         if (! $sql) return -1;
 
         //print $sql;
