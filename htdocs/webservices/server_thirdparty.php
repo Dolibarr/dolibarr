@@ -290,7 +290,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			$result=$thirdparty->fetch($id,$ref,$ref_ext);
 			if ($result > 0)
 			{
-				
+
 				$thirdparty_result_fields=array(
 				    	'id' => $thirdparty->id,
 			   			'ref' => $thirdparty->name,
@@ -328,16 +328,16 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				        'vat_number' => $thirdparty->tva_intra,
 						'note_private' => $thirdparty->note_private,
 						'note_public' => $thirdparty->note_public);
-				
+
 				//Retreive all extrafield for thirdsparty
 				// fetch optionals attributes and labels
 				$extrafields=new ExtraFields($db);
 				$extralabels=$extrafields->fetch_name_optionals_label('societe',true);
 				//Get extrafield values
 				$thirdparty->fetch_optionals($thirdparty->id,$extralabels);
-				
+
 				foreach($extrafields->attribute_label as $key=>$label)
-				{				
+				{
 					$thirdparty_result_fields=array_merge($thirdparty_result_fields,array('options_'.$key => $thirdparty->array_options['options_'.$key]));
 				}
 
@@ -444,7 +444,7 @@ function createThirdParty($authentication,$thirdparty)
 
         $newobject->canvas=$thirdparty['canvas'];
         $newobject->particulier=$thirdparty['individual'];
-        
+
         //Retreive all extrafield for thirdsparty
         // fetch optionals attributes and labels
         $extrafields=new ExtraFields($db);
@@ -520,16 +520,16 @@ function updateThirdParty($authentication,$thirdparty)
 	if (! $error)
 	{
 		$objectfound=false;
-		
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object=new Societe($db);
 		$result=$object->fetch($thirdparty['id']);
-		
+
 		if (!empty($object->id)) {
-			 
+
 			$objectfound=true;
-			
+
 			$object->ref=$thirdparty['ref'];
 			$object->name=$thirdparty['ref'];
 			$object->ref_ext=$thirdparty['ref_ext'];
@@ -546,12 +546,12 @@ function updateThirdParty($authentication,$thirdparty)
 			$object->address=$thirdparty['address'];
 			$object->zip=$thirdparty['zip'];
 			$object->town=$thirdparty['town'];
-	
+
 			$object->country_id=$thirdparty['country_id'];
 			if ($thirdparty['country_code']) $object->country_id=getCountry($thirdparty['country_code'],3);
 			$object->province_id=$thirdparty['province_id'];
 			//if ($thirdparty['province_code']) $newobject->province_code=getCountry($thirdparty['province_code'],3);
-	
+
 			$object->phone=$thirdparty['phone'];
 			$object->fax=$thirdparty['fax'];
 			$object->email=$thirdparty['email'];
@@ -562,15 +562,15 @@ function updateThirdParty($authentication,$thirdparty)
 			$object->idprof4=$thirdparty['profid4'];
 			$object->idprof5=$thirdparty['profid5'];
 			$object->idprof6=$thirdparty['profid6'];
-	
+
 			$object->capital=$thirdparty['capital'];
-	
+
 			$object->barcode=$thirdparty['barcode'];
 			$object->tva_assuj=$thirdparty['vat_used'];
 			$object->tva_intra=$thirdparty['vat_number'];
-	
+
 			$object->canvas=$thirdparty['canvas'];
-	
+
 			//Retreive all extrafield for thirdsparty
 			// fetch optionals attributes and labels
 			$extrafields=new ExtraFields($db);
@@ -580,9 +580,9 @@ function updateThirdParty($authentication,$thirdparty)
 				$key='options_'.$key;
 				$object->array_options[$key]=$thirdparty[$key];
 			}
-	
+
 			$db->begin();
-	
+
 			$result=$object->update($thirdparty['id'],$fuser);
 			if ($result <= 0) {
 				$error++;
@@ -640,6 +640,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
     // Init and check authentication
     $objectresp=array();
     $arraythirdparties=array();
+
     $errorcode='';$errorlabel='';
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
@@ -647,9 +648,11 @@ function getListOfThirdParties($authentication,$filterthirdparty)
 
     if (! $error)
     {
-        $sql ="SELECT s.rowid, s.nom as ref, s.ref_ext, s.address, s.zip, s.town, p.libelle as country, s.phone, s.fax, s.url";
+        $sql ="SELECT s.rowid as socRowid, s.nom as ref, s.ref_ext, s.address, s.zip, s.town, p.libelle as country, s.phone, s.fax, s.url, extra.*";
         $sql.=" FROM ".MAIN_DB_PREFIX."societe as s";
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid';
+        $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as extra ON s.rowid=fk_object";
+
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterthirdparty as $key => $val)
         {
@@ -658,6 +661,11 @@ function getListOfThirdParties($authentication,$filterthirdparty)
             if ($key == 'category'   && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
         dol_syslog("Function: getListOfThirdParties sql=".$sql);
+
+        $extrafields=new ExtraFields($db);
+        $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
+
+
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -666,18 +674,25 @@ function getListOfThirdParties($authentication,$filterthirdparty)
             $i=0;
             while ($i < $num)
             {
+                $extrafieldsOptions=array();
                 $obj=$db->fetch_object($resql);
-                $arraythirdparties[]=array('id'=>$obj->rowid,
-                			'ref'=>$obj->ref,
-                			'ref_ext'=>$obj->ref_ext,
-                			'adress'=>$obj->adress,
-			                'zip'=>$obj->zip,
-			                'town'=>$obj->town,
-			                'country'=>$obj->country,
-			                'phone'=>$obj->phone,
-			                'fax'=>$obj->fax,
-			                'url'=>$obj->url
+                foreach($extrafields->attribute_label as $key=>$label)
+                {
+                    $extrafieldsOptions['options_'.$key] = $obj->{$key};
+                }
+                $arraythirdparties[]=array('id'=>$obj->socRowid,
+                    'ref'=>$obj->ref,
+                    'ref_ext'=>$obj->ref_ext,
+                    'adress'=>$obj->adress,
+                    'zip'=>$obj->zip,
+                    'town'=>$obj->town,
+                    'country'=>$obj->country,
+                    'phone'=>$obj->phone,
+                    'fax'=>$obj->fax,
+                    'url'=>$obj->url
                 );
+                $arraythirdparties[$i] = array_merge($arraythirdparties[$i],$extrafieldsOptions);
+
                 $i++;
             }
         }
