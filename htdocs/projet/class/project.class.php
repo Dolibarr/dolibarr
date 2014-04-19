@@ -389,6 +389,7 @@ class Project extends CommonObject
      * 	Return list of elements for type linked to project
      *
      * 	@param		string		$type		'propal','order','invoice','order_supplier','invoice_supplier'
+     * 	@param		string		$tablename	name of table associated of the type
      * 	@return		array					List of orders linked to project, <0 if error
      */
     function get_element_list($type, $tablename)
