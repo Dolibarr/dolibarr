@@ -357,7 +357,7 @@ foreach ($listofreferent as $key => $value)
 	$margin = $value['margin'];
 	if (isset($margin))
 	{
-		$elementarray = $project->get_element_list($key);
+		$elementarray = $project->get_element_list($key, $tablename);
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
 			$var=true;
