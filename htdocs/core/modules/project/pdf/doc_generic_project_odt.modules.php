@@ -841,46 +841,56 @@ class doc_generic_project_odt extends ModelePDFProjects
 				'propal'=>array(
 				'title'=>"ListProposalsAssociatedProject",
 				'class'=>'Propal',
-				'test'=>$conf->propal->enabled),
+				'table'=>'propal',
+				'test'=>$conf->propal->enabled  && $user->rights->propale->lire),
 				'order'=>array(
 				'title'=>"ListOrdersAssociatedProject",
 				'class'=>'Commande',
-				'test'=>$conf->commande->enabled),
+				'table'=>'commande',
+				'test'=>$conf->commande->enabled  && $user->rights->commande->lire),
 				'invoice'=>array(
 				'title'=>"ListInvoicesAssociatedProject",
 				'class'=>'Facture',
-				'test'=>$conf->facture->enabled),
+				'table'=>'facture',
+				'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 				'invoice_predefined'=>array(
 				'title'=>"ListPredefinedInvoicesAssociatedProject",
 				'class'=>'FactureRec',
-				'test'=>$conf->facture->enabled),
+				'table'=>'facture_rec',
+				'test'=>$conf->facture->enabled  && $user->rights->facture->lire),
 				'order_supplier'=>array(
 				'title'=>"ListSupplierOrdersAssociatedProject",
+				'table'=>'commande_fournisseur',
 				'class'=>'CommandeFournisseur',
-				'test'=>$conf->fournisseur->enabled),
+				'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
 				'invoice_supplier'=>array(
 				'title'=>"ListSupplierInvoicesAssociatedProject",
+				'table'=>'facture_fourn',
 				'class'=>'FactureFournisseur',
-				'test'=>$conf->fournisseur->enabled),
+				'test'=>$conf->fournisseur->enabled  && $user->rights->fournisseur->facture->lire),
 				'contract'=>array(
 				'title'=>"ListContractAssociatedProject",
 				'class'=>'Contrat',
-				'test'=>$conf->contrat->enabled),
+				'table'=>'contrat',
+				'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
 				'intervention'=>array(
 				'title'=>"ListFichinterAssociatedProject",
 				'class'=>'Fichinter',
+				'table'=>'fichinter',
 				'disableamount'=>1,
-				'test'=>$conf->ficheinter->enabled),
+				'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 				'trip'=>array(
 				'title'=>"ListTripAssociatedProject",
 				'class'=>'Deplacement',
+				'table'=>'deplacement',
 				'disableamount'=>1,
-				'test'=>$conf->deplacement->enabled),
+				'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
 				'agenda'=>array(
 				'title'=>"ListActionsAssociatedProject",
 				'class'=>'ActionComm',
+				'table'=>'actioncomm',
 				'disableamount'=>1,
-				'test'=>$conf->agenda->enabled)
+				'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
 				);
 
 				//Insert reference
@@ -891,11 +901,12 @@ class doc_generic_project_odt extends ModelePDFProjects
 					foreach ($listofreferent as $keyref => $valueref)
 					{
 						$title=$valueref['title'];
+						$tablename=$valueref['table'];
 						$classname=$valueref['class'];
 						$qualified=$valueref['test'];
 						if ($qualified)
 						{
-							$elementarray = $object->get_element_list($keyref);
+							$elementarray = $object->get_element_list($keyref, $tablename);
 							if (count($elementarray)>0 && is_array($elementarray))
 							{
 								$var=true;

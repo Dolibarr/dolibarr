@@ -151,6 +151,7 @@ $listofreferent=array(
 'invoice'=>array(
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
+	'margin'=>'add',
 	'table'=>'facture',
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'invoice_predefined'=>array(
@@ -166,6 +167,7 @@ $listofreferent=array(
 'invoice_supplier'=>array(
 	'title'=>"ListSupplierInvoicesAssociatedProject",
 	'class'=>'FactureFournisseur',
+	'margin'=>'minus',
 	'table'=>'facture_fourn',
 	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
@@ -183,6 +185,7 @@ $listofreferent=array(
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
+	'margin'=>'minus',
 	'disableamount'=>1,
 	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
 'agenda'=>array(
@@ -237,7 +240,7 @@ foreach ($listofreferent as $key => $value)
 		if (empty($value['disableamount'])) print '<td align="right" width="120">'.$langs->trans("AmountTTC").'</td>';
 		print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
-		$elementarray = $project->get_element_list($key);
+		$elementarray = $project->get_element_list($key, $tablename);
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
 			$var=true;
@@ -333,6 +336,74 @@ foreach ($listofreferent as $key => $value)
 		print '</div>';
 	}
 }
+
+// Margin display of the project
+print_titre("Margin");
+print '<table class="noborder">';
+print '<tr class="liste_titre">';
+print '<td align="left" width="200">'.$langs->trans("Element").'</td>';
+print '<td align="right" width="100">'.$langs->trans("Number").'</td>';
+print '<td align="right" width="100">'.$langs->trans("AmountHT").'</td>';
+print '<td align="right" width="100">'.$langs->trans("AmountTTC").'</td>';
+print '</tr>';
+
+
+foreach ($listofreferent as $key => $value)
+{
+	$title=$value['title'];
+	$classname=$value['class'];
+	$tablename=$value['table'];
+	$qualified=$value['test'];
+	$margin = $value['margin'];
+	if (isset($margin))
+	{
+		$elementarray = $project->get_element_list($key, $tablename);
+		if (count($elementarray)>0 && is_array($elementarray))
+		{
+			$var=true;
+			$total_ht = 0;
+			$total_ttc = 0;
+			$num=count($elementarray);
+			for ($i = 0; $i < $num; $i++)
+			{
+				$element = new $classname($db);
+				$element->fetch($elementarray[$i]);
+				$element->fetch_thirdparty();
+				//print $classname;
+
+				$total_ht = $total_ht + $element->total_ht;
+				$total_ttc = $total_ttc + $element->total_ttc;
+			}
+
+			print '<tr >';
+			print '<td align="left" >'.$classname.'</td>';
+			print '<td align="right">'.$i.'</td>';
+			print '<td align="right">'.price($total_ht).'</td>';
+			print '<td align="right">'.price($total_ttc).'</td>';
+			print '</tr>';
+			if ($margin=="add")
+			{
+				$margin_ht+= $total_ht;
+				$margin_ttc+= $total_ttc;
+			}
+			else
+			{
+				$margin_ht-= $total_ht;
+				$margin_ttc-= $total_ttc;
+			}
+		}
+
+	}
+}
+// and the margin amount total
+print '<tr class="liste_total">';
+print '<td align="right" colspan=2 >'.$langs->trans("Total").'</td>';
+print '<td align="right" >'.price($margin_ht).'</td>';
+print '<td align="right" >'.price($margin_ttc).'</td>';
+print '</tr>';
+
+print "</table>";
+
 
 llxFooter();
 
