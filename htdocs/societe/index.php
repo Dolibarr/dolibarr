@@ -178,7 +178,7 @@ if (! empty($conf->categorie->enabled))
 	{
 		$num = $db->num_rows($result);
 		$i=0;
-		if (! empty($conf->use_javascript_ajax) 
+		if (! empty($conf->use_javascript_ajax) )
 		{
 			$dataseries=array();
 			while ($i < $num)
