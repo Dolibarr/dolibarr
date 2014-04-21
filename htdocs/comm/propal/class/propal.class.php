@@ -200,7 +200,7 @@ class Propal extends CommonObject
             $line->remise_percent=$remise_percent;
             $line->tva_tx=$tva_tx;
 
-            $this->products[]=$line;
+            $this->lines[]=$line;
         }
     }
 
