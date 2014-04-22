@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -346,7 +346,7 @@ if ($id > 0 || ! empty($ref))
 					$productstatic->ref=$value['fullpath'];
 					print '<td>'.$productstatic->getNomUrl(1,'composition').' ('.$value['nb'].')</td>';
 					print '<td align="right">';
-					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id, $value['nb']) > 0)
+					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0)
 					{
 						print $langs->trans("BuyingPriceMinShort").': ';
 				    	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur(0,0);
