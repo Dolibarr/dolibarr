@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2012	Nicolas Péré			<nicolas@amarok2.net>
- * Copyright (C) 2012	Xavier Peyronnet		<xavier.peyronnet@free.fr>
- * Copyright (C) 2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2012       Nicolas Péré			<nicolas@amarok2.net>
+ * Copyright (C) 2012       Xavier Peyronnet		<xavier.peyronnet@free.fr>
+ * Copyright (C) 2012       Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@ require_once '../../main.inc.php';
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);
 
+
 // Define css type
 header('Content-type: text/css');
-// Important: Following code is to avoid page request by browser and PHP CPU at
-// each Dolibarr page access.
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
@@ -59,16 +59,13 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
-$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
 $path='';    		// This value may be used in future for external module to overwrite theme
 $theme='amarok';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
-// Define image path files
+// Define image path files and other constants
 $fontlist='helvetica,arial,tahoma,verdana';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
-//'/theme/auguria/img/menus/trtitle.png';
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -112,8 +109,8 @@ $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
 $colorbackbody='#f5f5f5';
 $colortext='40,40,40';
-$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
-$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
+$fontsize='12';
+$fontsizesmaller='11';
 
 $colorback1          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$conf->global->THEME_ELDY_TOPMENU_BACK1)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorback2          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$conf->global->THEME_ELDY_TOPMENU_BACK2)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
@@ -575,8 +572,6 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
-	/* margin:0px 0px 0px 8px; */
 	font-weight:bold;
 	float: right;
 }
@@ -591,7 +586,6 @@ div.login {
 }
 
 img.login, img.printer, img.entity {
-	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
 	margin:2px 0px 0px 0px;
 	text-decoration:none;
 	color: white;
