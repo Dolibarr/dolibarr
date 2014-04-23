@@ -80,7 +80,7 @@ class DolCookie
 	/**
 	 * Decrypt the cookie
 	 *
-	 * @return	void
+	 * @return	string
 	 */
 	function decryptCookie()
 	{
