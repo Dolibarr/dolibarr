@@ -1302,9 +1302,6 @@ class Propal extends CommonObject
             $soc = new Societe($this->db);
             $soc->fetch($this->socid);
 
-            // Class of company linked to propal
-            $result=$soc->set_as_client();
-
             // Define new ref
             if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))
             {
