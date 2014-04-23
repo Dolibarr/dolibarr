@@ -34,7 +34,7 @@ class DolCookie
 	var $myExpire;
 	var $myPath;
 	var $myDomain;
-	var	$mySsecure;
+	var	$mySecure;
 	var $cookiearray;
 	var $cookie;
 
