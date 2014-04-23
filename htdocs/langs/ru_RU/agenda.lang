@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Действия
 ActionsArea=Действия области (События и задач)
 Agenda= Повестка дня
@@ -10,7 +10,7 @@ LocalAgenda=Местное календарь
 AffectedTo= Затронутые в
 DoneBy= Проделанную
 Events= События
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=Мои события
 OtherEvents=Другие события
 ListOfActions=Список событий
@@ -40,9 +40,10 @@ ActionsEvents= События, за которые Dolibarr создадут д�
 PropalValidatedInDolibarr= Предложение проверены
 InvoiceValidatedInDolibarr= Счет проверены
 InvoiceBackToDraftInDolibarr=Счет %s вернуться к проекту статус
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Приказ проверены
 OrderApprovedInDolibarr=Заказ %s утвержденный
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Заказ %s вернуться к проекту статус
 OrderCanceledInDolibarr=Заказ %s отменен
 InterventionValidatedInDolibarr=Intervensjon %s validert
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Клиенту счет-фактура %s отправлен�
 SupplierOrderSentByEMail=Поставщик порядке %s отправлены по электронной почте
 SupplierInvoiceSentByEMail=Поставщиком счета %s отправлены по электронной почте
 ShippingSentByEMail=Доставка %s отправлены по электронной почте
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Вмешательство %s отправлены по электронной почте
 NewCompanyToDolibarr= Третья группа создала
 DateActionPlannedStart= Планируемая дата начала
@@ -68,8 +69,8 @@ AgendaUrlOptions4=<b>logint=<b>logint= %s</b> ограничить выход н
 AgendaUrlOptions5=<b>logind=<b>logind= %s</b> ограничить выход на действия пользователя, <b>проделанной %s.</b>
 AgendaShowBirthdayEvents=Показать рождения контакты
 AgendaHideBirthdayEvents=Скрыть рождения контакты
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Экспорт календаря

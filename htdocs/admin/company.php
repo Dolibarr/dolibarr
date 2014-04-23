@@ -305,7 +305,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-    $form->select_currency($conf->currency,"currency");
+    print $form->selectCurrency($conf->currency,"currency");
     print '</td></tr>'."\n";
 
     $var=!$var;
@@ -381,7 +381,7 @@ if ($action == 'edit' || $action == 'updateedit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ManagingDirectors").'</td><td>';
     print '<input name="MAIN_INFO_SOCIETE_MANAGERS" size="80" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
-    
+
     // Capital
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
@@ -746,7 +746,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ManagingDirectors").'</td><td>';
     print $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '</td></tr>';
-    
+
     // Capital
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';

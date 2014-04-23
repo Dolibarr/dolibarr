@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Toimet
 ActionsArea=Toimien alueella (tapahtumat ja tehtävät)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Paikallinen kalenteri
 AffectedTo= Vaikuttaa
 DoneBy= Tekemiäni
 Events= Tapahtumat
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=My tapahtumia
 OtherEvents=Muut tapahtumat
 ListOfActions=Luettelo tapahtumista
@@ -40,9 +40,10 @@ ActionsEvents= Tapahtumat, joista Dolibarr luo toimia esityslistan automaattises
 PropalValidatedInDolibarr= Ehdotus validoitava
 InvoiceValidatedInDolibarr= Laskun validoitava
 InvoiceBackToDraftInDolibarr=Laskun %s palata luonnos tila
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Tilaa validoitava
 OrderApprovedInDolibarr=Tilaa %s hyväksytty
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Tilaa %s palata luonnos tila
 OrderCanceledInDolibarr=Tilaus %s peruutettu
 InterventionValidatedInDolibarr=Intervention %s validoitu
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
 SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
 SupplierInvoiceSentByEMail=Toimittaja lasku %s lähetetään sähköpostilla
 ShippingSentByEMail=Toimitus %s lähetetään sähköpostilla
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s lähetetään sähköpostilla
 NewCompanyToDolibarr= Kolmannen osapuolen luonut
 DateActionPlannedStart= SUUNNITELTU ALKAMISPÄIVÄ
@@ -68,8 +69,8 @@ AgendaUrlOptions4=<b>logint=<b>logint= %s</b> rajoittaa tuotannon toimet vaikutt
 AgendaUrlOptions5=<b>logind=<b>sisäänkirj= %s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän %s.</b>
 AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
 AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Vie kalenteri

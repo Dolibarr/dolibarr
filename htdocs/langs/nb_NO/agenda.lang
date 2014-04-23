@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Handlinger
 ActionsArea=Handlingsområde (Hendelser og oppgaver)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Lokal kalender
 AffectedTo= Relatert til
 DoneBy= Utført av
 Events= Hendelser
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=Mine hendelser
 OtherEvents=Andre arrangementer
 ListOfActions=Oversikt over hendelser
@@ -40,9 +40,10 @@ ActionsEvents= Handlinger som Dolibarr automatisk registrerer i agendaen
 PropalValidatedInDolibarr= Tilbud godkjent
 InvoiceValidatedInDolibarr= Faktura godkjent
 InvoiceBackToDraftInDolibarr=Faktura %s gå tilbake til utkast status
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Ordre godkjent
 OrderApprovedInDolibarr=Bestill %s godkjent
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Bestill %s gå tilbake til utkast status
 OrderCanceledInDolibarr=Bestill %s kansellert
 InterventionValidatedInDolibarr=Intervensjon %s validert
@@ -52,7 +53,7 @@ InvoiceSentByEMail=Faktura %s på e-post
 SupplierOrderSentByEMail=Leverandør bestill %s på e-post
 SupplierInvoiceSentByEMail=Leverandørfaktura %s på e-post
 ShippingSentByEMail=Frakt %s på e-post
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervensjon %s på e-post
 NewCompanyToDolibarr= Tredjepart opprettet
 DateActionPlannedStart= Planlagt startdato
@@ -68,8 +69,8 @@ AgendaUrlOptions4=<b>logint=%s</b> for å begrense utvalg til handlinger relater
 AgendaUrlOptions5=<b>logind=%s</b> for å begrense utvalg til handlinger utført av bruker <b>%s</b>.
 AgendaShowBirthdayEvents=Vis fødselsdager
 AgendaHideBirthdayEvents=Skjul fødselsdager
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Eksporter kalender

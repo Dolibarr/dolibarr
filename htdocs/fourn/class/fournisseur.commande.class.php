@@ -45,6 +45,8 @@ class CommandeFournisseur extends CommonOrder
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    var $id;
+    
     var $ref;		 // TODO deprecated
     var $product_ref;
     var $ref_supplier;
@@ -99,8 +101,8 @@ class CommandeFournisseur extends CommonOrder
         $this->statuts[3] = 'StatusOrderOnProcess';
         $this->statuts[4] = 'StatusOrderReceivedPartially';
         $this->statuts[5] = 'StatusOrderReceivedAll';
-        $this->statuts[6] = 'StatusOrderCanceled';
-        $this->statuts[7] = 'StatusOrderCanceled';
+        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
+        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
         $this->statuts[9] = 'StatusOrderRefused';
     }
 

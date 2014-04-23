@@ -8,7 +8,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2014      Florian Henry		 <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1187,12 +1187,12 @@ if ($action == 'create') {
 
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td>';
-	$form->select_demand_reason('', 'demand_reason_id', "SRC_PROP", 1);
+	$form->selectInputReason('', 'demand_reason_id', "SRC_PROP", 1);
 	print '</td></tr>';
 
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
-	$form->select_availability('', 'availability_id', '', 1);
+	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -1465,7 +1465,7 @@ if ($action == 'create') {
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	if ($absolute_discount) {
 		if ($object->statut > 0) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
 		} else {
 			// Remise dispo de type non avoir
 			$filter = 'fk_facture_source IS NULL';
@@ -1474,7 +1474,7 @@ if ($action == 'create') {
 		}
 	}
 	if ($absolute_creditnote) {
-		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '. ';
+		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
 	}
 	if (! $absolute_discount && ! $absolute_creditnote)
 		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
@@ -1604,13 +1604,11 @@ if ($action == 'create') {
 		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	// print $object->demand_reason_id;
 	if ($action == 'editdemandreason') {
-		$form->form_demand_reason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
+		$form->formInputReason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
-		$form->form_demand_reason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
+		$form->formInputReason($_SERVER ['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
 	}
-
 	print '</td>';
 	print '</tr>';
 

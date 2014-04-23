@@ -256,7 +256,7 @@ if ($action == 'create')
 	print '<td colspan="3">';
 	$selectedcode=$account->account_currency_code;
 	if (! $selectedcode) $selectedcode=$conf->currency;
-	$form->select_currency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
+	print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 	//print $langs->trans("Currency".$conf->currency);
 	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 	print '</td></tr>';
@@ -374,7 +374,7 @@ else
 		if ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
-			
+
 		}
 
 		print '<table class="border" width="100%">';
@@ -531,7 +531,7 @@ else
 		print '<td colspan="3">';
 		$selectedcode=$account->account_currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
-		$form->select_currency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
+		print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
 		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 		print '</td></tr>';

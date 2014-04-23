@@ -6,7 +6,7 @@ CountryES=西班牙
 CountryDE=德国
 CountryCH=瑞士
 CountryGB=大不列颠
-# CountryUK=United Kingdom
+CountryUK=英国
 CountryIE=爱尔兰
 CountryCN=中国
 CountryTN=突尼斯
@@ -253,7 +253,6 @@ CivilityMR=先生
 CivilityMLE=女士
 CivilityMTRE=主
 CivilityDR=医生
-
 ##### Currencies #####
 Currencyeuros=欧元
 CurrencyAUD=澳元
@@ -290,10 +289,8 @@ CurrencyXOF=非洲法郎西非国家中央银行
 CurrencySingXOF=郎西非国家中央银行
 CurrencyXPF=CFP法郎
 CurrencySingXPF=太平洋法郎
-
 CurrencyCentSingEUR=美分
 CurrencyThousandthSingTND=千分之一
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=因特网
 DemandReasonTypeSRC_CAMP_MAIL=邮寄活动
@@ -306,7 +303,6 @@ DemandReasonTypeSRC_WOM=口碑
 DemandReasonTypeSRC_PARTNER=伙伴
 DemandReasonTypeSRC_EMPLOYEE=雇员
 DemandReasonTypeSRC_SPONSORING=赞助
-
 #### Paper formats ####
 PaperFormatEU4A0=4A0
 PaperFormatEU2A0=2A0

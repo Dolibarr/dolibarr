@@ -192,7 +192,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	}
 	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)			
+			)
 	{
 		$predef= '_predef';
 		$idprod=GETPOST('idprod', 'int');
@@ -214,7 +214,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     }
     if (! GETPOST('addline_predefined') && ( GETPOST('pu')==='')) // Unit price can be 0 but not ''
     {
-    	
+
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
         $error++;
     }
@@ -508,6 +508,9 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
         $result	= $object->approve($user, $idwarehouse);
         if ($result > 0)
         {
+            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+                supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            }
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
             exit;
         }
@@ -537,6 +540,9 @@ else if ($action == 'confirm_commande' && $confirm	== 'yes' &&	$user->rights->fo
     $result	= $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
     if ($result > 0)
     {
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+            supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        }
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         exit;
     }
@@ -1987,7 +1993,7 @@ elseif (! empty($object->id))
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
-			$formorder->select_methodes_commande(GETPOST('methodecommande'), "methodecommande", 1);
+			$formorder->selectInputMethod(GETPOST('methodecommande'), "methodecommande", 1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment" value="'.GETPOST('comment').'"></td></tr>';

@@ -816,9 +816,10 @@ abstract class CommonObject
      *
      *      @param	string	$filter		Optional filter
      *	 	@param  int		$fieldid   	Name of field to use for the select MAX and MIN
+     *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
-    function load_previous_next_ref($filter,$fieldid)
+    function load_previous_next_ref($filter,$fieldid,$nodbprefix=0)
     {
         global $conf, $user;
 
@@ -834,7 +835,7 @@ abstract class CommonObject
         if ($this->element == 'societe') $alias = 'te';
 
         $sql = "SELECT MAX(te.".$fieldid.")";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
+        $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'";
@@ -847,7 +848,7 @@ abstract class CommonObject
         $result = $this->db->query($sql);
         if (! $result)
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             return -1;
         }
         $row = $this->db->fetch_row($result);
@@ -855,7 +856,7 @@ abstract class CommonObject
 
 
         $sql = "SELECT MIN(te.".$fieldid.")";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
+        $sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
         if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
         if (empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$alias.".rowid = sc.fk_soc";
         $sql.= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'";
@@ -869,7 +870,7 @@ abstract class CommonObject
         $result = $this->db->query($sql);
         if (! $result)
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             return -2;
         }
         $row = $this->db->fetch_row($result);

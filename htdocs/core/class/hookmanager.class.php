@@ -137,6 +137,7 @@ class HookManager
         		'addMoreActionsButtons',
 		        'addStatisticLine',
 		        'doActions',
+        		'formCreateThirdpartyOptions',
 		        'formObjectOptions',
 		        'formattachOptions',
 		        'formBuilddocLineOptions',

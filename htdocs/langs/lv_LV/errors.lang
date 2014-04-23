@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=Nav kļūda, mēs apņemamies
-
 # Errors
 Error=Kļūda
 Errors=Kļūdas
@@ -26,7 +25,7 @@ ErrorFromToAccountsMustDiffers=Avots un mērķiem banku kontiem jābūt atšķir
 ErrorBadThirdPartyName=Slikti vērtība trešo personu vārda
 ErrorProdIdIsMandatory=%s ir obligāta
 ErrorBadCustomerCodeSyntax=Slikti sintakse klientu kodu
-# ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bad syntax for bar code
 ErrorCustomerCodeRequired=Klientam nepieciešams kods
 ErrorBarCodeRequired=Svītrkods nepieciešams
 ErrorCustomerCodeAlreadyUsed=Klienta kods jau ir izmantots
@@ -66,7 +65,7 @@ ErrorNoValueForCheckBoxType=Lūdzu, aizpildiet vērtību rūtiņu sarakstu
 ErrorNoValueForRadioType=Lūdzu, aizpildiet vērtību radio sarakstā
 ErrorBadFormatValueList=Saraksts vērtība nevar būt vairāk kā viens nāk: <u>%s,</u> bet ir nepieciešams vismaz viens: Llave, Valores
 ErrorFieldCanNotContainSpecialCharacters=Lauka <b>%s</b> nedrīkst satur speciālās rakstzīmes.
-# ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=Nav grāmatvedības moduli aktivizēts
 ErrorExportDuplicateProfil=Šāds profila nosaukums jau eksistē šim eksportam.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP saskaņošana nav pilnīga.
@@ -134,8 +133,8 @@ ErrorPHPNeedModule=Kļūda, jūsu PHP ir jābūt moduli <b>%s</b> uzstādītas, 
 ErrorOpenIDSetupNotComplete=Jūs uzstādīšana Dolibarr config failu, lai ļautu OpenID autentifikācijas, bet OpenID pakalpojuma URL nav definēts spēkā salīdzināmajās %s
 ErrorWarehouseMustDiffers=Avota un mērķa noliktavas jābūt atšķiras
 ErrorBadFormat=Nepareizs formāts
-# ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
-
+ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
 # Warnings
 WarningMandatorySetupNotComplete=Obligātie uzstādīšanas parametri vēl nav definētas
 WarningSafeModeOnCheckExecDir=Uzmanību, PHP iespēja <b>safe_mode</b> ir par tik komanda jāuzglabā iekšpusē direktorijā deklarēto php parametru <b>safe_mode_exec_dir.</b>

@@ -18,8 +18,8 @@ RequestStandingOrderToTreat=Αίτηση πάγιων εντολών για τη
 RequestStandingOrderTreated=Αίτηση για παραγγελίες που έλαβαν στέκεται
 CustomersStandingOrders=Πάγιες εντολές πελατών
 CustomerStandingOrder=Πελάτης πάγια εντολή
-NbOfInvoiceToWithdraw=Αριθμός τιμολογίου με αίτημα απόσυρσης
-NbOfInvoiceToWithdrawWithInfo=Αριθμός τιμολογίου με το αίτημα απόσυρσης για τους πελάτες που έχουν ορίσει τα στοιχεία του τραπεζικού λογαριασμού
+NbOfInvoiceToWithdraw=Nb. of invoice with withdraw request
+NbOfInvoiceToWithdrawWithInfo=Nb. of invoice with withdraw request for customers having defined bank account information
 InvoiceWaitingWithdraw=Τιμολόγιο περιμένει να αποσύρει
 AmountToWithdraw=Ποσό για την απόσυρση
 WithdrawsRefused=Αναλήψεις αρνήθηκε
@@ -78,11 +78,11 @@ BankToReceiveWithdraw=Τραπεζικός λογαριασμός για να λ
 CreditDate=Πιστωτικές με
 WithdrawalFileNotCapable=Δεν είναι δυνατή η δημιουργία αρχείου απόσυρση απόδειξη για τη χώρα σας
 ShowWithdraw=Εμφάνιση Ανάληψη
-# IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one withdrawal payment not yet processed, it won't be set as paid to allow prior withdrawal management.
-# DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
+IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one withdrawal payment not yet processed, it won't be set as paid to allow prior withdrawal management.
+DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
 WithdrawalFile=Απόσυρση αρχείο
 SetToStatusSent=Ρυθμίστε την κατάσταση "αποστολή αρχείου"
-# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
 
 ### Notifications
 InfoCreditSubject=Η πληρωμή των πάγιων %s ώστε από την τράπεζα

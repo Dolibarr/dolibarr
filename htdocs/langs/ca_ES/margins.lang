@@ -18,12 +18,11 @@ MarginDetails=Detalls de marges realitzats
 
 ProductMargins=Marges per producte
 CustomerMargins=Marges per client
-AgentMargins=Marges per comercial
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Producte o servei
 AllProducts=Tots els productes i serveis
 ChooseProduct/Service=Trieu el producte o servei
-CommercialAgent=Agent comercial
 
 StartDate=Data d'inici
 EndDate=Data de fi
