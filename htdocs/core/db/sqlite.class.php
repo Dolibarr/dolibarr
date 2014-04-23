@@ -369,55 +369,6 @@ class DoliDBSqlite extends DoliDB
     }
 
     /**
-     * Validate a database transaction
-     *
-     * @param	string	$log		Add more log to default log line
-     * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
-     */
-    function commit($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("COMMIT");
-            if ($ret)
-            {
-                $this->transaction_opened=0;
-                dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
-            }
-            return $ret;
-        }
-        else
-       {
-       		$this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
-     *	Annulation d'une transaction et retour aux anciennes valeurs
-     *
-     * 	@param	string	$log		Add more log to default log line
-     * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-     */
-    function rollback($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("ROLLBACK");
-            $this->transaction_opened=0;
-            dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
      * 	Execute a SQL request and return the resultset
      *
      * 	@param	string	$query			SQL query string
