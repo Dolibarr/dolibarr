@@ -491,9 +491,10 @@ abstract class Stats
 	 *
      *     @param	int		$year       Year
      *     @param  	string	$sql        SQL
-     *     @return	array
+	 *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
+	 *     @return	array
 	 */
-	function _getAverageByMonth($year, $sql)
+	function _getAverageByMonth($year, $sql, $format=0)
 	{
 		$result=array();
 		$res=array();
