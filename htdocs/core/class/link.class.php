@@ -266,7 +266,7 @@ class Link extends CommonObject
             {
                 while ($obj = $this->db->fetch_object($resql))
                 {
-                    $link = new Link($db);
+                    $link = new Link($this->db);
                     $link->id = $obj->rowid;
                     $link->entity = $obj->entity;
                     $link->datea = $this->db->jdate($obj->datea);
