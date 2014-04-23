@@ -449,32 +449,6 @@ class DoliDBPgsql extends DoliDB
     }
 
 	/**
-	 * Start transaction
-	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
-	 */
-	function begin()
-	{
-		if (! $this->transaction_opened)
-		{
-			$ret=$this->query("BEGIN;");
-			if ($ret)
-			{
-				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
-			}
-			return $ret;
-		}
-		else
-		{
-			$this->transaction_opened++;
-			dol_syslog('',0,1);
-			return 1;
-		}
-	}
-
-	/**
      * Validate a database transaction
      *
      * @param	string	$log        Add more log to default log line
