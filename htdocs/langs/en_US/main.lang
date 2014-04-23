@@ -206,6 +206,7 @@ Limit=Limit
 Limits=Limits
 DevelopmentTeam=Development Team
 Logout=Logout
+NoLogoutProcessWithAuthMode=No applicative disconnect feature with authentication mode <b>%s</b> 
 Connection=Connection
 Setup=Setup
 Alert=Alert

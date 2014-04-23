@@ -1430,11 +1430,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Link info
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
-	    $logouthtmltext.=$langs->trans("Logout").'<br>';
-	    //$logouthtmltext.="<br>";
 	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
 	    {
-	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
+
+	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
 	        //$logouttext .=empty($atarget?(' target="'.$atarget.'"'):'';
 	        $logouttext .='>';
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
@@ -1442,6 +1442,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    }
 	    else
 	    {
+	    	$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
 	    }
 
