@@ -722,7 +722,7 @@ class RssParser
 /**
  * Function to convert an XML object into an array
  *
- * @param	string	$xml		Xml
+ * @param	SimpleXMLElement	$xml		Xml
  * @return	void
  */
 function xml2php($xml)
