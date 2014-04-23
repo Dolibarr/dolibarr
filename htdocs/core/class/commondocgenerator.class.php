@@ -418,7 +418,7 @@ abstract class CommonDocGenerator
      *	@param  Object			$object				Object with extrafields (must have $object->array_options filled)
      *	@param  array			$array_to_fill      Substitution array
      *  @param  Extrafields		$extrafields        Extrafields object
-     *  @param   array_key		$array_key	        Name of the key for return array
+     *  @param  string			$array_key	        Name of the key for return array
      *  @param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
