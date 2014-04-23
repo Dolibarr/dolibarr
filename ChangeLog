@@ -43,9 +43,11 @@ For users:
 - New: Can define custom fields for categories.
 - New: Prepare generation of SEPA files into module withdrawal.
 - New: Can filter on status for supplier order.
+- New: Add option FACTURE_SENDBYEMAIL_FOR_ALL_STATUS to allow to send invoice by email 
+       whatever is its status.
+- New: Add filter date in bank writing list page.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
-- New: Add filter date in bank writing list page.
 - Fix: Price min of composition is not supplier price min by quantity
 
 TODO
