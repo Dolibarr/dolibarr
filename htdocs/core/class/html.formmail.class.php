@@ -58,7 +58,8 @@ class FormMail
     var $withreplytoreadonly;
     var $withtoreadonly;
     var $withtoccreadonly;
-    var $withtopicreadonly;
+	var $withtocccreadonly;
+	var $withtopicreadonly;
     var $withfilereadonly;
     var $withdeliveryreceipt;
     var $withcancel;
@@ -95,6 +96,7 @@ class FormMail
         $this->withreplytoreadonly=1;
         $this->withtoreadonly=0;
         $this->withtoccreadonly=0;
+	    $this->withtocccreadonly=0;
         $this->witherrorstoreadonly=0;
         $this->withtopicreadonly=0;
         $this->withfilereadonly=0;
