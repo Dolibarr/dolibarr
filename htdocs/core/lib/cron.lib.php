@@ -39,9 +39,9 @@ function cronadmin_prepare_head()
     $head[$h][2] = 'setup';
     $h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'cronadmin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin');
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'cronadmin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'cronadmin', 'remove');
 
 
     return $head;
