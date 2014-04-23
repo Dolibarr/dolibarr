@@ -2482,7 +2482,7 @@ abstract class CommonObject
         	$i=0;
         	while ($i < $num)
         	{
-            	$obj = $this->db->fetch_object($query);
+            	$obj = $this->db->fetch_object($resql);
 
             	$pu_ht = $obj->pu_ht;
             	$qty= $obj->qty;
