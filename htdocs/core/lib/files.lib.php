@@ -1755,7 +1755,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	{
 		$accessallowed=1;
 		$dir='files';
-		if ($type == 'application/x-bittorrent') $dir='torrents';
+		if (dol_mimetype($original_file) == 'application/x-bittorrent') $dir='torrents';
 		$original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	}
 
