@@ -482,7 +482,7 @@ if ($step == 3 && $datatoimport)
 	if ($action == 'delete')
 	{
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		
+
 	}
 
 	print '<table width="100%" class="border">';
@@ -824,7 +824,7 @@ if ($step == 4 && $datatoimport)
 	}
 
 	print "</div>\n";
-	print "<!-- End box container -->\n";
+	print "<!-- End box left container -->\n";
 
 
 	print '</td><td width="50%">';
