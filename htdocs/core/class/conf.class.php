@@ -119,6 +119,8 @@ class Conf
 	 */
 	function setValues($db)
 	{
+		global $conf;
+
 		dol_syslog(get_class($this)."::setValues");
 
 		/*
