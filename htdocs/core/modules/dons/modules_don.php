@@ -147,9 +147,12 @@ abstract class ModeleNumRefDons
  *	@param	string		$message		Message
  *	@param	string		$modele			Force le modele a utiliser ('' par defaut)
  *	@param	Translate	$outputlangs	Object langs
+ *  @param  int			$hidedetails    Hide details of lines
+ *  @param  int			$hidedesc       Hide description
+ *  @param  int			$hideref        Hide ref
  *	@return int         				0 if KO, 1 if OK
  */
-function don_create($db, $id, $message, $modele, $outputlangs)
+function don_create($db, $id, $message, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
     global $conf, $langs;
     $langs->load("bills");
