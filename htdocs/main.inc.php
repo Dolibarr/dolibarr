@@ -1788,7 +1788,7 @@ function getHelpParamFor($helppagename,$langs)
  *  @param  string	$title              Title search area
  *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
  *  @param  string	$htmlinputname      Field Name input form
- *  @return	void
+ *  @return	string
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname)
 {
