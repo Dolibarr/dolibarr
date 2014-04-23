@@ -581,7 +581,7 @@ class ExtraFields
 	 */
 	function showInputField($key,$value,$moreparam='',$keyprefix='')
 	{
-		global $conf,$langs;
+		global $conf,$langs,$db;
 
 		$label=$this->attribute_label[$key];
 		$type =$this->attribute_type[$key];
