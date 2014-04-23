@@ -20,3 +20,6 @@ YouAreCurrentlyInSandboxMode=Kasutad hetkel "liivakasti" režiimi.
 NewPaypalPaymentReceived=Uus PayPali makse vastu võetud
 NewPaypalPaymentFailed=Üritati uut PayPali makset, kuid see ebaõnnestus
 PAYPAL_PAYONLINE_SENDEMAIL=E-posti aadress pärast makset hoiatuse saatmiseks (õnnestus või mitte)
+ReturnURLAfterPayment=Return URL after payment
+ValidationOfPaypalPaymentFailed=Validation of Paypal payment failed
+PaypalConfirmPaymentPageWasCalledButFailed=Payment confirmation page for Paypal was called by Paypal but confirmation failed

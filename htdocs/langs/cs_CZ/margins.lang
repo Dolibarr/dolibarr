@@ -18,12 +18,11 @@ MarginDetails=Margin detaily
 
 ProductMargins=Produktové marže
 CustomerMargins=Zákazníků marže
-AgentMargins=Agent marže
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Produkt nebo služba
 AllProducts=Všechny produkty a služby
 ChooseProduct/Service=Zvolte produkt nebo službu
-CommercialAgent=Obchodní zástupce
 
 StartDate=Datum zahájení
 EndDate=Datum ukončení
@@ -47,5 +46,5 @@ BuyingCost=Velkoobchodní cena
 UnitCharges=Jednotkové náklady
 Charges=Poplatky
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactType=Commercial agent contact type
+AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

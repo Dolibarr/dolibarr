@@ -166,6 +166,7 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source  
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/adodbtime  
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
@@ -306,6 +307,11 @@ done >>%{name}.lang
 %post
 
 echo Run post script of packager dolibarr_generic.spec
+echo Detected constant fedora=0%{?fedora}
+echo Detected constant rhel_version=0%{?rhel_version}
+echo Detected constant centos_version=0%{?centos_version}
+echo Detected constant mdkversion=0%{?mdkversion}
+echo Detected constant suse_version=0%{?suse_version}
 
 # Define vars
 export docdir="/var/lib/dolibarr/documents"
@@ -466,9 +472,12 @@ echo Restart mysql server
 %else
 %if 0%{?suse_version}
 if [ -f /etc/init.d/mysqld ]; then
-  /etc/init.d/mysqld restart
-else
+  /sbin/service mysqld restart
+  #/etc/init.d/mysqld restart
+fi
+if [ -f /etc/init.d/mysql ]; then
   /sbin/service mysql restart
+  #/etc/init.d/mysql restart
 fi
 %else
 if [ -f /etc/init.d/mysqld ]; then
@@ -559,7 +568,7 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
-* Mon Feb 7 2014 Laurent Destailleur 3.6.0-0.2.b
+* Mon Feb 21 2014 Laurent Destailleur 3.6.0-0.2.b
 - Upstream release
 
 * Fri Feb 14 2014 Laurent Destailleur 3.5.2-0.3

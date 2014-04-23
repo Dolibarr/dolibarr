@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=Hata yok, taahüt ediyoruz
-
 # Errors
 Error=Hata
 Errors=Hatalar
@@ -26,11 +25,11 @@ ErrorFromToAccountsMustDiffers=Kaynak ve hedef banka hesapları farklı olmalıd
 ErrorBadThirdPartyName=Üçüncü parti adı için hatalı değer
 ErrorProdIdIsMandatory=Bu %s zorunludur
 ErrorBadCustomerCodeSyntax=Hatalı müşteri kodu
-# ErrorBadBarCodeSyntax=Bad syntax for bar code
+ErrorBadBarCodeSyntax=Bar kodu için hatalı sözdizimi
 ErrorCustomerCodeRequired=Müşteri kodu gereklidir
-# ErrorBarCodeRequired=Bar code required
+ErrorBarCodeRequired=Bar kod gerekli
 ErrorCustomerCodeAlreadyUsed=Müşteri kodu zaten kullanılmış
-# ErrorBarCodeAlreadyUsed=Bar code already used
+ErrorBarCodeAlreadyUsed=Bar kod zaten kullanıldı
 ErrorPrefixRequired=Önek gerekli
 ErrorUrlNotValid=Web sitesi adresi yanlış
 ErrorBadSupplierCodeSyntax=Tedarikçi kodu için hatalı kod
@@ -66,7 +65,7 @@ ErrorNoValueForCheckBoxType=Lütfen onay kutusu listesi için değer girin
 ErrorNoValueForRadioType=Lütfen onay düğmesi için değer girin
 ErrorBadFormatValueList=Listedeki değeri birden fazla virgül içeremez: <u>%s</u>, ama en az bir tane olması gerekir: anahtar, değer
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> alanı özel karakterler içermemelidir.
-# ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=b>%s</b> alanı ne özel karakterler ne de büyük harfler içermemelidir.
 ErrorNoAccountancyModuleLoaded=Etkinleştirilmiş muhasebe modülü yok
 ErrorExportDuplicateProfil=Bu profil adı bu dışaaktarma seti için zaten var.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP eşleşmesi tamamlanmamış.
@@ -135,7 +134,7 @@ ErrorOpenIDSetupNotComplete=Dolibarr yapılandırma dosyasını OpenID kimlik do
 ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
 ErrorBadFormat=Hatalı biçim!
 ErrorPaymentDateLowerThanInvoiceDate=Ödeme tarihi (%s) fatura tarihinden (%s) önce bu faturada %s olamaz.
-
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Hata, bu üye henüz bir üçüncü partiye bağlanmamıştır. Üyeyi varolan bir üçüncü partiye bağlayın ya da faturayla abonelik oluşturmadan önce yeni bir üçüncü parti oluşturun.
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.

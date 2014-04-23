@@ -633,14 +633,59 @@ class InterfaceActionsAuto
         	$ok=1;
         }
 
-		// If not found
-        /*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+		// Project tasks
+		elseif($action == 'TASK_CREATE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			$langs->load("other");
+			$langs->load("projects");
+			$langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TaskCreatedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("TaskCreatedInDolibarr",$object->ref);
+			$object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$ok=1;
+		}
+
+		elseif($action == 'TASK_MODIFY') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			$langs->load("other");
+			$langs->load("projects");
+			$langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TaskModifiedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("TaskModifieddInDolibarr",$object->ref);
+			$object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$ok=1;
+		}
+
+		elseif($action == 'TASK_DELETE') {
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			$langs->load("other");
+			$langs->load("projects");
+			$langs->load("agenda");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+			if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("TaskDeletedInDolibarr",$object->ref);
+			$object->actionmsg=$langs->transnoentities("TaskDeletedInDolibarr",$object->ref);
+			$object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+			$ok=1;
+		}
+
+		// The trigger was enabled but we are missing the implementation, let the log know
+		else
+		{
+			dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.", LOG_WARNING);
 			return 0;
-        }
-        */
+		}
 
         // Add entry in event table
         if ($ok)

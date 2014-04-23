@@ -129,9 +129,9 @@ if ($action == 'add' && $user->rights->projet->creer)
         $db->begin();
 
         $object->ref             = GETPOST('ref','alpha');
-        $object->title           = GETPOST('title','alpha');
+        $object->title           = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
         $object->socid           = GETPOST('socid','int');
-        $object->description     = GETPOST('description','alpha');
+        $object->description     = GETPOST('description'); // Do not use 'alpha' here, we want field as it is
         $object->public          = GETPOST('public','alpha');
         $object->datec=dol_now();
         $object->date_start=$date_start;
@@ -205,9 +205,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$old_start_date = $object->date_start;
 
         $object->ref          = GETPOST('ref','alpha');
-        $object->title        = GETPOST('title','alpha');
+        $object->title        = GETPOST('title'); // Do not use 'alpha' here, we want field as it is
         $object->socid        = GETPOST('socid','int');
-        $object->description  = GETPOST('description','alpha');
+        $object->description  = GETPOST('description');	// Do not use 'alpha' here, we want field as it is
         $object->public       = GETPOST('public','alpha');
         $object->date_start   = empty($_POST["project"])?'':$date_start;
         $object->date_end     = empty($_POST["projectend"])?'':$date_end;

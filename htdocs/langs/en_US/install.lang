@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert 
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for customer's orders
 MigrationSupplierOrder=Data migration for supplier's orders

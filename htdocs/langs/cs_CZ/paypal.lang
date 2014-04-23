@@ -20,3 +20,6 @@ YouAreCurrentlyInSandboxMode=Ty jsou v současné době v &quot;sandbox&quot; m�
 NewPaypalPaymentReceived=Nový Paypal přijaté platby
 NewPaypalPaymentFailed=Nový Paypal platební snažil se ale propadal
 PAYPAL_PAYONLINE_SENDEMAIL=E-mail upozornit po platbě (úspěch nebo ne)
+ReturnURLAfterPayment=Return URL after payment
+ValidationOfPaypalPaymentFailed=Validation of Paypal payment failed
+PaypalConfirmPaymentPageWasCalledButFailed=Payment confirmation page for Paypal was called by Paypal but confirmation failed

@@ -18,12 +18,11 @@ MarginDetails=Marge details
 
 ProductMargins=Product marge
 CustomerMargins=Klant marges
-AgentMargins=Acc. Manager marges
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Trainning of Dienst
 AllProducts=Alle Trainingen en Diensten
 ChooseProduct/Service=Kies Training of Dienst
-CommercialAgent=Commerciel Agent
 
 StartDate=Start datum
 EndDate=Eind datum

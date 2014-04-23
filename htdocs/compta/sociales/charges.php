@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,7 @@ $langs->load("bills");
 
 $id=GETPOST('id','int');
 $action=GETPOST("action");
+$confirm=GETPOST('confirm');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -47,20 +48,16 @@ $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 /*                                                                             */
 /* *************************************************************************** */
 
-/*
- * 	Classify paid
- */
-if ($action == 'confirm_paid' && $_REQUEST["confirm"] == 'yes')
+// Classify paid
+if ($action == 'confirm_paid' && $confirm == 'yes')
 {
 	$chargesociales = new ChargeSociales($db);
 	$chargesociales->fetch($id);
 	$result = $chargesociales->set_paid($user);
 }
 
-/*
- *	Delete social contribution
- */
-if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
+// Delete social contribution
+if ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$chargesociales=new ChargeSociales($db);
 	$chargesociales->fetch($id);
@@ -77,10 +74,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes')
 }
 
 
-/*
- * Add social contribution
- */
-
+// Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
 	$dateech=@dol_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
@@ -226,7 +220,7 @@ if ($action == 'create')
     print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 
-    print '<td align="right"><input type="text" size="6" name="amount" class="flat"></td>';
+    print '<td align="right"><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
 
     print '<td align="center">';
     print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
@@ -303,8 +297,8 @@ if ($id > 0)
 		print '<td rowspan="'.$rowspan.'" valign="top">';
 
 		/*
-		* Paiements
-		*/
+		 * Paiements
+		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
 		$sql.= "c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -325,7 +319,7 @@ if ($id > 0)
 			echo '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Payments").'</td><td>'.$langs->trans("Type").'</td>';
-      print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
+      		print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
 
 			$var=True;
 			while ($i < $num)
@@ -336,7 +330,7 @@ if ($id > 0)
 				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").'</a> ';
 				print dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-        print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 				print "</tr>";
 				$totalpaye += $objp->amount;
 				$i++;
@@ -363,7 +357,7 @@ if ($id > 0)
 
 		print "</tr>";
 
-    // Period end date
+    	// Period end date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
 		print "<td>";
 		if ($action == 'edit')
@@ -388,10 +382,10 @@ if ($id > 0)
 		}
 
 		// Amount
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount).'</td></tr>';
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 		// Status
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
 		print '</table>';
 

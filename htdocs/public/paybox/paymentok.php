@@ -104,13 +104,22 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 {
 	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$urlback=$_SERVER["REQUEST_URI"];
+	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentReceived");
+	$content="";
+	$content.=$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."\n";
+	$content.="\n";
+	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
+	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+	$content.="tag=".$fulltag."\n";
+	
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile(
-		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentReceived"),
-		$sendto,
-		$from,
-		$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."\n".$fulltag
-		);
+	$mailfile = new CMailFile($topic, $sendto, $from, $content);
 
 	$result=$mailfile->sendfile();
 	if ($result)

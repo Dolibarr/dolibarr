@@ -866,7 +866,6 @@ class Facture extends CommonInvoice
 				$this->datem				= $this->db->jdate($obj->datem);
 				$this->remise_percent		= $obj->remise_percent;
 				$this->remise_absolue		= $obj->remise_absolue;
-				//$this->remise				= $obj->remise;
 				$this->total_ht				= $obj->total;
 				$this->total_tva			= $obj->tva;
 				$this->total_localtax1		= $obj->localtax1;
@@ -947,7 +946,7 @@ class Facture extends CommonInvoice
 		$this->lines=array();
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.fk_parent_line, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
-		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.fk_remise_except, l.subprice,';
+		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
 		$sql.= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
@@ -1007,10 +1006,6 @@ class Facture extends CommonInvoice
 				$line->special_code		= $objp->special_code;
 				$line->fk_parent_line	= $objp->fk_parent_line;
 
-				// Ne plus utiliser
-				//$line->price            = $objp->price;
-				//$line->remise           = $objp->remise;
-
 				$this->lines[$i] = $line;
 
 				$i++;
@@ -1069,7 +1064,6 @@ class Facture extends CommonInvoice
 		$sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
 		$sql.= " remise_percent=".(isset($this->remise_percent)?$this->remise_percent:"null").",";
 		$sql.= " remise_absolue=".(isset($this->remise_absolue)?$this->remise_absolue:"null").",";
-		//$sql.= " remise=".(isset($this->remise)?$this->remise:"null").",";
 		$sql.= " close_code=".(isset($this->close_code)?"'".$this->db->escape($this->close_code)."'":"null").",";
 		$sql.= " close_note=".(isset($this->close_note)?"'".$this->db->escape($this->close_note)."'":"null").",";
 		$sql.= " tva=".(isset($this->total_tva)?$this->total_tva:"null").",";
@@ -1275,6 +1269,16 @@ class Facture extends CommonInvoice
 				$error++; $this->errors=$interface->errors;
 			}
 			// Fin appel triggers
+		}
+		
+		// Removed extrafields
+		if (! $error) {
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error deleteExtraFields ".$this->error, LOG_ERR);
+			}
 		}
 
 		if (! $error)
@@ -2223,16 +2227,6 @@ class Facture extends CommonInvoice
 			$pu_tva = $tabprice[4];
 			$pu_ttc = $tabprice[5];
 
-			// Old properties: $price, $remise (deprecated)
-			$price = $pu;
-			$remise = 0;
-			if ($remise_percent > 0)
-			{
-				$remise = round(($pu * $remise_percent / 100),2);
-				$price = ($pu - $remise);
-			}
-			$price    = price2num($price);
-
 			// Update line into database
 			$this->line=new FactureLigne($this->db);
 
@@ -2275,10 +2269,6 @@ class Facture extends CommonInvoice
 			// infos marge
 			$this->line->fk_fournprice = $fk_fournprice;
 			$this->line->pa_ht = $pa_ht;
-
-			// A ne plus utiliser
-			//$this->line->price=$price;
-			//$this->line->remise=$remise;
 
 			if (is_array($array_option) && count($array_option)>0) {
 				$this->line->array_options=$array_option;
@@ -2391,7 +2381,7 @@ class Facture extends CommonInvoice
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_percent = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
-			$sql.= ' AND fk_statut = 0 ;';
+			$sql.= ' AND fk_statut = 0';
 
 			if ($this->db->query($sql))
 			{
@@ -2426,7 +2416,7 @@ class Facture extends CommonInvoice
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_absolue = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
-			$sql.= ' AND fk_statut = 0 ;';
+			$sql.= ' AND fk_statut = 0';
 
 			dol_syslog(get_class($this)."::set_remise_absolue sql=$sql");
 

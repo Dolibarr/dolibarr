@@ -18,12 +18,11 @@ MarginDetails=Maržinālā detaļas
 
 ProductMargins=Produktu rezerves
 CustomerMargins=Klientu robežas
-AgentMargins=Aģents robežas
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Produkts vai pakalpojums
 AllProducts=Visi produkti un pakalpojumi
 ChooseProduct/Service=Izvēlies preci vai pakalpojumu
-CommercialAgent=Tirdzniecības pārstāvis
 
 StartDate=Sākuma datums
 EndDate=Beigu datums
@@ -47,5 +46,5 @@ BuyingCost=Pašizmaksa
 UnitCharges=Vienības izmaksas
 Charges=Maksas
 
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+AgentContactType=Commercial agent contact type
+AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

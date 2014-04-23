@@ -402,17 +402,17 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         // Some test for local TZ Europe/Paris
         date_default_timezone_set('Europe/Paris');
-        
+
         // Check that tz for paris in winter is used
         $result=dol_mktime(2,0,0,1,1,1970,'server');         // 1970-01-01 02:00:00 = 7200 in local area Europe/Paris = 3600 GMT
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(3600,$result);        			 // 7200 if we are at greenwich winter, 3600 at Europe/Paris
-        
+
         // Check that daylight saving time is used
         $result=dol_mktime(2,0,0,6,1,2014,0);         		// 2014-06-01 02:00:00 = 1401588000-3600(location)-3600(daylight) in local area Europe/Paris = 1401588000 GMT
         print __METHOD__." result=".$result."\n";
         $this->assertEquals(1401588000-3600-3600,$result);  // 1401588000 are at greenwich summer, 1401588000-3600(location)-3600(daylight) at Europe/Paris summer
-        
+
         date_default_timezone_set($savtz);
     }
 
@@ -702,5 +702,21 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals(0,$vat1);
     	$this->assertEquals(0,$vat2);
     }
+
+
+    /**
+     * testDolExplodeIntoArray
+     *
+     * @return	void
+     */
+    public function testDolExplodeIntoArray()
+    {
+    	$stringtoexplode='AA=B/B.CC=.EE=FF.HH=GG;.';
+    	$tmp=dolExplodeIntoArray($stringtoexplode,'.','=');
+
+        print __METHOD__." tmp=".json_encode($tmp)."\n";
+        $this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}',json_encode($tmp));
+    }
+
 }
 ?>

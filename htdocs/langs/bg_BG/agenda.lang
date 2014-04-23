@@ -37,12 +37,13 @@ AgendaAutoActionDesc= Определете тук събития, за коит�
 AgendaSetupOtherDesc= Тази страница предоставя възможности да се допусне износ на вашите събития Dolibarr в външен календар (Thunderbird, Google Calendar, ...)
 AgendaExtSitesDesc=Тази страница позволява да се обяви външните източници на календари, за да видят своите събития в дневния ред Dolibarr.
 ActionsEvents= Събития, за които Dolibarr ще създаде действие в дневния ред автоматично
-# PropalValidatedInDolibarr= Proposal %s validated
+PropalValidatedInDolibarr= Proposal %s validated
 InvoiceValidatedInDolibarr= Фактура %s валидирани
 InvoiceBackToDraftInDolibarr=Фактура %s се върнете в състояние на чернова
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Поръчка %s валидирани
 OrderApprovedInDolibarr=Поръчка %s одобрен
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Поръчка %s се върне в състояние на чернова
 OrderCanceledInDolibarr=Поръчка %s отменен
 InterventionValidatedInDolibarr=Намеса %s валидирани
@@ -52,7 +53,7 @@ InvoiceSentByEMail=, Изпратени по електронната поща %
 SupplierOrderSentByEMail=%s доставчик реда, изпратени по електронната поща
 SupplierInvoiceSentByEMail=, Изпратени по електронната поща %s доставчик фактура
 ShippingSentByEMail=Доставка %s изпращат по електронна поща
-# ShippingValidated= Shipping %s validated
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Намеса %s изпращат по електронна поща
 NewCompanyToDolibarr= Създадено от трета страна
 DateActionPlannedStart= Планирана начална дата
@@ -69,7 +70,7 @@ AgendaUrlOptions5=<b>logind = %s</b> да се ограничи производ
 AgendaShowBirthdayEvents=Показване на контактите, които имат рожден ден
 AgendaHideBirthdayEvents=Скриване на контактите, които имат рожден ден
 Busy=Зает
-# ExportDataset_event1=List of agenda events
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Изнасяне на календар

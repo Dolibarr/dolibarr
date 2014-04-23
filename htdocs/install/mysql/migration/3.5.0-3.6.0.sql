@@ -18,6 +18,18 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+create table llx_c_email_templates
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
+  type_template   varchar(32),  -- template for wich type of email (send invoice by email, send order, ...)
+  datec           datetime,
+  label           varchar(255),
+  content         text
+)ENGINE=innodb;
+
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
@@ -1029,7 +1041,7 @@ create table llx_product_customer_price_log
  import_key			varchar(14)                  -- Import key
 )ENGINE=innodb;
 
---Batch number managment
+-- Batch number management
 ALTER TABLE llx_product ADD COLUMN tobatch tinyint DEFAULT 0 NOT NULL;
 
 CREATE TABLE llx_product_batch (
@@ -1055,7 +1067,8 @@ CREATE TABLE llx_expeditiondet_batch (
   KEY ix_fk_expeditiondet (fk_expeditiondet)
 ) ENGINE=InnoDB;
 
---Salary payment in tax module
+-- Salary payment in tax module
+--DROP TABLE llx_payment_salary
 CREATE TABLE llx_payment_salary (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
@@ -1063,6 +1076,8 @@ CREATE TABLE llx_payment_salary (
   datep date,
   datev date,
   amount real NOT NULL DEFAULT 0,
+  fk_typepayment integer NOT NULL,
+  num_payment varchar(50),
   label varchar(255),
   datesp date,                       -- date de début de la période
   dateep date,                       -- date de fin de la période    
@@ -1073,11 +1088,11 @@ CREATE TABLE llx_payment_salary (
   fk_user_modif integer
 )ENGINE=innodb;
 
---New 1074 : Stock mouvement link to origin
+-- New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin integer;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR(32);
 
---New 1300 : Add THM on user
+-- New 1300 : Add THM on user
 ALTER TABLE llx_user ADD thm double(24,8);
 ALTER TABLE llx_projet_task_time ADD thm double(24,8);
 
@@ -1103,3 +1118,16 @@ ALTER TABLE llx_societe ADD INDEX idx_societe_barcode (barcode);
 ALTER TABLE llx_societe ADD UNIQUE INDEX uk_societe_barcode (barcode, fk_barcode_type, entity);
 
 
+ALTER TABLE llx_tva ADD COLUMN fk_typepayment integer NULL;	-- table may already contains data
+ALTER TABLE llx_tva ADD COLUMN num_payment varchar(50);
+
+-- Add missing action triggers
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (31,'PROPAL_CLOSE_SIGNED','Customer proposal closed signed','Executed when a customer proposal is closed signed','propal',31);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (32,'PROPAL_CLOSE_REFUSED','Customer proposal closed refused','Executed when a customer proposal is closed refused','propal',32);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (33,'BILL_SUPPLIER_CANCELED','Supplier invoice cancelled','Executed when a supplier invoice is cancelled','invoice_supplier',33);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (34,'MEMBER_MODIFY','Member modified','Executed when a member is modified','member',34);
+
+-- Automatic events for tasks
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (35,'TASK_CREATE','Task created','Executed when a project task is created','project',35);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (36,'TASK_MODIFY','Task modified','Executed when a project task is modified','project',36);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (37,'TASK_DELETE','Task deleted','Executed when a project task is deleted','project',37);

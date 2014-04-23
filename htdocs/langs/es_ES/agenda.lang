@@ -43,6 +43,7 @@ InvoiceBackToDraftInDolibarr=Factura %s devuelta a borrador
 InvoiceDeleteDolibarr=Factura %s eliminada
 OrderValidatedInDolibarr= Pedido %s validado
 OrderApprovedInDolibarr=Pedido %s aprobado
+OrderRefusedInDolibarr=Pedido %s rechazado
 OrderBackToDraftInDolibarr=Pedido %s devuelto a borrador
 OrderCanceledInDolibarr=Pedido %s anulado
 InterventionValidatedInDolibarr=Intervención %s validada

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -330,54 +330,73 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                 $invoice=new Facture($db);
                 $customer=new Societe($db);
-                $result=$customer->fetch($object->fk_soc);
-                if ($result <= 0)
-                {
-                    $errmsg=$customer->error;
-                    $error++;
-                }
 
-                // Create draft invoice
-                $invoice->type= Facture::TYPE_STANDARD;
-                $invoice->cond_reglement_id=$customer->cond_reglement_id;
-                if (empty($invoice->cond_reglement_id))
+                if (! $error)
                 {
-                    $paymenttermstatic=new PaymentTerm($db);
-                    $invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
-                    if (empty($invoice->cond_reglement_id))
-                    {
-                        $error++;
-                        $errmsg='ErrorNoPaymentTermRECEPFound';
-                    }
+                	if (! ($object->fk_soc > 0))
+                	{
+                		$langs->load("errors");
+                		$errmsg=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
+                		$error++;	
+                	}
                 }
-                $invoice->socid=$object->fk_soc;
-                $invoice->date=$datecotisation;
-
-                $result=$invoice->create($user);
-                if ($result <= 0)
+                if (! $error)
                 {
-                    $errmsg=$invoice->error;
-                    $error++;
+	                $result=$customer->fetch($object->fk_soc);
+	                if ($result <= 0)
+	                {
+	                    $errmsg=$customer->error;
+	                    $error++;
+	                }
                 }
-
-                // Add line to draft invoice
-                $idprodsubscription=0;
-                $vattouse=0;
-                if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
+                
+                if (! $error)
                 {
-                	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
+	                // Create draft invoice
+	                $invoice->type= Facture::TYPE_STANDARD;
+	                $invoice->cond_reglement_id=$customer->cond_reglement_id;
+	                if (empty($invoice->cond_reglement_id))
+	                {
+	                    $paymenttermstatic=new PaymentTerm($db);
+	                    $invoice->cond_reglement_id=$paymenttermstatic->getDefaultId();
+	                    if (empty($invoice->cond_reglement_id))
+	                    {
+	                        $error++;
+	                        $errmsg='ErrorNoPaymentTermRECEPFound';
+	                    }
+	                }
+	                $invoice->socid=$object->fk_soc;
+	                $invoice->date=$datecotisation;
+	
+	                $result=$invoice->create($user);
+	                if ($result <= 0)
+	                {
+	                    $errmsg=$invoice->error;
+	                    $error++;
+	                }
                 }
-                //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
-                if ($result <= 0)
+                
+                if (! $error)
                 {
-                    $errmsg=$invoice->error;
-                    $error++;
+	                // Add line to draft invoice
+	                $idprodsubscription=0;
+	                $vattouse=0;
+	                if (isset($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) && $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS == 'defaultforfoundationcountry')
+	                {
+	                	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
+	                }
+	                //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
+	                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
+	                if ($result <= 0)
+	                {
+	                    $errmsg=$invoice->error;
+	                    $error++;
+	                }
+	
+	                // Validate invoice
+	                $result=$invoice->validate($user);
                 }
-
-                // Validate invoice
-                $result=$invoice->validate($user);
-
+                
                 // Add payment onto invoice
                 if ($option == 'bankviainvoice' && $accountid)
                 {
@@ -486,8 +505,8 @@ if ($rowid)
 
     dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
 
-    $rowspan=9;
-    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan+=1;
+    $rowspan=10;
+    if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
     if (! empty($conf->societe->enabled)) $rowspan++;
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -764,9 +783,9 @@ if ($rowid)
         }
         else
        {
-        	if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $bankviainvoice=1;
+        	if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankviainvoice' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $bankviainvoice=1;
        		else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'bankdirect' && ! empty($conf->banque->enabled)) $bankdirect=1;
-        	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled) && $object->fk_soc) $invoiceonly=1;
+        	else if (! empty($conf->global->ADHERENT_BANK_USE) && $conf->global->ADHERENT_BANK_USE == 'invoiceonly' && ! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $invoiceonly=1;
        }
 
         print "\n\n<!-- Form add subscription -->\n";
@@ -917,12 +936,14 @@ if ($rowid)
                 if (! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(! empty($invoiceonly)?' checked="checked"':'');
-                    if (empty($object->fk_soc)) print ' disabled="disabled"';
+                    //if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionInvoiceOnly");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
 					{
-                    	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
+                    	print ' (';
+                    	if (empty($object->fk_soc)) print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
+                    	print $langs->trans("NoThirdPartyAssociatedToMember");
                     	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">';
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';
@@ -934,12 +955,14 @@ if ($rowid)
                 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled))
                 {
                     print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(! empty($bankviainvoice)?' checked="checked"':'');
-                    if (empty($object->fk_soc)) print ' disabled="disabled"';
+                    //if (empty($object->fk_soc)) print ' disabled="disabled"';
                     print '> '.$langs->trans("MoreActionBankViaInvoice");
                     if ($object->fk_soc) print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
                     else
 					{
-                    	print ' ('.$langs->trans("NoThirdPartyAssociatedToMember");
+                    	print ' (';
+                    	if (empty($object->fk_soc)) print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
+                    	print $langs->trans("NoThirdPartyAssociatedToMember");
                     	print ' - <a href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&amp;action=create_thirdparty">';
                     	print $langs->trans("CreateDolibarrThirdParty");
                     	print '</a>)';

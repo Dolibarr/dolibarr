@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
@@ -45,8 +45,7 @@ if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSI
 
 // Define css type
 header('Content-type: text/css');
-// Important: Following code is to avoid page request by browser and PHP CPU at
-// each Dolibarr page access.
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
@@ -58,14 +57,12 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
-$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
 $path='';    	// This value may be used in future for external module to overwrite theme
 $theme='eldy';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
-// Define image path files
+// Define image path files and other constants
 $fontlist='arial,tahoma,verdana,helvetica';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 $img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
@@ -108,11 +105,10 @@ $colorbacklineimpairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+roun
 $colorbacklinepair1='255,255,255';    // line pair
 $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
-//$colorbackbody='#ffffff url('.$img_head.') 0 0 no-repeat;';
 $colorbackbody='#fcfcfc';
 $colortext='40,40,40';
-$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
-$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
+$fontsize='12';
+$fontsizesmaller='11';
 
 // Eldy colors
 if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
@@ -408,6 +404,7 @@ th .button {
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
 .maxwidthonsmartphone { max-width: 100px; }
+.maxwidth200onsmartphone { max-width: 200px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
@@ -437,6 +434,7 @@ td.showDragHandle {
 
 #id-container {
 	margin-top: 8px;
+	margin-bottom: 8px;
 	display: table;
 	table-layout: fixed;
 }
@@ -603,8 +601,10 @@ li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
 	text-align: center;
 	vertical-align: bottom;
+	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
     height: <?php print $heightmenu; ?>px;
+    <?php } ?>
 	position:relative;
 	display: block;
 	padding: 0px 0px 2px 0px;
@@ -885,8 +885,6 @@ div.login_block table {
 }
 div.login {
 	white-space:nowrap;
-	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
-    /* margin: 0px 0px 0px 8px; */
 	font-weight: bold;
 	float: right;
 }
@@ -1576,9 +1574,8 @@ span.butAction, span.butActionDelete {
 	border-collapse: collapse;
 	border: 0px;
 	margin-left: 0px;
-	spacing-left: 0px;
-	padding-left: 0px;
-	padding-right: 4px;
+	padding-<?php print $left; ?>: 0px !important;
+	padding-<?php print $right; ?>: 4px !important;
 }
 .nocellnopadd {
 	list-style-type:none;
@@ -2483,7 +2480,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; padding: 1px; }
+.ui-autocomplete-input { margin: 0; }
 
 
 /* ============================================================================== */
@@ -2512,6 +2509,11 @@ a.cke_dialog_ui_button
 .cke_dialog_ui_hbox_last
 {
 	vertical-align: bottom ! important;
+}
+.cke_editable
+{
+	line-height: 1.4 !important;
+	margin: 6px !important;
 }
 
 

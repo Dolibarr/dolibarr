@@ -674,6 +674,7 @@ class ExtraFields
 			$out = '';
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
 			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox('options_'.$key.$keyprefix, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
@@ -693,6 +694,7 @@ class ExtraFields
 			$out = '';
 			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
 			{
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox('options_'.$key.$keyprefix, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 			}
 
@@ -789,6 +791,7 @@ class ExtraFields
 									$labeltoshow=dol_trunc($obj->$field_toshow,18).' ';
 								}
 							}
+							$out.='<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.'</option>';
 						}
 						else
 						{

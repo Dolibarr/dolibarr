@@ -6,7 +6,7 @@ Maintainer: Laurent Destailleur (eldy) <eldy@users.sourceforge.net>
 Standards-Version: 3.9.4
 Homepage: http://www.dolibarr.org
 Build-Depends: debhelper (>= 9), po-debconf
-Comments: This package need at least debian 7 or ubuntu 13.04 or any distribution based on this version
+# This package need at least debian 7 or ubuntu 13.04 or any distribution based on this version
  
 Package: dolibarr
 Architecture: all
@@ -16,7 +16,7 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
     php5-mysql | php5-mysqli, php5-curl, php5-gd, php5-ldap, php5-geoip,
 # Required PHP libraries
     php-pear, php-mail-mime, 
-#    libfpdi-php, libfpdf-tpl-php, php-fpdf,
+#    php-tcpdf, libfpdi-php, libfpdf-tpl-php, php-fpdf,
 #    libphp-adodb,
 #    libnusoap-php,
 #    libphp-pclzip,

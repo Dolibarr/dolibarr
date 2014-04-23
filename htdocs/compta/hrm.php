@@ -164,7 +164,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

@@ -37,4 +37,4 @@ ShowCompany=Firma göster
 ShowStock=Depo göster
 DeleteArticle=Bu malı kaldırmak için tıkla
 FilterRefOrLabelOrBC=Ara (Ref/Etiket)
-# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.
+UserNeedPermissionToEditStockToUsePos=Fatura oluştururken stok arttırmanız istenir, böylece POS kullanan kullanıcı stok düzenlemek için izne gereksinim duyar.

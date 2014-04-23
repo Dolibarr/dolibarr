@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
@@ -49,6 +49,7 @@ if (! empty($conf->notification->enabled)) $langs->load("mails");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action') ? GETPOST('action') : 'view');
+$backtopage = GETPOST('backtopage','alpha');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -182,7 +183,7 @@ if (empty($reshook))
         else if (! empty($_FILES['photo']['name'])) $object->logo = dol_sanitizeFileName($_FILES['photo']['name']);
 
         // Check parameters
-        if (empty($_POST["cancel"]))
+        if (! GETPOST("cancel"))
         {
             if (! empty($object->email) && ! isValidEMail($object->email))
             {
@@ -317,11 +318,20 @@ if (empty($reshook))
                 {
                     $db->commit();
 
-                    $url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-                    if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/fiche.php?socid=".$object->id;
-                    else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/fiche.php?socid=".$object->id;
-                    header("Location: ".$url);
-                    exit;
+                	if (! empty($backtopage))
+                	{
+               		    header("Location: ".$backtopage);
+                    	exit;
+                	}
+                	else
+                	{
+                    	$url=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+                    	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url=DOL_URL_ROOT."/comm/fiche.php?socid=".$object->id;
+                    	else if ($object->fournisseur == 1) $url=DOL_URL_ROOT."/fourn/fiche.php?socid=".$object->id;
+
+                		header("Location: ".$url);
+                    	exit;
+                	}
                 }
                 else
                 {
@@ -332,10 +342,18 @@ if (empty($reshook))
 
             if ($action == 'update')
             {
-                if ($_POST["cancel"])
+                if (GETPOST("cancel"))
                 {
-                    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
-                    exit;
+                	if (! empty($backtopage))
+                	{
+               		    header("Location: ".$backtopage);
+                    	exit;
+                	}
+                	else
+                	{
+               		    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    	exit;
+                	}
                 }
 
                 // To not set code if third party is not concerned. But if it had values, we keep them.
@@ -425,9 +443,16 @@ if (empty($reshook))
 
                 if (! $error && ! count($errors))
                 {
-
-                    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
-                    exit;
+                    if (! empty($backtopage))
+                	{
+               		    header("Location: ".$backtopage);
+                    	exit;
+                	}
+                	else
+                	{
+               		    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
+                    	exit;
+                	}
                 }
                 else
                 {
@@ -739,6 +764,7 @@ else
         print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
 
         print '<input type="hidden" name="action" value="add">';
+        print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="private" value='.$object->particulier.'>';
         print '<input type="hidden" name="type" value='.GETPOST("type").'>';
@@ -1478,7 +1504,7 @@ else
         $showlogo=$object->logo;
         $showbarcode=empty($conf->barcode->enabled)?0:1;
         if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-        
+
         print '<table class="border" width="100%">';
 
         // Ref

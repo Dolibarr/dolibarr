@@ -270,7 +270,7 @@ print '<div class="tagtable">';
 print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' &nbsp; ';
-print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
+print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels=array();
 foreach(array_keys($_Avery_Labels) as $codecards)
@@ -284,7 +284,7 @@ print '</div></div>';
 print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
-print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
+print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
 print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker')?GETPOST('numberofsticker','int'):10).'">';
 print '</div></div>';
 

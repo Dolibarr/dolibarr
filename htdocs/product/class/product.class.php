@@ -560,7 +560,7 @@ class Product extends CommonObject
 		if (empty($this->localtax2_tx))			$this->localtax2_tx = 0;
 		if (empty($this->status))				$this->status = 0;
 		if (empty($this->status_buy))			$this->status_buy = 0;
-		
+
         if (empty($this->country_id))           $this->country_id = 0;
 
         //Gencod
@@ -1486,7 +1486,9 @@ class Product extends CommonObject
 
 				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
 				//$res=$this->load_stock();
-				//return $res;
+
+				// instead we just init the stock_warehouse array
+				$this->stock_warehouse = array();
 
 				return 1;
 			}
@@ -2798,6 +2800,7 @@ class Product extends CommonObject
 	function load_stock()
 	{
 		$this->stock_reel = 0;
+		$this->stock_warehouse = array();
 
 		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
@@ -3269,7 +3272,7 @@ class Product extends CommonObject
     function get_barcode($object,$type='')
     {
         global $conf;
-        
+
         $result='';
         if (! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
         {
