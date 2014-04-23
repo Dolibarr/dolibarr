@@ -1430,7 +1430,7 @@ function dol_print_address($address, $htmlid, $mode, $id)
 	{
         if ($hookmanager) {
             $parameters = array('element' => $mode, 'id' => $id);
-            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address, $action);
+            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
             print $hookmanager->resPrint;
         }
         if (empty($reshook)) {
