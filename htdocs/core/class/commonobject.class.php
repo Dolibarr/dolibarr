@@ -1721,7 +1721,7 @@ abstract class CommonObject
      *	@param  string	$clause			OR, AND clause
      *	@return	void
      */
-    function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
         global $conf;
 
