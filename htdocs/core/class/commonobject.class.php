@@ -3277,9 +3277,10 @@ abstract class CommonObject
 		print '</table>';
 	}
 
-	
+
 	/**
-	 *	Add resources to the current object
+	 *	Add resources to the current object : add entry into llx_element_resources
+	 *Need $this->element & $this->id
 	 *
 	 *	@param		int	$resource_id		Resource id
 	 *	@param		string	$resource_element	Resource element
@@ -3288,7 +3289,7 @@ abstract class CommonObject
 	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
 	{
 		$this->db->begin();
-	
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_resources (";
 		$sql.= "resource_id";
 		$sql.= ", resource_type";
@@ -3304,7 +3305,7 @@ abstract class CommonObject
 		$sql.= ", '".$busy."'";
 		$sql.= ", '".$mandatory."'";
 		$sql.= ")";
-	
+
 		dol_syslog(get_class($this)."::add_element_resource sql=".$sql, LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
@@ -3318,8 +3319,8 @@ abstract class CommonObject
 			return  0;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Overwrite magic function to solve problem of cloning object that are kept as references
 	 *

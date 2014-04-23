@@ -22,7 +22,7 @@
 
 /**
  * Actions class file for resources
- * 
+ *
  */
 class ActionsResource
 {
@@ -43,18 +43,49 @@ class ActionsResource
 
 	/**
 	 * doActions for resource module
-	 * 
+	 *
 	 * @param array $parameters parameters
 	 * @param Object $object object
 	 * @param string $action action
 	 */
-	function doActions($parameters, &$object, &$action) 
+	function doActions($parameters, &$object, &$action)
 	{
 		global $langs,$user;
 		$langs->load('resource');
-		
+
 		if (in_array('element_resource',explode(':',$parameters['context'])))
 		{
+
+		    $element_id = GETPOST('element_id','int');
+		    $element = GETPOST('element','alpha');
+		    $resource_type = GETPOST('resource_type');
+
+		    $fk_resource = GETPOST('fk_resource');
+
+		    $busy = GETPOST('busy','int');
+		    $mandatory = GETPOST('mandatory','int');
+
+		    if($action == 'add_element_resource' && !GETPOST('cancel'))
+		    {
+		        $objstat = fetchObjectByElement($element_id,$element);
+
+		        $res = $objstat->add_element_resource($fk_resource,$resource_type,$busy,$mandatory);
+
+
+		        if($res > 0)
+		        {
+		            setEventMessage($langs->trans('ResourceLinkedWithSuccess'),'mesgs');
+		            header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$element_id);
+		            exit;
+		        }
+		        else
+		        {
+		            setEventMessage($langs->trans('ErrorWhenLinkingResource'),'errors');
+		            header("Location: ".$_SERVER['PHP_SELF'].'?mode=add&resource_type='.$resource_type.'&element='.$element.'&element_id='.$element_id);
+		            exit;
+		        }
+		    }
+
 			// Delete a resource linked to an element
 			if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
 			{

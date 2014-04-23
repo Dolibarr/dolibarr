@@ -53,7 +53,7 @@ class FormResource
 
 
     /**
-     *  Output html form to select a location (place)
+     *  Output html form to select a resource
      *
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
@@ -63,7 +63,7 @@ class FormResource
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	string	$filterkey		Filter on key value
-     *  @param	int		$outputmode		0=HTML select string, 1=Array
+     *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
      *  @param	int		$limit			Limit number of answers
      * 	@return	string					HTML string with
      */
@@ -76,10 +76,13 @@ class FormResource
 
     	$resourcestat = new Resource($this->db);
 
-    	$resources_used = $resourcestat->fetch_all_used('ASC', 't.rowid', $limit, $offset, $filter='');
+    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
 
-    	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    	$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	if ($outputmode != 2)
+    	{
+    	    $out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+    	    $out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	}
     	//$out.= '<input type="hidden" name="action" value="search">';
     	//$out.= '<input type="hidden" name="id" value="'.$theme->id.'">';
 
@@ -122,20 +125,23 @@ class FormResource
     		}
     		$out.= '</select>'."\n";
 
+    		if ($outputmode != 2)
+    		{
 
-    		$out.= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';
+        		$out.= '<input type="submit" class="button" value="'.$langs->trans("Search").'"> &nbsp; &nbsp; ';
 
-    		$out.= '</form>';
+        		$out.= '</form>';
+    		}
     	}
     	else
     	{
     		dol_print_error($this->db);
     	}
 
-    	if ($outputmode) return $outarray;
+    	if ($outputmode && $outputmode != 2) return $outarray;
     	return $out;
     }
-    
+
     /**
      *      Return html list of tickets type
      *
@@ -151,15 +157,15 @@ class FormResource
     function select_types_resource($selected='',$htmlname='type_resource',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
     {
     	global $langs,$user;
-    
+
     	$resourcestat = new Resource($this->db);
-    
+
     	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
-    
+
     	$filterarray=array();
-    
+
     	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
-    
+
     	$resourcestat->load_cache_code_type_resource();
     	print '<select id="select'.$htmlname.'" class="flat select_'.$htmlname.'" name="'.$htmlname.'">';
     	if ($empty) print '<option value="">&nbsp;</option>';
@@ -167,10 +173,10 @@ class FormResource
     	{
     		foreach($resourcestat->cache_code_type_resource as $id => $arraytypes)
     		{
-    
+
     			// We discard empty line if showempty is on because an empty line has already been output.
     			if ($empty && empty($arraytypes['code'])) continue;
-    
+
     			if ($format == 0) print '<option value="'.$id.'"';
     			if ($format == 1) print '<option value="'.$arraytypes['code'].'"';
     			if ($format == 2) print '<option value="'.$arraytypes['code'].'"';
@@ -190,7 +196,7 @@ class FormResource
     	print '</select>';
     	if ($user->admin && ! $noadmininfo) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
-    
+
 
 
 }

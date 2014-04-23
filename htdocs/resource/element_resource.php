@@ -58,9 +58,14 @@ $object=new Resource($db);
 
 $hookmanager->initHooks(array('element_resource'));
 
-$parameters=array('resource_id'=>$resource_id);
+
+$object->available_resources = array('resource','place@place');
+
+$parameters=array('resource_id'=>$available_resources);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+$parameters=array('resource_id'=>$resource_id);
+$reshook=$hookmanager->executeHooks('getElementResources',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 
 /***************************************************
@@ -77,7 +82,7 @@ $form=new Form($db);
 
 
 // Load available resource, declared by modules
-$ret = $object->fetch_all("ASC",'rowid',0);
+$ret = count($object->available_resources);
 if($ret == -1) {
 	dol_print_error($db,$object->error);
 	exit;
@@ -163,20 +168,18 @@ else
 
 
 	print_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','resource.png@resource');
-	
-	
+
+
 
 	foreach ($object->available_resources as $modresources => $resources)
 	{
-		$langs->load($modresources);
+		$langs->load($resources);
 		//print '<h2>'.$modresources.'</h2>';
-		//var_dump($resources);
 
 		$resources=(array) $resources;	// To be sure $resources is an array
 		foreach($resources as $resource_obj)
 		{
 			$element_prop = getElementProperties($resource_obj);
-			//var_dump($element_prop);
 
 			print_titre($langs->trans(ucfirst($element_prop['element']).'Singular'));
 
@@ -190,20 +193,14 @@ else
 
 			if ( $mode == 'add' && $resource_obj == $resource_type)
 			{
-				//print '/'.$element_prop['module'].'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php'.'<BR>';
-
-
-
 				// If we have a specific template we use it
 				if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php')))
 				{
 					$res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_'.$mode.'.tpl.php');
-
 				}
 				else
 				{
-					$res=@include dol_buildpath('/resource/core/tpl/resource_add.tpl.php');
-
+					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
 				}
 			}
 			else
@@ -218,8 +215,7 @@ else
 				}
 				else
 				{
-					$res=include dol_buildpath('/resource/core/tpl/resource_view.tpl.php');
-
+					$res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_view.tpl.php';
 				}
 			}
 

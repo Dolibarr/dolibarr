@@ -39,7 +39,7 @@ class Resource extends CommonObject
 
     var $id;
 
-    
+
 	var $resource_id;
 	var $resource_type;
 	var $element_id;
@@ -73,28 +73,28 @@ class Resource extends CommonObject
     {
     	global $conf, $langs;
     	$error=0;
-    
+
     	// Clean parameters
-    
+
     	if (isset($this->ref)) $this->ref=trim($this->ref);
     	if (isset($this->description)) $this->description=trim($this->description);
     	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
     	if (isset($this->note_public)) $this->note_public=trim($this->note_public);
     	if (isset($this->note_private)) $this->note_private=trim($this->note_private);
-    
-    
+
+
     	// Insert request
     	$sql = "INSERT INTO ".MAIN_DB_PREFIX."resource(";
-    
+
     	$sql.= " entity,";
     	$sql.= "ref,";
     	$sql.= "description,";
     	$sql.= "fk_code_type_resource,";
     	$sql.= "note_public,";
     	$sql.= "note_private";
-    
+
     	$sql.= ") VALUES (";
-    
+
     	$sql.= $conf->entity.", ";
     	$sql.= " ".(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").",";
     	$sql.= " ".(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").",";
@@ -103,21 +103,21 @@ class Resource extends CommonObject
     	$sql.= " ".(! isset($this->note_private)?'NULL':"'".$this->db->escape($this->note_private)."'");
 
     	$sql.= ")";
-    
+
     	$this->db->begin();
-    
+
     	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if (! $resql) {
     		$error++; $this->errors[]="Error ".$this->db->lasterror();
     	}
-    
+
     	if (! $error)
     	{
     		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."place");
-    
+
     		if (! $notrigger)
-    		{   
+    		{
     			//// Call triggers
     			//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     			//$interface=new Interfaces($this->db);
@@ -126,7 +126,7 @@ class Resource extends CommonObject
     			//// End call triggers
     		}
     	}
-    
+
     	// Commit or rollback
     	if ($error)
     	{
@@ -144,7 +144,7 @@ class Resource extends CommonObject
     		return $this->id;
     	}
     }
-    
+
     /**
      *    Load object in memory from database
      *
@@ -167,7 +167,7 @@ class Resource extends CommonObject
     	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	$sql.= " WHERE t.rowid = ".$this->db->escape($id);
-    
+
     	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
@@ -175,19 +175,19 @@ class Resource extends CommonObject
     		if ($this->db->num_rows($resql))
     		{
     			$obj = $this->db->fetch_object($resql);
-    
+
     			$this->id						=	$obj->rowid;
     			$this->entity					=	$obj->entity;
     			$this->ref						=	$obj->ref;
     			$this->description				=	$obj->description;
     			$this->fk_code_type_resource	=	$obj->fk_code_type_resource;
     			$this->note_public				=	$obj->note_public;
-    			$this->note_private				=	$obj->note_private;    			
+    			$this->note_private				=	$obj->note_private;
     			$this->type_label				=	$obj->type_label;
-    
+
     		}
     		$this->db->free($resql);
-    
+
     		return $this->id;
     	}
     	else
@@ -197,7 +197,7 @@ class Resource extends CommonObject
     		return -1;
     	}
     }
-    
+
     /**
      *  Update object into database
      *
@@ -209,12 +209,12 @@ class Resource extends CommonObject
     {
     	global $conf, $langs;
     	$error=0;
-    
+
     	// Clean parameters
     	if (isset($this->ref)) $this->ref=trim($this->ref);
     	if (isset($this->fk_code_type_resource)) $this->fk_code_type_resource=trim($this->fk_code_type_resource);
     	if (isset($this->description)) $this->description=trim($this->description);
-    
+
     	// Update request
     	$sql = "UPDATE ".MAIN_DB_PREFIX."resource SET";
     	$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
@@ -222,20 +222,20 @@ class Resource extends CommonObject
     	$sql.= " fk_code_type_resource=".(isset($this->fk_code_type_resource)?"'".$this->db->escape($this->fk_code_type_resource)."'":"null").",";
     	$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
     	$sql.= " WHERE rowid=".$this->id;
-    
+
     	$this->db->begin();
-    
+
     	dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-    
+
     	if (! $error)
     	{
     		if (! $notrigger)
     		{
     			// Uncomment this and change MYOBJECT to your own tag if you
     			// want this action calls a trigger.
-    
+
     			//// Call triggers
     			//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     			//$interface=new Interfaces($this->db);
@@ -244,7 +244,7 @@ class Resource extends CommonObject
     			//// End call triggers
     		}
     	}
-    
+
     	// Commit or rollback
     	if ($error)
     	{
@@ -262,10 +262,10 @@ class Resource extends CommonObject
     		return 1;
     	}
     }
-    
+
     /**
      *    Load object in memory from database
-     *    
+     *
      *    @param      int	$id          id object
      *    @return     int         <0 if KO, >0 if OK
      */
@@ -319,7 +319,7 @@ class Resource extends CommonObject
     		return -1;
     	}
     }
-    
+
     /**
      *	Load resource objects into $this->lines
      *
@@ -344,7 +344,7 @@ class Resource extends CommonObject
     	$sql.= " FROM ".MAIN_DB_PREFIX."resource as t";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_resource as ty ON ty.code=t.fk_code_type_resource";
     	//$sql.= " WHERE t.entity IN (".getEntity('resource').")";
-    
+
     	//Manage filter
     	if (!empty($filter)){
     		foreach($filter as $key => $value) {
@@ -360,7 +360,7 @@ class Resource extends CommonObject
     	$sql.= " ORDER BY $sortfield $sortorder ";
     	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all sql=".$sql, LOG_DEBUG);
-    
+
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -377,7 +377,7 @@ class Resource extends CommonObject
     				$line->description				=	$obj->description;
     				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
     				$line->type_label				=	$obj->type_label;
-    				
+
     				$this->lines[$i] = $line;
     				$i++;
     			}
@@ -390,7 +390,7 @@ class Resource extends CommonObject
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
-    
+
     }
 
      /**
@@ -487,10 +487,10 @@ class Resource extends CommonObject
     function fetch_all_used($sortorder, $sortfield, $limit, $offset=1, $filter='')
     {
     	global $conf;
-    	
+
     	if ( ! $sortorder) $sortorder="ASC";
     	if ( ! $sortfield) $sortfield="t.rowid";
-    	
+
     	$sql="SELECT ";
     	$sql.= " t.rowid,";
     	$sql.= " t.resource_id,";
@@ -559,6 +559,8 @@ class Resource extends CommonObject
      * Fetch all resources available, declared by modules
      * Load available resource in array $this->available_resources
      *
+     * note : deprecated, remplaced by hook getElementResources
+     *
      * @return int 	number of available resources declared by modules
      */
     function fetch_all_available() {
@@ -572,7 +574,7 @@ class Resource extends CommonObject
     	}
     	return 0;
     }
-    
+
     /**
      *      Load properties id_previous and id_next
      *
@@ -583,18 +585,18 @@ class Resource extends CommonObject
     function load_previous_next_ref($filter,$fieldid)
     {
     	global $conf, $user;
-    
+
     	if (! $this->table_element)
     	{
     		dol_print_error('',get_class($this)."::load_previous_next_ref was called on objet with property table_element not defined", LOG_ERR);
     		return -1;
     	}
-    
+
     	// this->ismultientitymanaged contains
     	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     	$alias = 's';
-    	
-    
+
+
     	$sql = "SELECT MAX(te.".$fieldid.")";
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
     	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && empty($user->rights->societe->client->voir))) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
@@ -604,7 +606,7 @@ class Resource extends CommonObject
     	if (! empty($filter)) $sql.=" AND ".$filter;
     	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
     	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
-    
+
     	//print $sql."<br>";
     	$result = $this->db->query($sql);
     	if (! $result)
@@ -614,8 +616,8 @@ class Resource extends CommonObject
     	}
     	$row = $this->db->fetch_row($result);
     	$this->ref_previous = $row[0];
-    
-    
+
+
     	$sql = "SELECT MIN(te.".$fieldid.")";
     	$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as te";
     	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
@@ -626,7 +628,7 @@ class Resource extends CommonObject
     	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2 || ($this->element != 'societe' && empty($this->isnolinkedbythird) && !$user->rights->societe->client->voir)) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
     	if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element, 1).')';
     	// Rem: Bug in some mysql version: SELECT MIN(rowid) FROM llx_socpeople WHERE rowid > 1 when one row in database with rowid=1, returns 1 instead of null
-    
+
     	//print $sql."<br>";
     	$result = $this->db->query($sql);
     	if (! $result)
@@ -636,7 +638,7 @@ class Resource extends CommonObject
     	}
     	$row = $this->db->fetch_row($result);
     	$this->ref_next = $row[0];
-    
+
     	return 1;
     }
 
@@ -670,7 +672,7 @@ class Resource extends CommonObject
 		$sql.= " busy=".(isset($this->busy)?$this->busy:"null").",";
 		$sql.= " mandatory=".(isset($this->mandatory)?$this->mandatory:"null").",";
 		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null')."";
-		
+
         $sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -725,7 +727,7 @@ class Resource extends CommonObject
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-	    $sql.= " WHERE element_id='".$element_id."' AND element_type='".$element."'";
+	    $sql.= " WHERE element_id='".$element_id."' AND resource_type='".$this->element."'";
 	    if($resource_type)
 	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
 	    $sql .= ' ORDER BY resource_type';
@@ -809,7 +811,7 @@ class Resource extends CommonObject
     		return -1;
     	}
     }
-    
+
     /**
      *      Load in cache resource type code (setup in dictionary)
      *
@@ -818,9 +820,9 @@ class Resource extends CommonObject
     function load_cache_code_type_resource()
     {
     	global $langs;
-    
+
     	if (count($this->cache_code_type_resource)) return 0;    // Cache deja charge
-    
+
     	$sql = "SELECT rowid, code, label, active";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_type_resource";
     	$sql.= " WHERE active > 0";
@@ -850,5 +852,36 @@ class Resource extends CommonObject
     	}
     }
 
+    /**
+     *	Return clicable link of object (with eventually picto)
+     *
+     *	@param      int		$withpicto		Add picto into link
+     *	@param      string	$option			Where point the link ('compta', 'expedition', 'document', ...)
+     *	@param      string	$get_params    	Parametres added to url
+     *	@return     string          		String with URL
+     */
+    function getNomUrl($withpicto=0,$option='', $get_params='')
+    {
+        global $langs;
+
+        $result='';
+
+        if ($option == '')
+        {
+            $lien = '<a href="'.dol_buildpath('/resource/card.php',1).'?id='.$this->id. $get_params .'">';
+            $picto='resource@resource';
+            $label=$langs->trans("ShowResource").': '.$this->ref;
+
+        }
+
+        $lienfin='</a>';
+
+        $label=$langs->trans("ShowResource").': '.$this->ref;
+
+        if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        $result.=$lien.$this->ref.$lienfin;
+        return $result;
+    }
 }
 ?>
