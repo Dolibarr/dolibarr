@@ -916,7 +916,8 @@ class Cronjob extends CommonObject
 		if ($this->jobtype=='method')
 		{
 			// load classes
-			$ret=dol_include_once("/".$this->module_name."/class/".$this->classesname,$this->objectname);
+			$file = "/".$this->module_name."/class/".$this->classesname;
+			$ret=dol_include_once($file,$this->objectname);
 			if ($ret===false)
 			{
 				$this->error=$langs->trans('CronCannotLoadClass',$file,$this->objectname);
