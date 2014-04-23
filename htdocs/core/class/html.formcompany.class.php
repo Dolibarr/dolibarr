@@ -92,15 +92,17 @@ class FormCompany
 	 *	Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
 	 *
 	 *	@param	int		$mode		0=renvoi id+libelle, 1=renvoi code+libelle
+	 *	@param  string	$filter     Add a SQL filter to select
 	 *  @return array				Array of types d'effectifs
 	 */
-	function effectif_array($mode=0)
+	function effectif_array($mode=0, $filter='')
 	{
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
 		$sql.= " WHERE active = 1";
+		if ($filter) $sql.=" ".$filter;
 		$sql .= " ORDER BY id ASC";
 		dol_syslog(get_class($this).'::effectif_array sql='.$sql,LOG_DEBUG);
 		$resql=$this->db->query($sql);
