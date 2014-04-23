@@ -376,6 +376,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
 {
     global $conf,$langs,$user;
     $langs->load("bills");
+	$error=0;
 
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/societe/doc";
     $srctemplatepath='';
