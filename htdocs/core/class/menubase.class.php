@@ -409,7 +409,7 @@ class Menubase
      * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
      * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
      * 	@param  array	&$tabMenu       Array with menu entries already loaded
-     * 	@return array    		       	Menu array for particular mainmenu value or full tabArray
+     * 	@return Menu    		       	Menu array for particular mainmenu value or full tabArray
      */
     function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
     {
