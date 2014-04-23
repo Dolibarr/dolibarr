@@ -562,7 +562,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					if (!empty($project->fk_soc)) $socid = $project->fk_soc;
 
 					$tmparray=$this->get_substitutionarray_tasks($object,$outputlangs);
-					complete_substitutions_array($tmparray, $outputlangs, $task);
+					complete_substitutions_array($tmparray, $outputlangs, $object);
 					foreach($tmparray as $key => $val)
 					{
 						try
