@@ -174,7 +174,7 @@ function dol_shutdown()
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'az'=check it's a-z only, 'array'=check it's array)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
- *  @return string      		 Value found, or '' if check fails
+ *  @return string||string[]      		 Value found, or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -715,6 +715,8 @@ function dol_bc($var,$moreclass='')
  */
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
+	global $conf;
+
 	$ret='';
 	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
 
@@ -1428,7 +1430,7 @@ function dol_print_address($address, $htmlid, $mode, $id)
 	{
         if ($hookmanager) {
             $parameters = array('element' => $mode, 'id' => $id);
-            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address, $action);
+            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
             print $hookmanager->resPrint;
         }
         if (empty($reshook)) {

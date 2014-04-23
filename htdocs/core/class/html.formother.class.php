@@ -391,7 +391,7 @@ class FormOther
                 $moreinfo=0;
                 if (! empty($conf->global->MAIN_SHOW_LOGIN))
                 {
-                	$out.=($moreinfo?' - ':' (').$obj->login;
+                	$moreforfilter.=($moreinfo?' - ':' (').$obj_usr->login;
                 	$moreinfo++;
                 }
                 if ($showstatus >= 0)
@@ -1095,9 +1095,10 @@ class FormOther
      *  @param	string	$labelfield			Label field
      *  @param	string	$selected			Selected value
      *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
-    function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0)
+    function select_dictionary($htmlname,$dictionarytable,$keyfield='code',$labelfield='label',$selected='',$useempty=0,$moreattrib='')
     {
         global $langs, $conf;
 

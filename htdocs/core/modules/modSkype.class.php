@@ -99,6 +99,8 @@ class modSkype extends DolibarrModules
      */
     function init($options='')
     {
+		$sql = array();
+
         // Prevent pb of modules not correctly disabled
         //$this->remove($options);
 

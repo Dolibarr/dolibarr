@@ -3160,7 +3160,7 @@ class Form
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
     {
-        global $langs;
+        global $langs, $conf;
 
         if ($htmlname != "none")
         {

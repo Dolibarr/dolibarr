@@ -431,7 +431,7 @@ class pdf_merou extends ModelePdfExpedition
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs;
+		global $conf, $langs,$hookmanager;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 

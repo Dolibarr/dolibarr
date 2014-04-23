@@ -179,7 +179,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'project';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'project_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'project_admin');
 
 	$head[$h][0] = DOL_URL_ROOT."/projet/admin/project_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFieldsProject");
@@ -191,7 +191,7 @@ function project_admin_prepare_head()
 	$head[$h][2] = 'attributes_task';
 	$h++;
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'project_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'project_admin','remove');
 
 	return $head;
 }

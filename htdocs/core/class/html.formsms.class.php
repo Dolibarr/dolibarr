@@ -213,6 +213,7 @@ function limitChars(textarea, limit, infodiv)
                 else
                 {
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
+	                $resultsender=array();
                     $resultsender[0]->number=$this->fromsms;
                 }
 

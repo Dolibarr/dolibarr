@@ -83,10 +83,10 @@ abstract class CommonObject
         if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';
-        if ($option && $this->civilite_id)
+        if ($option && $this->civility_id)
         {
-            if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-            else $ret.=$this->civilite_id.' ';
+            if ($langs->transnoentitiesnoconv("Civility".$this->civility_id)!="Civility".$this->civility_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civility_id).' ';
+            else $ret.=$this->civility_id.' ';
         }
 
         $ret.=dolGetFirstLastname($firstname, $lastname, $nameorder);
@@ -241,8 +241,8 @@ abstract class CommonObject
     /**
      *    Copy contact from one element to current
      *
-     *    @param    int     $objFrom			Source element
-     *    @param    int		$source             Nature of contact ('internal' or 'external')
+     *    @param    CommonObject    $objFrom    Source element
+     *    @param    string          $source     Nature of contact ('internal' or 'external')
      *    @return   int                         >0 if OK, <0 if KO
      */
     function copy_linked_contact($objFrom, $source='internal')
@@ -1721,7 +1721,7 @@ abstract class CommonObject
      *	@param  string	$clause			OR, AND clause
      *	@return	void
      */
-    function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
         global $conf;
 
@@ -2278,7 +2278,7 @@ abstract class CommonObject
      */
     function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
-		global $_POST;
+		global $_POST, $conf;
 
 		$out = '';
 
@@ -2482,7 +2482,7 @@ abstract class CommonObject
         	$i=0;
         	while ($i < $num)
         	{
-            	$obj = $this->db->fetch_object($query);
+            	$obj = $this->db->fetch_object($resql);
 
             	$pu_ht = $obj->pu_ht;
             	$qty= $obj->qty;

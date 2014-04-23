@@ -490,7 +490,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  *  @param  Account		$account         		Bank account object
  *  @param  int			$onlynumber      		Output only number
  *  @param	int			$default_font_size		Default font size
- *  @return	void
+ *  @return	float                               The Y PDF position
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default_font_size=10)
 {
@@ -863,7 +863,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
  *	@param	float		$h					Cell minimum height. The cell extends automatically if needed.
  *	@param	int			$align				Align
  *	@param	string		$default_font_size	Font size
- *	@return	void
+ *	@return	float                           The Y PDF position
  */
 function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$align,$default_font_size)
 {
@@ -1186,7 +1186,7 @@ function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string
  */
 function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1213,7 +1213,7 @@ function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string
  */
 function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1271,7 +1271,7 @@ function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- *  @return	void
+ *  @return	string
  */
 function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1301,7 +1301,7 @@ function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string
  */
 function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1331,7 +1331,7 @@ function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string
  */
 function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
 {
@@ -1391,7 +1391,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
- * 	@return	void
+ * 	@return	string
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 {
