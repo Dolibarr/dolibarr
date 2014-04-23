@@ -18,6 +18,18 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+create table llx_c_email_templates
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
+  type_template   varchar(32),  -- template for wich type of email (send invoice by email, send order, ...)
+  datec           datetime,
+  label           varchar(255),
+  content         text
+)ENGINE=innodb;
+
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
