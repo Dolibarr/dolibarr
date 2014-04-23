@@ -201,7 +201,7 @@ class InfoBox
         $tab[$confuserzone]=1;
         if (dol_set_user_param($db, $conf, $user, $tab) < 0)
         {
-            $this->error=$db->lasterror();
+            $error=$db->lasterror();
             $db->rollback();
             return -3;
         }
