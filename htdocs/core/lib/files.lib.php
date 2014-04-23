@@ -879,7 +879,7 @@ function dol_delete_preview($object)
 	{
 		if ( ! dol_delete_file($file,1) )
 		{
-			$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+			$object->error=$langs->trans("ErrorFailedToOpenFile",$file);
 			return 0;
 		}
 	}
@@ -893,7 +893,7 @@ function dol_delete_preview($object)
 			{
 				if ( ! dol_delete_file($preview,1) )
 				{
-					$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+					$object->error=$langs->trans("ErrorFailedToOpenFile",$preview);
 					return 0;
 				}
 			}
