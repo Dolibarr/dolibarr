@@ -438,7 +438,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
