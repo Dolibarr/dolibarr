@@ -703,7 +703,7 @@ class Translate
 	 */
 	function getCurrencyAmount($currency_code, $amount)
 	{
-		$symbol=$this->getCurrencSymbol($currency_code);
+		$symbol=$this->getCurrencySymbol($currency_code);
 
 		if (in_array($currency_code, array('USD'))) return $symbol.$amount;
 		else return $amount.$symbol;
