@@ -83,10 +83,10 @@ abstract class CommonObject
         if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';
-        if ($option && $this->civilite_id)
+        if ($option && $this->civility_id)
         {
-            if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-            else $ret.=$this->civilite_id.' ';
+            if ($langs->transnoentitiesnoconv("Civility".$this->civility_id)!="Civility".$this->civility_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civility_id).' ';
+            else $ret.=$this->civility_id.' ';
         }
 
         $ret.=dolGetFirstLastname($firstname, $lastname, $nameorder);
