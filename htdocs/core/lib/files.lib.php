@@ -39,16 +39,16 @@ function dol_basename($pathfile)
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string	$path        	Starting path from which to search
- *  @param	string	$types        	Can be "directories", "files", or "all"
- *  @param	int		$recursive		Determines whether subdirectories are searched
- *  @param	string	$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
- *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
- *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- *  @param	int		$nohook			Disable all hooks
- *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
+ *  @param	string		$path        	Starting path from which to search
+ *  @param	string		$types        	Can be "directories", "files", or "all"
+ *  @param	int			$recursive		Determines whether subdirectories are searched
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ *  @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
+ *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
+ *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *  @param	int			$nohook			Disable all hooks
+ *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
 {
@@ -1279,11 +1279,11 @@ function dol_uncompress($inputfile,$outputdir)
 /**
  * Return file(s) into a directory (by default most recent)
  *
- * @param 	string	$dir			Directory to scan
- * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	int		$nohook			Disable all hooks
- * @return	string					Full path to most recent file
+ * @param 	string		$dir			Directory to scan
+ * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	int			$nohook			Disable all hooks
+ * @return	string						Full path to most recent file
  */
 function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
 {
