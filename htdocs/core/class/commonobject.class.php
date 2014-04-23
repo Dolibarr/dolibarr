@@ -2278,7 +2278,7 @@ abstract class CommonObject
      */
     function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
-		global $_POST;
+		global $_POST, $conf;
 
 		$out = '';
 
