@@ -62,7 +62,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 	/**		Return description of module
 	 *
-	 * 		@param	string 		$langs		Object langs
+	 * 		@param	Translate 		$langs		Object langs
 	 * 		@return string      			Description of module
 	 */
 	function info($langs)
@@ -104,7 +104,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs			Object langs
-	 * @param	product		$objproduct		Object product
+	 * @param	Product		$objproduct		Object product
 	 * @return	string						Return string example
 	 */
 	function getExample($langs,$objproduct=0)
