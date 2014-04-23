@@ -227,7 +227,7 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('SHIPPING_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
+				$error++; $obj->errors=$interface->errors;
 			}
 			// End calls triggers
 
