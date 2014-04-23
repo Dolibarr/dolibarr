@@ -253,6 +253,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 		if ($mode == 4)
 		{
+			$prefix='';
 			if (! $paye)
 			{
 				if ($status == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
