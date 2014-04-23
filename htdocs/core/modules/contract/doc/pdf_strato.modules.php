@@ -253,6 +253,7 @@ class pdf_strato extends ModelePDFContract
 					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
 					if ($valide > 0 || $object->specimen)
 					{
+						$curX = $this->posxdesc-1;
 						$curY = $nexY;
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 						$pdf->SetTextColor(0,0,0);
