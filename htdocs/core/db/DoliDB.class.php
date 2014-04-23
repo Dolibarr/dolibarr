@@ -126,6 +126,71 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 * Validate a database transaction
+	 *
+	 * @param	string	$log		Add more log to default log line
+	 * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
+	 */
+	function commit($log='')
+	{
+		dol_syslog('',0,-1);
+		if ($this->transaction_opened<=1)
+		{
+			$ret=$this->query("COMMIT");
+			if ($ret)
+			{
+				$this->transaction_opened=0;
+				dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
+			}
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened--;
+			return 1;
+		}
+	}
+
+	/**
+	 *	Annulation d'une transaction et retour aux anciennes valeurs
+	 *
+	 * 	@param	string	$log		Add more log to default log line
+	 * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 */
+	function rollback($log='')
+	{
+		dol_syslog('',0,-1);
+		if ($this->transaction_opened<=1)
+		{
+			$ret=$this->query("ROLLBACK");
+			$this->transaction_opened=0;
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened--;
+			return 1;
+		}
+	}
+
+	/**
+	 *	Define limits and offset of request
+	 *
+	 *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
+	 *	@param	int		$offset     Numero of line from where starting fetch
+	 *	@return	string      		String with SQL syntax to add a limit and offset
+	 */
+	function plimit($limit=0,$offset=0)
+	{
+		global $conf;
+		if (empty($limit)) return "";
+		if ($limit < 0) $limit=$conf->liste_limit;
+		if ($offset > 0) return " LIMIT $offset,$limit ";
+		else return " LIMIT $limit ";
+	}
+
+	/**
 	 *	Return version of database server into an array
 	 *
 	 *	@return	        array  		Version array
