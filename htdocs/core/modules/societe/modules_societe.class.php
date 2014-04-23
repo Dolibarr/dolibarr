@@ -353,6 +353,8 @@ abstract class ModeleAccountancyCode
      */
     function get_code($db, $societe, $type='')
     {
+	    global $langs;
+
         return $langs->trans("NotAvailable");
     }
 }
