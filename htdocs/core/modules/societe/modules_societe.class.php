@@ -425,7 +425,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
             $interface=new Interfaces($db);
             $result=$interface->run_triggers('COMPANY_BUILDDOC',$object,$user,$langs,$conf);
             if ($result < 0) {
-            	$error++; $this->errors=$interface->errors;
+            	$error++; $obj->errors=$interface->errors;
             }
             // Fin appel triggers
 
