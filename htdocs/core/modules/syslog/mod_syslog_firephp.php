@@ -110,7 +110,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Output log content
 	 *
-	 *	@param	string	$content	Content to log
+	 *	@param	array	$content	Content to log
 	 * 	@return	void
 	 */
 	public function export($content)
@@ -132,10 +132,10 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 			set_include_path($oldinclude);
 			ob_start();	// To be sure headers are not flushed until all page is completely processed
 			$firephp = FirePHP::getInstance(true);
-			if ($level == LOG_ERR) $firephp->error($message);
-			elseif ($level == LOG_WARNING) $firephp->warn($message);
-			elseif ($level == LOG_INFO) $firephp->log($message);
-			else $firephp->log($message);
+			if ($content['level'] == LOG_ERR) $firephp->error($content['message']);
+			elseif ($content['level'] == LOG_WARNING) $firephp->warn($content['message']);
+			elseif ($content['level'] == LOG_INFO) $firephp->log($content['message']);
+			else $firephp->log($content['message']);
 		}
 		catch (Exception $e)
 		{
