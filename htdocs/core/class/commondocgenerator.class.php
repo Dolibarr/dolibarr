@@ -139,7 +139,7 @@ abstract class CommonDocGenerator
         {
         	$object->country=$outputlangs->transnoentitiesnoconv("Country".$object->country_code);
         }
-        if (empty($mysoc->state) && ! empty($mysoc->state_code))
+        if (empty($object->state) && ! empty($object->state_code))
         {
         	$object->state=getState($object->state_code,0);
         }
