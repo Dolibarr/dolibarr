@@ -68,7 +68,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
      */
     function canBeActivated()
     {
-    	global $conf,$langs;
+    	global $conf,$langs,$db;
 
         $siyymm=''; $max='';
 
