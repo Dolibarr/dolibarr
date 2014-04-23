@@ -601,8 +601,10 @@ li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
 	text-align: center;
 	vertical-align: bottom;
+	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
     height: <?php print $heightmenu; ?>px;
+    <?php } ?>
 	position:relative;
 	display: block;
 	padding: 0px 0px 2px 0px;

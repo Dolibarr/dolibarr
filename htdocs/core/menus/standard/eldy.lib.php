@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * Core function to output top menu eldy
  *
  * @param 	DoliDB	$db				Database handler
- * @param 	string	$atarget		Target
+ * @param 	string	$atarget		Target (Example: '' or '_top')
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
  * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	array	&$menu			Object Menu to return back list of menu entries
@@ -443,7 +443,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	$leftmenu=($forceleftmenu?'':(empty($_SESSION["leftmenu"])?'none':$_SESSION["leftmenu"]));
 
 	// Show logo company
-	if (empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO))
+	if (empty($conf->global->MAIN_MENU_INVERT) && empty($noout) && ! empty($conf->global->MAIN_SHOW_LOGO))
 	{
 		$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 		if (! empty($mysoc->logo_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini))
@@ -1253,6 +1253,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	if (! is_array($menu_array)) return 0;
 
 	// Show menu
+	$invert=empty($conf->global->MAIN_MENU_INVERT)?"":"invert";
 	if (empty($noout))
 	{
 		$alt=0; $blockvmenuopened=false;
@@ -1268,11 +1269,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$blockvmenuopened=true;
 				if (($alt%2==0))
 				{
-					print '<div class="blockvmenuimpair">'."\n";
+					print '<div class="blockvmenuimpair'.$invert.'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair">'."\n";
+					print '<div class="blockvmenupair'.$invert.'">'."\n";
 				}
 			}
 

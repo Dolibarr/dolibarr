@@ -1273,7 +1273,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *
  *  @param      string	$head    			Lines in the HEAD
  *  @param      string	$title   			Title of web page
- *  @param      string	$target  			Target to use in menu links
+ *  @param      string	$target  			Target to use in menu links (Example: '' or '_top')
  *	@param		int		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
  *	@param		int		$disablehead		Do not output head section
  *	@param		array	$arrayofjs			Array of js files to add in header
@@ -1373,7 +1373,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (empty($conf->dol_hide_topmenu))
     {
 	    // Show menu entries
-    	print '<div id="tmenu_tooltip" class="tmenu">'."\n";
+    	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
 	    $menumanager->showmenu('top');      // This contains a \n
 	    print "</div>\n";
