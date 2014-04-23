@@ -175,6 +175,22 @@ abstract class DoliDB implements Database
 	}
 
 	/**
+	 *	Define limits and offset of request
+	 *
+	 *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
+	 *	@param	int		$offset     Numero of line from where starting fetch
+	 *	@return	string      		String with SQL syntax to add a limit and offset
+	 */
+	function plimit($limit=0,$offset=0)
+	{
+		global $conf;
+		if (empty($limit)) return "";
+		if ($limit < 0) $limit=$conf->liste_limit;
+		if ($offset > 0) return " LIMIT $offset,$limit ";
+		else return " LIMIT $limit ";
+	}
+
+	/**
 	 *	Return version of database server into an array
 	 *
 	 *	@return	        array  		Version array
