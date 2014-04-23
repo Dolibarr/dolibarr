@@ -391,7 +391,7 @@ class FormOther
                 $moreinfo=0;
                 if (! empty($conf->global->MAIN_SHOW_LOGIN))
                 {
-                	$out.=($moreinfo?' - ':' (').$obj->login;
+                	$moreforfilter.=($moreinfo?' - ':' (').$obj_usr->login;
                 	$moreinfo++;
                 }
                 if ($showstatus >= 0)
