@@ -359,10 +359,10 @@ class Ldap
 	 * 	Add a LDAP entry
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *	@param	string	$dn			DN entry key
-	 *	@param	string	$info		Attributes array
-	 *	@param	User	$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string[]	$info		Attributes array
+	 *	@param	User		$user		Objet user that create
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function add($dn, $info, $user)
 	{
@@ -413,7 +413,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	string		$info		Attributes array
+	 *	@param	string[]	$info		Attributes array
 	 *	@param	string		$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
@@ -465,7 +465,7 @@ class Ldap
 	 *	Ldap object connect and bind must have been done
 	 *
 	 *  @param	string		$dn			DN entry key
-	 *  @param  string		$info		Attributes array
+	 *  @param  string[]	$info		Attributes array
 	 *  @param  User		$user		Objet user that update
 	 * 	@param	string		$olddn		Old DN entry key (before update)
 	 *	@return	int						<0 if KO, >0 if OK
@@ -552,9 +552,9 @@ class Ldap
 	/**
 	 * 	Build a LDAP message
 	 *
-	 *	@param	string	$dn			DN entry key
-	 *	@param	string	$info		Attributes array
-	 *	@return	string				Content of file
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string[]	$info		Attributes array
+	 *	@return	string					Content of file
 	 */
 	function dump_content($dn, $info)
 	{
@@ -594,9 +594,9 @@ class Ldap
 	/**
 	 * 	Dump a LDAP message to ldapinput.in file
 	 *
-	 *	@param	string	$dn			DN entry key
-	 *	@param	string	$info		Attributes array
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string[]	$info		Attributes array
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function dump($dn, $info)
 	{
@@ -631,10 +631,10 @@ class Ldap
 	 * 	Add a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *	@param	string	$dn			DN entry key
-	 *	@param	string	$info		Attributes array
-	 *	@param	User	$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string[]	$info		Attributes array
+	 *	@param	User		$user		Objet user that create
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function addAttribute($dn, $info, $user)
 	{
@@ -683,10 +683,10 @@ class Ldap
 	 * 	Update a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *	@param	string	$dn			DN entry key
-	 *	@param	string	$info		Attributes array
-	 *	@param	User	$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string[]	$info		Attributes array
+	 *	@param	User		$user		Objet user that create
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function updateAttribute($dn, $info, $user)
 	{
@@ -735,10 +735,10 @@ class Ldap
 	 * 	Delete a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *	@param	string	$dn			DN entry key
-	 *	@param	string	$info		Attributes array
-	 *	@param	User	$user		Objet user that create
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@param	string		$dn			DN entry key
+	 *	@param	string[]	$info		Attributes array
+	 *	@param	User		$user		Objet user that create
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function deleteAttribute($dn, $info, $user)
 	{

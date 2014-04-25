@@ -158,7 +158,7 @@ class MenuManager
      *  Show menu
      *
      *	@param	string	$mode		'top', 'left', 'jmobile'
-     *  @return	int     			Number of menu entries shown
+     *  @return	void
 	 */
 	function showmenu($mode)
 	{
@@ -172,16 +172,14 @@ class MenuManager
 	        $conf->global->MAIN_SEARCHFORM_CONTACT=0;
         }
 
-        $res='ErrorBadParameterForMode';
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
-        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
-        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
         if ($mode == 'jmobile')
         {
-        	$res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+        	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
 
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -199,7 +197,7 @@ class MenuManager
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
-        			$res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
+        			print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
         			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
@@ -248,8 +246,6 @@ class MenuManager
         }
 
         unset($this->menu);
-
-        return $res;
     }
 }
 

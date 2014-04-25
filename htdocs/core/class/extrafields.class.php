@@ -207,16 +207,16 @@ class ExtraFields
 	/**
 	 *	Add description of a new optional attribute
 	 *
-	 *	@param	string	$attrname			code of attribute
-	 *	@param	string	$label				label of attribute
-	 *  @param	int		$type				Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
-	 *  @param	int		$pos				Position of attribute
-	 *  @param	int		$size				Size/length of attribute
-	 *  @param  string	$elementtype        Element type ('member', 'product', 'company', ...)
-	 *  @param	int		$unique				Is field unique or not
-	 *  @param	int		$required			Is field required or not
-	 *  @param  array	$param				Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
-	 *  @return	int							<=0 if KO, >0 if OK
+	 *	@param	string			$attrname		code of attribute
+	 *	@param	string			$label			label of attribute
+	 *  @param	int				$type			Type of attribute ('int', 'text', 'varchar', 'date', 'datehour', 'float')
+	 *  @param	int				$pos			Position of attribute
+	 *  @param	int				$size			Size/length of attribute
+	 *  @param  string			$elementtype	Element type ('member', 'product', 'company', ...)
+	 *  @param	int				$unique			Is field unique or not
+	 *  @param	int				$required		Is field required or not
+	 *  @param  array||string	$param			Params for field  (ex for select list : array('options' => array(value'=>'label of option')) )
+	 *  @return	int								<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='')
 	{
@@ -581,7 +581,7 @@ class ExtraFields
 	 */
 	function showInputField($key,$value,$moreparam='',$keyprefix='')
 	{
-		global $conf,$langs;
+		global $conf,$langs,$db;
 
 		$label=$this->attribute_label[$key];
 		$type =$this->attribute_type[$key];

@@ -300,7 +300,7 @@ function print_start_menu_entry_empty($idsel,$classname,$showmode)
  */
 function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $classname, $atarget)
 {
-	global $conf;
+	global $conf,$langs;
 
 	if ($showmode == 1)
 	{

@@ -442,7 +442,7 @@ function dol_get_next_week($day, $week, $month, $year)
  * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
- *  @return		timestamp				Date for first day
+ *  @return		int						Date for first day
  */
 function dol_get_first_day($year,$month=1,$gm=false)
 {
@@ -455,7 +455,7 @@ function dol_get_first_day($year,$month=1,$gm=false)
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
  * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *	@return		timestamp				Date for first day
+ *	@return		int						Date for first day
  */
 function dol_get_last_day($year,$month=12,$gm=false)
 {
@@ -551,8 +551,8 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
  *	Fonction retournant le nombre de jour feries, samedis et dimanches entre 2 dates entrees en timestamp. Dates must be UTC with hour, day, min to 0
  *	Called by function num_open_day
  *
- *	@param	    timestamp	$timestampStart     Timestamp de debut
- *	@param	    timestamp	$timestampEnd       Timestamp de fin
+ *	@param	    int			$timestampStart     Timestamp de debut
+ *	@param	    int			$timestampEnd       Timestamp de fin
  *  @param      string		$countrycode        Country code
  *	@return   	int								Nombre de jours feries
  */
@@ -685,8 +685,8 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
  *	Function to return number of days between two dates (date must be UTC date !)
  *  Example: 2012-01-01 2012-01-02 => 1 if lastday=0, 2 if lastday=1
  *
- *	@param	   timestamp	$timestampStart     Timestamp start UTC
- *	@param	   timestamp	$timestampEnd       Timestamp end UTC
+ *	@param	   int			$timestampStart     Timestamp start UTC
+ *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: non, 1:oui
  *	@return    int								Number of days
  */
@@ -711,8 +711,8 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 /**
  *	Function to return number of working days (and text of units) between two dates (working days)
  *
- *	@param	   	timestamp	$timestampStart     Timestamp for start date (date must be UTC to avoid calculation errors)
- *	@param	   	timestamp	$timestampEnd       Timestamp for end date (date must be UTC to avoid calculation errors)
+ *	@param	   	int			$timestampStart     Timestamp for start date (date must be UTC to avoid calculation errors)
+ *	@param	   	int			$timestampEnd       Timestamp for end date (date must be UTC to avoid calculation errors)
  *	@param     	int			$inhour             0: return number of days, 1: return number of hours
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end

@@ -165,6 +165,8 @@ class CommActionRapport
 	 */
 	function _pages(&$pdf, $outputlangs)
 	{
+		global $conf;
+
 		$height=3;		// height for text separation
 		$pagenb=1;
 

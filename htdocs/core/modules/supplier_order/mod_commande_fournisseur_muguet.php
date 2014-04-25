@@ -68,7 +68,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
      */
     function canBeActivated()
     {
-    	global $conf,$langs;
+    	global $conf,$langs,$db;
 
         $coyymm=''; $max='';
 

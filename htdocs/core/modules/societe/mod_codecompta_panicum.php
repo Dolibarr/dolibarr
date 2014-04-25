@@ -46,7 +46,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	/**
 	 * Return description of module
 	 *
-	 * @param	string	$langs		Object langs
+	 * @param	Translate	$langs	Object langs
 	 * @return 	string      		Description of module
 	 */
 	function info($langs)

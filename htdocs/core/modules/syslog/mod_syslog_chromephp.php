@@ -112,7 +112,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * 	Output log content
 	 *
-	 *	@param	string	$content	Content to log
+	 *	@param	array	$content	Content to log
 	 * 	@return	void
 	 */
 	public function export($content)
@@ -133,10 +133,10 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 			include_once 'ChromePhp.class.php';
 			set_include_path($oldinclude);
 			ob_start();	// To be sure headers are not flushed until all page is completely processed
-			if ($level == LOG_ERR) ChromePhp::error($message);
-			elseif ($level == LOG_WARNING) ChromePhp::warn($message);
-			elseif ($level == LOG_INFO) ChromePhp::log($message);
-			else ChromePhp::log($message);
+			if ($content['level'] == LOG_ERR) ChromePhp::error($content['message']);
+			elseif ($content['level'] == LOG_WARNING) ChromePhp::warn($content['message']);
+			elseif ($content['level'] == LOG_INFO) ChromePhp::log($content['message']);
+			else ChromePhp::log($content['message']);
 		}
 		catch (Exception $e)
 		{

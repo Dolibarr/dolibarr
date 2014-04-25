@@ -228,6 +228,8 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
+		global $conf;
+
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
 		{
@@ -281,6 +283,8 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
+		global $conf;
+
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
 		{
@@ -398,6 +402,8 @@ class ExportExcel extends ModeleExports
      */
 	function close_file()
 	{
+		global $conf;
+
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     	{
 	        $this->workbook->close();
