@@ -770,14 +770,21 @@ class Categorie extends CommonObject
 	 */
 	function get_full_arbo($type,$markafterid=0)
 	{
+	    global $langs;
+	    
 		$this->cats = array();
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
 		$this->load_motherof();
+		$current_lang = $langs->getDefaultLang();
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
+		if (! empty($conf->global->MAIN_MULTILANGS))		
+		    $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
+		if (! empty($conf->global->MAIN_MULTILANGS))
+		    $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
 		$sql.= " AND c.type = ".$type;
 
@@ -791,8 +798,8 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['rowid'] = $obj->rowid;
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
 				$this->cats[$obj->rowid]['fk_parent'] = $obj->fk_parent;
-				$this->cats[$obj->rowid]['label'] = $obj->label;
-				$this->cats[$obj->rowid]['description'] = $obj->description;
+				$this->cats[$obj->rowid]['label'] = ! empty($obj->label_trans) ? $obj->label_trans : $obj->label;
+				$this->cats[$obj->rowid]['description'] = ! empty($obj->description_trans) ? $obj->description_trans : $obj->description;
 				$i++;
 			}
 		}
