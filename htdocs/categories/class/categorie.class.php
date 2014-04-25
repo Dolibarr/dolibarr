@@ -107,6 +107,9 @@ class Categorie extends CommonObject
 				$this->fetch_optionals($this->id,$extralabels);
 
 				$this->db->free($resql);
+				
+				// multilangs
+				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				return 1;
 			}
@@ -1458,6 +1461,118 @@ class Categorie extends CommonObject
 		$this->imgHeight = $infoImg[1]; // Hauteur de l'image
 	}
 
+	/**
+	 *	Update ou cree les traductions des infos produits
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
+	 */
+	function setMultiLangs()
+	{
+	    global $langs;
+	
+	    $langs_available = $langs->get_available_languages();
+	    $current_lang = $langs->getDefaultLang();
+	
+	    foreach ($langs_available as $key => $value)
+	    {
+	        $sql = "SELECT rowid";
+	        $sql.= " FROM ".MAIN_DB_PREFIX."categorie_lang";
+	        $sql.= " WHERE fk_category=".$this->id;
+	        $sql.= " AND lang='".$key."'";
+	
+	        $result = $this->db->query($sql);
+	
+	        if ($key == $current_lang)
+	        {
+	            if ($this->db->num_rows($result)) // si aucune ligne dans la base
+	            {
+	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
+	                $sql2.= " SET label='".$this->db->escape($this->label)."',";
+	                $sql2.= " description='".$this->db->escape($this->description)."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	            }
+	            else
+	            {
+	                $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
+	                $sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
+	                $sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
+	            }
+	            dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+	            if (! $this->db->query($sql2))
+	            {
+	                $this->error=$this->db->lasterror();
+	                dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
+	                return -1;
+	            }
+	        }
+	        else if (isset($this->multilangs["$key"]))
+	        {
+	            if ($this->db->num_rows($result)) // si aucune ligne dans la base
+	            {
+	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
+	                $sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
+	                $sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	            }
+	            else
+	            {
+	                $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
+	                $sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"]);
+	                $sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
+	            }
+	
+	            // on ne sauvegarde pas des champs vides
+	            if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
+	                dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+	            if (! $this->db->query($sql2))
+	            {
+	                $this->error=$this->db->lasterror();
+	                dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
+	                return -1;
+	            }
+	        }
+	    }
+	    return 1;
+	}
+	
+	/**
+	 *	Load array this->multilangs
+	 *
+	 *	@return		int		<0 if KO, >0 if OK
+	 */
+	function getMultiLangs()
+	{
+	    global $langs;
+	
+	    $current_lang = $langs->getDefaultLang();
+	
+	    $sql = "SELECT lang, label, description";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_lang";
+	    $sql.= " WHERE fk_category=".$this->id;
+	
+	    $result = $this->db->query($sql);
+	    if ($result)
+	    {
+	        while ( $obj = $this->db->fetch_object($result) )
+	        {
+	            //print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
+	            if( $obj->lang == $current_lang ) // si on a les traduct. dans la langue courante on les charge en infos principales.
+	            {
+	                $this->label		= $obj->label;
+	                $this->description	= $obj->description;
+	
+	            }
+	            $this->multilangs["$obj->lang"]["label"]		= $obj->label;
+	            $this->multilangs["$obj->lang"]["description"]	= $obj->description;
+	        }
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+	        return -1;
+	    }
+	}
 
     /**
      *  Initialise an instance with random values.
