@@ -34,6 +34,8 @@ class Cotisation extends CommonObject
 	public $table_element='cotisation';
 
 	var $id;
+	var $ref;
+
 	var $datec;
 	var $datem;
 	var $dateh;				// Subscription start date
