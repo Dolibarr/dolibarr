@@ -46,6 +46,7 @@ For users:
 - New: Add option FACTURE_SENDBYEMAIL_FOR_ALL_STATUS to allow to send invoice by email 
        whatever is its status.
 - New: Add filter date in bank writing list page.
+- New: Extrafields can be used as substitution key %EXTRA_XXX% into emails texts for members.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity
