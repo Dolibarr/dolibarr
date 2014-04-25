@@ -49,6 +49,7 @@ For users:
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity
+- New: Add categories translation 
 
 TODO
 - New: Predefined product and free product use same form.
