@@ -1018,6 +1018,8 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_soc F
 
 ALTER TABLE llx_user ADD COLUMN barcode varchar(255) DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN fk_barcode_type integer DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN nb_holiday integer DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN salary double(24,8) DEFAULT NULL;
 
 ALTER TABLE llx_product ADD COLUMN url varchar(255);
 
