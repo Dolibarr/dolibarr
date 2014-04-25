@@ -263,17 +263,10 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
-
 	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();
-
 	print '</td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
 
-	$doleditor = new DolEditor('note', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
-	$doleditor->Create();
-
-	print '</td></tr>';
 	print '</tr>';
 	print '</table>';
 
