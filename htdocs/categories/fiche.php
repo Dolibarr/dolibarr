@@ -31,9 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("categories");
 
-$extrafields = new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-
 // Security check
 $socid=GETPOST('socid','int');
 if (!$user->rights->categorie->lire) accessforbidden();
@@ -63,6 +60,9 @@ if ($origin)
 if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
 
 $object = new Categorie($db);
+
+$extrafields = new ExtraFields($db);
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 /*
  *	Actions
@@ -244,7 +244,7 @@ if ($user->rights->categorie->creer)
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $form->select_all_categories($type, $catorigin);
 		print '</td></tr>';
-		
+
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
