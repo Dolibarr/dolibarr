@@ -92,11 +92,11 @@ class CMailFile
 	 *	@param 	array	$mimetype_list       List of MIME type of attached files
 	 *	@param 	array	$mimefilename_list   List of attached file name in message
 	 *	@param 	string	$addr_cc             Email cc
-	 *	@param 	string	$addr_bcc            Email bcc
-	 *	@param 	int		$deliveryreceipt		Ask a delivery receipt
-	 *	@param 	int		$msgishtml       	1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
-	 *	@param 	string	$errors_to      		Email errors
-	 *	@param	string	$css			        Css option
+	 *	@param 	string	$addr_bcc            Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
+	 *	@param 	int		$deliveryreceipt     Ask a delivery receipt
+	 *	@param 	int		$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
+	 *	@param 	string	$errors_to      	 Email errors
+	 *	@param	string	$css                 Css option
 	 */
 	function __construct($subject,$to,$from,$msg,
 	$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),

@@ -184,6 +184,7 @@ if ($PAYPALTOKEN)
 				$content="";
 				if (! empty($tmptag['MEM']))
 				{
+					$langs->load("members");
 					$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
 					$content.=$langs->trans("PaymentSubscription")."\n";
 					$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."\n";
@@ -198,8 +199,10 @@ if ($PAYPALTOKEN)
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
 				$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 				
+				$ishtml=dol_textishtml($content);	// May contain urls
+
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-				$mailfile = new CMailFile($topic, $sendto, $from, $content);
+				$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 		
 				$result=$mailfile->sendfile();
 				if ($result)
@@ -247,8 +250,10 @@ if ($PAYPALTOKEN)
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
 				$content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
 				
+				$ishtml=dol_textishtml($content);	// May contain urls
+				
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-				$mailfile = new CMailFile($topic, $sendto, $from, $content);
+				$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 		
 				$result=$mailfile->sendfile();
 				if ($result)
