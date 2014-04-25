@@ -303,7 +303,7 @@ $server->register(
  * @param	int			$id					Id of object
  * @param	string		$ref				Ref of object
  * @param	ref_ext		$ref_ext			Ref external of object
- * @param	$lang		$lang				Force lang
+ * @param   string      $lang               Lang to force
  * @return	mixed
  */
 function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang='')
@@ -311,6 +311,9 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
     global $db,$conf,$langs;
 
     dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
+
+    $langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langs->setDefaultLang($langcode);
 
     if ($authentication['entity']) $conf->entity=$authentication['entity'];
 
@@ -346,6 +349,10 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
             	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
+
+            	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
+            	if (! empty($product->multilangs[$langs->defaultlang]["description"]))     	$product->description =  $product->multilangs[$langs->defaultlang]["description"];
+            	if (! empty($product->multilangs[$langs->defaultlang]["note"]))     		$product->note =  $product->multilangs[$langs->defaultlang]["note"];
 
                 // Create
                 $objectresp = array(
