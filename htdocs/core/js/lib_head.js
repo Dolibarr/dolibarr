@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 // Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -924,6 +924,7 @@ function copyToClipboard(text,text2)
  * 
  * TODO Who use this ?
  */
+/*
 (function($){
 	$.widget("ui.onDelayedKeyup", {
 	    _init : function() {
@@ -942,4 +943,4 @@ function copyToClipboard(text,text2)
 	    }
 	});
 })(jQuery);
-
+*/
