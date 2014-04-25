@@ -707,15 +707,19 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 
 
 /**
- * getProductsForCategory
+ * Get list of products for a category
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$id					Category id
  * @param	$lang		$lang				Force lang
  * @return	array							Array result
- */function getProductsForCategory($authentication,$id,$lang='')
+ */
+function getProductsForCategory($authentication,$id,$lang='')
 {
 	global $db,$conf,$langs;
+
+	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+	$langs->setDefaultLang($langcode);
 
 	dol_syslog("Function: getProductsForCategory login=".$authentication['login']." id=".$id);
 
@@ -773,11 +777,11 @@ function getListOfProductsOrServices($authentication,$filterproduct)
 						    	'id' => $obj->id,
 					   			'ref' => $obj->ref,
 					   			'ref_ext' => $obj->ref_ext,
-					    		'label' => $obj->label,
-					    		'description' => $obj->description,
+					    		'label' => $obj->multilangs[$langs->defaultlang]["label"]?$obj->multilangs[$langs->defaultlang]["label"]:$obj->label,
+					    		'description' => $obj->multilangs[$langs->defaultlang]["description"]?$obj->multilangs[$langs->defaultlang]["description"]:$obj->description,
 					    		'date_creation' => dol_print_date($obj->date_creation,'dayhourrfc'),
 					    		'date_modification' => dol_print_date($obj->date_modification,'dayhourrfc'),
-					            'note' => $obj->note,
+					            'note' => $obj->multilangs[$langs->defaultlang]["note"]?$obj->multilangs[$langs->defaultlang]["note"]:$obj->note,
 					            'status_tosell' => $obj->status,
 					            'status_tobuy' => $obj->status_buy,
 		                		'type' => $obj->type,
