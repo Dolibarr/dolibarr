@@ -780,9 +780,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Client destinataire
 			$posy=42;
+			$posx=102;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY(102,$posy-5);
+			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
 
 			// If SHIPPING contact defined on order, we use it
@@ -814,7 +816,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
 			$posy=42;
 			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
-			//if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
