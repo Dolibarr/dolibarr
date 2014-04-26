@@ -348,8 +348,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 1)		// TODO A virer
 		});
 	});
 	<?php } else { ?>
-	$('#product_desc').onDelayedKeyup({
-		'handler': function() {
+	$('#product_desc').keyup(function() {
 			var addline=false;
 			if ($('#product_id').val() == 0 && $('#select_type').val() >= 0 && $('#price_ht').val().length > 0) {
 				var content = $('#product_desc').val();
@@ -364,7 +363,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 1)		// TODO A virer
 			} else {
 				$('#savelinebutton').attr('disabled','disabled');
 			}
-		}
 	});
 	<?php } ?>
 

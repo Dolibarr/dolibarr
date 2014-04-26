@@ -59,7 +59,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						$("#'.$htmlname.'").trigger("change");
 					});
 					// Check when keyup
-					$("input#search_'.$htmlname.'").onDelayedKeyup({ handler: function() {
+					$("input#search_'.$htmlname.'").keyup(function() {
 							//console.log(\'keyup\');
 						    if ($(this).val().length == 0)
 						    {
@@ -93,7 +93,6 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 	    							});
 	    						}
 						    }
-						}
                     });
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
@@ -366,7 +365,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 						$("select#" + htmlname).html(response.value);
 					});
 		}
-	
+
 	});'."\n";
     $msg.= "</script>\n";
 
