@@ -1537,6 +1537,7 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 /**
  * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
  *
+ * @param	DoliDB	$db					Database handler
  * @param	string	$tabletocleantree	Table to clean
  * @param	string	$fieldfkparent		Field name that contains id of parent
  * @return	int							Nb of records fixed/deleted
