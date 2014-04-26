@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
+Fix: [ bug #1351 ] VIES verification link broken.
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.

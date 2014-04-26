@@ -312,7 +312,6 @@ EditDeliveryAddress=Modificar adreça d'enviament
 ThisUserIsNot=Aquest usuari no és ni un client potencial, ni un client, ni un proveïdor
 VATIntraCheck=Verificar
 VATIntraCheckDesc=El link <b>%s</b> permet consultar al servei europeu de control de números d'IVA intracomunitari. Es requereix accés a internet per a que el servei funcioni
-VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome&selectedLanguage=ES
 VATIntraCheckableOnEUSite=Verificar a la web de la Comissió Europea
 VATIntraManualCheck=Podeu també fer una verificació manual a la web europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Comprovació impossible. El servei de comprovació no és prestat pel país membre (%s).
