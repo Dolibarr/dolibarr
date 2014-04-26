@@ -855,7 +855,7 @@ form#login {
 }
 div#login_left, div#login_right {
 	display: inline-block;
-	min-width: 250px;
+	min-width: 245px;
 	padding-top: 10px;
 	text-align: center;
 	vertical-align: middle;
