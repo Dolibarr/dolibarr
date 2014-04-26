@@ -50,6 +50,7 @@ For users:
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity
+- Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers
 
 TODO
 - New: Predefined product and free product use same form.

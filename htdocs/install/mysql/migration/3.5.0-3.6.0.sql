@@ -30,6 +30,9 @@ create table llx_c_email_templates
 )ENGINE=innodb;
 
 
+ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(24);
+
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
