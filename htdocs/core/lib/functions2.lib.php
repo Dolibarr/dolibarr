@@ -1532,3 +1532,125 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 	}
 	return $ret;
 }
+
+
+/**
+ * Clean corrupted tree (orphelins linked to a not existing parent), record linked to themself and child-parent loop
+ *
+ * @param	string	$tabletocleantree	Table to clean
+ * @param	string	$fieldfkparent		Field name that contains id of parent
+ * @return	int							Nb of records fixed/deleted
+ */
+function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
+{
+	$totalnb=0;
+	$listofid=array();
+	$listofparentid=array();
+
+	// Get list of all id in array listofid and all parents in array listofparentid
+	$sql='SELECT rowid, '.$fieldfkparent.' as parent_id FROM '.MAIN_DB_PREFIX.$tabletocleantree;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$listofid[]=$obj->rowid;
+			if ($obj->parent_id > 0) $listofparentid[$obj->rowid]=$obj->parent_id;
+			$i++;
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+
+	if (count($listofid))
+	{
+		print 'Code requested to clean tree (may be to solve data corruption), so we check/clean orphelins and loops.'."<br>\n";
+
+		// Check loops on each other
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid";	// So we update only records linked to themself
+		dol_syslog("sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			if ($nb > 0)
+			{
+				print '<br>Some record that were parent of themself were cleaned.';
+			}
+
+			$totalnb+=$nb;
+		}
+		//else dol_print_error($db);
+
+		// Check other loops
+		$listofidtoclean=array();
+		foreach($listofparentid as $id => $pid)
+		{
+			// Check depth
+			//print 'Analyse record id='.$id.' with parent '.$pid.'<br>';
+
+			$cursor=$id; $arrayidparsed=array();	// We start from child $id
+			while ($cursor > 0)
+			{
+				$arrayidparsed[$cursor]=1;
+				if ($arrayidparsed[$listofparentid[$cursor]])	// We detect a loop. A record with a parent that was already into child
+				{
+					print 'Found a loop between id '.$id.' - '.$cursor.'<br>';
+					unset($arrayidparsed);
+					$listofidtoclean[$cursor]=$id;
+					break;
+				}
+				$cursor=$listofparentid[$cursor];
+			}
+
+			if (count($listofidtoclean)) break;
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
+		$sql.= " SET ".$fieldfkparent." = 0";
+		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
+		dol_syslog("sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			if ($nb > 0)
+			{
+				// Removed orphelins records
+				print '<br>Some records were detected to have parent that is a child, we set them as root record for id: ';
+				print join(',',$listofidtoclean);
+			}
+
+			$totalnb+=$nb;
+		}
+		//else dol_print_error($db);
+
+		// Check and clean orphelins
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
+		$sql.= " SET ".$fieldfkparent." = 0";
+		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
+		dol_syslog("sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$nb=$db->affected_rows($sql);
+			if ($nb > 0)
+			{
+				// Removed orphelins records
+				print '<br>Some orphelins were found and modified to be parent so records are visible again for id: ';
+				print join(',',$listofid);
+			}
+
+			$totalnb+=$nb;
+		}
+		//else dol_print_error($db);
+
+		print '<br>We fixed '.$totalnb.' record(s). Some records may still be corrupted. New check may be required.';
+		return $totalnb;
+	}
+}

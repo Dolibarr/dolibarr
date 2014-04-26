@@ -424,16 +424,17 @@ class FormOther
     /**
      *	Return list of project and tasks
      *
-     *	@param  int		$selectedtask   	Pre-selected task
-     *  @param  int		$projectid       Project id
-     * 	@param  string	$htmlname    	Name of html select
-     * 	@param	int		$modeproject		1 to restrict on projects owned by user
-     * 	@param	int		$modetask		1 to restrict on tasks associated to user
-     * 	@param	int		$mode			0=Return list of tasks and their projects, 1=Return projects and tasks if exists
-     *  @param  int		$useempty        0=Allow empty values
+     *	@param  int		$selectedtask   		Pre-selected task
+     *  @param  int		$projectid				Project id
+     * 	@param  string	$htmlname    			Name of html select
+     * 	@param	int		$modeproject			1 to restrict on projects owned by user
+     * 	@param	int		$modetask				1 to restrict on tasks associated to user
+     * 	@param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
+     *  @param  int		$useempty       		0=Allow empty values
+     *  @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
      *  @return	void
      */
-    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0)
+    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0)
     {
         global $user, $langs;
 
@@ -448,7 +449,7 @@ class FormOther
             if ($useempty) print '<option value="0">&nbsp;</option>';
             $j=0;
             $level=0;
-            $this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid);
+            $this->_pLineSelect($j, 0, $tasksarray, $level, $selectedtask, $projectid, $disablechildoftaskid);
             print '</select>';
         }
         else
@@ -458,17 +459,18 @@ class FormOther
     }
 
     /**
-     * Write all lines of a project (if parent = 0)
+     * Write lines of a project (all lines of a project if parent = 0)
      *
      * @param 	int		&$inc					Cursor counter
-     * @param 	int		$parent					Id parent
-     * @param 	Object	$lines					Line object
+     * @param 	int		$parent					Id of parent task we want to see
+     * @param 	array	$lines					Array of task lines
      * @param 	int		$level					Level
      * @param 	int		$selectedtask			Id selected task
      * @param 	int		$selectedproject		Id selected project
+     * @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
      * @return	void
      */
-    private function _pLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0)
+    private function _pLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0, $disablechildoftaskid=0)
     {
         global $langs, $user, $conf;
 
@@ -481,12 +483,12 @@ class FormOther
             {
                 $var = !$var;
 
-				//var_dump($selectedtask."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);
+				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);
 
                 // Break on a new project
-                if ($parent == 0)
+                if ($parent == 0)	// We are on a task at first level
                 {
-                    if ($lines[$i]->fk_project != $lastprojectid)
+                    if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
                         if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
@@ -509,11 +511,22 @@ class FormOther
                     }
                 }
 
+                $newdisablechildoftaskid=$disablechildoftaskid;
+
                 // Print task
                 if ($lines[$i]->id >= 0)
                 {
+                	// Check if we must disable entry
+                	$disabled=0;
+                	if ($disablechildoftaskid && (($lines[$i]->id == $disablechildoftaskid || $lines[$i]->fk_parent == $disablechildoftaskid)))
+                	{
+               			$disabled++;
+               			if ($lines[$i]->fk_parent == $disablechildoftaskid) $newdisablechildoftaskid=$lines[$i]->id;	// If task is child of a disabled parent, we will propagate id to disable next child too
+                	}
+
                     print '<option value="'.$lines[$i]->fk_project.'_'.$lines[$i]->id.'"';
                     if (($lines[$i]->id == $selectedtask) || ($lines[$i]->fk_project.'_'.$lines[$i]->id == $selectedtask)) print ' selected="selected"';
+                    if ($disabled) print ' disabled="disabled"';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
                     if (empty($lines[$i]->public))
@@ -534,7 +547,7 @@ class FormOther
                 }
 
                 $level++;
-                if ($lines[$i]->id) $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject);
+                if ($lines[$i]->id) $this->_pLineSelect($inc, $lines[$i]->id, $lines, $level, $selectedtask, $selectedproject, $newdisablechildoftaskid);
                 $level--;
             }
         }

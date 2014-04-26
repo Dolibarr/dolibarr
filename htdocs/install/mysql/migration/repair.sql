@@ -142,3 +142,5 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
+UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
+

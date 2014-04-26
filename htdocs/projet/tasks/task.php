@@ -317,7 +317,8 @@ if ($id > 0 || ! empty($ref))
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-			print $formother->selectProjectTasks($object->fk_task_parent,$projectstatic->id, 'task_parent', $user->admin?0:1, 0);
+//			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
+			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, 0);
 			print '</td></tr>';
 
 			// Date start
