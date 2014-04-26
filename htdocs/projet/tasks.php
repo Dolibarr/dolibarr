@@ -438,11 +438,19 @@ else
 	{
 		if ($mode=='mine')
 		{
-			if ($nboftaskshown < count($tasksrole)) $object->clean_orphelins();
+			if ($nboftaskshown < count($tasksrole))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
+			}
 		}
 		else
 		{
-			if ($nboftaskshown < count($tasksarray)) $object->clean_orphelins();
+			if ($nboftaskshown < count($tasksarray))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
+			}
 		}
 	}
 }
