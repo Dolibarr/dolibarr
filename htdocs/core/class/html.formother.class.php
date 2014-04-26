@@ -1055,7 +1055,7 @@ class FormOther
             	$emptybox->showBox(array(),array());
             }
             print "</div>\n";
-            print "<!-- End box container -->\n";
+            print "<!-- End box left container -->\n";
 
             print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1086,7 +1086,7 @@ class FormOther
             	$emptybox->showBox(array(),array());
             }
             print "</div>\n";
-            print "<!-- End box container -->\n";
+            print "<!-- End box right container -->\n";
 
             print '</div></div>';
             print "\n";

@@ -882,9 +882,10 @@ class Expedition extends CommonObject
     }
 
     /**
-	 * 	Delete shipment
+	 * 	Delete shipment.
+	 *  Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 * 	@return	int		>0 if OK otherwise if KO
+	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	function delete()
 	{
@@ -892,6 +893,14 @@ class Expedition extends CommonObject
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
+
+		// Add a protection to refuse deleting if shipment has at least one delivery
+		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
+		if (count($this->linkedObjectsIds) > 0)
+		{
+			$this->error='ErrorThereIsSomeDeliveries';
+			return -1;
+		}
 
 		$this->db->begin();
 
@@ -942,7 +951,7 @@ class Expedition extends CommonObject
 			}
 		}
 
-		if(! $error)
+		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
 			$sql.= " WHERE fk_expedition = ".$this->id;
@@ -960,31 +969,6 @@ class Expedition extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-						$this->db->commit();
-
-						// On efface le repertoire de pdf provisoire
-						$ref = dol_sanitizeFileName($this->ref);
-						if (! empty($conf->expedition->dir_output))
-						{
-							$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
-							$file = $dir . '/' . $ref . '.pdf';
-							if (file_exists($file))
-							{
-								if (! dol_delete_file($file))
-								{
-									return 0;
-								}
-							}
-							if (file_exists($dir))
-							{
-								if (!dol_delete_dir($dir))
-								{
-									$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-									return 0;
-								}
-							}
-						}
-
 						// Call triggers
 			            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 			            $interface=new Interfaces($this->db);
@@ -992,7 +976,40 @@ class Expedition extends CommonObject
 			            if ($result < 0) { $error++; $this->errors=$interface->errors; }
 			            // End call triggers
 
-						return 1;
+			            if (! $error)
+			            {
+							$this->db->commit();
+
+							// We delete PDFs
+							$ref = dol_sanitizeFileName($this->ref);
+							if (! empty($conf->expedition->dir_output))
+							{
+								$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
+								$file = $dir . '/' . $ref . '.pdf';
+								if (file_exists($file))
+								{
+									if (! dol_delete_file($file))
+									{
+										return 0;
+									}
+								}
+								if (file_exists($dir))
+								{
+									if (!dol_delete_dir($dir))
+									{
+										$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+										return 0;
+									}
+								}
+							}
+
+							return 1;
+			            }
+			            else
+						{
+							$this->db->rollback();
+							return -1;
+						}
 					}
 					else
 					{

@@ -206,7 +206,7 @@ if (empty($reshook))
 
             $object->barcode_type          = GETPOST('fk_barcode_type');
             $object->barcode		           = GETPOST('barcode');
-			
+
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
             $object->url					= GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
@@ -358,7 +358,7 @@ if (empty($reshook))
                 $object->status_buy = 0;
                 $object->id = null;
                 $object->barcode = -1;
-                
+
                 if ($object->check())
                 {
                     $id = $object->create($user);
@@ -405,12 +405,12 @@ if (empty($reshook))
                         else
                         {
                             $db->rollback();
-                            if (count($object->errors)) 
+                            if (count($object->errors))
                             {
                             	setEventMessage($object->errors, 'errors');
                             	dol_print_error($db,$object->errors);
                             }
-                            else 
+                            else
                             {
                             	setEventMessage($langs->trans($object->error), 'errors');
                             	dol_print_error($db,$object->error);
@@ -785,7 +785,7 @@ else
         print '</td></tr>';
 
 	    // Batch number management
-		if ($conf->productbatch->enabled) 
+		if ($conf->productbatch->enabled)
 		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Batch").')</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
@@ -828,8 +828,8 @@ else
         // Public URL
         print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
 		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
-        print '</td></tr>';    
-        
+        print '</td></tr>';
+
         // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
@@ -902,7 +902,7 @@ else
 	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        print '</td></tr>';
         }
-        
+
         // Other attributes
         $parameters=array('colspan' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1008,10 +1008,10 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
             // Status To sell
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
@@ -1092,7 +1092,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("PublicUrl").'</td><td colspan="3">';
 			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
             print '</td></tr>';
-            
+
             // Stock
             if ($object->isproduct() && ! empty($conf->stock->enabled))
             {
@@ -1170,7 +1170,7 @@ else
 	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	            print '</td></tr>';
         	}
-        	
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1437,11 +1437,11 @@ else
         	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
-			
+
             	// Origin country code
             	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
         	}
-        	
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
