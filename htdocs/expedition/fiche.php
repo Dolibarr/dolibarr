@@ -183,7 +183,7 @@ if ($action == 'add')
 
 /*
  * Build a receiving receipt
-*/
+ */
 else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
     $result = $object->create_delivery($user);
@@ -235,8 +235,9 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expe
         exit;
     }
     else
-    {
-        $mesg = $object->error;
+	{
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
     }
 }
 

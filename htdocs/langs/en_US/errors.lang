@@ -128,6 +128,7 @@ ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setu
 ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
 ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
 ErrorWarehouseMustDiffers=Source and target warehouses must differs
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

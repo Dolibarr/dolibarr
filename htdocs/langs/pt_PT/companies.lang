@@ -312,7 +312,6 @@ EditDeliveryAddress=Modificar Direcção de Envío
 ThisUserIsNot=Este utilizador nem é um cliente potencial, nem um cliente, nem um fornecedor
 VATIntraCheck=Verificar
 VATIntraCheckDesc=o link <b>%s</b> permite consultar à serviço europeu de control de números de IVA intracomunitario. Requer acesso á internet para que o serviço funcione
-VATIntraCheckURL=http://ec.europa.eu/taxation_customs/vies/lang.do?fromWhichPage=vieshome&selectedLanguage=é
 VATIntraCheckableOnEUSite=Verificar na web da Comissão Europeia
 VATIntraManualCheck=Pode também realizar uma verificação manual na web europea <a href="%s" target="_blank">%s</a>
 ErrorVATCheckMS_UNAVAILABLE=Verificação Impossivel. O serviço de verificação não é prestado pelo país membro (%s).
