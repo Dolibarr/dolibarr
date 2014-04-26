@@ -47,8 +47,8 @@ abstract class CommonObject
 
     public $array_options=array();
 
-    public $linkedObjectsIds;
-    public $linkedObjects;
+    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
+    public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
     // No constructor as it is an abstract class
 
@@ -1691,7 +1691,7 @@ abstract class CommonObject
      *	@param  string	$sourcetype		Object source type
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
-     *	@param  string	$clause			OR, AND clause
+     *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
      */
     function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
@@ -2359,7 +2359,8 @@ abstract class CommonObject
 
 
     /**
-     *  Function to check if an object is used by others
+     *  Function to check if an object is used by others.
+     *  Check is done into this->childtables. There is no check into llx_element_element.
      *
      *  @param	int		$id			Id of object
      *  @return	int					<0 if KO, 0 if not used, >0 if already used
