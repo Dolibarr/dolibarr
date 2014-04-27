@@ -466,7 +466,8 @@ if (! defined('NOLOGIN'))
 
                 // Bad password. No authmode has found a good password.
                 $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
-                $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+                // We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
+                if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
