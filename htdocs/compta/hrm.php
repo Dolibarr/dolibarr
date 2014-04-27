@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
 $langs->load('users');
 $langs->load('holidays');
-$langs->load('tripss');
+$langs->load('trips');
 
 // Protection if external user
 if ($user->societe_id > 0) accessforbidden();
@@ -61,7 +61,7 @@ $holidaystatic=new Holiday($db);
 
 llxHeader(array(),$langs->trans('HRMArea'));
 
-
+print_fiche_titre($langs->trans("HRMArea"));
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -106,11 +106,11 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-
 $max=10;
 
 $langs->load("boxes");
 
+// Last trips
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, d.rowid, d.dated as date, d.tms as dm, d.km, d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
