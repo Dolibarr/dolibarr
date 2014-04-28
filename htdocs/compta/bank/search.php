@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
+$langs->load("companies");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
