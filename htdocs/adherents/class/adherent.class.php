@@ -825,7 +825,7 @@ class Adherent extends CommonObject
         if (! $password)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-            $password=getRandomPassword('');
+            $password=getRandomPassword(false);
         }
 
         // Cryptage mot de passe

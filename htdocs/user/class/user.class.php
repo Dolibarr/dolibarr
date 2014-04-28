@@ -1356,7 +1356,7 @@ class User extends CommonObject
 		// If new password not provided, we generate one
 		if (! $password)
 		{
-			$password=getRandomPassword('');
+			$password=getRandomPassword(false);
 		}
 
 		// Crypte avec md5
