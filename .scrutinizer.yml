@@ -16,4 +16,7 @@ tools:
     # Some Metrics + Bug Detection/Auto-Fixes
     php_analyzer: true
 
+	# Coding-Style / Bug Detection
+    js_hint: true
+
 ## Overwrite as needed here.
