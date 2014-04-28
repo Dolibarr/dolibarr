@@ -58,7 +58,6 @@ TODO
 - New: Predefined product and free product use same form.
 - New: [ task #926 ] Add extrafield feature on order lines.
 - New: [ task #927 ] Add extrafield feature on Proposal lines.
-- New: [ task #928 ] Add extrafield feature on invoice lines.
 
 For translators:
 - Update language files.
@@ -76,6 +75,9 @@ For developers:
 - New: Normalize code for barcode generation to match other modules.
 - New: Uniformize code for contacts forms.
 - New: Add some hooks for financial reports.
+- New: A module can add its own ECM view.
+- New: A module can disable a standard ECM view.
+- New: Add multilang support into product webservice.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -94,6 +96,10 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
+Fix: [ bug #1351 ] VIES verification link broken.
+Fix: [ bug #1352 ] Removing a shipping does not remove the delivery.
+Fix: Option MAIN_INVERT_SENDER_RECIPIENT broken with typhon template.
+
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
