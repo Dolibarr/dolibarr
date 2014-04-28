@@ -481,7 +481,7 @@ if (! defined('NOLOGIN'))
         }
 
         // End test login / passwords
-        if (! $login)
+        if (! $login || (empty($passwordtotest)))
         {
             // We show login page
             dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
