@@ -824,7 +824,7 @@ if ($step == 4 && $datatoimport)
 	}
 
 	print "</div>\n";
-	print "<!-- End box container -->\n";
+	print "<!-- End box left container -->\n";
 
 
 	print '</td><td width="50%">';

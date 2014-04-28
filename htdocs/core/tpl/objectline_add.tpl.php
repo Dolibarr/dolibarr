@@ -521,8 +521,7 @@ $(document).ready(function() {
 		});
 	});
 	<?php } else { ?>
-	$('#product_desc').onDelayedKeyup({
-		'handler': function() {
+	$('#product_desc').keyup(function() {
 			var addline=false;
 			if ($('#idprod').val() == 0 && $('#select_type').val() >= 0 && $('#price_ht').val().length > 0) {
 				var content = $('#product_desc').val();
@@ -537,7 +536,6 @@ $(document).ready(function() {
 			} else {
 				$('#addlinebutton').attr('disabled','disabled');
 			}
-		}
 	});
 	<?php } ?>
 

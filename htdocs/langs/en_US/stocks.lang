@@ -117,3 +117,8 @@ SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse 
 RecordMovement=Record transfert
 ReceivingForSameOrder=Receivings for this order
 StockMovementRecorded=Stock movements recorded
+RuleForStockAvailability=Rules on stock requirements
+StockMustBeEnoughForInvoice=Stock level must be enough to add product/service into invoice 
+StockMustBeEnoughForOrder=Stock level must be enough to add product/service into order
+StockMustBeEnoughForShipment= Stock level must be enough to add product/service into shipment
+
