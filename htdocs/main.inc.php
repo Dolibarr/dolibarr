@@ -481,7 +481,7 @@ if (! defined('NOLOGIN'))
         }
 
         // End test login / passwords
-        if (! $login)
+        if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
             // We show login page
             dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
