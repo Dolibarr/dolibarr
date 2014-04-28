@@ -277,18 +277,23 @@ class PaymentSalary extends CommonObject
 		$this->fk_user_modif='';
 	}
 
-	/**
-	 *  Ajoute un paiement de salaire
-	 *
-	 *	@param	User	$user		Object user that insert
-	 *	@return	int					<0 if KO, rowid in tva table if OK
-	 */
+    /**
+     *  Create in database
+     *
+     *  @param      User	$user       User that create
+     *  @return     int      			<0 if KO, >0 if OK
+     */
 	function create($user)
 	{
 		global $conf,$langs;
 
 		// Clean parameters
 		$this->amount=price2num(trim($this->amount));
+		$this->label=trim($this->label);
+		$this->note=trim($this->note);
+		$this->fk_bank=trim($this->fk_bank);
+		$this->fk_user_creat=trim($this->fk_user_creat);
+		$this->fk_user_modif=trim($this->fk_user_modif);
 
 		// Check parameters
 		if (! $this->label)
@@ -314,20 +319,20 @@ class PaymentSalary extends CommonObject
 		if (! empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-			return -6;
+			return -7;
 		}
 
 		$this->db->begin();
 
-		// Insertion dans table des paiement salaires
+		// Insertion dans la table d'un paiement salaire
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (fk_user";
 		$sql.= ", datep";
 		$sql.= ", datev";
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
-		$sql.=", note";
-		$sql.=", label";
+		$sql.= ", note";
+		$sql.= ", label";
 		$sql.= ", datesp";
 		$sql.= ", dateep";
 		$sql.= ", fk_user_creat";
@@ -338,9 +343,9 @@ class PaymentSalary extends CommonObject
 		$sql.= "'".$this->fk_user."'";
 		$sql.= ", '".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
-		$sql.= ", ".$this->amount;
-		$sql.= ", ".$this->type_payment;
-		$sql.= ", ".$this->num_payment;
+		$sql.= ", '".$this->amount."'";
+		$sql.= ", '".$this->type_payment."'";
+		$sql.= ", '".$this->num_payment."'";
 		$sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->idate($this->datesp)."'";

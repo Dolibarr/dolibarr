@@ -75,8 +75,9 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->label=GETPOST("label");
 	$sal->datesp=$datesp;
 	$sal->dateep=$dateep;
+	$sal->note=GETPOST("note");
 	$sal->type_payment=GETPOST("paymenttype");
-	$sal->num_payment=GETPOST('num_payment');
+	$sal->num_payment=GETPOST("num_payment");
 
 	if (empty($sal->fk_user) || $sal->fk_user < 0)
 	{
