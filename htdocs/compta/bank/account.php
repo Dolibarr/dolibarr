@@ -465,10 +465,11 @@ if ($id > 0 || ! empty($ref))
 	if ($mode_search && ! empty($conf->tax->enabled))
 	{
 		// VAT
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='payment_vat'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='payment_vat'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."tva as t ON bu2.url_id = t.rowid";
-    // Salary payment
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment_salary'";
+		
+		// Salary payment
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment_salary'";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."payment_salary as sal ON bu3.url_id = sal.rowid";
 	}
 	if ($mode_search && ! empty($conf->adherent->enabled))
@@ -587,7 +588,7 @@ if ($id > 0 || ! empty($ref))
 						$paymentvatstatic->ref=$links[$key]['url_id'];
 						print ' '.$paymentvatstatic->getNomUrl(2);
 					}
-          elseif ($links[$key]['type']=='payment_salary')
+					elseif ($links[$key]['type']=='payment_salary')
 					{
 						$paymentsalstatic->id=$links[$key]['url_id'];
 						$paymentsalstatic->ref=$links[$key]['url_id'];
@@ -628,7 +629,7 @@ if ($id > 0 || ! empty($ref))
 					{
 
 					}
-          elseif ($links[$key]['type']=='user')
+					elseif ($links[$key]['type']=='user')
 					{
 
 					}
@@ -670,7 +671,7 @@ if ($id > 0 || ! empty($ref))
 						$societestatic->nom=$links[$key]['label'];
 						print $societestatic->getNomUrl(1,'',16);
 					}
-          else if ($links[$key]['type']=='user')
+					else if ($links[$key]['type']=='user')
 					{
 						$userstatic->id=$links[$key]['url_id'];
 						$userstatic->lastname=$links[$key]['label'];

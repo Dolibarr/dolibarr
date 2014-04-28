@@ -323,7 +323,7 @@ class Tva extends CommonObject
 
 
     /**
-     *  Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de TVA, non ?
+     *  Hum la fonction s'appelle 'Solde' elle doit a mon avis calculer le solde de TVA, non ?
      *  
      *	@param	int		$year		Year
      *	@return	double				Amount
@@ -589,7 +589,7 @@ class Tva extends CommonObject
     }
 
     /**
-     *  Mise a jour du lien entre le paiement tva et la ligne g�n�r�e dans llx_bank
+     *  Mise a jour du lien entre le paiement tva et la ligne generee dans llx_bank
      *
      *  @param	int		$id_bank    Id compte bancaire
 	 *	@return	int					<0 if KO, >0 if OK
