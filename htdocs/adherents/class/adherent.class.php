@@ -1242,15 +1242,15 @@ class Adherent extends CommonObject
     /**
      *	Insert subscription into database and eventually add links to banks, mailman, etc...
      *
-     *	@param	timestamp	$date        		Date d'effet de la cotisation
-     *	@param	amount		$montant     		Montant cotisation (accepte 0 pour les adherents non soumis a cotisation)
-     *	@param	int			$accountid			Id compte bancaire
-     *	@param	string		$operation			Type operation (si Id compte bancaire fourni)
-     *	@param	string		$label				Label operation (si Id compte bancaire fourni)
-     *	@param	string		$num_chq			Numero cheque (si Id compte bancaire fourni)
-     *	@param	string		$emetteur_nom		Nom emetteur cheque
-     *	@param	string		$emetteur_banque	Nom banque emetteur cheque
-     *	@param	timestamp	$datesubend			Date fin adhesion
+     *	@param	timestamp	$date        		Date of effect of subscription
+     *	@param	double		$montant     		Amount of subscription (0 accepted for some members)
+     *	@param	int			$accountid			Id bank account
+     *	@param	string		$operation			Type operation (if Id bank account provided)
+     *	@param	string		$label				Label operation (if Id bank account provided)
+     *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
+     *	@param	string		$emetteur_nom		Name of cheque writer
+     *	@param	string		$emetteur_banque	Name of bank of cheque
+     *	@param	timestamp	$datesubend			Date end subscription
      *	@return int         					rowid of record added, <0 if KO
      */
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
