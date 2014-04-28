@@ -1,0 +1,19 @@
+# .scrutinizer.yml
+imports:
+    - javascript
+    - php
+
+filter:
+    excluded_paths: [build/*, dev/*, doc/*, test/*, htdocs/includes/*]
+
+tools:
+    # Similar Code Detector
+    php_sim: true
+
+    # Metrics
+    php_pdepend: true
+
+    # Some Metrics + Bug Detection/Auto-Fixes
+    php_analyzer: true
+
+## Overwrite as needed here.
