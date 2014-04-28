@@ -13,7 +13,7 @@ filter:
     paths: {  }
     
 tools:
-	# Similar code detection
+    # Similar code detection
     php_sim:
         enabled: true
         min_mass: 16
@@ -26,7 +26,7 @@ tools:
                 - 'htdocs/includes/*'
             paths: {  }
 
-	# php_depend
+    # php_depend
     php_pdepend:
         enabled: true
         configuration_file: null
@@ -42,7 +42,7 @@ tools:
                 - 'htdocs/includes/*'
             paths: {  }
 
-	# php_analyzer
+    # php_analyzer
     php_analyzer:
         enabled: true
         extensions:
@@ -58,7 +58,7 @@ tools:
             paths: {  }
         path_configs: {  }
 
-	# change tracking
+    # change tracking
     php_changetracking:
         enabled: true
         bug_patterns:
@@ -75,7 +75,7 @@ tools:
                 - 'htdocs/includes/*'
             paths: {  }
 
-	# Coding-Style / Bug Detection
+    # Coding-Style / Bug Detection
     js_hint: true
 
 
