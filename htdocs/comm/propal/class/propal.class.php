@@ -200,7 +200,7 @@ class Propal extends CommonObject
             $line->remise_percent=$remise_percent;
             $line->tva_tx=$tva_tx;
 
-            $this->products[]=$line;
+            $this->lines[]=$line;
         }
     }
 
@@ -1301,9 +1301,6 @@ class Propal extends CommonObject
             // Numbering module definition
             $soc = new Societe($this->db);
             $soc->fetch($this->socid);
-
-            // Class of company linked to propal
-            $result=$soc->set_as_client();
 
             // Define new ref
             if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref)))

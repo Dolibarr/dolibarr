@@ -169,7 +169,7 @@ class Adherent extends CommonObject
 
 
     /**
-     * Make substitution
+     * Make substitution of tags into text with value of current object.
      *
      * @param	string	$text       Text to make substitution to
      * @return  string      		Value of input text string with substitutions done
@@ -230,6 +230,12 @@ class Adherent extends CommonObject
 				'%VILLE%'=>$msgishtml?dol_htmlentitiesbr($this->town):$this->town,
 				'%PAYS%'=>$msgishtml?dol_htmlentitiesbr($this->country):$this->country,
 		);
+		// Add extrafields as substitution key %EXTRA_XXX%
+		foreach($this->array_options as $key => $val)
+		{
+			$keyshort=preg_replace('/^(options|extra)_/','',$key);
+			$substitutionarray['%EXTRA_'.$keyshort.'%']=$val;
+		}
 
 		complete_substitutions_array($substitutionarray, $langs);
 
@@ -819,7 +825,7 @@ class Adherent extends CommonObject
         if (! $password)
         {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-            $password=getRandomPassword('');
+            $password=getRandomPassword(false);
         }
 
         // Cryptage mot de passe

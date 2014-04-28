@@ -18,6 +18,21 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+create table llx_c_email_templates
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
+  type_template   varchar(32),  -- template for wich type of email (send invoice by email, send order, ...)
+  datec           datetime,
+  label           varchar(255),
+  content         text
+)ENGINE=innodb;
+
+
+ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(24);
+
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
@@ -1006,6 +1021,8 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_customer_price_fk_soc F
 
 ALTER TABLE llx_user ADD COLUMN barcode varchar(255) DEFAULT NULL;
 ALTER TABLE llx_user ADD COLUMN fk_barcode_type integer DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN nb_holiday integer DEFAULT 0;
+ALTER TABLE llx_user ADD COLUMN salary double(24,8) DEFAULT NULL;
 
 ALTER TABLE llx_product ADD COLUMN url varchar(255);
 
@@ -1114,3 +1131,21 @@ insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (32,'PROPAL_CLOSE_REFUSED','Customer proposal closed refused','Executed when a customer proposal is closed refused','propal',32);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (33,'BILL_SUPPLIER_CANCELED','Supplier invoice cancelled','Executed when a supplier invoice is cancelled','invoice_supplier',33);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (34,'MEMBER_MODIFY','Member modified','Executed when a member is modified','member',34);
+
+-- Automatic events for tasks
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (35,'TASK_CREATE','Task created','Executed when a project task is created','project',35);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (36,'TASK_MODIFY','Task modified','Executed when a project task is modified','project',36);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (37,'TASK_DELETE','Task deleted','Executed when a project task is deleted','project',37);
+
+-- New : category translation
+create table llx_categorie_lang
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_category    integer      DEFAULT 0 NOT NULL,
+  lang           varchar(5)   DEFAULT 0 NOT NULL,
+  label          varchar(255) NOT NULL,
+  description    text
+)ENGINE=innodb;
+
+ALTER TABLE llx_categorie_lang ADD UNIQUE INDEX uk_category_lang (fk_category, lang);
+ALTER TABLE llx_categorie_lang ADD CONSTRAINT fk_category_lang_fk_category 	FOREIGN KEY (fk_category) REFERENCES llx_categorie (rowid);

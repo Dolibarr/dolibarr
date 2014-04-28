@@ -199,9 +199,9 @@ class FormAdmin
     /**
      *  Return combo list of available menu families
      *
-     *  @param	string	$selected        Menu pre-selected
-     *  @param  string	$htmlname        Name of html select
-     *  @param	string	$dirmenuarray    Directories to scan
+     *  @param	string		$selected        Menu pre-selected
+     *  @param	string		$htmlname        Name of html select
+     *  @param	string[]	$dirmenuarray    Directories to scan
      *  @return	void
      */
     function select_menu_families($selected, $htmlname, $dirmenuarray)

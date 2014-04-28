@@ -103,6 +103,8 @@ class ExpeditionLigneBatch extends CommonObject
 	 * @return	int						<0 if KO, Id of record (>0) if OK
 	 */
 	function create($id_line_expdet) {
+		$error = 0;
+
 		$id_line_expdet = (int) $id_line_expdet;
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.self::$_table_element." (";

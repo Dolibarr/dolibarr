@@ -400,7 +400,7 @@ abstract class ActionsContactCardCommon
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         	$login=dol_buildlogin($this->object->lastname, $this->object->firstname);
 
-       		$generated_password=getRandomPassword('');
+       		$generated_password=getRandomPassword(false);
         	$password=$generated_password;
 
         	// Create a form array

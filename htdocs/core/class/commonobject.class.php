@@ -47,8 +47,8 @@ abstract class CommonObject
 
     public $array_options=array();
 
-    public $linkedObjectsIds;
-    public $linkedObjects;
+    public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
+    public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
     // No constructor as it is an abstract class
 
@@ -83,10 +83,10 @@ abstract class CommonObject
         if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';
-        if ($option && $this->civilite_id)
+        if ($option && $this->civility_id)
         {
-            if ($langs->transnoentitiesnoconv("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civilite_id).' ';
-            else $ret.=$this->civilite_id.' ';
+            if ($langs->transnoentitiesnoconv("Civility".$this->civility_id)!="Civility".$this->civility_id) $ret.=$langs->transnoentitiesnoconv("Civility".$this->civility_id).' ';
+            else $ret.=$this->civility_id.' ';
         }
 
         $ret.=dolGetFirstLastname($firstname, $lastname, $nameorder);
@@ -241,8 +241,8 @@ abstract class CommonObject
     /**
      *    Copy contact from one element to current
      *
-     *    @param    int     $objFrom			Source element
-     *    @param    int		$source             Nature of contact ('internal' or 'external')
+     *    @param    CommonObject    $objFrom    Source element
+     *    @param    string          $source     Nature of contact ('internal' or 'external')
      *    @return   int                         >0 if OK, <0 if KO
      */
     function copy_linked_contact($objFrom, $source='internal')
@@ -1718,10 +1718,10 @@ abstract class CommonObject
      *	@param  string	$sourcetype		Object source type
      *	@param  int		$targetid		Object target id
      *	@param  string	$targettype		Object target type
-     *	@param  string	$clause			OR, AND clause
+     *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
      *	@return	void
      */
-    function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
+	function fetchObjectLinked($sourceid='',$sourcetype='',$targetid='',$targettype='',$clause='OR')
     {
         global $conf;
 
@@ -2278,7 +2278,7 @@ abstract class CommonObject
      */
     function showOptionals($extrafields, $mode='view', $params=0, $keyprefix='')
     {
-		global $_POST;
+		global $_POST, $conf;
 
 		$out = '';
 
@@ -2392,7 +2392,8 @@ abstract class CommonObject
 
 
     /**
-     *  Function to check if an object is used by others
+     *  Function to check if an object is used by others.
+     *  Check is done into this->childtables. There is no check into llx_element_element.
      *
      *  @param	int		$id			Id of object
      *  @return	int					<0 if KO, 0 if not used, >0 if already used
@@ -2482,7 +2483,7 @@ abstract class CommonObject
         	$i=0;
         	while ($i < $num)
         	{
-            	$obj = $this->db->fetch_object($query);
+            	$obj = $this->db->fetch_object($resql);
 
             	$pu_ht = $obj->pu_ht;
             	$qty= $obj->qty;
@@ -2692,13 +2693,12 @@ abstract class CommonObject
     /**
      *	Show add free products/services form
      *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @param	int		        $dateSelector       1=Show also date range input fields
+     *  @param	int		        $dateSelector       1=Show also date range input fields (start and end date)
      *  @param	Societe			$seller				Object thirdparty who sell
      *  @param	Societe			$buyer				Object thirdparty who buy
      *	@return	void
-     *	@deprecated
      */
     function formAddFreeProduct($dateSelector,$seller,$buyer)
     {

@@ -61,7 +61,7 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title" summary="<?php echo dol_escape_htmltag($title); ?>" align="center">
+<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
 <tr class="vmenu"><td align="center"><?php echo $title; ?></td></tr>
 </table>
 <br>
@@ -72,7 +72,7 @@ $(document).ready(function () {
 
 <div id="login_left">
 
-<table class="left" summary="Login pass" cellpadding="2">
+<table class="left" summary="Login pass">
 <!-- Login -->
 <tr>
 <td valign="middle" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
@@ -190,9 +190,9 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if (! empty($_SESSION['dol_loginmesg']))
 {
 ?>
-	<center><div align="center" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
+	<div class="center" style="max-width: 500px; margin-left: 10px; margin-right: 10px;"><div class="error">
 	<?php echo $_SESSION['dol_loginmesg']; ?>
-	</div></div></center>
+	</div></div>
 <?php
 }
 ?>
@@ -200,9 +200,9 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file
 <?php if ($main_home)
 {
 ?>
-	<center><div align="center" class="login_main_home" style="max-width: 80%">
+	<div class="center" class="login_main_home" style="max-width: 80%">
 	<?php echo $main_home; ?>
-	</div></center><br>
+	</div><br>
 <?php
 }
 ?>

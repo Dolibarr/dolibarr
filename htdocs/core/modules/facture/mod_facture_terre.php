@@ -65,7 +65,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 	 */
 	function canBeActivated()
 	{
-		global $langs,$conf;
+		global $langs,$conf,$db;
 
 		$langs->load("bills");
 

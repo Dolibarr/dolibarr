@@ -179,8 +179,8 @@ $dolibarr_main_authentication='dolibarr';
 // Parameters used to setup LDAP authentication.
 // Uncomment them if dolibarr_main_authentication = 'ldap'
 //
-// $dolibarr_main_auth_ldap_host='127.0.0.1';
-// $dolibarr_main_auth_ldap_port='389';
+// $dolibarr_main_auth_ldap_host='127.0.0.1';                  // You can define several servers here separated with a comma.
+// $dolibarr_main_auth_ldap_port='389';                        // Port
 // $dolibarr_main_auth_ldap_version='3';
 // $dolibarr_main_auth_ldap_servertype='openldap';			   // openldap, activedirectory or egroupware
 // $dolibarr_main_auth_ldap_login_attribute='loginfield';	   // Ex: uid or samaccountname for active directory

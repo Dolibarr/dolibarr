@@ -13,12 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Output javascript for interactions code of ecm module
  */
 ?>
 
-<!-- BEGIN PHP TEMPLATE ecm/tpl/builddatabase.tpl.php -->
+<!-- BEGIN PHP TEMPLATE ecm/tpl/enablefiletreeajax.tpl.php -->
 <!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
 
 <script type="text/javascript">
@@ -29,7 +29,7 @@ $openeddir='/';
 
 $(document).ready(function() {
 
-	$('#filetree').fileTree({ 
+	$('#filetree').fileTree({
 		root: '<?php print dol_escape_js($openeddir); ?>',
 		// Ajax called if we click to expand a dir (not a file). Parameter of dir is provided as a POST parameter.
 		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',

@@ -83,7 +83,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyeassskr'],'user');
+	$date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
 	$date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 
 	if (empty($_POST["cancel"]))
@@ -438,11 +438,19 @@ else
 	{
 		if ($mode=='mine')
 		{
-			if ($nboftaskshown < count($tasksrole)) $object->clean_orphelins();
+			if ($nboftaskshown < count($tasksrole))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
+			}
 		}
 		else
 		{
-			if ($nboftaskshown < count($tasksarray)) $object->clean_orphelins();
+			if ($nboftaskshown < count($tasksarray))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
+			}
 		}
 	}
 }

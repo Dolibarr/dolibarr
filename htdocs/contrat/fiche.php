@@ -1140,8 +1140,7 @@ else
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
                 print '<td width="30" align="center">'.$langs->trans("Qty").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("ReductionShort").'</td>';
-				if ($conf->margin->enabled)
-	                print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
+				if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td width="50" align="right">'.$langs->trans("BuyingPrice").'</td>';
                 print '<td width="30">&nbsp;</td>';
                 print "</tr>\n";
 
@@ -1186,8 +1185,8 @@ else
                         print '<td>&nbsp;</td>';
                     }
 
-					if ($conf->margin->enabled)
-						print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
+					// Margin
+					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) print '<td align="right" class="nowrap">'.price($objp->pa_ht).'</td>';
 
                     // Icon move, update et delete (statut contrat 0=brouillon,1=valide,2=ferme)
                     print '<td align="right" class="nowrap">';
@@ -1292,9 +1291,13 @@ else
                     print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
+
+                    $colspan=5;
+                    if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
+
                     // Ligne dates prevues
                     print "<tr ".$bc[$var].">";
-                    print '<td colspan="'.($conf->margin->enabled?6:5).'">';
+                    print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
                     $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
                     print '<br>'.$langs->trans("DateEndPlanned").' ';
@@ -1644,8 +1647,8 @@ else
             }
 
             print "</div>";
-            print '<br>';
         }
+
 
         print '<table width="100%"><tr><td width="50%" valign="top">';
 

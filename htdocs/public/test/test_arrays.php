@@ -4,7 +4,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
-if (empty($conf->global->MAIN_FEATURES_LEVEL))
+if (!empty($conf->global->MAIN_FEATURES_LEVEL))
 {
 	print "Page available onto dev environment only";
 	exit;
@@ -23,7 +23,7 @@ if (empty($conf->global->MAIN_FEATURES_LEVEL))
 <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui-latest.custom.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/css/jquery.dataTables.css" />
 <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
-<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php?dol_use_jmobile=1" />
+<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php?dol_use_jmobile=1&dol_optimize_smallscreen=1" />
 <!-- Includes JS for JQuery -->
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery-latest.min.js"></script>
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
@@ -58,7 +58,7 @@ Example 0a : Table with div+div+div containg a select that should be overflowed 
 Example 0b: Table with div+form+div containg a select that should be overflowed and truncated<br>
 <div class="tagtable centpercent">
 	<form action="xxx" method="POST" class="tagtr">
-	<div class="tagtd" style="max-width:100px; overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
 	<select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
 	</div>
 	<div class="tagtd" style="max-width:100px; overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
@@ -69,7 +69,7 @@ Example 0b: Table with div+form+div containg a select that should be overflowed 
 Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated<br>
 <table class="centpercent">
     <tr>
-    <td class="tagtd" style="max-width:100px; overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
+    <td class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
 	<select name="hidedetails"><option>aaaaaaaaaaaaaaafd sf sf gfd gfds fsd  gfd fhfg hf dhfg hg fhfgdhfgdh gh gfdhdgf h gfdh dfhg dfgh dfgh fdgh gfd hfd hfd gs fgdf gaaaa</option><option>gdfs gdf g sdfg dfg fdsg dsfg dfs gdfs gds fgs  gdfdf gd</option></select>
     </td>
     <td class="tagtd" style="max-width:100px; overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->

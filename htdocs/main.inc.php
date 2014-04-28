@@ -466,7 +466,8 @@ if (! defined('NOLOGIN'))
 
                 // Bad password. No authmode has found a good password.
                 $user->trigger_mesg=$langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username","alpha",2);
-                $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
+                // We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
+                if (empty($_SESSION["dol_loginmesg"])) $_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadLoginPassword");
 
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
@@ -480,7 +481,7 @@ if (! defined('NOLOGIN'))
         }
 
         // End test login / passwords
-        if (! $login)
+        if (! $login || (in_array('ldap',$authmode) && empty($passwordtotest)))	// With LDAP we refused empty password because some LDAP are "opened" for anonymous access so connexion is a success.
         {
             // We show login page
             dol_loginfunction($langs,$conf,(! empty($mysoc)?$mysoc:''));
@@ -1273,7 +1274,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *
  *  @param      string	$head    			Lines in the HEAD
  *  @param      string	$title   			Title of web page
- *  @param      string	$target  			Target to use in menu links
+ *  @param      string	$target  			Target to use in menu links (Example: '' or '_top')
  *	@param		int		$disablejs			Do not output links to js (Ex: qd fonction utilisee par sous formulaire Ajax)
  *	@param		int		$disablehead		Do not output head section
  *	@param		array	$arrayofjs			Array of js files to add in header
@@ -1373,7 +1374,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (empty($conf->dol_hide_topmenu))
     {
 	    // Show menu entries
-    	print '<div id="tmenu_tooltip" class="tmenu">'."\n";
+    	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
 	    $menumanager->showmenu('top');      // This contains a \n
 	    print "</div>\n";
@@ -1430,11 +1431,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Link info
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
-	    $logouthtmltext.=$langs->trans("Logout").'<br>';
-	    //$logouthtmltext.="<br>";
 	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
 	    {
-	        $logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
+
+	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
 	        //$logouttext .=empty($atarget?(' target="'.$atarget.'"'):'';
 	        $logouttext .='>';
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
@@ -1442,6 +1443,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    }
 	    else
 	    {
+	    	$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
 	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
 	    }
 
@@ -1491,7 +1493,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	print '<div style="clear: both;"></div>';
     print "<!-- End top horizontal menu -->\n\n";
 
-    if (empty($conf->dol_hide_leftmenu) && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile) || empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))) print '<div id="id-container">';
+    if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile) && empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div id="id-container">';
 }
 
 
@@ -1522,7 +1524,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    $hookmanager->initHooks(array('searchform','leftblock'));
 
     	if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print "\n".'<div class="ui-layout-west"> <!-- Begin left layout -->'."\n";
-		else print '<div id="id-left">';
+		else print '<div id="id-left"> <!-- Begin id-left -->';
 
 	    print "\n";
 
@@ -1700,7 +1702,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    print $leftblock;
 
 	    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End left layout -->'."\n";
-	    else print '</div>';	// End div id="id-left"
+	    else print '</div> <!-- end id-left -->';	// End div id="id-left"
     }
 
     print "\n";
@@ -1721,10 +1723,7 @@ function main_area($title='')
 {
     global $conf, $langs;
 
-    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))
-    {
-        print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
-    }
+    if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '<div id="mainContent"><div class="ui-layout-center"> <!-- begin main layout -->'."\n";
 	if (empty($conf->dol_hide_leftmenu)) print '<div id="id-right">';
 
     print "\n";
@@ -1787,7 +1786,7 @@ function getHelpParamFor($helppagename,$langs)
  *  @param  string	$title              Title search area
  *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
  *  @param  string	$htmlinputname      Field Name input form
- *  @return	void
+ *  @return	string
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname)
 {
@@ -1849,18 +1848,18 @@ if (! function_exists("llxFooter"))
         }
 
         print "\n\n";
-        print '</div> <!-- end div class="fiche" -->'."\n";
+        print '</div> <!-- End div class="fiche" -->'."\n";
         if (! empty($conf->dol_use_jmobile)) print '</div>';	// end data-role="page"
 
         if (empty($conf->dol_use_jmobile) && ! empty($conf->use_javascript_ajax) && ! empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div></div> <!-- end main layout -->'."\n";
-		if (empty($conf->dol_hide_leftmenu)) print '</div>'; // End div id-right
+		if (empty($conf->dol_hide_leftmenu)) print '</div> <!-- End div id-right -->'; // End div id-right
 
         print "\n";
         if ($comment) print '<!-- '.$comment.' -->'."\n";
 
         printCommonFooter($zone);
 
-        if (empty($conf->dol_hide_leftmenu)) print '</div>';	// End div container
+        if (empty($conf->dol_hide_leftmenu) && empty($conf->dol_use_jmobile) && empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT)) print '</div> <!-- End div id-container -->'."\n";	// End div container
 
         print "</body>\n";
         print "</html>\n";

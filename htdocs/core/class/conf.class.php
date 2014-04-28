@@ -119,6 +119,8 @@ class Conf
 	 */
 	function setValues($db)
 	{
+		global $conf;
+
 		dol_syslog(get_class($this)."::setValues");
 
 		/*
@@ -222,22 +224,6 @@ class Conf
 			$ret = @dol_include_once('/multicompany/class/actions_multicompany.class.php');
 			if ($ret) $mc = new ActionsMulticompany($db);
 		}
-
-		// Second or others levels object
-		$this->propal->cloture				= new stdClass();
-		$this->propal->facturation			= new stdClass();
-		$this->commande->client				= new stdClass();
-		$this->commande->fournisseur		= new stdClass();
-		$this->facture->client				= new stdClass();
-		$this->facture->fournisseur			= new stdClass();
-		$this->fournisseur->commande 		= new stdClass();
-		$this->fournisseur->facture			= new stdClass();
-		$this->contrat->services			= new stdClass();
-		$this->contrat->services->inactifs	= new stdClass();
-		$this->contrat->services->expires	= new stdClass();
-		$this->adherent->cotisation			= new stdClass();
-		$this->bank->rappro					= new stdClass();
-		$this->bank->cheque					= new stdClass();
 
 		// Clean some variables
 		if (empty($this->global->MAIN_MENU_STANDARD)) $this->global->MAIN_MENU_STANDARD="eldy_menu.php";

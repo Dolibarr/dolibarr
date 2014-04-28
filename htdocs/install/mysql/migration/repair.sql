@@ -55,6 +55,18 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
 
+-- Fix: delete category child with no category parent.
+drop table tmp_categorie;
+create table tmp_categorie as select * from llx_categorie; 
+-- select * from llx_categorie where fk_parent not in (select rowid from tmp_categorie) and fk_parent is not null and fk_parent <> 0;
+delete from llx_categorie where fk_parent not in (select rowid from tmp_categorie) and fk_parent is not null and fk_parent <> 0;
+drop table tmp_categorie;
+-- Fix: delete orphelin category.
+delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+
+
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
 delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
@@ -100,6 +112,7 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 -- ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
 
+
 -- Fix: deprecated tag to new one
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
@@ -111,14 +124,18 @@ update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 update llx_product set barcode = null where barcode in ('', '-1', '0');
 update llx_societe set barcode = null where barcode in ('', '-1', '0');
 
+
 -- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+drop table tmp_product_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_product_double;
 update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);
 drop table tmp_product_double;
 
+
 -- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+drop table tmp_societe_double;
 --select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
 create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
 --select * from tmp_societe_double;
@@ -126,3 +143,4 @@ update llx_societe set barcode = null where (rowid, barcode) in (select max_rowi
 drop table tmp_societe_double;
 
 
+UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid

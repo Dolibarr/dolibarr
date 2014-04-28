@@ -178,7 +178,7 @@ function societe_prepare_head2($object)
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
 	    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("BankAccount")." $account->number";
+	    $head[$h][1] = $langs->trans("BankAccount");
 	    $head[$h][2] = 'rib';
 	    $h++;
     }
@@ -659,10 +659,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 
-    if ($num)
+	$var=true;
+	if ($num)
     {
         $i=0;
-        $var=true;
 
         while ($i < $num)
         {

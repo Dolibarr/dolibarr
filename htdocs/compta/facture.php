@@ -3307,10 +3307,13 @@ if ($action == 'create')
 	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline') {
 		$var = true;
 
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+		{
 			// Add free or predefined products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
-		} else {
+		}
+		else
+		{
 			// Add free products/services
 			$object->formAddFreeProduct(1, $mysoc, $soc);
 
@@ -3332,9 +3335,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	// Boutons actions
 
-	if ($action != 'prerelance' && $action != 'presend' && $action != 'valid' && $action != 'editline') {
+	// Actions buttons
+
+	if ($action != 'prerelance' && $action != 'presend' && $action != 'valid' && $action != 'editline')
+	{
 		print '<div class="tabsAction">';
 
 		$parameters = array();
@@ -3382,7 +3387,7 @@ if ($action == 'create')
 			}
 
 			// Send by mail
-			if (($object->statut == 1 || $object->statut == 2)) {
+			if (($object->statut == 1 || $object->statut == 2) || ! empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendByMail') . '</span></div>';
 				} else {

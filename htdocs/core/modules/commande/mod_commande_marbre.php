@@ -66,7 +66,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 */
 	function canBeActivated()
 	{
-		global $conf,$langs;
+		global $conf,$langs,$db;
 
 		$coyymm=''; $max='';
 

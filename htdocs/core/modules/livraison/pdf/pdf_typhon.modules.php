@@ -438,7 +438,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -685,7 +685,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		if ($object->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"%d %b %Y",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,"%d %b %Y",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
@@ -780,9 +780,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Client destinataire
 			$posy=42;
+			$posx=102;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY(102,$posy-5);
+			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
 
 			// If SHIPPING contact defined on order, we use it
@@ -814,7 +816,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
 			$posy=42;
 			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
-			//if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);

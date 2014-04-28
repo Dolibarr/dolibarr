@@ -70,7 +70,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
      */
     function canBeActivated()
     {
-        global $langs,$conf;
+        global $langs,$conf,$db;
 
         $langs->load("bills");
 

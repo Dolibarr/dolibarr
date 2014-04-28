@@ -1,5 +1,5 @@
--- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ============================================================================
+-- Copyright (C) 2014 Jean-François Ferry  <jfefe@aternatik.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,13 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- ============================================================================
 
-create table llx_domain
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  label           varchar(255),
-  note            text
-)ENGINE=innodb;
-
+ALTER TABLE llx_categorie_lang ADD UNIQUE INDEX uk_category_lang (fk_category, lang);
+ALTER TABLE llx_categorie_lang ADD CONSTRAINT fk_category_lang_fk_category 	FOREIGN KEY (fk_category) REFERENCES llx_categorie (rowid);

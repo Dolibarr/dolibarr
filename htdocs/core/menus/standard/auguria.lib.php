@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param  	array	&$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	array	&$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			Disable output (Initialise &$menu only).
- * @return	void
+ * @return	int						0
  */
 function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 {
@@ -97,6 +97,8 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	if (empty($noout)) print_end_menu_array_auguria();
 
 	print "\n";
+
+	return 0;
 }
 
 
@@ -202,11 +204,11 @@ function print_end_menu_array_auguria()
  * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler
  * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler
  * @param  	array		&$tabMenu       	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
- * @param	array		&$menu				Object Menu to return back list of menu entries
+ * @param	Menu		&$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
  * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all)
- * @return	void
+ * @return	int								Nb of entries
  */
 function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabMenu,&$menu,$noout=0,$forcemainmenu='',$forceleftmenu='')
 {

@@ -174,7 +174,7 @@ function dol_shutdown()
  *  @param	string	$paramname   Name of parameter to found
  *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'az'=check it's a-z only, 'array'=check it's array)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
- *  @return string      		 Value found, or '' if check fails
+ *  @return string||string[]      		 Value found, or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0)
 {
@@ -581,7 +581,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  *	@param	array	$links				Array of tabs
  *	@param	string	$active     		Active tab name (document', 'info', 'ldap', ....)
  *	@param  string	$title      		Title
- *	@param  int		$notab				0=Add tab header, 1=no tab header
+ *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
@@ -597,7 +597,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param	array	$links				Array of tabs
  *	@param	int		$active     		Active tab name
  *	@param  string	$title      		Title
- *	@param  int		$notab				0=Add tab header, 1=no tab header
+ *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  * 	@return	void
@@ -715,6 +715,8 @@ function dol_bc($var,$moreclass='')
  */
 function dol_format_address($object,$withcountry=0,$sep="\n")
 {
+	global $conf;
+
 	$ret='';
 	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
 
@@ -1428,7 +1430,7 @@ function dol_print_address($address, $htmlid, $mode, $id)
 	{
         if ($hookmanager) {
             $parameters = array('element' => $mode, 'id' => $id);
-            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address, $action);
+            $reshook = $hookmanager->executeHooks('printAddress', $parameters, $address);
             print $hookmanager->resPrint;
         }
         if (empty($reshook)) {
@@ -4331,6 +4333,7 @@ function picto_from_langcode($codelang)
  *                              		'group'            to add a tab in group view
  * 		        	                    'member'           to add a tab in fundation member view
  *      		                        'categories_x'	   to add a tab in category view ('x': type of category (0=product, 1=supplier, 2=customer, 3=member)
+ *      								'ecm'			   to add a tab for another ecm view
  *  @param  string		$mode  	        'add' to complete head, 'remove' to remove entries
  *	@return	void
  */
