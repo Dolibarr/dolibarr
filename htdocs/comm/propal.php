@@ -1803,10 +1803,13 @@ if ($action == 'create') {
 		if ($action != 'editline') {
 			$var = true;
 
-			if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+			if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+			{
 				// Add free or predefined products/services
 				$object->formAddObjectLine(1, $mysoc, $soc);
-			} else {
+			}
+			else
+			{
 				// Add free products/services
 				$object->formAddFreeProduct(1, $mysoc, $soc);
 

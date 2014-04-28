@@ -2693,13 +2693,12 @@ abstract class CommonObject
     /**
      *	Show add free products/services form
      *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it'st possible as we keep a method available on overloaded objects.
+     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @param	int		        $dateSelector       1=Show also date range input fields
+     *  @param	int		        $dateSelector       1=Show also date range input fields (start and end date)
      *  @param	Societe			$seller				Object thirdparty who sell
      *  @param	Societe			$buyer				Object thirdparty who buy
      *	@return	void
-     *	@deprecated
      */
     function formAddFreeProduct($dateSelector,$seller,$buyer)
     {

@@ -3307,10 +3307,13 @@ if ($action == 'create')
 	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline') {
 		$var = true;
 
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) {
+		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
+		{
 			// Add free or predefined products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
-		} else {
+		}
+		else
+		{
 			// Add free products/services
 			$object->formAddFreeProduct(1, $mysoc, $soc);
 
