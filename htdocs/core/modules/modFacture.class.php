@@ -179,12 +179,46 @@ class modFacture extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text','f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.date_lim_reglement'=>"Date",'f.total'=>"Numeric",'f.total_ttc'=>"Numeric",'f.tva'=>"Numeric",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note'=>"Text",'f.note_public'=>"Text",'fd.description'=>"Text",'fd.price'=>"Numeric",'fd.tva_tx'=>"Numeric",'fd.qty'=>"Numeric",'fd.total_ht'=>"Numeric",'fd.total_tva'=>"Numeric",'fd.total_ttc'=>"Numeric",'fd.date_start'=>"Date",'fd.date_end'=>"Date",'fd.product_type'=>"Numeric",'fd.fk_product'=>'List:Product:label','p.ref'=>'Text','p.label'=>'Text');
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.date_lim_reglement'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'f.note_public'=>"invoice",'fd.rowid'=>'invoice_line','fd.label'=>"invoice_line",'fd.description'=>"invoice_line",'fd.price'=>"invoice_line",'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_tx'=>"invoice_line",'fd.qty'=>"invoice_line",'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line",'fd.product_type'=>'invoice_line','fd.fk_product'=>'product','p.ref'=>'product','p.label'=>'product');
 		$this->export_dependencies_array[$r]=array('invoice_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-
+		// Add extra fields
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture'";
+		$resql=$this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+        		while ($obj=$this->db->fetch_object($resql))
+        		{
+        			$fieldname='extra.'.$obj->name;
+        			$fieldlabel=ucfirst($obj->label);
+        			$typeFilter="Text";
+        			switch($obj->type)
+        			{
+        			case 'int':
+        			case 'double':
+        			case 'price':
+        				$typeFilter="Numeric";
+        				break;
+        			case 'date':
+        			case 'datetime':
+        				$typeFilter="Date";
+        				break;
+        			case 'boolean':
+        				$typeFilter="Boolean";
+        				break;
+        			case 'sellist':
+        				$typeFilter="List:".$obj->param;
+        				break;
+        			}
+        			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+        			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+        			$this->export_entities_array[$r][$fieldname]='facture';
+			}
+		}
+		// End add axtra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as c on s.fk_pays = c.rowid,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture as f,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facturedet as fd';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture as f';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'facturedet as fd';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .=' AND f.entity = '.$conf->entity;
@@ -199,11 +233,45 @@ class modFacture extends DolibarrModules
 		$this->export_TypeFields_array[$r]=array('s.nom'=>'Text','s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','c.code'=>'Text','s.phone'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.code_compta'=>'Text','s.code_compta_fournisseur'=>'Text','s.tva_intra'=>'Text','f.rowid'=>"List:facture:facnumber",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.date_lim_reglement'=>"Date",'f.total'=>"Number",'f.total_ttc'=>"Number",'f.tva'=>"Number",'f.paye'=>"Boolean",'f.fk_statut'=>'Status','f.note_private'=>"Text",'f.note_public'=>"Text",'pf.amount'=>'Number','p.datep'=>'Date','p.num_paiement'=>'Number');
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.code_compta'=>'company','s.code_compta_fournisseur'=>'company','s.tva_intra'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.date_lim_reglement'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note_private'=>"invoice",'f.note_public'=>"invoice",'p.rowid'=>'payment','pf.amount'=>'payment','p.datep'=>'payment','p.num_paiement'=>'payment');
 		$this->export_dependencies_array[$r]=array('payment'=>'p.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-
+		// Add extra fields
+		$sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'facture'";
+		$resql=$this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$fieldname='extra.'.$obj->name;
+				$fieldlabel=ucfirst($obj->label);
+				$typeFilter="Text";
+				switch($obj->type)
+				{
+					case 'int':
+					case 'double':
+					case 'price':
+						$typeFilter="Numeric";
+						break;
+					case 'date':
+					case 'datetime':
+						$typeFilter="Date";
+						break;
+					case 'boolean':
+						$typeFilter="Boolean";
+						break;
+					case 'sellist':
+						$typeFilter="List:".$obj->param;
+						break;
+				}
+				$this->export_fields_array[$r][$fieldname]=$fieldlabel;
+				$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
+				$this->export_entities_array[$r][$fieldname]='facture';
+			}
+		}
+		// End add axtra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as c on s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture as f';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_extrafields as extra ON f.rowid = extra.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
