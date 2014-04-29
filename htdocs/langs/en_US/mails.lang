@@ -119,6 +119,7 @@ TargetsReset=Clear list
 ToClearAllRecipientsClickHere=Click here to clear the recipient list for this emailing
 ToAddRecipientsChooseHere=Add recipients by choosing from the lists
 NbOfEMailingsReceived=Mass emailings received
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID record
 DeliveryReceipt=Delivery Receipt
 YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separator to specify several recipients.
