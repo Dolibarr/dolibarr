@@ -77,6 +77,7 @@ if ($test)
 	else
 	{
 		print img_picto('','warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
+		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php',1).'">Memcached module admin page</a>';
 	}
 }
 else print img_picto('','warning').' '.$langs->trans("MemcachedNotAvailable");
