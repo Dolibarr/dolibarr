@@ -749,7 +749,7 @@ else
             $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);
             print '</td></tr>';
-           
+
             // Note Private
             print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
             $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -843,7 +843,7 @@ else
             if (! $ldap_sid) // TODO ldap_sid ?
             {
                 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-                $generated_password=getRandomPassword('');
+                $generated_password=getRandomPassword(false);
             }
             $password=$generated_password;
 
@@ -971,7 +971,7 @@ else
         print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
         print nl2br($object->note_public);
         print '</td></tr>';
-        
+
         // Note Private
         print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
         print nl2br($object->note_private);
@@ -1067,9 +1067,9 @@ else
                 print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a>';
             }
         }
-        
+
         print "</div><br>";
-        
+
         print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
 
         print show_actions_todo($conf,$langs,$db,$objsoc,$object);

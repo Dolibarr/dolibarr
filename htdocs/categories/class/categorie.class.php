@@ -103,11 +103,11 @@ class Categorie extends CommonObject
 				$this->visible		= $res['visible'];
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
-				
+
 				$this->fetch_optionals($this->id,$extralabels);
 
 				$this->db->free($resql);
-				
+
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
@@ -194,7 +194,7 @@ class Categorie extends CommonObject
 			if ($id > 0)
 			{
 				$this->id = $id;
-				
+
 				// Actions on extra fields (by external module or standard code)
 				// FIXME le hook fait double emploi avec le trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
@@ -281,7 +281,7 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::update sql=".$sql);
 		if ($this->db->query($sql))
 		{
-			
+
 			// Actions on extra fields (by external module or standard code)
 			// FIXME le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
@@ -299,10 +299,10 @@ class Categorie extends CommonObject
 				}
 			}
 			else if ($reshook < 0) $error++;
-			
+
 			$this->db->commit();
 
-			
+
 			// Appel des triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
@@ -340,7 +340,7 @@ class Categorie extends CommonObject
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-			$sql.= " SET fk_parent = ".$this->fk_parent; 
+			$sql.= " SET fk_parent = ".$this->fk_parent;
 			$sql.= " WHERE fk_parent = ".$this->id;
 
 			if (!$this->db->query($sql))
@@ -771,7 +771,7 @@ class Categorie extends CommonObject
 	function get_full_arbo($type,$markafterid=0)
 	{
 	    global $langs;
-	    
+
 		$this->cats = array();
 
 		// Init this->motherof that is array(id_son=>id_parent, ...)
@@ -780,7 +780,7 @@ class Categorie extends CommonObject
 
 		// Init $this->cats array
 		$sql = "SELECT DISTINCT c.rowid, c.label, c.description, c.fk_parent";	// Distinct reduce pb with old tables with duplicates
-		if (! empty($conf->global->MAIN_MULTILANGS))		
+		if (! empty($conf->global->MAIN_MULTILANGS))
 		    $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS))
@@ -1054,63 +1054,6 @@ class Categorie extends CommonObject
 		return $ways;
 	}
 
-
-	/**
-	 *	Affiche le chemin le plus court pour se rendre a un produit
-	 *
-	 *	@param	int		$id		Id of category
-	 *	@param	string	$type	Type of category
-	 *	@return	void
-	 *	@deprecated function not used ?
-	 */
-	function get_primary_way($id, $type="")
-	{
-		$primary_way = array("taille" => -1, "chemin" => array());
-		$meres = $this->containing($id,$type);
-		foreach ($meres as $mere)
-		{
-			foreach ($mere->get_all_ways() as $way)
-			{
-				if(count($way) < $primary_way["taille"] || $primary_way["taille"] < 0)
-				{
-					$primary_way["taille"] = count($way);
-					$primary_way["chemin"] = $way;
-				}
-			}
-		}
-		return $primary_way["chemin"];
-
-	}
-
-	/**
-	 *	Affiche le chemin le plus court pour se rendre a un produit
-	 *
-	 *	@param	int		$id		Id of category
-	 *	@param	string	$sep	Separator
-	 *	@param	string	$url	Url
-	 *	@param	string	$type	Type
-	 *	@return	void
-	 *	@deprecated function not used ?
-	 */
-	function print_primary_way($id, $sep= " &gt;&gt; ", $url="", $type="")
-	{
-		$primary_way = array();
-		$way = $this->get_primary_way($id,$type);
-		$w = array();
-		foreach ($way as $cat)
-		{
-			if ($url == '')
-			{
-				$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
-			}
-			else
-			{
-				$w[] = "<a href='".DOL_URL_ROOT."/".$url."?catid=".$cat->id."'>".$cat->label."</a>";
-			}
-		}
-
-		return implode($sep, $w);
-	}
 
 	/**
 	 *	Retourne un tableau contenant la liste des categories meres
@@ -1476,19 +1419,19 @@ class Categorie extends CommonObject
 	function setMultiLangs()
 	{
 	    global $langs;
-	
+
 	    $langs_available = $langs->get_available_languages();
 	    $current_lang = $langs->getDefaultLang();
-	
+
 	    foreach ($langs_available as $key => $value)
 	    {
 	        $sql = "SELECT rowid";
 	        $sql.= " FROM ".MAIN_DB_PREFIX."categorie_lang";
 	        $sql.= " WHERE fk_category=".$this->id;
 	        $sql.= " AND lang='".$key."'";
-	
+
 	        $result = $this->db->query($sql);
-	
+
 	        if ($key == $current_lang)
 	        {
 	            if ($this->db->num_rows($result)) // si aucune ligne dans la base
@@ -1527,7 +1470,7 @@ class Categorie extends CommonObject
 	                $sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"]);
 	                $sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
 	            }
-	
+
 	            // on ne sauvegarde pas des champs vides
 	            if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
 	                dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
@@ -1541,7 +1484,7 @@ class Categorie extends CommonObject
 	    }
 	    return 1;
 	}
-	
+
 	/**
 	 *	Load array this->multilangs
 	 *
@@ -1550,13 +1493,13 @@ class Categorie extends CommonObject
 	function getMultiLangs()
 	{
 	    global $langs;
-	
+
 	    $current_lang = $langs->getDefaultLang();
-	
+
 	    $sql = "SELECT lang, label, description";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_lang";
 	    $sql.= " WHERE fk_category=".$this->id;
-	
+
 	    $result = $this->db->query($sql);
 	    if ($result)
 	    {
@@ -1567,7 +1510,7 @@ class Categorie extends CommonObject
 	            {
 	                $this->label		= $obj->label;
 	                $this->description	= $obj->description;
-	
+
 	            }
 	            $this->multilangs["$obj->lang"]["label"]		= $obj->label;
 	            $this->multilangs["$obj->lang"]["description"]	= $obj->description;
