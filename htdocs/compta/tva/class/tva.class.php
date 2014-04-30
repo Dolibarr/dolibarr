@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,8 @@ class Tva extends CommonObject
 	var $datep;
 	var $datev;
 	var $amount;
+	var $type_payment;
+	var $num_payment;
 	var $label;
 	var $note;
 	var $fk_bank;
@@ -215,6 +218,8 @@ class Tva extends CommonObject
 		$sql.= " t.datep,";
 		$sql.= " t.datev,";
 		$sql.= " t.amount,";
+		$sql.= " t.fk_typepayment,";
+		$sql.= " t.num_payment,";
 		$sql.= " t.label,";
 		$sql.= " t.note,";
 		$sql.= " t.fk_bank,";
@@ -242,6 +247,8 @@ class Tva extends CommonObject
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->datev = $this->db->jdate($obj->datev);
 				$this->amount = $obj->amount;
+				$this->type_payment = $obj->fk_typepayment;
+				$this->num_payment = $obj->num_payment;
 				$this->label = $obj->label;
 				$this->note  = $obj->note;
 				$this->fk_bank = $obj->fk_bank;
@@ -479,7 +486,12 @@ class Tva extends CommonObject
 
         // Clean parameters
         $this->amount=price2num(trim($this->amount));
-        
+        $this->label=trim($this->label);
+		$this->note=trim($this->note);
+		$this->fk_bank=trim($this->fk_bank);
+		$this->fk_user_creat=trim($this->fk_user_creat);
+		$this->fk_user_modif=trim($this->fk_user_modif);
+		
         // Check parameters
 		if (! $this->label)
 		{
@@ -496,23 +508,35 @@ class Tva extends CommonObject
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
             return -5;
         }
-        if (! empty($conf->banque->enabled) && (empty($this->paymenttype) || $this->paymenttype <= 0))
+        if (! empty($conf->banque->enabled) && (empty($this->type_payment) || $this->type_payment <= 0))
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
             return -5;
         }
 
-        // Insertion dans table des paiement tva
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount";
-        if ($this->note)  $sql.=", note";
-        if ($this->label) $sql.=", label";
-        $sql.= ", fk_user_creat, fk_bank, entity";
+        // Insertion dans la table d'un paiement tva
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep";
+		$sql.= ", datev";
+		$sql.= ", amount";
+		$sql.= ", fk_typepayment";
+		$sql.= ", num_payment";
+		if ($this->note)  $sql.= ", note";
+        if ($this->label) $sql.= ", label";
+        $sql.= ", fk_user_creat";
+		$sql.= ", fk_bank";
+		$sql.= ", entity";
 		$sql.= ") ";
-        $sql.= " VALUES ('".$this->db->idate($this->datep)."',";
-        $sql.= "'".$this->db->idate($this->datev)."'," . $this->amount;
-        if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
+        $sql.= " VALUES (";
+		$sql.= "'".$this->db->idate($this->datep)."'";
+        $sql.= ", '".$this->db->idate($this->datev)."'";
+		$sql.= ", ".$this->amount;
+        $sql.= ", '".$this->type_payment."'";
+		$sql.= ", '".$this->num_payment."'";
+		if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.=", '".$user->id."', NULL, ".$conf->entity;
+        $sql.= ", '".$user->id."'";
+		$sql.= ", NULL";
+		$sql.= ", ".$conf->entity;
         $sql.= ")";
 
 		dol_syslog(get_class($this)."::addPayment sql=".$sql);
@@ -540,7 +564,7 @@ class Tva extends CommonObject
 					$result=$acc->fetch($this->accountid);
 					if ($result <= 0) dol_print_error($this->db);
 
-                    $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
+                    $bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs($this->amount), '', '', $user);
 
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
