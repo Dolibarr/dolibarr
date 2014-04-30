@@ -43,7 +43,7 @@ class FormMail
     var $replytomail;
     var $toname;
     var $tomail;
-	
+
     var $withsubstit;			// Show substitution array
     var $withfrom;
     var $withto;				// Show recipient emails
@@ -555,7 +555,7 @@ class FormMail
         	{
         		$defaultmessage="";
 
-        		// TODO    A partir du type, proposer liste de messages dans table llx_models
+        		// TODO    A partir du type, proposer liste de messages dans table llx_c_email_template
         		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
         		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
         		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
@@ -595,8 +595,15 @@ class FormMail
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
 
-        		$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
+				else
+				{
+					$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
+					$defaultmessage=preg_replace("/^(<br>)+/","",$defaultmessage);
+					$defaultmessage=preg_replace("/^\n+/","",$defaultmessage);
+				}
 
         		$out.= '<tr>';
         		$out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
