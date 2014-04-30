@@ -195,12 +195,85 @@ abstract class CommonDocGenerator
         		{
         			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
         		}
-        		$array_thirdparty=array_merge($array_thirdparty,array('company_options_'.$key => $object->array_options['options_'.$key]));
-        	}
-        }
-        return $array_thirdparty;
-    }
-
+        		$array_thirdparty = array_merge ( $array_thirdparty, array (
+						'company_options_' . $key => $object->array_options ['options_' . $key] 
+				) );
+			}
+		}
+		return $array_thirdparty;
+	}
+	
+	/**
+	 * Define array with couple subtitution key => subtitution value
+	 *
+	 * @param	Object 		$object        	contact
+	 * @param	Translate 	$outputlangs   	object for output
+	 * @param   array_key	$array_key	    Name of the key for return array
+	 * @return	array of substitution key->code
+	 */
+	function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object') {
+		global $conf;
+		
+		if(empty($object->country) && ! empty($object->country_code)) 
+		{
+			$object->country = $outputlangs->transnoentitiesnoconv("Country" . $object->country_code);
+		}
+		if(empty($object->state) && ! empty($object->state_code)) 
+		{
+			$object->state = getState($object->state_code, 0);
+		}
+		
+		$array_contact = array (
+				$array_key . '_lastname' => $object->lastname,
+				$array_key . '_firstname' => $object->firstname,
+				$array_key . '_address' => $object->address,
+				$array_key . '_zip' => $object->zip,
+				$array_key . '_town' => $object->town,
+				$array_key . '_state_id' => $object->state_id,
+				$array_key . '_state_code' => $object->state_code,
+				$array_key . '_state' => $object->state,
+				$array_key . '_country_id' => $object->country_id,
+				$array_key . '_country_code' => $object->country_code,
+				$array_key . '_country' => $object->country,
+				$array_key . '_poste' => $object->poste,
+				$array_key . '_socid' => $object->socid,
+				$array_key . '_statut' => $object->statut,
+				$array_key . '_code' => $object->code,
+				$array_key . '_email' => $object->email,
+				$array_key . '_jabberid' => $object->jabberid,
+				$array_key . '_phone_pro' => $object->phone_pro,
+				$array_key . '_phone_perso' => $object->phone_perso,
+				$array_key . '_phone_mobile' => $object->phone_mobile,
+				$array_key . '_fax' => $object->fax,
+				$array_key . '_birthday' => $object->birthday,
+				$array_key . '_default_lang' => $object->default_lang,
+				$array_key . '_note_public' => $object->note_public,
+				$array_key . '_note_private' => $object->note_private 
+		);
+		
+		// Retrieve extrafields
+		if (is_array($object->array_options) && count($object->array_options)) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label('contact', true);
+			$object->fetch_optionals($object->id, $extralabels);
+			
+			foreach($extrafields->attribute_label as $key => $label) 
+			{
+				if ($extrafields->attribute_type[$key] == 'price') 
+				{
+					$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
+				}
+				elseif($extrafields->attribute_type[$key] == 'select') 
+				{
+					$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
+				}
+				$array_contact = array_merge($array_contact, array('contact_options_' . $key => $object->array_options['options_'. $key]));
+			}
+		}
+		return $array_contact;
+	}
+    
 
     /**
      * Define array with couple subtitution key => subtitution value

@@ -296,6 +296,75 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 // Make substitutions into odt of thirdparty + external modules
 				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
                 complete_substitutions_array($tmparray, $outputlangs, $object);
+                
+                
+                // Replace tags of lines for contacts
+                
+                $contact_arrray=array();
+                
+                $sql = "SELECT p.rowid";
+                $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+                $sql .= " WHERE p.fk_soc = ".$object->id;
+                
+                
+                dol_syslog('doc_generic_odt :: sql='.$sql,LOG_DEBUG);
+                $result = $this->db->query($sql);
+                $num = $this->db->num_rows($result);
+                
+                $var=true;
+                if ($num)
+                {
+                	$i=0;
+                
+                	$contactstatic = new Contact($this->db);
+                		
+                	while ($i < $num)
+                	{
+                		$obj = $this->db->fetch_object($result);
+                		
+                		$contact_arrray[$i] = $obj->rowid;
+                		//$contactstatic;
+                		
+                		
+                		$i++;
+                	}
+                }
+                if ((is_array($contact_arrray) && count($contact_arrray) > 0))
+                {
+                	try
+                	{
+                		$listlines = $odfHandler->setSegment('companycontacts');
+                		
+                		foreach ($contact_arrray as $array_key => $contact_id)
+                		{
+                			$res_contact = $contactstatic->fetch($contact_id);
+                			//$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
+                			$tmparray=$this->get_substitutionarray_contact($contactstatic,$outputlangs,'contact');
+                			foreach($tmparray as $key => $val)
+                			{
+                				try
+                				{
+                					$listlines->setVars($key, $val, true, 'UTF-8');
+                				}
+                				catch(OdfException $e)
+                				{
+                				}
+                				catch(SegmentException $e)
+                				{
+                				}
+                			}
+                			$listlines->merge();
+                		}
+                		$odfHandler->mergeSegment($listlines);
+                	}
+                	catch(OdfException $e)
+                	{
+                		$this->error=$e->getMessage();
+                		dol_syslog($this->error, LOG_WARNING);
+                		//return -1;
+                	}
+                }
+                
                 // Call the ODTSubstitution hook
                 $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
                 $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
