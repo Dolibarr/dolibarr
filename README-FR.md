@@ -1,4 +1,12 @@
-README (french)
+# DOLIBARR ERP & CRM
+
+## INTRODUCTION
+
+Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans). 
+Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
+ 
+![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
+
 --------------------------------
 Documentation démarrage rapide
 --------------------------------
@@ -10,8 +18,7 @@ Documentation démarrage rapide
 5) Ce que ne peux pas faire Dolibarr (pas encore)
 
 
-I - INSTALLER DOLIBARR
-----------------------
+## INSTALLER DOLIBARR
 
 Si vous n'avez pas de connaissances techniques, et que vous recherchez
 un programme d'installation qui install Dolibarr ERP/CRM en quelques clics,
@@ -45,8 +52,7 @@ vous pouvez installer Dolibarr avec cette version de la manière suivante:
 
 
 
-II - METTRE A JOUR DOLIBARR
----------------------------
+## METTRE A JOUR DOLIBARR
 
 Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
 - Ecraser les vieux fichiers dans le vieux repertoire 'dolibarr' par les fichiers
@@ -67,15 +73,13 @@ Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
   Note: Le processus de migration peut etre lance plusieurs fois sans risque.
   
 
-III - CE QUI EST NOUVEAU
-------------------------
+## CE QUI EST NOUVEAU
 
 Voir fichier ChangeLog.
 
 
 
-IV - CE QUE DOLIBARR PEUT FAIRE
--------------------------------
+## CE QUE DOLIBARR PEUT FAIRE
 
 Modules principaux:
 - Annuaires des prospects et/ou client et/ou fournisseurs
@@ -116,13 +120,24 @@ Divers:
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP. 
 
 
-V - CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
-------------------------------------------------------
+## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
+
 Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
-- Pas de compta analytique (uniquement gestion de trésorerie).
+- Pas de compta analytique double-partie (uniquement gestion de trésorerie).
 - Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
 - Dolibarr ne gère en standard qu'une société/institution/association mère (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MultiCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
 - Dolibarr ne contient pas de module de Gestion de la paie.
 - Les tâches du module de gestion de projets n'ont pas de dépendance entre elle.
 - Dolibarr ne contient pas de Webmail.
 - Dolibarr ne fait pas le café (pas encore). 
+
+
+## RESEAUX SOCIAUX
+
+Suivez le projet Dolibarr project sur
+
+Facebook: <https://www.facebook.com/dolibarr.fr>
+
+Google+: <https://plus.google.com/+DolibarrFrance>
+
+Twitter: <http://www.twitter.com/dolibarr_france>
