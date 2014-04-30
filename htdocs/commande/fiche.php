@@ -2248,7 +2248,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		}
 		print '<br>';
 
-		if ($action != 'presend') {
+		if ($action != 'presend')
+		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			// print '<table width="100%"><tr><td width="50%" valign="top">';
 			// print '<a name="builddoc"></a>'; // ancre
@@ -2267,7 +2268,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 			/*
 			 * Linked object block
-			*/
+			 */
 			$somethingshown = $object->showLinkedObjectBlock();
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
@@ -2284,9 +2285,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 		/*
 		 * Action presend
-		*
-		*/
-		if ($action == 'presend') {
+		 */
+		if ($action == 'presend')
+		{
 			$ref = dol_sanitizeFileName($object->ref);
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/'));

@@ -513,9 +513,9 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	if (empty($newmask))	// This should no happen
 	{
 		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
-		$newmask='0664';	
+		$newmask='0664';
 	}
-	
+
 	@chmod($newpathofdestfile, octdec($newmask));
 
 	return 1;
@@ -1148,26 +1148,29 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 }
 
 /**
- * 	Convert an image file into antoher format.
+ * 	Convert an image file into anoher format.
  *  This need Imagick php extension.
  *
- *  @param	string	$file       Input file name
- *  @param  string	$ext        Extension of target file
+ *  @param	string	$fileinput  Input file name
+ *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
+ *  @param	string	$fileoutput	Output filename
  *  @return	int					<0 if KO, >0 if OK
  */
-function dol_convert_file($file,$ext='png')
+function dol_convert_file($fileinput,$ext='png',$fileoutput='')
 {
 	global $langs;
 
 	$image=new Imagick();
-	$ret = $image->readImage($file);
+	$ret = $image->readImage($fileinput);
 	if ($ret)
 	{
 		$ret = $image->setImageFormat($ext);
 		if ($ret)
 		{
+			if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
+
 			$count = $image->getNumberImages();
-			$ret = $image->writeImages($file . "." . $ext, true);
+			$ret = $image->writeImages($fileoutput, true);
 			if ($ret) return $count;
 			else return -3;
 		}

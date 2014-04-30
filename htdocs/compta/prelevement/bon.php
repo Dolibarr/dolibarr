@@ -76,7 +76,7 @@ if ($id > 0 || ! empty($ref))
         {
 			if (class_exists("Imagick"))
 			{
-				$ret = dol_convert_file($file);
+				$ret = dol_convert_file($file,'png',$fileimage);
 				if ($ret < 0) $error++;
 			}
 			else
@@ -91,14 +91,14 @@ if ($id > 0 || ! empty($ref))
 			print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=prelevement&file='.urlencode(basename($fileimage)).'">';
 
 		}
+
+		dol_fiche_end();
 	}
 	else
 	{
 		dol_print_error($db);
     }
 }
-
-print "</div>";
 
 llxFooter();
 ?>
