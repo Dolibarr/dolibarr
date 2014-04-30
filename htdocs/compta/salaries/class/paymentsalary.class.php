@@ -331,7 +331,7 @@ class PaymentSalary extends CommonObject
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
-		$sql.= ", note";
+		if ($this->note) $sql.= ", note";
 		$sql.= ", label";
 		$sql.= ", datesp";
 		$sql.= ", dateep";
@@ -346,7 +346,7 @@ class PaymentSalary extends CommonObject
 		$sql.= ", '".$this->amount."'";
 		$sql.= ", '".$this->type_payment."'";
 		$sql.= ", '".$this->num_payment."'";
-		$sql.= ", '".$this->db->escape($this->note)."'";
+		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->idate($this->datesp)."'";
 		$sql.= ", '".$this->db->idate($this->dateep)."'";

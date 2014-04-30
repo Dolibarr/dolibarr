@@ -69,7 +69,7 @@ if ($result)
     print "<td>".$langs->trans("Person")."</td>";
     print "<td>".$langs->trans("Label")."</td>";
     print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
+    print '<td class="nowrap" align="left">'.$langs->trans("Type").'</td>';
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
     $var=1;
