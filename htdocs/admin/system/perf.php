@@ -77,6 +77,7 @@ if ($test)
 	else
 	{
 		print img_picto('','warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
+		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php',1).'">Memcached module admin page</a>';
 	}
 }
 else print img_picto('','warning').' '.$langs->trans("MemcachedNotAvailable");
@@ -89,7 +90,7 @@ $test1=function_exists('xcache_info');
 if ($test1)
 {
 	print img_picto('','tick.png').' '.$langs->trans("XCacheInstalled");
-	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/xcache.php'.'">Xcache admin page</a>';
+	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
 else
 {

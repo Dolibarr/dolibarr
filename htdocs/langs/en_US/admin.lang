@@ -1282,6 +1282,8 @@ YouMayFindPerfAdviceHere=You will find on this page some checks or advices relat
 NotInstalled=Not installed, so your server is not slow down by this.
 ApplicativeCache=Applicative cache
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server. 
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=OPCode cache
 NoOPCodeCacheFound=No OPCode cache found. May be you use another OPCode cache than XCache or eAccelerator (good), may be you don't have OPCode cache (very bad). 
 HTTPCacheStaticResources=HTTP cache for static resources (css, img, javascript)
