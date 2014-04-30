@@ -318,10 +318,15 @@ class Conf
 		$this->livraison_bon->enabled=defined("MAIN_SUBMODULE_LIVRAISON")?MAIN_SUBMODULE_LIVRAISON:0;
 
 		// Module fournisseur
-		$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
-		$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
-		$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
-		$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+		if (! empty($this->fournisseur))
+		{
+			$this->fournisseur->commande=new stdClass();
+			$this->fournisseur->commande->dir_output=$rootfordata."/fournisseur/commande";
+			$this->fournisseur->commande->dir_temp  =$rootfordata."/fournisseur/commande/temp";
+			$this->fournisseur->facture=new stdClass();
+			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
+			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+		}
 
 		// Module product/service
 		$this->product->multidir_output=array($this->entity => $rootfordata."/produit");
@@ -433,6 +438,19 @@ class Conf
         if (empty($this->global->TAX_MODE_BUY_SERVICE))  $this->global->TAX_MODE_BUY_SERVICE='payment';
 
 		// Delay before warnings
+		// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
+		$this->propal->cloture				= new stdClass();
+		$this->propal->facturation			= new stdClass();
+		$this->commande->client				= new stdClass();
+		$this->commande->fournisseur		= new stdClass();
+		$this->facture->client				= new stdClass();
+		$this->facture->fournisseur			= new stdClass();
+		$this->contrat->services			= new stdClass();
+		$this->contrat->services->inactifs	= new stdClass();
+		$this->contrat->services->expires	= new stdClass();
+		$this->adherent->cotisation			= new stdClass();
+		$this->bank->rappro					= new stdClass();
+		$this->bank->cheque					= new stdClass();
 		$this->actions->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
 		$this->commande->client->warning_delay=(isset($this->global->MAIN_DELAY_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_ORDERS_TO_PROCESS:2)*24*60*60;
 		$this->commande->fournisseur->warning_delay=(isset($this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)?$this->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS:7)*24*60*60;
