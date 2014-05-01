@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
+$langs->load("companies");
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))

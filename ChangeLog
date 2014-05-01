@@ -51,7 +51,9 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers
-- New: Add categories translation 
+- New: Add categories translation
+- New: Improved tax module:
+	   Add specific page for salaries payment	
 
 TODO
 - New: Predefined product and free product use same form.
