@@ -305,8 +305,55 @@ class Mailing extends CommonObject
 
 		if (! $error)
 		{
-
-
+			//Clone target
+			if (!empty($option2)) {
+				
+				require_once DOL_DOCUMENT_ROOT .'/core/modules/mailings/modules_mailings.php';
+				
+				$mailing_target = new MailingTargets($this->db);
+				
+				$target_array=array();
+				
+				$sql = "SELECT fk_contact, ";
+				$sql.=" lastname,   ";
+				$sql.=" firstname,";
+				$sql.=" email,";
+				$sql.=" other,";
+				$sql.=" source_url,";
+				$sql.=" source_id ,";
+				$sql.=" source_type ";
+				$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles ";
+				$sql.= " WHERE fk_mailing = ".$fromid;
+				
+				dol_syslog(get_class($this)."::createFromClone sql=".$sql);
+				$result=$this->db->query($sql);
+				if ($result)
+				{
+					if ($this->db->num_rows($result))
+					{
+						while ($obj = $this->db->fetch_object($result)) {
+						
+							$target_array[]=array('fk_contact'=>$obj->fk_contact,
+							'lastname'=>$obj->lastname,
+							'firstname'=>$obj->firstname,
+							'email'=>$obj->email, 
+							'other'=>$obj->other,
+							'source_url'=>$obj->source_url,
+							'source_id'=>$obj->source_id,
+							'source_type'=>$obj->source_type);
+						}
+						
+					}
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					dol_syslog("Mailing::createFromClone ".$this->error, LOG_ERR);
+					return -1;
+				}
+				
+				$mailing_target->add_to_target($object->id, $target_array);
+			}
 
 		}
 
