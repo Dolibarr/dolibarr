@@ -285,7 +285,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			// TVA
 			if ($i == 1) 			// We show only price for level 1
 			{
-				print '<td>'.price($object->multiprices_ttc["$i"]);
+                print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($object->multiprices_tva_tx[1],true).'</td></tr>';
 			}
 			
 			print '<tr>';
