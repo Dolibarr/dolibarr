@@ -7,6 +7,7 @@ Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
 Fix: [ bug #1352 ] Removing a shipping does not remove the delivery.
 Fix: Option MAIN_INVERT_SENDER_RECIPIENT broken with typhon template.
+Fix: [ bug #1341 ] Lastname not added by file or direct input in mass e-mailing
 
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
