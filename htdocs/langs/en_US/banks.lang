@@ -133,6 +133,7 @@ CashBudget=Cash budget
 PlannedTransactions=Planned transactions
 Graph=Graphics
 ExportDataset_banque_1=Bank transactions and account statement
+ExportDataset_banque_1=Deposit slip
 TransactionOnTheOtherAccount=Transaction on the other account
 TransactionWithOtherAccount=Account transfer
 PaymentNumberUpdateSucceeded=Payment number updated succesfully
