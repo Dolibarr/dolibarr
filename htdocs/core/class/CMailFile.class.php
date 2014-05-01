@@ -212,9 +212,10 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Encode images
+			$images_encoded = '';
 			if ($this->atleastoneimage)
 			{
-				$images_encoded = $this->write_images($this->images_encoded);
+				$images_encoded.= $this->write_images($this->images_encoded);
 				// always end related and end alternative after inline images
 				$images_encoded.= "--" . $this->related_boundary . "--" . $this->eol;
 				$images_encoded.= $this->eol . "--" . $this->alternative_boundary . "--" . $this->eol;
@@ -742,7 +743,7 @@ class CMailFile
 		}
 		else
 		{
-			$strContent.= $msgtext;
+			$strContent = $msgtext;
 		}
 
 		// Make RFC821 Compliant, replace bare linefeeds
