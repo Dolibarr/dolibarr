@@ -1438,7 +1438,7 @@ AccountancyCodeBuy=Código contable compras
 AgendaSetup=Módulo configuración de acciones y agenda
 PasswordTogetVCalExport=Clave de autorización vcal export link
 PastDelayVCalExport=No exportar los eventos de más de
-AGENDA_USE_EVENT_TYPE=Usar los tipos de eventos (administrables desde Configuración->Diccionarios->Eventos de tipo de agenda)
+AGENDA_USE_EVENT_TYPE=Usar tipos de eventos (configurables desde Configuración->Diccionarios->Tipos de eventos de la agenda)
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####
