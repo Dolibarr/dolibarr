@@ -237,7 +237,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				{
 					$objectligne = $object->lines[$i];
 
-					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
+					$valide = empty($objectligne->id) ? 0 : $objectligne->fetch($objectligne->id);
 					if ($valide > 0 || $object->specimen)
 					{
 						$curX = $this->posxdesc-1;

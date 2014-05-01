@@ -80,38 +80,40 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	global $conf;
 
 	// Define constant for TCPDF
-	define('K_TCPDF_EXTERNAL_CONFIG',1);	// this avoid using tcpdf_config file
-	define('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
-	define('K_PATH_URL_CACHE', DOL_DATA_ROOT.'/admin/temp/');
-	dol_mkdir(K_PATH_CACHE);
-	define('K_BLANK_IMAGE', '_blank.png');
-	define('PDF_PAGE_FORMAT', 'A4');
-	define('PDF_PAGE_ORIENTATION', 'P');
-	define('PDF_CREATOR', 'TCPDF');
-	define('PDF_AUTHOR', 'TCPDF');
-	define('PDF_HEADER_TITLE', 'TCPDF Example');
-	define('PDF_HEADER_STRING', "by Dolibarr ERP CRM");
-	define('PDF_UNIT', 'mm');
-	define('PDF_MARGIN_HEADER', 5);
-	define('PDF_MARGIN_FOOTER', 10);
-	define('PDF_MARGIN_TOP', 27);
-	define('PDF_MARGIN_BOTTOM', 25);
-	define('PDF_MARGIN_LEFT', 15);
-	define('PDF_MARGIN_RIGHT', 15);
-	define('PDF_FONT_NAME_MAIN', 'helvetica');
-	define('PDF_FONT_SIZE_MAIN', 10);
-	define('PDF_FONT_NAME_DATA', 'helvetica');
-	define('PDF_FONT_SIZE_DATA', 8);
-	define('PDF_FONT_MONOSPACED', 'courier');
-	define('PDF_IMAGE_SCALE_RATIO', 1.25);
-	define('HEAD_MAGNIFICATION', 1.1);
-	define('K_CELL_HEIGHT_RATIO', 1.25);
-	define('K_TITLE_MAGNIFICATION', 1.3);
-	define('K_SMALL_RATIO', 2/3);
-	define('K_THAI_TOPCHARS', true);
-	define('K_TCPDF_CALLS_IN_HTML', true);
-	define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
-
+	if (! defined('K_TCPDF_EXTERNAL_CONFIG'))
+	{
+		define('K_TCPDF_EXTERNAL_CONFIG',1);	// this avoid using tcpdf_config file
+		define('K_PATH_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+		define('K_PATH_URL_CACHE', DOL_DATA_ROOT.'/admin/temp/');
+		dol_mkdir(K_PATH_CACHE);
+		define('K_BLANK_IMAGE', '_blank.png');
+		define('PDF_PAGE_FORMAT', 'A4');
+		define('PDF_PAGE_ORIENTATION', 'P');
+		define('PDF_CREATOR', 'TCPDF');
+		define('PDF_AUTHOR', 'TCPDF');
+		define('PDF_HEADER_TITLE', 'TCPDF Example');
+		define('PDF_HEADER_STRING', "by Dolibarr ERP CRM");
+		define('PDF_UNIT', 'mm');
+		define('PDF_MARGIN_HEADER', 5);
+		define('PDF_MARGIN_FOOTER', 10);
+		define('PDF_MARGIN_TOP', 27);
+		define('PDF_MARGIN_BOTTOM', 25);
+		define('PDF_MARGIN_LEFT', 15);
+		define('PDF_MARGIN_RIGHT', 15);
+		define('PDF_FONT_NAME_MAIN', 'helvetica');
+		define('PDF_FONT_SIZE_MAIN', 10);
+		define('PDF_FONT_NAME_DATA', 'helvetica');
+		define('PDF_FONT_SIZE_DATA', 8);
+		define('PDF_FONT_MONOSPACED', 'courier');
+		define('PDF_IMAGE_SCALE_RATIO', 1.25);
+		define('HEAD_MAGNIFICATION', 1.1);
+		define('K_CELL_HEIGHT_RATIO', 1.25);
+		define('K_TITLE_MAGNIFICATION', 1.3);
+		define('K_SMALL_RATIO', 2/3);
+		define('K_THAI_TOPCHARS', true);
+		define('K_TCPDF_CALLS_IN_HTML', true);
+		define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
+	}
 
 	if (! empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->MAIN_DISABLE_FPDI))
 		return "Error MAIN_USE_FPDF and MAIN_DISABLE_FPDI can't be set together";
@@ -129,7 +131,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 
 	// Protection and encryption of pdf
 	if (empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->PDF_SECURITY_ENCRYPTION))
-	{	
+	{
 		/* Permission supported by TCPDF
 		- print : Print the document;
 		- modify : Modify the contents of the document by operations other than those controlled by 'fill-forms', 'extract' and 'assemble';
@@ -161,7 +163,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	{
 		// Declare here a class to overwrite FPDI to add method writeHTMLCell
 		/**
-		 *	This class if a enhanced FPDI class that support method writeHTMLCell
+		 *	This class is an enhanced FPDI class that support method writeHTMLCell
 		 */
 		class FPDI_DolExtended extends FPDI
         {
@@ -910,7 +912,7 @@ function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hide
 	global $db, $conf, $langs, $hookmanager;
 
 	$reshook=0;
-	if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+	if (is_object($hookmanager) && ( (isset($object->lines[$i]->product_type) && $object->lines[$i]->product_type == 9 && ! empty($object->lines[$i]->special_code)) || ! empty($object->lines[$i]->fk_parent_line) ) )
 	{
 		$special_code = $object->lines[$i]->special_code;
 		if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
@@ -959,7 +961,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		if (! empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
 		{
 			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label)     $label=$prodser->multilangs[$outputlangs->defaultlang]["label"];
-			
+
 			//Manage HTML entities description test
 			//Cause $prodser->description is store with htmlentities but $desc no
 			$needdesctranslation=false;
@@ -1081,7 +1083,7 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		//print $libelleproduitservice;
 	}
 
-	if ($dbatch) 
+	if ($dbatch)
 	{
 		$format='day';
 		foreach ($dbatch as $detail)

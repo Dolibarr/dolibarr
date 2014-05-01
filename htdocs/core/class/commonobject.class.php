@@ -79,7 +79,7 @@ abstract class CommonObject
         //print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
         $lastname=$this->lastname;
         $firstname=$this->firstname;
-        if (empty($lastname))  $lastname=($this->lastname?$this->lastname:($this->name?$this->name:$this->nom));
+        if (empty($lastname))  $lastname=(isset($this->lastname)?$this->lastname:(isset($this->name)?$this->name:(isset($this->nom)?$this->nom:'')));
         if (empty($firstname)) $firstname=$this->firstname;
 
         $ret='';
@@ -1590,6 +1590,9 @@ abstract class CommonObject
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
+                if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
+                if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
+                if (! isset($total_ttc_by_vats[$obj->vatrate])) $total_ttc_by_vats[$obj->vatrate]=0;
                 $total_ht_by_vats[$obj->vatrate]  += $obj->total_ht;
                 $total_tva_by_vats[$obj->vatrate] += $obj->total_tva;
                 $total_ttc_by_vats[$obj->vatrate] += $obj->total_ttc;

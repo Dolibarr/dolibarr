@@ -1270,7 +1270,7 @@ class Facture extends CommonInvoice
 			}
 			// Fin appel triggers
 		}
-		
+
 		// Removed extrafields
 		if (! $error) {
 			$result=$this->deleteExtraFields();
@@ -2654,7 +2654,7 @@ class Facture extends CommonInvoice
 		$num=count($this->lines);
 		for ($i = 0; $i < $num; $i++)
 		{
-			if ($this->lines[$i]->export_compta <> 0 && $this->lines[$i]->code_ventilation <> 0)
+			if (! empty($this->lines[$i]->export_compta) && ! empty($this->lines[$i]->code_ventilation))
 			{
 				$ventilExportCompta++;
 			}

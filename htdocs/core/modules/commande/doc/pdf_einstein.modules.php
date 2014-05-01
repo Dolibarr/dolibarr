@@ -641,7 +641,7 @@ class pdf_einstein extends ModelePDFCommandes
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_availability=$outputlangs->transnoentities("AvailabilityType".$object->availability_code)!=('AvailabilityType'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityType".$object->availability_code):$outputlangs->convToOutputCharset($object->availability);
+			$lib_availability=$outputlangs->transnoentities("AvailabilityType".$object->availability_code)!=('AvailabilityType'.$object->availability_code)?$outputlangs->transnoentities("AvailabilityType".$object->availability_code):$outputlangs->convToOutputCharset(isset($object->availability)?$object->availability:'');
 			$lib_availability=str_replace('\n',"\n",$lib_availability);
 			$pdf->MultiCell(80, 4, $lib_availability, 0, 'L');
 

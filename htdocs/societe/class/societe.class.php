@@ -525,11 +525,12 @@ class Societe extends CommonObject
 
         // Check name is required and codes are ok or unique.
         // If error, this->errors[] is filled
+        $result = 0;
         if ($action != 'add') $result = $this->verify();	// We don't check when update called during a create because verify was already done
 
         if ($result >= 0)
         {
-            dol_syslog(get_class($this)."::update verify ok");
+            dol_syslog(get_class($this)."::update verify ok or not done");
 
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
             $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
@@ -604,7 +605,7 @@ class Societe extends CommonObject
             	unset($this->state_code);
             	unset($this->state);
 
-            	$nbrowsaffected+=$this->db->affected_rows($resql);
+            	$nbrowsaffected = $this->db->affected_rows($resql);
 
             	if (! $error && $nbrowsaffected)
             	{
@@ -679,13 +680,13 @@ class Societe extends CommonObject
                     return 1;
                 }
                 else
-                {
+				{
                     $this->db->rollback();
                     return -1;
                 }
             }
             else
-            {
+			{
                 if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
                     // Doublon

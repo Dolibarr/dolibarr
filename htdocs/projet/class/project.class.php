@@ -765,7 +765,7 @@ class Project extends CommonObject
 
         $now=dol_now();
 
-        // Initialise parametres
+        // Initialise parameters
         $this->id = 0;
         $this->ref = 'SPECIMEN';
         $this->specimen = 1;
@@ -774,17 +774,20 @@ class Project extends CommonObject
         $this->date_m = $now;
         $this->date_start = $now;
         $this->note_public = 'SPECIMEN';
+        /*
         $nbp = rand(1, 9);
         $xnbp = 0;
         while ($xnbp < $nbp)
         {
             $line = new Task($this->db);
-            $line->desc = $langs->trans("Description") . " " . $xnbp;
-            $line->qty = 1;
-            $prodid = rand(1, $num_prods);
-            $line->fk_product = $prodids[$prodid];
+            $line->fk_project = 0;
+            $line->label = $langs->trans("Label") . " " . $xnbp;
+            $line->description = $langs->trans("Description") . " " . $xnbp;
+
+            $this->lines[]=$line;
             $xnbp++;
         }
+        */
     }
 
     /**

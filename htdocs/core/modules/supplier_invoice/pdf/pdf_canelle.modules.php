@@ -371,13 +371,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 
-					if ($object->remise_percent) $tvaligne-=($tvaligne*$object->remise_percent)/100;
+					if (! empty($object->remise_percent)) $tvaligne-=($tvaligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 					$localtax1rate=(string) $object->lines[$i]->localtax1_tx;
 					$localtax2rate=(string) $object->lines[$i]->localtax2_tx;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
+					if (empty($this->tva[$vatrate])) $this->tva[$vatrate]=0;
+					if (empty($this->localtax1[$localtax1rate])) $this->localtax1[$localtax1rate]=0;
+					if (empty($this->localtax2[$localtax2rate])) $this->localtax2[$localtax2rate]=0;
 					$this->tva[$vatrate] += $tvaligne;
 					$this->localtax1[$localtax1rate]+=$localtax1ligne;
 					$this->localtax2[$localtax2rate]+=$localtax2ligne;
@@ -1011,7 +1014,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$carac_client_name=$outputlangs->convToOutputCharset($mysoc->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,$object->contact,$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$mysoc,((!empty($object->contact))?$object->contact:null),$usecontact,'target');
 
 			// Show recipient
 			$widthrecbox=100;

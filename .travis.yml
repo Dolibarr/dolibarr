@@ -31,6 +31,8 @@ before_script:
  - echo PHP version $PHPV 
 # - echo Update composer
 # - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
+ - echo PHPUnit version
+ - phpunit --version
  - echo Install phpcs then show installed rules
  - pyrus install pear/PHP_CodeSniffer
  - phpenv rehash

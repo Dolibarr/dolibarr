@@ -80,6 +80,8 @@ class AdherentTest extends PHPUnit_Framework_TestCase
     	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
+        if (! empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)) { print "\n".__METHOD__." Company must be setup to have name-firstname in order 'Firstname Lastname'\n"; die(); }
+
     	print __METHOD__."\n";
     }
     public static function tearDownAfterClass()

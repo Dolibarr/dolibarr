@@ -46,7 +46,7 @@ class CommandeFournisseur extends CommonOrder
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
     var $id;
-    
+
     var $ref;		 // TODO deprecated
     var $product_ref;
     var $ref_supplier;
@@ -1834,7 +1834,7 @@ class CommandeFournisseur extends CommonOrder
 
         // Find first product
         $prodid=0;
-        $product=new ProductFournisseur($db);
+        $product=new ProductFournisseur($this->db);
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";
         $sql.= " WHERE entity IN (".getEntity('product', 1).")";
@@ -1992,6 +1992,8 @@ class CommandeFournisseurLigne
     var $tva_tx;
     var $localtax1_tx;
     var $localtax2_tx;
+    var $localtax1_type;
+    var $localtax2_type;
     var $subprice;
     var $remise_percent;
     var $desc;          	// Description ligne

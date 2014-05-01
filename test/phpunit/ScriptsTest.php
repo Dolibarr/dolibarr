@@ -175,7 +175,7 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
 		$this->assertEquals($returnvar,255);
 		*/
-        return $result;
+        return '';
     }
 
     /**

@@ -602,7 +602,7 @@ class Task extends CommonObject
 
                 if (! $error)
                 {
-					$tasks[$i] = new Task($db);
+					$tasks[$i] = new Task($this->db);
                     $tasks[$i]->id				= $obj->taskid;
 					$tasks[$i]->ref				= $obj->ref_task;
                     $tasks[$i]->fk_project		= $obj->projectid;
@@ -801,7 +801,7 @@ class Task extends CommonObject
                 $ret = -2;
             }
         }
-		
+
 		if ($ret >= 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";

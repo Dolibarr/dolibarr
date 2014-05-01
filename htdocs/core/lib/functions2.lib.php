@@ -454,7 +454,7 @@ function clean_url($url,$http=1)
     {
         $proto=$regs[1];
         $domain=$regs[2];
-        $port=$regs[3];
+        $port=isset($regs[3])?$regs[3]:'';
         //print $url." -> ".$proto." - ".$domain." - ".$port;
         //$url = dol_string_nospecial(trim($url));
         $url = trim($url);
