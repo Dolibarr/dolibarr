@@ -219,8 +219,10 @@ class FormMail
      */
     function get_form($addfileaction='addfile',$removefileaction='removefile')
     {
-        global $conf, $langs, $user, $hookmanager;
+        global $conf, $langs, $user, $hookmanager, $form;
 
+        if (! is_object($form)) $form=new Form($this->db);
+        
         $langs->load("other");
         $langs->load("mails");
 
@@ -247,8 +249,6 @@ class FormMail
         	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
         	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
         	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-
-        	$form=new Form($this->db);
 
         	$out.= "\n<!-- Debut form mail -->\n";
         	if ($this->withform == 1)

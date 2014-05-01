@@ -900,7 +900,8 @@ class FormOther
 
 
     /**
-     * 	Show a HTML Tab with boxes of a particular area including personalized choices of user
+     * 	Show a HTML Tab with boxes of a particular area including personalized choices of user.
+     *  Class 'Form' must be known.
      *
      * 	@param	   User         $user		 Object User
      * 	@param	   String       $areacode    Code of area for pages (0=value for Home page)
@@ -933,9 +934,8 @@ class FormOther
         		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
-
-        	$form=new Form($db);
-            $selectboxlist=$form->selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
+			// Class Form must have been already loaded
+            $selectboxlist=Form::selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
         }
 
         // Javascript code for dynamic actions

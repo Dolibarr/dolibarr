@@ -3783,7 +3783,7 @@ class Form
 
 
     /**
-     *	Show a select form from an array
+     *	Return a HTML select string, built from an array of key+value.
      *
      *	@param	string	$htmlname       Name of html select area
      *	@param	array	$array          Array with key+value
@@ -3799,7 +3799,7 @@ class Form
      *  @param	string	$morecss		Add more class to css styles
      * 	@return	string					HTML select string
      */
-    function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
+    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $option='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
         global $langs;
 

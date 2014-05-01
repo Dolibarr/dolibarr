@@ -144,7 +144,7 @@ class FormActions
         global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        
+
         $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
@@ -217,12 +217,13 @@ class FormActions
      */
     function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0)
     {
-        global $langs,$user;
+        global $langs,$user,$form;
 
+        if (! is_object($form)) $form=new Form($db);
+        
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $caction=new CActionComm($this->db);
-        $form=new Form($this->db);
 
        	// Suggest a list with manual events or all auto events
        	$arraylist=$caction->liste_array(1, 'code', $excludetype, $onlyautoornot);
@@ -231,7 +232,7 @@ class FormActions
 
        	if ($selected == 'manual') $selected='AC_OTH';
        	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
-       	
+
         print $form->selectarray($htmlname, $arraylist, $selected);
         if ($user->admin && empty($onlyautoornot)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }

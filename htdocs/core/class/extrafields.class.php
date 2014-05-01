@@ -27,6 +27,7 @@
  *	\brief      File of class to manage extra fields
  */
 
+
 /**
  *	Class to manage standard extra fields
  */
@@ -581,7 +582,7 @@ class ExtraFields
 	 */
 	function showInputField($key,$value,$moreparam='',$keyprefix='')
 	{
-		global $conf,$langs,$db;
+		global $conf,$langs;
 
 		$label=$this->attribute_label[$key];
 		$type =$this->attribute_type[$key];
@@ -612,17 +613,18 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			if(!class_exists('Form'))
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-			$formstat = new Form($db);
 
 			$showtime = in_array($type,array('datetime')) ? 1 : 0;
-			// Do not show current date when field not required (see select_date() method)
-			if(!$required && $value == '')
-				$value = '-1';
 
-			$out = $formstat->select_date($value, 'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
-			// TODO Missing to add $moreparam
+			// Do not show current date when field not required (see select_date() method)
+			if (!$required && $value == '') $value = '-1';
+
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+			global $form;
+			if (! is_object($form)) $form=new Form($this->db);
+
+			// TODO Must also support $moreparam
+			$out = $form->select_date($value, 'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
 		}
 		elseif (in_array($type,array('int')))
 		{
