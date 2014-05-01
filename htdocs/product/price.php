@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -130,7 +130,7 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 	//$newminprice=price2num(GETPOST("price_min"),'MU'); // TODO : Add min price management
 	$quantity=GETPOST('quantity');
 	$remise_percent=price2num(GETPOST('remise_percent'));
-	$remise=0; // TODO : allow dicsount by amount when available on documents
+	$remise=0; // TODO : allow discount by amount when available on documents
 
 	if (empty($quantity))
 	{
@@ -276,27 +276,30 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		print '</td></tr>';
 
 		// TVA
-		print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($object->multiprices_tva_tx["$soc->price_level"],true).'</td></tr>';
-	}
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>' . vatrate($object->multiprices_tva_tx ["$soc->price_level"], true) . '</td></tr>';
+	} 
 	else
 	{
-		for ($i=1; $i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) 
 		{
-            // TVA
-            if ($i == 1) // We show only price for level 1
-            {
-                 print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.vatrate($object->multiprices_tva_tx[1],true).'</td></tr>';
-            }
-
-            print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
-
-			if ($object->multiprices_base_type["$i"] == 'TTC')
+			// TVA
+			if ($i == 1) 			// We show only price for level 1
 			{
 				print '<td>'.price($object->multiprices_ttc["$i"]);
 			}
-			else
-			{
-				print '<td>'.price($object->multiprices["$i"]);
+			
+			print '<tr>';
+			
+			// Label of price
+			print '<td>' . $langs->trans("SellingPrice") . ' ' . $i;
+			$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
+			if (! empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
+			print '</td>';
+			
+			if ($object->multiprices_base_type ["$i"] == 'TTC') {
+				print '<td>' . price($object->multiprices_ttc ["$i"]);
+			} else {
+				print '<td>' . price($object->multiprices ["$i"]);
 			}
 
 			if ($object->multiprices_base_type["$i"])
