@@ -112,6 +112,25 @@ if ($action == 'setrefext' && $user->rights->banque->cheque)
     }
 }
 
+if ($action == 'setref' && $user->rights->banque->cheque)
+{
+	$result = $object->fetch(GETPOST('id','int'));
+	if ($result > 0)
+	{
+		$number=GETPOST('number');
+
+		$result=$object->set_number($user,$number);
+		if ($result < 0)
+		{
+		    $mesg='<div class="error">'.$object->error.'</div>';
+		}
+	}
+	else
+	{
+	    $mesg='<div class="error">'.$object->error.'</div>';
+	}
+}
+
 if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->cheque)
 {
 	if (is_array($_POST['toRemise']))
@@ -481,12 +500,30 @@ else
 	$accountstatic->label=$object->account_label;
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="2" >';
+	print '<tr><td width=20%>';
 
-	print $form->showrefnav($object,'ref',$linkback, 1, 'number');
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('Ref');
+	print '</td>';
+	if ($action != 'editref') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editref&amp;id='.$object->id.'">'.img_edit($langs->trans('SetRef'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($action == 'editref')
+	{
+		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="setref">';
+		print '<input type="text" name="number" value="'.$object->number.'">';
+		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		print '</form>';
+	}
+	else
+	{
+	    print $form->showrefnav($object,'ref',$linkback, 1, 'number');
+	}
 
-	print "</td>";
-	print "</tr>\n";
+	print '</td>';
+	print '</tr>';
 
 	print '<tr><td>';
 
