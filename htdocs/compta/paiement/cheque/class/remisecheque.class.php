@@ -725,6 +725,40 @@ class RemiseCheque extends CommonObject
         }
     }
 
+	/**
+	 *      Set the number of bordereau
+	 *
+	 *      @param	User		$user           Object user
+	 *      @param  timestamp   $number         number of bordereau
+	 *      @return int                 		<0 if KO, >0 if OK
+	 */
+	function set_number($user, $number)
+	{
+		if ($user->rights->banque->cheque)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+			$sql.= " SET number = '".$number."'" ;
+			$sql.= " WHERE rowid = ".$this->id;
+			
+			dol_syslog("RemiseCheque::set_number sql=$sql",LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date_bordereau = $date;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dol_syslog("RemiseCheque::set_number ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
 
 	/**
 	 *    	Renvoie nom clicable (avec eventuellement le picto)

@@ -49,9 +49,11 @@ For users:
 - New: Extrafields can be used as substitution key %EXTRA_XXX% into emails texts for members.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
-- Fix: Price min of composition is not supplier price min by quantity
-- Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers
-- New: Add categories translation 
+- Fix: Price min of composition is not supplier price min by quantity.
+- Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- New: Add categories translation.
+- New: Enable option "clone target emailing".
+- New: Improved tax module: Add specific page for salaries payment	
 
 TODO
 - New: Predefined product and free product use same form.
