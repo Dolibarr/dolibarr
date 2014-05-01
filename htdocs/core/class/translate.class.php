@@ -737,12 +737,12 @@ class Translate
 	}
 
 	/**
-	 *  Load into the cache, all currencies
+	 *  Load into the cache this->cache_currencies, all currencies
 	 *
 	 *	@param	string	$currency_code		Get only currency. Get all if ''.
 	 *  @return int             			Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function load_cache_currencies($currency_code)
+	private function load_cache_currencies($currency_code)
 	{
 		global $db;
 
@@ -786,7 +786,13 @@ class Translate
 		}
 	}
 
-	function get_translations_for_substitutions() {
+	/**
+	 * Return an array with content of all loaded translation keys (found into this->tab_translate)
+	 *
+	 * @return array	Array of translation keys lang_key => string_translation_loaded
+	 */
+	function get_translations_for_substitutions()
+	{
 		$substitutionarray = array();
 
 		foreach($this->tab_translate as $code => $label) {
