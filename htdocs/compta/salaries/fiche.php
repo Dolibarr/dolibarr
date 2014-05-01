@@ -75,8 +75,9 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->label=GETPOST("label");
 	$sal->datesp=$datesp;
 	$sal->dateep=$dateep;
+	$sal->note=GETPOST("note");
 	$sal->type_payment=GETPOST("paymenttype");
-	$sal->num_payment=GETPOST('num_payment');
+	$sal->num_payment=GETPOST("num_payment");
 
 	if (empty($sal->fk_user) || $sal->fk_user < 0)
 	{
@@ -243,20 +244,19 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
 		print '</td></tr>';
-
+		
+		// Type payment
+		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+		$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
+		print "</td>\n";
+		print "</tr>";
+	 
+		// Number
+		print '<tr><td>'.$langs->trans('Numero');
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
-
-	// TYpe payment
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
-	print "</td>\n";
-	print "</tr>";
-	 
-	// Number
-	print '<tr><td>'.$langs->trans('Numero');
-	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
-	 
+ 
 	// Other attributes
 	$parameters=array('colspan' => ' colspan="1"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

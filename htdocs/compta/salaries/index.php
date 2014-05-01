@@ -33,7 +33,33 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $conf->liste_limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+$limit = $conf->liste_limit;
+if (! $sortfield) $sortfield="s.datev";
+if (! $sortorder) $sortorder="DESC";
 
+$filtre=$_GET["filtre"];
+
+if (empty($_REQUEST['typeid']))
+{
+	$newfiltre=str_replace('filtre=','',$filtre);
+	$filterarray=explode('-',$newfiltre);
+	foreach($filterarray as $val)
+	{
+		$part=explode(':',$val);
+		if ($part[0] == 's.fk_typepayment') $typeid=$part[1];
+	}
+}
+else
+{
+	$typeid=$_REQUEST['typeid'];
+}
 
 /*
  * View
@@ -41,20 +67,29 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 llxHeader();
 
+$form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
 
-
-print_fiche_titre($langs->trans("SalariesPayments"));
-
-$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.num_payment,";
-$sql.= " pst.code as payment_code";
+$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev as dm, s.fk_typepayment as type,";
+$sql.= " s.num_payment, pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE u.rowid = s.fk_user";
 $sql.= " AND s.entity = ".$conf->entity;
-$sql.= " ORDER BY dm DESC";
+if (GETPOST("search_label")) $sql.=" AND s.label LIKE '%".$db->escape(GETPOST("search_label"))."%'";
+if (GETPOST("search_amount")) $sql.=" AND s.amount = ".price2num(GETPOST("search_amount"));
+if ($filtre) {
+    $filtre=str_replace(":","=",$filtre);
+    $sql .= " AND ".$filtre;
+}
+if ($typeid) {
+    $sql .= " AND s.fk_typepayment=".$typeid;
+}
+$sql.= " GROUP BY s.rowid, s.fk_typepayment, s.amount, s.datev, s.label";
+$sql.= $db->order($sortfield,$sortorder);
+$sql.= $db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -62,18 +97,44 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
     $total = 0 ;
+	$var=true;
+
+	$param='';
+	if ($typeid) $param.='&amp;typeid='.$typeid;
+	
+	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
+
+	dol_htmloutput_mesg($mesg);
+	
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
-    print "<td>".$langs->trans("Person")."</td>";
-    print "<td>".$langs->trans("Label")."</td>";
-    print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
-    print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$paramlist,"",$sortfield,$sortorder);
-    print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
+		print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datev","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre("");
     print "</tr>\n";
-    $var=1;
-    while ($i < $num)
+	
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="14" name="search_label" value="'.GETPOST("search_label").'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	// Type
+	print '<td class="liste_titre" align="left">';
+	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
+	print '</td>';
+	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.GETPOST("search_amount").'"></td>';
+	print '<td class="liste_titre" align="right">';
+	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '</td>';
+	print "</tr>\n";
+	
+    while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
         $var=!$var;
@@ -92,6 +153,7 @@ if ($result)
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
 		// Amount
         print "<td align=\"right\">".price($obj->amount,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
+        print "<td>&nbsp;</td>";
         print "</tr>\n";
 
         $total = $total + $obj->amount;
@@ -99,9 +161,13 @@ if ($result)
         $i++;
     }
     print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td></tr>";
+    print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
+	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
+	
+	print '</form>';
+		
     $db->free($result);
 }
 else
