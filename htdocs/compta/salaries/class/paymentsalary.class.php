@@ -125,14 +125,14 @@ class PaymentSalary extends CommonObject
 
 		if (! $notrigger)
 		{
-			// Appel des triggers
+			// Start triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('PAYMENT_SALARY_MODIFY',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
-			// Fin appel triggers
+			// End triggers
 		}
 
 		return 1;
@@ -239,14 +239,14 @@ class PaymentSalary extends CommonObject
 			return -1;
 		}
 
-		// Appel des triggers
+		// Start triggers
 		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 		$interface=new Interfaces($this->db);
 		$result=$interface->run_triggers('PAYMENT_SALARY_DELETE',$this,$user,$langs,$conf);
 		if ($result < 0) {
 			$error++; $this->errors=$interface->errors;
 		}
-		// Fin appel triggers
+		// End triggers
 
 		return 1;
 	}
@@ -324,7 +324,7 @@ class PaymentSalary extends CommonObject
 
 		$this->db->begin();
 
-		// Insertion dans la table d'un paiement salaire
+		// Insert into llx_payment_salary
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_salary (fk_user";
 		$sql.= ", datep";
 		$sql.= ", datev";
@@ -359,23 +359,23 @@ class PaymentSalary extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");    // TODO devrait s'appeler payment_salary
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");    // TODO should be called payment_salary
 
-			// Appel des triggers
+			// Start triggers
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('PAYMENT_SALARY_CREATE',$this,$user,$langs,$conf);
 			if ($result < 0) {
 				$error++; $this->errors=$interface->errors;
 			}
-			// Fin appel triggers
+			// End triggers
 
 			if ($this->id > 0)
 			{
 				$ok=1;
 				if (! empty($conf->banque->enabled) && ! empty($this->amount))
 				{
-					// Insertion dans llx_bank
+					// Insert into llx_bank
 					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 					$acc = new Account($this->db);
@@ -394,8 +394,8 @@ class PaymentSalary extends CommonObject
 						$user
 					);
 
-					// Mise a jour fk_bank dans llx_paiement.
-					// On connait ainsi le paiement qui a genere l'ecriture bancaire
+					// Update fk_bank into llx_paiement.
+					// So we know the payment which has generate the banking ecriture
 					if ($bank_line_id > 0)
 					{
 						$this->update_fk_bank($bank_line_id);
@@ -469,9 +469,9 @@ class PaymentSalary extends CommonObject
 	}
 
 	/**
-	 *  Mise a jour du lien entre le paiement salaire et la ligne générée dans llx_bank
+	 *  Update link between payment salary and line generate into llx_bank
 	 *
-	 *  @param	int		$id_bank    Id compte bancaire
+	 *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function update_fk_bank($id_bank)
@@ -492,11 +492,11 @@ class PaymentSalary extends CommonObject
 
 
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Send name clicable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@param	string	$option			Sur quoi pointe le lien
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option			link option
+	 *	@return	string					Chaine with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{

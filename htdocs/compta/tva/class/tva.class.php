@@ -121,12 +121,12 @@ class Tva extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
 
-            // Appel des triggers
+            // Start triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('TVA_CREATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // End triggers
 
             return $this->id;
         }
@@ -189,12 +189,12 @@ class Tva extends CommonObject
 
 		if (! $notrigger)
 		{
-            // Appel des triggers
+            // Start triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('TVA_MODIFY',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // End triggers
     	}
 
         return 1;
@@ -295,12 +295,12 @@ class Tva extends CommonObject
 			return -1;
 		}
 
-        // Appel des triggers
+        // Start triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($this->db);
         $result=$interface->run_triggers('TVA_DELETE',$this,$user,$langs,$conf);
         if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // Fin appel triggers
+        // End triggers
 
 		return 1;
 	}
@@ -330,7 +330,7 @@ class Tva extends CommonObject
 
 
     /**
-     *  Hum la fonction s'appelle 'Solde' elle doit a mon avis calculer le solde de TVA, non ?
+     *  Balance of VAT
      *  
      *	@param	int		$year		Year
      *	@return	double				Amount
@@ -349,7 +349,7 @@ class Tva extends CommonObject
     }
 
     /**
-     * 	Total de la TVA des factures emises par la societe.
+     * 	Total of the VAT from invoices emitted by the society.
      * 
      *	@param	int		$year		Year
      *	@return	double				Amount
@@ -431,7 +431,7 @@ class Tva extends CommonObject
 
 
     /**
-     * 	Total de la TVA reglee aupres de qui de droit
+     * 	Total of the VAT payed
      *
      *	@param	int		$year		Year
      *	@return	double				Amount
@@ -473,7 +473,7 @@ class Tva extends CommonObject
 
 
     /**
-     *  Ajoute un paiement de TVA
+     *  Create in database
      *
 	 *	@param	User	$user		Object user that insert
 	 *	@return	int					<0 if KO, rowid in tva table if OK
@@ -514,7 +514,7 @@ class Tva extends CommonObject
             return -5;
         }
 
-        // Insertion dans la table d'un paiement tva
+        // Insert into llx_tva
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep";
 		$sql.= ", datev";
 		$sql.= ", amount";
@@ -543,21 +543,21 @@ class Tva extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO devrait s'appeler paiementtva
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called paiementtva
 
-            // Appel des triggers
+            // Start triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('TVA_ADDPAYMENT',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // End triggers
 
             if ($this->id > 0)
             {
                 $ok=1;
 				if (! empty($conf->banque->enabled) && ! empty($this->amount))
                 {
-                    // Insertion dans llx_bank
+                    // Insert into llx_bank
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
                     $acc = new Account($this->db);
@@ -613,9 +613,9 @@ class Tva extends CommonObject
     }
 
     /**
-     *  Mise a jour du lien entre le paiement tva et la ligne generee dans llx_bank
+	 *  Update link between payment tva and line generate into llx_bank
      *
-     *  @param	int		$id_bank    Id compte bancaire
+     *  @param	int		$id_bank    Id bank account
 	 *	@return	int					<0 if KO, >0 if OK
      */
 	function update_fk_bank($id_bank)
@@ -634,13 +634,12 @@ class Tva extends CommonObject
 		}
 	}
 
-
 	/**
-	 *	Renvoie nom clicable (avec eventuellement le picto)
+	 *	Send name clicable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-	 *	@param	string	$option			Sur quoi pointe le lien
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option			link option
+	 *	@return	string					Chaine with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
