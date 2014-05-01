@@ -134,7 +134,7 @@ abstract class CommonDocGenerator
     function get_substitutionarray_thirdparty($object,$outputlangs)
     {
         global $conf;
-        
+
         if (empty($object->country) && ! empty($object->country_code))
         {
         	$object->country=$outputlangs->transnoentitiesnoconv("Country".$object->country_code);
@@ -195,14 +195,12 @@ abstract class CommonDocGenerator
         		{
         			$object->array_options['options_'.$key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_'.$key]];
         		}
-        		$array_thirdparty = array_merge ( $array_thirdparty, array (
-						'company_options_' . $key => $object->array_options ['options_' . $key] 
-				) );
+        		$array_thirdparty = array_merge($array_thirdparty, array ('company_options_'.$key => $object->array_options ['options_' . $key]));
 			}
 		}
 		return $array_thirdparty;
 	}
-	
+
 	/**
 	 * Define array with couple subtitution key => subtitution value
 	 *
@@ -213,16 +211,16 @@ abstract class CommonDocGenerator
 	 */
 	function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object') {
 		global $conf;
-		
-		if(empty($object->country) && ! empty($object->country_code)) 
+
+		if(empty($object->country) && ! empty($object->country_code))
 		{
 			$object->country = $outputlangs->transnoentitiesnoconv("Country" . $object->country_code);
 		}
-		if(empty($object->state) && ! empty($object->state_code)) 
+		if(empty($object->state) && ! empty($object->state_code))
 		{
 			$object->state = getState($object->state_code, 0);
 		}
-		
+
 		$array_contact = array (
 		    $array_key . '_fullname' => $object->getFullName($outputlangs, 1),
             $array_key . '_lastname' => $object->lastname,
@@ -249,23 +247,23 @@ abstract class CommonDocGenerator
             $array_key . '_birthday' => $object->birthday,
             $array_key . '_default_lang' => $object->default_lang,
             $array_key . '_note_public' => $object->note_public,
-            $array_key . '_note_private' => $object->note_private 
+            $array_key . '_note_private' => $object->note_private
 		);
-		
+
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options)) {
 			require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extralabels = $extrafields->fetch_name_optionals_label('contact', true);
 			$object->fetch_optionals($object->id, $extralabels);
-			
-			foreach($extrafields->attribute_label as $key => $label) 
+
+			foreach($extrafields->attribute_label as $key => $label)
 			{
-				if ($extrafields->attribute_type[$key] == 'price') 
+				if ($extrafields->attribute_type[$key] == 'price')
 				{
 					$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 				}
-				elseif($extrafields->attribute_type[$key] == 'select') 
+				elseif($extrafields->attribute_type[$key] == 'select')
 				{
 					$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
 				}
@@ -274,7 +272,7 @@ abstract class CommonDocGenerator
 		}
 		return $array_contact;
 	}
-    
+
 
     /**
      * Define array with couple subtitution key => subtitution value
