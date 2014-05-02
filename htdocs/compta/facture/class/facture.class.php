@@ -319,15 +319,14 @@ class Facture extends CommonInvoice
 
 			/*
 			 *  Insert lines of invoices into database
-			*/
-			if (count($this->lines) && is_object($this->lines[0]))
+			 */
+			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array on InvoiceLines (preferred mode)
 			{
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines that are invoice lines objects");
 				foreach ($this->lines as $i => $val)
 				{
-					$newinvoiceline=new FactureLigne($this->db);
 					$newinvoiceline=$this->lines[$i];
 					$newinvoiceline->fk_facture=$this->id;
 					if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
@@ -353,7 +352,7 @@ class Facture extends CommonInvoice
 					}
 				}
 			}
-			else
+			else	// If this->lines is not object of invoice lines
 			{
 				$fk_parent_line = 0;
 
@@ -391,7 +390,8 @@ class Facture extends CommonInvoice
 							$fk_parent_line,
 							$this->lines[$i]->fk_fournprice,
 							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label
+							$this->lines[$i]->label,
+							''
 						);
 						if ($result < 0)
 						{
@@ -799,7 +799,6 @@ class Facture extends CommonInvoice
 		if ($this->type == self::TYPE_DEPOSIT) $label=$langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
 		if ($moretitle) $label.=' - '.$moretitle;
 
-		//$linkstart='<a href="'.$url.'" title="'.dol_escape_htmltag($label).'">';
 		$linkstart='<a href="'.$url.'">';
 		$linkend='</a>';
 
@@ -968,7 +967,7 @@ class Facture extends CommonInvoice
 				$line = new FactureLigne($this->db);
 
 				$line->rowid	        = $objp->rowid;
-				$line->label            = $objp->custom_label;
+				$line->label            = $objp->custom_label;		// deprecated
 				$line->desc             = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
 				$line->product_ref      = $objp->product_ref;		// Ref product
@@ -1979,34 +1978,34 @@ class Facture extends CommonInvoice
 	 *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,produit)
 	 *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	 *
-	 * 		@param    	string		$desc            	Description de la ligne
-	 * 		@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
-	 * 		@param    	double		$qty             	Quantite
-	 * 		@param    	double		$txtva           	Taux de tva force, sinon -1
+	 * 		@param    	string		$desc            	Description of line
+	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
+	 * 		@param    	double		$qty             	Quantity
+	 * 		@param    	double		$txtva           	Force vat rate, -1 for auto
 	 * 		@param		double		$txlocaltax1		Local tax 1 rate
 	 *  	@param		double		$txlocaltax2		Local tax 2 rate
-	 *		@param    	int			$fk_product      	Id du produit/service predefini
-	 * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
-	 * 		@param    	timestamp	$date_start      	Date de debut de validite du service
-	 * 		@param    	timestamp	$date_end        	Date de fin de validite du service
-	 * 		@param    	int			$ventil          	Code de ventilation comptable
+	 *		@param    	int			$fk_product      	Id of predefined product/service
+	 * 		@param    	double		$remise_percent  	Percent of discount on line
+	 * 		@param    	timestamp	$date_start      	Date start of service
+	 * 		@param    	timestamp	$date_end        	Date end of service
+	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
 	 * 		@param    	int			$info_bits			Bits de type de lignes
-	 *		@param    	int			$fk_remise_except	Id remise
-	 *		@param		string		$price_base_type	HT or TTC
-	 * 		@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *		@param    	int			$fk_remise_except	Id discount used
+	 *		@param		string		$price_base_type	'HT' or 'TTC'
+	 * 		@param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
 	 * 		@param		int			$type				Type of line (0=product, 1=service)
 	 *      @param      int			$rang               Position of line
 	 *      @param		int			$special_code		Special code (also used by externals modules!)
 	 *      @param		string		$origin				'order', ...
 	 *      @param		int			$origin_id			Id of origin object
 	 *      @param		int			$fk_parent_line		Id of parent line
-	 * 		@param		int			$fk_fournprice		To calculate margin
-	 * 		@param		int			$pa_ht				Buying price of line
-	 * 		@param		string		$label				Label of the line
+	 * 		@param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
+	 * 		@param		int			$pa_ht				Buying price of line (to calculate margin) or ''
+	 * 		@param		string		$label				Label of the line (deprecated, do not use)
 	 *		@param		array		$array_option		extrafields array
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type= self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -2058,7 +2057,23 @@ class Facture extends CommonInvoice
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'',$localtaxes_type);
+			/*if (is_object($invoiceline) && $invoiceline->total_ttc && $invoiceline->total_ht)	// We already have details calculated
+			{
+				$pu=($price_base_type=='HT'?price2num($invoiceline->total_ttc/$qty,'MU'):price2num($invoiceline->total_ht/$qty,'MU'));
+
+				$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
+				// Now overwrite already calculated fields
+				$tabprice[0] = $array_calculated['total_ht'];
+				$tabprice[1] = $array_calculated['total_vat'];
+				$tabprice[2] = $array_calculated['total_ttc'];
+				$tabprice[9] = $array_calculated['total_localtax1'];
+				$tabprice[10] = $array_calculated['total_localtax2'];
+				$tabprice[3] = $array_calculated['pu_ht'];
+			}
+			else*/
+
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
+
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -2091,7 +2106,7 @@ class Facture extends CommonInvoice
 			// Insert line
 			$this->line=new FactureLigne($this->db);
 			$this->line->fk_facture=$facid;
-			$this->line->label=$label;
+			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
 			$this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
 			$this->line->tva_tx=$txtva;
@@ -2178,7 +2193,7 @@ class Facture extends CommonInvoice
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 * 	@param		int			$fk_fournprice		Id of origin supplier price
 	 * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
-	 * 	@param		string		$label				Label of the line
+	 * 	@param		string		$label				Label of the line (deprecated, do not use)
 	 * 	@param		int			$special_code		Special code (also used by externals modules!)
      *  @param		array		$array_option		extrafields array
 	 *  @return    	int             				< 0 if KO, > 0 if OK
@@ -3270,7 +3285,7 @@ class Facture extends CommonInvoice
 
 				$this->lines[$i]					= new FactureLigne($this->db);
 				$this->lines[$i]->id				= $obj->rowid;
-				$this->lines[$i]->label 			= $obj->custom_label;
+				$this->lines[$i]->label 			= $obj->custom_label;	// deprecated
 				$this->lines[$i]->description 		= $obj->description;
 				$this->lines[$i]->fk_product		= $obj->fk_product;
 				$this->lines[$i]->ref				= $obj->product_ref;
@@ -3337,7 +3352,7 @@ class FactureLigne  extends CommonInvoiceLine
 	var $fk_facture;
 	//! Id parent line
 	var $fk_parent_line;
-	var $label;
+	var $label;				// deprecated
 	//! Description ligne
 	var $desc;
 	var $fk_product;		// Id of predefined product
@@ -3397,7 +3412,6 @@ class FactureLigne  extends CommonInvoiceLine
 	var $product_desc;  	// Description produit
 
 	var $skip_update_total; // Skip update price total for special lines
-
 
 	/**
 	 *  Constructor
