@@ -206,6 +206,7 @@ Limit=Ограничение
 Limits=Граници
 DevelopmentTeam=Екипът
 Logout=Изход
+NoLogoutProcessWithAuthMode=No applicative disconnect feature with authentication mode <b>%s</b>
 Connection=Вход
 Setup=Настройки
 Alert=Предупреждение

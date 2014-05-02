@@ -281,7 +281,7 @@ UnpackPackageInDolibarrRoot=Entpacken des Pakets in den Stammordner der Systemin
 SetupIsReadyForUse=Die Installation ist abgeschlossen und das System zur Verwendung der neuen Komponente bereit.
 NotExistsDirect=Kein alternatives Stammverzeichnis definiert.<br>
 InfDirAlt=Since version 3 it is possible to define an alternative root directory.This allows you to store, same place, plug-ins and custom templates.<br>Just create a directory at the root of Dolibarr (eg: custom).<br>
-InfDirExample=<br>Then declare it in the file conf.php<br> $dolibarr_main_url_root_alt='http://myserver/custom'<br>$dolibarr_main_document_root_alt='/path/of/dolibarr/htdocs/custom'<br>*These lines are commented with "#", to uncomment only remove the character.
+InfDirExample=<br>Danach in der Datei conf.php deklarieren<br> $dolibarr_main_url_root_alt='http://meinserver/custom'<br>$dolibarr_main_document_root_alt='/pfad/zu/dolibarr/htdocs/custom'<br>*Diese Zeilen sind mit "#" auskommentiert, um sie zu aktivieren, einfach das Zeichen entfernen.
 YouCanSubmitFile=Modul wählen:
 CurrentVersion=Aktuelle dolibarr-Version
 CallUpdatePage=Zur Aktualisierung der Daten und Datenbankstrukturen gehen Sie zur Seite %s.
@@ -367,7 +367,7 @@ ExtrafieldRadio=Radio button
 ExtrafieldParamHelpselect=Parameterlisten müssen das Format Schlüssel,Wert haben<br><br> zum Beispiel:<br>1,Wert1<br>2,Wert2<br>3,Wert3<br>...<br><br>Um die Liste in Abhängigkeit zu einer anderen zu haben:<br>1,Wert1|parent_list_code:parent_key<br>2,Wert2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameterlisten müssen das Format Schlüssel,Wert haben<br><br> zum Beispiel:<br>1,Wert1<br>2,Wert2<br>3,Wert3<br>...
 ExtrafieldParamHelpradio=Parameterlisten müssen das Format Schlüssel,Wert haben<br><br> zum Beispiel:<br>1,Wert1<br>2,Wert2<br>3,Wert3<br>...
-ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Verwendete Bibliothek zur PDF-Erzeugung
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -383,10 +383,10 @@ BarcodeInitForThirdparties=Mass barcode init for thirdparties
 BarcodeInitForProductsOrServices=Mass barcode init or reset for products or services
 CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> records on <strong>%s</strong> %s without barcode defined.
 InitEmptyBarCode=Init value for next %s empty records
-EraseAllCurrentBarCode=Erase all current barcode values
-ConfirmEraseAllCurrentBarCode=Are you sure you want to erase all current barcode values ?
-AllBarcodeReset=All barcode values have been removed
-NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
+EraseAllCurrentBarCode=Alle aktuellen Barcode-Werte löschen
+ConfirmEraseAllCurrentBarCode=Möchten Sie wirklich alle aktuellen Barcodes löschen?
+AllBarcodeReset=Alle Barcode-Werte wurden entfernt
+NoBarcodeNumberingTemplateDefined=Im Barcode-Modul wurde kein Numerierungs-Schema aktiviert.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 
 # Modules
@@ -776,14 +776,14 @@ LocalTax1IsUsed=Zweite Steuer nutzen
 LocalTax1IsNotUsed=Zweite Steuer nicht nutzen
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
 LocalTax1IsNotUsedDesc=Do not use other type of tax (other than VAT)
-LocalTax1Management=Second type of tax
+LocalTax1Management=Zweite Steuer-Art
 LocalTax1IsUsedExample=
 LocalTax1IsNotUsedExample=
 LocalTax2IsUsed=Dritte Steuer nutzen
 LocalTax2IsNotUsed=Dritte Steuer nicht nutzen
 LocalTax2IsUsedDesc=Use a third type of tax (other than VAT)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than VAT)
-LocalTax2Management=Third type of tax
+LocalTax2Management=Dritte Steuer-Art
 LocalTax2IsUsedExample=
 LocalTax2IsNotUsedExample=
 LocalTax1ManagementES= RE Management
@@ -996,7 +996,7 @@ ExtraFieldsProject=Ergänzende Attribute (Projekte)
 ExtraFieldsProjectTask=Ergänzende Attribute (Aufgaben)
 ExtraFieldHasWrongValue=Attribut %s einen falschen Wert hat.
 AlphaNumOnlyCharsAndNoSpace=nur alphanumericals Zeichen ohne Leerzeichen
-AlphaNumOnlyLowerCharsAndNoSpace=only alphanumericals and lower case characters without space
+AlphaNumOnlyLowerCharsAndNoSpace=nur Kleinbuchstaben und Zahlen, keine Leerzeichen
 SendingMailSetup=Einrichten von Sendungen per E-Mail
 SendmailOptionNotComplete=Achtung, auf einigen Linux-Systemen, E-Mails von Ihrem E-Mail zu senden, sendmail Ausführung Setup muss conatins Option-ba (Parameter mail.force_extra_parameters in Ihre php.ini-Datei). Wenn einige Empfänger niemals E-Mails erhalten, versuchen, diese Parameter mit PHP mail.force_extra_parameters =-ba) zu bearbeiten.
 PathToDocuments=Dokumentenpfad
@@ -1008,7 +1008,7 @@ TotalNumberOfActivatedModules=Summe aktivierter Module: <b>%s</b>
 YouMustEnableOneModule=Sie müssen mindestens 1 Modul aktivieren
 ClassNotFoundIntoPathWarning=Klasse %s nicht innerhalb PHP-Pfad gefunden
 YesInSummer=Ja im Sommer
-OnlyFollowingModulesAreOpenedToExternalUsers=Note, only following modules are opened to external users (whatever are permission of such users):
+OnlyFollowingModulesAreOpenedToExternalUsers=Bitte beachten: nur die folgenden Module sind für externe Nutzer verfügbar (unabhängig von deren Rechten):
 SuhosinSessionEncrypt=Session storage encrypted by Suhosin
 ConditionIsCurrently=Einstellung ist aktuell %s
 TestNotPossibleWithCurrentBrowsers=Automatische Erkennung nicht möglich
@@ -1017,8 +1017,8 @@ YouDoNotUseBestDriver=Sie verwenden Treiber %s, aber der Treiber %s wird empfohl
 NbOfProductIsLowerThanNoPb=Sie haben nur %s Produkte/Dienstleistungen in der Datenbank. Daher ist keine bestimmte Optimierung erforderlich.
 SearchOptim=Such Optimierung
 YouHaveXProductUseSearchOptim=You have %s product into database. You should add the constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 into Home-Setup-Other, you limit the search to the beginning of strings making possible for database to use index and you should get an immediate response.
-BrowserIsOK=You are using the web browser %s. This browser is ok for security and performance.
-BrowserIsKO=You are using the web browser %s. This browser is known to be a bad choice for security, performance and reliability. We recommand you to use Firefox, Chrome, Opera or Safari.
+BrowserIsOK=Sie benutzen den Webbrowser %s. Dieser ist hinsichtlich Sicherheit und Leistung ok.
+BrowserIsKO=Sie benutzen den Webbrowser %s. Dieser ist bekannt für Sicherheitsprobleme, schlechte Leistung und Zuverlässigkeit. Wir empfehlen Ihnen, Firefox, Chrome, Opera oder Safari zu nutzen.
 XDebugInstalled=XDebug installiert.
 XCacheInstalled=XCache installiert.
 AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink
@@ -1278,10 +1278,12 @@ LDAPDescMembers=Auf dieser Seite definieren Sie die LDAP-Attribute im LDAP-Baum 
 LDAPDescValues=Die Beispielwerte für <b>OpenLDAP</b> verfügen über folgende Muster: <b>core.schema, cosine.schema, inetorgperson.schema</b>. Wenn Sie diese Werte für OpenLDAP verwenden möchten, passen Sie bitte die LDAP-Konfigurationsdateu <b>slapd.conf</b> entsprechend an, damit all diese Muster geladen werden.
 ForANonAnonymousAccess=Für einen authentifizierten Zugang (z.B. für Schreibzugriff)
 PerfDolibarr=Performance setup/optimizing report
-YouMayFindPerfAdviceHere=You will find on this page some checks or advices related to performance.
+YouMayFindPerfAdviceHere=Auf dieser Seite finden Sie einige Überprüfungen oder Hinweise zur Leistung.
 NotInstalled=Nicht installiert, Ihr Server wird dadurch nicht verlangsamt.
 ApplicativeCache=Applicative cache
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=OPCode cache
 NoOPCodeCacheFound=No OPCode cache found. May be you use another OPCode cache than XCache or eAccelerator (good), may be you don't have OPCode cache (very bad).
 HTTPCacheStaticResources=HTTP cache for static resources (css, img, javascript)

@@ -66,11 +66,9 @@ CarrierList=Taşımacı listesi
 SendingMethodCATCH=Müşteri tarafından
 SendingMethodTRANS=Taşıyıcı tarafından
 SendingMethodCOLSUI=Colissimo
-
 # ModelDocument
 DocumentModelSirocco=Teslimat makbuzları için basit belge modeli
 DocumentModelTyphon=Teslimat makbuzları için daha fazla eksiksiz doküman modeli (logo. ..)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER değişmezi tanımlanmamış
 SumOfProductVolumes=Ürün hacimleri toplamı
 SumOfProductWeights=Ürün ağırlıkları toplamı

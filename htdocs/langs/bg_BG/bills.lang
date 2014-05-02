@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50% авансово, 50% при доставка
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=На влоговете в банките
 PaymentTypeShortVIR=На влоговете в банките

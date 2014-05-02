@@ -367,7 +367,7 @@ ExtrafieldRadio=Radio button
 ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Η λίστα παραμέτρων προέρχεται από τον πίνακα<br><br> για παράδειγμα: <br>c_typent:libelle:id::filter<br><br>Για να εξαρτάται από άλλη:<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> το φίλτρο μπορεί να είναι ένα απλό τέστ (πχ. active=1) για την εμφάνιση μόνο μιας τιμής <br> εάν θέλετε να φιλτράρετε με βάση έξτρα πεδία χρησιμοποιήστε  extra.fieldcode=... (όπου field code είναι ο κώδικας του έξτρα πεδίου)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Library used to build PDF
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -381,12 +381,12 @@ ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user speci
 ExternalModule=Εξωτερικό module - Εγκατεστημένο στον φάκελο %s
 BarcodeInitForThirdparties=Όγκος barcode init για Πέλ./Πρόμ.
 BarcodeInitForProductsOrServices=Όγκος barcode init ή επαναφορά για προϊόντα ή υπηρεσίες
-CurrentlyNWithoutBarCode=Currently, you have <strong>%s</strong> records on <strong>%s</strong> %s without barcode defined.
+CurrentlyNWithoutBarCode=Αυτή τη στιγμή, έχετε <strong>%s</strong> καταγραφές σχετικά με <strong>%s</strong> %s ορισμένα  χωρίς barcode.
 InitEmptyBarCode=Init τιμή για τις επόμενες %s άδειες καταχωρήσεις
 EraseAllCurrentBarCode=Διαγραφή όλων των τρεχουσών τιμών barcode
 ConfirmEraseAllCurrentBarCode=Είστε σίγουροι ότι θέλετε να διαγράψετε όλες τις τρέχουσες τιμές barcode;
 AllBarcodeReset=Όλες οι τιμές barcode έχουν αφαιρεθεί
-NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
+NoBarcodeNumberingTemplateDefined=Δεν υπάρχει πρότυπο για barcode αρίθμηση ενεργοποιημένη στο module barcode
 NoRecordWithoutBarcodeDefined=Δεν υπάρχει εγγραφή χωρίς ορισμένη τιμή barcode.
 
 # Modules
@@ -1282,6 +1282,8 @@ YouMayFindPerfAdviceHere=Θα βρείτε σε αυτή τη σελίδα ορ�
 NotInstalled=Δεν έχει εγκατασταθεί, οπότε ο server σας δεν έχει επιβραδυνθεί από αυτό.
 ApplicativeCache=Εφαρμογή Cache
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=OPCode cache
 NoOPCodeCacheFound=No OPCode cache found. May be you use another OPCode cache than XCache or eAccelerator (good), may be you don't have OPCode cache (very bad).
 HTTPCacheStaticResources=HTTP cache for static resources (css, img, javascript)
@@ -1438,7 +1440,7 @@ AccountancyCodeBuy=Purchase account. code
 AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
 PastDelayVCalExport=Do not export event older than
-AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionnary -> Type of agenda events)
+AGENDA_USE_EVENT_TYPE=Χρησιμοποιήστε τα γεγονότα είδη (διαχείριση σε μενού Setup -> dictionnary -> Τύπος γεγονότα της ημερήσιας διάταξης)
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to add an icon after phone numbers. A click on this icon will call a server with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ##### Point Of Sales (CashDesk) #####

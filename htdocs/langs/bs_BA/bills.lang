@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% unaprijed, 50%% na isporuci
 FixAmount=Fiksni iznos
 VarAmount=Varijabilni iznos (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Bankovni avans
 PaymentTypeShortVIR=Bankovni avans

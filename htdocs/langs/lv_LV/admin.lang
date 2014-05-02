@@ -24,7 +24,7 @@ NoSessionFound=Jūsu PHP, šķiet, neļauj uzskaitīt aktīvās sesijas. Directo
 HTMLCharset=Charset par rada HTML lapas
 DBStoringCharset=Datu bāzes rakstzīmju kopas, lai datus uzglabātu
 DBSortingCharset=Datu bāzes rakstzīmju kopas, lai kārtotu datus
-WarningModuleNotActive=Moduļu <b>%s</b> ir jābūt aktivizētam
+WarningModuleNotActive=Modulim <b>%s</b> ir jābūt aktivizētam
 WarningOnlyPermissionOfActivatedModules=Tikai atļaujas, kas saistīti ar aktīviem moduļi tiek parādīts šeit. Jūs varat aktivizēt citus moduļus Home-&gt; Setup-&gt; moduļi lapā.
 DolibarrSetup=Dolibarr instalēšana vai atjaunināšana
 DolibarrUser=Dolibarr lietotājs
@@ -61,7 +61,7 @@ UsePopupCalendar=Izmantot uznirstošo logu datumu ievadei
 UsePreviewTabs=Izmantot priekšskatījuma cilnes
 ShowPreview=Rādīt priekšskatījumu
 PreviewNotAvailable=Priekšskatījums nav pieejams
-ThemeCurrentlyActive=Tēma pašlaik ir aktīvs
+ThemeCurrentlyActive=aktīvā tēma
 CurrentTimeZone=Laika josla PHP (servera)
 Space=Telpa
 Table=Tabula
@@ -111,7 +111,7 @@ LanguageBrowserParameter=Parametrs %s
 LocalisationDolibarrParameters=Lokalizācijas parametri
 ClientTZ=Client Time Zone (user)
 ClientHour=Client time (user)
-OSTZ=Servre OS Time Zone
+OSTZ=Servera laika zona
 PHPTZ=PHP servera Laika zona
 PHPServerOffsetWithGreenwich=PHP servera kompensēt platums Greenwich (sekundes)
 ClientOffsetWithGreenwich=Klienta / Browser kompensēt platums Greenwich (sekundes)
@@ -159,7 +159,7 @@ YouCanDownloadBackupFile=Radītais failus tagad var lejupielādēt
 NoBackupFileAvailable=Nav rezerves kopiju faili pieejami
 ExportMethod=Eksportēšanas veids
 ImportMethod=Importēšanas veids
-ToBuildBackupFileClickHere=Lai izveidotu rezerves kopijas failu, noklikšķiniet <a href="%s">šeit</a> .
+ToBuildBackupFileClickHere=Lai izveidotu rezerves kopiju noklikšķiniet <a href="%s">šeit</a> .
 ImportMySqlDesc=Importēt dublējuma failu, jums ir izmantot mysql komandu no komandrindas:
 ImportPostgreSqlDesc=Importēt dublējuma failu, jums ir jāizmanto pg_restore komandu no komandrindas:
 ImportMySqlCommand=%s %s &lt;mybackupfile.sql
@@ -367,7 +367,7 @@ ExtrafieldRadio=Radio poga
 ExtrafieldParamHelpselect=Parametri sarakstā jābūt, piemēram, atslēgas, vērtības <br><br> par exemple: <br> 1, vērtība1 <br> 2, vērtība2 <br> 3, value3 <br> ... <br><br> Lai iegūtu sarakstu atkarībā no citu: <br> 1, vērtība1 | parent_list_code: parent_key <br> 2, vērtība2 | parent_list_code: parent_key
 ExtrafieldParamHelpcheckbox=Parametri sarakstā jābūt, piemēram, atslēgas, vērtības <br><br> par exemple: <br> 1, vērtība1 <br> 2, vērtība2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpradio=Parametri sarakstā jābūt, piemēram, atslēgas, vērtības <br><br> par exemple: <br> 1, vērtība1 <br> 2, vērtība2 <br> 3, value3 <br> ...
-ExtrafieldParamHelpsellist=Parametri saraksts nāk no galda <br><br> par exemple: <br> c_typent: Libelle: id :: filtrs <br><br> Lai iegūtu sarakstu atkarībā no citu: <br> c_typent: Libelle: id: parent_list_code | parent_column: filtrs <br> filtrs var būt vienkāršs tests (piemēram, aktīva = 1), lai parādītu tikai aktīvu vērtības <br> Ja jūs vēlaties filtrēt extrafields izmantot syntaxt extra.fieldcode = ... (Ja lauka kods ir kods extrafield)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Bibliotēka, lai izveidotu PDF
 WarningUsingFPDF=Uzmanību: Jūsu <b>conf.php</b> satur direktīvu <b>dolibarr_pdf_force_fpdf = 1.</b> Tas nozīmē, ka jūs izmantojat FPDF bibliotēku, lai radītu PDF failus. Šī bibliotēka ir vecs un neatbalsta daudz funkcijām (Unicode, attēlu pārredzamība, kirilicas, arābu un Āzijas valodās, ...), tāpēc var rasties kļūdas laikā PDF paaudzes. <br> Lai atrisinātu šo problēmu, un ir pilnībā atbalsta PDF paaudzes, lūdzu, lejupielādējiet <a href="http://www.tcpdf.org/" target="_blank">TCPDF bibliotēka</a> , tad komentēt vai noņemt līnijas <b>$ dolibarr_pdf_force_fpdf = 1,</b> un pievienojiet vietā <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir'</b>
 LocalTaxDesc=Dažas valstis piemēro 2 vai 3 nodokļus par katru PVN rēķinu rindā. Ja tas ir gadījums, izvēlieties veidu otrajā un trešajā nodokli un tā likmi. Iespējamais veids ir: <br> 1: vietējais nodoklis attiecas uz produktiem un pakalpojumiem, bez PVN (PVN netiek piemērots vietējiem nodokļiem) <br> 2: vietējais nodoklis attiecas uz produktiem un pakalpojumiem, bez PVN (PVN aprēķina summas + localtax) <br> 3: vietējais nodoklis attiecas uz produktiem, bez PVN (PVN netiek piemērots vietējiem nodokļiem) <br> 4: vietējais nodoklis attiecas uz produktiem, bez PVN (PVN aprēķina summas + localtax) <br> 5: vietējais nodoklis attiecas uz pakalpojumiem, bez PVN (PVN netiek piemērots vietējiem nodokļiem) <br> 6: vietējais nodoklis attiecas uz pakalpojumiem, bez PVN (PVN aprēķina summas + localtax)
@@ -943,7 +943,7 @@ MAIN_MAX_DECIMALS_TOT=Max decimāldaļas attiecībā uz kopējo cenu
 MAIN_MAX_DECIMALS_SHOWN=Max aiz komata par cenām parādīta ekrānā (Add <b>...</b> pēc šo numuru, ja jūs vēlaties redzēt <b>...</b> kad numurs tiek apcirsti, kad redzams uz ekrāna)
 MAIN_DISABLE_PDF_COMPRESSION=Izmantot PDF saspiešanu izveidotajiem PDF failiem.
 MAIN_ROUNDING_RULE_TOT= Izmērs noapaļošanas diapazons (par retajām valstīm, kur noapaļošana tiek darīts uz kaut ko citu par 10 bāzes)
-UnitPriceOfProduct=Neto vienības cena produkta
+UnitPriceOfProduct=Neto vienības produkta cena
 TotalPriceAfterRounding=Kopējā cena (neto / pvn / ar nodokli) pēc noapaļošanas
 ParameterActiveForNextInputOnly=Parametrs spēkā nākamās ievades tikai
 NoEventOrNoAuditSetup=Nav drošības pasākums ir ierakstīta vēl. Tas var būt normāls, ja audits nav iespējots uz &quot;Setup - drošība - revīzijas&quot; lapā.
@@ -1282,6 +1282,8 @@ YouMayFindPerfAdviceHere=Jūs atradīsiet šajā lapā dažas pārbaudes, vai pa
 NotInstalled=Nav uzstādīta, lai jūsu serveris nav palēnināt ar šo.
 ApplicativeCache=Applicative kešatmiņa
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=Opcode cache
 NoOPCodeCacheFound=Nav opcode cache atrasts. Var būt jūs izmantojat citu opcode cache nekā XCache vai eAccelerator (labi), var būt jums nav opcode cache (ļoti slikti).
 HTTPCacheStaticResources=HTTP kešatmiņu statisko resursu (CSS, img, javascript)

@@ -8,7 +8,7 @@ VersionExperimental=Experimental
 VersionDevelopment=Desarrollo
 VersionUnknown=Desconocida
 VersionRecommanded=Recomendada
-SessionId=Sesión ID
+SessionId=ID sesión
 SessionSaveHandler=Modalidad de salvaguardado de sesiones
 SessionSavePath=Localización salvaguardado de sesiones
 PurgeSessions=Purga de sesiones
@@ -367,7 +367,7 @@ ExtrafieldRadio=Botón de selección excluyente
 ExtrafieldParamHelpselect=El listado tiene que ser en forma clave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
 ExtrafieldParamHelpcheckbox=El listado tiene que ser en forma clave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
 ExtrafieldParamHelpradio=El listado tiene que ser en forma clave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
-ExtrafieldParamHelpsellist=El listado viene de una tabla<br><br> por ejemplo : <br>c_typent:libelle:id::filter<br><br>Con el fin de crear el listado en función de otra :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> el filtro puede ser un simple test (ej. active=1) para mostrar solamente los valores activos <br> si desea filtrar por extrafields use la sintaxis extra.fieldcode=... (donde fielcode es el código del extrafield)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Librería usada para la creación de archivos PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
 LocalTaxDesc=Algunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
@@ -1282,6 +1282,8 @@ YouMayFindPerfAdviceHere=En esta página encontrará varias pruebas y consejos r
 NotInstalled=No instalado,  por lo que su servidor no baja de rendimiento con esto.
 ApplicativeCache=Aplicación caché
 MemcachedNotAvailable=No se ha encontrado una aplicación de cache. Puede mejorar el rendimiento instalando un cache server Memcached y un módulo capaz de usar ese servidor de cache.<br>Más información aquí <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Tenga en cuenta que algunos hostings no ofrecen servidores de cache.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=OPCode caché
 NoOPCodeCacheFound=No se ha encontrado ningún OPCode caché. Puede ser que esté usando otro OPCode como XCache o eAccelerator (mejor), o puede que no tenga OPCode caché (peor).
 HTTPCacheStaticResources=Caché HTTP para estadísticas de recursos (css, img, javascript)

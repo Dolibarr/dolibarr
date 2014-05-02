@@ -18,6 +18,7 @@ NewCompany=Yeni firma (aday, müşteri, tedarikçi)
 NewThirdParty=Yeni üçüncü parti (aday, müşteri, tedarikçi)
 NewSocGroup=Yeni firma grubu
 NewPrivateIndividual=Yeni özel şahıs (aday, müşteri, tedarikçi)
+CreateDolibarrThirdPartySupplier=Create a third party (supplier)
 ProspectionArea=Aday alanı
 SocGroup=Firmalar grubu
 IdThirdParty=Üçüncü parti kimliği

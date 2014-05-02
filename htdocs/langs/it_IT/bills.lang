@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% all'ordine, 50%% alla consegna*
 FixAmount=Correggi importo
 VarAmount=Importo variabile (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Bonifico bancario
 PaymentTypeShortVIR=Bon. banc.

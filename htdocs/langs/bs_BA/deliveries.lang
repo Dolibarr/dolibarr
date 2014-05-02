@@ -23,4 +23,4 @@ GoodStatusDeclaration=Primio sam robu navedenu gore u dobrom stanju.
 Deliverer=Dostavljač:
 Sender=Pošiljalac
 Recipient=Primalac
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=There's not enough stock

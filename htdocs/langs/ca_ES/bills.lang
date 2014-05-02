@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50/50
 PaymentConditionPT_5050=Pagament 50%% per avançat, 50%% al lliurament
 FixAmount=Import fixe
 VarAmount=Import variable (%% total)
-
 # PaymentType
 PaymentTypeVIR=Transferència bancària
 PaymentTypeShortVIR=Transferència

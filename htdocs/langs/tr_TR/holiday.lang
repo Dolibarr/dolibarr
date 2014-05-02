@@ -34,7 +34,6 @@ ReturnCP=Önceki sayfaya dön
 ErrorUserViewCP=Tatil isteklerini okumaya yetkili değilsiniz.
 InfosCP=Tatil isteği bilgileri
 InfosWorkflowCP=Bilgi işakışı
-DateCreateCP=Oluşturma tarihi
 RequestByCP=İsteyen
 TitreRequestCP=Tatil tablosu
 NbUseDaysCP=Harcanan tatil günleri
@@ -130,7 +129,6 @@ ErrorMailNotSend=Eposta gönderilirken bir hata oluştu:
 NoCPforMonth=Bu ay hiç izin yok.
 nbJours=Gün sayısı
 TitleAdminCP=Tatillerin Yapılandırması
-
 #Messages
 Hello=Merhaba
 HolidaysToValidate=Tatil doğrula
@@ -143,7 +141,6 @@ HolidaysRefused=Tatil reddedildi
 HolidaysRefusedBody=%s tarihinden %s tarihine kadar olan tatil isteğiniz aşağıdaki nedenden dolayı reddeilmiştir :
 HolidaysCanceled=İptal edilen tatiller
 HolidaysCanceledBody=%s tarihinden %s tarihine kadar olan tatil isteğiniz iptal edilmiştir.
-
 Permission20001=Tatilleri oku/oluştur/değiştir
 Permission20002=Bütün tatil isteklerini oku/değiştir
 Permission20003=Tatil isteklerini sil

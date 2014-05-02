@@ -1,10 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
 About = About
 CronAbout = About Cron
 CronAboutPage = Cron about page
-
 # Right
 Permission23101 = Read Scheduled task
 Permission23102 = Create/update Scheduled task

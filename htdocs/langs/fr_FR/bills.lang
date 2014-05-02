@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50/50
 PaymentConditionPT_5050=Règlement 50%% d'avance, 50%% à la livraison
 FixAmount=Montant Fixe
 VarAmount=Montant variable (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Virement bancaire
 PaymentTypeShortVIR=Virement

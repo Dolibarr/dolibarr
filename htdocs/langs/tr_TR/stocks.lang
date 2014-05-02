@@ -117,3 +117,8 @@ SelectProductInAndOutWareHouse=Bir ürün, bir miktar, bir kaynak depo ve bir he
 RecordMovement=Kayıt aktarımı
 ReceivingForSameOrder=Bu sipariş için alımlar
 StockMovementRecorded=Stok hareketleri kaydedildi
+RuleForStockAvailability=Rules on stock requirements
+StockMustBeEnoughForInvoice=Stock level must be enough to add product/service into invoice
+StockMustBeEnoughForOrder=Stock level must be enough to add product/service into order
+StockMustBeEnoughForShipment= Stock level must be enough to add product/service into shipment
+

@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
 ErrorBadFormat=Hatalı biçim!
 ErrorPaymentDateLowerThanInvoiceDate=Ödeme tarihi (%s) fatura tarihinden (%s) önce bu faturada %s olamaz.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Hata, bu üye henüz bir üçüncü partiye bağlanmamıştır. Üyeyi varolan bir üçüncü partiye bağlayın ya da faturayla abonelik oluşturmadan önce yeni bir üçüncü parti oluşturun.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış
 WarningSafeModeOnCheckExecDir=Uyarı, PHP seçeneği <b>güvenli_mode</b> açıktır, böylece komut php parametresi <b>güvenli_mode_exec_dir</b> tarafından bildirilen bir dizine saklanabilir.

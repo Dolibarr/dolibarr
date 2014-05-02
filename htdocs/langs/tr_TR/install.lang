@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Gelişmiş parametreleri (uzman modu) göstermek/dü
 
 #########
 # upgrade
-#########
 MigrationFixData=Standart dışı veri onarımı
 MigrationOrder=Müşteri siparişleri için veri taşıma
 MigrationSupplierOrder=Tedarikçi siparişleri için veri taşıma

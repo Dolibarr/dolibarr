@@ -253,7 +253,6 @@ CivilityMR=Г-н
 CivilityMLE=Г-ца
 CivilityMTRE=Майстор
 CivilityDR=Доктор
-
 ##### Currencies #####
 Currencyeuros=Евро
 CurrencyAUD=АС долара
@@ -290,10 +289,8 @@ CurrencyXOF=CFA франкове BCEAO
 CurrencySingXOF=CFA франк BCEAO
 CurrencyXPF=ОПОР франкове
 CurrencySingXPF=CFP франк
-
 CurrencyCentSingEUR=цент
 CurrencyThousandthSingTND=хиляден
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Интернет
 DemandReasonTypeSRC_CAMP_MAIL=Пощенска кампания
@@ -306,7 +303,6 @@ DemandReasonTypeSRC_WOM=Дума на устата
 DemandReasonTypeSRC_PARTNER=Партньор
 DemandReasonTypeSRC_EMPLOYEE=Служителите
 DemandReasonTypeSRC_SPONSORING=Спонсорство
-
 #### Paper formats ####
 PaperFormatEU4A0=Формат 4A0
 PaperFormatEU2A0=Формат 2A0
@@ -317,13 +313,13 @@ PaperFormatEUA3=Формат A3
 PaperFormatEUA4=Формат A4
 PaperFormatEUA5=Формат A5
 PaperFormatEUA6=Формат A6
-# PaperFormatUSLETTER=Format Letter US
-# PaperFormatUSLEGAL=Format Legal US
-# PaperFormatUSEXECUTIVE=Format Executive US
-# PaperFormatUSLEDGER=Format Ledger/Tabloid
-# PaperFormatCAP1=Format P1 Canada
-# PaperFormatCAP2=Format P2 Canada
-# PaperFormatCAP3=Format P3 Canada
-# PaperFormatCAP4=Format P4 Canada
-# PaperFormatCAP5=Format P5 Canada
-# PaperFormatCAP6=Format P6 Canada
+PaperFormatUSLETTER=Format Letter US
+PaperFormatUSLEGAL=Format Legal US
+PaperFormatUSEXECUTIVE=Format Executive US
+PaperFormatUSLEDGER=Format Ledger/Tabloid
+PaperFormatCAP1=Format P1 Canada
+PaperFormatCAP2=Format P2 Canada
+PaperFormatCAP3=Format P3 Canada
+PaperFormatCAP4=Format P4 Canada
+PaperFormatCAP5=Format P5 Canada
+PaperFormatCAP6=Format P6 Canada
