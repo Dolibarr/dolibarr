@@ -133,7 +133,6 @@ CashBudget=Presupuesto de tesorería
 PlannedTransactions=Transacciones previstas
 Graph=Gráficos
 ExportDataset_banque_1=Transacción bancaria y extracto
-ExportDataset_banque_2=Transacción bancaria y extracto
 TransactionOnTheOtherAccount=Transacción sobre la otra cuenta
 TransactionWithOtherAccount=Transferencia de cuenta
 PaymentNumberUpdateSucceeded=Numero de pago modificado
