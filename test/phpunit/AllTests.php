@@ -156,6 +156,8 @@ class AllTests
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
+        require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+        $suite->addTestSuite('WebservicesProductsTest');
         require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
         $suite->addTestSuite('WebservicesInvoicesTest');
         require_once dirname(__FILE__).'/WebservicesOrdersTest.php';

@@ -131,7 +131,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-    	$WS_METHOD  = '';
+    	$WS_METHOD  = 'getInvoice';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
@@ -153,24 +153,29 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	if ($WS_METHOD)
-    	{
-    		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__." call method ".$WS_METHOD."\n";
+    	$parameters = array('authentication'=>$authentication,'id'=>1);
+    	print __METHOD__." call method ".$WS_METHOD."\n";
+    	try {
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-    		if (! $result)
-    		{
-    			//var_dump($soapclient);
-    			print $soapclient->error_str;
-    			print "<br>\n\n";
-    			print $soapclient->request;
-    			print "<br>\n\n";
-    			print $soapclient->response;
-    		}
-
-    		print __METHOD__." result=".$result."\n";
-	    	$this->assertEquals('OK',$result['result']['result_code']);
     	}
+    	catch(SoapFault $exception)
+    	{
+    		echo $exception;
+    		$result=0;
+    	}
+    	if (! $result || ! empty($result['faultstring']))
+    	{
+    		//var_dump($soapclient);
+    		print $soapclient->error_str;
+    		print "\n<br>\n";
+    		print $soapclient->request;
+    		print "\n<br>\n";
+    		print $soapclient->response;
+    		print "\n";
+    	}
+
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('OK',$result['result']['result_code']);
 
     	return $result;
     }

@@ -217,6 +217,7 @@ class Product extends CommonObject
 		// Clean parameters
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
+		if (empty($this->type)) $this->type=0;
 		$this->price_ttc=price2num($this->price_ttc);
 		$this->price=price2num($this->price);
 		$this->price_min_ttc=price2num($this->price_min_ttc);
@@ -267,7 +268,7 @@ class Product extends CommonObject
 		// Check parameters
 		if (empty($this->libelle))
 		{
-			$this->error='ErrorWrongParameters';
+			$this->error='ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
 		if (empty($this->ref))
@@ -1260,7 +1261,7 @@ class Product extends CommonObject
 	 *  @param	int		$id      	Id of product/service to load
 	 *  @param  string	$ref     	Ref of product/service to load
 	 *  @param	string	$ref_ext	Ref ext of product/service to load
-	 *  @return int     			<0 if KO, >0 if OK
+	 *  @return int     			<0 if KO, 0 if not found, >0 if OK
 	 */
 	function fetch($id='',$ref='',$ref_ext='')
 	{

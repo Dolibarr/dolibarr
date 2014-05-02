@@ -14,6 +14,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Path to WSDL is: http://localhost/dolibarr/webservices/server_productorservice.php?wsdl
  */
 
 /**
@@ -187,18 +189,6 @@ $server->wsdl->addComplexType(
     )
 );
 
-/*$server->wsdl->addComplexType(
-    'ProductsArray',
-    'complexType',
-    'array',
-    '',
-    'SOAP-ENC:Array',
-    array(),
-    array(
-        array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'tns:product[]')
-    ),
-    'tns:product'
-);*/
 $server->wsdl->addComplexType(
     'ProductsArray2',
     'complexType',
@@ -265,6 +255,20 @@ $server->register(
     $styledoc,
     $styleuse,
     'WS to update a product or service'
+);
+
+// Register WSDL
+$server->register(
+    'deleteProductOrService',
+    // Entry values
+    array('authentication'=>'tns:authentication','listofid'=>'xsd:string'),
+    // Exit values
+    array('result'=>'tns:result','nbdeleted'=>'xsd:int'),
+    $ns,
+    $ns.'#deleteProductOrService',
+    $styledoc,
+    $styleuse,
+    'WS to delete a product or service'
 );
 
 // Register WSDL
@@ -412,7 +416,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
     {
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
     }
-
+	//var_dump($objectresp);exit;
     return $objectresp;
 }
 
@@ -527,7 +531,7 @@ function createProductOrService($authentication,$product)
 
 
 /**
- * Update an invoice
+ * Update a product or service
  *
  * @param	array		$authentication		Array of authentication information
  * @param	Product		$product			Product
@@ -631,6 +635,103 @@ function updateProductOrService($authentication,$product)
     if ($error)
     {
         $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
+}
+
+
+/**
+ * Delete a product or service
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	string		$listofidstring		List of id with comma
+ * @return	array							Array result
+ */
+function deleteProductOrService($authentication,$listofidstring)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: deleteProductOrService login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+
+	// User must be defined to user authenticated
+    global $user;
+    $user=$fuser;
+
+    $listofid=explode(',',trim($listofidstring));
+    $listofiddeleted=array();
+
+    // Check parameters
+    if (count($listofid) == 0 || empty($listofid[0]))
+    {
+        $error++; $errorcode='KO'; $errorlabel="List of Id of products or services to delete are required.";
+    }
+
+    if (! $error)
+    {
+    	$firsterror='';
+
+		$db->begin();
+
+    	foreach($listofid as $key => $id)
+		{
+	        $newobject=new Product($db);
+	        $result=$newobject->fetch($id);
+
+	        if ($result == 0)
+	        {
+	        	$error++;
+		        $firsterror='Product or service with id '.$id.' not found';
+		        break;
+	        }
+	        else
+			{
+		        $result=$newobject->delete();
+		        if ($result <= 0)
+		        {
+		            $error++;
+		            $firsterror=$newobject->error;
+		            break;
+		        }
+
+		        $listofiddeleted[]=$id;
+			}
+		}
+
+	    if (! $error)
+	    {
+	        $db->commit();
+            //$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'listofid'=>$listofiddeleted);
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'nbdeleted'=>count($listofiddeleted));
+	    }
+	    else
+	    {
+	    	$db->rollback();
+	        $error++;
+	        $errorcode='KO';
+	        $errorlabel=$firsterror;
+		}
+    }
+
+    if ($error)
+    {
+        //$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'listofid'=>$listofiddeleted);
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel), 'nbdeleted'=>0);
+    }
+    else if (count($listofiddeleted) == 0)
+    {
+   		//$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'listofid'=>$listofiddeleted);
+   		$objectresp=array('result'=>array('result_code'=>'NOT_FOUND', 'result_label'=>'No product or service with id '.join(',',$listofid).' found'), 'nbdeleted'=>0);
     }
 
     return $objectresp;
