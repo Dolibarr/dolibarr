@@ -2887,7 +2887,7 @@ class Societe extends CommonObject
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function set_OutstandingBill ($user)
+	function set_OutstandingBill (User $user)
 	{
 		if ($this->id)
 		{
