@@ -451,7 +451,7 @@ interface Database
 	/**
 	 *    Renvoie la ligne courante (comme un objet) pour le curseur resultset
 	 *
-	 * @param    Resultset $resultset Curseur de la requete voulue
+	 * @param    resource $resultset Curseur de la requete voulue
 	 * @return    Object                    Object result line or false if KO or end of cursor
 	 */
 	function fetch_object($resultset);
