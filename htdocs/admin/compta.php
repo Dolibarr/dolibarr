@@ -59,12 +59,15 @@ if ($action == 'update')
 {
     $error = 0;
 
-    $compta_mode = GETPOST('compta_mode','alpha');
-
-    if (in_array($compta_mode, array(
+    $compta_modes = array(
         'RECETTES-DEPENSES',
         'CREANCES-DETTES'
-    ))) {
+    );
+
+    $compta_mode = GETPOST('compta_mode','alpha');
+
+
+    if (in_array($compta_mode,$compta_modes)) {
 
         if (!dolibarr_set_const($db, 'COMPTA_MODE', $compta_mode, 'chaine', 0, '', $conf->entity)) {
             $error++;
