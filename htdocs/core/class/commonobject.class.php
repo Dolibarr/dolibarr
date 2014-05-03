@@ -590,7 +590,7 @@ abstract class CommonObject
     }
 
     /**
-     *    	Load the third party of object from id $this->socid into this->thirdpary
+     *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdpary
      *
      *		@return		int					<0 if KO, >0 if OK
      */
@@ -598,10 +598,10 @@ abstract class CommonObject
     {
         global $conf;
 
-        if (empty($this->socid)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc)) return 0;
 
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch($this->socid);
+        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:$this->fk_soc);
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 
