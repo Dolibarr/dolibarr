@@ -3,7 +3,6 @@
 -- when current version is 2.6.0 or higher. 
 --
 
-
 -- Requests to clean corrupted database
 
 -- delete foreign key that should never exists
@@ -100,6 +99,10 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 
 -- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid;
 -- VPGSQL8.2 DELETE FROM llx_boxes_def as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_boxes_def GROUP BY file, entity, note);
+
+-- We delete old entries into menu for module margin (pb with margin and margins)
+-- VMYSQL DELETE from llx_menu where module = 'margin' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
+-- VMYSQL DELETE from llx_menu where module = 'margins' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
 
 
 -- Requests to clean old tables or fields

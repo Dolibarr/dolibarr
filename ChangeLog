@@ -9,6 +9,8 @@ Fix: [ bug #1352 ] Removing a shipping does not remove the delivery.
 Fix: Option MAIN_INVERT_SENDER_RECIPIENT broken with typhon template.
 Fix: Can disable features with PHPEXCEL (no DLSF compatible).
 Fix: Can disable features with CKEDITOR. 
+Fix: Pb of records not correctly cleaned when module marge is
+     uninstalled (conflict between 'margin' and 'margins').
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
