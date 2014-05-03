@@ -191,7 +191,8 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
     /**
      * testWSProductsGetProductOrService
      *
-     * @return int
+     * @param	int		$id		Id of product or service
+     * @return 	int				Id of product or service
      *
      * @depends	testWSProductsCreateProductOrService
      */
@@ -256,7 +257,8 @@ class WebservicesProductsTest extends PHPUnit_Framework_TestCase
     /**
      * testWSProductsDeleteProductOrService
      *
-     * @return int
+     * @param	int		$id		Id of product or service
+     * @return 	int				0
      *
      * @depends	testWSProductsGetProductOrService
      */
