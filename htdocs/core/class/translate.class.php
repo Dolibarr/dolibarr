@@ -643,7 +643,7 @@ class Translate
 	 *      Search into translation array, then into cache, then if still not found, search into database.
 	 *      Store key-label found into cache variable $this->cache_labels to save SQL requests to get labels.
 	 *
-	 * 		@param	DoliBD	$db				Database handler
+	 * 		@param	DoliDB	$db				Database handler
 	 * 		@param	string	$key			Translation key to get label (key in language file)
 	 * 		@param	string	$tablename		Table name without prefix
 	 * 		@param	string	$fieldkey		Field for key
