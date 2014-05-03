@@ -38,7 +38,7 @@ interface Database
 	/**
 	 *    Return datas as an array
 	 *
-	 * @param    Resultset $resultset Resultset of request
+	 * @param    resource $resultset Resultset of request
 	 * @return    array                    Array
 	 */
 	function fetch_row($resultset);
@@ -98,7 +98,7 @@ interface Database
 	/**
 	 *    Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
-	 * @param    resultset $resultset Curseur de la requete voulue
+	 * @param    resource $resultset Curseur de la requete voulue
 	 * @return int            Nombre de lignes
 	 * @see    num_rows
 	 */
@@ -154,7 +154,7 @@ interface Database
 	/**
 	 *    Return datas as an array
 	 *
-	 * @param    Resultset $resultset Resultset of request
+	 * @param    resource $resultset Resultset of request
 	 * @return    array                    Array
 	 */
 	function fetch_array($resultset);
@@ -257,7 +257,7 @@ interface Database
 	/**
 	 *    Return number of lines for result of a SELECT
 	 *
-	 * @param    Resultset $resultset Resulset of requests
+	 * @param    resource $resultset Resulset of requests
 	 * @return int                        Nb of lines
 	 * @see    affected_rows
 	 */
@@ -421,7 +421,7 @@ interface Database
 	/**
 	 *    Free last resultset used.
 	 *
-	 * @param  resultset $resultset Curseur de la requete voulue
+	 * @param  resource $resultset Curseur de la requete voulue
 	 * @return    void
 	 */
 	function free($resultset = 0);
