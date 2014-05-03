@@ -2537,8 +2537,12 @@ class Societe extends CommonObject
     	$this->address=empty($conf->global->MAIN_INFO_SOCIETE_ADDRESS)?'':$conf->global->MAIN_INFO_SOCIETE_ADDRESS;
     	$this->zip=empty($conf->global->MAIN_INFO_SOCIETE_ZIP)?'':$conf->global->MAIN_INFO_SOCIETE_ZIP;
     	$this->town=empty($conf->global->MAIN_INFO_SOCIETE_TOWN)?'':$conf->global->MAIN_INFO_SOCIETE_TOWN;
-    	$this->state_id=empty($conf->global->MAIN_INFO_SOCIETE_STATE)?'':$conf->global->MAIN_INFO_SOCIETE_STATE;
-        $this->state = getState($this->state_id);
+
+        if (!empty($conf->global->MAIN_INFO_SOCIETE_STATE)) {
+            $this->state_id= $conf->global->MAIN_INFO_SOCIETE_STATE;
+            $this->state = getState($this->state_id);
+        }
+
     	$this->note_private=empty($conf->global->MAIN_INFO_SOCIETE_NOTE)?'':$conf->global->MAIN_INFO_SOCIETE_NOTE;
 
     	$this->nom=$this->name; 									// deprecated
