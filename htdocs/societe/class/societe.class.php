@@ -42,11 +42,20 @@ class Societe extends CommonObject
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
     protected $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");    // To test if we can delete object
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    protected $ismultientitymanaged = 1;
 
     var $id;
     var $name;
-    var $nom;      // TODO obsolete
+
+    /**
+     * @deprecated Use $name instead
+     */
+    var $nom;
     var $firstname;
     var $lastname;
     var $particulier;
@@ -54,15 +63,31 @@ class Societe extends CommonObject
     var $address;
     var $zip;
     var $town;
-    var $status;   // 0=activity ceased, 1= in activity
+    /**
+     * 0=activity ceased, 1= in activity
+     * @var int
+     */
+    var $status;
 
-    var $state_id;		// Id of department
+    /**
+     * Id of department
+     */
+    var $state_id;
     var $state_code;
     var $state;
+    /**
+     * @deprecated Use state_code instead
+     */
     var $departement_code;   // deprecated
-    var $departement;        // deprecated
+    /**
+     * @deprecated Use state instead
+     */
+    var $departement;
 
-    var $pays;	    // deprecated
+    /**
+     * @deprecated Use country instead
+     */
+    var $pays;
     var $country_id;
     var $country_code;
     var $country;
@@ -111,16 +136,31 @@ class Societe extends CommonObject
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
 
-    var $client;					// 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
-    var $prospect;					// 0=no prospect, 1=prospect
-    var $fournisseur;				// 0=no supplier, 1=supplier
+    /**
+     * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
+     * @var int
+     */
+    var $client;
+    /**
+     * 0=no prospect, 1=prospect
+     * @var int
+     */
+    var $prospect;
+    /**
+     * 0=no supplier, 1=supplier
+     * @var int
+     */
+    var $fournisseur;
 
     var $code_client;
     var $code_fournisseur;
     var $code_compta;
     var $code_compta_fournisseur;
 
-    var $note; //TODO deprecated
+    /**
+     * @deprecated Note is split in public and private notes
+     */
+    var $note;
     var $note_private;
     var $note_public;
     //! code statut prospect
@@ -133,7 +173,10 @@ class Societe extends CommonObject
     var $datec;
     var $date_update;
 
-    var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+    /**
+     * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+     */
+    var $commercial_id;
     var $parent;
     var $default_lang;
 
@@ -146,8 +189,10 @@ class Societe extends CommonObject
 
     var $array_options;
 
-    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
-
+    /**
+     * To contains a clone of this when we need to save old properties of object
+     */
+    var $oldcopy;
 
     /**
      *    Constructor
@@ -304,7 +349,7 @@ class Societe extends CommonObject
      * @param 	User	$user		Object user
      * @return 	int					<0 if KO, >0 if OK
      */
-    function create_individual($user)
+    function create_individual(User $user)
     {
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact=new Contact($this->db);
@@ -1199,7 +1244,7 @@ class Societe extends CommonObject
      *  @param  User	$user		Utilisateur qui definie la remise
      *	@return	int					<0 if KO, >0 if OK
      */
-    function set_remise_client($remise, $note, $user)
+    function set_remise_client($remise, $note, User $user)
     {
         global $langs;
 
@@ -1261,7 +1306,7 @@ class Societe extends CommonObject
      *      @param  float	$tva_tx     VAT rate
      *		@return	int					<0 if KO, id of discount record if OK
      */
-    function set_remise_except($remise, $user, $desc, $tva_tx=0)
+    function set_remise_except($remise, User $user, $desc, $tva_tx=0)
     {
         global $langs;
 
@@ -1337,7 +1382,7 @@ class Societe extends CommonObject
      *  @param	User	$user		Object user
      *  @return array       		Array of sales representatives of third party
      */
-    function getSalesRepresentatives($user='')
+    function getSalesRepresentatives(User $user)
     {
         global $conf;
 
@@ -1376,7 +1421,7 @@ class Societe extends CommonObject
      * @param 	User	$user			Use making change
      * @return	int						<0 if KO, >0 if OK
      */
-    function set_price_level($price_level, $user)
+    function set_price_level($price_level, User $user)
     {
         if ($this->id)
         {
@@ -1409,7 +1454,7 @@ class Societe extends CommonObject
      *	@param	int		$commid		Id of user
      *	@return	void
      */
-    function add_commercial($user, $commid)
+    function add_commercial(User $user, $commid)
     {
         if ($this->id > 0 && $commid > 0)
         {
@@ -1436,7 +1481,7 @@ class Societe extends CommonObject
      *	@param	int		$commid		Id of user
      *	@return	void
      */
-    function del_commercial($user, $commid)
+    function del_commercial(User $user, $commid)
     {
         if ($this->id > 0 && $commid > 0)
         {
