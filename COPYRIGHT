@@ -12,7 +12,7 @@ Dolibarr uses some external libraries released under different licences. This is
 Composant             Version  License                     Compatible GPL   Usage
 ----------------------------------------------------------------------------
 PHP libraries:
-AdoDb-Date            0.21		Modified BSD License		Yes				Date convertion (not into rpm package)
+AdoDb-Date            0.32		Modified BSD License		Yes				Date convertion (not into rpm package)
 CKEditor		      3.6.4		LGPL-2.1+					Yes				Editor WYSIWYG
 FPDI                  1.4.2		Apache Software License 2.0	Yes				PDF templates management (with FPDF_TPL 1.2)
 GeoIP			      2004      LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
