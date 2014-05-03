@@ -271,4 +271,3 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 }
 
-?>

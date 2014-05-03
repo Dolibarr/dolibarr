@@ -251,4 +251,3 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 	}
 }
 
-?>

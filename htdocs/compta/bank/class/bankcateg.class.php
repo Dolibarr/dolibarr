@@ -359,4 +359,3 @@ class BankCateg // extends CommonObject
     }
 
 }
-?>

@@ -57,4 +57,3 @@ print '</div>';
 llxFooter();
 
 $db->close();
-?>

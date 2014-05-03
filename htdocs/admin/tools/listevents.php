@@ -270,4 +270,3 @@ else
 
 llxFooter();
 $db->close();
-?>

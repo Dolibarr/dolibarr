@@ -240,4 +240,3 @@ print '</tr></table>';
 $dbosc->close();
 
 llxFooter();
-?>

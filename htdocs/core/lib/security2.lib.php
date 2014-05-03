@@ -463,4 +463,3 @@ function getRandomPassword($generic=false)
 	return $generated_password;
 }
 
-?>

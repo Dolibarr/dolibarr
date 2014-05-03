@@ -310,4 +310,3 @@ function html_print_paybox_footer($fromcompany,$langs)
 	print '</font></center>'."\n";
 }
 
-?>

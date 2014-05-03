@@ -145,4 +145,3 @@ function getProducts($order_id)
     return $products;
 }
 
-?>

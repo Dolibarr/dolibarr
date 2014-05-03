@@ -76,4 +76,3 @@ $result=$withdrawreceipt->create($conf->global->PRELEVEMENT_CODE_BANQUE,$conf->g
 $db->close();
 
 exit(0);
-?>

@@ -164,4 +164,3 @@ else
 $db->close();	// Close $db database opened handler
 
 exit($error);
-?>

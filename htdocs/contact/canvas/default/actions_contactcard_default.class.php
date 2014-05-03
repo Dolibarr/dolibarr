@@ -144,4 +144,3 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	}
 }
 
-?>

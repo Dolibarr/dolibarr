@@ -336,4 +336,3 @@ class AdherentType extends CommonObject
         }
     }
 }
-?>

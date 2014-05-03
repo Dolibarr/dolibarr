@@ -1276,4 +1276,3 @@ class pdf_einstein extends ModelePDFCommandes
 
 }
 
-?>

@@ -178,4 +178,3 @@ if ($id)
 
 llxFooter();
 $db->close();
-?>

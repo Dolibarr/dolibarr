@@ -1141,4 +1141,3 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 llxFooter();
 
 $db->close();
-?>

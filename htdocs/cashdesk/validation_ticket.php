@@ -34,7 +34,3 @@ require ('tpl/ticket.tpl.php');
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
-?>
-
-
-

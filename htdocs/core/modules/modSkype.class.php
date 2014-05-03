@@ -123,4 +123,3 @@ class modSkype extends DolibarrModules
     }
 
 }
-?>

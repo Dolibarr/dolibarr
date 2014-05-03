@@ -3374,4 +3374,3 @@ class Product extends CommonObject
 		}
 	}
 }
-?>

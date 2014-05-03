@@ -278,4 +278,3 @@ else
 $db->close();
 
 llxFooter();
-?>

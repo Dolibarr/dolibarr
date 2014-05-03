@@ -606,4 +606,3 @@ print
 llxFooterVierge();
 
 $db->close();
-?>

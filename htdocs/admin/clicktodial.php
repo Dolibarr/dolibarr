@@ -131,4 +131,3 @@ if (! empty($conf->global->CLICKTODIAL_URL))
 llxFooter();
 
 $db->close();
-?>

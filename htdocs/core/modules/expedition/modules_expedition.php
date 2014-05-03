@@ -254,4 +254,3 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 		return 0;
     }
 }
-?>

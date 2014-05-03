@@ -141,4 +141,3 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 
 }
 
-?>

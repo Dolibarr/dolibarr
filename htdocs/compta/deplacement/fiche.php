@@ -543,4 +543,3 @@ else if ($id)
 llxFooter();
 
 $db->close();
-?>

@@ -713,4 +713,3 @@ function ftp_isdir($connect_id,$dir)
 	}
 }
 
-?>

@@ -79,4 +79,3 @@ if ($action == 'clear')
 llxFooter();
 
 $db->close();
-?>

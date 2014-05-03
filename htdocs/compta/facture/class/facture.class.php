@@ -3852,4 +3852,3 @@ class FactureLigne  extends CommonInvoiceLine
 	}
 }
 
-?>

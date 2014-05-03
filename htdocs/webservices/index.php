@@ -102,4 +102,3 @@ print '<br>';
 
 $db->close();
 
-?>

@@ -810,4 +810,3 @@ dol_fiche_end();
 $db->close();
 
 llxFooter();
-?>

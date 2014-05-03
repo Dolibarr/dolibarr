@@ -108,4 +108,3 @@ class modClickToDial extends DolibarrModules
     }
 
 }
-?>

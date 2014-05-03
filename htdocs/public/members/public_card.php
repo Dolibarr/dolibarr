@@ -154,4 +154,3 @@ function llxFooterVierge()
 	print "</html>\n";
 }
 
-?>

@@ -1165,4 +1165,3 @@ function getablenamefromfield($code,$sqlmaxforexport)
 	else return '';
 }
 
-?>

@@ -1726,4 +1726,3 @@ $(document).ready(function() {
 
 <?php
 }
-?>

@@ -2354,4 +2354,3 @@ class User extends CommonObject
 
 }
 
-?>

@@ -944,4 +944,3 @@ function write_conf_file($conffile)
 	return $error;
 }
 
-?>

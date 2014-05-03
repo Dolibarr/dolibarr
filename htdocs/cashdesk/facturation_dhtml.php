@@ -108,4 +108,3 @@ if (dol_strlen($_GET["code"]) >= 0)	// If search criteria is on char length at l
 	}
 
 }
-?>

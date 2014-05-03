@@ -117,4 +117,3 @@ function report_header($nom,$variante,$period,$periodlink,$description,$builddat
 	print "\n<!-- fin cartouche rapport -->\n\n";
 }
 
-?>

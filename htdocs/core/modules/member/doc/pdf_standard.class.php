@@ -559,4 +559,3 @@ class pdf_standard
 	}
 
 }
-?>

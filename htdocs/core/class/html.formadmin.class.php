@@ -384,4 +384,3 @@ class FormAdmin
 		return $out;
 	}
 }
-?>

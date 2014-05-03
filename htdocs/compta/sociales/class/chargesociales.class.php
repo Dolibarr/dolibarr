@@ -512,4 +512,3 @@ class ChargeSociales extends CommonObject
     }
 }
 
-?>

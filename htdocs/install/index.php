@@ -65,4 +65,3 @@ print '<br><br>'.$langs->trans("SomeTranslationAreUncomplete");
 // Si pas d'erreur, on affiche le bouton pour passer a l'etape suivante
 if ($err == 0) pFooter(0);
 
-?>

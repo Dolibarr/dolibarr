@@ -626,4 +626,3 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->MultiCell($blW,2, $carac_client, 0, 'L');
 	}
 }
-?>

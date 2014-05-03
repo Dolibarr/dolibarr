@@ -1381,4 +1381,3 @@ function dol_eldy_showmenu($type_user, &$menuentry, &$listofmodulesforexternal)
 	return 1;
 }
 
-?>

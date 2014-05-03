@@ -347,4 +347,3 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	return 1;
 }
 
-?>

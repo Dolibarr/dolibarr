@@ -29,14 +29,3 @@ $langs->load("externalsite");
 top_htmlhead("","");
 top_menu("","","_top");
 
-?>
-
-
-
-
-
-
-
-
-
-

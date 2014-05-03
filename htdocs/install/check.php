@@ -463,4 +463,3 @@ else
 
 pFooter(1);	// 1 car ne doit jamais afficher bouton Suivant
 
-?>

@@ -132,4 +132,3 @@ class box_fournisseurs extends ModeleBoxes
 
 }
 
-?>

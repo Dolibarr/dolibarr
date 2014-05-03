@@ -145,4 +145,3 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	}
 }
 
-?>

@@ -66,4 +66,3 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
 $db->close();
 
 llxFooter();
-?>

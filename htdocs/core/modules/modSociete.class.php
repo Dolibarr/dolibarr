@@ -516,4 +516,3 @@ class modSociete extends DolibarrModules
     }
 
 }
-?>

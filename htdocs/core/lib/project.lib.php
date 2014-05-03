@@ -706,4 +706,3 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 	print "</table>";
 }
 
-?>

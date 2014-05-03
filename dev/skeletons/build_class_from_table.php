@@ -470,4 +470,3 @@ else $error++;
 
 print "You can now rename generated files by removing the 'out.' prefix in their name and store them into directory /yourmodule/class.\n";
 return $error;
-?>

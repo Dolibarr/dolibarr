@@ -320,4 +320,3 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 }
 
-?>

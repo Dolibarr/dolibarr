@@ -582,4 +582,3 @@ function jscheckparam()
 // $db->close();	Not database connexion yet
 
 pFooter($err,$setuplang,'jscheckparam');
-?>

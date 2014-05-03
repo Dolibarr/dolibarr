@@ -349,4 +349,3 @@ class modCategorie extends DolibarrModules
     }
 
 }
-?>

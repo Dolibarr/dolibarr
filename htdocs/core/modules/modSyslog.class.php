@@ -114,4 +114,3 @@ class modSyslog extends DolibarrModules
     }
 
 }
-?>

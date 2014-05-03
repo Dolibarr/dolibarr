@@ -244,4 +244,3 @@ class DolEditor
 
 }
 
-?>

@@ -387,4 +387,3 @@ print '<br>';
 llxFooterSurvey();
 
 $db->close();
-?>

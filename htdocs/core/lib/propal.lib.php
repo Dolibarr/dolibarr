@@ -147,4 +147,3 @@ function propal_admin_prepare_head($object)
 }
 
 
-?>

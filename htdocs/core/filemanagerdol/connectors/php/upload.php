@@ -63,4 +63,3 @@ $CKEcallback = $_GET['CKEditorFuncNum'];
 FileUpload($sType, $sCurrentFolder, $sCommand, $CKEcallback);
 
 
-?>

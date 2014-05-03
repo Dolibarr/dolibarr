@@ -379,4 +379,3 @@ function activitytrim($product_type)
 	}
 }
 
-?>

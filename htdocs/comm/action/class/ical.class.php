@@ -395,4 +395,3 @@ class ICal
         return $this->cal;
     }
 }
-?>

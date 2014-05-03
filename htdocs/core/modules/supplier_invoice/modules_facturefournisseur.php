@@ -251,4 +251,3 @@ function supplier_invoice_pdf_create($db, $object, $modele, $outputlangs, $hided
 	}
 }
 
-?>

@@ -521,4 +521,3 @@ class AddressLine
 		$this->db = $db;
 	}
 }
-?>

@@ -162,4 +162,3 @@ function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $
 
 }
 
-?>

@@ -367,4 +367,3 @@ if ($user->rights->ecm->read)
 $db->close();
 
 llxFooter();
-?>

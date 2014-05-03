@@ -1355,4 +1355,3 @@ class FichinterLigne
 
 }
 
-?>

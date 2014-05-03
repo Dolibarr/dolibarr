@@ -173,4 +173,3 @@ class Prospect extends Societe
 		return $lib;
 	}
 }
-?>

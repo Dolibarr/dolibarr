@@ -150,4 +150,3 @@ class box_propales extends ModeleBoxes
 
 }
 
-?>

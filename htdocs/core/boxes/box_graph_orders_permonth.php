@@ -266,4 +266,3 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 }
 
-?>

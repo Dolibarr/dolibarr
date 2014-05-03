@@ -124,4 +124,3 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
     return $rep;
 }
 
-?>

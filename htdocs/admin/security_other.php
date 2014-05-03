@@ -336,4 +336,3 @@ $formfile->list_of_documents($filearray, '', 'admin_temp', '');
 
 llxFooter();
 $db->close();
-?>

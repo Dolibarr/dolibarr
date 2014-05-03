@@ -429,4 +429,3 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 	return $out;
 }
 
-?>

@@ -644,4 +644,3 @@ function toggle(source)
 llxFooter();
 
 $db->close();
-?>

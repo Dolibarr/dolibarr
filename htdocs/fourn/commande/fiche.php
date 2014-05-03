@@ -2154,4 +2154,3 @@ elseif (! empty($object->id))
 llxFooter();
 
 $db->close();
-?>

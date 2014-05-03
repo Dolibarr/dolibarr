@@ -90,4 +90,3 @@ else
 llxFooter();
 
 $db->close();
-?>

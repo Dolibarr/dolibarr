@@ -803,4 +803,3 @@ class Translate
 	}
 }
 
-?>

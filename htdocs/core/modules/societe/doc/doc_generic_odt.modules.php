@@ -438,4 +438,3 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 
 }
 
-?>

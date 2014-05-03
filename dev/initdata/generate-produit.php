@@ -98,4 +98,3 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 }
 
 
-?>

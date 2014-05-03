@@ -217,4 +217,3 @@ class mailing_contacts2 extends MailingTargets
 
 }
 
-?>

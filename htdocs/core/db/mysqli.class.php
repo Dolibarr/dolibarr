@@ -1019,4 +1019,3 @@ class DoliDBMysqli extends DoliDB
     }
 }
 
-?>

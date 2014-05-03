@@ -1462,4 +1462,3 @@ class pdf_crabe extends ModelePDFFactures
 
 }
 
-?>

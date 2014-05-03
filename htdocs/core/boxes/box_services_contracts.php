@@ -170,4 +170,3 @@ class box_services_contracts extends ModeleBoxes
 
 }
 
-?>

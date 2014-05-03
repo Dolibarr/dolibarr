@@ -267,4 +267,3 @@ if ($user->rights->categorie->creer)
 llxFooter();
 
 $db->close();
-?>

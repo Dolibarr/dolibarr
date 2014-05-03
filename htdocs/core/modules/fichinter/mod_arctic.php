@@ -140,4 +140,3 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 }
 
-?>

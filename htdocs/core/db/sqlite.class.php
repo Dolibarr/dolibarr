@@ -1129,4 +1129,3 @@ class DoliDBSqlite extends DoliDB
     }
 }
 
-?>

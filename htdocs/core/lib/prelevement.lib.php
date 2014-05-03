@@ -97,4 +97,3 @@ function prelevement_check_config()
 	return 0;
 }
 
-?>

@@ -287,4 +287,3 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 
 llxFooter();
 $db->close();
-?>

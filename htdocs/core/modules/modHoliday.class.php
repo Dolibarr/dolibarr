@@ -311,4 +311,3 @@ class modHoliday extends DolibarrModules
 
 }
 
-?>

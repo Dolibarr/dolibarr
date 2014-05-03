@@ -136,4 +136,3 @@ class box_clients extends ModeleBoxes
 
 }
 
-?>

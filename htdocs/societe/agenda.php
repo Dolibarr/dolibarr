@@ -185,4 +185,3 @@ if ($socid)
 llxFooter();
 
 $db->close();
-?>

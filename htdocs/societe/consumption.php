@@ -454,4 +454,3 @@ dol_htmloutput_errors($error,$errors);
 llxFooter();
 
 $db->close();
-?>

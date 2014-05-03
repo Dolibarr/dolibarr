@@ -1673,4 +1673,3 @@ class FactureFournisseur extends CommonInvoice
     }
 
 }
-?>

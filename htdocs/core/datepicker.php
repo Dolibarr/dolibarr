@@ -278,4 +278,3 @@ function displayBox($selectedDate,$month,$year)
 		<?php
 }//end function
 
-?>

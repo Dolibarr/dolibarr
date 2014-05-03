@@ -1871,4 +1871,3 @@ class BonPrelevement extends CommonObject
 
 }
 
-?>

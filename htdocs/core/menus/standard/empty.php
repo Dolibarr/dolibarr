@@ -347,4 +347,3 @@ function print_end_menu_array_empty()
 	print "\n";
 }
 
-?>

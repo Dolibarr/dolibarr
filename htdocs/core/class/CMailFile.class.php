@@ -1080,4 +1080,3 @@ class CMailFile
 	}
 }
 
-?>

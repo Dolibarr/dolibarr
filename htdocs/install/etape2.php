@@ -608,4 +608,3 @@ dolibarr_install_syslog("--- install/etape2.php end", LOG_INFO);
 pFooter(!$ok,$setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
-?>

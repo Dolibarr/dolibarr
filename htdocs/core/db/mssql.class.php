@@ -996,4 +996,3 @@ class DoliDBMssql extends DoliDB
 	}
 }
 
-?>

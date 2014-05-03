@@ -208,4 +208,3 @@ llxFooter();
 
 $db->close();
 
-?>

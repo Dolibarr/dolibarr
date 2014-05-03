@@ -349,4 +349,3 @@ else
 $db->close();
 
 llxFooter();
-?>

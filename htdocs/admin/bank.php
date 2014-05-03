@@ -187,4 +187,3 @@ print '</table>'."\n";
 $db->close();
 
 llxFooter();
-?>

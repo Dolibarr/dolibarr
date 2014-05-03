@@ -194,4 +194,3 @@ else if ($label == 'PostgreSQL')
 llxFooter();
 
 $db->close();
-?>

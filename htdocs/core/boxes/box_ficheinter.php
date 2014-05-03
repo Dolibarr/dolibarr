@@ -155,4 +155,3 @@ class box_ficheinter extends ModeleBoxes
 
 }
 
-?>

@@ -1292,4 +1292,3 @@ function phpinfo_array()
 	return $info_arr;
 }
 
-?>

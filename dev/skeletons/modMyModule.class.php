@@ -269,4 +269,3 @@ class modMyModule extends DolibarrModules
 
 }
 
-?>

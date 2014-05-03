@@ -3722,4 +3722,3 @@ dol_htmloutput_mesg('', $mesgs);
 
 llxFooter();
 $db->close();
-?>

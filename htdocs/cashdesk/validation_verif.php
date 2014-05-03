@@ -301,4 +301,3 @@ switch ($action)
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 header('Location: '.$redirection);
-?>

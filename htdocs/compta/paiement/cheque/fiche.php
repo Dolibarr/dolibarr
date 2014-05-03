@@ -723,4 +723,3 @@ if ($action != 'new')
 $db->close();
 
 llxFooter();
-?>

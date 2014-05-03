@@ -144,4 +144,3 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     }
 }
 
-?>

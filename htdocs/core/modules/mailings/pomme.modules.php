@@ -208,4 +208,3 @@ class mailing_pomme extends MailingTargets
 
 }
 
-?>

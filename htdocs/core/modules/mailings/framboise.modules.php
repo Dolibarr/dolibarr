@@ -231,4 +231,3 @@ class mailing_framboise extends MailingTargets
 
 }
 
-?>

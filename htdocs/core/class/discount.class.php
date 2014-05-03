@@ -480,4 +480,3 @@ class DiscountAbsolute
 		$this->description    = 'Specimen discount';
 	}
 }
-?>

@@ -160,4 +160,3 @@ if(is_array($object->lines) && (count($object->lines)>0))
 $db->close();
 
 exit(0);
-?>

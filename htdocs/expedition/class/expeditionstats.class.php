@@ -140,4 +140,3 @@ class ExpeditionStats extends Stats
 	}
 }
 
-?>

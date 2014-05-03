@@ -797,4 +797,3 @@ function getApiError()
 	return $errors;
 }
 
-?>

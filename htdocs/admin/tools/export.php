@@ -528,4 +528,3 @@ function backup_tables($outputfile, $tables='*')
 
     return 1;
 }
-?>

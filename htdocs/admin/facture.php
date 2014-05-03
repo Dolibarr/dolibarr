@@ -791,4 +791,3 @@ print "</table>\n";
 llxFooter();
 
 $db->close();
-?>

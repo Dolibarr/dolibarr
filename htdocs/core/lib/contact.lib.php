@@ -92,4 +92,3 @@ function contact_prepare_head($object)
 	return $head;
 }
 
-?>

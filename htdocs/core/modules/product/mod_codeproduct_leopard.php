@@ -120,4 +120,3 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	}
 }
 
-?>

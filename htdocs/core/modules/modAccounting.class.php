@@ -171,4 +171,3 @@ class modAccounting extends DolibarrModules
 		return $this->_remove($sql,$options);
 	}
 }
-?>

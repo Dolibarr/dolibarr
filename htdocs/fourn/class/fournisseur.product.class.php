@@ -546,4 +546,3 @@ class ProductFournisseur extends Product
 
 }
 
-?>

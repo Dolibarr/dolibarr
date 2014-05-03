@@ -181,4 +181,3 @@ else
 
 <?php
 print '</html>';
-?>

@@ -317,4 +317,3 @@ dol_print_cron_urls();
 llxFooter();
 
 $db->close();
-?>

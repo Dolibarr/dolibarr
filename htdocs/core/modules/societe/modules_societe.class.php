@@ -447,4 +447,3 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
 }
 
 
-?>

@@ -690,4 +690,3 @@ if ($rowid > 0)
 $db->close();
 
 llxFooter();
-?>

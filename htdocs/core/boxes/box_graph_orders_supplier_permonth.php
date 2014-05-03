@@ -265,4 +265,3 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 
 }
 
-?>

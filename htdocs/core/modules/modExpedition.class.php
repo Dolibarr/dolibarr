@@ -294,4 +294,3 @@ class modExpedition extends DolibarrModules
     }
 
 }
-?>

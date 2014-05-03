@@ -239,4 +239,3 @@ class MailingTargets    // This can't be abstract as it is used for some method
 
 }
 
-?>

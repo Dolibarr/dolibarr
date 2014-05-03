@@ -611,4 +611,3 @@ if ($socid && $action != 'edit' && $action != 'create')
 llxFooter();
 
 $db->close();
-?>

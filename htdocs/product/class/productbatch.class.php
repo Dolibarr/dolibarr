@@ -523,4 +523,3 @@ class Productbatch extends CommonObject
     }
 
 }
-?>

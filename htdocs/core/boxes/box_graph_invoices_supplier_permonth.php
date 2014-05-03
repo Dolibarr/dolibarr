@@ -265,4 +265,3 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 
 }
 
-?>

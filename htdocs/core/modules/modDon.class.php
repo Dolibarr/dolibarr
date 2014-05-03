@@ -140,4 +140,3 @@ class modDon  extends DolibarrModules
     }
 
 }
-?>

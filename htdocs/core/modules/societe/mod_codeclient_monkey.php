@@ -267,4 +267,3 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 }
 
-?>

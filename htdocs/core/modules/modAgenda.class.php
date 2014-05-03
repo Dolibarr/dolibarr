@@ -427,4 +427,3 @@ class modAgenda extends DolibarrModules
 	}
 
 }
-?>

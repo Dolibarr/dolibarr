@@ -149,4 +149,3 @@ function order_admin_prepare_head($object)
 }
 
 
-?>

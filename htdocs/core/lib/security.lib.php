@@ -518,4 +518,3 @@ function accessforbidden($message='',$printheader=1,$printfooter=1,$showonlymess
     exit(0);
 }
 
-?>

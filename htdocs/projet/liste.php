@@ -215,4 +215,3 @@ print "</table>";
 llxFooter();
 
 $db->close();
-?>

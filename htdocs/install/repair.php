@@ -434,4 +434,3 @@ if ($db->connected) $db->close();
 
 // Return code if ran from command line
 if (! $ok && isset($argv[1])) exit(1);
-?>

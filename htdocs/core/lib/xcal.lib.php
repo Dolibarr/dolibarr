@@ -519,4 +519,3 @@ function quotedPrintDecode($str)
 	return trim($out);
 }
 
-?>

@@ -246,4 +246,3 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails=0, $
 	}
 }
 
-?>

@@ -165,4 +165,3 @@ class box_produits extends ModeleBoxes
 
 }
 
-?>

@@ -226,4 +226,3 @@ class modBanque extends DolibarrModules
     }
 
 }
-?>

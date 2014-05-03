@@ -212,4 +212,3 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 	}
 }
 
-?>

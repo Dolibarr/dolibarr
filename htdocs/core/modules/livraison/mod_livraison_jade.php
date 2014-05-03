@@ -154,4 +154,3 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
     }
 
 }
-?>

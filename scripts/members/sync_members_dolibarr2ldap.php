@@ -160,4 +160,3 @@ else
 }
 
 exit($error);
-?>

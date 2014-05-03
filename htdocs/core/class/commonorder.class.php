@@ -41,4 +41,3 @@ abstract class CommonOrderLine extends CommonObject
 
 }
 
-?>

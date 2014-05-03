@@ -312,4 +312,3 @@ class Cpays // extends CommonObject
 	}
 
 }
-?>

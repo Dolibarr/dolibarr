@@ -169,4 +169,3 @@ else
 $db->close();
 
 llxFooterVierge();
-?>

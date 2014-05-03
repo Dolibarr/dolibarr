@@ -233,4 +233,3 @@ class modService extends DolibarrModules
     }
 
 }
-?>

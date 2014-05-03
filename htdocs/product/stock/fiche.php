@@ -559,4 +559,3 @@ else
 llxFooter();
 
 $db->close();
-?>

@@ -1711,4 +1711,3 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 
 llxFooter();
 $db->close();
-?>

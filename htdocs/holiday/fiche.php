@@ -1145,4 +1145,3 @@ else
 llxFooter();
 
 if (is_object($db)) $db->close();
-?>

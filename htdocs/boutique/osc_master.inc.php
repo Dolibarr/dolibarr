@@ -36,4 +36,3 @@ if (! $dbosc->connected)
 	exit;
 }
 
-?>

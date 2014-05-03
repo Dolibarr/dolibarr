@@ -147,4 +147,3 @@ class box_contacts extends ModeleBoxes
 
 }
 
-?>

@@ -249,4 +249,3 @@ function don_create($db, $id, $message, $modele, $outputlangs, $hidedetails=0, $
     }
 }
 
-?>

@@ -1944,4 +1944,3 @@ class Adherent extends CommonObject
     }
 
 }
-?>
