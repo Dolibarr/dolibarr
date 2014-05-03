@@ -46,11 +46,11 @@ abstract class ActionsCardCommon
 
 	/**
 	 * 	Instantiation of DAO class
-	 *  TODO This method is useless
 	 *
-	 * 	@return	void
+	 * 	@return	int		0
+	 *  @deprecated		Using getInstanceDao should not be used.
 	 */
-	protected function getInstanceDao()
+	private function getInstanceDao()
 	{
 		if (! is_object($this->object))
 		{
@@ -67,6 +67,7 @@ abstract class ActionsCardCommon
 	            }
 	        }
 		}
+    	return 0;
 	}
 
 	/**
@@ -78,7 +79,7 @@ abstract class ActionsCardCommon
      */
     protected function getObject($id,$ref='')
     {
-    	$ret = $this->getInstanceDao();
+    	//$ret = $this->getInstanceDao();
 
     	$object = new Societe($this->db);
     	if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);

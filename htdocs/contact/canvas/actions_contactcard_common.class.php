@@ -46,7 +46,8 @@ abstract class ActionsContactCardCommon
 	/**
 	 * 	Instantiation of DAO class
 	 *
-	 * 	@return	void
+	 * 	@return	int		0
+	 *  @deprecated		Using getInstanceDao should not be used.
 	 */
 	private function getInstanceDao()
 	{
@@ -65,6 +66,7 @@ abstract class ActionsContactCardCommon
 	            }
 	        }
 		}
+		return 0;
 	}
 
 	/**
