@@ -51,6 +51,7 @@ class Societe extends CommonObject
 
     var $id;
     var $name;
+    var $entity;
 
     /**
      * @deprecated Use $name instead
@@ -126,6 +127,7 @@ class Societe extends CommonObject
     var $capital;
     var $typent_id;
     var $typent_code;
+    var $effectif;
     var $effectif_id;
     var $forme_juridique_code;
     var $forme_juridique;
@@ -135,6 +137,14 @@ class Societe extends CommonObject
     var $cond_reglement_id;
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
+
+    var $date_modification;
+    var $date_creation;
+    var $user_modification;
+    var $user_creation;
+    var $fk_prospectlevel;
+    var $specimen;
+    var $name_bis;
 
     /**
      * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
@@ -180,7 +190,9 @@ class Societe extends CommonObject
     var $parent;
     var $default_lang;
 
+    var $ref;
     var $ref_int;
+    var $ref_ext;
     var $import_key;
 
     var $logo;
@@ -201,8 +213,6 @@ class Societe extends CommonObject
      */
     public function __construct($db)
     {
-        global $conf;
-
         $this->db = $db;
 
         $this->client = 0;
@@ -1066,7 +1076,7 @@ class Societe extends CommonObject
      */
     function delete($id)
     {
-        global $user, $langs, $conf, $hookmanager;
+        global $user, $langs, $conf;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -2196,7 +2206,6 @@ class Societe extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $nump = $this->db->num_rows($resql);
             $obj = $this->db->fetch_object($resql);
             $count = $obj->idprof;
         }
@@ -2364,7 +2373,6 @@ class Societe extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $nump = $this->db->num_rows($resql);
             $obj = $this->db->fetch_object($resql);
             $count = $obj->numproj;
         }
@@ -2496,13 +2504,13 @@ class Societe extends CommonObject
     /**
      *  Create a third party into database from a member object
      *
-     *  @param	Member	$member		Object member
+     *  @param	Adherent	$member		Object member
      * 	@param	string	$socname	Name of third party to force
      *  @return int					<0 if KO, id of created account if OK
      */
-    function create_from_member($member,$socname='')
+    function create_from_member(Adherent $member,$socname='')
     {
-        global $conf,$user,$langs;
+        global $user,$langs;
 
         $name = $socname?$socname:$member->societe;
         if (empty($name)) $name=$member->getFullName($langs);
@@ -2639,8 +2647,6 @@ class Societe extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf,$mysoc;
-
         $now=dol_now();
 
         // Initialize parameters
@@ -2769,13 +2775,11 @@ class Societe extends CommonObject
 	 *  @param  User	$user		Utilisateur qui definie la remise
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function set_prospect_level($user)
+	function set_prospect_level(User $user)
 	{
 		if ($this->id)
 		{
 			$this->db->begin();
-
-			$now=dol_now();
 
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
@@ -2859,8 +2863,6 @@ class Societe extends CommonObject
 		{
 			$this->db->begin();
 
-			$now=dol_now();
-
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
 			$sql.= " fk_stcomm='".$this->stcomm_id."'";
@@ -2892,8 +2894,6 @@ class Societe extends CommonObject
 		if ($this->id)
 		{
 			$this->db->begin();
-
-			$now=dol_now();
 
 			// Clean parameters
 			$outstanding = price2num($this->outstanding_limit);
