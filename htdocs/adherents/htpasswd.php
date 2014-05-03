@@ -39,8 +39,8 @@ llxHeader();
 
 $now=dol_now();
 
-if ($sortorder == "") {  $sortorder="ASC"; }
-if ($sortfield == "") {  $sortfield="d.login"; }
+if (empty($sortorder)) {  $sortorder="ASC"; }
+if (empty($sortfield)) {  $sortfield="d.login"; }
 if (! isset($statut))
 {
   $statut = 1 ;
