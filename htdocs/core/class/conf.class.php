@@ -77,7 +77,7 @@ class Conf
 	 */
 	function __construct()
 	{
-		// Avoid warnings when filling this->xxx
+		// Properly declare multi-modules objects.
 		$this->file				= new stdClass();
 		$this->db				= new stdClass();
 		$this->global			= new stdClass();
@@ -88,7 +88,11 @@ class Conf
 		$this->browser			= new stdClass();
 		$this->multicompany		= new stdClass();
 
+		//! Charset for HTML output and for storing data in memory
+		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
+
 		// First level object
+		// TODO Remove this part.
 		$this->expedition_bon	= new stdClass();
 		$this->livraison_bon	= new stdClass();
 		$this->fournisseur		= new stdClass();
@@ -104,9 +108,6 @@ class Conf
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
-
-		//! Charset for HTML output and for storing data in memory
-		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
 	}
 
 
