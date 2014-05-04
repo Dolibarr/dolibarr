@@ -11,6 +11,7 @@ Fix: Can disable features with PHPEXCEL (no DLSF compatible).
 Fix: Can disable features with CKEDITOR. 
 Fix: Pb of records not correctly cleaned when module marge is
      uninstalled (conflict between 'margin' and 'margins').
+Fix: [ bug #1341 ] Lastname not added by file or direct input in mass e-mailing
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
