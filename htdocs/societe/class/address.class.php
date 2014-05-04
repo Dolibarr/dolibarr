@@ -27,7 +27,7 @@
 /**
  *  Class to manage addresses
  *
- *  @deprecated
+ *  @deprecated This class is dedicated to a not supported and deprecated feature.
  */
 class Address
 {
