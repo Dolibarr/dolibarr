@@ -3,10 +3,10 @@
     "type": "project",
     "description": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
     "keywords": ["erp","crm"],
-    "homepage": "http://dolibarr.org",
+    "homepage": "http://www.dolibarr.org",
     "licence": "GPL-3.0+",
     "require": {
-        "php": ">=5.2.1",
+        "php": ">=5.3.0",
         "ext-gd": "*",
         "ext-curl": "*"
     },

@@ -115,8 +115,7 @@ Divers:
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
-- Fonctionne avec MySQL 4.1+ ou PostgreSql 8.1.4+.
-- Fonctionne avec PHP 5.0+.
+- Fonctionne avec PHP 5.3+, MySQL 4.1+ ou PostgreSql 8.1.4+.
 - Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP. 
 
 
