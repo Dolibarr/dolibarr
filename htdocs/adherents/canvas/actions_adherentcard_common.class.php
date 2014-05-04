@@ -273,7 +273,7 @@ abstract class ActionsAdherentCardCommon
         	}
 
         	// Civility
-        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civilite_id);
+        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
         	// Predefined with third party
         	if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE'))
@@ -397,7 +397,7 @@ abstract class ActionsAdherentCardCommon
         $this->object->fk_soc				=	$_POST["fk_soc"];
         $this->object->lastname				=	$_POST["lastname"];
         $this->object->firstname			= 	$_POST["firstname"];
-        $this->object->civilite_id			= 	$_POST["civilite_id"];
+        $this->object->civility_id			= 	$_POST["civility_id"];
         $this->object->address				=	$_POST["address"];
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];

@@ -266,7 +266,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->oldcopy=dol_clone($object);
 
 		// Change values
-		$object->civilite_id = trim($_POST["civilite_id"]);
+		$object->civility_id = trim($_POST["civility_id"]);
 		$object->firstname   = trim($_POST["firstname"]);
 		$object->lastname    = trim($_POST["lastname"]);
 		$object->login       = trim($_POST["login"]);
@@ -415,7 +415,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	}
 
 	$typeid=$_POST["typeid"];
-	$civilite_id=$_POST["civilite_id"];
+	$civility_id=$_POST["civility_id"];
 	$lastname=$_POST["lastname"];
 	$firstname=$_POST["firstname"];
 	$societe=$_POST["societe"];
@@ -441,7 +441,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$userid=$_POST["userid"];
 	$socid=$_POST["socid"];
 
-	$object->civilite_id = $civilite_id;
+	$object->civility_id = $civility_id;
 	$object->firstname   = $firstname;
 	$object->lastname    = $lastname;
 	$object->societe     = $societe;
@@ -794,7 +794,7 @@ else
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
-		print $formcompany->select_civility(GETPOST('civilite_id','int')?GETPOST('civilite_id','int'):$object->civilite_id,'civilite_id').'</td>';
+		print $formcompany->select_civility(GETPOST('civility_id','int')?GETPOST('civility_id','int'):$object->civility_id,'civility_id').'</td>';
 		print '</tr>';
 
 		// Lastname
@@ -1044,9 +1044,9 @@ else
 		// Company
 		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.(isset($_POST["societe"])?$_POST["societe"]:$object->societe).'"></td></tr>';
 
-		// Civilite
+		// Civility
 		print '<tr><td width="20%">'.$langs->trans("UserTitle").'</td><td width="35%">';
-		print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id)."\n";
+		print $formcompany->select_civility(isset($_POST["civility_id"])?$_POST["civility_id"]:$object->civility_id)."\n";
 		print '</td>';
 		print '</tr>';
 

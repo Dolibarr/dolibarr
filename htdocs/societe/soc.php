@@ -119,7 +119,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname'),GETPOST('nom')?GETPOST('nom'):GETPOST('name'));
-            $object->civility_id       = GETPOST('civilite_id');
+            $object->civility_id       = GETPOST('civility_id');
             // Add non official properties
             $object->name_bis          = GETPOST('name')?GETPOST('name'):GETPOST('nom');
             $object->firstname         = GETPOST('firstname');
@@ -651,7 +651,7 @@ else
         $object->idprof6			= GETPOST('idprof6');
         $object->typent_id			= GETPOST('typent_id');
         $object->effectif_id		= GETPOST('effectif_id');
-        $object->civility_id		= GETPOST('civilite_id');
+        $object->civility_id		= GETPOST('civility_id');
 
         $object->tva_assuj			= GETPOST('assujtva_value');
         $object->status				= GETPOST('status');

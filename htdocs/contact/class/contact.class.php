@@ -42,7 +42,7 @@ class Contact extends CommonObject
 
 	var $id;
     var $ref_ext;
-	var $civilite_id;  // In fact we store civility_code
+	var $civility_id;  // In fact we store civility_code
     var $lastname;
 	var $firstname;
 	var $address;
@@ -251,7 +251,7 @@ class Contact extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		else if ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civilite='".$this->db->escape($this->civilite_id)."'";
+		$sql .= "  civilite='".$this->db->escape($this->civility_id)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
@@ -504,7 +504,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civilite as civilite_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civilite as civility_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -534,7 +534,7 @@ class Contact extends CommonObject
 				$this->id				= $obj->rowid;
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
-				$this->civilite_id		= $obj->civilite_id;
+				$this->civility_id		= $obj->civility_id;
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
@@ -887,7 +887,7 @@ class Contact extends CommonObject
 
 	/**
 	 *  Return name of contact with link (and eventually picto)
-	 *	Use $this->id, $this->lastname, $this->firstname, this->civilite_id
+	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
 	 *	@param		int			$withpicto		Include picto with link
 	 *	@param		string		$option			Where the link point to
@@ -924,7 +924,7 @@ class Contact extends CommonObject
 		global $langs;
 		$langs->load("dict");
 
-		$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
+		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civility_id)?$this->civility_id:''));
 		if (empty($code)) return '';
         return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
 	}

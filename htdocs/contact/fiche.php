@@ -162,7 +162,7 @@ if (empty($reshook))
         $object->socid			= $_POST["socid"];
         $object->lastname		= $_POST["lastname"];
         $object->firstname		= $_POST["firstname"];
-        $object->civilite_id	= $_POST["civilite_id"];
+        $object->civility_id	= $_POST["civility_id"];
         $object->poste			= $_POST["poste"];
         $object->address		= $_POST["address"];
         $object->zip			= $_POST["zipcode"];
@@ -260,7 +260,7 @@ if (empty($reshook))
             $object->socid			= $_POST["socid"];
             $object->lastname		= $_POST["lastname"];
             $object->firstname		= $_POST["firstname"];
-            $object->civilite_id	= $_POST["civilite_id"];
+            $object->civility_id	= $_POST["civility_id"];
             $object->poste			= $_POST["poste"];
 
             $object->address		= $_POST["address"];
@@ -447,7 +447,7 @@ else
 
             // Civility
             print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
+            print $formcompany->select_civility(isset($_POST["civility_id"])?$_POST["civility_id"]:$object->civility_id);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td>';
@@ -663,7 +663,7 @@ else
 
             // Civility
             print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civilite_id"])?$_POST["civilite_id"]:$object->civilite_id);
+            print $formcompany->select_civility(isset($_POST["civility_id"])?$_POST["civility_id"]:$object->civility_id);
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';

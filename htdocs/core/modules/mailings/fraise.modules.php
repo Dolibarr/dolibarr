@@ -167,7 +167,7 @@ class mailing_fraise extends MailingTargets
         // La requete doit retourner: id, email, fk_contact, name, firstname
         $sql = "SELECT a.rowid as id, a.email as email, null as fk_contact, ";
         $sql.= " a.lastname, a.firstname,";
-        $sql.= " a.datefin, a.civilite, a.login, a.societe";	// Other fields
+        $sql.= " a.datefin, a.civilite as civility_id, a.login, a.societe";	// Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql.= " WHERE a.email <> ''";     // Note that null != '' is false
         $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
@@ -204,7 +204,7 @@ class mailing_fraise extends MailingTargets
                     			'firstname' => $obj->firstname,
                     			'other' =>
                                 ($langs->transnoentities("Login").'='.$obj->login).';'.
-                                ($langs->transnoentities("UserTitle").'='.($obj->civilite?$langs->transnoentities("Civility".$obj->civilite):'')).';'.
+                                ($langs->transnoentities("UserTitle").'='.($obj->civility_id?$langs->transnoentities("Civility".$obj->civility_id):'')).';'.
                                 ($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin),'day')).';'.
                                 ($langs->transnoentities("Company").'='.$obj->societe),
                                 'source_url' => $this->url($obj->id),

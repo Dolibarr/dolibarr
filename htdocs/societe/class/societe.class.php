@@ -464,7 +464,7 @@ class Societe extends CommonObject
 
         $contact->name              = $this->name_bis;
         $contact->firstname         = $this->firstname;
-        $contact->civilite_id       = $this->civility_id;
+        $contact->civility_id       = $this->civility_id;
         $contact->socid             = $this->id;	// fk_soc
         $contact->statut            = 1;
         $contact->priv              = 0;

@@ -238,7 +238,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
         $timestamp = dol_now();
 
-        $localobject->civilite_id = 0;
+        $localobject->civility_id = 0;
 		$localobject->login='newlogin';
 		$localobject->societe='New company';
 		$localobject->note='New note after update';
@@ -271,7 +271,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0);
 
-        $this->assertEquals($localobject->civilite_id, $newobject->civilite_id);
+        $this->assertEquals($localobject->civility_id, $newobject->civility_id);
 		$this->assertEquals($localobject->login, $newobject->login);
 		$this->assertEquals($localobject->societe, $newobject->societe);
 		$this->assertEquals($localobject->note, $newobject->note);
@@ -313,7 +313,7 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $template = '%DOL_MAIN_URL_ROOT%,%ID%,%CIVILITE%,%FIRSTNAME%,%LASTNAME%,%FULLNAME%,%COMPANY%,'.
+        $template = '%DOL_MAIN_URL_ROOT%,%ID%,%CIVILITY%,%FIRSTNAME%,%LASTNAME%,%FULLNAME%,%COMPANY%,'.
                     '%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%,%EMAIL%,%BIRTH%,%PHOTO%,%LOGIN%,%PASSWORD%,%PRENOM%,'.
                     '%NOM%,%SOCIETE%,%ADDRESS%,%ZIP%,%TOWN%,%COUNTRY%';
 

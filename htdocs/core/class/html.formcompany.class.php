@@ -359,14 +359,14 @@ class FormCompany
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @return	string					String with HTML select
 	 */
-	function select_civility($selected='',$htmlname='civilite_id')
+	function select_civility($selected='',$htmlname='civility_id')
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
 
 		$out='';
 
-		$sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
+		$sql = "SELECT rowid, code, civilite as civility_label, active FROM ".MAIN_DB_PREFIX."c_civilite";
 		$sql.= " WHERE active = 1";
 
 		dol_syslog("Form::select_civility sql=".$sql);
@@ -391,7 +391,7 @@ class FormCompany
 						$out.= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
+					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civility_label!='-'?$obj->civility_label:''));
 					$out.= '</option>';
 					$i++;
 				}

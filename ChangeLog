@@ -95,7 +95,7 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
   So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
   default standard behaviour.
-
+- Properties "civilite_id" were renamed into "civility_id".
 
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****

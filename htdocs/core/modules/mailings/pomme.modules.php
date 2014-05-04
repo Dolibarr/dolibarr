@@ -148,7 +148,7 @@ class mailing_pomme extends MailingTargets
 
 		// La requete doit retourner: id, email, fk_contact, name, firstname
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
-		$sql.= " u.lastname as name, u.firstname as firstname, u.login, u.office_phone";
+		$sql.= " u.lastname as name, u.firstname as firstname, u.civilite as civility_id, u.login, u.office_phone";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";
@@ -183,7 +183,7 @@ class mailing_pomme extends MailingTargets
                     			'firstname' => $obj->firstname,
                     			'other' =>
 					            ($langs->transnoentities("Login").'='.$obj->login).';'.
-//                                ($langs->transnoentities("UserTitle").'='.$obj->civilite).';'.
+                                ($langs->transnoentities("UserTitle").'='.$obj->civility_id).';'.
 					            ($langs->transnoentities("PhonePro").'='.$obj->office_phone),
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,

@@ -648,7 +648,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
 
     $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.poste, p.phone, p.phone_mobile, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civilite, p.address, p.zip, p.town";
+    $sql .= ", p.civilite as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     if ($search_status!='') $sql .= " AND p.statut = ".$db->escape($search_status);
@@ -675,7 +675,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->statut = $obj->statut;
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
-            $contactstatic->civilite = $obj->civilite;
+            $contactstatic->civility_id = $obj->civility_id;
             print $contactstatic->getNomUrl(1);
             print '</td>';
 

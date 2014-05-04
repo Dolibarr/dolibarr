@@ -583,7 +583,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->socid = $thirdparty->id;
 						$contact->lastname = $thirdpartywithuser['name'];
 						$contact->firstname = $thirdpartywithuser['firstname'];
-						$contact->civilite_id = $thirdparty->civilite_id;
+						$contact->civility_id = $thirdparty->civility_id;
 						$contact->address = $thirdparty->address;
 						$contact->zip = $thirdparty->zip;
 						$contact->town = $thirdparty->town;

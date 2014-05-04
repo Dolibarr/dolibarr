@@ -45,7 +45,7 @@ class Adherent extends CommonObject
 
     var $id;
     var $ref;
-    var $civilite_id;
+    var $civility_id;
     var $firstname;
     var $lastname;
     var $login;
@@ -184,7 +184,7 @@ class Adherent extends CommonObject
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
 		$infos='';
-		if ($this->civilite_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
+		if ($this->civility_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
 		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
 		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
@@ -207,7 +207,7 @@ class Adherent extends CommonObject
 		$substitutionarray=array(
 				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
 				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
-				'%CIVILITE%'=>$this->getCivilityLabel($msgishtml?0:1),
+				'%CIVILITY%'=>$this->getCivilityLabel($msgishtml?0:1),
 				'%FIRSTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
 				'%LASTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
 				'%FULLNAME%'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
@@ -425,7 +425,7 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-        $sql.= " civilite = ".(!is_null($this->civilite_id)?"'".$this->civilite_id."'":"null");
+        $sql.= " civilite = ".(!is_null($this->civility_id)?"'".$this->civility_id."'":"null");
         $sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
         $sql.= ", lastname=" .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
@@ -526,7 +526,7 @@ class Adherent extends CommonObject
 
                     if ($result >= 0)
                     {
-                        $luser->civilite_id=$this->civilite_id;
+                        $luser->civility_id=$this->civility_id;
                         $luser->firstname=$this->firstname;
                         $luser->lastname=$this->lastname;
                         $luser->login=$this->user_login;
@@ -1056,7 +1056,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.ref_ext, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.ref_ext, d.civilite as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
         $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1098,7 +1098,7 @@ class Adherent extends CommonObject
                 $this->ref				= $obj->rowid;
                 $this->id				= $obj->rowid;
                 $this->ref_ext			= $obj->ref_ext;
-                $this->civilite_id		= $obj->civilite;
+                $this->civility_id		= $obj->civility;
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
@@ -1552,7 +1552,7 @@ class Adherent extends CommonObject
     	global $langs;
     	$langs->load("dict");
 
-    	$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
+    	$code=(empty($this->civility_id)?'':$this->civility_id);
     	if (empty($code)) return '';
     	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
     }
@@ -1779,7 +1779,7 @@ class Adherent extends CommonObject
         // Initialise parametres
         $this->id=0;
         $this->specimen=1;
-        $this->civilite_id = 0;
+        $this->civility_id = 0;
         $this->lastname = 'DOLIBARR';
         $this->firstname = 'SPECIMEN';
         $this->login='dolibspec';
