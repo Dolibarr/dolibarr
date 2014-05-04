@@ -18,6 +18,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_societe DROP COLUMN datea;
+
 
 create table llx_c_email_templates
 (

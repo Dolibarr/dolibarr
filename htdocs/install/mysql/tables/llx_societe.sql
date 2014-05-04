@@ -32,7 +32,6 @@ create table llx_societe
   parent                   integer,
   tms                      timestamp,
   datec	                   datetime,                            		-- creation date
-  datea	                   datetime,                            		-- activation date
 
   status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)						
 

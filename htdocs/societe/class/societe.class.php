@@ -130,8 +130,8 @@ class Societe extends CommonObject
     var $price_level;
     var $outstanding_limit;
 
-    var $datec;
-    var $date_update;
+    var $date_creation;
+    var $date_modification;
 
     var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
     var $parent;
@@ -218,8 +218,8 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, datea, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
-            $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."', '".$this->db->idate($now)."'";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
+            $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
             $sql.= ", ".$this->status;
@@ -535,7 +535,6 @@ class Societe extends CommonObject
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
             $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
             $sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
-            $sql .= ",datea = '".$this->db->idate($now)."'";
             $sql .= ",address = '" . $this->db->escape($this->address) ."'";
 
             $sql .= ",zip = ".(! empty($this->zip)?"'".$this->zip."'":"null");
@@ -732,10 +731,10 @@ class Societe extends CommonObject
 
         if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as datec, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
         $sql .= ', s.price_level';
-        $sql .= ', s.tms as date_update';
+        $sql .= ', s.tms as date_modification';
         $sql .= ', s.phone, s.fax, s.email, s.skype, s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
         $sql .= ', s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6';
         $sql .= ', s.capital, s.tva_intra';
@@ -793,8 +792,8 @@ class Societe extends CommonObject
                 $this->ref_ext      = $obj->ref_ext;
                 $this->ref_int      = $obj->ref_int;
 
-                $this->datec = $this->db->jdate($obj->datec);
-                $this->date_update = $this->db->jdate($obj->date_update);
+                $this->date_creation = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
 
                 $this->address 		= $obj->address;
                 $this->zip 			= $obj->zip;
@@ -1382,17 +1381,21 @@ class Societe extends CommonObject
         {
         	$now=dol_now();
 
-            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+            $sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
             $sql .= " SET price_level = '".$price_level."'";
             $sql .= " WHERE rowid = " . $this->id;
 
-            $this->db->query($sql);
+            if (! $this->db->query($sql))
+            {
+                dol_print_error($this->db);
+                return -1;
+            }
 
-            $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices ";
-            $sql .= " ( datec, fk_soc, price_level, fk_user_author )";
+            $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_prices";
+            $sql .= " (datec, fk_soc, price_level, fk_user_author)";
             $sql .= " VALUES ('".$this->db->idate($now)."',".$this->id.",'".$price_level."',".$user->id.")";
 
-            if (! $this->db->query($sql) )
+            if (! $this->db->query($sql))
             {
                 dol_print_error($this->db);
                 return -1;
@@ -2334,14 +2337,14 @@ class Societe extends CommonObject
 
 
     /**
-     *  Charge les informations d'ordre info dans l'objet societe
+     *  Load information for tab info
      *
-     *  @param  int		$id     Id de la societe a charger
+     *  @param  int		$id     Id of thirdparty to load
      *  @return	void
      */
     function info($id)
     {
-        $sql = "SELECT s.rowid, s.nom as name, s.datec, s.datea,";
+        $sql = "SELECT s.rowid, s.nom as name, s.datec as date_creation, tms as date_modification,";
         $sql.= " fk_user_creat, fk_user_modif";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE s.rowid = ".$id;
@@ -2366,16 +2369,17 @@ class Societe extends CommonObject
                     $muser->fetch($obj->fk_user_modif);
                     $this->user_modification = $muser;
                 }
+
                 $this->ref			     = $obj->name;
-                $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datea);
+                $this->date_creation     = $this->db->jdate($obj->date_creation);
+                $this->date_modification = $this->db->jdate($obj->date_modification);
             }
 
             $this->db->free($result);
 
         }
         else
-        {
+		{
             dol_print_error($this->db);
         }
     }
