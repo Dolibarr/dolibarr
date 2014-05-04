@@ -77,7 +77,7 @@ class Conf
 	 */
 	function __construct()
 	{
-		// Avoid warnings when filling this->xxx
+		// Properly declare objects
 		$this->file				= new stdClass();
 		$this->db				= new stdClass();
 		$this->global			= new stdClass();
@@ -88,7 +88,7 @@ class Conf
 		$this->browser			= new stdClass();
 		$this->multicompany		= new stdClass();
 
-		// First level object
+		// First level objects
 		$this->expedition_bon	= new stdClass();
 		$this->livraison_bon	= new stdClass();
 		$this->fournisseur		= new stdClass();
@@ -104,6 +104,24 @@ class Conf
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
+
+		// Second level objects
+		$this->fournisseur->commande = new stdClass();
+		$this->fournisseur->facture = new stdClass();
+		$this->commande->client = new stdClass();
+		$this->commande->fournisseur = new stdClass();
+		$this->propal->cloture = new stdClass();
+		$this->propal->facturation = new stdClass();
+		$this->facture->client = new stdClass();
+		$this->facture->fournisseur = new stdClass();
+		$this->contrat->services = new stdClass();
+		$this->adherent->cotisation = new stdClass();
+		$this->bank->rappro = new stdClass();
+		$this->bank->cheque = new stdClass();
+
+		// Third level objects
+		$this->contrat->services->inactifs = new stdClass();
+		$this->contrat->services->expires = new stdClass();
 
 		//! Charset for HTML output and for storing data in memory
 		$this->file->character_set_client='UTF-8';   // UTF-8, ISO-8859-1
