@@ -2,9 +2,14 @@
     "name": "dolibarr/dolibarr",
     "type": "project",
     "description": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
-    "keywords": ["erp","crm"],
+    "keywords": ["erp","crm","invoice","sme","proposal","order","stock"],
     "homepage": "http://www.dolibarr.org",
-    "licence": "GPL-3.0+",
+    "license": "GPL-3.0+",
+    "support": {
+        "issues": "https://doliforge.org/projects/dolibarr",
+        "forum": "http://www.dolibarr.org/forum",
+        "wiki": "http://wiki.dolibarr.org"
+    },
     "require": {
         "php": ">=5.3.0",
         "ext-gd": "*",
@@ -18,7 +23,7 @@
         "ext-imagick": "*",
         "ext-mcrypt": "*",
         "ext-openssl": "*",
-        "ext-mb_string": "*",
+        "ext-mbstring": "*",
         "ext-soap": "*"
     }
 }
