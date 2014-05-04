@@ -4,7 +4,7 @@
     "description": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
     "keywords": ["erp","crm"],
     "homepage": "http://dolibarr.org",
-    "licence": "GPL-3.0+",
+    "license": "GPL-3.0+",
     "require": {
         "php": ">=5.2.1",
         "ext-gd": "*",
