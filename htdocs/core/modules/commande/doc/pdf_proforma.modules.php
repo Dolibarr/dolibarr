@@ -1233,4 +1233,3 @@ class pdf_proforma extends ModelePDFCommandes
 
 }
 
-?>

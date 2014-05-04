@@ -570,4 +570,3 @@ abstract class Stats
 	}	
 }
 
-?>

@@ -323,4 +323,3 @@ if ($_GET["action"] == 'create')
 $db->close();
 
 llxFooter();
-?>

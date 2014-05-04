@@ -518,4 +518,3 @@ else
 
 llxFooter();
 $db->close();
-?>

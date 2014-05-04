@@ -192,4 +192,3 @@ function findChildGanttLine($tarr,$parent,$project_dependencies,$level)
     }
 }
 
-?>

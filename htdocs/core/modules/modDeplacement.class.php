@@ -156,4 +156,3 @@ class modDeplacement extends DolibarrModules
     }
 
 }
-?>

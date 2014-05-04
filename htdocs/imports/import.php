@@ -1772,4 +1772,3 @@ function getnewkey(&$fieldssource,&$listofkey)
 	$listofkey[$i]=1;
 	return $i;
 }
-?>

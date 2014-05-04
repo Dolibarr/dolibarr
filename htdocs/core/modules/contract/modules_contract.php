@@ -249,4 +249,3 @@ function contract_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		return 0;
 	}
 }
-?>

@@ -266,4 +266,3 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 }
 
-?>

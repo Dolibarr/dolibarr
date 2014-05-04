@@ -139,4 +139,3 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 
 	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }
-?>

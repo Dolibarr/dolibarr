@@ -336,4 +336,3 @@ function limitChars(textarea, limit, infodiv)
 
 }
 
-?>

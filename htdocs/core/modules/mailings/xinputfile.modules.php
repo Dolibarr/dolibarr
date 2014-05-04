@@ -225,4 +225,3 @@ class mailing_xinputfile extends MailingTargets
 
 }
 
-?>

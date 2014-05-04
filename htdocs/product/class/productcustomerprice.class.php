@@ -943,4 +943,3 @@ class PriceByCustomerLine
 	var $socname;
 	var $prodref;
 }
-?>

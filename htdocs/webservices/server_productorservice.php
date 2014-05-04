@@ -957,4 +957,3 @@ function getProductsForCategory($authentication,$id,$lang='')
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
 
-?>

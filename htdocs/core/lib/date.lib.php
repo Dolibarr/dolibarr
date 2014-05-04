@@ -777,4 +777,3 @@ function monthArray($outputlangs)
     return $montharray;
 }
 
-?>

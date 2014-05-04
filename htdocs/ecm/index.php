@@ -781,4 +781,3 @@ if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE
 llxFooter();
 
 $db->close();
-?>

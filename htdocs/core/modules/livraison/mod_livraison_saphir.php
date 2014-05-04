@@ -153,4 +153,3 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 
 }
 
-?>

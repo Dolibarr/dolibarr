@@ -159,4 +159,3 @@ class modBarcode extends DolibarrModules
     }
 
 }
-?>

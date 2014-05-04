@@ -117,4 +117,3 @@ $dbosc->close();
 
 llxFooter();
 
-?>

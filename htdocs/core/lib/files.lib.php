@@ -1854,4 +1854,3 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	return $ret;
 }
-?>

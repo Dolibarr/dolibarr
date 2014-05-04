@@ -743,4 +743,3 @@ if (! GETPOST('action'))
 $db->close();
 
 llxFooter();
-?>

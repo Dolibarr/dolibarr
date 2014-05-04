@@ -588,4 +588,3 @@ if (! empty($id) && $action != 'edit')
 
 llxFooter();
 $db->close();
-?>

@@ -341,4 +341,3 @@ class modFacture extends DolibarrModules
     }
 
 }
-?>

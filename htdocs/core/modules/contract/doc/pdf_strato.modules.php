@@ -616,4 +616,3 @@ class pdf_strato extends ModelePDFContract
 
 }
 
-?>

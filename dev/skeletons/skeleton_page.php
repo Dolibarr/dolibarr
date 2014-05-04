@@ -176,4 +176,3 @@ if ($action == 'list')
 // End of page
 llxFooter();
 $db->close();
-?>

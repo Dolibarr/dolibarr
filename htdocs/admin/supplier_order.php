@@ -464,4 +464,3 @@ print '</form>';
 
 $db->close();
 llxFooter();
-?>

@@ -290,4 +290,3 @@ class CommActionRapport
 	}
 }
 
-?>

@@ -315,4 +315,3 @@ if ($id)
 $db->close();
 
 llxFooter();
-?>

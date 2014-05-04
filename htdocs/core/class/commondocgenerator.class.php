@@ -547,4 +547,3 @@ abstract class CommonDocGenerator
     }
 }
 
-?>

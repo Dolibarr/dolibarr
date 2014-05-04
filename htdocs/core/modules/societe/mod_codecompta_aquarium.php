@@ -184,4 +184,3 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	}
 }
 
-?>

@@ -93,4 +93,3 @@ print '</body>';
 print '</html>'."\n";
 
 $db->close();
-?>

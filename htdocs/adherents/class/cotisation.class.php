@@ -314,4 +314,3 @@ class Cotisation extends CommonObject
 		}
 	}
 }
-?>

@@ -811,4 +811,3 @@ class Paiement extends CommonObject
 	}
 
 }
-?>

@@ -174,4 +174,3 @@ class modSalaries extends DolibarrModules
     }
 
 }
-?>

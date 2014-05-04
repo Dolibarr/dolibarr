@@ -183,4 +183,3 @@ if (isset($action) && ! empty($action))
 	}
 }
 
-?>

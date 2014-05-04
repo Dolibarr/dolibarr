@@ -101,4 +101,3 @@ print '</table>'."\n";
 // Fin de page
 $db->close();
 llxFooter();
-?>

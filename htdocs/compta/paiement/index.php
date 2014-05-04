@@ -36,4 +36,3 @@ print_fiche_titre("Payments");
 $db->close();
 
 llxFooter();
-?>

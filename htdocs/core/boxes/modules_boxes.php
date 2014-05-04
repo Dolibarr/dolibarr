@@ -266,4 +266,3 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 }
 
 
-?>

@@ -173,4 +173,3 @@ class modCron extends DolibarrModules
     }
 
 }
-?>

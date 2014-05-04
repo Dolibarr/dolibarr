@@ -150,4 +150,3 @@ class mod_project_simple extends ModeleNumRefProjects
     }
 }
 
-?>

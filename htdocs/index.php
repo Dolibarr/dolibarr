@@ -605,4 +605,3 @@ function showWeather($totallate,$text,$options)
     if ($totallate > $level3) $out.=img_picto_common($text,'weather/weather-storm.png',$options);
     return $out;
 }
-?>

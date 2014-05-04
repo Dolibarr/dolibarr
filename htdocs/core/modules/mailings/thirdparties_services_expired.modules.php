@@ -239,4 +239,3 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 }
 
-?>

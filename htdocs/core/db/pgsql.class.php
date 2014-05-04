@@ -1260,4 +1260,3 @@ class DoliDBPgsql extends DoliDB
 		return array();
 	}
 }
-?>

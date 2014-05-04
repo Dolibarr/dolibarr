@@ -262,4 +262,3 @@ class modAdherent extends DolibarrModules
     }
 
 }
-?>

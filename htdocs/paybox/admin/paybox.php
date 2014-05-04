@@ -232,4 +232,3 @@ dol_htmloutput_mesg($mesg);
 $db->close();
 dol_fiche_end();
 llxFooter();
-?>

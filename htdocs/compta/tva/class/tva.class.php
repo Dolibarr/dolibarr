@@ -660,4 +660,3 @@ class Tva extends CommonObject
 	}
 
 }
-?>

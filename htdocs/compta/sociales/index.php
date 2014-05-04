@@ -232,4 +232,3 @@ else
 $db->close();
 
 llxFooter();
-?>

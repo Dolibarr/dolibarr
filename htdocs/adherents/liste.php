@@ -380,4 +380,3 @@ else
 llxFooter();
 
 $db->close();
-?>

@@ -249,4 +249,3 @@ class mailing_thirdparties extends MailingTargets
 
 }
 
-?>

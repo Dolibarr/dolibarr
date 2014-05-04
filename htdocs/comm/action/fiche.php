@@ -1103,4 +1103,3 @@ if ($id > 0)
 llxFooter();
 
 $db->close();
-?>

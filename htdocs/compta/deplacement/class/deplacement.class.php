@@ -449,4 +449,3 @@ class Deplacement extends CommonObject
 
 }
 
-?>

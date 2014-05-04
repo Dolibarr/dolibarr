@@ -82,4 +82,3 @@ unset($_SESSION['dol_entity']);
 
 if (GETPOST('noredirect')) return;
 header("Location: ".$url);		// Default behaviour is redirect to index.php page
-?>

@@ -158,4 +158,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

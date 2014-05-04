@@ -146,4 +146,3 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	}
 
 }
-?>

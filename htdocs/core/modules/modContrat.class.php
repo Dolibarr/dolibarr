@@ -153,4 +153,3 @@ class modContrat extends DolibarrModules
     }
 
 }
-?>

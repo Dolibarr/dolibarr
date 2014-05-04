@@ -599,4 +599,3 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 }
 
-?>

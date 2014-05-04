@@ -161,4 +161,3 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 
 }
 
-?>

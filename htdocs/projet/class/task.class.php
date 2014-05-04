@@ -1237,4 +1237,3 @@ class Task extends CommonObject
 	}
 
 }
-?>

@@ -468,4 +468,3 @@ abstract class ActionsContactCardCommon
 
 }
 
-?>

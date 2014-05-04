@@ -70,4 +70,3 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	}
 }
 
-?>

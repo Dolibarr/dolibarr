@@ -230,4 +230,3 @@ class mailing_fraise extends MailingTargets
 
 }
 
-?>

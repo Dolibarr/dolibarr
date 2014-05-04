@@ -445,4 +445,3 @@ else
 $db->close();
 
 exit($ret);
-?>

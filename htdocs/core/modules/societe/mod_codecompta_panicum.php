@@ -88,4 +88,3 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	}
 }
 
-?>

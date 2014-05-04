@@ -396,4 +396,3 @@ if ($modecompta == 'CREANCES-DETTES')
 
 llxFooter();
 $db->close();
-?>

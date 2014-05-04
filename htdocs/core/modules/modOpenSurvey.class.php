@@ -212,4 +212,3 @@ class modOpenSurvey extends DolibarrModules
 	}
 }
 
-?>

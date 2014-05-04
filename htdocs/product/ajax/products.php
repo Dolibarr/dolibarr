@@ -190,4 +190,3 @@ if (! empty($action) && $action == 'fetch' && ! empty($id)) {
 		print json_encode($arrayresult);
 }
 
-?>

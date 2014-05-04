@@ -626,4 +626,3 @@ if (($action=="create") || ($action=="edit"))
 llxFooter();
 
 $db->close();
-?>

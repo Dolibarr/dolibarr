@@ -160,4 +160,3 @@ class box_factures_fourn extends ModeleBoxes
 
 }
 
-?>

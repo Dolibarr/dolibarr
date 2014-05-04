@@ -338,4 +338,3 @@ if ($_POST["action"] == "search" && ! $num)
 $db->close();
 
 llxFooter();
-?>

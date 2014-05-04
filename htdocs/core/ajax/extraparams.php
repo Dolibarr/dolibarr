@@ -76,4 +76,3 @@ if(! empty($id) && ! empty($element) && ! empty($htmlelement) && ! empty($type))
 	$result=$object->setExtraParameters();
 }
 
-?>

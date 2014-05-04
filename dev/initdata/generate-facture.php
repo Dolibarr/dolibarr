@@ -135,4 +135,3 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 }
 
 
-?>

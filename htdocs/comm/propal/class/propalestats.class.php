@@ -208,4 +208,3 @@ class PropaleStats extends Stats
 		return $this->_getAllByProduct($sql);
 	}	
 }
-?>

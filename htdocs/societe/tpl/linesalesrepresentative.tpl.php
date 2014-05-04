@@ -36,4 +36,3 @@
         }
         else print $langs->trans("NoSalesRepresentativeAffected");
         print '</td></tr>';
-?>

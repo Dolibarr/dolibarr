@@ -132,4 +132,3 @@ class modDocument extends DolibarrModules
     }
 
 }
-?>

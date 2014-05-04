@@ -139,4 +139,3 @@ class box_prospect extends ModeleBoxes
 
 }
 
-?>

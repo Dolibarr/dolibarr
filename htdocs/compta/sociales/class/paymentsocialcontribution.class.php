@@ -604,4 +604,3 @@ class PaymentSocialContribution extends CommonObject
 }
 
 
-?>

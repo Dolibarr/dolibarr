@@ -705,4 +705,3 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	return $thermometer . $formLegenda;
 }
 
-?>

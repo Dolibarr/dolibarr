@@ -127,4 +127,3 @@ print '</div>';
 print '</body></html>'."\n";
 
 $db->close();
-?>

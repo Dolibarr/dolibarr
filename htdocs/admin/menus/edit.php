@@ -471,4 +471,3 @@ elseif ($action == 'edit')
 $db->close();
 
 llxFooter();
-?>

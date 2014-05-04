@@ -158,4 +158,3 @@ class InterfacePaypalWorkflow
     }
 
 }
-?>

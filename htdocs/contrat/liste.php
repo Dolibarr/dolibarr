@@ -167,4 +167,3 @@ else
 
 llxFooter();
 $db->close();
-?>

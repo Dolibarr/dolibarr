@@ -307,4 +307,3 @@ dol_htmloutput_mesg($mesg);
 llxFooter();
 
 $db->close();
-?>

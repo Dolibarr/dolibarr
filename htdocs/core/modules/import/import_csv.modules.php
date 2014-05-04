@@ -671,4 +671,3 @@ function cleansep($value)
 };
 
 
-?>

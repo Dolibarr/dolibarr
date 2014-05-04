@@ -1547,4 +1547,3 @@ class Categorie extends CommonObject
         $this->type = 0;
     }
 }
-?>

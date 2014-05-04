@@ -412,4 +412,3 @@ class modFournisseur extends DolibarrModules
     }
 
 }
-?>

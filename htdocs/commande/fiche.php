@@ -2389,4 +2389,3 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 llxFooter();
 $db->close();
-?>

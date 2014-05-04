@@ -199,4 +199,3 @@ class DateLibTzFranceTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

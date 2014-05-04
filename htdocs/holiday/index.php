@@ -396,4 +396,3 @@ if ($user_id == $user->id)
 llxFooter();
 
 $db->close();
-?>

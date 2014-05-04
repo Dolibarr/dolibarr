@@ -175,4 +175,3 @@ else
 $db->close();
 
 llxFooter();
-?>

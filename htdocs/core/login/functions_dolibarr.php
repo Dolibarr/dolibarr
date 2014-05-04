@@ -138,4 +138,3 @@ function check_user_password_dolibarr($usertotest,$passwordtotest,$entitytotest=
 }
 
 
-?>

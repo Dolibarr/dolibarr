@@ -116,4 +116,3 @@ class modFckeditor extends DolibarrModules
     }
 
 }
-?>

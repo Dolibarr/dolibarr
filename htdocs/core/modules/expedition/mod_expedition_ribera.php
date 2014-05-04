@@ -130,4 +130,3 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 
 }
 
-?>

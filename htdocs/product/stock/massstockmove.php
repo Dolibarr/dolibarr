@@ -343,4 +343,3 @@ print '</form>';
 llxFooter();
 
 $db->close();
-?>

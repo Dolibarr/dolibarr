@@ -289,4 +289,3 @@ function usage()
 	print "\n";
 	print "Note that some filters can be cumulated.\n";
 }
-?>

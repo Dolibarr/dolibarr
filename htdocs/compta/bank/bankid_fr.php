@@ -460,4 +460,3 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 llxFooter();
 
 $db->close();
-?>

@@ -154,4 +154,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

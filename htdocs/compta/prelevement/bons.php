@@ -125,4 +125,3 @@ $db->close();
 
 llxFooter();
 
-?>

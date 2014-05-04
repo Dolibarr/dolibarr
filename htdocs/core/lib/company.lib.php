@@ -1387,4 +1387,3 @@ function show_subsidiaries($conf,$langs,$db,$object)
 	return $i;
 }
 
-?>

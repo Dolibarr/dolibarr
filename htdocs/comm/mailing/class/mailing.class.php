@@ -514,4 +514,3 @@ class Mailing extends CommonObject
 
 }
 
-?>

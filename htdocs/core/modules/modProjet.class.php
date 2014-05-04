@@ -368,4 +368,3 @@ class modProjet extends DolibarrModules
     }
 
 }
-?>

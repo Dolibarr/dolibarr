@@ -448,4 +448,3 @@ if (function_exists("ldap_connect"))
 $db->close();
 
 llxFooter();
-?>

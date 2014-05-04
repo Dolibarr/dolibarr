@@ -177,4 +177,3 @@ class box_comptes extends ModeleBoxes
 
 }
 
-?>

@@ -206,7 +206,6 @@ else
 		{
 			@fwrite($fp, '<?php');
 			@fputs($fp,"\n");
-			@fputs($fp,"?>");
 			fclose($fp);
 		}
 		else dolibarr_install_syslog("failed to create a new file ".$conffile." into current dir ".getcwd().". Check permission.", LOG_ERR);
@@ -463,4 +462,3 @@ else
 
 pFooter(1);	// 1 car ne doit jamais afficher bouton Suivant
 
-?>

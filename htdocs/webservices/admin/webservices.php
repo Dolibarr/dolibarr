@@ -158,4 +158,3 @@ if (! empty($conf->use_javascript_ajax))
 
 llxFooter();
 $db->close();
-?>

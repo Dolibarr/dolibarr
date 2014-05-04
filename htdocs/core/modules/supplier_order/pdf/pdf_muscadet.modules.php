@@ -1099,4 +1099,3 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 }
 
-?>

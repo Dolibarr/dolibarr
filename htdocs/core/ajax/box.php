@@ -71,4 +71,3 @@ if ($boxorder && $zone != '' &&  $userid > 0)
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
 }
 
-?>

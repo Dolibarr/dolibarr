@@ -788,4 +788,3 @@ html_print_paybox_footer($mysoc,$langs);
 llxFooterPayBox();
 
 $db->close();
-?>

@@ -1633,4 +1633,3 @@ function pdf_getSizeForImage($realpath)
 	return array('width'=>$width,'height'=>$height);
 }
 
-?>

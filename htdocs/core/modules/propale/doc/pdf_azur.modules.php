@@ -1367,4 +1367,3 @@ class pdf_azur extends ModelePDFPropales
 
 }
 
-?>

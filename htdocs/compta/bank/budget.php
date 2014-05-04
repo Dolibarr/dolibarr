@@ -99,4 +99,3 @@ print "</table>";
 $db->close();
 
 llxFooter();
-?>

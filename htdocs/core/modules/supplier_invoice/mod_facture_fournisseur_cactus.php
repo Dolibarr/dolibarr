@@ -179,4 +179,3 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 	}
 }
 
-?>

@@ -130,4 +130,3 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	}
 
 }
-?>

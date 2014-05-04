@@ -111,4 +111,3 @@ dolibarr_install_syslog("--- install/etape4.php end", LOG_INFO);
 pFooter($err,$setuplang);
 
 $db->close();
-?>

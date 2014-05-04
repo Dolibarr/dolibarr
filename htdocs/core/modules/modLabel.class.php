@@ -124,4 +124,3 @@ class modLabel extends DolibarrModules
     }
 
 }
-?>

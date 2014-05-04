@@ -159,4 +159,3 @@ class SqlTest extends PHPUnit_Framework_TestCase
         return;
     }
 }
-?>

@@ -509,4 +509,3 @@ print "\n</div>\n";
 
 llxFooter();
 $db->close();
-?>

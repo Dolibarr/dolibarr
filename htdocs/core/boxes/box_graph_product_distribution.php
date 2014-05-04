@@ -387,4 +387,3 @@ class box_graph_product_distribution extends ModeleBoxes
 
 }
 
-?>

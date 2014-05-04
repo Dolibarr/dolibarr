@@ -67,4 +67,3 @@ print '</div>';
 
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
-?>

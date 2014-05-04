@@ -968,4 +968,3 @@ html_print_paypal_footer($mysoc,$langs);
 llxFooterPaypal();
 
 $db->close();
-?>

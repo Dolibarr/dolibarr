@@ -538,4 +538,3 @@ if ($object->fetch($id) >= 0)
 llxFooter();
 
 $db->close();
-?>

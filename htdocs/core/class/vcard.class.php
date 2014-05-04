@@ -334,4 +334,3 @@ class vCard
     }
 
 }
-?>

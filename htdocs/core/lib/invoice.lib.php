@@ -144,4 +144,3 @@ function invoice_admin_prepare_head($object)
 
 
 
-?>

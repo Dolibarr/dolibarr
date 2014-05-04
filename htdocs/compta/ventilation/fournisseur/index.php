@@ -125,4 +125,3 @@ print '</td></tr></table>';
 
 llxFooter();
 
-?>

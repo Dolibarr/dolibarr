@@ -1048,4 +1048,3 @@ class DolGraph
 	
 }
 
-?>

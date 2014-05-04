@@ -358,4 +358,3 @@ if ($conf->tax->enabled)
 llxFooter();
 
 $db->close();
-?>

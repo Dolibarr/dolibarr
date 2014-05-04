@@ -360,4 +360,3 @@ function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 }
 
 
-?>

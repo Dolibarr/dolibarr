@@ -162,4 +162,3 @@ class mailing_xinputuser extends MailingTargets
 
 }
 
-?>

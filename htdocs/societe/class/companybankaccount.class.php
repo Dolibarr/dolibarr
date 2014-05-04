@@ -368,4 +368,3 @@ class CompanyBankAccount extends Account
     }
 }
 
-?>

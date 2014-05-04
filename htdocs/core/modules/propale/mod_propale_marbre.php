@@ -150,4 +150,3 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 }
 
-?>

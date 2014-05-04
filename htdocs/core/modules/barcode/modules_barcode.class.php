@@ -173,4 +173,3 @@ abstract class ModeleNumRefBarCode
     
 }
 
-?>

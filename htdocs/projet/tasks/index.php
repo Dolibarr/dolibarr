@@ -160,4 +160,3 @@ if ($user->rights->projet->creer)
 llxFooter();
 
 $db->close();
-?>

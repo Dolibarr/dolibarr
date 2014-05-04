@@ -537,4 +537,3 @@ class pdf_standardlabel
         return 1;
     }
 }
-?>

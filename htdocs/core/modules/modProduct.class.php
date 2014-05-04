@@ -354,4 +354,3 @@ class modProduct extends DolibarrModules
     }
 
 }
-?>

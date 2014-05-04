@@ -229,4 +229,3 @@ dol_fiche_end();
 llxFooter();
 
 $db->close();
-?>

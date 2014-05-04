@@ -134,4 +134,3 @@ class modProductBatch extends DolibarrModules
 
 }
 
-?>

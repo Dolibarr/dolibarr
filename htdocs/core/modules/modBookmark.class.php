@@ -131,4 +131,3 @@ class modBookmark extends DolibarrModules
     }
 
 }
-?>

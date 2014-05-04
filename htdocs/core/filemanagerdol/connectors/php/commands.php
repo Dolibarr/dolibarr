@@ -297,4 +297,3 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 
 	exit;
 }
-?>

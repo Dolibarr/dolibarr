@@ -1282,4 +1282,3 @@ class Project extends CommonObject
 	}
 }
 
-?>

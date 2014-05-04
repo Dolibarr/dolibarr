@@ -600,4 +600,3 @@ class FactureRec extends Facture
 	}
 		
 }
-?>

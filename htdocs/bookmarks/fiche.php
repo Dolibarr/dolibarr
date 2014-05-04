@@ -292,4 +292,3 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 llxFooter();
 
 $db->close();
-?>

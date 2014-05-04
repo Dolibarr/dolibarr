@@ -1058,4 +1058,3 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 
 }
 
-?>

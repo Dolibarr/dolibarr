@@ -119,4 +119,3 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	}
 }
 
-?>

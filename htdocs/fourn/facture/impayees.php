@@ -296,4 +296,3 @@ if ($user->rights->fournisseur->facture->lire)
 // End of page
 $db->close();
 llxFooter();
-?>

@@ -192,4 +192,3 @@ class modFicheinter extends DolibarrModules
     }
 
 }
-?>

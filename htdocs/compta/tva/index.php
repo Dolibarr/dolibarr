@@ -256,4 +256,3 @@ echo '</table>';
 $db->close();
 
 llxFooter();
-?>

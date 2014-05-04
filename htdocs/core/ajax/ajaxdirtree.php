@@ -228,4 +228,3 @@ if (file_exists($fullpathselecteddir))
 //print '</script>';
 
 if (is_object($db)) $db->close();
-?>

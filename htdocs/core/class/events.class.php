@@ -283,4 +283,3 @@ class Events // extends CommonObject
 	}
 
 }
-?>

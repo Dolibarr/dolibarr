@@ -297,4 +297,3 @@ abstract class CommonInvoiceLine extends CommonObject
 {
 }
 
-?>

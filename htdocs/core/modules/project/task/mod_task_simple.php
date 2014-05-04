@@ -150,4 +150,3 @@ class mod_task_simple extends ModeleNumRefTask
     }
 }
 
-?>

@@ -1985,4 +1985,3 @@ else
 
 llxFooter();
 $db->close();
-?>

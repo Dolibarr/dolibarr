@@ -160,4 +160,3 @@ class box_factures extends ModeleBoxes
 
 }
 
-?>

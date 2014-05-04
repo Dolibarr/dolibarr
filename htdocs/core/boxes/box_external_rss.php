@@ -169,4 +169,3 @@ class box_external_rss extends ModeleBoxes
 
 }
 
-?>

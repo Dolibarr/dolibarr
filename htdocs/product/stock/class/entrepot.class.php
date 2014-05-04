@@ -552,4 +552,3 @@ class Entrepot extends CommonObject
         $this->country_code='FR';
     }
 }
-?>

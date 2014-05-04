@@ -855,4 +855,3 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 }
 
-?>

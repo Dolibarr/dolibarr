@@ -1866,4 +1866,3 @@ if (! function_exists("llxFooter"))
     }
 }
 
-?>

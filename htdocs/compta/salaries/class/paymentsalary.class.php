@@ -517,4 +517,3 @@ class PaymentSalary extends CommonObject
 	}
 
 }
-?>

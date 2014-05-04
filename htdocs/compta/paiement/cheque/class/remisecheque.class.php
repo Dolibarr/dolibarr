@@ -839,4 +839,3 @@ class RemiseCheque extends CommonObject
 	}
 
 }
-?>

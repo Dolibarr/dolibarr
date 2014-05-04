@@ -287,4 +287,3 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 $db->close();
 
 llxFooter();
-?>

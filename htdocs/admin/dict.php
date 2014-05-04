@@ -1327,4 +1327,3 @@ function fieldList($fieldlist,$obj='',$tabname='')
 	}
 }
 
-?>

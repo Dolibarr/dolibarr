@@ -582,4 +582,3 @@ if ($object->id > 0)
 
 llxFooter();
 $db->close();
-?>

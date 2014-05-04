@@ -1234,4 +1234,3 @@ function dol_color_minus($color, $minus)
 	return $newcolor;
 }
 
-?>

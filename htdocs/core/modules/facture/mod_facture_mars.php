@@ -205,4 +205,3 @@ class mod_facture_mars extends ModeleNumRefFactures
 
 }
 
-?>

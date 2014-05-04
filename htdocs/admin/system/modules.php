@@ -159,4 +159,3 @@ foreach($rights_ids as $right_id)
 
 llxFooter();
 $db->close();
-?>

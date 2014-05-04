@@ -247,4 +247,3 @@ class modCommande extends DolibarrModules
     }
 
 }
-?>

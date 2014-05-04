@@ -317,4 +317,3 @@ class Ctypent // extends CommonObject
 	}
 
 }
-?>

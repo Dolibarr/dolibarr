@@ -211,4 +211,3 @@ class modStock extends DolibarrModules
     }
 
 }
-?>

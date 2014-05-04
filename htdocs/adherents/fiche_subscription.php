@@ -393,4 +393,3 @@ if ($rowid && $action != 'edit')
 $db->close();
 
 llxFooter();
-?>

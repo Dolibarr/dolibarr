@@ -2873,4 +2873,3 @@ border-top-right-radius: 6px;
 
 <?php
 if (is_object($db)) $db->close();
-?>

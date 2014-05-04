@@ -2432,4 +2432,3 @@ ul.ulmenu {
 
 <?php
 if (is_object($db)) $db->close();
-?>

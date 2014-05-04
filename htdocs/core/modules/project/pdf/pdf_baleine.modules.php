@@ -447,4 +447,3 @@ class pdf_baleine extends ModelePDFProjects
 
 }
 
-?>

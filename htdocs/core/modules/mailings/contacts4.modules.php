@@ -245,4 +245,3 @@ class mailing_contacts4 extends MailingTargets
 
 }
 
-?>

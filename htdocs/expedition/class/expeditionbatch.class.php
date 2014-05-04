@@ -215,4 +215,3 @@ class ExpeditionLigneBatch extends CommonObject
 	}
 
 }
-?>

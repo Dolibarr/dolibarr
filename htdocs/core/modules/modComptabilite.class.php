@@ -156,4 +156,3 @@ class modComptabilite extends DolibarrModules
     }
 
 }
-?>

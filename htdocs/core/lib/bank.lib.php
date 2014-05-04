@@ -222,4 +222,3 @@ function checkES($IentOfi, $InumCta) {
     return $keycontrol;
 }
 
-?>

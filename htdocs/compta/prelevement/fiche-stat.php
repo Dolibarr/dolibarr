@@ -161,4 +161,3 @@ if ($prev_id)
 $db->close();
 
 llxFooter();
-?>

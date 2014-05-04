@@ -704,4 +704,3 @@ class EcmDirectory // extends CommonObject
 	}
 
 }
-?>

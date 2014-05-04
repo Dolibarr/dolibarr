@@ -86,4 +86,3 @@ foreach($fieldstarget as $code=>$label)
 
 print $objimport->build_example_file($format,$headerlinefields,$contentlinevalues,$datatoimport);
 
-?>
