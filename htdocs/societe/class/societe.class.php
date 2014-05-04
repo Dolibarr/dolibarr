@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +43,21 @@ class Societe extends CommonObject
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
     protected $childtables=array("propal","commande","facture","contrat","facture_fourn","commande_fournisseur");    // To test if we can delete object
-    protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+    /**
+     * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     * @var int
+     */
+    protected $ismultientitymanaged = 1;
 
     var $id;
     var $name;
-    var $nom;      // TODO obsolete
+    var $entity;
+
+    /**
+     * @deprecated Use $name instead
+     */
+    var $nom;
     var $firstname;
     var $lastname;
     var $particulier;
@@ -54,15 +65,31 @@ class Societe extends CommonObject
     var $address;
     var $zip;
     var $town;
-    var $status;   // 0=activity ceased, 1= in activity
+    /**
+     * 0=activity ceased, 1= in activity
+     * @var int
+     */
+    var $status;
 
-    var $state_id;		// Id of department
+    /**
+     * Id of department
+     */
+    var $state_id;
     var $state_code;
     var $state;
+    /**
+     * @deprecated Use state_code instead
+     */
     var $departement_code;   // deprecated
-    var $departement;        // deprecated
+    /**
+     * @deprecated Use state instead
+     */
+    var $departement;
 
-    var $pays;	    // deprecated
+    /**
+     * @deprecated Use country instead
+     */
+    var $pays;
     var $country_id;
     var $country_code;
     var $country;
@@ -74,23 +101,77 @@ class Societe extends CommonObject
     var $url;
 
 	//! barcode
-	var $barcode;               // value
-	var $barcode_type;          // id
-	var $barcode_type_code;     // code (loaded by fetch_barcode)
-	var $barcode_type_label;    // label (loaded by fetch_barcode)
-	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
+    /**
+     * Barcode value
+     * @var string
+     */
+    var $barcode;
+    /**
+     * ID of bardode type
+     * @var int
+     */
+    var $barcode_type;
+    /**
+     * code (loaded by fetch_barcode)
+     * @var
+     */
+    var $barcode_type_code;
+    /**
+     * label (loaded by fetch_barcode)
+     * @var
+     */
+    var $barcode_type_label;
+    /**
+     * coder (loaded by fetch_barcode)
+     * @var
+     */
+    var $barcode_type_coder;
 
-    // 4 professional id (usage depend on country)
-    var $idprof1;	// IdProf1 (Ex: Siren in France)
-    var $idprof2;	// IdProf2 (Ex: Siret in France)
-    var $idprof3;	// IdProf3 (Ex: Ape in France)
-    var $idprof4;	// IdProf4 (Ex: RCS in France)
-    var $idprof5;	// IdProf5
-    var $idprof6;	// IdProf6
+    // 6 professional id (usage depends on country)
+
+    /**
+     * Professional ID 1 (Ex: Siren in France)
+     * @var string
+     */
+    var $idprof1;
+
+    /**
+     * Professional ID 2 (Ex: Siret in France)
+     * @var string
+     */
+    var $idprof2;
+
+    /**
+     * Professional ID 3 (Ex: Ape in France)
+     * @var string
+     */
+    var $idprof3;
+
+    /**
+     * Professional ID 4 (Ex: RCS in France)
+     * @var string
+     */
+    var $idprof4;
+
+    /**
+     * Professional ID 5
+     * @var string
+     */
+    var $idprof5;
+
+    /**
+     * Professional ID 6
+     * @var string
+     */
+    var $idprof6;
 
     var $prefix_comm;
 
     var $tva_assuj;
+    /**
+     * Intracommunitary VAT ID
+     * @var string
+     */
     var $tva_intra;
 
     // Local taxes
@@ -101,6 +182,7 @@ class Societe extends CommonObject
     var $capital;
     var $typent_id;
     var $typent_code;
+    var $effectif;
     var $effectif_id;
     var $forme_juridique_code;
     var $forme_juridique;
@@ -111,33 +193,107 @@ class Societe extends CommonObject
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
 
-    var $client;					// 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
-    var $prospect;					// 0=no prospect, 1=prospect
-    var $fournisseur;				// 0=no supplier, 1=supplier
+    var $date_modification;
+    var $date_creation;
+    var $user_modification;
+    var $user_creation;
+    var $fk_prospectlevel;
+    var $specimen;
+    var $name_bis;
 
+    /**
+     * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
+     * @var int
+     */
+    var $client;
+    /**
+     * 0=no prospect, 1=prospect
+     * @var int
+     */
+    var $prospect;
+    /**
+     * 0=no supplier, 1=supplier
+     * @var int
+     */
+    var $fournisseur;
+
+    /**
+     * Client code. E.g: CU2014-003
+     * @var string
+     */
     var $code_client;
+
+    /**
+     * Supplier code. E.g: SU2014-003
+     * @var string
+     */
     var $code_fournisseur;
+
+    /**
+     * Accounting code for client
+     * @var string
+     */
     var $code_compta;
+
+    /**
+     * Accounting code for suppliers
+     * @var string
+     */
     var $code_compta_fournisseur;
 
-    var $note; //TODO deprecated
+    /**
+     * @deprecated Note is split in public and private notes
+     */
+    var $note;
+
+    /**
+     * Private note
+     * @var string
+     */
     var $note_private;
+
+    /**
+     * Public note
+     * @var string
+     */
     var $note_public;
     //! code statut prospect
     var $stcomm_id;
     var $statut_commercial;
 
+    /**
+     * Assigned price level
+     * @var int
+     */
     var $price_level;
     var $outstanding_limit;
 
     var $date_creation;
     var $date_modification;
 
-    var $commercial_id;  // Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+    /**
+     * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
+     */
+    var $commercial_id;
     var $parent;
     var $default_lang;
 
+    var $ref;
     var $ref_int;
+    /**
+     * External user reference.
+     * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
+     * build.
+     * @var string
+     */
+    var $ref_ext;
+
+    /**
+     * Import key.
+     * Set when the thirdparty has been created through an import process. This is to relate those created thirdparties
+     * to an import process
+     * @var string
+     */
     var $import_key;
 
     var $logo;
@@ -146,8 +302,10 @@ class Societe extends CommonObject
 
     var $array_options;
 
-    var $oldcopy;		// To contains a clone of this when we need to save old properties of object
-
+    /**
+     * To contains a clone of this when we need to save old properties of object
+     */
+    var $oldcopy;
 
     /**
      *    Constructor
@@ -302,7 +460,7 @@ class Societe extends CommonObject
      * @param 	User	$user		Object user
      * @return 	int					<0 if KO, >0 if OK
      */
-    function create_individual($user)
+    function create_individual(User $user)
     {
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         $contact=new Contact($this->db);
@@ -1018,7 +1176,7 @@ class Societe extends CommonObject
      */
     function delete($id)
     {
-        global $user, $langs, $conf, $hookmanager;
+        global $user, $langs, $conf;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1196,7 +1354,7 @@ class Societe extends CommonObject
      *  @param  User	$user		Utilisateur qui definie la remise
      *	@return	int					<0 if KO, >0 if OK
      */
-    function set_remise_client($remise, $note, $user)
+    function set_remise_client($remise, $note, User $user)
     {
         global $langs;
 
@@ -1258,7 +1416,7 @@ class Societe extends CommonObject
      *      @param  float	$tva_tx     VAT rate
      *		@return	int					<0 if KO, id of discount record if OK
      */
-    function set_remise_except($remise, $user, $desc, $tva_tx=0)
+    function set_remise_except($remise, User $user, $desc, $tva_tx=0)
     {
         global $langs;
 
@@ -1334,7 +1492,7 @@ class Societe extends CommonObject
      *  @param	User	$user		Object user
      *  @return array       		Array of sales representatives of third party
      */
-    function getSalesRepresentatives($user='')
+    function getSalesRepresentatives(User $user)
     {
         global $conf;
 
@@ -1373,7 +1531,7 @@ class Societe extends CommonObject
      * @param 	User	$user			Use making change
      * @return	int						<0 if KO, >0 if OK
      */
-    function set_price_level($price_level, $user)
+    function set_price_level($price_level, User $user)
     {
         if ($this->id)
         {
@@ -1410,7 +1568,7 @@ class Societe extends CommonObject
      *	@param	int		$commid		Id of user
      *	@return	void
      */
-    function add_commercial($user, $commid)
+    function add_commercial(User $user, $commid)
     {
         if ($this->id > 0 && $commid > 0)
         {
@@ -1437,7 +1595,7 @@ class Societe extends CommonObject
      *	@param	int		$commid		Id of user
      *	@return	void
      */
-    function del_commercial($user, $commid)
+    function del_commercial(User $user, $commid)
     {
         if ($this->id > 0 && $commid > 0)
         {
@@ -2152,7 +2310,6 @@ class Societe extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $nump = $this->db->num_rows($resql);
             $obj = $this->db->fetch_object($resql);
             $count = $obj->idprof;
         }
@@ -2320,7 +2477,6 @@ class Societe extends CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $nump = $this->db->num_rows($resql);
             $obj = $this->db->fetch_object($resql);
             $count = $obj->numproj;
         }
@@ -2453,13 +2609,13 @@ class Societe extends CommonObject
     /**
      *  Create a third party into database from a member object
      *
-     *  @param	Member	$member		Object member
+     *  @param	Adherent	$member		Object member
      * 	@param	string	$socname	Name of third party to force
      *  @return int					<0 if KO, id of created account if OK
      */
-    function create_from_member($member,$socname='')
+    function create_from_member(Adherent $member,$socname='')
     {
-        global $conf,$user,$langs;
+        global $user,$langs;
 
         $name = $socname?$socname:$member->societe;
         if (empty($name)) $name=$member->getFullName($langs);
@@ -2596,8 +2752,6 @@ class Societe extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf,$mysoc;
-
         $now=dol_now();
 
         // Initialize parameters
@@ -2726,13 +2880,11 @@ class Societe extends CommonObject
 	 *  @param  User	$user		Utilisateur qui definie la remise
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function set_prospect_level($user)
+	function set_prospect_level(User $user)
 	{
 		if ($this->id)
 		{
 			$this->db->begin();
-
-			$now=dol_now();
 
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
@@ -2816,8 +2968,6 @@ class Societe extends CommonObject
 		{
 			$this->db->begin();
 
-			$now=dol_now();
-
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
 			$sql.= " fk_stcomm='".$this->stcomm_id."'";
@@ -2844,13 +2994,11 @@ class Societe extends CommonObject
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function set_OutstandingBill ($user)
+	function set_OutstandingBill (User $user)
 	{
 		if ($this->id)
 		{
 			$this->db->begin();
-
-			$now=dol_now();
 
 			// Clean parameters
 			$outstanding = price2num($this->outstanding_limit);
