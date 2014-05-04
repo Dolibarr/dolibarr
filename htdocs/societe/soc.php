@@ -969,7 +969,7 @@ else
         print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
-            $formcompany->select_forme_juridique($object->forme_juridique_code,$object->country_code);
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code);
         }
         else
         {
@@ -1422,7 +1422,7 @@ else
             print '</td></tr>';
 
             print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-            $formcompany->select_forme_juridique($object->forme_juridique_code,$object->country_code);
+            print $formcompany->select_juridicalstatus($object->forme_juridique_code,$object->country_code);
             print '</td></tr>';
 
             // Capital

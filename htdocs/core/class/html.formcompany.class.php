@@ -415,6 +415,7 @@ class FormCompany
 	 *    @param    mixed		$country_codeid		0=liste tous pays confondus, sinon code du pays a afficher
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
+	 *    @deprecated Use print xxx->select_juridicalstatus instead
 	 */
 	function select_forme_juridique($selected='', $country_codeid=0, $filter='')
 	{
@@ -425,8 +426,8 @@ class FormCompany
 	 *    Retourne la liste deroulante des formes juridiques tous pays confondus ou pour un pays donne.
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
 	 *
-	 *    @param	string		$selected        	Code forme juridique a pre-selectionne
-	 *    @param    int			$country_codeid     0=liste tous pays confondus, sinon code du pays a afficher
+	 *    @param	string		$selected        	Preselected code of juridical type
+	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
      *    @param    string		$filter          	Add a SQL filter on list
      *    @return	string							String with HTML select
 	 */
@@ -438,55 +439,61 @@ class FormCompany
 		$out='';
 
 		// On recherche les formes juridiques actives des pays actifs
-		$sql  = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as country, p.code as country_code";
+		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, p.libelle as country, p.code as country_code";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p";
 		$sql .= " WHERE f.fk_pays=p.rowid";
 		$sql .= " AND f.active = 1 AND p.active = 1";
 		if ($country_codeid) $sql .= " AND p.code = '".$country_codeid."'";
 		if ($filter) $sql .= " ".$filter;
-		$sql .= " ORDER BY p.code, f.code";
+		$sql .= " ORDER BY p.code";
 
-		dol_syslog("Form::select_forme_juridique sql=".$sql);
-		$result=$this->db->query($sql);
-		if ($result)
+		dol_syslog(get_class($this)."::select_juridicalstatus sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			$out.= '<div id="particulier2" class="visible">';
 			$out.= '<select class="flat" name="forme_juridique_code">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
-			$num = $this->db->num_rows($result);
-			$i = 0;
+
+			$num = $this->db->num_rows($resql);
 			if ($num)
 			{
-				$country='';
+				$i = 0;
+				$country=''; $arraydata=array();
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object($result);
-					if ($obj->code == 0) {
-						$out.= '<option value="0">&nbsp;</option>';
-					}
-					else {
-						if (! $country || $country != $obj->country) {
-							// Affiche la rupture si on est en mode liste multipays
-							if (! $country_codeid && $obj->country_code) {
-								$out.= '<option value="0">----- '.$obj->country." -----</option>\n";
-								$country=$obj->country;
-							}
-						}
-
-						if ($selected > 0 && $selected == $obj->code)
-						{
-							$out.= '<option value="'.$obj->code.'" selected="selected">';
-						}
-						else
-						{
-							$out.= '<option value="'.$obj->code.'">';
-						}
-						// Si translation exists, we use it, otherwise we use default label in database
-						$out.= $obj->code . ' - ';
-						$out.= ($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$obj->nom:''));	// $obj->nom is alreay in output charset (converted by database driver)
-						$out.= '</option>';
-					}
+					$obj = $this->db->fetch_object($resql);
+					$labelcountry=(($langs->trans("Country".$obj->country_code)!="Country".$obj->country_code) ? $langs->trans("Country".$obj->country_code) : $obj->country);
+					$labeljs=(($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code) ? $langs->trans("JuridicalStatus".$obj->code) : ($obj->label!='-'?$obj->label:''));	// $obj->label is already in output charset (converted by database driver)
+					$arraydata[$obj->code]=array('code'=>$obj->code, 'label'=>$labeljs, 'label_sort'=>$labelcountry.'_'.$labeljs, 'country_code'=>$obj->country_code, 'country'=>$labelcountry);
 					$i++;
+				}
+
+				$arraydata=dol_sort_array($arraydata, 'label_sort', 'ASC');
+
+				foreach($arraydata as $key => $val)
+				{
+					if (! $country || $country != $val['country'])
+					{
+						// Show break when we are in multi country mode
+						if (empty($country_codeid) && $val['country_code'])
+						{
+							$out.= '<option value="0">----- '.$val['country']." -----</option>\n";
+							$country=$val['country'];
+						}
+					}
+
+					if ($selected > 0 && $selected == $val['code'])
+					{
+						$out.= '<option value="'.$val['code'].'" selected="selected">';
+					}
+					else
+					{
+						$out.= '<option value="'.$val['code'].'">';
+					}
+					// If translation exists, we use it, otherwise we use default label in database
+					$out.= $val['label'];
+					$out.= '</option>';
 				}
 			}
 			$out.= '</select>';
