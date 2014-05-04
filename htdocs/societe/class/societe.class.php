@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,23 +101,77 @@ class Societe extends CommonObject
     var $url;
 
 	//! barcode
-	var $barcode;               // value
-	var $barcode_type;          // id
-	var $barcode_type_code;     // code (loaded by fetch_barcode)
-	var $barcode_type_label;    // label (loaded by fetch_barcode)
-	var $barcode_type_coder;    // coder (loaded by fetch_barcode)
+    /**
+     * Barcode value
+     * @var string
+     */
+    var $barcode;
+    /**
+     * ID of bardode type
+     * @var int
+     */
+    var $barcode_type;
+    /**
+     * code (loaded by fetch_barcode)
+     * @var
+     */
+    var $barcode_type_code;
+    /**
+     * label (loaded by fetch_barcode)
+     * @var
+     */
+    var $barcode_type_label;
+    /**
+     * coder (loaded by fetch_barcode)
+     * @var
+     */
+    var $barcode_type_coder;
 
-    // 4 professional id (usage depend on country)
-    var $idprof1;	// IdProf1 (Ex: Siren in France)
-    var $idprof2;	// IdProf2 (Ex: Siret in France)
-    var $idprof3;	// IdProf3 (Ex: Ape in France)
-    var $idprof4;	// IdProf4 (Ex: RCS in France)
-    var $idprof5;	// IdProf5
-    var $idprof6;	// IdProf6
+    // 6 professional id (usage depends on country)
+
+    /**
+     * Professional ID 1 (Ex: Siren in France)
+     * @var string
+     */
+    var $idprof1;
+
+    /**
+     * Professional ID 2 (Ex: Siret in France)
+     * @var string
+     */
+    var $idprof2;
+
+    /**
+     * Professional ID 3 (Ex: Ape in France)
+     * @var string
+     */
+    var $idprof3;
+
+    /**
+     * Professional ID 4 (Ex: RCS in France)
+     * @var string
+     */
+    var $idprof4;
+
+    /**
+     * Professional ID 5
+     * @var string
+     */
+    var $idprof5;
+
+    /**
+     * Professional ID 6
+     * @var string
+     */
+    var $idprof6;
 
     var $prefix_comm;
 
     var $tva_assuj;
+    /**
+     * Intracommunitary VAT ID
+     * @var string
+     */
     var $tva_intra;
 
     // Local taxes
@@ -162,21 +217,54 @@ class Societe extends CommonObject
      */
     var $fournisseur;
 
+    /**
+     * Client code. E.g: CU2014-003
+     * @var string
+     */
     var $code_client;
+
+    /**
+     * Supplier code. E.g: SU2014-003
+     * @var string
+     */
     var $code_fournisseur;
+
+    /**
+     * Accounting code for client
+     * @var string
+     */
     var $code_compta;
+
+    /**
+     * Accounting code for suppliers
+     * @var string
+     */
     var $code_compta_fournisseur;
 
     /**
      * @deprecated Note is split in public and private notes
      */
     var $note;
+
+    /**
+     * Private note
+     * @var string
+     */
     var $note_private;
+
+    /**
+     * Public note
+     * @var string
+     */
     var $note_public;
     //! code statut prospect
     var $stcomm_id;
     var $statut_commercial;
 
+    /**
+     * Assigned price level
+     * @var int
+     */
     var $price_level;
     var $outstanding_limit;
 
@@ -192,7 +280,20 @@ class Societe extends CommonObject
 
     var $ref;
     var $ref_int;
+    /**
+     * External user reference.
+     * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
+     * build.
+     * @var string
+     */
     var $ref_ext;
+
+    /**
+     * Import key.
+     * Set when the thirdparty has been created through an import process. This is to relate those created thirdparties
+     * to an import process
+     * @var string
+     */
     var $import_key;
 
     var $logo;
