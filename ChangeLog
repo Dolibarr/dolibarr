@@ -54,6 +54,7 @@ For users:
 - New: Add categories translation.
 - New: Enable option "clone target emailing".
 - New: Improved tax module: Add specific page for salaries payment	
+- New: Add composer.json file so Dolibarr can be publish onto packagist.org.
 
 TODO
 - New: Predefined product and free product use same form.
