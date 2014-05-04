@@ -1,0 +1,24 @@
+{
+    "name": "dolibarr/dolibarr",
+    "type": "project",
+    "description": "Dolibarr ERP & CRM is a modern and easy to use web software to manage your business",
+    "keywords": ["erp","crm"],
+    "homepage": "http://dolibarr.org",
+    "licence": "GPL-3.0+",
+    "require": {
+        "php": ">=5.2.1",
+        "ext-gd": "*",
+        "ext-curl": "*"
+    },
+    "suggest": {
+        "ext-mysqli": "*",
+        "ext-pgsql": "*",
+        "ext-mssql": "*",
+        "ext-pdo_sqlite": "*",
+        "ext-imagick": "*",
+        "ext-mcrypt": "*",
+        "ext-openssl": "*",
+        "ext-mb_string": "*",
+        "ext-soap": "*"
+    }
+}
