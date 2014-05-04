@@ -5,6 +5,12 @@
     "keywords": ["erp","crm"],
     "homepage": "http://dolibarr.org",
     "license": "GPL-3.0+",
+    "support": {
+        "issues": "https://doliforge.org/projects/dolibarr",
+        "forum": "http://www.dolibarr.org/forum",
+        "wiki": "http://wiki.dolibarr.org",
+        "irc": "irc://irc.freenode.net/dolibarr"
+    },
     "require": {
         "php": ">=5.2.1",
         "ext-gd": "*",
