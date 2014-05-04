@@ -156,8 +156,6 @@ class Societe extends CommonObject
      */
     public function __construct($db)
     {
-        global $conf;
-
         $this->db = $db;
 
         $this->client = 0;
@@ -2553,8 +2551,8 @@ class Societe extends CommonObject
     		{
     			dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
     			include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-    			$country_code=getCountry($country_id,2,$db);  // This need a SQL request, but it's the old feature
-    			$country_label=getCountry($country_id,0,$db);  // This need a SQL request, but it's the old feature
+    			$country_code=getCountry($country_id,2,$this->db);  // This need a SQL request, but it's the old feature
+    			$country_label=getCountry($country_id,0,$this->db);  // This need a SQL request, but it's the old feature
     		}
     	}
     	$this->country_id=$country_id;
