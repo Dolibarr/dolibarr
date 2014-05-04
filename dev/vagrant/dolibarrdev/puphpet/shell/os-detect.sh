@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 # Try and get debian operating system
 # id, codename, and release
 
@@ -40,9 +40,9 @@ info[id]=$(echo "${ID}" | tr '[A-Z]' '[a-z]')
 info[codename]=$(echo "${CODENAME}" | tr '[A-Z]' '[a-z]')
 info[release]=$(echo "${RELEASE}" | tr '[A-Z]' '[a-z]')
 
-if [ "$TYPE" ] ; then 
+if [ "$TYPE" ] ; then
     echo "${info[${TYPE}]}"
-else 
+else
     echo -e "ID\t${info[id]}"
     echo -e "CODENAME\t${info[codename]}"
     echo -e "RELEASE\t${info[release]}"
