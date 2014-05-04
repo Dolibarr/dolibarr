@@ -268,9 +268,6 @@ class Societe extends CommonObject
     var $price_level;
     var $outstanding_limit;
 
-    var $date_creation;
-    var $date_modification;
-
     /**
      * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
      */
