@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C)      2014 Charles-Fr Benke	<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,13 +182,21 @@ if (! empty($conf->categorie->enabled))
 		if (! empty($conf->use_javascript_ajax) )
 		{
 			$dataseries=array();
+			$rest=0;
+			$nbmax=10;
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				if ($i < $nbmax)
+					$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				else
+					$rest+=$obj->nb;
 				$total+=$obj->nb;
 				$i++;
 			}
+			if ($i > $nbmax)
+				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
 			$data=array('series'=>$dataseries);
 			dol_print_graph('statscategclient',300,180,$data,1,'pie',0);
 		}
