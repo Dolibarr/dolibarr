@@ -20,13 +20,14 @@
 /**
  * 	\file       htdocs/societe/class/address.class.php
  * 	\ingroup    societe
- *  \brief      Fichier de la classe des adresses des tiers
+ *  \brief      File of class to manage addresses. This class is deprecated.
  */
 
 
 /**
- *  \class 		Address
- *  \brief 		Class to manage addresses
+ *  Class to manage addresses
+ *
+ *  @deprecated
  */
 class Address
 {
