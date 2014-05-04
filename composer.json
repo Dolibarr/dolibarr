@@ -24,7 +24,7 @@
         "ext-imagick": "*",
         "ext-mcrypt": "*",
         "ext-openssl": "*",
-        "ext-mb_string": "*",
+        "ext-mbstring": "*",
         "ext-soap": "*"
     }
 }
