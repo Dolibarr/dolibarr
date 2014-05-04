@@ -153,7 +153,7 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	$parameters = array('authentication'=>$authentication);
+    	$parameters = array('authentication'=>$authentication, 'id'=>1);
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
