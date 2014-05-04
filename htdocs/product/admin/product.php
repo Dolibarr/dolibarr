@@ -372,7 +372,7 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="usesearchtoselectproduct">';
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
 	print '<td class="nowrap" align="right" colspan="2">';

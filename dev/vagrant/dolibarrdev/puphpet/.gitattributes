@@ -1,0 +1,10 @@
+# Autodetect text files
+* text=auto
+
+# Force the following filetypes to have unix eols, so Windows does not break them
+*.pp text eol=lf
+*.sh text eol=lf
+*.yaml text eol=lf
+Puppetfile text eol=lf
+.bash_aliases text eol=lf
+.vimrc text eol=lf

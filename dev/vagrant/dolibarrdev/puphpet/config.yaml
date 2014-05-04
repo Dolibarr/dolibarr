@@ -7,7 +7,7 @@ vagrantfile-local:
         network:
             private_network: 192.168.42.101
             forwarded_port:
-                jHkzZVuBoVtG:
+                XnCD0YcW5aic:
                     host: '9252'
                     guest: '22'
         provider:
@@ -26,8 +26,7 @@ vagrantfile-local:
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
                     - '--parser future'
         synced_folder:
-            vMRGvEXBrASV:
-                id: vagrant-root
+            bH8PX003LLNi:
                 source: ../../../
                 target: /var/www
                 nfs: 'false'
@@ -59,14 +58,22 @@ mailcatcher:
         smtp_port: 1025
         http_ip: 0.0.0.0
         http_port: '1080'
-        path: /usr/local/bin
-        log: /var/log/mailcatcher/mailcatcher.log
+        mailcatcher_path: /usr/local/bin
+        log_path: /var/log/mailcatcher/mailcatcher.log
 apache:
+    install: '1'
+    settings:
+        user: www-data
+        group: www-data
+        default_vhost: true
+        manage_user: false
+        manage_group: false
+        sendfile: 0
     modules:
         - php
         - rewrite
     vhosts:
-        fIrYPRDORtSV:
+        2iyFAvXD9OZU:
             servername: dev.dolibarr.org
             docroot: /var/www/htdocs
             port: '80'
@@ -74,11 +81,28 @@ apache:
                 - 'APP_ENV dev'
             override:
                 - All
-    user: www-data
-    group: www-data
-    default_vhost: true
+            custom_fragment: ''
+            ssl_cert: ''
+            ssl_key: ''
+            ssl_chain: ''
+            ssl_certs_dir: ''
     mod_pagespeed: 0
     mod_spdy: 0
+nginx:
+    install: 0
+    vhosts:
+        N7iqVXFhLCgi:
+            server_name: awesome.dev
+            server_aliases:
+                - www.awesome.dev
+            www_root: /var/www/awesome.dev
+            listen_port: '80'
+            index_files:
+                - index.html
+                - index.htm
+                - index.php
+            envvars:
+                - 'APP_ENV dev'
 php:
     install: '1'
     version: '55'
@@ -115,11 +139,12 @@ drush:
     settings:
         drush.tag_branch: 6.x
 mysql:
+    install: '1'
     root_password: root
     phpmyadmin: '1'
     adminer: 0
     databases:
-        K7xpd6KqfK3E:
+        8oNQ7e6GCpdw:
             grant:
                 - ALTER
                 - CREATE
@@ -134,11 +159,32 @@ mysql:
             user: user
             password: user
             sql_file: /var/www/dev/initdata/mysqldump_dolibarr_3.5.0.sql
+postgresql:
+    install: 0
+    settings:
+        root_password: '123'
+        user_group: postgres
+        encoding: UTF8
+        version: '9.3'
+    databases: {  }
+    adminer: 0
+mariadb:
+    install: 0
+    root_password: '123'
+    phpmyadmin: 0
+    adminer: 0
+    databases: {  }
+    version: '10.0'
 mongodb:
     install: 0
-    auth: 1
-    port: '27017'
+    settings:
+        auth: 1
+        port: '27017'
     databases: {  }
+redis:
+    install: 0
+    settings:
+        conf_port: '6379'
 beanstalkd:
     install: 0
     settings:
@@ -153,5 +199,6 @@ beanstalkd:
     binlogdir: /var/lib/beanstalkd/binlog
 rabbitmq:
     install: 0
-    port: '5672'
+    settings:
+        port: '5672'
 
