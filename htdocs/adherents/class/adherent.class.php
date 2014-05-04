@@ -1191,7 +1191,7 @@ class Adherent extends CommonObject
         $sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
         $sql.= " c.tms as datem,";
         $sql.= " c.datec as datec,";
-        $sql.= " c.dateadh as dateadh,";
+        $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef as datef";
         $sql.= " FROM ".MAIN_DB_PREFIX."cotisation as c";
         $sql.= " WHERE c.fk_adherent = ".$this->id;
@@ -1208,10 +1208,10 @@ class Adherent extends CommonObject
             {
                 if ($i==0)
                 {
-                    $this->first_subscription_date=$obj->dateadh;
+                    $this->first_subscription_date=$obj->dateh;
                     $this->first_subscription_amount=$obj->cotisation;
                 }
-                $this->last_subscription_date=$obj->dateadh;
+                $this->last_subscription_date=$obj->dateh;
                 $this->last_subscription_amount=$obj->cotisation;
 
                 $subscription=new Cotisation($this->db);
@@ -1222,7 +1222,7 @@ class Adherent extends CommonObject
                 $subscription->fk_bank=$obj->fk_bank;
                 $subscription->datem=$this->db->jdate($obj->datem);
                 $subscription->datec=$this->db->jdate($obj->datec);
-                $subscription->dateadh=$this->db->jdate($obj->dateadh);
+                $subscription->dateh=$this->db->jdate($obj->dateh);
                 $subscription->datef=$this->db->jdate($obj->datef);
 
                 $this->subscriptions[]=$subscription;

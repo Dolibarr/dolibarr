@@ -367,13 +367,13 @@ $Number=array();
 $tot=0;
 $numb=0;
 
-$sql = "SELECT c.cotisation, c.dateadh";
+$sql = "SELECT c.cotisation, c.dateadh as dateh";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " WHERE d.entity IN (".getEntity().")";
 $sql.= " AND d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != '')
 {
-	$sql .= " AND dateadh LIKE '$date_select%'";
+	$sql .= " AND c.dateadh LIKE '".$date_select."%'";
 }
 $result = $db->query($sql);
 if ($result)
@@ -383,7 +383,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		$year=dol_print_date($db->jdate($objp->dateadh),"%Y");
+		$year=dol_print_date($db->jdate($objp->dateh),"%Y");
 		$Total[$year]=(isset($Total[$year])?$Total[$year]:0)+$objp->cotisation;
 		$Number[$year]=(isset($Number[$year])?$Number[$year]:0)+1;
 		$tot+=$objp->cotisation;

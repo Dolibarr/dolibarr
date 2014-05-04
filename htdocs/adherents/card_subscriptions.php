@@ -337,7 +337,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 	{
                 		$langs->load("errors");
                 		$errmsg=$langs->trans("ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst");
-                		$error++;	
+                		$error++;
                 	}
                 }
                 if (! $error)
@@ -349,7 +349,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $error++;
 	                }
                 }
-                
+
                 if (! $error)
                 {
 	                // Create draft invoice
@@ -367,7 +367,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                }
 	                $invoice->socid=$object->fk_soc;
 	                $invoice->date=$datecotisation;
-	
+
 	                $result=$invoice->create($user);
 	                if ($result <= 0)
 	                {
@@ -375,7 +375,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $error++;
 	                }
                 }
-                
+
                 if (! $error)
                 {
 	                // Add line to draft invoice
@@ -392,11 +392,11 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $errmsg=$invoice->error;
 	                    $error++;
 	                }
-	
+
 	                // Validate invoice
 	                $result=$invoice->validate($user);
                 }
-                
+
                 // Add payment onto invoice
                 if ($option == 'bankviainvoice' && $accountid)
                 {
@@ -681,7 +681,7 @@ if ($rowid)
         $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
         $sql.= " c.rowid as crowid, c.cotisation,";
         $sql.= " c.datec,";
-        $sql.= " c.dateadh,";
+        $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
@@ -724,7 +724,7 @@ if ($rowid)
                 $cotisationstatic->id=$objp->crowid;
                 print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
-                print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+                print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->cotisation).'</td>';
                 if (! empty($conf->banque->enabled))
