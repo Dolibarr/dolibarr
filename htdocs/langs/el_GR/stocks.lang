@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - stocks
-WarehouseCard=Αποθήκη κάρτα
+WarehouseCard=Κάρτα Αποθήκης
 Warehouse=Αποθήκη
-Warehouses=Warehouses
+Warehouses=Αποθήκες
 NewWarehouse=Νέα αποθήκη / Χρηματιστήριο περιοχή
 WarehouseEdit=Τροποποίηση αποθήκη
 MenuNewWarehouse=Νέα αποθήκη
@@ -94,7 +94,7 @@ DesiredStock=Επιθυμητο απόθεμα
 StockToBuy=Για να παραγγείλετε
 Replenishment=Αναπλήρωση
 ReplenishmentOrders=Αναπλήρωση παραγγελίων
-# VirtualDiffersFromPhysical=According to increase/decrease stock options, physical stock and virtual stock (physical + current orders) may differs
+VirtualDiffersFromPhysical=According to increase/decrease stock options, physical stock and virtual stock (physical + current orders) may differs
 UseVirtualStockByDefault=Χρησιμοποιήστε το εικονικό απόθεμα από προεπιλογή, αντί των φυσικών αποθεμάτων, για τη \nλειτουργία αναπλήρωσης
 UseVirtualStock=Χρησιμοποιήστε το εικονικό απόθεμα
 UsePhysicalStock=Χρησιμοποιήστε το φυσικό απόθεμα
@@ -117,3 +117,8 @@ SelectProductInAndOutWareHouse=Επιλέξτε ένα προϊόν, ποσότ�
 RecordMovement=Η εγγραφή μεταφέρθηκε
 ReceivingForSameOrder=Λήψη για αυτή τη σειρά
 StockMovementRecorded=Οι κινήσεις των αποθεμάτων καταγράφονται
+RuleForStockAvailability=Rules on stock requirements
+StockMustBeEnoughForInvoice=Stock level must be enough to add product/service into invoice
+StockMustBeEnoughForOrder=Stock level must be enough to add product/service into order
+StockMustBeEnoughForShipment= Stock level must be enough to add product/service into shipment
+

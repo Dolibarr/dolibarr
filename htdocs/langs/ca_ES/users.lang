@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=Fitxa usuari
 ContactCard=Fitxa contacte
 GroupCard=Fitxa grup
@@ -116,5 +117,5 @@ DontDowngradeSuperAdmin=Només un superadmin pot degradar un superadmin
 HierarchicalResponsible=Responsable jeràrquic
 HierarchicView=Vista jeràrquica
 UseTypeFieldToChange=Modificar el camp Tipus per canviar
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

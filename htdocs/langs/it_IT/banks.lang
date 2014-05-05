@@ -133,6 +133,7 @@ CashBudget=Bilancio di cassa
 PlannedTransactions=Transazioni pianificate
 Graph=Grafico
 ExportDataset_banque_1=Movimenti bancari e di cassa e loro rilevazioni
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Transazione sull'altro conto
 TransactionWithOtherAccount=Giroconto
 PaymentNumberUpdateSucceeded=Numero di pagamento aggiornato con successo

@@ -2,7 +2,7 @@
 Salary=Salaires
 Salaries=Salaires
 Employee=Employé
-NewSalaryPayment=Nouveau paiement de salaire
-SalaryPayment=Paiement de salaire
-SalariesPayments=Paiements de salaires
-ShowSalaryPayment=Afficher paiement de salaire
+NewSalaryPayment=Nouveau règlement de salaire
+SalaryPayment=Règlement salaire
+SalariesPayments=Règlements des salaires
+ShowSalaryPayment=Afficher règlement de salaire

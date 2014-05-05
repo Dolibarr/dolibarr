@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=Użytkownik karty
 ContactCard=Kontakt karty
 GroupCard=Grupa karty
@@ -113,8 +114,8 @@ YourRole=Swoje role
 YourQuotaOfUsersIsReached=Limitu aktywnych użytkowników został osiągnięty!
 NbOfUsers=Nb użytkowników
 DontDowngradeSuperAdmin=Tylko superadmin niższej wersji superadmin
-# HierarchicalResponsible=Hierarchical responsible
-# HierarchicView=Hierarchical view
-# UseTypeFieldToChange=Use field Type to change
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+HierarchicalResponsible=Hierarchical responsible
+HierarchicView=Hierarchical view
+UseTypeFieldToChange=Use field Type to change
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

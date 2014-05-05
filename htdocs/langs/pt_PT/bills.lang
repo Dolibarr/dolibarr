@@ -203,7 +203,7 @@ StandingOrders=Débitos Directos
 StandingOrder=Domiciliação
 NoDraftBills=Nenhuma factura rascunho
 NoOtherDraftBills=Nenhuma outra factura rascunho
-NoDraftInvoices=No draft invoices
+NoDraftInvoices=Sem rascunhos de faturas 
 RefBill=Ref. factura
 ToBill=A facturar
 RemainderToBill=Falta Facturar
@@ -315,7 +315,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% adiantado, 50%% na entrega
 FixAmount=Fix amount
 VarAmount=Quantidade variável (%% total.)
-
 # PaymentType
 PaymentTypeVIR=Transferência bancaria
 PaymentTypeShortVIR=Transferência

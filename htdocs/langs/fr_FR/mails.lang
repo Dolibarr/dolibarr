@@ -99,8 +99,6 @@ MailingModuleDescContactsByCompanyCategory=Contacts de tiers (par catégorie de 
 MailingModuleDescContactsByCategory=Contacts de tiers par catégorie de contact
 MailingModuleDescMembersCategories=Adhérents (par catégorie)
 MailingModuleDescContactsByFunction=Contacts de tiers (par poste/fonction)
-
-
 LineInFile=Ligne %s du fichier
 RecipientSelectionModules=Modules de sélection des destinataires
 MailSelectedRecipients=Destinataires sélectionnés
@@ -121,7 +119,7 @@ TargetsReset=Vider liste
 ToClearAllRecipientsClickHere=Pour vider la liste des destinataires de cet emailing, cliquez sur le bouton
 ToAddRecipientsChooseHere=Pour ajouter des destinataires, choisir dans les listes ci-dessous
 NbOfEMailingsReceived=Emailings de masse reçus
-NbOfEMailingsSend=Emailings de masse envoyé(s)
+NbOfEMailingsSend=EMailings de masse envoyés
 IdRecord=ID enregistrement
 DeliveryReceipt=Accusé de réception
 YouCanUseCommaSeparatorForSeveralRecipients=Vous pouvez utiliser le caractère de séparation <b>virgule</b> pour spécifier plusieurs destinataires.
@@ -129,7 +127,6 @@ TagCheckMail=Suivre l'ouverture de l'email
 TagUnsubscribe=Lien de désinscription
 TagSignature=Signature utilisateur émetteur
 TagMailtoEmail=Email destinataire
-
 # Module Notifications
 Notifications=Notifications
 NoNotificationsWillBeSent=Aucune notification par email n'est prévue pour cet événement et société

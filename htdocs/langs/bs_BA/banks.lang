@@ -133,6 +133,7 @@ CashBudget=Novčani proračun
 PlannedTransactions=Planirana transakcije
 Graph=Grafika
 ExportDataset_banque_1=Bankovne transakcije i izvod računa
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Transakcija na drugom računu
 TransactionWithOtherAccount=Account transfer
 PaymentNumberUpdateSucceeded=Broj uplate ažuriran uspješno

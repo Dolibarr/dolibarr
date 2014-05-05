@@ -117,3 +117,8 @@ SelectProductInAndOutWareHouse=Välj produkt, antal, ursprungslager och mållage
 RecordMovement=Spela in överföring
 ReceivingForSameOrder=Godsmottagning för denna order
 StockMovementRecorded=Sparade lageröverföringar
+RuleForStockAvailability=Rules on stock requirements
+StockMustBeEnoughForInvoice=Stock level must be enough to add product/service into invoice
+StockMustBeEnoughForOrder=Stock level must be enough to add product/service into order
+StockMustBeEnoughForShipment= Stock level must be enough to add product/service into shipment
+

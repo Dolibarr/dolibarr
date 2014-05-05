@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=بطاقة مستخدم
 ContactCard=بطاقة الاتصال
 GroupCard=مجموعة البطاقات
@@ -113,8 +114,8 @@ YourRole=الأدوار الخاص
 YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من المستخدمين النشطين!
 NbOfUsers=ملحوظة من المستخدمين
 DontDowngradeSuperAdmin=يمكن فقط superadmin تقليله a superadmin
-# HierarchicalResponsible=Hierarchical responsible
-# HierarchicView=Hierarchical view
-# UseTypeFieldToChange=Use field Type to change
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+HierarchicalResponsible=Hierarchical responsible
+HierarchicView=Hierarchical view
+UseTypeFieldToChange=Use field Type to change
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

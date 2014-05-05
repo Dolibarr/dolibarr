@@ -49,9 +49,11 @@ ErrorReservedTypeSystemSystemAuto=Value 'system' and 'systemauto' for type is re
 ErrorCodeCantContainZero=Code can't contain value 0
 DisableJavascript=禁用JavaScript和Ajax功能
 ConfirmAjax=使用Ajax確認彈出式窗口
-UseSearchToSelectCompany=Use autocompletion fields to choose third parties (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectCompany=Use autocompletion fields to choose third parties instead of using a list box.
 ActivityStateToSelectCompany= 添加一個篩選器的選項，以顯示/隱藏thirdparties，這是在目前的活動或已停止
-UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).<br><br>Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).
 SearchFilter=搜尋過濾選項
 NumberOfKeyToSearch=需要 %s 個字元來觸發搜尋
 ViewFullDateActions=充分顯示行動的日期，第三表
@@ -100,6 +102,9 @@ OtherOptions=其他選項
 OtherSetup=其他設置
 CurrentValueSeparatorDecimal=小數分隔符
 CurrentValueSeparatorThousand=千位分隔符
+Destination=Destination
+IdModule=Module ID
+IdPermissions=Permissions ID
 Modules=模組
 ModulesCommon=主要模組
 ModulesOther=其他模組
@@ -367,7 +372,7 @@ ExtrafieldRadio=Radio button
 ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
 ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for exemple : <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpsellist=Parameters list have come from table<br><br> for exemple : <br>c_typent:libelle:id::filter<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Library used to build PDF
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
@@ -1282,6 +1287,8 @@ YouMayFindPerfAdviceHere=You will find on this page some checks or advices relat
 NotInstalled=Not installed, so your server is not slow down by this.
 ApplicativeCache=Applicative cache
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=OPCode cache
 NoOPCodeCacheFound=No OPCode cache found. May be you use another OPCode cache than XCache or eAccelerator (good), may be you don't have OPCode cache (very bad).
 HTTPCacheStaticResources=HTTP cache for static resources (css, img, javascript)
@@ -1302,7 +1309,8 @@ ConfirmDeleteProductLineAbility=當形式確認刪除產品線
 ModifyProductDescAbility=產品個性化的形式描述
 ViewProductDescInFormAbility=在表單上是否可以直接顯示產品描述資訊(如果關閉則採用彈出式訊息框方式顯示)
 ViewProductDescInThirdpartyLanguageAbility=是否可以直接顯示其他語系的產品描述資訊
-UseSearchToSelectProduct=使用自動完成欄位資訊的方式，來選擇產品(而不是使用清單方式)<br><br>如果你有大於100000筆的產品資訊，則可以藉由修改PRODUCT_DONOTSEARCH_ANYWHERE常數為 1 來加快速度。此常數可以在設定->其他設置中設定。 這樣在搜尋的時候會被限制為字串開始輸入時。
+UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
 UseEcoTaxeAbility=支持生態附加稅（WEEE）的
 SetDefaultBarcodeTypeProducts=預設的條碼類型
 SetDefaultBarcodeTypeThirdParties=預設的條碼類型給客戶/供應商模組使用
@@ -1489,3 +1497,6 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
+
+
+Format=Format

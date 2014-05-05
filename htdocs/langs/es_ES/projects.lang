@@ -106,9 +106,9 @@ ProjectReportDate=Cambiar las fechas de las tareas en función de la fecha de in
 ErrorShiftTaskDate=Se ha producido un error en el cambio de las fechas de las tareas
 ProjectsAndTasksLines=Proyectos y tareas
 ProjectCreatedInDolibarr=Proyecto %s creado
-TaskCreatedInDolibarr=La tarea %s fué creada
-TaskModifiedInDolibarr=La tarea %s fué modificada
-TaskDeletedInDolibarr=La tarea %s fué eliminada
+TaskCreatedInDolibarr=La tarea %s fue creada
+TaskModifiedInDolibarr=La tarea %s fue modificada
+TaskDeletedInDolibarr=La tarea %s fue eliminada
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Jefe de proyecto
 TypeContact_project_external_PROJECTLEADER=Jefe de proyecto

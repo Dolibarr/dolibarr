@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=Käyttäjän kortti
 ContactCard=Osoitekortin
 GroupCard=Ryhmän kortti
@@ -113,8 +114,8 @@ YourRole=Omat roolit
 YourQuotaOfUsersIsReached=Tilakiintiösi aktiivisia käyttäjiä on saavutettu!
 NbOfUsers=Nb käyttäjien
 DontDowngradeSuperAdmin=Vain superadmin voi downgrade superadmin
-# HierarchicalResponsible=Hierarchical responsible
-# HierarchicView=Hierarchical view
-# UseTypeFieldToChange=Use field Type to change
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+HierarchicalResponsible=Hierarchical responsible
+HierarchicView=Hierarchical view
+UseTypeFieldToChange=Use field Type to change
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

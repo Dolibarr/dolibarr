@@ -49,9 +49,11 @@ ErrorReservedTypeSystemSystemAuto=Vertės 'system' ir 'systemauto' yra rezervuot
 ErrorCodeCantContainZero=Kode negali būti vertės 0
 DisableJavascript=Išjunkite JAvaScript ir Ajax funkcijas
 ConfirmAjax=Naudokite Ajax patvirtinimo langus
-UseSearchToSelectCompany=Naudokite automatinio užbaigimo laukus pasirinkti trečiosioms šalims (o ne naudojant sąrašo lauką).<br><br>Taip pat, jei turite daug trečiųjų šalių (> 100 000), galite padidinti greitį nustatydami konstantą COMPANY_DONOTSEARCH_ANYWHERE į 1 čia Nustatymai-> Kiti. Paieška bus tik pagal eilutės pradžią.
+UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectCompany=Use autocompletion fields to choose third parties instead of using a list box.
 ActivityStateToSelectCompany= Parodyti/paslėpti trečiasias šalis vykdančias ar nutraukusias veiklą, pridėkite filtro pasirinkimą
-UseSearchToSelectContact=Naudoti intuityvų laukelį pasirenkant kontaktus (vietoje iššaukiamo sąrašo). <br><br> Taip pat jei trečiųjų šalių kiekis yra didelis (> 100 000), galite paspartinti paiešką nustatant konstantą CONTACT_DONOTSEARCH_ANYWHERE to 1, PAruošimas -> Kiti srityje. Tokiu atvėju paieška apsiribos 'string' vertės pradžia.
+UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).
 SearchFilter=Paieškos filtrų nustatymai
 NumberOfKeyToSearch=Paieškai paleisti reikalingas simbolių skaičius: %s
 ViewFullDateActions=Rodyti pilnas įvykių datas trečiajame lape
@@ -100,6 +102,9 @@ OtherOptions=Kitos parinktys
 OtherSetup=Kiti nustatymai
 CurrentValueSeparatorDecimal=Dešimtainis skyriklis
 CurrentValueSeparatorThousand=Tūkstančių skyriklis
+Destination=Destination
+IdModule=Module ID
+IdPermissions=Permissions ID
 Modules=Moduliai
 ModulesCommon=Pagrindiniai moduliai
 ModulesOther=Kiti moduliai
@@ -218,7 +223,7 @@ InstrucToEncodePass=Norint užkoduoti slaptažodį į <b>conf.php</b> failą, pa
 InstrucToClearPass=Norint iššifruoti slaptažodį į <b>conf.php</b> failą, pakeisti eilutę <br> <b>$ Dolibarr_main_db_pass = "crypted: ..."</b> <br> į <br> <b>$ Dolibarr_main_db_pass = "% s"</b>
 ProtectAndEncryptPdfFiles=Generuojamų PDF failų apsauga (Activated NOT recomended, breaks mass pdf generation)
 ProtectAndEncryptPdfFilesDesc=PDF dokumento apsauga sudaro galimybę jį skaityti ir spausdinti bet kurioje PDF skaityklėje. Tačiau redagavimas ir kopijavimas yra nebegalimas. Dėmesio, naudojant šią funkciją, masinis sukauptų pdf failų apjungimas neveikia (kaip neapmokėtų sąskaitų).
-Feature=Ypatybė
+Feature=Savybė
 DolibarrLicense=Licencija
 DolibarrProjectLeader=Projekto vadovas
 Developpers=Kūrėjai/autoriai
@@ -367,7 +372,7 @@ ExtrafieldRadio=Opcijų mygtukai
 ExtrafieldParamHelpselect=Parametrų sąrašas turi būti kaip raktas, reikšmė<br><br> pavyzdžiui: <br>1, reikšmė1<br>2, reikšmė2<br>3, reikšmė3 <br> ... <br><br>Siekiant turėti sąrašą, priklausomai nuo kito: <br>1, reikšmė1|parent_list_code:parent_key<br>2, reikšmė2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parametrų sąrašas turi būti kaip raktas, reikšmė<br><br> pavyzdžiui: <br>1, reikšmė1<br>2, reikšmė2<br>3, reikšmė3 <br>...
 ExtrafieldParamHelpradio=Parametrų sąrašas turi būti kaip raktas, reikšmė<br><br> pavyzdžiui: <br>1, reikšmė1<br> 2, reikšmė2<br> 3, reikšmė3 <br>...
-ExtrafieldParamHelpsellist=Parametrų sąrašas iš lentelės<br><br> pavyzdžiui: <br>c_typent:libelle:id::filter<br><br>Siekiant turėti sąrašą, priklausomai nuo kitko: <br>c_typent:libelle:id:parent_list_code|parent_column:filter<br> Filtras gali būti paprastas testas (pvz., aktyvus=1) rodyti tik aktyvią reikšmę<br> Jei norite filtruoti papildomus laukus naudokite sintaksę extra.fieldcode=... (kur lauko kodas yra papildomo lauko kodas)
+ExtrafieldParamHelpsellist=Parametrų sąrašas ateina iš lentelės<br>Sintaksė: table_name:label_field:id_field::filter<br>Pavyzdys: c_typent:libelle:id::filter<br><br>filtras gali būti paprastas bandymas (pvz., aktyvi=1) rodyti tik aktyvią reikšmę <br> jei norite filtruoti extrafield laukelius, naudokite syntaksę: extra.fieldcode=... (kur laukelio kodas yra extrafield kodas)<br><br>Siekiant turėti sąrašą, priklausomą nuo kito: <br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Biblioteka naudojama sukurti PDF
 WarningUsingFPDF=Įspėjimas: Jūsų <b>conf.php</b> yra ribojanti direktyva <b>dolibarr_pdf_force_fpdf=1</b>. Tai reiškia, kad jūs naudojate FPDF biblioteką PDF failų generavimui. Ši biblioteka yra sena ir nepalaiko daug funkcijų (Unicode, vaizdo skaidrumo, kirilicos, arabų ir Azijos kalbų, ...), todėl galite patirti klaidų generuojant PDF.<br>Norėdami išspręsti šią problemą ir turėti visapusišką palaikymą generuojant PDF, atsisiųskite <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a> , tada pažymėkite (comment) arba pašalinkite eilutę <b>$dolibarr_pdf_force_fpdf=1</b> ir įdėkite vietoje jos <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
 LocalTaxDesc=Kai kurios šalys taiko 2 arba 3 mokesčius kiekvienai sąskaitos eilutei. Tokiu atveju pasirinkite 2-jo ir 3-jo mokesčio tipą ir jo tarifą. Galimi tipai yra:<br>1: vietinis mokestis taikomas produktams ir paslaugoms be PVM (PVM nėra taikomas vietiniams mokesčiams)<br>2: vietinis mokestis taikomas produktams ir paslaugoms iki PVM (PVM skaičiuojamas nuo sumos + vietinis mokestis)<br> 3: vietos mokestis taikomas produktams be PVM (PVM nėra taikomas vietiniams mokesčiams)<br> 4: vietos mokestis taikomas produktams iki PVM (PVM skaičiuojamas nuo sumos + vietinis mokestis)<br> 5: vietos mokestis taikomas paslaugoms be PVM (PVM nėra taikomas vietiniams mokesčiams)<br> 6: vietiniai mokesčiai taikomi paslaugoms iki PVM (PVM skaičiuojamas nuo sumos + vietiniai mokesčiai)
@@ -458,8 +463,8 @@ Module310Name=Nariai
 Module310Desc=Organizacijos narių valdymas
 Module320Name=RSS mechanizmas
 Module320Desc=Pridėti RSS mechanizmą Dolibarr ekrano puslapių viduje
-Module330Name=Žymės
-Module330Desc=Žymių valdymas
+Module330Name=Žymekliai
+Module330Desc=Žymeklių valdymas
 Module400Name=Projektai
 Module400Desc=Projektų valdymas kitų modulių viduje
 Module410Name=Web kalendorius
@@ -1282,6 +1287,8 @@ YouMayFindPerfAdviceHere=Šiame puslapyje rasite kelis patikrinimus ar patarimus
 NotInstalled=Nėra įdiegtas, todėl Jūsų serverio šitas neapkrauna ir nelėtina.
 ApplicativeCache=Taikomoji sparčioji tarpinė atmintis
 MemcachedNotAvailable=Taikomosios sparčiosios tarpinės atminties nerasta. Jūs galite padidinti efektyvumą įdiegdami atminties serverį Memcached ir įgalindami modulį naudoti šį atminties serverį.<br>Daugiau informacijos rasite čia <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Atkreipkite dėmesį, kad daugumas interneto talpinimo paslaugų teikėjų neteikia šitokių atminties serverių.
+MemcachedModuleAvailableButNotSetup=Modulis memcached taikomąjai atmintinei (cache) rastas, bet modulio nustatymai nėra baigti.
+MemcachedAvailableAndSetup=Modulis memcached, skirti naudoti memcached server yra įjungtas.
 OPCodeCache=OPCode sparčioji tarpinė atmintis (cache)
 NoOPCodeCacheFound=OPCode sparčioji tarpinė atmintis nerasta. Galbūt, Jūs naudojate kitą OPCode atmintį nei XCache ar eAccelerator (gerai), o galbūt, Jūs neturite OPCode atminties (labai blogai).
 HTTPCacheStaticResources=HTTP sparčioji tarpinė atmintis statiniams ištekliams (css, img, javascript)
@@ -1302,7 +1309,8 @@ ConfirmDeleteProductLineAbility=Patvirtinimas, norint ištrinti produkto liniją
 ModifyProductDescAbility=Produkto aprašymų formose personalizavimas
 ViewProductDescInFormAbility=Produktų aprašymų vizualizavimas formose (kitu būdu per "iššokantį" langą)
 ViewProductDescInThirdpartyLanguageAbility=Produktų aprašymų vizualizavimas trečios šalies kalba
-UseSearchToSelectProduct=Naudokite paieškos formą pasirinkti produktui (geriau naudotis "iškrentančiu" sąrašu).<br> Taip pat, jei turite daug produktų (>100 000), galite padidinti greitį nustatydami  PRODUCT_DONOTSEARCH_ANYWHERE pastoviąją 1 meniu Nuostatos-> Kiti. Paieška bus apribojama tik eilutės pradžia.
+UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
 UseEcoTaxeAbility=Palaikyti Eco-Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Brūkšninio kodo tipas produktams pagal nutylėjimą
 SetDefaultBarcodeTypeThirdParties=Brūkšninio kodo tipas trečiosioms šalims pagal nutylėjimą
@@ -1489,3 +1497,6 @@ TaskModelModule=Užduočių ataskaitų dokumento modelis
 ##### ECM (GED) #####
 ECMSetup = GED nustatymas
 ECMAutoTree = Automatinis medžio aplankas ir dokumentas
+
+
+Format=Format

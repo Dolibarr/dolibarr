@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=帳戶資訊
 ContactCard=聯系卡
 GroupCard=集團卡
@@ -113,8 +114,8 @@ YourRole=您的角色
 YourQuotaOfUsersIsReached=你的活躍用戶達到配額！
 NbOfUsers=用戶數
 DontDowngradeSuperAdmin=只有超級管理員可以降級超級管理員
-# HierarchicalResponsible=Hierarchical responsible
-# HierarchicView=Hierarchical view
-# UseTypeFieldToChange=Use field Type to change
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+HierarchicalResponsible=Hierarchical responsible
+HierarchicView=Hierarchical view
+UseTypeFieldToChange=Use field Type to change
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

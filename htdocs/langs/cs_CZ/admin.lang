@@ -49,9 +49,11 @@ ErrorReservedTypeSystemSystemAuto=Hodnota &quot;system&quot; a &quot;systemauto&
 ErrorCodeCantContainZero=Kód nemůže obsahovat hodnotu 0
 DisableJavascript=Zakázat JavaScript a Ajax funkce
 ConfirmAjax=Použít Ajax potvrzovací okénka
-UseSearchToSelectCompany=Použijte pole s automatickým doplňováním pro výběr třetích stran (namísto list-boxu).<br><br> Při větším množství třetích stran (> 100 000) můžete zvýšit rychlost nastavením konstanty COMPANY_DONOTSEARCH_ANYWHERE na 1 v menu Nastavení -&gt; Ostatní. Hledání pak bude omezené na začátek řetězce.
+UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectCompany=Use autocompletion fields to choose third parties instead of using a list box.
 ActivityStateToSelectCompany= Přidat možnost filtru pro zobrazení / skrytí třetích stran, které jsou v současné době v činnosti nebo ji ukončili
-UseSearchToSelectContact=Použijte pole s automatickým doplňováním pro výběr kontaktu (namísto list-boxu).<br><br> Při větším množství třetích stran (> 100 000) můžete zvýšit rychlost nastavením konstanty COMPANY_DONOTSEARCH_ANYWHERE na 1 v menu Nastavení -&gt; Ostatní. Hledání pak bude omezené na začátek řetězce.
+UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).
 SearchFilter=Nastavení vyhledávání
 NumberOfKeyToSearch=Počet charakterů nutných k spuštění hledání: %s
 ViewFullDateActions=Zobrazit rozšířené datumy události v třetím listu
@@ -100,6 +102,9 @@ OtherOptions=Další možnosti
 OtherSetup=Další nastavení
 CurrentValueSeparatorDecimal=Desetinný oddělovač
 CurrentValueSeparatorThousand=Oddělovač tisíců
+Destination=Destination
+IdModule=Module ID
+IdPermissions=Permissions ID
 Modules=Moduly
 ModulesCommon=Hlavní moduly
 ModulesOther=Další moduly
@@ -367,7 +372,7 @@ ExtrafieldRadio=Přepínač
 ExtrafieldParamHelpselect=Seznam parametrů musí být jako klíčový, hodnota <br><br> např: <br> 1 hodnota1 <br> 2, hodnota2 <br> 3 value3 <br> ... <br><br> Aby bylo možné mít seznam v závislosti na druhého: <br> 1 hodnota1 | parent_list_code: parent_key <br> 2, hodnota2 | parent_list_code: parent_key
 ExtrafieldParamHelpcheckbox=Seznam parametrů musí být jako klíčový, hodnota <br><br> např: <br> 1 hodnota1 <br> 2, hodnota2 <br> 3 value3 <br> ...
 ExtrafieldParamHelpradio=Seznam parametrů musí být jako klíčový, hodnota <br><br> např: <br> 1 hodnota1 <br> 2, hodnota2 <br> 3 value3 <br> ...
-ExtrafieldParamHelpsellist=Seznam parametrů pochází z tabulky<br><br> například : <br>c_typent:libelle:id::filter<br><br>Za účelem mít seznam v závislosti na jiném:<br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filtr může být jednoduchým testem (např. active=1 zobrazí pouze aktivní hodnotu) <br> Chcete-li filtrovat další pole, použijte syntaxi: extra.fieldcode = ... (v případě pole kód je kód extrafield)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Knihovna použít k vytvoření PDF
 WarningUsingFPDF=Upozornění: Váš <b>conf.php</b> obsahuje direktivu <b>dolibarr_pdf_force_fpdf = 1.</b> To znamená, že můžete používat knihovnu FPDF pro generování PDF souborů. Tato knihovna je stará a nepodporuje mnoho funkcí (Unicode, obraz transparentnost, azbuka, arabské a asijské jazyky, ...), takže může dojít k chybám při generování PDF. <br> Chcete-li vyřešit tento a mají plnou podporu generování PDF, stáhněte si <a href="http://www.tcpdf.org/" target="_blank">TCPDF knihovny</a> , pak komentář nebo odebrat řádek <b>$ dolibarr_pdf_force_fpdf = 1,</b> a místo něj doplnit <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir &quot;</b>
 LocalTaxDesc=Některé země používají 2 nebo 3 daně na každou fakturu řádku. Pokud je to tento případ, vybrat typ druhém a třetím daně a její sazba. Možné typem jsou: <br> 1: pobytová taxa platí o produktech a službách bez DPH (není aplikován na místní daně) <br> 2: pobytová taxa platí o produktech a službách před DPH (je vypočtena na částku + localtax) <br> 3: pobytová taxa platí na výrobky bez DPH (není aplikován na místní daně) <br> 4: pobytová taxa platí na výrobky před DPH (je vypočtena na částku + localtax) <br> 5: pobytová taxa platí na služby bez DPH (není aplikován na místní daně) <br> 6: pobytová taxa platí o službách před DPH (je vypočtena na částku + localtax)
@@ -1282,6 +1287,8 @@ YouMayFindPerfAdviceHere=Najdete na této stránce nějaké kontroly nebo rad t�
 NotInstalled=Ne, takľe není váš server zpomalit tím.
 ApplicativeCache=Aplikačních mezipaměti
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=Opcode mezipaměti
 NoOPCodeCacheFound=Žádné opcode nalezená keš. Může být použít další opcode paměť než XCache nebo eAccelerator (dobré), může být, že nemáte opcode cache (velmi špatně).
 HTTPCacheStaticResources=HTTP cache pro statické zdroje (css, img, javascript)
@@ -1302,7 +1309,8 @@ ConfirmDeleteProductLineAbility=Potvrzení při odstraňování produktové řad
 ModifyProductDescAbility=Personalizace popisy produktů ve formách
 ViewProductDescInFormAbility=Vizualizace popisy produktů ve formách (jinak jako vyskakovací bublině)
 ViewProductDescInThirdpartyLanguageAbility=Vizualizace Popisy výrobků v thirdparty jazyce
-UseSearchToSelectProduct=Použijte vyhledávací formulář si vybrat produkt (spíše než v rozevíracím seznamu). <br> Také, pokud máte velké množství produktů (&gt; 100 000), můžete zvýšit rychlost nastavením konstantní PRODUCT_DONOTSEARCH_ANYWHERE na 1 v Nastavení-&gt; Ostatní. Vyhledávání pak bude omezen na začátek řetězce.
+UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
 UseEcoTaxeAbility=Podpora Eco-taxe (WEEE)
 SetDefaultBarcodeTypeProducts=Výchozí typ čárového kódu použít pro produkty
 SetDefaultBarcodeTypeThirdParties=Výchozí typ čárového kódu použít k třetím osobám
@@ -1489,3 +1497,6 @@ TaskModelModule=Úkoly zprávy Vzor dokladu
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatické strom složek a dokumentů
+
+
+Format=Format

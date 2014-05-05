@@ -133,6 +133,7 @@ CashBudget=Środki pieniężne budżetu
 PlannedTransactions=Planowane transakcje
 Graph=Grafika
 ExportDataset_banque_1=Bank transakcji i konta
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Transakcji na inne konta
 TransactionWithOtherAccount=Konto transferu
 PaymentNumberUpdateSucceeded=Płatność liczba zaktualizowany

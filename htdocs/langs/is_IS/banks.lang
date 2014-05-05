@@ -133,6 +133,7 @@ CashBudget=Cash fjárhagsáætlun
 PlannedTransactions=Fyrirhuguð viðskipti
 Graph=Grafík
 ExportDataset_banque_1=Bank fundargerðir og reikningsyfirlit
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Færsla á annan reikning
 TransactionWithOtherAccount=Reikningur flytja
 PaymentNumberUpdateSucceeded=Greiðslunnar uppfærðir

@@ -133,6 +133,7 @@ CashBudget=Pressupost de tresoreria
 PlannedTransactions=Transaccions previstes
 Graph=Gràfics
 ExportDataset_banque_1=Transacció bancària i extracte
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Transacció sobre l'altra compte
 TransactionWithOtherAccount=Transferència de compte
 PaymentNumberUpdateSucceeded=Numero de pagament modificat

@@ -133,6 +133,7 @@ CashBudget=الميزانية النقدية
 PlannedTransactions=المخطط المعاملات
 Graph=الرسومات
 ExportDataset_banque_1=المعاملات المصرفية وحساب
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=صفقة على حساب الآخرين
 TransactionWithOtherAccount=تحويل الحساب
 PaymentNumberUpdateSucceeded=دفع عدد تحديث بنجاح

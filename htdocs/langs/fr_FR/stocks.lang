@@ -117,3 +117,8 @@ SelectProductInAndOutWareHouse=Sélectionner un produit, une quantité à transf
 RecordMovement=Enregistrer transferts
 ReceivingForSameOrder=Réceptions pour cette commande
 StockMovementRecorded=Mouvement de stocks enregistré
+RuleForStockAvailability=Règles d'exigence sur les stocks
+StockMustBeEnoughForInvoice=Le niveau de stock doit être suffisant pour ajouter un produit/service dans une facture
+StockMustBeEnoughForOrder=Le niveau de stock doit être suffisant pour ajouter un produit/service dans une commande
+StockMustBeEnoughForShipment= Le niveau de stock doit être suffisant pour ajouter un produit/service dans une expédition
+

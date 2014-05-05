@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=ユーザーカード
 ContactCard=カードにお問い合わせください
 GroupCard=グループカード
@@ -113,8 +114,8 @@ YourRole=あなたの役割
 YourQuotaOfUsersIsReached=アクティブなユーザーのあなたのクォータに達している！
 NbOfUsers=ユーザーのNb
 DontDowngradeSuperAdmin=唯一superadminはダウングレードは、superAdminできます
-# HierarchicalResponsible=Hierarchical responsible
-# HierarchicView=Hierarchical view
-# UseTypeFieldToChange=Use field Type to change
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+HierarchicalResponsible=Hierarchical responsible
+HierarchicView=Hierarchical view
+UseTypeFieldToChange=Use field Type to change
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

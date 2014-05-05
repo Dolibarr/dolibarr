@@ -135,6 +135,8 @@ ErrorWarehouseMustDiffers=Source and target warehouses must differs
 ErrorBadFormat=Bad format!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=警告，PHP的選項<b>safe_mode設置</b>為在此情況下命令必須在<b>safe_mode_exec_dir之</b>存儲參數的PHP目錄內宣布。

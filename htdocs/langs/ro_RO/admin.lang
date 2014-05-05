@@ -49,9 +49,11 @@ ErrorReservedTypeSystemSystemAuto=Valorile 'system' și 'systemauto' pentru  tip
 ErrorCodeCantContainZero=Codul nu poate conţine valoarea 0
 DisableJavascript=Dezactivează funcţiile  JavaScript si Ajax
 ConfirmAjax=Utilizaţi pop-up de confirmare  Ajax
-UseSearchToSelectCompany=Utilizați autocompletarea  câmpurilor pentru alegerea terţilor (în loc de a folosi o casetă listă). <br><br> De asemenea, dacă aveți un număr mare de terţi (> 100 000), puteți crește viteza prin setarea constantei COMPANY_DONOTSEARCH_ANYWHERE la 1 la Setup->Altele. Căutarea va fi limitată la începutul șirului.
+UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectCompany=Use autocompletion fields to choose third parties instead of using a list box.
 ActivityStateToSelectCompany= Adaugă o opţiune de filtru pentru a afişa / ascunde thirdparties, care sunt în prezent în activitate sau le-a încetat
-UseSearchToSelectContact=Utilizați un câmp cu autocompletare pentru a selecta un contact (în loc de lista derulantă). <br> Rețineți că, dacă aveți un număr mare de contacte (> 100 000), puteți îmbunătăți performanța prin setarea constantei CONTACT_DONOTSEARCH_ANYWHERE  la 1 în Setări-> Diverse. Căutarea se va limita la începutul șirului.
+UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).
 SearchFilter=Opţiuni filtre de căutare
 NumberOfKeyToSearch=Nr caractere pentru a declanşa căutare: %s
 ViewFullDateActions=Arata complet datele de acţiuni în cea de-a treia foaie
@@ -100,6 +102,9 @@ OtherOptions=Alte opţiuni
 OtherSetup=Alte Setări
 CurrentValueSeparatorDecimal=Separator zecimal
 CurrentValueSeparatorThousand=Separator mii
+Destination=Destination
+IdModule=Module ID
+IdPermissions=Permissions ID
 Modules=Module
 ModulesCommon=Module Principale
 ModulesOther=Alte Module
@@ -367,7 +372,7 @@ ExtrafieldRadio=Radio buton
 ExtrafieldParamHelpselect=Lista de parametri trebuie să fie ca cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ... <br><br> Pentru a avea listă în funcție de o alta:<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
 ExtrafieldParamHelpradio=Lista de parametri trebuie să fie de tip  cheie, valoare <br><br> pentru exemplul: <br> 1, valoare1 <br> 2, valoare2 <br> 3, value3 <br> ...
-ExtrafieldParamHelpsellist=Lista de parametri a venit de la tabelul <br><br> de exemplu: <br>c_typent:libelle:id::filter<br><br>Pentru a avea lista în funcție de alta: <br>c_typent:libelle:id:parent_list_code|parent_column:filter <br> filtru poate fi un test simplu (de exemplu, activ = 1), pentru a afișa doar valoare activă <br> dacă doriți să filtrați pe extracâmpuri folosi sintaxa  extra.fieldcode=... (unde codul de câmp este codul de extracâmp)
+ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Librairie utilizată la construirea PDF ului
 WarningUsingFPDF=Atenție: <b>conf.php</b> contine Directiva <b>dolibarr_pdf_force_fpdf = 1.</b> Acest lucru înseamnă că utilizați biblioteca FPDF pentru a genera fișiere PDF. Această bibliotecă este vechi și nu suportă o mulțime de caracteristici (Unicode, transparența imagine, cu litere chirilice, limbi arabe și asiatice, ...), astfel încât este posibil să apară erori în timpul generație PDF. <br> Pentru a rezolva acest lucru și au un suport complet de generare PDF, vă rugăm să descărcați <a href="http://www.tcpdf.org/" target="_blank">biblioteca TCPDF</a> , atunci comentariu sau elimina linia <b>$ dolibarr_pdf_force_fpdf = 1,</b> și se adaugă în schimb <b>$ dolibarr_lib_TCPDF_PATH = &#39;path_to_TCPDF_dir&#39;</b>
 LocalTaxDesc=Unele țări aplică 2 sau 3 impozitele la fiecare linie de factura. Dacă este cazul, alege tipul de al doilea și al treilea de taxă și ratele lor. Tipuri posibile sunt: <br> 1: Taxa hoteliera se aplică pe produse și servicii, fără TVA (TVA nu este aplicată la taxa locala) <br> 2: taxa locala aplica pe produse și servicii fără TVA (TVA-ul este calculat la suma + localtax) <br> 3: Taxa locală se aplică la produsele fara TVA (TVA nu se aplică la taxa locala) <br> 4: Taxa locală se aplică la produsele fără TVA (TVA-ul este calculat la suma + localtax) <br> 5: Taxa locală  se aplică pe servicii fara TVA (TVA nu este aplicată la taxa locala) <br> 6: TTaxa locală  se aplică pe servicii fără TVA (TVA-ul este calculat la suma + localtax)
@@ -1282,6 +1287,8 @@ YouMayFindPerfAdviceHere=Veți găsi pe această pagină unele verificări sau s
 NotInstalled=Neinstalat,  astfel serverul dvs nu este încetinit de acesta.
 ApplicativeCache=Cache aplicativ
 MemcachedNotAvailable=No applicative cache found. You can enhance performance by installing a cache server Memcached and a module able to use this cache server.<br>More information here <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Note that a lot of web hosting provider does not provide such cache server.
+MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
+MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
 OPCodeCache=Cache OPCode
 NoOPCodeCacheFound=Niciun cache Opcode găsit. Puteţi să folosiți un alt cache Opcode decât XCache sau eAccelerator (bun), poate nu ai cache Opcode (foarte rău).
 HTTPCacheStaticResources=HTTP cache pentru resursele statice (CSS, img, javascript)
@@ -1302,7 +1309,8 @@ ConfirmDeleteProductLineAbility=Confirmarea de îndepărtare a produce o linie �
 ModifyProductDescAbility=Personalizare de descrieri produse în forme
 ViewProductDescInFormAbility=Vizualizare descrierile de produs, în forme (de altfel ca popup tooltip)
 ViewProductDescInThirdpartyLanguageAbility=Vizualizarea de descrieri de produse în limba thirdparty
-UseSearchToSelectProduct=Folositi un formular de căutare pentru a alege un produs (în loc de a utiliza o listă caseta)
+UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
+UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
 UseEcoTaxeAbility=Suport Eco-Taxe (DEEE)
 SetDefaultBarcodeTypeProducts=Implicit tip de cod de bare de a utiliza pentru produse
 SetDefaultBarcodeTypeThirdParties=Implicit tip de cod de bare de a utiliza pentru terţi
@@ -1489,3 +1497,6 @@ TaskModelModule=Modele  de document de rapoarte taskuri
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Arborescenţa automată este disponibilă
+
+
+Format=Format

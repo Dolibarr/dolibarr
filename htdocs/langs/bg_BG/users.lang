@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=Карта на потребител
 ContactCard=Карта на контакт
 GroupCard=Карта на група
@@ -113,8 +114,8 @@ YourRole=Вашите роли
 YourQuotaOfUsersIsReached=Вашата квота за активни потребители е достигната!
 NbOfUsers=Брой потребители
 DontDowngradeSuperAdmin=Само истинска черна нинджа може да убие друга черна нинджа
-# HierarchicalResponsible=Hierarchical responsible
+HierarchicalResponsible=Hierarchical responsible
 HierarchicView=Йерархичен изглед
-# UseTypeFieldToChange=Use field Type to change
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+UseTypeFieldToChange=Use field Type to change
+OpenIDURL=OpenID URL
+LoginUsingOpenID=Use OpenID to login

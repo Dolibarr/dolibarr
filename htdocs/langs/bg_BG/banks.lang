@@ -133,6 +133,7 @@ CashBudget=Парични бюджет
 PlannedTransactions=Планирани сделки
 Graph=Графики
 ExportDataset_banque_1=Банкови сделки и отчет по сметка
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Транзакциите по друга сметка
 TransactionWithOtherAccount=Трансфер на акаунти
 PaymentNumberUpdateSucceeded=Успешно се обновява на броя на плащане

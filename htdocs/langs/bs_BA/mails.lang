@@ -79,13 +79,13 @@ MailtoEMail=Hyper link na e-poštu
 ActivateCheckRead=Dozvoli korištenje "Ispiši se" linka
 ActivateCheckReadKey=Kljul korišten za enkriptovanje linka koristi se za "Pročitaj potvrdu" i "Ispiši se" mogućnosti
 EMailSentToNRecipients=E-pošta poslana %s primaocima
-# EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
-# MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
-# SendRemind=Send reminder by EMails
-# RemindSent=%s reminder(s) sent
-# AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
-# NoRemindSent=No EMail reminder sent
-# ResultOfMassSending=Result of mass EMail reminders sending
+EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+SendRemind=Send reminder by EMails
+RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No EMail reminder sent
+ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakti/Adrese za subjekte (kupac, mogući klijent, dobavljač, ...)
@@ -99,8 +99,6 @@ MailingModuleDescContactsByCompanyCategory=Kontakti/adrese subjekata (po kategor
 MailingModuleDescContactsByCategory=Kontakti/adrese subjekata po kategoriji
 MailingModuleDescMembersCategories=Članovi fondacije (po kategorijama)
 MailingModuleDescContactsByFunction=Kontakti/adrese subjekata (po poziciji/funkciji)
-
-
 LineInFile=Linija %s u fajlu
 RecipientSelectionModules=Definisani zahtjevi za odabir primaoca
 MailSelectedRecipients=Odabrani primaoci
@@ -121,6 +119,7 @@ TargetsReset=Očisti listu
 ToClearAllRecipientsClickHere=Klikni ovdje da očistite listu primaoca za ovu e-poštu
 ToAddRecipientsChooseHere=Odaberi primaoce biranjem sa liste
 NbOfEMailingsReceived=Masovno slanje e-pošte primljeno
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID zapisa
 DeliveryReceipt=Potvrda prijema
 YouCanUseCommaSeparatorForSeveralRecipients=Možete koristiti <b>zarez</b> kao separator da biste naveli više primaoca.
@@ -128,7 +127,6 @@ TagCheckMail=Prati otvaranje mailova
 TagUnsubscribe=Link za ispisivanje
 TagSignature=Korisnik sa slanjem potpisa
 TagMailtoEmail=E-pošta primalac
-
 # Module Notifications
 Notifications=Notifikacije
 NoNotificationsWillBeSent=Nema planiranih email notifikacija za ovaj događaj i kompaniju

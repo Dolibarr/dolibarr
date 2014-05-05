@@ -133,6 +133,7 @@ CashBudget=Nakit bütçesi
 PlannedTransactions=Planlanan işlemler
 Graph=Grafik
 ExportDataset_banque_1=Banka işlemleri ve hesap özeti
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=Diğer hesaptaki işlemler
 TransactionWithOtherAccount=Hesap transferi
 PaymentNumberUpdateSucceeded=Ödeme numarası başarıyla güncellendi

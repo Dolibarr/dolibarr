@@ -133,6 +133,7 @@ CashBudget=現金予算
 PlannedTransactions=計画された取引
 Graph=グラフィックス
 ExportDataset_banque_1=銀行取引と口座明細書
+ExportDataset_banque_2=Deposit slip
 TransactionOnTheOtherAccount=他のアカウントでのトランザクション
 TransactionWithOtherAccount=口座振替
 PaymentNumberUpdateSucceeded=支払い番号が正常に更新されました

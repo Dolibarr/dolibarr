@@ -49,9 +49,11 @@ ErrorReservedTypeSystemSystemAuto=Erreur, les valeurs 'system' et 'systemauto' s
 ErrorCodeCantContainZero=Erreur, le code ne peut contenir la valeur 0
 DisableJavascript=Désactiver les fonctions Javascript et Ajax
 ConfirmAjax=Utiliser les fenêtres de confirmation Ajax
-UseSearchToSelectCompany=Utiliser un champ avec autocomplétion pour choisir un tiers (plutôt qu'une liste déroulante).<br><br>Notez que si vous avez un nombre important de tiers (> 100 000), vous pouvez améliorer les performances en définissant la constante COMPANY_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limitée au début de la chaîne.
+UseSearchToSelectCompanyTooltip=Si vous avez un nombre important de tiers (>100 000), vous pourrez améliorer les performances en positionnant la constante COMPANY_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limité au début des chaines.
+UseSearchToSelectCompany=Utilisez un champ avec auto-complétion pour choisir les tiers plutôt qu'une liste déroulante.
 ActivityStateToSelectCompany= Ajouter une option de filtrage lors des recherches pour afficher/masquer les tiers en exercice ou ayant cessé d'exercer
-UseSearchToSelectContact=Utiliser un champ avec autocomplétion pour choisir un contact (plutôt qu'une liste déroulante).<br><br>Notez que si vous avez un nombre important de contacts (> 100 000), vous pouvez améliorer les performances en définissant la constante CONTACT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limitée au début de la chaîne.
+UseSearchToSelectContactTooltip=Si vous avez un nombre important de contacts (>100 000), vous pourrez améliorer les performances en positionnant la constante CONTACT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limité au début des chaines.
+UseSearchToSelectContact=Utilisez un champ avec auto-complétion pour choisir les contacts (plutôt qu'une liste déroulante).
 SearchFilter=Options des filtres de recherche
 NumberOfKeyToSearch=Nb carac. déclenchant recherche : %s
 ViewFullDateActions=Afficher les dates complètes des événements dans la fiche de tiers
@@ -100,6 +102,9 @@ OtherOptions=Autres options
 OtherSetup=Divers
 CurrentValueSeparatorDecimal=Séparateur décimal
 CurrentValueSeparatorThousand=Séparateur de milliers
+Destination=Destination
+IdModule=ID Module
+IdPermissions=ID Permissions
 Modules=Modules
 ModulesCommon=Modules principaux
 ModulesOther=Modules complémentaires
@@ -367,7 +372,7 @@ ExtrafieldRadio=Bouton radio
 ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...<br><br>Pour que la liste soit dépendante d'une autre :<br>1,valeur1|code_liste_parent:clef_parent<br>2,valeur2|code_liste_parent:clef_parent
 ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=La liste vient d'une table<br>Syntaxe: <br>nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : <br>c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 WarningUsingFPDF=Attention : votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalités (Unicode, transparence des images, langues cyrilliques, arabes ou asiatiques...), aussi vous pouvez rencontrer des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir une prise en charge complète de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">bibliothèque TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>
 LocalTaxDesc=Certains pays appliquent 2 voire 3 taux sur chaque ligne de facture. Si c'est le cas, choisissez le type du deuxième et troisième taux et sa valeur. Les types possibles sont:<br>1 : taxe locale sur les produits et services hors tva (la tva n'est pas appliquée sur la taxe locale)<br>2 : taxe locale sur les produits et services avant tva (la tva est appliquée sur le montant + la taxe locale)<br>3 : taxe locale uniquement sur les produits hors tva (la tva n'est pas appliquée sur la taxe locale)<br>4 : taxe locale uniquement sur les produits avant tva (la tva est appliquée sur le montant + la taxe locale)<br>5 : taxe locale uniquement sur les services hors tva (la tva n'est pas appliquée sur la taxe locale)<br>6 : taxe locale uniquement sur les service avant tva (la tva est appliquée sur le montant + la taxe locale)
@@ -1282,8 +1287,8 @@ YouMayFindPerfAdviceHere=Sur cette page vous trouverez quelques indicateurs ou c
 NotInstalled=Non installé, aussi votre serveur n'est pas ralentit par cela.
 ApplicativeCache=Cache applicatif
 MemcachedNotAvailable=Aucun cache applicatif trouvé. Vous pouvez accélérer les performances de Dolibarr en installant un serveur de cache Memcached et un module de cache applicatif exploitant ce serveur.<br>Plus d'info sur la page <a href="http://wiki.dolibarr.org/index.php/Module_MemCached">http://wiki.dolibarr.org/index.php/Module_MemCached</a>. Notez que de nombreux hébergeurs low-cost ne fournissent pas de tels serveurs de cache dans leur infrastructure.
-MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
-MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
+MemcachedModuleAvailableButNotSetup=Le module memcached pour le cache applicatif a été trouvé mais la configuration de ce module n'est pas complète.
+MemcachedAvailableAndSetup=Le module memcached dédié à l'utilisation du serveur de cache memcached est activé.
 OPCodeCache=Cache OPCode
 NoOPCodeCacheFound=Pas de cache OPCode trouvé. Peut-être utilisez-vous un cache OPCode différent de XCache ou eAccelerator (bien), peut-être n'avez vous pas du tout de cache OPCode (très mauvais).
 HTTPCacheStaticResources=Cache HTTP des ressources statiques (css, img, javascript)
@@ -1304,7 +1309,8 @@ ConfirmDeleteProductLineAbility=Confirmation de suppression d'une ligne produit 
 ModifyProductDescAbility=Personnalisation des descriptions produits dans les formulaires
 ViewProductDescInFormAbility=Visualisation des descriptions produits dans les formulaires (sinon en tant que bulle d'aide)
 ViewProductDescInThirdpartyLanguageAbility=Visualisation des descriptions produits dans la langue du tiers
-UseSearchToSelectProduct=Utiliser un formulaire de recherche pour le choix d'un produit (plutôt qu'une liste déroulante).<br>Notez que si vous avez un nombre important de produits ou services (> 100 000), vous pouvez améliorer les performances en définissant la constante PRODUCT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limitée au début de la chaîne.
+UseSearchToSelectProductTooltip=Si vous avez un nombre important de produits (>100 000), vous pourrez améliorer les performances en positionnant la constante PRODUCT_DONOTSEARCH_ANYWHERE à 1 dans Configuration->Divers. La recherche sera alors limité au début des chaines.
+UseSearchToSelectProduct=Utilisez un champ avec auto-complétion pour choisir les produits (plutôt qu'une liste déroulante).
 UseEcoTaxeAbility=Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeTypeProducts=Type de code-barre utilisé par défaut pour les produits
 SetDefaultBarcodeTypeThirdParties=Type de code-barre utilisé par défaut pour les tiers
@@ -1491,3 +1497,6 @@ TaskModelModule=Modèles de document de rapport tâches
 ##### ECM (GED) #####
 ECMSetup = Configuration du module GED
 ECMAutoTree = L'arborescence automatique est disponible
+
+
+Format=Format
