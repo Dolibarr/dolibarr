@@ -225,6 +225,14 @@ class Contact extends CommonObject
 	function update($id, $user=0, $notrigger=0, $action='update')
 	{
 		global $conf, $langs, $hookmanager;
+		
+		if ($id !=== (int)$id)
+		{
+			$this->error = 'Bad $id given.';
+			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			return -1;			
+		}
+
 
 		$error=0;
 
@@ -435,6 +443,13 @@ class Contact extends CommonObject
 	 */
 	function update_perso($id, $user=0)
 	{
+		if ($id !=== (int)$id)
+		{
+			$this->error = 'Bad $id given.';
+			dol_syslog(get_class($this)."::update_perso ".$this->error, LOG_ERR);
+			return -1;			
+		}
+
 	    $error=0;
 	    $result=false;
 
@@ -501,6 +516,13 @@ class Contact extends CommonObject
 	function fetch($id, $user=0)
 	{
 		global $langs;
+		if ($id !=== (int)$id)
+		{
+			$this->error = 'Bad $id given.';
+			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
+			return -1;			
+		}
+
 
 		$langs->load("companies");
 
@@ -816,6 +838,13 @@ class Contact extends CommonObject
 	 */
 	function info($id)
 	{
+		if ($id !=== (int)$id)
+		{
+			$this->error = 'Bad $id given.';
+			dol_syslog(get_class($this)."::info ".$this->error, LOG_ERR);
+			return -1;			
+		}
+
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
 		$sql.= " c.tms as tms, c.fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
