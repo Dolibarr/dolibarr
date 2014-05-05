@@ -80,7 +80,7 @@ class Societe extends CommonObject
     /**
      * @deprecated Use state_code instead
      */
-    var $departement_code;   // deprecated
+    var $departement_code;
     /**
      * @deprecated Use state instead
      */
@@ -94,11 +94,31 @@ class Societe extends CommonObject
     var $country_code;
     var $country;
 
-    var $phone;
-    var $fax;
-    var $email;
-    var $skype;
-    var $url;
+	/**
+	 * Phone number
+	 * @var string
+	 */
+	var $phone;
+	/**
+	 * Fax number
+	 * @var string
+	 */
+	var $fax;
+	/**
+	 * Email
+	 * @var string
+	 */
+	var $email;
+	/**
+	 * Skype username
+	 * @var string
+	 */
+	var $skype;
+	/**
+	 * Webpage
+	 * @var string
+	 */
+	var $url;
 
 	//! barcode
     /**
@@ -192,14 +212,31 @@ class Societe extends CommonObject
     var $cond_reglement_id;
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
+	var $fk_prospectlevel;
+	var $name_bis;
 
-    var $date_modification;
-    var $date_creation;
-    var $user_modification;
-    var $user_creation;
-    var $fk_prospectlevel;
+	//Log data
+
+	/**
+	 * Date of last update
+	 */
+	var $date_modification;
+	/**
+	 * User that made last update
+	 */
+	var $user_modification;
+	/**
+	 * Date of creation
+	 */
+	var $date_creation;
+	/**
+	 * User that created the thirdparty
+	 */
+	var $user_creation;
+
+
     var $specimen;
-    var $name_bis;
+
 
     /**
      * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
@@ -2675,7 +2712,7 @@ class Societe extends CommonObject
      * 	@param	Conf	$conf		Conf object (possibility to use another entity)
      * 	@return	void
      */
-    function setMysoc($conf)
+    function setMysoc(Conf $conf)
     {
     	global $langs;
 
