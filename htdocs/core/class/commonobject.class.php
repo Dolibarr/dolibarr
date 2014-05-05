@@ -2669,60 +2669,7 @@ abstract class CommonObject
     /* This is to show add lines */
 
     /**
-     *	Show add predefined products/services form
-     *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
-     *
-     *  @param  int	    		$dateSelector       1=Show also date range input fields
-     *  @param	Societe			$seller				Object thirdparty who sell
-     *  @param	Societe			$buyer				Object thirdparty who buy
-     *	@return	void
-     *	@deprecated
-     */
-    function formAddPredefinedProduct($dateSelector,$seller,$buyer)
-    {
-    	global $conf,$langs,$object,$hookmanager;
-    	global $form,$bcnd,$var;
-    	global $user;
-    	//Line extrafield
-    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-    	$extrafieldsline = new ExtraFields($this->db);
-    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
-
-    	// Use global variables + $dateSelector + $seller and $buyer
-    	include(DOL_DOCUMENT_ROOT.'/core/tpl/predefinedproductline_create.tpl.php');
-    }
-
-    /**
-     *	Show add free products/services form
-     *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
-     *
-     *  @param	int		        $dateSelector       1=Show also date range input fields (start and end date)
-     *  @param	Societe			$seller				Object thirdparty who sell
-     *  @param	Societe			$buyer				Object thirdparty who buy
-     *	@return	void
-     */
-    function formAddFreeProduct($dateSelector,$seller,$buyer)
-    {
-    	global $conf,$langs,$object,$hookmanager;
-    	global $form,$bcnd,$var;
-    	global $user;
-
-    	//Line extrafield
-    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-    	$extrafieldsline = new ExtraFields($this->db);
-    	$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
-
-    	// Use global variables + $dateSelector + $seller and $buyer
-    	include(DOL_DOCUMENT_ROOT.'/core/tpl/freeproductline_create.tpl.php');
-    }
-
-
-    /**
      *	Show add free and predefined products/services form
-     *  TODO Edit templates to use global variables and include them directly in controller call
-     *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
      *  @param	int		        $dateSelector       1=Show also date range input fields
      *  @param	Societe			$seller				Object thirdparty who sell
@@ -2744,7 +2691,7 @@ abstract class CommonObject
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
 		{
-			$tpl = dol_buildpath($reldir.'/objectline_add.tpl.php');
+			$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
 			if (empty($conf->file->strict_mode)) {
 				$res=@include $tpl;
 			} else {

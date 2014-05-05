@@ -1037,39 +1037,27 @@ else if ($action == 'add' && $user->rights->facture->creer)
 }
 
 // Add a new line
-else if (($action == 'addline' || $action == 'addline_predef') && $user->rights->facture->creer)
+else if ($action == 'addline' && $user->rights->facture->creer)
 {
 	$langs->load('errors');
 	$error = 0;
 
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre')
-			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-	)
+	$predef='';
+	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	if (GETPOST('prod_entry_mode') == 'free')
 	{
-		$predef = '';
-		$idprod = 0;
-		$product_desc = (GETPOST('dp_desc') ? GETPOST('dp_desc') : '');
+		$idprod=0;
 		$price_ht = GETPOST('price_ht');
 		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
-	if (GETPOST('addline_predefined')
-			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-	)
+	else
 	{
-		$predef = (($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
-		$idprod = GETPOST('idprod', 'int');
-		$product_desc = (GETPOST('product_desc') ? GETPOST('product_desc') : (GETPOST('np_desc') ? GETPOST('np_desc') : ''));
+		$idprod=GETPOST('idprod', 'int');
 		$price_ht = '';
 		$tva_tx = '';
 	}
-	if (GETPOST('usenewaddlineform')) // TODO Remove this
-	{
-		$idprod = GETPOST('idprod', 'int');
-		$product_desc = (GETPOST('product_desc') ? GETPOST('product_desc') : (GETPOST('np_desc') ? GETPOST('np_desc') : (GETPOST('dp_desc') ? GETPOST('dp_desc') : '')));
-		$price_ht = GETPOST('price_ht');
-		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-	}
+
 	$qty = GETPOST('qty' . $predef);
 	$remise_percent = GETPOST('remise_percent' . $predef);
 
@@ -1085,7 +1073,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		}
 	}
 
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && ($qty < 0)) {
+	if (empty($idprod) && ($price_ht < 0) && ($qty < 0)) {
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
 		$error ++;
 	}
@@ -1093,7 +1081,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
 		$error ++;
 	}
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+	if (empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error ++;
@@ -1135,13 +1123,6 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 			$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
 			// Update if prices fields are defined
-			if (GETPOST('usenewaddlineform')) {
-				$pu_ht = price2num($price_ht, 'MU');
-				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
-				$tva_tx = str_replace('*', '', $tva_tx);
-				$desc = $product_desc;
-			} else {
 				$tva_tx = get_default_tva($mysoc, $object->client, $prod->id);
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
@@ -1225,7 +1206,6 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$tmptxt .= ')';
 					$desc = dol_concatdesc($desc, $tmptxt);
 				}
-			}
 
 			$type = $prod->type;
 		} else {
@@ -1272,6 +1252,8 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$ret = $object->fetch($id); // Reload to get new records
 					facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
+
+				unset($_POST ['prod_entry_mode']);
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
@@ -3303,30 +3285,19 @@ if ($action == 'create')
 	if (! empty($object->lines))
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
-		// Form to add new line
-	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline') {
-		$var = true;
+	// Form to add new line
+	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
+	{
+		if ($action != 'editline')
+		{
+			$var = true;
 
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-		{
-			// Add free or predefined products/services
-			$object->formAddObjectLine(1, $mysoc, $soc);
-		}
-		else
-		{
 			// Add free products/services
-			$object->formAddFreeProduct(1, $mysoc, $soc);
+			$object->formAddObjectLine(1, $mysoc, $soc);
 
-			// Add predefined products/services
-			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
-				$var = ! $var;
-				$object->formAddPredefinedProduct(1, $mysoc, $soc);
-			}
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}
-
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by
-		                                                                                      // hook
 	}
 
 	print "</table>\n";

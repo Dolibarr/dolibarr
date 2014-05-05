@@ -355,28 +355,21 @@ else if ($action == 'classin' && $user->rights->contrat->creer)
 else if ($action == 'addline' && $user->rights->contrat->creer)
 {
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre'))
+	$predef='';
+	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	if (GETPOST('prod_entry_mode') == 'free')
 	{
-		$predef='';
 		$idprod=0;
-		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
-		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
-	if (GETPOST('addline_predefined'))
+	else
 	{
-		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
-		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
 		$price_ht = '';
 		$tva_tx = '';
 	}
-    if (GETPOST('usenewaddlineform')) {
-        $idprod=GETPOST('idprod', 'int');
-        $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
-        $price_ht = GETPOST('price_ht');
-        $tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
-    }
+
 	$qty = GETPOST('qty'.$predef);
 	$remise_percent=GETPOST('remise_percent'.$predef);
 
@@ -519,6 +512,8 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
              	contrat_pdf_create($db, $object->id, $object->modelpdf, $outputlangs);
              }
              */
+
+			unset($_POST ['prod_entry_mode']);
 
 			unset($_POST['qty']);
 			unset($_POST['type']);
@@ -1161,7 +1156,12 @@ else
                         $productstatic->type=$objp->ptype;
                         $productstatic->ref=$objp->pref;
                         print $productstatic->getNomUrl(1,'',20);
-                        print $objp->label?' - '.dol_trunc($objp->label,16):'';
+                        if ($objp->label)
+                        {
+                        	print ' - ';
+                        	$productstatic->ref=$objp->label;
+                        	print $productstatic->getNomUrl(0,'',16);
+                        }
                         if ($objp->description) print '<br>'.dol_nl2br($objp->description);
                         print '</td>';
                     }
@@ -1561,34 +1561,19 @@ else
 
             // Trick to not show product entries
             $savproductenabled=$conf->product->enabled;
-            $conf->product->enabled = 0;
+            if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $conf->product->enabled = 0;
 
         	// Form to add new line
-        	if ($action != 'editline')
-        	{
-        		$var=true;
+       		if ($action != 'editline')
+			{
+				$var = true;
 
-        		if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-        		{
-        			// Add free or predefined products/services
-        			$object->formAddObjectLine($dateSelector,$mysoc,$object->thirdparty);
-        		}
-        		else
-        		{
-        			// Add free products/services
-        			$object->formAddFreeProduct($dateSelector,$mysoc,$object->thirdparty);
+				// Add free products/services
+				$object->formAddObjectLine(1, $mysoc, $soc);
 
-        			// Add predefined products/services
-        			if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-        			{
-        				$var=!$var;
-        				$object->formAddPredefinedProduct($dateSelector,$mysoc,$object->thirdparty);
-        			}
-        		}
-
-        		$parameters=array();
-        		$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-        	}
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			}
 
         	// Restore correct setup
         	$conf->product->enabled = $savproductenabled;
