@@ -60,6 +60,12 @@ if ($id > 0 || ! empty($ref))
 	$id=$product->id;
 }
 
+// Initialize technical object to manage hooks of products. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('composedproductcard'));
+
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 /*
  * Actions
@@ -406,7 +412,9 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 			print '</td></tr>';
 		}
-
+		$parameters=array('prods_arbo'=>$prods_arbo);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+		$error=$hookmanager->error; $errors=$hookmanager->errors;
 		print '</table>';
 
 		dol_fiche_end();
