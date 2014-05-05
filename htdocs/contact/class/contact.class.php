@@ -274,7 +274,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
-		$sql .= " WHERE rowid=".$id;
+		$sql .= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -442,7 +442,7 @@ class Contact extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
-		$sql.= " WHERE rowid=".$id;
+		$sql.= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update_perso this->birthday=".$this->birthday." - sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -456,13 +456,13 @@ class Contact extends CommonObject
 		if ($this->birthday_alert)
 		{
 			//check existing
-			$sql_check = "SELECT * FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
+			$sql_check = "SELECT * FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result_check = $this->db->query($sql_check);
 			if (! $result_check || ($this->db->num_rows($result_check)<1))
 			{
 				//insert
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-				$sql.= "VALUES (1,".$id.",".$user->id.")";
+				$sql.= "VALUES (1,".$this->db->escape($id).",".$user->id.")";
 				$result = $this->db->query($sql);
 				if (! $result)
 				{
@@ -478,7 +478,7 @@ class Contact extends CommonObject
 		else
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
-			$sql.= "WHERE type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
+			$sql.= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
@@ -608,7 +608,7 @@ class Contact extends CommonObject
 				{
 					$sql = "SELECT fk_user";
 					$sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-					$sql .= " WHERE fk_user = ".$user->id." AND fk_contact = ".$id;
+					$sql .= " WHERE fk_user = ".$user->id." AND fk_contact = ".$this->db->escape($id);
 
 					$resql=$this->db->query($sql);
 					if ($resql)
@@ -819,7 +819,7 @@ class Contact extends CommonObject
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
 		$sql.= " c.tms as tms, c.fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql.= " WHERE c.rowid = ".$id;
+		$sql.= " WHERE c.rowid = ".$this->db->escape($id);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
