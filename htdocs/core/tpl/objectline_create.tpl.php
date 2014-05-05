@@ -122,9 +122,9 @@ else {
 
 		if (empty($senderissupplier))
 		{
-			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToBuy');
-			else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToBuy');
-			else echo $langs->trans('PredefinedProductsAndServicesToBuy');
+			if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
+			else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToSell');
+			else echo $langs->trans('PredefinedProductsAndServicesToSell');
 		}
 		else
 		{
