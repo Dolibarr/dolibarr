@@ -1077,11 +1077,11 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
 		$error ++;
 	}
-	if (empty($idprod) && GETPOST('type') < 0) {
+	if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
 		$error ++;
 	}
-	if (empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+	if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error ++;
@@ -1090,7 +1090,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
 		$error ++;
 	}
-	if (empty($idprod) && empty($product_desc)) {
+	if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
 		$error ++;
 	}
@@ -1269,15 +1269,20 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				unset($_POST['np_marginRate']);
 				unset($_POST['np_markRate']);
 				unset($_POST['dp_desc']);
-
 				unset($_POST['idprod']);
-				unset($_POST['qty_predef']);
-				unset($_POST['remise_percent_predef']);
-				unset($_POST['fournprice_predef']);
-				unset($_POST['buying_price_predef']);
-				unset($_POST['np_marginRate_predef']);
-				unset($_POST['np_markRate_predef']);
-				unset($_POST['np_desc']);
+
+		    	unset($_POST['date_starthour']);
+		    	unset($_POST['date_startmin']);
+		    	unset($_POST['date_startsec']);
+		    	unset($_POST['date_startday']);
+		    	unset($_POST['date_startmonth']);
+		    	unset($_POST['date_startyear']);
+		    	unset($_POST['date_endhour']);
+		    	unset($_POST['date_endmin']);
+		    	unset($_POST['date_endsec']);
+		    	unset($_POST['date_endday']);
+		    	unset($_POST['date_endmonth']);
+		    	unset($_POST['date_endyear']);
 			} else {
 				setEventMessage($object->error, 'errors');
 			}

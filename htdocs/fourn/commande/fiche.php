@@ -180,51 +180,45 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     $error = 0;
 
 	// Set if we used free entry or predefined product
-	if (GETPOST('addline_libre')
-			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)
+	$predef='';
+	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	if (GETPOST('prod_entry_mode') == 'free')
 	{
-		$predef='';
 		$idprod=0;
-		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
-		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 	}
-	if (GETPOST('addline_predefined')
-			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)
+	else
 	{
-		$predef= '_predef';
 		$idprod=GETPOST('idprod', 'int');
-		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
 		$price_ht = '';
 		$tva_tx = '';
 	}
+
 	$qty = GETPOST('qty'.$predef);
 	$remise_percent=GETPOST('remise_percent'.$predef);
-    if (GETPOST('addline_libre') && GETPOST('pu') < 0 && $qty < 0)
+
+    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht') < 0 && $qty < 0)
     {
         setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error++;
     }
-    if (GETPOST('addline_libre') && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
+    if (GETPOST('prod_entry_mode')=='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
         $error++;
     }
-    if (! GETPOST('addline_predefined') && ( GETPOST('pu')==='')) // Unit price can be 0 but not ''
+    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
     {
-
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
         $error++;
     }
-    if (! GETPOST('addline_predefined')  && ! GETPOST('np_desc') && ! GETPOST('dp_desc'))
+    if (GETPOST('prod_entry_mode')=='free' && ! GETPOST('dp_desc'))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
         $error++;
     }
-    if ((! GETPOST('addline_predefined')  && (! GETPOST('qty') || GETPOST('qty') == ''))
-    || (GETPOST('addline_predefined') && (! GETPOST('qty_predef') || GETPOST('qty_predef') == '')))
+    if (! GETPOST('qty'))
     {
         setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
         $error++;
@@ -233,18 +227,16 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     // Ecrase $pu par celui	du produit
     // Ecrase $desc	par	celui du produit
     // Ecrase $txtva  par celui du produit
-    if (GETPOST('addline_predefined') || GETPOST('idprodfournprice'))	// With combolist idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+    if (GETPOST('prod_entry_mode') != 'free')	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
     {
     	$idprod=0;
     	$productsupplier = new ProductFournisseur($db);
 
-    	if (GETPOST('idprodfournprice') == '')
-    	{
-    		$idprod=-1;
-    	}
+    	if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-2;	// Same behaviour than with combolist. When not select idprodfournprice is now -2 (to avoid conflict with next action that may return -1)
+
     	if (GETPOST('idprodfournprice') > 0)
     	{
-    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat
+    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
     	}
 
     	if ($idprod > 0)
@@ -278,7 +270,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     			$type
     		);
     	}
-    	if ($idprod == 0)
+    	if ($idprod == -2 || $idprod == 0)
     	{
     		// Product not selected
     		$error++;
@@ -293,37 +285,36 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     		setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
     	}
     }
-    else if( GETPOST('pu')!=='' || GETPOST('amountttc')!=='' )
+    else if( GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='' )
 	{
-    	$type=$_POST["type"];
-    	$desc=$_POST['dp_desc'];
-    	$tva_tx = price2num($_POST['tva_tx']);
+		$pu_ht = price2num($price_ht, 'MU');
+		$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+		$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
+		$tva_tx = str_replace('*', '', $tva_tx);
+		$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
+		$desc = $product_desc;
+		$type = GETPOST('type');
+
+    	$tva_tx = price2num($tva_tx);	// When vat is text input field
 
     	// Local Taxes
     	$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
     	$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
 
-    	if (! $product_desc)
+    	if (!empty($_POST['price_ht']))
     	{
-    		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
+    		$price_base_type = 'HT';
+    		$ht = price2num($_POST['price_ht']);
+    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type);
     	}
     	else
     	{
-    		if (!empty($_POST['pu']))
-    		{
-    			$price_base_type = 'HT';
-    			$ht = price2num($_POST['pu']);
-    			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type);
-    		}
-    		else
-    		{
-    			$ttc = price2num($_POST['amountttc']);
-    			$ht = $ttc / (1 + ($tauxtva / 100));
-    			$price_base_type = 'HT';
-			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
-    		}
+    		$ttc = price2num($_POST['price_ttc']);
+    		$ht = $ttc / (1 + ($tauxtva / 100));
+    		$price_base_type = 'HT';
+    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
     	}
-    }
+	}
 
     //print "xx".$tva_tx; exit;
     if (! $error && $result > 0)
@@ -345,22 +336,35 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     		supplier_order_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
     	}
 
+		unset($_POST ['prod_entry_mode']);
+
     	unset($_POST['qty']);
     	unset($_POST['type']);
     	unset($_POST['remise_percent']);
-    	unset($_POST['dp_desc']);
     	unset($_POST['pu']);
+    	unset($_POST['price_ht']);
+    	unset($_POST['price_ttc']);
     	unset($_POST['tva_tx']);
     	unset($_POST['label']);
     	unset($localtax1_tx);
     	unset($localtax2_tx);
+		unset($_POST['np_marginRate']);
+		unset($_POST['np_markRate']);
+    	unset($_POST['dp_desc']);
+		unset($_POST['idprodfournprice']);
 
-    	unset($_POST['idprodfournprice']);
-    	unset($_POST['qty_predef']);
-    	unset($_POST['remise_percent_predef']);
-    	unset($_POST['fournprice_predef']);
-    	unset($_POST['buying_price_predef']);
-    	unset($_POST['np_desc']);
+    	unset($_POST['date_starthour']);
+    	unset($_POST['date_startmin']);
+    	unset($_POST['date_startsec']);
+    	unset($_POST['date_startday']);
+    	unset($_POST['date_startmonth']);
+    	unset($_POST['date_startyear']);
+    	unset($_POST['date_endhour']);
+    	unset($_POST['date_endmin']);
+    	unset($_POST['date_endsec']);
+    	unset($_POST['date_endday']);
+    	unset($_POST['date_endmonth']);
+    	unset($_POST['date_endyear']);
     }
     else
 	{
@@ -1653,12 +1657,12 @@ elseif (! empty($object->id))
 
 			if ($object->statut == 0	&& $user->rights->fournisseur->commande->creer)
 			{
-				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;rowid='.$line->id.'#'.$line->id.'">';
+				print '<td align="center" width="16"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_line&amp;rowid='.$line->id.'#'.$line->id.'">';
 				print img_edit();
 				print '</a></td>';
 
 				$actiondelete='delete_product_line';
-				print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$actiondelete.'&amp;lineid='.$line->id.'">';
+				print '<td align="center" width="16"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$actiondelete.'&amp;lineid='.$line->id.'">';
 				print img_delete();
 				print '</a></td>';
 			}
@@ -1723,13 +1727,10 @@ elseif (! empty($object->id))
 		$i++;
 	}
 
-	/*
-	 * Form to add new line
-	 */
+	// Form to add new line
 	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'edit_line')
 	{
-
-		print '<tr class="liste_titre">';
+		/*print '<tr class="liste_titre">';
 		print '<td>';
 		print '<a name="add"></a>'; // ancre
 		print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
@@ -1738,12 +1739,27 @@ elseif (! empty($object->id))
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 		print '<td colspan="4">&nbsp;</td>';
-		print '</tr>';
-
-		// TODO Use the predefinedproductline_create.tpl.php file
+		print '</tr>';*/
 
 		// Add free products/services form
-		$var=true;
+		global $forceall, $senderissupplier, $dateSelector;
+		$forceall=1; $senderissupplier=1; $dateSelector=0;
+		if ($object->statut == 0 && $user->rights->propal->creer)
+		{
+			if ($action != 'editline')
+			{
+				$var = true;
+
+				// Add free products/services
+				$object->formAddObjectLine(1, $mysoc, $soc);
+
+				$parameters = array();
+				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			}
+		}
+
+/*
+	$var=true;
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
 
@@ -1805,6 +1821,7 @@ elseif (! empty($object->id))
 			print '<tr '.$bc[$var].'>';
 			print '<td colspan="3">';
 
+
 			$ajaxoptions=array(
 					'update' => array('qty_predef'=>'qty','remise_percent_predef' => 'discount'),	// html id tag will be edited with which ajax json response key
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
@@ -1830,7 +1847,7 @@ elseif (! empty($object->id))
 			print '<td align="right" class="nowrap"><input type="text" size="1" id="remise_percent_predef" name="remise_percent_predef" value="'.(GETPOST('remise_percent_predef')?GETPOST('remise_percent_predef'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
 			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'" name="addline_predefined"></td>';
 			print '</tr>';
-		}
+		}*/
 	}
 	print '</table>';
 

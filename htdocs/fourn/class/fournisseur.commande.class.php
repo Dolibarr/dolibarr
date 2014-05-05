@@ -1066,9 +1066,11 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int		$type					Type of line (0=product, 1=service)
      *	@param		int		$info_bits				More information
      *  @param		int		$notrigger				Disable triggers
+     *  @param		timestamp	$date_start			Date start of service
+     *  @param		timestamp	$date_end			Date end of service
      *	@return     int             				<=0 if KO, >0 if OK
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0, $notrigger=false)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $type=0, $info_bits=0, $notrigger=false, $date_start='', $date_end='')
     {
         global $langs,$mysoc;
 
@@ -1172,12 +1174,14 @@ class CommandeFournisseur extends CommonOrder
             $subprice = price2num($pu,'MU');
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
-            $sql.= " (fk_commande, label, description,";
+            $sql.= " (fk_commande, label, description, date_start, date_end,";
             $sql.= " fk_product, product_type,";
             $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
             $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
             $sql.= ")";
             $sql.= " VALUES (".$this->id.", '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
+            $sql.= " ".($date_start?"'".$this->db->idate($date_start)."'":"null").",";
+            $sql.= " ".($date_end?"'".$this->db->idate($date_end)."'":"null").",";
             if ($fk_product) { $sql.= $fk_product.","; }
             else { $sql.= "null,"; }
             $sql.= "'".$product_type."',";
