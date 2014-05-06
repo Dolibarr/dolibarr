@@ -16,6 +16,7 @@ Fix: [ bug #1357 ] Invoice creator state not printed in generated invoice docume
 Fix: Suppliers invoice mask fails using {tttt} in numbering.
 Fix: pdf template name for typhon was not correctly et when enabling module.
 Fix: Navigation on notes for shipments was not working.
+Fix: [ bug #1353 ] Email notifications, wrong URL.
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
