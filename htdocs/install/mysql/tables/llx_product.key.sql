@@ -26,25 +26,25 @@ ALTER TABLE llx_product ADD INDEX idx_product_label (label);
 ALTER TABLE llx_product ADD INDEX idx_product_barcode (barcode);
 ALTER TABLE llx_product ADD INDEX idx_product_import_key (import_key);
 ALTER TABLE llx_product ADD INDEX idx_product_seuil_stock_alerte (seuil_stock_alerte);
-ALTER TABLE `llx_product` ADD INDEX (  `fk_country` );
-ALTER TABLE `llx_product` ADD INDEX (  `fk_user_author` );
-ALTER TABLE `llx_product` ADD INDEX (  `fk_barcode_type` );
-ALTER TABLE `llx_product` ADD INDEX (  `fk_parent` );
+ALTER TABLE llx_product ADD INDEX (  fk_country );
+ALTER TABLE llx_product ADD INDEX (  fk_user_author );
+ALTER TABLE llx_product ADD INDEX (  fk_barcode_type );
+ALTER TABLE llx_product ADD INDEX (  fk_parent );
 ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
 
 
-ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_country` ) REFERENCES  `llx_c_pays` (
-`rowid`
+ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_country ) REFERENCES  llx_c_pays (
+rowid
 ) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
-ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_user_author` ) REFERENCES  `llx_user` (
-`rowid`
+ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_user_author ) REFERENCES  llx_user (
+rowid
 ) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
-ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_barcode_type` ) REFERENCES  `llx_c_barcode_type` (
-`rowid`
+ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_barcode_type ) REFERENCES  llx_c_barcode_type (
+rowid
 ) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
-ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_parent` ) REFERENCES  `llx_product` (
-`rowid`
+ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_parent ) REFERENCES  llx_product (
+rowid
 ) ON DELETE RESTRICT ON UPDATE RESTRICT ;

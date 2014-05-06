@@ -16,13 +16,13 @@
 --
 -- ============================================================================
 
-ALTER TABLE  `llx_product_price` ADD INDEX (  `fk_user_author` );
-ALTER TABLE  `llx_product_price` ADD INDEX (  `fk_product` );
+ALTER TABLE  llx_product_price ADD INDEX (  fk_user_author );
+ALTER TABLE  llx_product_price ADD INDEX (  fk_product );
 
-ALTER TABLE  `llx_product_price` ADD FOREIGN KEY (  `fk_product` ) REFERENCES  `llx_product` (
-  `rowid`
+ALTER TABLE  llx_product_price ADD FOREIGN KEY (  fk_product ) REFERENCES  llx_product (
+  rowid
 ) ON DELETE RESTRICT ON UPDATE RESTRICT ;
 
-ALTER TABLE  `llx_product_price` ADD FOREIGN KEY (  `fk_user_author` ) REFERENCES  `llx_user` (
-  `rowid`
+ALTER TABLE  llx_product_price ADD FOREIGN KEY (  fk_user_author ) REFERENCES  llx_user (
+  rowid
 ) ON DELETE RESTRICT ON UPDATE RESTRICT ;
