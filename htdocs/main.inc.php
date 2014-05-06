@@ -80,15 +80,14 @@ function test_sql_and_script_inject($val, $type)
     // For SQL Injection (only GET and POST are used to be included into bad escaped SQL requests)
     if ($type != 2)
     {
-        $sql_inj += preg_match('/delete\s+from/i'	, $val);
-        $sql_inj += preg_match('/create\s+table/i'	, $val);
-        $sql_inj += preg_match('/update.+set.+=/i'	, $val);
-        $sql_inj += preg_match('/insert\s+into/i'	, $val);
-        $sql_inj += preg_match('/select.+from/i'	, $val);
-        $sql_inj += preg_match('/union.+select/i'	, $val);
-        $sql_inj += preg_match('/into\s+outfile/i'	, $val);
-        $sql_inj += preg_match('/into\s+dumpfile/i'	, $val);
-        $sql_inj += preg_match('/(\.\.%2f)+/i'		, $val);
+        $sql_inj += preg_match('/delete\s+from/i',	 $val);
+        $sql_inj += preg_match('/create\s+table/i',	 $val);
+        $sql_inj += preg_match('/update.+set.+=/i',  $val);
+        $sql_inj += preg_match('/insert\s+into/i', 	 $val);
+        $sql_inj += preg_match('/select.+from/i', 	 $val);
+        $sql_inj += preg_match('/union.+select/i', 	 $val);
+        $sql_inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+        $sql_inj += preg_match('/(\.\.%2f)+/i',		 $val);
     }
     // For XSS Injection done by adding javascript with script
     // This is all cases a browser consider text is javascript:
