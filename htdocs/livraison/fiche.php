@@ -185,7 +185,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$object = new Livraison($db);
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-
+	
 	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
