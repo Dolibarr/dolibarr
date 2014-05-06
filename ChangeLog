@@ -17,6 +17,8 @@ Fix: Suppliers invoice mask fails using {tttt} in numbering.
 Fix: pdf template name for typhon was not correctly et when enabling module.
 Fix: Navigation on notes for shipments was not working.
 Fix: [ bug #1353 ] Email notifications, wrong URL.
+Fix: [ bug #1362 ] Note is not saved.
+Fix: tr/td balance.
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.

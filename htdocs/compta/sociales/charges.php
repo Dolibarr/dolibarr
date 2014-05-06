@@ -256,7 +256,7 @@ if ($id > 0)
 
 		$head=tax_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
 
 		// Confirmation de la suppression de la charge
 		if ($action == 'paid')
@@ -367,7 +367,7 @@ if ($id > 0)
 
 		print "</tr>";
 
-    // Period end date
+	    // Period end date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
 		print "<td>";
 		if ($action == 'edit')
@@ -410,7 +410,7 @@ if ($id > 0)
 
 		if ($action == 'edit') print "</form>\n";
 
-		print '</div>';
+		dol_fiche_end();
 
 
 		/*
