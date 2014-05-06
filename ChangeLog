@@ -103,7 +103,13 @@ Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
 Fix: [ bug #1352 ] Removing a shipping does not remove the delivery.
 Fix: Option MAIN_INVERT_SENDER_RECIPIENT broken with typhon template.
-
+Fix: Can disable features with PHPEXCEL (no DLSF compatible).
+Fix: Can disable features with CKEDITOR. 
+Fix: Pb of records not correctly cleaned when module marge is
+     uninstalled (conflict between 'margin' and 'margins').
+Fix: [ bug #1341 ] Lastname not added by file or direct input in mass e-mailing
+Fix: [ bug #1357 ] Invoice creator state not printed in generated invoice documents
+Fix: Suppliers invoice mask fails using {tttt} in numbering
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
