@@ -5,6 +5,7 @@
 
 -- Requests to clean corrupted database
 
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
@@ -76,8 +77,9 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
+update llx_document_model set nom = 'typhon' where (nom = '' OR nom is null) and type = 'delivery';
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
-DELETE FROM llx_document_model WHERE nom ='' AND type='delivery';
+
 
 -- Fix: It seems this is missing for some users
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);
