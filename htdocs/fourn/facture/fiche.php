@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -1454,7 +1454,7 @@ else
                     //TODO: Possibly will have to control payment information into suppliers
                     //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
                 }
-                $numref = $object->getNextNumRef($soc);
+                $numref = $object->getNextNumRef($societe);
             }
             else
             {
