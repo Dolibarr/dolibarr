@@ -47,7 +47,30 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
 $object = new Expedition($db);
-$object->fetch($id);
+if ($id > 0 || ! empty($ref))
+{
+    $object->fetch($id, $ref);
+    $object->fetch_thirdparty();
+
+    if (!empty($object->origin))
+    {
+        $typeobject = $object->origin;
+        $origin = $object->origin;
+        $object->fetch_origin();
+    }
+
+    // Linked documents
+    if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+    {
+        $objectsrc=new Commande($db);
+        $objectsrc->fetch($object->$typeobject->id);
+    }
+    if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+    {
+        $objectsrc=new Propal($db);
+        $objectsrc->fetch($object->$typeobject->id);
+    }
+}
 
 
 /******************************************************************************/
