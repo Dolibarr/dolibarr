@@ -18,21 +18,32 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Need to have following variables defined:
+ * $object (invoice, order, ...)
  * $conf
  * $langs
  * $dateSelector
- * $this (invoice, order, ...)
- * $inputalsopricewithtax
  * $forceall (0 by default, 1 for supplier invoices/orders)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
+ * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
-global $dateSelector, $forceall, $senderissupplier;
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+
+global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+
+
+// Define colspan for button Add
+$colspan = 3;	// Col total ht + col edit + col delete
+if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
+if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move
+if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
+if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -49,7 +60,6 @@ if (empty($senderissupplier)) $senderissupplier=0;
 	<td align="right"><?php echo $langs->trans('Qty'); ?></td>
 	<td align="right"><?php echo $langs->trans('ReductionShort'); ?></td>
 	<?php
-	$colspan = 4;
 	if (! empty($usemargins))
 	{
 		?>
@@ -62,22 +72,8 @@ if (empty($senderissupplier)) $senderissupplier=0;
 		?>
 		</td>
 		<?php
-		if ($user->rights->margins->creer)
-		{
-			if(! empty($conf->global->DISPLAY_MARGIN_RATES))
-			{
-				echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
-			}
-			if(! empty($conf->global->DISPLAY_MARK_RATES))
-			{
-				echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
-			}
-		}
-		else
-		{
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-			if (! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
-		}
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
 	}
 	?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -98,20 +94,30 @@ else {
 	// Free line
 	echo '<span>';
 	// Show radio free line
-	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"'.(GETPOST('prod_entry_mode')=='free'?' checked="true"':'').'> ';
+	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+	{
+		echo '<input type="radio" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
+		//echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked="true"':'') );
+		echo (GETPOST('prod_entry_mode')=='free' ? ' checked="true"' : '');
+		echo '> ';
+	}
 	else echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 	// Show type selector
-	if (empty($conf->product->enabled) && empty($conf->service->enabled))
+/*	if (empty($conf->product->enabled) && empty($conf->service->enabled))
 	{
 		// If module product and service disabled, by default this is a product except for contracts it is a service
 		print '<input type="hidden" name="type" value="'.((! empty($object->element) && $object->element == 'contrat')?'1':'0').'">';
 	}
-	else {
-		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' ';
+	else {*/
+		echo $langs->trans("FreeLineOfType");
+		/*
+		if (empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("Type");
+		else if (! empty($forceall) || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))) echo $langs->trans("FreeLineOfType");
 		else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Service");
-		else if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Product");
-		echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,$forceall);
-	}
+		else if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Product");*/
+		echo ' ';
+		echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,1);
+//	}
 	echo '</span>';
 
 	// Predefined product/service
@@ -200,8 +206,8 @@ else {
 	<td align="right"><input type="text" size="2" name="qty" class="flat" value="<?php echo (isset($_POST["qty"])?$_POST["qty"]:1); ?>">
 	</td>
 	<td align="right" class="nowrap"><input type="text" size="1" class="flat" value="<?php echo (isset($_POST["remise_percent"])?$_POST["remise_percent"]:$buyer->remise_client); ?>" name="remise_percent"><span class="hideonsmartphone">%</span></td>
+
 	<?php
-	$colspan = 4;
 	if (! empty($usemargins))
 	{
 		?>
@@ -214,32 +220,25 @@ else {
 			<input type="text" size="5" id="buying_price" name="buying_price" class="flat" value="<?php echo (isset($_POST["buying_price"])?$_POST["buying_price"]:''); ?>">
 		</td>
 		<?php
-		$colspan++;
-		$coldisplay++;
 
+		$coldisplay++;
 		if ($user->rights->margins->creer)
 		{
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+			{
 				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
-				$colspan++;
 				$coldisplay++;
 			}
-			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+			{
 				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
-				$colspan++;
 				$coldisplay++;
 			}
 		}
 		else
 		{
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-				$colspan++;
-				$coldisplay++;
-			}
-			if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-				$colspan++;
-				$coldisplay++;
-			}
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) $coldisplay++;
+			if (! empty($conf->global->DISPLAY_MARK_RATES))   $coldisplay++;
 		}
 	}
 	?>
@@ -491,6 +490,7 @@ function setforfree() {
 	jQuery("#prod_entry_mode_free").attr('checked',true);
 	jQuery("#prod_entry_mode_predef").attr('checked',false);
 	jQuery("#price_ht").show();
+	jQuery("#price_ttc").show();	// May no exists
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
 	jQuery("#fournprice_predef").hide();
@@ -503,6 +503,7 @@ function setforpredef() {
 	jQuery("#prod_entry_mode_free").attr('checked',false);
 	jQuery("#prod_entry_mode_predef").attr('checked',true);
 	jQuery("#price_ht").hide();
+	jQuery("#price_ttc").hide();	// May no exists
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
 	jQuery("#title_vat").hide();
