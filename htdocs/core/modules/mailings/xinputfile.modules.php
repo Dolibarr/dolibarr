@@ -166,7 +166,7 @@ class mailing_xinputfile extends MailingTargets
 								{
 									$cibles[$j] = array(
 					                    			'email' => $email,
-					                    			'name' => $name,
+					                    			'lastname' => $name,
 					                    			'firstname' => $firstname,
 													'other' => $other,
                                                     'source_url' => '',

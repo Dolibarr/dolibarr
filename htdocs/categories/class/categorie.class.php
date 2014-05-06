@@ -47,7 +47,7 @@ class Categorie extends CommonObject
 	var $label;
 	var $description;
 	var $socid;
-	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member, 4=Contact
 	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories

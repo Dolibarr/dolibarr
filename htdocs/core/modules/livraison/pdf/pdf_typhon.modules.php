@@ -197,16 +197,16 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $tplidx = $pdf->importPage(1);
                 }
 
-				// Complete object by loading several other informations
+				// We get the shipment that is the origin of delivery receipt
 				$expedition=new Expedition($this->db);
-				$result = $expedition->fetch($object->expedition_id);
-
+				$result = $expedition->fetch($object->origin_id);
+				// Now we get the order that is origin of shipment
 				$commande = new Commande($this->db);
 				if ($expedition->origin == 'commande')
 				{
 					$commande->fetch($expedition->origin_id);
 				}
-				$object->commande=$commande;
+				$object->commande=$commande;	// We set order of shipment onto delivery.
 
 
 				$pdf->Open();

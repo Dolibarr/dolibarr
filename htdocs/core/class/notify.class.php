@@ -133,7 +133,7 @@ class Notify
 
         $langs->load("other");
 
-		dol_syslog("Notify::send action=$action, socid=$socid, texte=$texte, objet_type=$objet_type, objet_id=$objet_id, file=$file");
+		dol_syslog(get_class($this)."::send action=".$action.", socid=".$socid.", texte=".$texte.", objet_type=".$objet_type.", objet_id=".$objet_id.", file=".$file);
 
 		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid";
@@ -185,10 +185,10 @@ class Notify
 						    $link='/compta/facture.php?facid='.$objet_id;
     						break;
                     	case 'order':
-						    $link='/commande/fiche.php?facid='.$objet_id;
+						    $link='/commande/fiche.php?id='.$objet_id;
     						break;
     					case 'order_supplier':
-						    $link='/fourn/commande/fiche.php?facid='.$objet_id;
+						    $link='/fourn/commande/fiche.php?id='.$objet_id;
     						break;
                     }
 					// Define $urlwithroot

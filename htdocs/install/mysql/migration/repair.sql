@@ -3,8 +3,8 @@
 -- when current version is 2.6.0 or higher. 
 --
 
-
 -- Requests to clean corrupted database
+
 
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
@@ -65,6 +65,7 @@ drop table tmp_categorie;
 delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
 delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
@@ -77,8 +78,9 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
+update llx_document_model set nom = 'typhon' where (nom = '' OR nom is null) and type = 'delivery';
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
-DELETE FROM llx_document_model WHERE nom ='' AND type='delivery';
+
 
 -- Fix: It seems this is missing for some users
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);
@@ -100,6 +102,10 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 
 -- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid;
 -- VPGSQL8.2 DELETE FROM llx_boxes_def as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_boxes_def GROUP BY file, entity, note);
+
+-- We delete old entries into menu for module margin (pb with margin and margins)
+-- VMYSQL DELETE from llx_menu where module = 'margin' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
+-- VMYSQL DELETE from llx_menu where module = 'margins' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
 
 
 -- Requests to clean old tables or fields
