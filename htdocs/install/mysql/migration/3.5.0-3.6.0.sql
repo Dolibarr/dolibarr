@@ -1151,3 +1151,43 @@ create table llx_categorie_lang
 
 ALTER TABLE llx_categorie_lang ADD UNIQUE INDEX uk_category_lang (fk_category, lang);
 ALTER TABLE llx_categorie_lang ADD CONSTRAINT fk_category_lang_fk_category 	FOREIGN KEY (fk_category) REFERENCES llx_categorie (rowid);
+
+-- Added missing relations of llx_product
+-- fk_country
+ALTER TABLE  `llx_product` CHANGE  `fk_country`  `fk_country` INT( 11 ) NULL DEFAULT NULL;
+ALTER TABLE  `llx_product` ADD INDEX (  `fk_country` );
+ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_country` ) REFERENCES  `llx_c_pays` (
+`rowid`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+-- fk_user_author
+ALTER TABLE  `llx_product` CHANGE  `fk_user_author`  `fk_user_author` INT( 11 ) NULL DEFAULT NULL;
+ALTER TABLE  `llx_product` ADD INDEX (  `fk_user_author` );
+ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_user_author` ) REFERENCES  `llx_user` (
+`rowid`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+-- fk_barcode_type
+ALTER TABLE  `llx_product` CHANGE  `fk_barcode_type`  `fk_barcode_type` INT( 11 ) NULL DEFAULT NULL;
+UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
+ALTER TABLE  `llx_product` ADD INDEX (  `fk_barcode_type` );
+ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_barcode_type` ) REFERENCES  `llx_c_barcode_type` (
+`rowid`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+-- fk_parent
+UPDATE llx_product SET fk_parent = NULL WHERE fk_parent = 0;
+ALTER TABLE  `llx_product` CHANGE  `fk_parent`  `fk_parent` INT( 11 ) NULL DEFAULT NULL;
+ALTER TABLE  `llx_product` ADD INDEX (  `fk_parent` );
+ALTER TABLE  `llx_product` ADD FOREIGN KEY (  `fk_parent` ) REFERENCES  `llx_product` (
+`rowid`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+
+-- Added missing relations of llx_product_price
+-- fk_user_author
+ALTER TABLE  `llx_product_price` ADD INDEX (  `fk_user_author` );
+ALTER TABLE  `llx_product_price` ADD FOREIGN KEY (  `fk_user_author` ) REFERENCES  `llx_user` (
+  `rowid`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+-- fk_user_author
+ALTER TABLE  `llx_product_price` ADD INDEX (  `fk_product` );
+ALTER TABLE  `llx_product_price` ADD FOREIGN KEY (  `fk_product` ) REFERENCES  `llx_product` (
+  `rowid`
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
