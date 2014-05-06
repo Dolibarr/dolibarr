@@ -65,6 +65,7 @@ drop table tmp_categorie;
 delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
 delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
