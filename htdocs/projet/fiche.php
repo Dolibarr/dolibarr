@@ -64,7 +64,7 @@ $result = restrictedArea($user, 'projet', $object->id);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 $date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
-$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
+$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
 
 
 /*
