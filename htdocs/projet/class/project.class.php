@@ -533,28 +533,31 @@ class Project extends CommonObject
                     $res = @dol_delete_dir_recursive($dir);
                     if (!$res)
                     {
-                        $this->error = 'ErrorFailToDeleteDir';
-                        $this->db->rollback();
-                        return 0;
+                        $this->errors[] = 'ErrorFailToDeleteDir';
+                        $error++;
                     }
                 }
             }
 
             if (!$notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_DELETE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // End call triggers
+            	// Call triggers
+            	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+            	$interface = new Interfaces($this->db);
+            	$result = $interface->run_triggers('PROJECT_DELETE', $this, $user, $langs, $conf);
+            	if ($result < 0)
+            	{
+            		$error++;
+            		foreach ($interface->errors as $errmsg ) {
+            			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+            			$this->errors[] =$errmsg;
+            		}
+            	}
+            	// End call triggers
             }
-
-            dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        }
+        
+        if (empty($error)) {
             $this->db->commit();
             return 1;
         }
