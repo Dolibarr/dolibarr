@@ -60,6 +60,7 @@ For users:
 - New: When a subscription is recorded with invoice and payment:
        - the document (PDF) of invoice is also generated.
        - the invoice is set to status paid.
+- New: Can enter holiday for someone else if user has permission for.
 - Fix: Project Task numbering customs rule works.
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.

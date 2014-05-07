@@ -173,7 +173,7 @@ if ($id > 0)
 	$user_id = $fuser->id;
 }
 // Récupération des congés payés de l'utilisateur ou de tous les users
-if (!$user->rights->holiday->lire_tous || $id > 0)
+if (!$user->rights->holiday->write_all || $id > 0)
 {
 	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);
 }
@@ -278,7 +278,7 @@ $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
 // UTILISATEUR
-if($user->rights->holiday->lire_tous) {
+if($user->rights->holiday->write_all) {
     print '<td class="liste_titre" align="left">';
     $form->select_users($search_employe,"search_employe",1,"",0,'');
     print '</td>';
@@ -287,7 +287,7 @@ if($user->rights->holiday->lire_tous) {
 }
 
 // VALIDEUR
-if($user->rights->holiday->lire_tous)
+if($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre" align="left">';
 

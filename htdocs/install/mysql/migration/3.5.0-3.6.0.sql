@@ -20,6 +20,10 @@
 
 ALTER TABLE llx_societe DROP COLUMN datea;
 
+ALTER TABLE llx_holiday ADD COLUMN fk_user_create integer;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user_create (fk_user_create);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_create (date_create);
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_validator (fk_validator);
 
 create table llx_c_email_templates
 (
