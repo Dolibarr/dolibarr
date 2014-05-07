@@ -26,7 +26,7 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-// For MultiCompany module. 
+// For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
@@ -111,15 +111,27 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 
 	$urlback=$_SERVER["REQUEST_URI"];
 	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentReceived");
+	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 	$content="";
-	$content.=$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."\n";
-	$content.="\n";
-	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
-	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
-	$content.="tag=".$fulltag."\n";
-	
+	if (! empty($tmptag['MEM']))
+	{
+		$langs->load("members");
+		$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+		$content.=$langs->trans("PaymentSubscription")."<br>\n";
+		$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
+		$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
+	}
+	else
+	{
+		$content.=$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."<br>\n";
+	}
+	$content.="<br>\n";
+	$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+	$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
+	$content.="tag=".$fulltag."<br>\n";
+
 	$ishtml=dol_textishtml($content);	// May contain urls
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
 
