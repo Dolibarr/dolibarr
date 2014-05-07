@@ -257,7 +257,7 @@ class DoliDBMysql extends DoliDB
 	{
 		return explode('.',$this->getVersion());
 	}
-	
+
 	/**
 	 *	Return version of database client driver
 	 *
@@ -267,7 +267,7 @@ class DoliDBMysql extends DoliDB
 	{
 		return mysqli_get_client_info();
 	}
-	
+
 
     /**
      *  Close database connexion
@@ -651,6 +651,7 @@ class DoliDBMysql extends DoliDB
 			1006 => 'DB_ERROR_CANNOT_CREATE',
 			1007 => 'DB_ERROR_ALREADY_EXISTS',
 			1008 => 'DB_ERROR_CANNOT_DROP',
+            1022 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
 			1044 => 'DB_ERROR_ACCESSDENIED',
 			1046 => 'DB_ERROR_NODBSELECTED',

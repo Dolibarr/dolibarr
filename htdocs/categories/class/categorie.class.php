@@ -46,7 +46,7 @@ class Categorie
 	var $label;
 	var $description;
 	var $socid;
-	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member, 4=Contact
 	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
@@ -296,7 +296,7 @@ class Categorie
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-			$sql.= " SET fk_parent = ".$this->fk_parent; 
+			$sql.= " SET fk_parent = ".$this->fk_parent;
 			$sql.= " WHERE fk_parent = ".$this->id;
 
 			if (!$this->db->query($sql))
