@@ -69,8 +69,6 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	// Description long of product line
 	if ($desc && ($desc != $label))
 	{
-		if ( $libelleproduitservice && empty($hidedesc) ) $libelleproduitservice.="\n";
-
 		if ($desc == '(CREDIT_NOTE)' && $line->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
@@ -83,18 +81,17 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 		    $discount->fetch($line->fk_remise_except);
 		    $libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
 		    // Add date of deposit
-		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
+		    if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) $libelleproduitservice.=' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
 		else
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc))
-					$libelleproduitservice.=$desc;
+				if (empty($hidedesc)) $libelleproduitservice=dol_concatdesc($libelleproduitservice, $desc);
 			}
 			else
 			{
-				$libelleproduitservice.=$desc;
+				$libelleproduitservice=dol_concatdesc($libelleproduitservice, $desc);
 			}
 		}
 	}
@@ -148,7 +145,7 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 			$period='('.$outputlangs->transnoentitiesnoconv('DateUntil',dol_print_date($line->date_end, $format, false, $outputlangs)).')';
 		}
 		//print '>'.$outputlangs->charset_output.','.$period;
-		$libelleproduitservice.="\n".$period;
+		$libelleproduitservice=dol_concatdesc($libelleproduitservice, $period);
 		//print $libelleproduitservice;
 	}
 
