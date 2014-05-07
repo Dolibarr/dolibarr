@@ -103,7 +103,7 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "LIVRAISON_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "typhon";
@@ -270,7 +270,7 @@ class modExpedition extends DolibarrModules
 		$sql = array(
 			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','shipping',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[2][2]."' AND entity = ".$conf->entity,
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[3][2]."' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[3][2]."','delivery',".$conf->entity.")",
 		);
 
