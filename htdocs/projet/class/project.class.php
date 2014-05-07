@@ -481,26 +481,47 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
         $sql.= " WHERE rowid=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
+        
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
-        if ($resql)
+        if (empty($error))
         {
             // We remove directory
             $projectref = dol_sanitizeFileName($this->ref);
@@ -539,7 +560,10 @@ class Project extends CommonObject
         }
         else
         {
-            $this->error = $this->db->lasterror();
+        	foreach ( $this->errors as $errmsg ) {
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
             dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
