@@ -5,6 +5,7 @@
 
 -- Requests to clean corrupted database
 
+
 -- delete foreign key that should never exists
 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
@@ -64,6 +65,7 @@ drop table tmp_categorie;
 delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
 delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
 
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
@@ -76,8 +78,9 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
+update llx_document_model set nom = 'typhon' where (nom = '' OR nom is null) and type = 'delivery';
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
-DELETE FROM llx_document_model WHERE nom ='' AND type='delivery';
+
 
 -- Fix: It seems this is missing for some users
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);
