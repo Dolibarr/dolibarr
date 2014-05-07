@@ -146,7 +146,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
 		$texte.= '<br></div></div>';
-		
+
 		// Scan directories
 		if (count($listofdir))
 		{
@@ -425,7 +425,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					}
 				}
 				// Replace tags of object + external modules
-				$tmparray=$this->get_substitutionarray_propal($object,$outputlangs);
+				$tmparray=$this->get_substitutionarray_object($object,$outputlangs);
 				//print_r($tmparray); exit;
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 				// Call the ODTSubstitution hook
@@ -454,7 +454,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 					$listlines = $odfHandler->setSegment('lines');
 					foreach ($object->lines as $line)
 					{
-						$tmparray=$this->get_substitutionarray_propal_lines($line,$outputlangs);
+						$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 						// Call the ODTSubstitutionLine hook
 						$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
