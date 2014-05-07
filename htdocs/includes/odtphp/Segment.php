@@ -136,9 +136,15 @@ class Segment implements IteratorAggregate, Countable
         if (strpos($this->xml, $this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')) === false) {
             throw new SegmentException("var $key not found in {$this->getName()}");
         }
+
+		$value=$this->odf->htmlToUTFAndPreOdf($value);
+
 		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-        $this->vars[$this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')] = str_replace("\n", "<text:line-break/>", $value);
+
+		$value=$this->odf->preOdfToOdf($value);
+
+        $this->vars[$this->odf->getConfig('DELIMITER_LEFT') . $key . $this->odf->getConfig('DELIMITER_RIGHT')] = $value;
         return $this;
     }
     /**
