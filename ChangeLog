@@ -88,6 +88,7 @@ For developers:
 - New: A module can add its own ECM view.
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
+- New: Add hooks on project card page.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
