@@ -2547,7 +2547,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($picto == 'setup') $picto='title.png';
 	if (!empty($conf->browser->ie) && $picto=='title.png') $picto='title.gif';
 
-	if ($num > $conf->liste_limit or $num == -1)
+	if (($num > $conf->liste_limit) || ($num == -1))
 	{
 		$nextpage = 1;
 	}
