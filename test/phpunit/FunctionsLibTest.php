@@ -168,18 +168,33 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='xxx <b>yyy</b> zzz';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
-        $input='xxx<br>';
-        $after=dol_textishtml($input);
-        $this->assertTrue($after);
         $input='text with <div>some div</div>';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
         $input='text with HTML &nbsp; entities';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
+        $input='xxx<br>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br >';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br style="eee">';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
+        $input='xxx<br style="eee" >';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
 
         // False
         $input='xxx < br>';
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+        $input='xxx <email@email.com>';	// <em> is html, <em... is not
+        $after=dol_textishtml($input);
+        $this->assertFalse($after);
+        $input='xxx <brstyle="ee">';
         $after=dol_textishtml($input);
         $this->assertFalse($after);
     }
@@ -207,6 +222,53 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         return true;
     }
+
+    /**
+     * testDolConcat
+     *
+     * @return boolean
+     */
+    public function testDolConcat()
+    {
+        $text1="A string 1"; $text2="A string 2";	// text 1 and 2 are text, concat need only \n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A string 1\nA string 2",$after);
+
+        $text1="A<br>string 1"; $text2="A string 2";	// text 1 is html, concat need <br>\n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A<br>string 1<br>\nA string 2",$after);
+
+        $text1="A string 1"; $text2="A <b>string</b> 2";	// text 2 is html, concat need <br>\n
+        $after=dol_concatdesc($text1, $text2);
+        $this->assertEquals("A string 1<br>\nA <b>string</b> 2",$after);
+
+        return true;
+    }
+
+
+    /**
+     * testDolStringNohtmltag
+     *
+     * @return boolean
+     */
+    public function testDolStringNohtmltag()
+    {
+        $text="A\nstring\n";
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("A\nstring",$after,"test1");
+
+        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $after=dol_string_nohtmltag($text, 0);
+        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test2");
+
+        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $after=dol_string_nohtmltag($text, 1);
+        $this->assertEquals("A string with tag with < chars",$after,"test3");
+
+        return true;
+    }
+
+
 
     /**
      * testDolHtmlEntitiesBr
