@@ -1,0 +1,5 @@
+# Dolibarr language file ccextras.lang : extra translations for Code Couleurs
+CheckAll=Tout cocher
+UncheckAll=Tout décocher
+MultipleDeleteLine=Supprimer lignes produits
+ConfirmMultipleDeleteLine=Êtes-vous sûre ("sûr" pour Éric) de vouloir effacer ces lignes produit ?

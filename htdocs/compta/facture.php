@@ -56,6 +56,7 @@ $langs->load('compta');
 $langs->load('products');
 $langs->load('banks');
 $langs->load('main');
+$langs->load('cc_extras');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -182,6 +183,38 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			$newlang = $_REQUEST ['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 			$newlang = $object->client->default_lang;
+		if (! empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			$ret = $object->fetch($id); // Reload to get new records
+			$result = facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+		if ($result >= 0) {
+			header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $id);
+			exit();
+		}
+	} else {
+		$mesgs [] = '<div clas="error">' . $object->error . '</div>';
+		$action = '';
+	}
+}
+
+// Suppression de plusieurs services
+else if ($action == 'confirm_multipledeleteline' AND $confirm == 'yes' AND $user->rights->facture->supprimer) {
+	$line_ids = isset($_GET['line_ids']) ? explode(',', $_GET['line_ids']) : array();
+	foreach ($line_ids as $line_id) {
+		$result = $object->deleteline($line_id, $user);
+	}
+	
+	if ($result > 0) {
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			$newlang = empty($_REQUEST['lang_id']) ? $object->client->default_lang : $_REQUEST['lang_id'];
+		}
 		if (! empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
@@ -2627,6 +2660,21 @@ if ($action == 'create')
 	if ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
+	
+	// Confirmation multiple delete product/service line
+	else if ($action == 'ask_multipledeleteline') {
+		$line_ids = isset($_POST['multiple_delete_lines']) ? $_POST['multiple_delete_lines'] : array();
+		$formconfirm_url = sprintf("%s?id=%d&line_ids=%s",
+			$_SERVER["PHP_SELF"], intval($object->id), implode(',', $line_ids)
+		);
+		$formconfirm = $form->formconfirm(
+			$formconfirm_url,
+			$langs->trans('MultipleDeleteLine'),
+			$langs->trans('ConfirmMultipleDeleteLine'),
+			'confirm_multipledeleteline',
+			'', 0, 1
+		);
+	}
 
 	// Clone confirmation
 	if ($action == 'clone') {
@@ -3287,19 +3335,23 @@ if ($action == 'create')
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show object lines
-	if (! empty($object->lines))
+	if (!empty($object->lines)) {
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
-
+		if ($object->statut == 0 AND $user->rights->facture->supprimer AND count($object->lines) > 0) {
+			$ret = $object->printMultipleDeleteLinesLine();
+		}
+	}
+	
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline')
 	{
 		if ($action != 'editline')
 		{
 			$var = true;
-
+			
 			// Add free products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
-
+			
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		}

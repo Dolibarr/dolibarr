@@ -53,6 +53,7 @@ $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
+$langs->load('cc_extras');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -156,6 +157,51 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			$newlang = GETPOST('lang_id');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 			$newlang = $object->client->default_lang;
+		if (! empty($newlang)) {
+			$outputlangs = new Translate("", $conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			$ret = $object->fetch($object->id); // Reload to get new records
+			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+
+		header('Location: ' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id);
+		exit();
+	} else {
+		$mesg = '<div class="error">' . $object->error . '</div>';
+	}
+}
+
+// Suppression de plusieurs services
+else if ($action == 'ask_multipledeleteline') {
+	// On retire les données de submit inutiles pour éviter les problèmes
+	$useless_submit_data_names = array(
+		'remise_percent',
+		'qty',
+		'price_ht',
+		'tva_tx',
+		'dp_desc',
+		'idprod',
+		'multiple_delete_select_all'
+	);
+	
+	foreach ($useless_submit_data_names as $useless) {
+		unset($_POST[$useless]);
+	}
+}
+else if ($action == 'confirm_multipledeleteline' AND $confirm == 'yes' AND $user->rights->commande->supprimer) {
+	$line_ids = isset($_GET['line_ids']) ? explode(',', $_GET['line_ids']) : array();
+	foreach ($line_ids as $line_id) {
+		$result = $object->deleteline($line_id);
+	}
+	if ($result > 0) {
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) {
+			$newlang = GETPOST('lang_id') ? GETPOST('lang_id') : $object->client->default_lang;
+		}
 		if (! empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
@@ -1697,6 +1743,21 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		if ($action == 'ask_deleteline') {
 			$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
+		
+		// Confirmation multiple delete product/service line
+		else if ($action == 'ask_multipledeleteline') {
+			$line_ids = isset($_POST['multiple_delete_lines']) ? $_POST['multiple_delete_lines'] : array();
+			$formconfirm_url = sprintf("%s?id=%d&line_ids=%s",
+				$_SERVER["PHP_SELF"], intval($object->id), implode(',', $line_ids)
+			);
+			$formconfirm = $form->formconfirm(
+				$formconfirm_url,
+				$langs->trans('MultipleDeleteLine'),
+				$langs->trans('ConfirmMultipleDeleteLine'),
+				'confirm_multipledeleteline',
+				'', 0, 1
+			);
+		}
 
 		// Clone confirmation
 		if ($action == 'clone') {
@@ -2078,8 +2139,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
-		if (! empty($object->lines))
+		if (!empty($object->lines)) {
 			$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+			if ($object->statut == 0 AND $user->rights->commande->supprimer AND count($object->lines) > 0) {
+				$ret = $object->printMultipleDeleteLinesLine();
+			}
+		}
 
 		$numlines = count($object->lines);
 

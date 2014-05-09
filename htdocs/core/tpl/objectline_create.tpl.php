@@ -44,12 +44,15 @@ if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move
 if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
 if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+
+$element = $this->element;
+$first_column_colspan = 1 + (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) + ($user->rights->$element->supprimer AND $this->statut == 0);
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
 
 <tr class="liste_titre nodrag nodrop">
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td colspan="<?php echo $first_column_colspan; ?>">
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
 	</td>
 	<td align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
@@ -87,7 +90,7 @@ else {
 	$coldisplay=0; }
 ?>
 
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
+	<td colspan="<?php echo $first_column_colspan; ?>">
 
 	<?php
 
