@@ -766,8 +766,16 @@ class Project extends CommonObject
 
         if ($option != 'nolink')
         {
-            $lien = '<a href="' . DOL_URL_ROOT . '/projet/fiche.php?id=' . $this->id . '">';
-            $lienfin = '</a>';
+        	if (preg_match('/\.php$/',$option))
+        	{
+            	$lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . '">';
+            	$lienfin = '</a>';
+        	}
+        	else
+        	{
+            	$lien = '<a href="' . DOL_URL_ROOT . '/projet/fiche.php?id=' . $this->id . '">';
+            	$lienfin = '</a>';
+        	}
         }
 
         $picto = 'projectpub';
