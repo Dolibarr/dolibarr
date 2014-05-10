@@ -69,7 +69,7 @@ class modSalaries extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependances
-		$this->depends = array("modTax");
+		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array("salaries");
