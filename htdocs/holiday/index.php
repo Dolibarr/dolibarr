@@ -186,10 +186,7 @@ if ($holiday_payes == '-1')
 {
     print_fiche_titre($langs->trans('CPTitreMenu'));
 
-    print '<div class="tabBar">';
-    print '<span>'.$langs->trans('CPErrorSQL');
-    print ' '.$holiday->error.'</span>';
-    print '</div>';
+    dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
     exit();
 }
 
