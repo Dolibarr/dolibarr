@@ -87,11 +87,12 @@ class ActionsResource
 		    }
 
 			// Delete a resource linked to an element
-			if ($action == 'confirm_delete_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
+			if ($action == 'confirm_delete_linked_resource' && $user->rights->resource->delete && GETPOST('confirm') == 'yes')
 			{
-				$res = $object->fetch(GETPOST('lineid'));
+				$res = $object->fetch(GETPOST('id'));
 				if($res)
-				{
+				{			    
+				    
 					$result = $object->delete_resource(GETPOST('lineid'),GETPOST('element'));
 
 					if ($result >= 0)
@@ -103,6 +104,10 @@ class ActionsResource
 					else {
 						setEventMessage($object->error,'errors');
 					}
+				}
+				else 
+				{
+				    setEventMessage($object->error,'errors');
 				}
 			}
 
@@ -129,6 +134,7 @@ class ActionsResource
 					}
 				}
 			}
+			
 		}
 
 	}
