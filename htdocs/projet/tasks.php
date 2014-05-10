@@ -215,7 +215,7 @@ if ($id > 0 || ! empty($ref))
 
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Company").'</td><td>';
+	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
 	else print '&nbsp;';
 	print '</td>';
@@ -369,7 +369,7 @@ else
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 	}
 
 	print '</div>';
