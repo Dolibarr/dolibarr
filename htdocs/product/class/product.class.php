@@ -154,6 +154,8 @@ class Product extends CommonObject
 
 	var $oldcopy;
 
+	//note not visible on orders and invoices
+	var $note;
 
 	/**
 	 *  Constructor
@@ -546,7 +548,7 @@ class Product extends CommonObject
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
 		$this->description = trim($this->description);
-		$this->note = (isset($this->note)? trim($this->note):"null");
+		$this->note = (isset($this->note) ? trim($this->note) : null);
 		$this->weight = price2num($this->weight);
 		$this->weight_units = trim($this->weight_units);
 		$this->length = price2num($this->length);
@@ -614,7 +616,7 @@ class Product extends CommonObject
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
-	        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
+	        $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
 			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
 			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
