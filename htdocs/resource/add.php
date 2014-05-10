@@ -36,6 +36,7 @@ require_once 'class/html.formresource.class.php';
 $langs->load("resource");
 $langs->load("companies");
 $langs->load("other");
+$langs->load("resource@resource");
 
 // Get parameters
 $id			= GETPOST('id','int');
