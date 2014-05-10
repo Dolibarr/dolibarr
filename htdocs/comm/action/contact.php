@@ -50,7 +50,7 @@ if ($user->societe_id > 0)
 	unset($_GET["action"]);
 	$action='';
 }
-$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
+$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 
 $object = new ActionComm($db);
@@ -236,9 +236,9 @@ if ($id > 0 || ! empty($ref))
         print '</table>';
 
    		dol_fiche_end();
-   		
+
    		print '<br>';
-   		
+
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)

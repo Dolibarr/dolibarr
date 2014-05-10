@@ -37,14 +37,14 @@ $id=GETPOST("id",'int');
 $action=GETPOST('action');
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $sal = new PaymentSalary($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('taxsalarycard'));
+$hookmanager->initHooks(array('salarycard'));
 
 
 
