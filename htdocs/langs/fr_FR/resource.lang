@@ -1,16 +1,33 @@
 
-MenuResourceIndex=Resources
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
+MenuResourceIndex=Ressources
+MenuResourceAdd=Nouvelle ressource
+MenuResourcePlanning=Planning des Ressources
+DeleteResource=Effacer resource
+ConfirmDeleteResourceElement=Confirmer la suppression de la ressource pour cet élément
 
-NoResourceInDatabase=Aucune resource en base de données.
-NoResourceLinked=No resource linked
+NoResourceInDatabase=Aucune ressource en base de données.
+NoResourceLinked=Aucune ressource liée
 
-ResourcePageIndex=Resources list
+ResourcePageIndex=Liste des Ressources
+ResourceSingular=Ressource
+ResourceCard=Fiche ressource
+AddResource=Ajouter une ressource
+ResourceFormLabel_ref=Nom de la ressource
+ResourceType=Type de la ressource
+ResourceFormLabel_description=Description de la ressource
 
-ResourcesLinkedToElement=Resources linked to element
-RessourceLineSuccessfullyUpdated=Resource successfully updated
-RessourceLineSuccessfullyDeleted=Resource successfully deleted
+ResourcesLinkedToElement=Ressources liées à l'élément
+RessourceLineSuccessfullyUpdated=Ressource mise à jour
+RessourceLineSuccessfullyDeleted=Resource supprimée
 
-ShowResourcePlanning=Show resource planning
+ShowResourcePlanning=Montrer le planning des ressources
+PlanningOfAffectedResources=Planning des ressources affectées aux évènements
+GotoDate=Afficher la date
+
+ResourceCreatedWithSuccess=Ressource créee avec succès
+RessourceLineSuccessfullyDeleted=Ressource supprimée avec succès
+RessourceLineSuccessfullyUpdated=Ressource mise à jour
+
+TitleResourceCard=Fiche resource
+
+DictionaryResourceType=Type de ressources

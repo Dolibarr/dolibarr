@@ -1,12 +1,20 @@
 
 MenuResourceIndex=Resources
+MenuResourceAdd=New resource
 MenuResourcePlanning=Resource planning
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 
 NoResourceLinked=No resource linked
+NoResourceLinked=No resource linked
 
 ResourcePageIndex=Resources list
+ResourceSingular=Resource
+ResourceCard=Resource card
+AddResource=Add a resource
+ResourceFormLabel_ref=Resource name
+ResourceType=Resource type
+ResourceFormLabel_description=Resource description
 
 ResourcesLinkedToElement=Resources linked to element
 RessourceLineSuccessfullyUpdated=Resource successfully updated
@@ -14,22 +22,12 @@ RessourceLineSuccessfullyDeleted=Resource successfully deleted
 
 ShowResourcePlanning=Show resource planning
 NoResourceInDatabase=No resource in database
-
-AddResource=Add a resource
-ResourceFormLabel_ref=Ref / title
-ResourceFormLabel_description=Description
+GotoDate=Go to date
 
 ResourceCreatedWithSuccess=Resource successfully created
 RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 
-MenuResourceAdd=Nouvelle ressource
-
 TitleResourceCard=Resource card
-ResourceSingular=Resource
-
-ResourceName=Resource name
-ResourceType=Type of resource
 
 DictionaryResourceType=Type of resources
-ResourceCard=Card

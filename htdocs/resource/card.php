@@ -144,7 +144,7 @@ if ( $object->fetch($id) > 0 )
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+		print '<tr><td width="20%">'.$langs->trans("ResourceFormLabel_ref").'</td>';
 		print '<td><input size="12" name="ref" value="'.(GETPOST('ref') ? GETPOST('ref') : $object->ref).'"></td></tr>';
 		
 		// Type
@@ -173,7 +173,7 @@ if ( $object->fetch($id) > 0 )
 		 */
 		print '<table width="100%" class="border">';
 
-		print '<tr><td style="width:35%">'.$langs->trans("ResourceName").'</td><td>';
+		print '<tr><td style="width:35%">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
 		$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
 		print $form->showrefnav($object, 'id', $linkback,1,"rowid");
 		print '</td>';
@@ -189,7 +189,7 @@ if ( $object->fetch($id) > 0 )
 		
 		// Description
 		print '<tr>';
-		print '<td>' . $langs->trans("Description") . '</td>';
+		print '<td>' . $langs->trans("ResourceFormLabel_description") . '</td>';
 		print '<td>';
 		print $object->description;
 		print '</td>';
