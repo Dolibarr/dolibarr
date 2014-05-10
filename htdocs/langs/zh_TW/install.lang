@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=後退和糾正錯誤的參數。
 ErrorWrongValueForParameter=您可能輸入一個參數的錯誤值%s'的。
 ErrorFailedToCreateDatabase=無法創建數據庫'%s'的。
 ErrorFailedToConnectToDatabase=無法連接到數據庫'%s'的。
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP的版本太舊。版本%s是必需的。
 WarningPHPVersionTooLow=PHP版本太舊。預計或以上版本%s。這個版本應該允許安裝，但不支持。
 ErrorConnectedButDatabaseNotFound=連接到數據庫服務器的成功，但'%s'不存在。
 ErrorDatabaseAlreadyExists=數據庫'%s'已經存在。
 IfDatabaseNotExistsGoBackAndUncheckCreate=如果數據庫不存在，請返回並檢查選擇“創建數據庫”。
 IfDatabaseExistsGoBackAndCheckCreate=如果數據庫已經存在，請返回並取消選中“創建數據庫”選項。
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP版本
 YouCanContinue=您可以繼續...
 PleaseBePatient=請耐心等待...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=升級存儲航運2
 MigrationFinished=遷移完成
 LastStepDesc=<strong>最後一步</strong> ：此處定義的登錄名和密碼，您打算使用連接到軟件。不松，因為它是帳戶管理所有其他。
 ActivateModule=激活模塊%s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=修正了非規範化數據
 MigrationOrder=數據遷移的客戶的訂單
 MigrationSupplierOrder=數據遷移對供應商的訂單
@@ -206,4 +205,7 @@ MigrationProjectUserResp=數據遷移llx_projet領域fk_user_resp到llx_element_
 MigrationProjectTaskTime=更新時間花費在幾秒鐘內
 MigrationActioncommElement=在行動上的更新數據
 MigrationPaymentMode=付款方式的數據遷移
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

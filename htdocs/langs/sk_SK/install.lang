@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Kliknite tu pre zobrazenie / editovať pokročilé p
 
 #########
 # upgrade
-#########
 MigrationFixData=Oprava pre denormalized dát
 MigrationOrder=Migrácia dát pre zákazníkovej objednávky
 MigrationSupplierOrder=Migrácia dát pre dodávateľov objednávky
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Aktualizovať čas strávený v sekundách
 MigrationActioncommElement=Aktualizovať údaje o činnosti
 MigrationPaymentMode=Migrácia dát platobného režimu
 MigrationCategorieAssociation=Migrácia kategórií
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

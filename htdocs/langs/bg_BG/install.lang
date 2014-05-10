@@ -206,3 +206,6 @@ MigrationProjectTaskTime=Актуализация на времето, прек�
 MigrationActioncommElement=Актуализиране на данни за действия
 MigrationPaymentMode=Миграция на данни за плащане режим
 MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

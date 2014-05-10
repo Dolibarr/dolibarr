@@ -49,11 +49,11 @@ ErrorReservedTypeSystemSystemAuto=El uso del tipo 'system' y 'systemauto' está 
 ErrorCodeCantContainZero=El código no puede contener el valor 0
 DisableJavascript=Desactivar las funciones Javascript y AJAX
 ConfirmAjax=Utilizar los diálogos de confirmación Ajax
-UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
-UseSearchToSelectCompany=Use autocompletion fields to choose third parties instead of using a list box.
+UseSearchToSelectCompanyTooltip=También si tiene un gran número de terceros (> 100 000), puede aumentar la velocidad mediante el establecimiento COMPANY_DONOTSEARCH_ANYWHERE constante a 1 en Configuración-> Otros. La búsqueda será limitada a la creación de cadena.
+UseSearchToSelectCompany=Utilice los campos de autocompletar para elegir  terceros en lugar de utilizar un cuadro de lista
 ActivityStateToSelectCompany= Agregar un filtro en la búsqueda para mostrar/ocultar los terceros en activo o que hayan dejado de ejercer
-UseSearchToSelectContactTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant CONTACT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
-UseSearchToSelectContact=Use autocompletion fields to choose contact (instead of using a list box).
+UseSearchToSelectContactTooltip=También si usted tiene un gran número de terceros (> 100 000), puede aumentar la velocidad mediante el establecimiento CONTACT_DONOTSEARCH_ANYWHERE constante a 1 en Configuración-> Otros. La búsqueda será limitada a la creación de cadena.
+UseSearchToSelectContact=Utilice los campos de autocompletar para seleccionar contactos (en lugar de utilizar un cuadro de lista).
 SearchFilter=Opciones filtros de búsqueda
 NumberOfKeyToSearch=Nº de caracteres para desencadenar la búsqueda: %s
 ViewFullDateActions=Ver las fechas de las acciones en su totalidad en la ficha de tercero
@@ -102,9 +102,9 @@ OtherOptions=Otras opciones
 OtherSetup=Varios
 CurrentValueSeparatorDecimal=Separador decimal
 CurrentValueSeparatorThousand=Separador miles
-Destination=Destination
-IdModule=Module ID
-IdPermissions=Permissions ID
+Destination=destino
+IdModule=identificador de modulo
+IdPermissions=Identificador de permisos
 Modules=Módulos
 ModulesCommon=Módulos principales
 ModulesOther=Módulos complementarios
@@ -372,7 +372,7 @@ ExtrafieldRadio=Botón de selección excluyente
 ExtrafieldParamHelpselect=El listado tiene que ser en forma clave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
 ExtrafieldParamHelpcheckbox=El listado tiene que ser en forma clave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
 ExtrafieldParamHelpradio=El listado tiene que ser en forma clave, valor<br><br> por ejemplo : <br>1,text1<br>2,text2<br>3,text3<br>...
-ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
+ExtrafieldParamHelpsellist=Lista Parámetros viene de una tabla <br> Sintaxis: nombre_tabla: etiqueta_campo: identificador_campo :: filtro <br> Ejemplo: c_typent: libelle: id :: filtro <br> filtro puede ser una prueba simple (por ejemplo, activo = 1) para mostrar el valor sólo se activa <br> si desea filtrar un campo extra utilizar la sintáxis extra.fieldcode = ... (donde el código de campo es el código del campo extra) <br> para tener la lista en función de otra: <br> c_typent: libelle: id: parent_list_code | parent_column: filtro
 LibraryToBuildPDF=Librería usada para la creación de archivos PDF
 WarningUsingFPDF=Atención: Su archivo <b>conf.php</b> contiene la directiva <b>dolibarr_pdf_force_fpdf=1</b>. Esto hace que se use la librería FPDF para generar sus archivos PDF. Esta librería es antigua y no cubre algunas funcionalidades (Unicode, transparencia de imágenes, idiomas cirílicos, árabes o asiáticos, etc.), por lo que puede tener problemas en la generación de los PDF.<br>Para resolverlo, y disponer de un soporte completo de PDF, puede descargar la <a href="http://www.tcpdf.org/" target="_blank">librería TCPDF</a> , y a continuación comentar o eliminar la línea <b>$dolibarr_pdf_force_fpdf=1</b>, y añadir en su lugar <b>$dolibarr_lib_TCPDF_PATH='ruta_a_TCPDF'</b>
 LocalTaxDesc=Algunos países aplican 2 o 3 tasas a cada línea de factura. Si es el caso, escoja el tipo de la segunda y tercera tasa y su valor. Los posibles tipos son:<br>1 : tasa local aplicable a productos y servicios sin IVA (IVA no se aplica en la tasa local)<br>2 : tasa local se aplica a productos y servicios antes del IVA (IVA se calcula sobre importe+tasa local)<br>3 : tasa local se aplica a productos sin IVA (IVA no se aplica en la tasa local)<br>4 : tasa local se aplica a productos antes del IVA (IVA se calcula sobre el importe+tasa local)<br>5 : tasa local se aplica a servicios sin IVA (IVA no se aplica a la tasa local)<br>6 : tasa local se aplica a servicios antes del IVA (IVA se calcula sobre importe + tasa local)
@@ -1287,8 +1287,8 @@ YouMayFindPerfAdviceHere=En esta página encontrará varias pruebas y consejos r
 NotInstalled=No instalado,  por lo que su servidor no baja de rendimiento con esto.
 ApplicativeCache=Aplicación caché
 MemcachedNotAvailable=No se ha encontrado una aplicación de cache. Puede mejorar el rendimiento instalando un cache server Memcached y un módulo capaz de usar ese servidor de cache.<br>Más información aquí <a href="http://wiki.dolibarr.org/index.php/Module_MemCached_EN">http://wiki.dolibarr.org/index.php/Module_MemCached_EN</a>.<br>Tenga en cuenta que algunos hostings no ofrecen servidores de cache.
-MemcachedModuleAvailableButNotSetup=Module memcached for applicative cache found but setup of module is not complete.
-MemcachedAvailableAndSetup=Module memcached dedicated to use memcached server is enabled.
+MemcachedModuleAvailableButNotSetup=Módulo memcached para el caché aplicativo encontrado pero la configuración del módulo no está completa.
+MemcachedAvailableAndSetup=Memcached módulo dedicado a utilizar el servidor memcached está disponible.
 OPCodeCache=OPCode caché
 NoOPCodeCacheFound=No se ha encontrado ningún OPCode caché. Puede ser que esté usando otro OPCode como XCache o eAccelerator (mejor), o puede que no tenga OPCode caché (peor).
 HTTPCacheStaticResources=Caché HTTP para estadísticas de recursos (css, img, javascript)
@@ -1309,8 +1309,8 @@ ConfirmDeleteProductLineAbility=Confirmación de eliminación de una línea de p
 ModifyProductDescAbility=Personalización de las descripciones de los productos en los formularios
 ViewProductDescInFormAbility=Visualización de las descripciones de los productos en los formularios
 ViewProductDescInThirdpartyLanguageAbility=Visualización de las descripciones de productos en el idioma del tercero
-UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
-UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
+UseSearchToSelectProductTooltip=También si usted tiene una gran cantidad de producto (> 100 000), puede aumentar la velocidad mediante el establecimiento PRODUCT_DONOTSEARCH_ANYWHERE constante a 1 en Configuración-> Otros. La búsqueda será limitada a la creación de cadena.
+UseSearchToSelectProduct=Utilice un formulario de búsqueda para elegir un producto (en lugar de una lista desplegable).
 UseEcoTaxeAbility=Asumir ecotasa (DEEE)
 SetDefaultBarcodeTypeProducts=Tipo de código de barras utilizado por defecto para los productos
 SetDefaultBarcodeTypeThirdParties=Tipo de código de barras utilizado por defecto para los terceros
@@ -1499,4 +1499,4 @@ ECMSetup = Configuración del módulo GED
 ECMAutoTree = El árbol automático está disponible
 
 
-Format=Format
+Format=Formatear 

@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Noklikšķiniet šeit, lai parādītu / rediģēt pa
 
 #########
 # upgrade
-#########
 MigrationFixData=Noteikt, denormalized datiem
 MigrationOrder=Klientu pasūtījumu datu migrācija
 MigrationSupplierOrder=Piegādātāju pasūtījumu datu migrācija
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Update pavadītais laiks sekundēs
 MigrationActioncommElement=Atjaunināt informāciju par pasākumiem
 MigrationPaymentMode=Datu migrācija uz maksājumu režīmā
 MigrationCategorieAssociation=Kategoriju migrācija
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

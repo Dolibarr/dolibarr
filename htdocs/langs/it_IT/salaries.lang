@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - users
-Salary=Salary
-Salaries=Salaries
+Salary=Stipendio
+Salaries=Stipendi
 Employee=Dipendente
-NewSalaryPayment=New salary payment
-SalaryPayment=Salary payment
-SalariesPayments=Salaries payments
-ShowSalaryPayment=Show salary payment
+NewSalaryPayment=Nuovo pagamento stipendio
+SalaryPayment=Pagamento stipendio
+SalariesPayments=Pagamento stipendi
+ShowSalaryPayment=Mostra i pagamenti stipendio

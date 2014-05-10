@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane
 
 #########
 # upgrade
-#########
 MigrationFixData=Fastsette for denormalized data
 MigrationOrder=Migracja danych zamówień odbiorców
 MigrationSupplierOrder=Migracja danych zamówień dostawców
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Oppdater tid i sekunder
 MigrationActioncommElement=Aktualizacja danych na temat działań
 MigrationPaymentMode=Migracji danych w trybie płatności
 MigrationCategorieAssociation=Migracja kategorii
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

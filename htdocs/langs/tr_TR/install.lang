@@ -206,3 +206,6 @@ MigrationProjectTaskTime=Saniyede olarak harcanan süreyi güncelle
 MigrationActioncommElement=Eylemlere ilişkin veri güncellemesi
 MigrationPaymentMode=Ödeme biçimi için veri taşıma
 MigrationCategorieAssociation=Kategorilerin taşınması
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options
