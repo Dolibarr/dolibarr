@@ -116,7 +116,7 @@ class modResource extends DolibarrModules
 		$this->phpmin = array(5, 3);
 		// Minimum version of Dolibarr required by module
 		$this->need_dolibarr_version = array(3, 5);
-		$this->langfiles = array("resource"); // langfiles@resource
+		$this->langfiles = array("resource@resource"); // langfiles@resource
 		// Constants
 		// List of particular constants to add when module is enabled
 		// (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
@@ -225,7 +225,7 @@ class modResource extends DolibarrModules
 			'titre'=> 'MenuResourceIndex',
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
-			'url'=> '/resource/index.php',	
+			'url'=> '/resource/list.php',	
 			'langs'=> 'resource',
 			'position'=> 100,
 			'enabled'=> '1',
