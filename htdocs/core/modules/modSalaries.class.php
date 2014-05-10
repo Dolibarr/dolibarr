@@ -4,6 +4,7 @@
  * Copyright (C) 2004		Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ class modSalaries extends DolibarrModules
 		$this->config_page_url = array();
 
 		// Dependances
-		$this->depends = array();
+		$this->depends = array("modTax");
 		$this->requiredby = array();
 		$this->conflictwith = array();
 		$this->langfiles = array("salaries");
