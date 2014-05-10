@@ -6,6 +6,7 @@
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,11 +106,11 @@ if (empty($reshook))
 
             // Creation user
             $nuser = new User($db);
-            $result=$nuser->create_from_contact($object,$_POST["login"]);
+            $result=$nuser->create_from_contact($object,GETPOST("login",'alpha'));
 
             if ($result > 0)
             {
-                $result2=$nuser->setPassword($user,$_POST["password"],0,0,1);
+                $result2=$nuser->setPassword($user,GETPOST("password",'alpha'),0,0,1);
                 if ($result2)
                 {
                     $db->commit();
@@ -159,37 +160,37 @@ if (empty($reshook))
 
         if ($canvas) $object->canvas=$canvas;
 
-        $object->socid			= $_POST["socid"];
-        $object->lastname		= $_POST["lastname"];
-        $object->firstname		= $_POST["firstname"];
-        $object->civility_id	= $_POST["civility_id"];
-        $object->poste			= $_POST["poste"];
-        $object->address		= $_POST["address"];
-        $object->zip			= $_POST["zipcode"];
-        $object->town			= $_POST["town"];
-        $object->country_id		= $_POST["country_id"];
-        $object->state_id       = $_POST["state_id"];
-        $object->skype			= $_POST["skype"];
-        $object->email			= $_POST["email"];
-        $object->phone_pro		= $_POST["phone_pro"];
-        $object->phone_perso	= $_POST["phone_perso"];
-        $object->phone_mobile	= $_POST["phone_mobile"];
-        $object->fax			= $_POST["fax"];
-        $object->jabberid		= $_POST["jabberid"];
-		    $object->no_email		= $_POST["no_email"];
-        $object->priv			= $_POST["priv"];
+        $object->socid			= GETPOST("socid",'int');
+        $object->lastname		= GETPOST("lastname",'alpha');
+        $object->firstname		= GETPOST("firstname",'alpha');
+        $object->civility_id	= GETPOST("civility_id",'alpha');
+        $object->poste			= GETPOST("poste",'alpha');
+        $object->address		= GETPOST("address",'alpha');
+        $object->zip			= GETPOST("zipcode",'alpha');
+        $object->town			= GETPOST("town",'alpha');
+        $object->country_id		= GETPOST("country_id",'int');
+        $object->state_id       = GETPOST("state_id",'int');
+        $object->skype			= GETPOST("skype",'alpha');
+        $object->email			= GETPOST("email",'alpha');
+        $object->phone_pro		= GETPOST("phone_pro",'alpha');
+        $object->phone_perso	= GETPOST("phone_perso",'alpha');
+        $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
+        $object->fax			= GETPOST("fax",'alpha');
+        $object->jabberid		= GETPOST("jabberid",'alpha');
+		$object->no_email		= GETPOST("no_email",'int');
+        $object->priv			= GETPOST("priv",'int');
         $object->note_public	= GETPOST("note_public");
         $object->note_private	= GETPOST("note_private");
         $object->statut			= 1; //Defult status to Actif
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
-        $object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-        $object->birthday_alert = $_POST["birthday_alert"];
+        $object->birthday = dol_mktime(0,0,0,GETPOST("birthdaymonth",'int'),GETPOST("birthdayday",'int'),GETPOST("birthdayyear",'int'));
+        $object->birthday_alert = GETPOST("birthday_alert",'alpha');
 
         // Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
-        if (! $_POST["lastname"])
+        if (! GETPOST("lastname",'alpha'))
         {
             $error++; $errors[]=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname").' / '.$langs->transnoentities("Label"));
             $action = 'create';
@@ -223,8 +224,8 @@ if (empty($reshook))
     {
         $result=$object->fetch($id);
 
-        $object->old_lastname      = $_POST["old_lastname"];
-        $object->old_firstname = $_POST["old_firstname"];
+        $object->old_lastname      = GETPOST("old_lastname",'alpha');
+        $object->old_firstname = GETPOST("old_firstname",'alpha');
 
         $result = $object->delete();
         if ($result > 0)
@@ -254,30 +255,30 @@ if (empty($reshook))
 
             $object->oldcopy=dol_clone($object);
 
-            $object->old_lastname	= $_POST["old_lastname"];
-            $object->old_firstname	= $_POST["old_firstname"];
+            $object->old_lastname	= GETPOST("old_lastname",'alpha');
+            $object->old_firstname	= GETPOST("old_firstname",'alpha');
 
-            $object->socid			= $_POST["socid"];
-            $object->lastname		= $_POST["lastname"];
-            $object->firstname		= $_POST["firstname"];
-            $object->civility_id	= $_POST["civility_id"];
-            $object->poste			= $_POST["poste"];
+            $object->socid			= GETPOST("socid",'int');
+            $object->lastname		= GETPOST("lastname",'alpha');
+            $object->firstname		= GETPOST("firstname",'alpha');
+            $object->civility_id	= GETPOST("civility_id",'alpha');
+            $object->poste			= GETPOST("poste",'alpha');
 
-            $object->address		= $_POST["address"];
-            $object->zip			= $_POST["zipcode"];
-            $object->town			= $_POST["town"];
-            $object->state_id   	= $_POST["state_id"];
-            $object->country_id		= $_POST["country_id"];
+            $object->address		= GETPOST("address",'alpha');
+            $object->zip			= GETPOST("zipcode",'alpha');
+            $object->town			= GETPOST("town",'alpha');
+            $object->state_id   	= GETPOST("state_id",'int');
+            $object->country_id		= GETPOST("country_id",'int');
 
-            $object->email			= $_POST["email"];
-            $object->skype			= $_POST["skype"];
-            $object->phone_pro		= $_POST["phone_pro"];
-            $object->phone_perso	= $_POST["phone_perso"];
-            $object->phone_mobile	= $_POST["phone_mobile"];
-            $object->fax			= $_POST["fax"];
-            $object->jabberid		= $_POST["jabberid"];
-			$object->no_email		= $_POST["no_email"];
-            $object->priv			= $_POST["priv"];
+            $object->email			= GETPOST("email",'alpha');
+            $object->skype			= GETPOST("skype",'alpha');
+            $object->phone_pro		= GETPOST("phone_pro",'alpha');
+            $object->phone_perso	= GETPOST("phone_perso",'alpha');
+            $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
+            $object->fax			= GETPOST("fax",'alpha');
+            $object->jabberid		= GETPOST("jabberid",'alpha');
+			$object->no_email		= GETPOST("no_email",'int');
+            $object->priv			= GETPOST("priv",'int');
         	$object->note_public	= GETPOST("note_public");
        		$object->note_private	= GETPOST("note_private");
 
@@ -423,8 +424,8 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="30" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
-            print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="30" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="30" maxlength="80" value="'.(GETPOST("lastname",'alpha')?GETPOST("lastname",'alpha'):$object->lastname).'"></td>';
+            print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="30" maxlength="80" value="'.(GETPOST("firstname",'alpha')?GETPOST("firstname",'alpha'):$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -447,10 +448,10 @@ else
 
             // Civility
             print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
-            print $formcompany->select_civility(isset($_POST["civility_id"])?$_POST["civility_id"]:$object->civility_id);
+            print $formcompany->select_civility(GETPOST("civility_id",'alpha')?GETPOST("civility_id",'alpha'):$object->civility_id);
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td>';
+            print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(GETPOST("poste",'alpha')?GETPOST("poste",'alpha'):$object->poste).'"></td>';
 
             $colspan=3;
             if ($conf->use_javascript_ajax && $socid > 0) $colspan=2;
@@ -458,7 +459,7 @@ else
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Address");
-            print '</td><td colspan="'.$colspan.'"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '</td><td colspan="'.$colspan.'"><textarea class="flat" name="address" cols="70">'.(GETPOST("address",'alpha')?GETPOST("address",'alpha'):$object->address).'</textarea></td>';
 
             if ($conf->use_javascript_ajax && $socid > 0)
             {
@@ -475,13 +476,13 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
             print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
-            print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
+            print $formcompany->select_ziptown((GETPOST("zipcode",'alpha')?GETPOST("zipcode",'alpha'):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
+            print $formcompany->select_ziptown((GETPOST("town",'alpha')?GETPOST("town",'alpha'):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $form->select_country((isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id),'country_id');
+            print $form->select_country((GETPOST("country_id",'alpha')?GETPOST("country_id",'alpha'):$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
@@ -491,7 +492,7 @@ else
                 print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
                 if ($object->country_id)
                 {
-                    print $formcompany->select_state(isset($_POST["state_id"])?$_POST["state_id"]:$object->state_id,$object->country_code,'state_id');
+                    print $formcompany->select_state(GETPOST("state_id",'alpha')?GETPOST("state_id",'alpha'):$object->state_id,$object->country_code,'state_id');
                 }
                 else
               {
@@ -502,19 +503,19 @@ else
 
             // Phone / Fax
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->phone;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$object->phone_pro).'"></td>';
-            print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
+            print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.(GETPOST("phone_pro",'alpha')?GETPOST("phone_pro",'alpha'):$object->phone_pro).'"></td>';
+            print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.(GETPOST("phone_perso",'alpha')?GETPOST("phone_perso",'alpha'):$object->phone_perso).'"></td></tr>';
 
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) $object->fax = $objsoc->fax;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" id="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td>';
-            print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" id="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$object->fax).'"></td></tr>';
+            print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" id="phone_mobile" type="text" size="18" maxlength="80" value="'.(GETPOST("phone_mobile",'alpha')?GETPOST("phone_mobile",'alpha'):$object->phone_mobile).'"></td>';
+            print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" id="fax" type="text" size="18" maxlength="80" value="'.(GETPOST("fax",'alpha')?GETPOST("fax",'alpha'):$object->fax).'"></td></tr>';
 
             // EMail
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Email").'</td><td><input name="email" id="email" type="text" size="50" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
+            print '<tr><td>'.$langs->trans("Email").'</td><td><input name="email" id="email" type="text" size="50" maxlength="80" value="'.(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
-            	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+            	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
             }
             else
 			      {
@@ -523,18 +524,18 @@ else
             print '</tr>';
 
             // Instant message and no email
-            print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td></tr>';
+            print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
 
             // Skype
             if (! empty($conf->skype->enabled))
             {
-                print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+                print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="80" value="'.(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             }
 
             // Visibility
             print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-            print $form->selectarray('priv',$selectarray,(isset($_POST["priv"])?$_POST["priv"]:$object->priv),0);
+            print $form->selectarray('priv',$selectarray,(GETPOST("priv",'alpha')?GETPOST("priv",'alpha'):$object->priv),0);
             print '</td></tr>';
 
             // Other attributes
