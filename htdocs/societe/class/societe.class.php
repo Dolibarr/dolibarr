@@ -1794,7 +1794,8 @@ class Societe extends CommonObject
         global $langs;
 
         $contact_phone = $this->contact_property_array('mobile');
-        if ($this->phone)
+
+        if (! empty($this->phone))	// If a phone of thirdparty is defined, we add it ot mobile of contacts
         {
             if (empty($this->name)) $this->name=$this->nom;
             // TODO: Tester si tel non deja present dans tableau contact
@@ -1808,10 +1809,12 @@ class Societe extends CommonObject
      *
      *  @param	string	$mode       		'email' or 'mobile'
 	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
-     *  @return array       				Array of contacts emails or mobile
+     *  @return array       				Array of contacts emails or mobile array(id=>'Name <email>')
      */
     function contact_property_array($mode='email', $hidedisabled=0)
     {
+    	global $langs;
+
         $contact_property = array();
 
 
@@ -1835,6 +1838,12 @@ class Societe extends CommonObject
 					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
                     if ($obj->statut == 1 || empty($hidedisabled))
                     {
+                    	if (empty($property))
+                    	{
+                    		if ($mode == 'email') $property=$langs->trans("NoEMail");
+                    		else if ($mode == 'mobile') $property=$langs->trans("NoMobilePhone");
+                    	}
+
 	                    if (!empty($obj->poste))
     	                {
 							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname,$obj->lastname))."(".$obj->poste.")"." &lt;".$property."&gt;";
