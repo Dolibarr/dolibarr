@@ -371,6 +371,7 @@ class Resource extends CommonObject
             return -1;
         }
     }
+    
     /**
      *	Load resource objects into $this->lines
      *

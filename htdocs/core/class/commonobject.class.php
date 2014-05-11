@@ -3319,6 +3319,48 @@ abstract class CommonObject
 			return  0;
 		}
 	}
+	
+	/**
+	 *    Delete a link to resource line
+	 *
+	 *    @param	int		$rowid			Id of resource line to delete
+	 *    @param	int		$element		element name (for trigger) TODO: use $this->element into commonobject class
+	 *    @param	int		$notrigger		Disable all triggers
+	 *    @return   int						>0 if OK, <0 if KO
+	 */
+	function delete_resource($rowid, $element, $notrigger=0)
+	{
+	    global $user,$langs,$conf;
+	
+	    $error=0;
+	
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
+	    $sql.= " WHERE rowid =".$rowid;
+	
+	    dol_syslog(get_class($this)."::delete_resource sql=".$sql);
+	    if ($this->db->query($sql))
+	    {
+	        if (! $notrigger)
+	        {
+	            // Call triggers
+	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers(strtoupper($element).'_DELETE_RESOURCE',$this,$user,$langs,$conf);
+	            if ($result < 0) {
+	                $error++; $this->errors=$interface->errors;
+	            }
+	            // End call triggers
+	        }
+	
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->lasterror();
+	        dol_syslog(get_class($this)."::delete_resource error=".$this->error, LOG_ERR);
+	        return -1;
+	    }
+	}
 
 
 	/**
