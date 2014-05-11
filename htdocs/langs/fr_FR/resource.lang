@@ -4,7 +4,6 @@ MenuResourceAdd=Nouvelle ressource
 MenuResourcePlanning=Planning des Ressources
 DeleteResource=Effacer resource
 ConfirmDeleteResourceElement=Confirmer la suppression de la ressource pour cet élément
-
 NoResourceInDatabase=Aucune ressource en base de données.
 NoResourceLinked=Aucune ressource liée
 
@@ -29,5 +28,6 @@ RessourceLineSuccessfullyDeleted=Ressource supprimée avec succès
 RessourceLineSuccessfullyUpdated=Ressource mise à jour
 
 TitleResourceCard=Fiche resource
-
+ConfirmDeleteResource=Confirmer la suppression de cette ressource?
+RessourceSuccessfullyDeleted=Ressource effacée avec succès
 DictionaryResourceType=Type de ressources

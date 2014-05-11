@@ -58,6 +58,9 @@ if( ! $user->rights->resource->read)
 $object = new Resource($db);
 
 $hookmanager->initHooks(array('resource_card'));
+$parameters=array('resource_id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 
 /*******************************************************************
 * ACTIONS
@@ -115,7 +118,7 @@ if ($action == 'update' && ! $_POST["cancel"]  && $user->rights->resource->write
 *
 * Put here all code to build page
 ****************************************************/
-$pagetitle = $langs->trans('Card');
+$pagetitle = $langs->trans('ResourceCard');
 llxHeader('',$pagetitle,'');
 
 $form = new Form($db);
@@ -167,6 +170,11 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
+	    // Confirmation suppression resource line
+	    if ($action == 'delete')
+	    {
+	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
+	    }
 
 		/*---------------------------------------
 		 * View object
@@ -218,6 +226,16 @@ if ( $object->fetch($id) > 0 )
 				print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=edit" class="butAction">'.$langs->trans('Edit').'</a>';
 				print '</div>';
 			}
+		}
+		if ($action != "delete" )
+		{
+		    // Edit resource
+		    if($user->rights->resource->delete)
+		    {
+		        print '<div class="inline-block divButAction">';
+		        print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete" class="butActionDelete">'.$langs->trans('Delete').'</a>';
+		        print '</div>';
+		    }
 		}
 	}
 	print '</div>';

@@ -53,6 +53,32 @@ class ActionsResource
 		global $langs,$user;
 		$langs->load('resource');
 
+		if (in_array('resource_card',explode(':',$parameters['context'])))
+		{
+		    if($action == 'confirm_delete_resource' && !GETPOST('cancel'))
+		    {
+		        $res = $object->fetch(GETPOST('id'));
+		        if($res)
+		        {
+		        
+		            $result = $object->delete(GETPOST('id'));
+		        
+		            if ($result >= 0)
+		            {
+		                setEventMessage($langs->trans('RessourceSuccessfullyDeleted'));
+		                Header("Location: ".$_SERVER['PHP_SELF']."?element=".GETPOST('element')."&element_id=".GETPOST('element_id'));
+		                exit;
+		            }
+		            else {
+		                setEventMessage($object->error,'errors');
+		            }
+		        }
+		        else
+		        {
+		            setEventMessage($object->error,'errors');
+		        }
+		    }
+		}
 		if (in_array('element_resource',explode(':',$parameters['context'])))
 		{
 

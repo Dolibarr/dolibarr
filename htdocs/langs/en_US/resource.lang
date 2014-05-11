@@ -4,8 +4,7 @@ MenuResourceAdd=New resource
 MenuResourcePlanning=Resource planning
 DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
-
-NoResourceLinked=No resource linked
+NoResourceInDatabase=No resource in database.
 NoResourceLinked=No resource linked
 
 ResourcePageIndex=Resources list
@@ -29,5 +28,6 @@ RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 
 TitleResourceCard=Resource card
-
+ConfirmDeleteResource=Confirm to delete this resource
+RessourceSuccessfullyDeleted=Resource successfully deleted
 DictionaryResourceType=Type of resources
