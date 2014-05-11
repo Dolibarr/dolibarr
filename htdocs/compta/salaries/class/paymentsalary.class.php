@@ -359,20 +359,12 @@ class PaymentSalary extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");    // TODO should be called payment_salary
+			$ok=1;
 
-			// Start triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('PAYMENT_SALARY_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// End triggers
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
 			if ($this->id > 0)
 			{
-				$ok=1;
 				if (! empty($conf->banque->enabled) && ! empty($this->amount))
 				{
 					// Insert into llx_bank
@@ -406,42 +398,53 @@ class PaymentSalary extends CommonObject
 						$ok=0;
 					}
 
-					// Add link 'payment_salary' in bank_url between payment and bank transaction
-					$url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
+					if ($ok)
+					{
+						// Add link 'payment_salary' in bank_url between payment and bank transaction
+						$url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
 
-					$result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
+						$result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
+						if ($result <= 0)
+						{
+							$this->error=$acc->error;
+							$ok=0;
+						}
+					}
+
+					$fuser=new User($this->db);
+					$fuser->fetch($this->fk_user);
+
+					// Add link 'user' in bank_url between operation and bank transaction
+					$result=$acc->add_url_line(
+						$bank_line_id,
+						$this->fk_user,
+						DOL_URL_ROOT.'/user/fiche.php?id=',
+						$langs->trans("SalaryPayment").' '.$fuser->getFullName($langs).' '.dol_print_date($this->datesp,'dayrfc').' '.dol_print_date($this->dateep,'dayrfc'),
+						'(User)',
+						'user'
+					);
+
 					if ($result <= 0)
 					{
 						$this->error=$acc->error;
 						$ok=0;
 					}
-
-					// Add link 'user' in bank_url between operation and bank transaction
-					$linkaddedforthirdparty=array();
-					foreach ($this->amounts as $key => $value)
-					{
-						$sal = new PaymentSalary($this->db);
-
-						$sal->fetch($key);
-						$sal->fetch_user($this->fk_user);
-
-						if (! in_array($sal->user->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
-						{
-							$result=$acc->add_url_line(
-								$bank_line_id,
-								$sal->user->id,
-								DOL_URL_ROOT.'/user/fiche.php?id=',
-								$sal->user->lastname,
-								'user'
-							);
-
-							if ($result <= 0) dol_print_error($this->db);
-							$linkaddedforthirdparty[$sal->user->id]=$sal->user->id;  // Mark as done for this thirdparty
-						}
-
-					}
 				}
 
+				// Start triggers
+				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('PAYMENT_SALARY_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) {
+					$error++; $this->errors=$interface->errors;
+				}
+				// End triggers
+
+			}
+			else $ok=0;
+
+			if ($ok)
+			{
 				if ($ok)
 				{
 					$this->db->commit();
