@@ -112,16 +112,16 @@ class ActionsResource
 			}
 
 			// Update ressource
-			if ($action == 'update_resource' && $user->rights->resource->write && !GETPOST('cancel') )
+			if ($action == 'update_linked_resource' && $user->rights->resource->write && !GETPOST('cancel') )
 			{
-				$res = $object->fetch(GETPOST('lineid'));
+				$res = $object->fetch_element_resource(GETPOST('lineid'));
 				if($res)
 				{
-					$object->id = GETPOST('lineid');
+					
 					$object->busy = GETPOST('busy');
 					$object->mandatory = GETPOST('mandatory');
-
-					$result = $object->update();
+					
+					$result = $object->update_element_resource($user);
 
 					if ($result >= 0)
 					{

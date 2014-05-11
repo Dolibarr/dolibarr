@@ -303,9 +303,9 @@ class Resource extends CommonObject
     			$this->fk_user_create	=	$obj->fk_user_create;
 
 				if($obj->resource_id && $obj->resource_type)
-					$this->objresource = $this->fetchObjectByElement($obj->resource_id,$obj->resource_type);
+					$this->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 				if($obj->element_id && $obj->element_type)
-					$this->objelement = $this->fetchObjectByElement($obj->element_id,$obj->element_type);
+					$this->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
 
     		}
     		$this->db->free($resql);

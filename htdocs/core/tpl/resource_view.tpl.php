@@ -49,7 +49,7 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 			print '<form class="tagtr '.($var==true?'pair':'impair').'" action="'.$_SERVER["PHP_SELF"].'?element='.$element.'&element_id='.$element_id.'" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 			print '<input type="hidden" name="id" value="'.$object->id.'" />';
-			print '<input type="hidden" name="action" value="update_resource" />';
+			print '<input type="hidden" name="action" value="update_linked_resource" />';
 			print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
 			print '<input type="hidden" name="lineid" value="'.$linked_resource['rowid'].'" />';
 
