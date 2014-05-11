@@ -1827,9 +1827,6 @@ abstract class CommonObject
                     else if ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
                         $classpath = 'fourn/class'; $module = 'fournisseur';
                     }
-                    else if ($objecttype == 'order_supplier')	{
-                        $classpath = 'fourn/class';
-                    }
                     else if ($objecttype == 'fichinter')			{
                         $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
                     }
