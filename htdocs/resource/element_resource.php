@@ -59,7 +59,7 @@ $object=new Resource($db);
 $hookmanager->initHooks(array('element_resource'));
 
 
-$object->available_resources = array('resource','place@place');
+$object->available_resources = array('resource');
 
 $parameters=array('resource_id'=>$available_resources);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
