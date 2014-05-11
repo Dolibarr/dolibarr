@@ -110,7 +110,7 @@ abstract class CommonDocGenerator
         	'mycompany_web'=>$mysoc->url,
             'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
             'mycompany_managers'=>$mysoc->managers,
-        	'mycompany_capital'=>$mysoc->capital,
+            'mycompany_capital'=>$mysoc->capital,
             'mycompany_barcode'=>$mysoc->barcode,
             'mycompany_idprof1'=>$mysoc->idprof1,
             'mycompany_idprof2'=>$mysoc->idprof2,
@@ -254,24 +254,22 @@ abstract class CommonDocGenerator
 		);
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label('contact', true);
-			$object->fetch_optionals($object->id, $extralabels);
-
-			foreach($extrafields->attribute_label as $key => $label)
+		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
+		$object->fetch_optionals($object->id, $extralabels);
+		
+		foreach($extrafields->attribute_label as $key => $label) 
+		{
+			if ($extrafields->attribute_type[$key] == 'price') 
 			{
-				if ($extrafields->attribute_type[$key] == 'price')
-				{
-					$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
-				}
-				elseif($extrafields->attribute_type[$key] == 'select')
-				{
-					$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
-				}
-				$array_contact = array_merge($array_contact, array('contact_options_' . $key => $object->array_options['options_'. $key]));
+				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
+			elseif($extrafields->attribute_type[$key] == 'select') 
+			{
+				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
+			}
+			$array_contact = array_merge($array_contact, array($array_key.'_options_' . $key => $object->array_options['options_'. $key]));
 		}
 		return $array_contact;
 	}

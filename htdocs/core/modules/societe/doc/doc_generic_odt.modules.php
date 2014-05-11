@@ -329,7 +329,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 		foreach($contact_arrray as $array_key => $contact_id)
                 		{
                 			$res_contact = $contactstatic->fetch($contact_id);
-                			//$contact['fullname']=$objectdetail->getFullName($outputlangs,1);
                 			$tmparray=$this->get_substitutionarray_contact($contactstatic,$outputlangs,'contact');
                 			foreach($tmparray as $key => $val)
                 			{
