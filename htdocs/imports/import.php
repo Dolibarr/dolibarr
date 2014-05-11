@@ -352,10 +352,13 @@ if ($step == 1 || ! $datatoimport)
 	{
 		foreach ($objimport->array_import_code as $key => $value)
 		{
+			//var_dump($objimport->array_import_code[$key]);
 			$val=!$val;
 			print '<tr '.$bc[$val].'><td nospan="nospan">';
-			//print img_object($objimport->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
-			print $objimport->array_import_module[$key]->getName();
+			$titleofmodule=$objimport->array_import_module[$key]->getName();
+			// Special cas for import common to module/services
+			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+			print $titleofmodule;
 			print '</td><td>';
 			//print $value;
 			print img_object($objimport->array_import_module[$key]->getName(),$objimport->array_import_icon[$key]).' ';
@@ -407,8 +410,10 @@ if ($step == 2 && $datatoimport)
 	// Module
 	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
+	$titleofmodule=$objimport->array_import_module[0]->getName();
+	// Special cas for import common to module/services
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	print $titleofmodule;
 	print '</td></tr>';
 
 	// Lot de donnees a importer
@@ -490,8 +495,10 @@ if ($step == 3 && $datatoimport)
 	// Module
 	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
+	$titleofmodule=$objimport->array_import_module[0]->getName();
+	// Special cas for import common to module/services
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	print $titleofmodule;
 	print '</td></tr>';
 
 	// Lot de donnees a importer
@@ -695,8 +702,10 @@ if ($step == 4 && $datatoimport)
 	// Module
 	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
+	$titleofmodule=$objimport->array_import_module[0]->getName();
+	// Special cas for import common to module/services
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	print $titleofmodule;
 	print '</td></tr>';
 
 	// Lot de donnees a importer
@@ -1144,8 +1153,10 @@ if ($step == 5 && $datatoimport)
 	// Module
 	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
+	$titleofmodule=$objimport->array_import_module[0]->getName();
+	// Special cas for import common to module/services
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	print $titleofmodule;
 	print '</td></tr>';
 
 	// Lot de donnees a importer
@@ -1487,8 +1498,10 @@ if ($step == 6 && $datatoimport)
 	// Module
 	print '<tr><td width="25%">'.$langs->trans("Module").'</td>';
 	print '<td>';
-	//print img_object($objimport->array_import_module[0]->getName(),$objimport->array_import_module[0]->picto).' ';
-	print $objimport->array_import_module[0]->getName();
+	$titleofmodule=$objimport->array_import_module[0]->getName();
+	// Special cas for import common to module/services
+	if (in_array($objimport->array_import_code[0], array('produit_supplierprices','produit_multiprice'))) $titleofmodule=$langs->trans("ProductOrService");
+	print $titleofmodule;
 	print '</td></tr>';
 
 	// Lot de donnees a importer
