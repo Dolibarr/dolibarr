@@ -94,7 +94,7 @@ class modResource extends DolibarrModules
 			// Set this to relative path of css if module has its own css file
 			//'css' => '/resource/css/resource.css.php',
 			// Set here all hooks context managed by module
-			'hooks' => array('actioncard','actioncommdao','element_resource')
+			'hooks' => array('actioncard','actioncommdao','resource_card','element_resource')
 			// Set here all workflow context managed by module
 			//'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
 		);
