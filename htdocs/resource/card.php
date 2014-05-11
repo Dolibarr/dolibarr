@@ -42,8 +42,8 @@ $langs->load("main");
 // Get parameters
 $id						= GETPOST('id','int');
 $action					= GETPOST('action','alpha');
-$ref					= GETPOST('ref','alpha');
-$description			= GETPOST('description','alpha');
+$ref					= GETPOST('ref');
+$description			= GETPOST('description');
 $fk_code_type_resource	= GETPOST('fk_code_type_resource','alpha');
 
 // Protection if external user
