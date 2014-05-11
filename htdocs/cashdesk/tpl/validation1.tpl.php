@@ -18,6 +18,8 @@
 
 $langs->load("main");
 
+// Object $form must de defined
+
 ?>
 
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Summary"); ?></legend>

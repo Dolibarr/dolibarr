@@ -78,6 +78,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->note=GETPOST("note");
 	$sal->type_payment=GETPOST("paymenttype");
 	$sal->num_payment=GETPOST("num_payment");
+	$sal->fk_user_creat=$user->id;
 
 	if (empty($datep) || empty($datesp) || empty($dateep))
 	{
@@ -215,11 +216,11 @@ if ($action == 'create')
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add');
+	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
-	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add');
+	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
