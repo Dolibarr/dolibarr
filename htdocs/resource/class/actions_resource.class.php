@@ -66,7 +66,7 @@ class ActionsResource
 		            if ($result >= 0)
 		            {
 		                setEventMessage($langs->trans('RessourceSuccessfullyDeleted'));
-		                Header("Location: ".$_SERVER['PHP_SELF']."?element=".GETPOST('element')."&element_id=".GETPOST('element_id'));
+		                Header("Location: list.php");
 		                exit;
 		            }
 		            else {
