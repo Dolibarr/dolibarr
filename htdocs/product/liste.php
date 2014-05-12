@@ -189,6 +189,14 @@ else
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
     $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+    
+    $nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+	}
+    
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
@@ -229,7 +237,8 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+		
+    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num ,$nbtotalofrecords);
 
     	if (! empty($catid))
     	{
@@ -501,7 +510,7 @@ else
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
-    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);
 
