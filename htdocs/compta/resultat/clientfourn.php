@@ -185,7 +185,7 @@ else
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
-$sql.= " ORDER BY s.nom";
+$sql.= " ORDER BY s.nom, s.rowid";
 
 dol_syslog("get customer invoices sql=".$sql);
 $result = $db->query($sql);
@@ -279,11 +279,11 @@ print '</tr>';
 
 
 /*
- * Frais, factures fournisseurs.
+ * Suppliers invoices
  */
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT s.nom, s.rowid as socid, date_format(f.datef,'%Y-%m') as dm, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
+    $sql = "SELECT s.nom, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f";
     $sql.= " WHERE f.fk_soc = s.rowid";
@@ -297,7 +297,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-    $sql = "SELECT s.nom, s.rowid as socid, date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
+    $sql = "SELECT s.nom, s.rowid as socid, sum(pf.amount) as amount_ttc";
     $sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";
     $sql.= ", ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";
@@ -310,7 +310,7 @@ else
 }
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-$sql .= " GROUP BY s.nom, s.rowid, dm";
+$sql .= " GROUP BY s.nom, s.rowid";
 $sql .= " ORDER BY s.nom, s.rowid";
 
 print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
@@ -370,11 +370,11 @@ print '</tr>';
  * Charges sociales non deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").'</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 0)</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT c.libelle as nom, sum(cs.amount) as amount";
+    $sql = "SELECT c.id, c.libelle as nom, sum(cs.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= " WHERE cs.fk_type = c.id";
@@ -384,7 +384,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+    $sql = "SELECT c.id, c.libelle as nom, sum(p.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -395,8 +395,8 @@ else
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
 $sql.= " AND cs.entity = ".$conf->entity;
-$sql.= " GROUP BY c.libelle";
-$sql.= " ORDER BY c.libelle";
+$sql.= " GROUP BY c.libelle, c.id";
+$sql.= " ORDER BY c.libelle, c.id";
 
 dol_syslog("get social contributions deductible=0 sql=".$sql);
 $result=$db->query($sql);
@@ -444,11 +444,11 @@ print '</tr>';
  * Charges sociales deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").'</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 1)</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT c.libelle as nom, sum(cs.amount) as amount";
+    $sql = "SELECT c.id, c.libelle as nom, sum(cs.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= " WHERE cs.fk_type = c.id";
@@ -456,12 +456,12 @@ if ($modecompta == 'CREANCES-DETTES')
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
     $sql.= " AND cs.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle";
-    $sql.= " ORDER BY c.libelle";
+    $sql.= " GROUP BY c.libelle, c.id";
+    $sql.= " ORDER BY c.libelle, c.id";
 }
 else
 {
-    $sql = "SELECT c.libelle as nom, sum(p.amount) as amount";
+    $sql = "SELECT c.id, c.libelle as nom, sum(p.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
     $sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
     $sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -471,8 +471,8 @@ else
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
     $sql.= " AND cs.entity = ".$conf->entity;
-    $sql.= " GROUP BY c.libelle";
-    $sql.= " ORDER BY c.libelle";
+    $sql.= " GROUP BY c.libelle, c.id";
+    $sql.= " ORDER BY c.libelle, c.id";
 }
 
 dol_syslog("get social contributions deductible=1 sql=".$sql);
@@ -539,6 +539,7 @@ if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
 /*
  * VAT
  */
+
 print '<tr><td colspan="4">'.$langs->trans("VAT").'</td></tr>';
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -562,12 +563,15 @@ if ($modecompta == 'CREANCES-DETTES')
 
     dol_syslog("get vat to pay sql=".$sql);
     $result=$db->query($sql);
-    if ($result) {
+    if ($result)
+    {
         $num = $db->num_rows($result);
         $var=false;
         $i = 0;
-        if ($num) {
-            while ($i < $num) {
+        if ($num)
+        {
+            while ($i < $num)
+            {
                 $obj = $db->fetch_object($result);
 
                 $amount -= $obj->amount;
@@ -604,12 +608,15 @@ if ($modecompta == 'CREANCES-DETTES')
 
     dol_syslog("get vat received back sql=".$sql);
     $result=$db->query($sql);
-    if ($result) {
+    if ($result)
+    {
         $num = $db->num_rows($result);
         $var=true;
         $i = 0;
-        if ($num) {
-            while ($i < $num) {
+        if ($num)
+        {
+            while ($i < $num)
+            {
                 $obj = $db->fetch_object($result);
 
                 $amount += $obj->amount;
@@ -632,7 +639,7 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 else
 {
-    // TVA reellement deja payee
+    // VAT really already paid
     $amount=0;
     $sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
@@ -673,7 +680,7 @@ else
     print "<td align=\"right\">".price($amount)."</td>\n";
     print "</tr>\n";
 
-    // TVA recuperee
+    // VAT really received
     $amount=0;
     $sql = "SELECT date_format(t.datev,'%Y-%m') as dm, sum(t.amount) as amount";
     $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
