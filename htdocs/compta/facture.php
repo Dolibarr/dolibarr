@@ -3069,7 +3069,8 @@ if ($action == 'create')
 	print '</table>';
 
 	// Margin Infos
-	if (! empty($conf->margin->enabled)) {
+	if (! empty($conf->margin->enabled))
+	{
 		print '<br>';
 		$object->displayMarginInfos($object->statut > 0);
 	}

@@ -3208,7 +3208,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * displayMarginInfos
+	 * Show the array with all margin infos
 	 *
 	 * @param 	string 	$force_price	Force price
 	 * @return	void
@@ -3225,7 +3225,7 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="nobordernopadding" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -3246,9 +3246,9 @@ abstract class CommonObject
 		print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
 		print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'n/a':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'n/a':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		print '<tr class="pair">';
 		print '<td>'.$langs->trans('MarginOnServices').'</td>';
@@ -3256,9 +3256,9 @@ abstract class CommonObject
 		print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
 		print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'n/a':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'n/a':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		//}
 		print '<tr class="impair">';
@@ -3267,9 +3267,9 @@ abstract class CommonObject
 		print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
 		print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'n/a':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'n/a':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		print '</table>';
 	}

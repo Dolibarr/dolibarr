@@ -1839,6 +1839,9 @@ tr.liste_total td, form.liste_total div {
 	color: #202020;
 }
 
+.tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
+	background: none;
+}
 
 /* Disable shadows */
 .noshadow {
