@@ -2718,7 +2718,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs,$user,$hookmanager;
+		global $conf,$langs,$user,$object,$hookmanager;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2757,11 +2757,11 @@ abstract class CommonObject
 		// Total HT
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 
-		print '<td width="10"></td>';
+		print '<td></td>';  // No width to allow autodim
 
 		print '<td width="10"></td>';
 
-		print '<td class="nowrap"></td>'; // No width to allow autodim
+		print '<td width="10"></td>';
 
 		print "</tr>\n";
 
@@ -2816,7 +2816,7 @@ abstract class CommonObject
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
-		global $conf,$langs,$user,$hookmanager;
+		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;

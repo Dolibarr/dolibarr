@@ -41,9 +41,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move
-if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -390,8 +388,7 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 		$dec=','; $thousand=' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
 		if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
-		if ($thousand == 'None') $thousand='';
-		print "var dec='".$dec."'; var thousand='".$thousand."';\n";
+		print "var dec='".$dec."'; var thousand='".$thousand."';\n";	// Set var in javascript
 		?>
 
 		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;

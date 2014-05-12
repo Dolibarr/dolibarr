@@ -17,14 +17,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *
  * Need to have following variables defined:
+ * $object (invoice, order, ...)
  * $conf
  * $langs
  * $dateSelector
- * $this (invoice, order, ...)
- * $line defined
+ * $forceall (0 by default, 1 for supplier invoices/orders)
+ * $senderissupplier (0 by default, 1 for supplier invoices/orders)
+ * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
+
+
+$usemargins=0;
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+
+global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+if (empty($dateSelector)) $dateSelector=0;
+if (empty($forceall)) $forceall=0;
+if (empty($senderissupplier)) $senderissupplier=0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+
+
+// Define colspan for button Add
+$colspan = 3;	// Col total ht + col edit + col delete
+if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
+if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
@@ -41,29 +58,7 @@ $coldisplay=-1; // We remove first td
 	<input type="hidden" id="product_id" name="productid" value="<?php echo (! empty($line->fk_product)?$line->fk_product:0); ?>" />
 	<input type="hidden" id="special_code" name="special_code" value="<?php echo $line->special_code; ?>">
 
-	<?php
-	if ($conf->global->MAIN_FEATURES_LEVEL > 1)
-	{
-		if ($line->fk_product > 0)
-		{
-			echo $text . ' - ';
-		}
-		else
-		{
-			echo $form->select_type_of_lines($line->product_type, 'type', 1, 1);
-		}
-		?>
-
-		<input id="product_label" name="product_label" size="40" value="<?php echo $label; ?>"<?php echo $placeholder . ((! empty($line->fk_product) && empty($line->label)) ? ' disabled="disabled"' : ''); ?>>
-		<input type="hidden" id="origin_label_cache" name="origin_label_cache" value="<?php echo $line->product_label; ?>" />
-		<span id="update_label_area" class="hideobject"><input type="checkbox" id="update_label_checkbox" name="update_label" value="1" />
-			<?php echo $form->textwithtooltip($langs->trans('UpdateOriginalProductLabel'), $langs->trans('HelpUpdateOriginalProductLabel'),1,0,'','',3); ?>
-		</span>
-		<span id="price_base_type" class="hideobject"></span>
-
-		<br>
-
-	<?php } else if ($line->fk_product > 0) { ?>
+	<?php if ($line->fk_product > 0) { ?>
 
 		<a href="<?php echo DOL_URL_ROOT.'/product/fiche.php?id='.$line->fk_product; ?>">
 		<?php
@@ -156,7 +151,7 @@ $coldisplay=-1; // We remove first td
 		} ?>
 
 	<!-- colspan=4 for this td because it replace total_ht+3 td for buttons -->
-	<td align="center" colspan="4" valign="middle"><?php $coldisplay+=4; ?>
+	<td align="center" colspan="<?php echo $colspan; ?>" valign="middle"><?php $coldisplay+=4; ?>
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
@@ -184,193 +179,6 @@ $coldisplay=-1; // We remove first td
 
 
 <script type="text/javascript">
-
-<?php
-if ($conf->global->MAIN_FEATURES_LEVEL > 1)		// TODO A virer
-{
-?>
-	jQuery(document).ready(function() {
-
-
-	if ($('#product_type').val() == 0) {
-		$('#service_duration_area').hide();
-	} else if ($('#product_type').val() == 1) {
-		$('#service_duration_area').show();
-	}
-
-	if ($('#product_label').attr('disabled')) {
-		$('#update_label_area').show();
-	}
-
-	$('#update_label_checkbox').change(function() {
-		if ($(this).attr('checked')) {
-			$('#product_label').removeAttr('disabled').focus();
-		} else {
-			$('#product_label')
-				.attr('disabled','disabled')
-				.val($('#origin_label_cache').val());
-		}
-	});
-
-	$('#select_type').change(function() {
-		var type = $(this).val();
-		if (type >= 0) {
-			if (type == 0) {
-				$('#service_duration_area').hide();
-				$('#date_start').val('').trigger('change');
-				$('#date_end').val('').trigger('change');
-			} else if (type == 1) {
-				$('#service_duration_area').show();
-			}
-			var addline=false;
-			if ($('#price_ht').val().length > 0) {
-				if ($('#product_id').val() == 0) {
-					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-						var content = CKEDITOR.instances['product_desc'].getData();
-					} else {
-						var content = $('#product_desc').val();
-					}
-					if (content.length > 0) {
-						addline=true;
-					}
-				} else {
-					addline=true;
-				}
-			}
-			if (addline) {
-				$('#savelinebutton').removeAttr('disabled');
-			} else {
-				$('#savelinebutton').attr('disabled','disabled');
-			}
-		} else {
-			$('#savelinebutton').attr('disabled','disabled');
-			$('#service_duration_area').hide();
-			$('#date_start').val('').trigger('change');
-			$('#date_end').val('').trigger('change');
-		}
-	});
-
-	$('#price_ht').focusin(function() {
-		$('#price_base_type').val('HT');
-	});
-
-	$('#price_ht').bind('change keyup input', function() {
-		if ($('#price_base_type').val() == 'HT') {
-			update_price('price_ht', 'price_ttc');
-		}
-	});
-
-	$('#price_ttc').focusin(function() {
-		$('#price_base_type').val('TTC');
-	});
-
-	$('#price_ttc').bind('change keyup input', function() {
-		if ($('#price_base_type').val() == 'TTC') {
-			update_price('price_ttc', 'price_ht');
-		}
-	});
-
-	if ($('#tva_tx').val() == 0) {
-		$('#price_ttc').attr('disabled','disabled');
-	}
-
-	$('#tva_tx').change(function() {
-		if ($(this).val() == 0) {
-			$('#price_ttc').attr('disabled','disabled');
-			$('#price_ttc').val('');
-		} else {
-			$('#price_ttc').removeAttr('disabled');
-			if ($('#price_base_type').val() == 'HT') {
-				update_price('price_ht', 'price_ttc');
-			} else if ($('#price_base_type').val() == 'TTC') {
-				update_price('price_ttc', 'price_ht');
-			}
-		}
-	});
-
-	// update_price
-	function update_price(input, output)
-	{
-		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/price.php', {
-			'amount': $('#' + input).val(),
-			'output': output,
-			'tva_tx': $('#tva_tx').val()
-		},
-		function(data) {
-			var addline=false;
-			if (typeof data[output] != 'undefined') {
-				// Hide price_ttc if no vat
-				if ($('#tva_tx').val() > 0 || ($('#tva_tx').val() == 0 && output == 'price_ht')) {
-					$('#' + output).val(data[output]);
-				}
-				if ($('#product_id').val() == 0 && $('#select_type').val() >= 0) {
-					if (typeof CKEDITOR == 'object' && typeof CKEDITOR.instances != 'undefined' && CKEDITOR.instances['product_desc'] != 'undefined') {
-						var content = CKEDITOR.instances['product_desc'].getData();
-					} else {
-						var content = $('#product_desc').val();
-					}
-					if (content.length > 0) {
-						addline=true;
-					}
-				} else {
-					addline=true;
-				}
-			} else {
-				$('#' + input).val('');
-				$('#' + output).val('');
-			}
-			if (addline) {
-				$('#savelinebutton').removeAttr('disabled');
-			} else {
-				$('#savelinebutton').attr('disabled','disabled');
-			}
-		}, 'json');
-	}
-
-	// Check if decription is not empty for free line
-	<?php if (! empty($conf->fckeditor->enabled) && ! empty($conf->global->FCKEDITOR_ENABLE_DETAILS)) { ?>
-	CKEDITOR.on('instanceReady', function() {
-		CKEDITOR.instances['product_desc'].on('key', function() {
-			var addline=false;
-			if ($('#product_id').val() == 0 && $('#select_type').val() >= 0 && $('#price_ht').val().length > 0) {
-				var content = CKEDITOR.instances['product_desc'].getData();
-				if (content.length > 0) {
-					addline=true;
-				}
-			} else if ($('#product_id').val() > 0 && $('#price_ht').val().length > 0) {
-				addline=true;
-			}
-			if (addline) {
-				$('#savelinebutton').removeAttr('disabled');
-			} else {
-				$('#savelinebutton').attr('disabled','disabled');
-			}
-		});
-	});
-	<?php } else { ?>
-	$('#product_desc').keyup(function() {
-			var addline=false;
-			if ($('#product_id').val() == 0 && $('#select_type').val() >= 0 && $('#price_ht').val().length > 0) {
-				var content = $('#product_desc').val();
-				if (content.length > 0) {
-					addline=true;
-				}
-			} else if ($('#product_id').val() > 0 && $('#price_ht').val().length > 0) {
-				addline=true;
-			}
-			if (addline) {
-				$('#savelinebutton').removeAttr('disabled');
-			} else {
-				$('#savelinebutton').attr('disabled','disabled');
-			}
-	});
-	<?php } ?>
-
-	});
-
-<?php } // End MAIN_LEVEL_FEATURES > 1 ?>
-
-
 
 <?php
 if (! empty($conf->margin->enabled))
@@ -499,12 +307,13 @@ if (! empty($conf->margin->enabled))
 	/* Function similar to price2num in PHP */
 	function price2numjs(num)
 	{
+		if (num == '') return '';
+
 		<?php
 		$dec=','; $thousand=' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
 		if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
-		if ($thousand == 'None') $thousand='';
-		print "var dec='".$dec."'; var thousand='".$thousand."';\n";
+		print "var dec='".$dec."'; var thousand='".$thousand."';\n";	// Set var in javascript
 		?>
 
 		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
