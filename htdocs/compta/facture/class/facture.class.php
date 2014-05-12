@@ -617,6 +617,7 @@ class Facture extends CommonInvoice
 		$this->statut=0;
 
 		// Clear fields
+		$this->date               = dol_now();	// Date of invoice is set to current date when cloning. // TODO Best is to ask date into confirm box
 		$this->user_author        = $user->id;
 		$this->user_valid         = '';
 		$this->fk_facture_source  = 0;
