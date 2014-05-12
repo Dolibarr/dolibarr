@@ -25,6 +25,7 @@ Fix: [ bug #1372 ] Margin calculation does not work in proposals.
 Fix: [ bug #1381 ] PHP Warning when listing stock transactions page.
 Fix: [ bug #1367 ] "Show invoice" link after a POS sell throws an error.
 Fix: TCPDF error file not found in member card generation.
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
