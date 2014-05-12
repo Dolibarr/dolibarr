@@ -229,11 +229,13 @@ from origin/upstream and origin/pristine.
 * If new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
 
+* Edit tgz file to remove ckeditor and phpexcel and renama file into dolibarr-x.y.z+dsfgw.tgz
+
 * Staying into git root directory, run
-> git-import-orig -vv ../dolibarr-3.3.4.tgz
+> git-import-orig -vv ../dolibarr-x.y.z+dsfgw.tgz
 and enter version when requested with format
-x.y.z-w
-(x.y.z = version, w start from 1 and increaed for each new import)
+x.y.z+dsfgw
+(x.y.z = version, w start from 1 and is increased for each new import)
 
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
