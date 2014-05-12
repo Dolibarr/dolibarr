@@ -199,6 +199,8 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		$object->project = dol_clone($projectstatic);
+
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
 		if (! empty($withproject))
@@ -227,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Company").'</td><td>';
+			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
@@ -267,7 +269,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 		}
 
 		print '</div>';
@@ -310,7 +312,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 
 				// Third party
-				print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+				print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 				if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 				else print '&nbsp;';
 				print '</td></tr>';
@@ -404,7 +406,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 
 				// Third party
-				print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+				print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 				if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 				else print '&nbsp;';
 				print '</td></tr>';

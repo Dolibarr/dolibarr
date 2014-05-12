@@ -36,7 +36,10 @@ if ($langs->defaultlang != 'en_US')
     print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
     exit;
 }
-
+if (! empty($conf->google->enabled))
+{
+	print "Warning: Google module should not be enabled.\n";
+}
 if (empty($user->id))
 {
 	print "Load permissions for admin user nb 1\n";

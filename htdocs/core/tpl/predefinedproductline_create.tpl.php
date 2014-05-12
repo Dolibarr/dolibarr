@@ -298,6 +298,8 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	/* Function similar to price2num in PHP */
 	function price2numjs(num)
 	{
+		if (num == '') return '';
+
 		<?php
 		$dec=','; $thousand=' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");

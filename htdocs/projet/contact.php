@@ -177,7 +177,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 		// Customer
-		print "<tr><td>".$langs->trans("Company")."</td>";
+		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
 		print '<td colspan="3">';
 		if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
 		else print '&nbsp;';
@@ -202,7 +202,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 			if ($res) break;
-		}		
+		}
 	}
 	else
 	{

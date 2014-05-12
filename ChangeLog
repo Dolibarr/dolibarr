@@ -20,6 +20,10 @@ Fix: [ bug #1353 ] Email notifications, wrong URL.
 Fix: [ bug #1362 ] Note is not saved.
 Fix: tr/td balance.
 Fix: [ bug #1360 ] note indicator for member tab.
+Fix: Nb of notes and doc not visible onto tasks.
+Fix: [ bug #1372 ] Margin calculation does not work in proposals.
+Fix: [ bug #1381 ] PHP Warning when listing stock transactions page.
+Fix: [ bug #1367 ] "Show invoice" link after a POS sell throws an error.
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
