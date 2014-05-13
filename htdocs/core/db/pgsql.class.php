@@ -48,6 +48,7 @@ class DoliDBPgsql extends DoliDB
 	private $_results;
 	
 	public $unescapeslashquot;
+	public $standard_conforming_strings;
 
 	/**
 	 *	Constructor.
