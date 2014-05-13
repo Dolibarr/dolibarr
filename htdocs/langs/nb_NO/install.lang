@@ -206,3 +206,6 @@ MigrationProjectTaskTime=Oppdater tid i sekunder
 MigrationActioncommElement=Oppdatering data på handlinger
 MigrationPaymentMode=Datamigrering for betaling modus
 MigrationCategorieAssociation=Migrer kategorier
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

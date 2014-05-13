@@ -154,6 +154,8 @@ class Product extends CommonObject
 
 	var $oldcopy;
 
+	//note not visible on orders and invoices
+	var $note;
 
 	/**
 	 *  Constructor
@@ -546,7 +548,7 @@ class Product extends CommonObject
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->libelle = trim($this->libelle);
 		$this->description = trim($this->description);
-		$this->note = (isset($this->note)? trim($this->note):"null");
+		$this->note = (isset($this->note) ? trim($this->note) : null);
 		$this->weight = price2num($this->weight);
 		$this->weight_units = trim($this->weight_units);
 		$this->length = price2num($this->length);
@@ -614,7 +616,7 @@ class Product extends CommonObject
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
-	        $sql.= ", note = '" .        $this->db->escape($this->note) ."'";
+	        $sql.= ", note = ".(isset($this->note) ? "'" .$this->db->escape($this->note)."'" : 'null');
 			$sql.= ", duration = '" . $this->duration_value . $this->duration_unit ."'";
 			$sql.= ", accountancy_code_buy = '" . $this->accountancy_code_buy."'";
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
@@ -2274,6 +2276,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
 		$sql.= " WHERE fk_product = ". $fromId;
 
+		dol_syslog(get_class($this).'::clone_price sql='.$sql);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
@@ -2283,6 +2286,13 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 * Clone links between products
+	 *
+	 * @param 	int		$fromId		Product id
+	 * @param 	int		$toId		Product id
+	 * @return number
+	 */
 	function clone_associations($fromId, $toId)
 	{
 		$this->db->begin();
@@ -2291,6 +2301,7 @@ class Product extends CommonObject
 		$sql.= " SELECT null, $toId, fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = '".$fromId."'";
 
+		dol_syslog(get_class($this).'::clone_association sql='.$sql);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
@@ -2334,6 +2345,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_product = ".$fromId;
 
+		dol_syslog(get_class($this).'::clone_fournisseurs sql='.$sql);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
@@ -2889,42 +2901,6 @@ class Product extends CommonObject
 		if (file_exists($file_osencoded))
 		{
 			vignette($file,$maxWidth,$maxHeight);
-		}
-	}
-
-	/**
-	 *  Deplace fichier recupere sur internet (utilise pour interface avec OSC)
-	 *
-	 *  @param  string	$sdir        	Repertoire destination finale
-	 *  @param  string	$file      		url de l'image
-	 *  @return	void
-	 */
-	function add_photo_web($sdir, $file)
-	{
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
-		$dir .= "photos/";
-
-		$dir_osencoded=dol_osencode($dir);
-		if (! file_exists($dir_osencoded))
-		{
-			dol_syslog("Product Create ".$dir);
-			dol_mkdir($dir);
-		}
-
-		if (file_exists($dir_osencoded))
-		{
-			// Cree fichier en taille vignette
-			// TODO A faire
-
-			// Cree fichier en taille origine
-			$content = @file_get_contents($file);
-			if( $content)
-			{
-				$nom = basename($file);
-				$im = fopen(dol_osencode($dir.$nom),'wb');
-				fwrite($im, $content);
-				fclose($im);
-			}
 		}
 	}
 

@@ -34,7 +34,6 @@ ReturnCP=Atgriezties uz iepriekšējo lappusi
 ErrorUserViewCP=Jums nav atļauts lasīt šo pieprasījumu brīvdienas.
 InfosCP=Informāciju par pieprasījuma brīvdienas
 InfosWorkflowCP=Informācijas Workflow
-DateCreateCP=Izveidošanas datums
 RequestByCP=Pieprasījis
 TitreRequestCP=Loksne brīvdienas
 NbUseDaysCP=Dienu skaits patērēto brīvdienās
@@ -130,7 +129,6 @@ ErrorMailNotSend=Kļūda sūtot e-pastu:
 NoCPforMonth=Nē atstāt šo mēnesi.
 nbJours=Numurs dienas
 TitleAdminCP=Konfigurācija Holidays
-
 #Messages
 Hello=Sveiki
 HolidaysToValidate=Apstiprināt brīvdienas
@@ -143,10 +141,10 @@ HolidaysRefused=Liegta brīvdienas
 HolidaysRefusedBody=Jūsu pieprasījums brīvdienās %s uz %s ir liegta šādu iemeslu dēļ:
 HolidaysCanceled=Atceltās brīvdienas
 HolidaysCanceledBody=Jūsu pieprasījums brīvdienās %s uz %s ir atcelts.
-
-Permission20001=Lasīt / izveidot / mainīt savas brīvdienas
-Permission20002=Lasīt / mainīt visus pieprasījumus brīvdienas
-Permission20003=Dzēst savus brīvdienas pieprasījumus
-Permission20004=Definēt lietotājiem brīvdienas
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Pārskatīt žurnālu modificētu brīvdienas
-Permission20006=Piekļuve brīvdienas ikmēneša ziņojumu
+Permission20006=Read holidays monthly report

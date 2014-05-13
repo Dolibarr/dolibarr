@@ -88,6 +88,7 @@ For developers:
 - New: A module can add its own ECM view.
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
+- New: Add hooks on project card page.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -116,12 +117,14 @@ Fix: Pb of records not correctly cleaned when module marge is
 Fix: [ bug #1341 ] Lastname not added by file or direct input in mass e-mailing.
 Fix: [ bug #1357 ] Invoice creator state not printed in generated invoice documents.
 Fix: Suppliers invoice mask fails using {tttt} in numbering.
-Fix: pdf template name for typhon was not correctly et when enabling module.
+Fix: [ bug #1350 ] pdf template name for typhon was not correctly set when enabling module.
 Fix: Navigation on notes for shipments was not working.
 Fix: [ bug #1353 ] Email notifications, wrong URL.
 Fix: [ bug #1362 ] Note is not saved.
 Fix: tr/td balance.
 Fix: [ bug #1360 ] note indicator for member tab.
+Fix: Nb of notes and doc not visible onto tasks.
+Fix: [ bug #1372 ] Margin calculation does not work in proposals
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.

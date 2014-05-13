@@ -617,6 +617,7 @@ class Facture extends CommonInvoice
 		$this->statut=0;
 
 		// Clear fields
+		$this->date               = dol_now();	// Date of invoice is set to current date when cloning. // TODO Best is to ask date into confirm box
 		$this->user_author        = $user->id;
 		$this->user_valid         = '';
 		$this->fk_facture_source  = 0;
@@ -3492,7 +3493,7 @@ class FactureLigne  extends CommonInvoiceLine
 	}
 
 	/**
-	 *	Insert line in database
+	 *	Insert line into database
 	 *
 	 *	@param      int		$notrigger		1 no triggers
 	 *	@return		int						<0 if KO, >0 if OK
@@ -3530,7 +3531,21 @@ class FactureLigne  extends CommonInvoiceLine
 		}
 
 		// Check parameters
-		if ($this->product_type < 0) return -1;
+		if ($this->product_type < 0)
+		{
+			$this->error='ErrorProductTypeMustBe0orMore';
+			return -1;
+		}
+		if (! empty($this->fk_product))
+		{
+			// Check product exists
+			$result=Product::isExistingObject('product', $this->fk_product);
+			if ($result <= 0)
+			{
+				$this->error='ErrorProductIdDoesNotExists';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 

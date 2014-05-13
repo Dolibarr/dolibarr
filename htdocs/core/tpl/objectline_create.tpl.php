@@ -41,9 +41,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move
-if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) $colspan++;
-if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES))   $colspan++;
+if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -72,8 +70,8 @@ if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES))
 		?>
 		</td>
 		<?php
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
-		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
+		if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
 	}
 	?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -226,12 +224,12 @@ else {
 		{
 			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 			{
-				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nowrap"><input type="text" size="2" id="np_marginRate" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'"><span class="np_marginRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 			if (! empty($conf->global->DISPLAY_MARK_RATES))
 			{
-				echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="hideonsmartphone">%</span></td>';
+				echo '<td align="right" class="nowrap"><input type="text" size="2" id="np_markRate" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'"><span class="np_markRate hideonsmartphone">%</span></td>';
 				$coldisplay++;
 			}
 		}
@@ -246,7 +244,7 @@ else {
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 	<?php
-	//Line extrafield
+	// Line extrafield
 	if (!empty($extrafieldsline)) {
 		if ($this->table_element_line=='commandedet') {
 			$newline = new OrderLine($this->db);
@@ -344,6 +342,7 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 		var rate = $("input[name='"+npRate+"']:first");
 		if (rate.val() == '')
 			return true;
+
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
 			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
@@ -362,14 +361,16 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 		var price = 0;
 		remisejs=price2numjs(remise.val());
 
-		if (remisejs != 100)
+		if (remisejs != 100)	// If a discount not 100 or no discount
 		{
+			if (remisejs == '') remisejs=0;
+
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
 
-			if (npRate == "marginRate")
+			if (npRate == "np_marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "markRate")
+			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
 		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
@@ -381,12 +382,13 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	/* Function similar to price2num in PHP */
 	function price2numjs(num)
 	{
+		if (num == '') return '';
+
 		<?php
 		$dec=','; $thousand=' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
 		if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
-		if ($thousand == 'None') $thousand='';
-		print "var dec='".$dec."'; var thousand='".$thousand."';\n";
+		print "var dec='".$dec."'; var thousand='".$thousand."';\n";	// Set var in javascript
 		?>
 
 		var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
@@ -497,6 +499,10 @@ function setforfree() {
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
 	jQuery("#title_up_ttc").show();
+	jQuery("#np_marginRate").show();	// May no exists
+	jQuery("#np_markRate").show();	// May no exists
+	jQuery(".np_marginRate").show();	// May no exists
+	jQuery(".np_markRate").show();	// May no exists
 }
 function setforpredef() {
 	jQuery("#select_type").val(-1);
@@ -509,6 +515,10 @@ function setforpredef() {
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ttc").hide();
+	jQuery("#np_marginRate").hide();	// May no exists
+	jQuery("#np_markRate").hide();	// May no exists
+	jQuery(".np_marginRate").hide();	// May no exists
+	jQuery(".np_markRate").hide();	// May no exists
 }
 
 </script>

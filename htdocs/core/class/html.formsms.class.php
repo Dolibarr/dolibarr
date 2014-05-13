@@ -238,7 +238,7 @@ function limitChars(textarea, limit, infodiv)
             }
         }
 
-        // To
+        // To (target)
         if ($this->withto || is_array($this->withto))
         {
             print '<tr><td width="180">';

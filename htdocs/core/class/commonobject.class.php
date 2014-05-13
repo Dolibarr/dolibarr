@@ -54,6 +54,42 @@ abstract class CommonObject
 
 
     /**
+     * Check an object id/ref exists
+     * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
+     *
+	 *  @param	string	$element   	String of element ('product', 'facture', ...)
+	 *  @param	int		$id      	Id of object
+	 *  @param  string	$ref     	Ref of object to check
+	 *  @param	string	$ref_ext	Ref ext of object to check
+	 *  @return int     			<0 if KO, 0 if OK but not found, >0 if OK and exists
+     */
+    static function isExistingObject($element, $id, $ref='', $ref_ext='')
+    {
+    	global $db;
+
+		$sql = "SELECT rowid, ref, ref_ext";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
+		if ($id > 0) $sql.= " WHERE rowid = ".$db->escape($id);
+		else if ($ref) $sql.= " WHERE ref = '".$db->escape($ref)."'";
+		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$db->escape($ref_ext)."'";
+		else {
+			$error='ErrorWrongParameters';
+			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
+			return -1;
+		}
+
+		dol_syslog(get_class()."::isExistingObject sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num=$db->num_rows($resql);
+			if ($num > 0) return 1;
+			else return 0;
+		}
+		return -1;
+    }
+
+    /**
      * Method to output saved errors
      *
      * @return	string		String with errors
@@ -114,33 +150,6 @@ abstract class CommonObject
     	return dol_format_address($this, $withcountry, $sep);
     }
 
-    /**
-     *  Check if ref is used.
-     *
-     * 	@return		int			<0 if KO, 0 if not found, >0 if found
-     */
-    function verifyNumRef()
-    {
-        global $conf;
-
-        $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE ref = '".$this->ref."'";
-        $sql.= " AND entity = ".$conf->entity;
-        dol_syslog(get_class($this)."::verifyNumRef sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            return $num;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::verifyNumRef ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
 
     /**
      *  Add a link between element $this->element and a contact
@@ -1827,9 +1836,6 @@ abstract class CommonObject
                     else if ($objecttype == 'invoice_supplier' || $objecttype == 'order_supplier')	{
                         $classpath = 'fourn/class'; $module = 'fournisseur';
                     }
-                    else if ($objecttype == 'order_supplier')	{
-                        $classpath = 'fourn/class';
-                    }
                     else if ($objecttype == 'fichinter')			{
                         $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
                     }
@@ -2055,7 +2061,7 @@ abstract class CommonObject
 
 
     /**
-     * 	Get special code of line
+     * 	Get special code of a line
      *
      * 	@param	int		$lineid		Id of line
      * 	@return	int					Special code
@@ -2721,7 +2727,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf,$langs,$user,$hookmanager;
+		global $conf,$langs,$user,$object,$hookmanager;
 
 		print '<tr class="liste_titre nodrag nodrop">';
 
@@ -2760,11 +2766,11 @@ abstract class CommonObject
 		// Total HT
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 
-		print '<td width="10"></td>';
+		print '<td></td>';  // No width to allow autodim
 
 		print '<td width="10"></td>';
 
-		print '<td class="nowrap"></td>'; // No width to allow autodim
+		print '<td width="10"></td>';
 
 		print "</tr>\n";
 
@@ -2819,7 +2825,7 @@ abstract class CommonObject
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
-		global $conf,$langs,$user,$hookmanager;
+		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
 
 		$element=$this->element;
@@ -3091,7 +3097,8 @@ abstract class CommonObject
 	 * 	@param 	string 	$force_price	True of not
 	 * 	@return mixed					Array with info
 	 */
-	function getMarginInfos($force_price=false) {
+	function getMarginInfos($force_price=false)
+	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
@@ -3211,7 +3218,7 @@ abstract class CommonObject
 	}
 
 	/**
-	 * displayMarginInfos
+	 * Show the array with all margin infos
 	 *
 	 * @param 	string 	$force_price	Force price
 	 * @return	void
@@ -3228,7 +3235,7 @@ abstract class CommonObject
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="nobordernopadding" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -3249,9 +3256,9 @@ abstract class CommonObject
 		print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
 		print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'n/a':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'n/a':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		print '<tr class="pair">';
 		print '<td>'.$langs->trans('MarginOnServices').'</td>';
@@ -3259,9 +3266,9 @@ abstract class CommonObject
 		print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
 		print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'n/a':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'n/a':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		//}
 		print '<tr class="impair">';
@@ -3270,9 +3277,9 @@ abstract class CommonObject
 		print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
 		print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'n/a':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'n/a':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
+			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
 		print '</tr>';
 		print '</table>';
 	}

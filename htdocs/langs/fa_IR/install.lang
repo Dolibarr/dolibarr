@@ -8,7 +8,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=ملفات <b>ل ٪</b> لا وجود 
 ConfFileCouldBeCreated=ملفات <b>ل ٪</b> ويمكن أن تنشأ.
 ConfFileIsNotWritable=ملفات <b>٪ ق</b> ليست للكتابة. التحقق من الأذونات. أولا لتركيب وخدمة الويب الخاص بك يجب أن تمنح ليكون قادرا على الكتابة في هذا الملف خلال عملية التهيئة ( "chmod 666" على سبيل المثال ، مثل نظام التشغيل يونكس).
 ConfFileIsWritable=ملفات للكتابة هو <b>٪ ق.</b>
-# ConfFileReload=Reload all information from configuration file.
+ConfFileReload=Reload all information from configuration file.
 PHPSupportSessions=ويدعم هذا PHP الدورات.
 PHPSupportPOSTGETOk=ويدعم هذا PHP المتغيرات والحصول على الوظائف.
 PHPSupportPOSTGETKo=فمن الممكن PHP الإعداد الخاص بك لا يدعم الوظائف المتغيرات و / أو الحصول عليه. التحقق من اتصالك <b>variables_order</b> معلمة في php.ini.
@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=العودة إلى الوراء وتصحيح ا
 ErrorWrongValueForParameter=قد تكون لديكم مطبوعة خاطئة قيمة معلمة '٪ ق.
 ErrorFailedToCreateDatabase=فشل إنشاء قاعدة بيانات '٪ ق.
 ErrorFailedToConnectToDatabase=فشل في الاتصال بقاعدة البيانات '٪ ق.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP نسخة قديمة جدا. النسخة ٪ ق هو مطلوب.
-# WarningPHPVersionTooLow=PHP version too old. Version %s or more is expected. This version should allow install but is not supported.
+WarningPHPVersionTooLow=PHP version too old. Version %s or more is expected. This version should allow install but is not supported.
 ErrorConnectedButDatabaseNotFound=خادم الصدد الى قاعدة البيانات ولكن النجاح في '٪ ق' لم يتم العثور عليه.
 ErrorDatabaseAlreadyExists=قاعدة البيانات '٪ ق' موجود بالفعل.
 IfDatabaseNotExistsGoBackAndUncheckCreate=إذا كان لا وجود قاعدة بيانات ، والتأكد من العودة الخيار "إنشاء قاعدة بيانات".
 IfDatabaseExistsGoBackAndCheckCreate=إذا كانت قاعدة البيانات موجود بالفعل ، من العودة وإلغاء "إنشاء قاعدة بيانات" الخيار.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP الإصدار
 YouCanContinue=يمكنك الاستمرار...
 PleaseBePatient=يرجى التحلي بالصبر...
@@ -52,7 +52,7 @@ ServerAddressDescription=الملكية الفكرية في اسم أو عنوا
 ServerPortDescription=قاعدة بيانات الميناء. تبقي فارغة إذا كانت غير معروفة.
 DatabaseServer=خادم قاعدة البيانات
 DatabaseName=اسم قاعدة البيانات
-# DatabasePrefix=Database prefix table
+DatabasePrefix=Database prefix table
 Login=تسجيل الدخول
 AdminLogin=ادخل لDolibarr مدير قاعدة البيانات. تبقي فارغة إذا لم يذكر اسمه في اتصال
 Password=كلمة السر
@@ -135,13 +135,13 @@ RemoveItManuallyAndPressF5ToContinue=إزالته يدويا واضغط F5 لل�
 KeepDefaultValuesWamp=استخدام معالج الإعداد DoliWamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
 KeepDefaultValuesDeb=يمكنك استخدام معالج الإعداد Dolibarr من أوبونتو أو حزمة ديبيان ، لذلك القيم المقترحة هنا هي الأمثل بالفعل. يجب أن تكتمل إلا كلمة السر للمالك قاعدة البيانات لإنشاء. تغيير معلمات أخرى إلا إذا كنت تعرف ما تفعله.
 KeepDefaultValuesMamp=استخدام معالج الإعداد DoliMamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
-# KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 FieldRenamed=تغيير اسم الميدان
 IfLoginDoesNotExistsCheckCreateUser=اذا ادخل لا يوجد حتى الآن ، يجب عليك التحقق من خيار "تكوين المستخدم"
 ErrorConnection=الخادم <b>"٪ ل"</b> اسم قاعدة بيانات <b>"٪ ل"</b> ادخل <b>"٪ ل"</b> أو كلمة سر قاعدة البيانات قد تكون خاطئة أو PHP العميل نسخة قديمة جدا ويمكن مقارنة مع قاعدة البيانات نسخة.
 InstallChoiceRecommanded=وأوصت لتثبيت اختيار النسخة <b>٪ المستندات</b> الخاصة بك من النسخة الحالية <b>ل ٪</b>
 InstallChoiceSuggested=<b>اقترح تثبيت اختيار المثبت.</b>
-# MigrateIsDoneStepByStep=The targeted version (%s) has a gap of several versions, so install wizard will come back to suggest next migration once this one will be finished.
+MigrateIsDoneStepByStep=The targeted version (%s) has a gap of several versions, so install wizard will come back to suggest next migration once this one will be finished.
 CheckThatDatabasenameIsCorrect=تأكد من أن اسم قاعدة البيانات <b>"%s"</b> هو الصحيح.
 IfAlreadyExistsCheckOption=وإذا كان هذا الاسم هو الصحيح وأنه لا وجود قاعدة بيانات حتى الآن ، ويجب التحقق من خيار "إنشاء قاعدة بيانات".
 OpenBaseDir=بي openbasedir المعلمة
@@ -153,12 +153,11 @@ MigrationShippingDelivery=ترقية تخزين الشحن
 MigrationShippingDelivery2=ترقية تخزين الشحن 2
 MigrationFinished=مهاجرت به پایان رسید
 LastStepDesc=<strong>آخرین مرحله</strong> : در اینجا با نام کاربری خود وارد شوید و رمز عبور تعریف شما قصد دارید استفاده برای اتصال به نرم افزار. سست این ، آن را به عنوان حساب اداره از همه دیگران نیست.
-# ActivateModule=Activate module %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ActivateModule=Activate module %s
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=إصلاح البيانات الذي لم تتم تسويته
 MigrationOrder=بيانات الهجرة طلبات الزبائن
 MigrationSupplierOrder=بيانات الهجرة من أجل الموردين أوامر
@@ -205,5 +204,8 @@ MigrationProjectTaskActors=بيانات الهجرة لllx_projet_task_actors ا
 MigrationProjectUserResp=بيانات fk_user_resp مجال الهجرة من llx_projet لllx_element_contact
 MigrationProjectTaskTime=تحديث الوقت الذي يقضيه في ثوان
 MigrationActioncommElement=به روز رسانی داده ها در اعمال
-# MigrationPaymentMode=Data migration for payment mode
-# MigrationCategorieAssociation=Migration of categories
+MigrationPaymentMode=Data migration for payment mode
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

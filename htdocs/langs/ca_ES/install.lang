@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Premi aquí per veure/editar els paràmetres tècnic
 
 #########
 # upgrade
-#########
 MigrationFixData=Correcció de dades desnormalitzades
 MigrationOrder=Migració de dades de les comandes clients
 MigrationSupplierOrder=Migració de dades de les comandes a proveïdors
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Actualització de temps dedicat en segons
 MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

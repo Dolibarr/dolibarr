@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Click aici pentru a vedea / edita  parametrii avansa
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix pentru date denormalized
 MigrationOrder=Migrare a datelor pentru comenzile clienţilor
 MigrationSupplierOrder=Migrare de date pentru comenzi furnizor
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Actualizare de timp petrecut în secunde
 MigrationActioncommElement=Actualiza datele privind acţiunile
 MigrationPaymentMode=Migrare de date pentru modul de plată
 MigrationCategorieAssociation=Migrarea categoriilor
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

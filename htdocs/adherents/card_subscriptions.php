@@ -473,8 +473,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 						// Define output language
 						$outputlangs = $langs;
 						$newlang = '';
-						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-							$newlang = $_REQUEST ['lang_id'];
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+							$newlang = $_REQUEST['lang_id'];
 						if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 							$newlang = $customer->default_lang;
 						if (! empty($newlang)) {

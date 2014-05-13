@@ -34,7 +34,6 @@ ReturnCP=Επιστροφή στην προηγούμενη σελίδα
 ErrorUserViewCP=Δεν έχετε δικαίωμα να διαβάσετε αυτό το αίτημα για τις άδειες.
 InfosCP=Πληροφορίες για τη ζήτηση των αδειών
 InfosWorkflowCP=Πληροφορίες για την ροή εργασιών
-DateCreateCP=Ημερομηνία Δημιουργίας
 RequestByCP=Ζητήθηκε από
 TitreRequestCP=Φύλλο αδειών
 NbUseDaysCP=Αριθμός ημερών αδειών που καταναλώνονται
@@ -130,7 +129,6 @@ ErrorMailNotSend=Παρουσιάστηκε σφάλμα κατά την απο�
 NoCPforMonth=Όχι αυτό το μήνα.
 nbJours=Αριθμός ημερών
 TitleAdminCP=Διαμόρφωση αδειών
-
 #Messages
 Hello=Γεια σας
 HolidaysToValidate=Επικύρωση άδειας
@@ -143,10 +141,10 @@ HolidaysRefused=Άρνηση άδειας
 HolidaysRefusedBody=Το αίτημα σας για την άδεια από %s έως %s έχει απορριφθεί για τους ακόλουθους λόγους:
 HolidaysCanceled=Ακύρωση άδειας
 HolidaysCanceledBody=Το αίτημά σας για άδεια από %s έως %s έχει ακυρωθεί.
-
-Permission20001=Διαβάστε/δημιουργήστε/τροποποιήστε τις άδειες τους
-Permission20002=Διαβάστε/τροποποιήστε όλα τα αιτήματα των αδειών
-Permission20003=Διαγραφή αιτημάτων αδειών
-Permission20004=Ορίστε χρήστες για άδειες
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Επανεξέταση καταγραφής των τροποποιημένων αδειών
-Permission20006=Πρόσβαση μηνιαίας αναφοράς αδειών
+Permission20006=Read holidays monthly report

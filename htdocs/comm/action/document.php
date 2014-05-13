@@ -53,7 +53,7 @@ if ($user->societe_id > 0)
 	unset($_GET["action"]);
 	$action='';
 }
-$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
+$result = restrictedArea($user, 'agenda', $objectid, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
 $object = new ActionComm($db);
 

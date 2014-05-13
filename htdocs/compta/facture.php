@@ -115,13 +115,13 @@ include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer) {
-	if (1 == 0 && empty($_REQUEST ["clone_content"]) && empty($_REQUEST ["clone_receivers"])) {
+	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
 		$mesgs [] = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
 	} else {
 		if ($object->fetch($id) > 0) {
 			$result = $object->createFromClone($socid);
 			if ($result > 0) {
-				header("Location: " . $_SERVER ['PHP_SELF'] . '?facid=' . $result);
+				header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
 				exit();
 			} else {
 				$mesgs [] = $object->error;
@@ -137,7 +137,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer) {
 	if ($object->statut == 2 || ($object->statut == 3 && $object->close_code != 'replaced')) {
 		$result = $object->set_unpaid($user);
 		if ($result > 0) {
-			header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $id);
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		} else {
 			$mesgs [] = '<div class="error">' . $object->error . '</div>';
@@ -178,8 +178,8 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-			$newlang = $_REQUEST ['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 			$newlang = $object->client->default_lang;
 		if (! empty($newlang)) {
@@ -191,7 +191,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			$result = facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 		if ($result >= 0) {
-			header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $id);
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		}
 	} else {
@@ -231,7 +231,7 @@ else if ($action == 'set_thirdparty' && $user->rights->facture->creer) {
 	$object->fetch($id);
 	$object->setValueFrom('fk_soc', $socid);
 
-	header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $id);
+	header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 	exit();
 }
 
@@ -384,8 +384,8 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->factu
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-				$newlang = $_REQUEST ['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->client->default_lang;
 			if (! empty($newlang)) {
@@ -458,8 +458,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-				$newlang = $_REQUEST ['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->client->default_lang;
 			if (! empty($newlang)) {
@@ -1023,7 +1023,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	if ($id > 0 && ! $error)
 	{
 		$db->commit();
-		header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $id);
+		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 		exit();
 	}
 	else
@@ -1403,7 +1403,7 @@ elseif ($action == 'updateligne' && $user->rights->facture->creer && ! GETPOST('
 }
 
 else if ($action == 'updateligne' && $user->rights->facture->creer && $_POST['cancel'] == $langs->trans('Cancel')) {
-	header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $id); // Pour reaffichage de la fiche en cours d'edition
+	header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id); // Pour reaffichage de la fiche en cours d'edition
 	exit();
 }
 
@@ -1416,8 +1416,8 @@ else if ($action == 'up' && $user->rights->facture->creer) {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-		$newlang = $_REQUEST ['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+		$newlang = $_REQUEST['lang_id'];
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 		$newlang = $object->client->default_lang;
 	if (! empty($newlang)) {
@@ -1427,7 +1427,7 @@ else if ($action == 'up' && $user->rights->facture->creer) {
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-	header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '#' . $_GET ['rowid']);
+	header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '#' . $_GET ['rowid']);
 	exit();
 } // Modify line position (down)
 else if ($action == 'down' && $user->rights->facture->creer) {
@@ -1438,8 +1438,8 @@ else if ($action == 'down' && $user->rights->facture->creer) {
 	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-		$newlang = $_REQUEST ['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+		$newlang = $_REQUEST['lang_id'];
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 		$newlang = $object->client->default_lang;
 	if (! empty($newlang)) {
@@ -1449,7 +1449,7 @@ else if ($action == 'down' && $user->rights->facture->creer) {
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-	header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '#' . $_GET ['rowid']);
+	header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '#' . $_GET ['rowid']);
 	exit();
 }
 
@@ -1608,7 +1608,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						// This avoid sending mail twice if going out and then back to page
 						$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
 						setEventMessage($mesg);
-						header('Location: ' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id);
+						header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id);
 						exit();
 					}
 				} else {
@@ -1715,7 +1715,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 		}
 
 		if ($result >= 0) {
-			header("Location: " . $_SERVER ['PHP_SELF'] . "?id=" . $object->id);
+			header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 			exit();
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -1742,7 +1742,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			header("Location: " . $_SERVER ['PHP_SELF'] . "?id=" . $object->id);
+			header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 			exit();
 		} else {
 			dol_print_error($db);
@@ -1889,7 +1889,7 @@ if ($action == 'create')
 		print ajax_combobox('fac_avoir');
 	}
 
-	print '<form name="add" action="' . $_SERVER ["PHP_SELF"] . '" method="POST">';
+	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
@@ -2160,17 +2160,17 @@ if ($action == 'create')
 		// Discounts for third party
 		print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="2">';
 		if ($soc->remise_percent)
-			print $langs->trans("CompanyHasRelativeDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . $soc->remise_percent . '</a>');
+			print $langs->trans("CompanyHasRelativeDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . $soc->remise_percent . '</a>');
 		else
 			print $langs->trans("CompanyHasNoRelativeDiscount");
-		print ' <a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditRelativeDiscount") . ')</a>';
+		print ' <a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditRelativeDiscount") . ')</a>';
 		print '. ';
 		print '<br>';
 		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . price($absolute_discount) . '</a>', $langs->trans("Currency" . $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">' . price($absolute_discount) . '</a>', $langs->trans("Currency" . $conf->currency));
 		else
 			print $langs->trans("CompanyHasNoAbsoluteDiscount");
-		print ' <a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditGlobalDiscounts") . ')</a>';
+		print ' <a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid')) . '">(' . $langs->trans("EditGlobalDiscounts") . ')</a>';
 		print '.';
 		print '</td></tr>';
 	}
@@ -2426,7 +2426,7 @@ if ($action == 'create')
 	// Confirmation de la conversion de l'avoir en reduc
 	if ($action == 'converttoreduc') {
 		$text = $langs->trans('ConfirmConvertToReduc');
-		$formconfirm = $form->formconfirm($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
 	}
 
 	// Confirmation to delete invoice
@@ -2453,9 +2453,9 @@ if ($action == 'create')
 								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 								// => 1),
 								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"))));
-			$formconfirm = $form->formconfirm($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
 		} else {
-			$formconfirm = $form->formconfirm($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', '', 1);
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', '', 1);
 		}
 	}
 
@@ -2517,7 +2517,7 @@ if ($action == 'create')
 		{
 			$text .= '<br>' . img_warning() . ' ' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
 		}
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), ($conf->notification->enabled ? 0 : 2));
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), ($conf->notification->enabled ? 0 : 2));
 	}
 
 	// Confirm back to draft status
@@ -2554,12 +2554,12 @@ if ($action == 'create')
 								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
 	}
 
 	// Confirmation du classement paye
 	if ($action == 'paid' && $resteapayer <= 0) {
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
 	}
 	if ($action == 'paid' && $resteapayer > 0) {
 		// Code
@@ -2588,7 +2588,7 @@ if ($action == 'create')
 		// Cree un tableau formulaire
 		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),array('type' => 'radio','name' => 'close_code','label' => $langs->trans("Reason"),'values' => $arrayreasons),array('type' => 'text','name' => 'close_note','label' => $langs->trans("Comment"),'value' => '','size' => '100'));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes");
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes");
 	}
 
 	// Confirmation du classement abandonne
@@ -2619,13 +2619,13 @@ if ($action == 'create')
 			// Cree un tableau formulaire
 			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"),array('type' => 'radio','name' => 'close_code','label' => $langs->trans("Reason"),'values' => $arrayreasons),array('type' => 'text','name' => 'close_note','label' => $langs->trans("Comment"),'value' => '','size' => '100'));
 
-			$formconfirm = $form->formconfirm($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes");
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes");
 		}
 	}
 
 	// Confirmation de la suppression d'une ligne produit
 	if ($action == 'ask_deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 	}
 
 	// Clone confirmation
@@ -2636,7 +2636,7 @@ if ($action == 'create')
 							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1)
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company('', 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	if (! $formconfirm) {
@@ -2675,12 +2675,12 @@ if ($action == 'create')
 	print $langs->trans('RefCustomer');
 	print '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER ['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
 	print '</tr></table>';
 	print '</td>';
 	print '<td colspan="5">';
 	if ($user->rights->facture->creer && $action == 'refclient') {
-		print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="set_ref_client">';
 		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
@@ -2697,11 +2697,11 @@ if ($action == 'create')
 	print '<tr><td>' . $langs->trans('Company') . '</td>';
 	print '</td><td colspan="5">';
 	if (! empty($conf->global->FACTURE_CHANGE_THIRDPARTY) && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editthirdparty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetLinkToThirdParty'), 1) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editthirdparty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetLinkToThirdParty'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($action == 'editthirdparty') {
-		$form->form_thirdparty($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->socid, 'socid');
+		$form->form_thirdparty($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, 'socid');
 	} else {
 		print ' &nbsp;' . $soc->getNomUrl(1, 'compta');
 		print ' &nbsp; ';
@@ -2756,9 +2756,9 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Relative and absolute discounts
-	$addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER ["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
-	$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER ["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
-	$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER ["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
+	$addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
+	$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
+	$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
 	print '<tr><td>' . $langs->trans('Discounts');
 	print '</td><td colspan="5">';
@@ -2787,7 +2787,7 @@ if ($action == 'create')
 		} else {
 			// Remise dispo de type remise fixe (not credit note)
 			print '<br>';
-			$form->form_remise_dispo($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')');
+			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')');
 		}
 	} else {
 		if ($absolute_creditnote > 0) 		// If not, link will be added later
@@ -2814,7 +2814,7 @@ if ($action == 'create')
 				print '<br>';
 				// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote,
 			// $filtercreditnote, $resteapayer);
-			$form->form_remise_dispo($_SERVER ["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0); // We
+			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0); // We
 			                                                                                                                                                        // must
 			                                                                                                                                                        // allow
 			                                                                                                                                                        // credit
@@ -2848,13 +2848,13 @@ if ($action == 'create')
 	print $langs->trans('Date');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editinvoicedate&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editinvoicedate&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 
 	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editinvoicedate') {
-			$form->form_date($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->date, 'invoicedate');
+			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date, 'invoicedate');
 		} else {
 			print dol_print_date($object->date, 'daytext');
 		}
@@ -2984,7 +2984,7 @@ if ($action == 'create')
 				print ' :</td>';
 				print '<td align="right">' . price($obj->amount_ttc) . '</td>';
 				print '<td align="right">';
-				print '<a href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
+				print '<a href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&action=unlinkdiscount&discountid=' . $obj->rowid . '">' . img_delete() . '</a>';
 				print '</td></tr>';
 				$i ++;
 				if ($invoice->type == Facture::TYPE_CREDIT_NOTE)
@@ -3069,7 +3069,8 @@ if ($action == 'create')
 	print '</table>';
 
 	// Margin Infos
-	if (! empty($conf->margin->enabled)) {
+	if (! empty($conf->margin->enabled))
+	{
 		print '<br>';
 		$object->displayMarginInfos($object->statut > 0);
 	}
@@ -3082,14 +3083,14 @@ if ($action == 'create')
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editconditions' && ! empty($object->brouillon) && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
-			$form->form_conditions_reglement($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->cond_reglement_id, 'none');
 		}
 	} else {
 		print '&nbsp;';
@@ -3102,12 +3103,12 @@ if ($action == 'create')
 	print $langs->trans('DateMaxPayment');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && ! empty($object->brouillon) && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editpaymentterm&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editpaymentterm&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editpaymentterm') {
-			$form->form_date($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
+			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
 		} else {
 			print dol_print_date($object->date_lim_reglement, 'daytext');
 			if ($object->date_lim_reglement < ($now - $conf->facture->client->warning_delay) && ! $object->paye && $object->statut == 1 && ! isset($object->am))
@@ -3124,13 +3125,13 @@ if ($action == 'create')
 	print $langs->trans('PaymentMode');
 	print '</td>';
 	if ($action != 'editmode' && ! empty($object->brouillon) && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
 	} else {
-		$form->form_modes_reglement($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
 
@@ -3160,11 +3161,11 @@ if ($action == 'create')
 		print $langs->trans('RevenueStamp');
 		print '</td>';
 		if ($action != 'editrevenuestamp' && ! empty($object->brouillon) && $user->rights->facture->creer)
-			print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=editrevenuestamp&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetRevenuStamp'), 1) . '</a></td>';
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editrevenuestamp&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetRevenuStamp'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3" align="right">';
 		if ($action == 'editrevenuestamp') {
-			print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setrevenuestamp">';
 			print $formother->select_revenue_stamp(GETPOST('revenuestamp'), 'revenuestamp', $mysoc->country_code);
@@ -3194,7 +3195,7 @@ if ($action == 'create')
 		print $langs->trans('Project');
 		print '</td>';
 		if ($action != 'classify') {
-			print '<td align="right"><a href="' . $_SERVER ["PHP_SELF"] . '?action=classify&amp;facid=' . $object->id . '">';
+			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=classify&amp;facid=' . $object->id . '">';
 			print img_edit($langs->trans('SetProject'), 1);
 			print '</a></td>';
 		}
@@ -3202,9 +3203,9 @@ if ($action == 'create')
 
 		print '</td><td colspan="3">';
 		if ($action == 'classify') {
-			$form->form_project($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid');
+			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid');
 		} else {
-			$form->form_project($_SERVER ['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'none');
+			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -3236,7 +3237,7 @@ if ($action == 'create')
 				}
 
 				if ($action == 'edit_extras' && $user->rights->facture->creer && GETPOST('attribute') == $key) {
-					print '<form enctype="multipart/form-data" action="' . $_SERVER ["PHP_SELF"] . '" method="post" name="formsoc">';
+					print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formsoc">';
 					print '<input type="hidden" name="action" value="update_extras">';
 					print '<input type="hidden" name="attribute" value="' . $key . '">';
 					print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -3249,7 +3250,7 @@ if ($action == 'create')
 				} else {
 					print $extrafields->showOutputField($key, $value);
 					if ($object->statut == 0 && $user->rights->facture->creer)
-						print '<a href="' . $_SERVER ['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
+						print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
 				}
 				print '</td></tr>' . "\n";
 			}
@@ -3273,7 +3274,7 @@ if ($action == 'create')
 	// Lines
 	$result = $object->getLinesArray();
 
-	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
+	print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">
 	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateligne') . '">
 	<input type="hidden" name="mode" value="">
@@ -3330,7 +3331,7 @@ if ($action == 'create')
 				if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
 					if (! $objectidnext) {
 						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->facture->valider) || $user->rights->facture->invoice_advance->unvalidate) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans('Modify') . '</span></div>';
 						}
@@ -3349,7 +3350,7 @@ if ($action == 'create')
 			{
 				if (! $objectidnext && $object->close_code != 'replaced') 				// Not replaced by another invoice
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=reopen">' . $langs->trans('ReOpen') . '</a></div>';
 				} else {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('ReOpen') . '</span></div>';
 				}
@@ -3358,7 +3359,7 @@ if ($action == 'create')
 			// Validate
 			if ($object->statut == 0 && count($object->lines) > 0 && ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && (! empty($conf->global->FACTURE_ENABLE_NEGATIVE) || $object->total_ttc >= 0)) || ($object->type == Facture::TYPE_CREDIT_NOTE && $object->total_ttc <= 0))) {
 				if ($user->rights->facture->valider) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
 				}
 			}
 
@@ -3368,7 +3369,7 @@ if ($action == 'create')
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendByMail') . '</span></div>';
 				} else {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=presend&amp;mode=init">' . $langs->trans('SendByMail') . '</a></div>';
 					} else
 						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
 				}
@@ -3381,7 +3382,7 @@ if ($action == 'create')
 						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('SendRemindByMail') . '</span></div>';
 					} else {
 						if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->facture->invoice_advance->send) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=prerelance&amp;mode=init">' . $langs->trans('SendRemindByMail') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=prerelance&amp;mode=init">' . $langs->trans('SendRemindByMail') . '</a></div>';
 						} else
 							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendRemindByMail') . '</a></div>';
 					}
@@ -3418,7 +3419,7 @@ if ($action == 'create')
 
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
 				if ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 1 && $resteapayer == 0 && $user->rights->facture->creer && empty($discount->id))
@@ -3441,14 +3442,14 @@ if ($action == 'create')
 				if ($totalpaye > 0 || $totalcreditnotes > 0)
 				{
 					// If one payment or one credit note was linked to this invoice
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=paid">' . $langs->trans('ClassifyPaidPartially') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=paid">' . $langs->trans('ClassifyPaidPartially') . '</a></div>';
 				}
 				else
 				{
 					if ($objectidnext) {
 						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('ClassifyCanceled') . '</span></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=canceled">' . $langs->trans('ClassifyCanceled') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=canceled">' . $langs->trans('ClassifyCanceled') . '</a></div>';
 					}
 				}
 			}
@@ -3456,7 +3457,7 @@ if ($action == 'create')
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $user->rights->facture->creer)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
 			}
 
 			// Clone as predefined
@@ -3478,7 +3479,7 @@ if ($action == 'create')
 				} elseif ($object->getSommePaiement()) {
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
 				} else {
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER ["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
 				}
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("NotAllowed") . '">' . $langs->trans('Delete') . '</a></div>';
@@ -3497,7 +3498,7 @@ if ($action == 'create')
 		// Documents generes
 		$filename = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
-		$urlsource = $_SERVER ['PHP_SELF'] . '?facid=' . $object->id;
+		$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
 		$genallowed = $user->rights->facture->creer;
 		$delallowed = $user->rights->facture->supprimer;
 
@@ -3602,8 +3603,8 @@ if ($action == 'create')
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST ['lang_id']))
-				$newlang = $_REQUEST ['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->client->default_lang;
 			if (! empty($newlang)) {
@@ -3680,7 +3681,7 @@ if ($action == 'create')
 		$formmail->param ['action'] = $action;
 		$formmail->param ['models'] = $modelmail;
 		$formmail->param ['facid'] = $object->id;
-		$formmail->param ['returnurl'] = $_SERVER ["PHP_SELF"] . '?id=' . $object->id;
+		$formmail->param ['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 
 		// Init list of files
 		if (GETPOST("mode") == 'init') {

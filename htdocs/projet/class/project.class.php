@@ -496,6 +496,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
 
+
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
@@ -540,13 +541,15 @@ class Project extends CommonObject
             }
         }
 
-    	if (empty($error)) {
+    	if (empty($error))
+    	{
             $this->db->commit();
             return 1;
         }
         else
-        {
-        	foreach ( $this->errors as $errmsg ) {
+       {
+        	foreach ( $this->errors as $errmsg )
+        	{
 				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
@@ -763,8 +766,16 @@ class Project extends CommonObject
 
         if ($option != 'nolink')
         {
-            $lien = '<a href="' . DOL_URL_ROOT . '/projet/fiche.php?id=' . $this->id . '">';
-            $lienfin = '</a>';
+        	if (preg_match('/\.php$/',$option))
+        	{
+            	$lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . '">';
+            	$lienfin = '</a>';
+        	}
+        	else
+        	{
+            	$lien = '<a href="' . DOL_URL_ROOT . '/projet/fiche.php?id=' . $this->id . '">';
+            	$lienfin = '</a>';
+        	}
         }
 
         $picto = 'projectpub';

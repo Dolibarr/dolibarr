@@ -38,7 +38,7 @@ ConfirmCloseService=Вы действительно хотите закрыть 
 ValidateAContract=Проверить контракт
 ActivateService=Активировать услугу
 ConfirmActivateService=Вы уверены, что хотите, чтобы активировать данную услугу с <b>даты %s?</b>
-# RefContract=Contract reference
+RefContract=Contract reference
 DateContract=Контракт дата
 DateServiceActivate=Дата активации услуги
 DateServiceUnactivate=Сроки службы unactivation
@@ -85,10 +85,10 @@ PaymentRenewContractId=Продлить контракт линия (номер 
 ExpiredSince=Срок действия
 RelatedContracts=Связанные контрактов
 NoExpiredServices=Не истек активных услуг
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=Список услуг, истекающих в ближайшие %s дней
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=Список истекающих услуг
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Торговый представитель подписания контракта

@@ -48,7 +48,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	global $conf, $user, $langs, $db;
 
 	// Filters
-	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER ["PHP_SELF"] . '" method="POST">';
+	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="status" value="' . $status . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';

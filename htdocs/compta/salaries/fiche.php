@@ -37,14 +37,14 @@ $id=GETPOST("id",'int');
 $action=GETPOST('action');
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $sal = new PaymentSalary($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('taxsalarycard'));
+$hookmanager->initHooks(array('salarycard'));
 
 
 
@@ -78,7 +78,13 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->note=GETPOST("note");
 	$sal->type_payment=GETPOST("paymenttype");
 	$sal->num_payment=GETPOST("num_payment");
+	$sal->fk_user_creat=$user->id;
 
+	if (empty($datep) || empty($datesp) || empty($dateep))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+		$error++;
+	}
 	if (empty($sal->fk_user) || $sal->fk_user < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Employee")),'errors');
@@ -98,7 +104,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	if (! $error)
 	{
 		$db->begin();
-	  
+
 		$ret=$sal->create($user);
 		if ($ret > 0)
 		{
@@ -210,11 +216,11 @@ if ($action == 'create')
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-	print $form->select_date($datep,"datep",'','','','add');
+	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-	print $form->select_date($datev,"datev",'','','','add');
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
@@ -244,19 +250,22 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
 		print '</td></tr>';
-		
-		// Type payment
-		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-		$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
-		print "</td>\n";
-		print "</tr>";
-	 
+	}
+
+	// Type payment
+	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
+	print "</td>\n";
+	print "</tr>";
+
+	if (! empty($conf->banque->enabled))
+	{
 		// Number
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
- 
+
 	// Other attributes
 	$parameters=array('colspan' => ' colspan="1"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

@@ -1099,18 +1099,14 @@ else
          */
         $productstatic=new Product($db);
 
+
+        $usemargins=0;
+		if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
+
         // Title line for service
-        //print '<table class="notopnoleft allwidth">';	// Array with (n*2)+1 lines
         $cursorline=1;
         while ($cursorline <= $nbofservices)
         {
-            //print '<tr '.$bc[false].'>';
-            //print '<td width="90" style="border-left: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';">';
-            //print $langs->trans("ServiceNb",$cursorline).'</td>';
-
-           // print '<td class="tab" style="border-right: 1px solid #'.$colorb.'; border-top: 1px solid #'.$colorb.'; border-bottom: 1px solid #'.$colorb.';" rowspan="2">';
-
-
             print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="updateligne">';
@@ -1119,7 +1115,7 @@ else
             print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
 
             // Area with common detail of line
-            print '<table class="notopnoleft allwidth" width="100%">';
+            print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
 
             $sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.description, cd.price_ht, cd.qty,";
             $sql.= " cd.tva_tx, cd.remise_percent, cd.info_bits, cd.subprice,";
@@ -1289,10 +1285,10 @@ else
                     print '<td align="right"><input size="5" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
                     print '<td align="center"><input size="2" type="text" name="elqty" value="'.$objp->qty.'"></td>';
                     print '<td align="right" class="nowrap"><input size="1" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
-					if ($conf->margin->enabled) {
+					if (! empty($usemargins))
+					{
 					    print '<td align="right">';
-					    if ($objp->fk_product)
-					        print '<select id="fournprice" name="fournprice"></select>';
+					    if ($objp->fk_product) print '<select id="fournprice" name="fournprice"></select>';
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht,0,'',0).'"></td>';
 					}
                     print '<td align="center" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
@@ -1389,7 +1385,7 @@ else
             // Area with status and activation info of line
             if ($object->statut > 0)
             {
-                print '<table class="notopnoleft" width="100%">';
+                print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
 
                 print '<tr '.$bc[false].'>';
                 print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
@@ -1447,8 +1443,7 @@ else
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="noborder" width="100%">';
-                //print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("Status").'</td></tr>';
+                print '<table class="notopnoleftnoright" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;
@@ -1540,15 +1535,8 @@ else
                 print '</form>';
             }
 
-           /* print '</td>';	// End td if line is 1
-
-            print '</tr>';
-            print '<tr><td style="border-right: 1px solid #'.$colorb.'">&nbsp;</td></tr>';*/
-
             $cursorline++;
         }
-        //print '</table>';
-
 
 		// Form to add new line
         if ($user->rights->contrat->creer && ($object->statut >= 0))

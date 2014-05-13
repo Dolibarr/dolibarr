@@ -34,7 +34,6 @@ ReturnCP=Voltar à página anterior
 ErrorUserViewCP=Não possui permissões para visualizar este pedido de férias.
 InfosCP=Informações do pedido de Férias
 InfosWorkflowCP=Information Workflow
-DateCreateCP=Data de criação
 RequestByCP=Pedido por
 TitreRequestCP=Folha de férias
 NbUseDaysCP=Número de dias de férias utilizados
@@ -130,7 +129,6 @@ ErrorMailNotSend=An error occurred while sending email:
 NoCPforMonth=No leave this month.
 nbJours=Number days
 TitleAdminCP=Configuração de Férias
-
 #Messages
 Hello=Olá
 HolidaysToValidate=Aprovar férias
@@ -143,10 +141,10 @@ HolidaysRefused=Férias recusadas
 HolidaysRefusedBody=O seu pedido de férias de %s a %s foi recusado pelo seguinte motivo:
 HolidaysCanceled=Férias canceladas
 HolidaysCanceledBody=O seu pedido de férias de %s a %s foi cancelado.
-
-Permission20001=Visualizar/criar/modificar suas férias
-Permission20002=Visualizar/modificar todos os pedidos de férias
-Permission20003=Apagar os seus pedidos de férias
-Permission20004=Definir ferias dos utilizadores
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Review log of modified holidays
-Permission20006=Access holidays monthly report
+Permission20006=Read holidays monthly report
