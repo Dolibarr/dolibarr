@@ -1144,6 +1144,10 @@ elseif (! empty($object->id))
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
 
+    $societe = new Fournisseur($db);
+    $result=$societe->fetch($object->socid);
+    if ($result < 0) dol_print_error($db);
+
 	$head = ordersupplier_prepare_head($object);
 
 	$title=$langs->trans("SupplierOrder");
@@ -1751,7 +1755,7 @@ elseif (! empty($object->id))
 				$var = true;
 
 				// Add free products/services
-				$object->formAddObjectLine(1, $mysoc, $soc);
+				$object->formAddObjectLine(1, $societe, $mysoc);
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

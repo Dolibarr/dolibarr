@@ -1888,8 +1888,7 @@ else
 
             // Show product and description
             $type=(! empty($object->lines[$i]->product_type)?$object->lines[$i]->product_type:(! empty($object->lines[$i]->fk_product_type)?$object->lines[$i]->fk_product_type:0));
-            // Try to enhance type detection using date_start and date_end for free lines where type
-            // was not saved.
+            // Try to enhance type detection using date_start and date_end for free lines where type was not saved.
             $date_start='';
             $date_end='';
             if (! empty($object->lines[$i]->date_start))
@@ -2077,7 +2076,7 @@ else
 					$var = true;
 
 					// Add free products/services
-					$object->formAddObjectLine(1, $mysoc, $soc);
+					$object->formAddObjectLine(1, $societe, $mysoc);
 
 					$parameters = array();
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
