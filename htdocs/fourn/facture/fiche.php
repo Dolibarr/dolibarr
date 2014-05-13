@@ -989,7 +989,7 @@ elseif ($action == 'calculate')
 
     $object->fetch($id);
     $object->fetch_thirdparty();
-	$result=$object->update_price(0, ($calculationrule=='totalofround'?0:1), 0, $object->thirdparty);
+	$result=$object->update_price(0, (($calculationrule=='totalofround')?'0':'1'), 0, $object->thirdparty);
     if ($result	<= 0)
     {
         dol_print_error($db,$result);
