@@ -612,6 +612,18 @@ class Commande extends CommonOrder
         dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
+    	if (! empty($this->ref))	// We check that ref is not already used
+		{
+			$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
+			if ($result > 0)
+			{
+				$this->error='ErrorRefAlreadyExists';
+				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
         $soc = new Societe($this->db);
         $result=$soc->fetch($this->socid);
         if ($result < 0)
@@ -1039,7 +1051,7 @@ class Commande extends CommonOrder
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_option=0)
     {
     	global $mysoc, $conf, $langs;
-    	
+
     	$commandeid=$this->id;
 
         dol_syslog(get_class($this)."::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type", LOG_DEBUG);
@@ -1086,9 +1098,9 @@ class Commande extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            
+
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -1103,14 +1115,14 @@ class Commande extends CommonOrder
                 $rangmax = $this->line_max($fk_parent_line);
                 $rangtouse = $rangmax + 1;
             }
-			
+
 			$product_type=$type;
 			if (!empty($fk_product))
 			{
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 				$product_type=$product->type;
-				
+
 				if($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER && $product_type == 0 && $product->stock_reel < $qty) {
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
@@ -2303,9 +2315,9 @@ class Commande extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            
+
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];

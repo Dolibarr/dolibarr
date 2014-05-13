@@ -673,15 +673,25 @@ class Propal extends CommonObject
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -3;
         }
+
+        // Check parameters
+		if (! empty($this->ref))	// We check that ref is not already used
+		{
+			$result=self::isExistingObject($this->element, 0, $this->ref);	// Check ref is not yet used
+			if ($result > 0)
+			{
+				$this->error='ErrorRefAlreadyExists';
+				dol_syslog(get_class($this)."::create ".$this->error,LOG_WARNING);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
         if (empty($this->date))
         {
             $this->error="Date of proposal is required";
             dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -4;
-        }
-        if (! empty($this->ref))
-        {
-            $result=$this->verifyNumRef();	// Check ref is not yet used
         }
 
 

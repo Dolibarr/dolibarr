@@ -136,7 +136,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 		$product=new ProductFournisseur($db);
 		$product->fetch(0,'PIDRESS');
 		if ($product->id <= 0) { print "\n".__METHOD__." A product with ref PIDRESS must exists into database"; die(); }
-		
+
 		$quantity=10;
 		$ref_fourn='SUPPLIER_REF_PHPUNIT';
 		$tva_tx=19.6;
@@ -337,26 +337,5 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
-    /**
-     *	testVerifyNumRef
-     *
-     *	@return	void
-     */
-    public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new CommandeFournisseur($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }
 }
 ?>

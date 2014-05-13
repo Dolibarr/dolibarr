@@ -2276,6 +2276,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
 		$sql.= " WHERE fk_product = ". $fromId;
 
+		dol_syslog(get_class($this).'::clone_price sql='.$sql);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
@@ -2285,6 +2286,13 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 * Clone links between products
+	 *
+	 * @param 	int		$fromId		Product id
+	 * @param 	int		$toId		Product id
+	 * @return number
+	 */
 	function clone_associations($fromId, $toId)
 	{
 		$this->db->begin();
@@ -2293,6 +2301,7 @@ class Product extends CommonObject
 		$sql.= " SELECT null, $toId, fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = '".$fromId."'";
 
+		dol_syslog(get_class($this).'::clone_association sql='.$sql);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
@@ -2336,6 +2345,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_product = ".$fromId;
 
+		dol_syslog(get_class($this).'::clone_fournisseurs sql='.$sql);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
@@ -2891,42 +2901,6 @@ class Product extends CommonObject
 		if (file_exists($file_osencoded))
 		{
 			vignette($file,$maxWidth,$maxHeight);
-		}
-	}
-
-	/**
-	 *  Deplace fichier recupere sur internet (utilise pour interface avec OSC)
-	 *
-	 *  @param  string	$sdir        	Repertoire destination finale
-	 *  @param  string	$file      		url de l'image
-	 *  @return	void
-	 */
-	function add_photo_web($sdir, $file)
-	{
-		$dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
-		$dir .= "photos/";
-
-		$dir_osencoded=dol_osencode($dir);
-		if (! file_exists($dir_osencoded))
-		{
-			dol_syslog("Product Create ".$dir);
-			dol_mkdir($dir);
-		}
-
-		if (file_exists($dir_osencoded))
-		{
-			// Cree fichier en taille vignette
-			// TODO A faire
-
-			// Cree fichier en taille origine
-			$content = @file_get_contents($file);
-			if( $content)
-			{
-				$nom = basename($file);
-				$im = fopen(dol_osencode($dir.$nom),'wb');
-				fwrite($im, $content);
-				fclose($im);
-			}
 		}
 	}
 

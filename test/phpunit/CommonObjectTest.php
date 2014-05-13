@@ -116,28 +116,6 @@ class CommonObjectTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     *	testVerifyNumRef
-     *
-     *	@return	void
-     */
-    public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Commande($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
-    	return $result;
-    }
-
-    /**
      *	testFetchUser
      *
      *	@return	void

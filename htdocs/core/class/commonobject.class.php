@@ -54,6 +54,42 @@ abstract class CommonObject
 
 
     /**
+     * Check an object id/ref exists
+     * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
+     *
+	 *  @param	string	$element   	String of element ('product', 'facture', ...)
+	 *  @param	int		$id      	Id of object
+	 *  @param  string	$ref     	Ref of object to check
+	 *  @param	string	$ref_ext	Ref ext of object to check
+	 *  @return int     			<0 if KO, 0 if OK but not found, >0 if OK and exists
+     */
+    static function isExistingObject($element, $id, $ref='', $ref_ext='')
+    {
+    	global $db;
+
+		$sql = "SELECT rowid, ref, ref_ext";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$element;
+		if ($id > 0) $sql.= " WHERE rowid = ".$db->escape($id);
+		else if ($ref) $sql.= " WHERE ref = '".$db->escape($ref)."'";
+		else if ($ref_ext) $sql.= " WHERE ref_ext = '".$db->escape($ref_ext)."'";
+		else {
+			$error='ErrorWrongParameters';
+			dol_print_error(get_class()."::isExistingObject ".$error, LOG_ERR);
+			return -1;
+		}
+
+		dol_syslog(get_class()."::isExistingObject sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num=$db->num_rows($resql);
+			if ($num > 0) return 1;
+			else return 0;
+		}
+		return -1;
+    }
+
+    /**
      * Method to output saved errors
      *
      * @return	string		String with errors
@@ -114,33 +150,6 @@ abstract class CommonObject
     	return dol_format_address($this, $withcountry, $sep);
     }
 
-    /**
-     *  Check if ref is used.
-     *
-     * 	@return		int			<0 if KO, 0 if not found, >0 if found
-     */
-    function verifyNumRef()
-    {
-        global $conf;
-
-        $sql = "SELECT rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE ref = '".$this->ref."'";
-        $sql.= " AND entity = ".$conf->entity;
-        dol_syslog(get_class($this)."::verifyNumRef sql=".$sql, LOG_DEBUG);
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            return $num;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::verifyNumRef ".$this->error, LOG_ERR);
-            return -1;
-        }
-    }
 
     /**
      *  Add a link between element $this->element and a contact
@@ -2052,7 +2061,7 @@ abstract class CommonObject
 
 
     /**
-     * 	Get special code of line
+     * 	Get special code of a line
      *
      * 	@param	int		$lineid		Id of line
      * 	@return	int					Special code
@@ -3088,7 +3097,8 @@ abstract class CommonObject
 	 * 	@param 	string 	$force_price	True of not
 	 * 	@return mixed					Array with info
 	 */
-	function getMarginInfos($force_price=false) {
+	function getMarginInfos($force_price=false)
+	{
 		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 

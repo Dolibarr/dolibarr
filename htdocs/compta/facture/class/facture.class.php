@@ -3493,7 +3493,7 @@ class FactureLigne  extends CommonInvoiceLine
 	}
 
 	/**
-	 *	Insert line in database
+	 *	Insert line into database
 	 *
 	 *	@param      int		$notrigger		1 no triggers
 	 *	@return		int						<0 if KO, >0 if OK
@@ -3531,7 +3531,21 @@ class FactureLigne  extends CommonInvoiceLine
 		}
 
 		// Check parameters
-		if ($this->product_type < 0) return -1;
+		if ($this->product_type < 0)
+		{
+			$this->error='ErrorProductTypeMustBe0orMore';
+			return -1;
+		}
+		if (! empty($this->fk_product))
+		{
+			// Check product exists
+			$result=Product::isExistingObject('product', $this->fk_product);
+			if ($result <= 0)
+			{
+				$this->error='ErrorProductIdDoesNotExists';
+				return -1;
+			}
+		}
 
 		$this->db->begin();
 
