@@ -785,7 +785,7 @@ foreach($mainmenuusedarray as $val)
 		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.".png",1);
 		$found=1;
 		if ($generic < 4) $generic++;
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
+		print "/* A mainmenu entry but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	}
 	if ($found)
 	{

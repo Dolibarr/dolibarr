@@ -599,7 +599,7 @@ foreach($mainmenuusedarray as $val)
 	}
 	if ($url)
 	{
-		print "/* A mainmenu entry but img file ".$val.".png not found, so we use a generic one */\n";
+		print "/* A mainmenu entry but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 		print "div.mainmenu.".$val." {\n";
 		print "	background-image: url(".$url.");\n";
 		print "	height:28px;\n";
