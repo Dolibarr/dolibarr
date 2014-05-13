@@ -515,7 +515,7 @@ function createInvoice($authentication,$invoice)
         $newobject->date=dol_stringtotime($invoice['date'],'dayrfc');
         $newobject->note_private=$invoice['note_private'];
         $newobject->note_public=$invoice['note_public'];
-        $newobject->statut=$invoice['status'];
+        $newobject->statut=0;	// We start with status draft
         $newobject->fk_project=$invoice['project_id'];
         $newobject->date_creation=$now;
 
@@ -551,7 +551,7 @@ function createInvoice($authentication,$invoice)
             $error++;
         }
 
-        if ($newobject->statut == 1)   // We want invoice validated
+        if ($invoice['status'] == 1)   // We want invoice to have status validated
         {
             $result=$newobject->validate($fuser);
             if ($result < 0)
