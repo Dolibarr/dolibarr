@@ -189,14 +189,14 @@ else
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
     $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
-    
+
     $nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 	}
-    
+
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
@@ -237,8 +237,8 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
-		
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num ,$nbtotalofrecords);
+
+    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
     	if (! empty($catid))
     	{
@@ -286,7 +286,7 @@ else
     	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
     	 	if ($user->rights->fournisseur->lire) $colspan++;
     	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
-    	 	
+
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
@@ -370,10 +370,10 @@ else
     			print '</td>';
     		}
 
-    		print '<td align="center">';  		
+    		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
             print '</td >';
-            
+
             print '<td align="center">';
             print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
@@ -501,7 +501,7 @@ else
                 print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 
                 print '<td>&nbsp;</td>';
-                
+
                 print "</tr>\n";
     			$i++;
     		}
