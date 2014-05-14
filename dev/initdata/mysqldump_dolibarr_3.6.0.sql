@@ -5505,6 +5505,7 @@ CREATE TABLE `llx_product` (
   `fk_product_type` int(11) DEFAULT '0',
   `duration` varchar(6) DEFAULT NULL,
   `seuil_stock_alerte` int(11) DEFAULT '0',
+  `url`	varchar(255),
   `barcode` varchar(255) DEFAULT NULL,
   `fk_barcode_type` int(11) DEFAULT '0',
   `accountancy_code_sell` varchar(15) DEFAULT NULL,
