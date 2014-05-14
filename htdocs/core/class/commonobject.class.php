@@ -3285,6 +3285,92 @@ abstract class CommonObject
 		print '</table>';
 	}
 
+
+	/**
+	 *	Add resources to the current object : add entry into llx_element_resources
+	 *Need $this->element & $this->id
+	 *
+	 *	@param		int	$resource_id		Resource id
+	 *	@param		string	$resource_element	Resource element
+	 *	@return		int	<=0 if KO, >0 if OK
+	 */
+	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
+	{
+		$this->db->begin();
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_resources (";
+		$sql.= "resource_id";
+		$sql.= ", resource_type";
+		$sql.= ", element_id";
+		$sql.= ", element_type";
+		$sql.= ", busy";
+		$sql.= ", mandatory";
+		$sql.= ") VALUES (";
+		$sql.= $resource_id;
+		$sql.= ", '".$resource_element."'";
+		$sql.= ", '".$this->id."'";
+		$sql.= ", '".$this->element."'";
+		$sql.= ", '".$busy."'";
+		$sql.= ", '".$mandatory."'";
+		$sql.= ")";
+
+		dol_syslog(get_class($this)."::add_element_resource sql=".$sql, LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return  0;
+		}
+	}
+	
+	/**
+	 *    Delete a link to resource line
+	 *
+	 *    @param	int		$rowid			Id of resource line to delete
+	 *    @param	int		$element		element name (for trigger) TODO: use $this->element into commonobject class
+	 *    @param	int		$notrigger		Disable all triggers
+	 *    @return   int						>0 if OK, <0 if KO
+	 */
+	function delete_resource($rowid, $element, $notrigger=0)
+	{
+	    global $user,$langs,$conf;
+	
+	    $error=0;
+	
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
+	    $sql.= " WHERE rowid =".$rowid;
+	
+	    dol_syslog(get_class($this)."::delete_resource sql=".$sql);
+	    if ($this->db->query($sql))
+	    {
+	        if (! $notrigger)
+	        {
+	            // Call triggers
+	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers(strtoupper($element).'_DELETE_RESOURCE',$this,$user,$langs,$conf);
+	            if ($result < 0) {
+	                $error++; $this->errors=$interface->errors;
+	            }
+	            // End call triggers
+	        }
+	
+	        return 1;
+	    }
+	    else
+	    {
+	        $this->error=$this->db->lasterror();
+	        dol_syslog(get_class($this)."::delete_resource error=".$this->error, LOG_ERR);
+	        return -1;
+	    }
+	}
+
+
 	/**
 	 * Overwrite magic function to solve problem of cloning object that are kept as references
 	 *
