@@ -115,9 +115,9 @@ if ($sall)
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (GETPOST('statut'))
+if (GETPOST('statut')!='')
 {
-	$sql .= " AND fk_statut =".GETPOST('statut','int');
+	$sql .= " AND fk_statut IN (".GETPOST('statut').")";
 }
 if ($search_refsupp)
 {

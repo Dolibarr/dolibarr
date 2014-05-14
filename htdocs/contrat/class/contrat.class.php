@@ -1151,11 +1151,11 @@ class Contrat extends CommonObject
 		$this->db->begin();
 
 		// Calcul du total TTC et de la TVA pour la ligne a partir de
-		// qty, pu, remise_percent et txtva
+		// qty, pu, remise_percent et tvatx
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-		$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+		$localtaxes_type=getLocalTaxesFromRate($tvatx,0,$mysoc);
 
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1, '', $localtaxes_type);
 		$total_ht  = $tabprice[0];

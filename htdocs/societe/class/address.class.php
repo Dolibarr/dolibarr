@@ -445,7 +445,7 @@ class Address
 	 */
 	function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom, datec as date_creation, datea as date_modification,";
+		$sql = "SELECT s.rowid, s.nom, datec as date_creation, tms as date_modification,";
 		$sql.= " fk_user_creat, fk_user_modif";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.rowid = ".$id;

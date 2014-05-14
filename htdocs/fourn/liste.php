@@ -78,7 +78,7 @@ $thirdpartystatic=new Societe($db);
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
-$sql = "SELECT s.rowid as socid, s.nom, s.zip, s.town, s.datec, s.datea,  st.libelle as stcomm, s.prefix_comm, s.status as status, ";
+$sql = "SELECT s.rowid as socid, s.nom, s.zip, s.town, s.datec, st.libelle as stcomm, s.prefix_comm, s.status as status, ";
 $sql.= "code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";

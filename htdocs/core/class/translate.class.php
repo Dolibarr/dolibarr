@@ -742,7 +742,7 @@ class Translate
 	 *	@param	string	$currency_code		Get only currency. Get all if ''.
 	 *  @return int             			Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	private function load_cache_currencies($currency_code)
+	public function load_cache_currencies($currency_code)
 	{
 		global $db;
 

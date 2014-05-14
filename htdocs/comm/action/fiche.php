@@ -203,7 +203,7 @@ if ($action == 'add_action')
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
-	if (! empty($datea) && GETPOST('percentage') == 0)
+	if (! empty($datep) && GETPOST('percentage') == 0)
 	{
 		$error++;
 		$action = 'create';
