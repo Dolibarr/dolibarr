@@ -411,7 +411,7 @@ class Facture extends CommonInvoice
 
 			/*
 			 * Insert lines of predefined invoices
-			*/
+			 */
 			if (! $error && $this->fac_rec > 0)
 			{
 				foreach ($_facrec->lines as $i => $val)
@@ -2010,9 +2010,7 @@ class Facture extends CommonInvoice
 	{
 		global $mysoc, $conf, $langs;
 
-		$facid=$this->id;
-
-		dol_syslog(get_class($this)."::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline facid=$this->id,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Clean parameters
@@ -2058,21 +2056,6 @@ class Facture extends CommonInvoice
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
 
-			/*if (is_object($invoiceline) && $invoiceline->total_ttc && $invoiceline->total_ht)	// We already have details calculated
-			{
-				$pu=($price_base_type=='HT'?price2num($invoiceline->total_ttc/$qty,'MU'):price2num($invoiceline->total_ht/$qty,'MU'));
-
-				$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
-				// Now overwrite already calculated fields
-				$tabprice[0] = $array_calculated['total_ht'];
-				$tabprice[1] = $array_calculated['total_vat'];
-				$tabprice[2] = $array_calculated['total_ttc'];
-				$tabprice[9] = $array_calculated['total_localtax1'];
-				$tabprice[10] = $array_calculated['total_localtax2'];
-				$tabprice[3] = $array_calculated['pu_ht'];
-			}
-			else*/
-
 			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
 
 			$total_ht  = $tabprice[0];
@@ -2106,7 +2089,7 @@ class Facture extends CommonInvoice
 
 			// Insert line
 			$this->line=new FactureLigne($this->db);
-			$this->line->fk_facture=$facid;
+			$this->line->fk_facture=$this->id;
 			$this->line->label=$label;	// deprecated
 			$this->line->desc=$desc;
 			$this->line->qty=            ($this->type==self::TYPE_CREDIT_NOTE?abs($qty):$qty);	// For credit note, quantity is always positive and unit price negative
@@ -2150,8 +2133,7 @@ class Facture extends CommonInvoice
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$this->id=$facid;	// TODO To move this we must remove parameter facid into this function declaration
-				$result=$this->update_price(1);
+				$result=$this->update_price(1,'auto');	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0)
 				{
 					$this->db->commit();

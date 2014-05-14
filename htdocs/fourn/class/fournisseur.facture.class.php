@@ -1256,7 +1256,7 @@ class FactureFournisseur extends CommonInvoice
             }
 
             // Update total price into invoice record
-            $result=$this->update_price();
+            $result=$this->update_price('','auto');
 
             return $result;
         }
@@ -1285,7 +1285,7 @@ class FactureFournisseur extends CommonInvoice
 
         $error=0;
     	$this->db->begin();
-		
+
 		if (! $error && ! $notrigger)
         {
 	    	// Appel des triggers
