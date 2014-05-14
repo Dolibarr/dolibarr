@@ -46,6 +46,9 @@ class DoliDBPgsql extends DoliDB
 	static $versionmin=array(8,4,0);	// Version min database
 	//! Resultset of last query
 	private $_results;
+	
+	public $unescapeslashquot;
+	public $standard_conforming_strings;
 
 	/**
 	 *	Constructor.
