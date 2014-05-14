@@ -17,11 +17,17 @@
  */
 
 /**
- *	\file		lib/resource.lib.php
+ *	\file		htdocs/core/lib/resource.lib.php
  *	\ingroup	resource
  *	\brief		This file is library for resource module
  */
 
+/**
+ * Prepare head for tabs
+ *
+ * @param	Object	$object		Object
+ * @return	array				Array of head entries
+ */
 function resourcePrepareHead($object)
 {
 	global $langs, $conf, $user;

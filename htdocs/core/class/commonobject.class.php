@@ -3290,9 +3290,11 @@ abstract class CommonObject
 	 *	Add resources to the current object : add entry into llx_element_resources
 	 *Need $this->element & $this->id
 	 *
-	 *	@param		int	$resource_id		Resource id
+	 *	@param		int		$resource_id		Resource id
 	 *	@param		string	$resource_element	Resource element
-	 *	@return		int	<=0 if KO, >0 if OK
+	 *	@param		int		$busy				Busy or not
+	 *	@param		int		$mandatory			Mandatory or not
+	 *	@return		int							<=0 if KO, >0 if OK
 	 */
 	function add_element_resource($resource_id,$resource_element,$busy=0,$mandatory=0)
 	{
@@ -3327,7 +3329,7 @@ abstract class CommonObject
 			return  0;
 		}
 	}
-	
+
 	/**
 	 *    Delete a link to resource line
 	 *
@@ -3339,12 +3341,12 @@ abstract class CommonObject
 	function delete_resource($rowid, $element, $notrigger=0)
 	{
 	    global $user,$langs,$conf;
-	
+
 	    $error=0;
-	
+
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid =".$rowid;
-	
+
 	    dol_syslog(get_class($this)."::delete_resource sql=".$sql);
 	    if ($this->db->query($sql))
 	    {
@@ -3359,7 +3361,7 @@ abstract class CommonObject
 	            }
 	            // End call triggers
 	        }
-	
+
 	        return 1;
 	    }
 	    else

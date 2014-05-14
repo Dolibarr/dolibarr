@@ -722,7 +722,7 @@ class Translate
 
 		if (function_exists("mb_convert_encoding"))
 		{
-			$this->load_cache_currencies($forceloadall?'':$currency_code);
+			$this->loadCacheCurrencies($forceloadall?'':$currency_code);
 
 			if (isset($this->cache_currencies[$currency_code]) && ! empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode']))
 			{
@@ -742,7 +742,7 @@ class Translate
 	 *	@param	string	$currency_code		Get only currency. Get all if ''.
 	 *  @return int             			Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	public function load_cache_currencies($currency_code)
+	public function loadCacheCurrencies($currency_code)
 	{
 		global $db;
 
@@ -754,7 +754,7 @@ class Translate
 		if (! empty($currency_code)) $sql.=" AND code_iso = '".$currency_code."'";
 		//$sql.= " ORDER BY code_iso ASC"; // Not required, a sort is done later
 
-		dol_syslog(get_class($this).'::load_cache_currencies sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::loadCacheCurrencies sql='.$sql, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

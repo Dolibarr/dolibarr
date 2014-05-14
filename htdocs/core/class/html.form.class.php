@@ -3264,7 +3264,7 @@ class Form
     {
         global $conf,$langs,$user;
 
-        $langs->load_cache_currencies('');
+        $langs->loadCacheCurrencies('');
 
         $out='';
 

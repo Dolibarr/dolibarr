@@ -61,7 +61,7 @@ class modResource extends DolibarrModules
 		// (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module Resource";
 		// Possible values for version are: 'development', 'experimental' or version
-		$this->version = 'experimental';
+		$this->version = 'development';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -94,7 +94,7 @@ class modResource extends DolibarrModules
 			// Set this to relative path of css if module has its own css file
 			//'css' => '/resource/css/resource.css.php',
 			// Set here all hooks context managed by module
-			'hooks' => array('actioncard','actioncommdao','resource_card','element_resource')
+			// 'hooks' => array('actioncard','actioncommdao','resource_card','element_resource')
 			// Set here all workflow context managed by module
 			//'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
 		);
@@ -190,7 +190,7 @@ class modResource extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$r++;
-		
+
 		$this->rights[$r][0] = 1101204;
 		$this->rights[$r][1] = 'Link resources';
 		$this->rights[$r][3] = 0;
@@ -225,7 +225,7 @@ class modResource extends DolibarrModules
 			'titre'=> 'MenuResourceIndex',
 			'mainmenu'=>'tools',
 			'leftmenu'=> 'resource',
-			'url'=> '/resource/list.php',	
+			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
 			'position'=> 100,
 			'enabled'=> '1',
@@ -233,7 +233,7 @@ class modResource extends DolibarrModules
 			'user'=> 0
 		);
 		$r++;
-		
+
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=resource', //On utilise les ancres définis dans le menu parent déclaré au dessus
 			'type'=> 'left', // Toujours un menu gauche
