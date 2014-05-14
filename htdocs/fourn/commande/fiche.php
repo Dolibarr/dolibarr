@@ -227,7 +227,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     // Ecrase $pu par celui	du produit
     // Ecrase $desc	par	celui du produit
     // Ecrase $txtva  par celui du produit
-    if (GETPOST('prod_entry_mode') != 'free')	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+    if ((GETPOST('prod_entry_mode') != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
     {
     	$idprod=0;
     	$productsupplier = new ProductFournisseur($db);
@@ -285,7 +285,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     		setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
     	}
     }
-    else if( GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='' )
+    else if((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))
 	{
 		$pu_ht = price2num($price_ht, 'MU');
 		$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
