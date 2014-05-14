@@ -23,6 +23,7 @@
 /**
  * Actions class file for resources
  *
+ * TODO Remove this class and replace a method into commonobject
  */
 class ActionsResource
 {
@@ -44,10 +45,12 @@ class ActionsResource
 	/**
 	 * doActions for resource module
 	 *
-	 * @param array $parameters parameters
-	 * @param Object $object object
-	 * @param string $action action
+	 * @param 	array 	$parameters 	parameters
+	 * @param 	Object 	&$object 		object
+	 * @param 	string 	&$action 		action
+	 * @return	void
 	 */
+	/* Why a hook action ? TODO Remove this class and replace a method into commonobject
 	function doActions($parameters, &$object, &$action)
 	{
 		global $langs,$user;
@@ -60,9 +63,9 @@ class ActionsResource
 		        $res = $object->fetch(GETPOST('id'));
 		        if($res)
 		        {
-		        
+
 		            $result = $object->delete(GETPOST('id'));
-		        
+
 		            if ($result >= 0)
 		            {
 		                setEventMessage($langs->trans('RessourceSuccessfullyDeleted'));
@@ -117,8 +120,8 @@ class ActionsResource
 			{
 				$res = $object->fetch(GETPOST('id'));
 				if($res)
-				{			    
-				    
+				{
+
 					$result = $object->delete_resource(GETPOST('lineid'),GETPOST('element'));
 
 					if ($result >= 0)
@@ -131,7 +134,7 @@ class ActionsResource
 						setEventMessage($object->error,'errors');
 					}
 				}
-				else 
+				else
 				{
 				    setEventMessage($object->error,'errors');
 				}
@@ -143,10 +146,10 @@ class ActionsResource
 				$res = $object->fetch_element_resource(GETPOST('lineid'));
 				if($res)
 				{
-					
+
 					$object->busy = GETPOST('busy');
 					$object->mandatory = GETPOST('mandatory');
-					
+
 					$result = $object->update_element_resource($user);
 
 					if ($result >= 0)
@@ -160,8 +163,6 @@ class ActionsResource
 					}
 				}
 			}
-			
 		}
-
-	}
+	}*/
 }
