@@ -21,10 +21,7 @@ create table llx_accountingaccount
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_pcg_version  varchar(12)  NOT NULL,
-  pcg_type        varchar(20)  NOT NULL,
-  pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(20)  NOT NULL,
-  account_parent  varchar(20),
   label           varchar(255) NOT NULL,
   active     	  tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
