@@ -1364,8 +1364,10 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 	// Reference client
 	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
-	// print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
-	print '<input type="text" name="ref_client" value=""></td>'; // We must not use ref_client of proposal for an order
+	if (!empty($conf->global->MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER))
+		print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
+	else
+		print '<input type="text" name="ref_client" value=""></td>';
 	print '</tr>';
 
 	// Client
