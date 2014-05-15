@@ -29,7 +29,7 @@
  */
 
 global $langs;
-$langs->load("cc_extras");
+$langs->load("products");
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_multipledeletelines.tpl.php -->
