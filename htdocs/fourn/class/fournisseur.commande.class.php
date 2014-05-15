@@ -1216,7 +1216,7 @@ class CommandeFournisseur extends CommonOrder
                     // Fin appel triggers
                 }
 
-                $this->update_price();
+                $this->update_price('','auto');
 
                 $this->db->commit();
                 return 1;
@@ -1799,7 +1799,7 @@ class CommandeFournisseur extends CommonOrder
                 }
 
                 // Mise a jour info denormalisees au niveau facture
-                $this->update_price();
+                $this->update_price('','auto');
 
                 $this->db->commit();
                 return $result;

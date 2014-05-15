@@ -388,7 +388,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 					print '</tr>';
 					foreach ($object->prices_by_qty_list [$i] as $ii => $prices) {
 						if ($action == 'edit_price_by_qty' && $rowid == $prices ['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
-							print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+							print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 							print '<input type="hidden" name="action" value="update_price_by_qty">';
 							print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [$i] . '">';
 							print '<input type="hidden" value="' . $prices ['rowid'] . '" name="rowid">';
@@ -408,9 +408,9 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 							print '<td align="right">' . price($prices ['remise_percent']) . ' %</td>';
 							print '<td align="center">';
 							if (($user->rights->produit->creer || $user->rights->service->creer)) {
-								print '<a href="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+								print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
 								print img_edit() . '</a>';
-								print '<a href="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+								print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
 								print img_delete() . '</a>';
 							} else {
 								print '&nbsp;';
@@ -420,7 +420,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 						}
 					}
 					if ($action != 'edit_price_by_qty' && ($user->rights->produit->creer || $user->rights->service->creer)) {
-						print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+						print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 						print '<input type="hidden" name="action" value="update_price_by_qty">';
 						print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [$i] . '">';
 						print '<input type="hidden" value="0" name="rowid">';
@@ -437,7 +437,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 					print '</table>';
 				} else {
 					print $langs->trans("No");
-					print '&nbsp;<a href="' . $_SERVER ['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';
+					print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';
 				}
 				print '</td></tr>';
 			}
@@ -469,7 +469,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 	if ($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
 		print '<tr><td>' . $langs->trans("PriceByQuantity");
 		if ($object->prices_by_qty [0] == 0) {
-			print '&nbsp;<a href="' . $_SERVER ['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=1">' . $langs->trans("Activate");
+			print '&nbsp;<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=1">' . $langs->trans("Activate");
 		}
 		print '</td><td>';
 		
@@ -484,7 +484,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 			print '</tr>';
 			foreach ($object->prices_by_qty_list [0] as $ii => $prices) {
 				if ($action == 'edit_price_by_qty' && $rowid == $prices ['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
-					print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+					print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 					print '<input type="hidden" name="action" value="update_price_by_qty">';
 					print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [0] . '">';
 					print '<input type="hidden" value="' . $prices ['rowid'] . '" name="rowid">';
@@ -504,9 +504,9 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 					print '<td align="right">' . price($prices ['remise_percent']) . ' %</td>';
 					print '<td align="center">';
 					if (($user->rights->produit->creer || $user->rights->service->creer)) {
-						print '<a href="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=edit_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
 						print img_edit() . '</a>';
-						print '<a href="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
+						print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=delete_price_by_qty&amp;rowid=' . $prices ["rowid"] . '">';
 						print img_delete() . '</a>';
 					} else {
 						print '&nbsp;';
@@ -516,7 +516,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
 				}
 			}
 			if ($action != 'edit_price_by_qty') {
-				print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+				print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 				print '<input type="hidden" name="action" value="update_price_by_qty">';
 				print '<input type="hidden" name="priceid" value="' . $object->prices_by_qty_id [0] . '">';
 				print '<input type="hidden" value="0" name="rowid">';
@@ -561,7 +561,7 @@ if (! $action || $action == 'delete') {
 	print "\n" . '<div class="tabsAction">' . "\n";
 	
 	if ($user->rights->produit->creer || $user->rights->service->creer) {
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdatePrice") . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdatePrice") . '</a></div>';
 	}
 	
 	print "\n</div>\n";
@@ -574,7 +574,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 	print_fiche_titre($langs->trans("NewPrice"), '', '');
 	
 	if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-		print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -625,7 +625,7 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		print '<br></form>';
 	} else {
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) {
-			print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="update_price">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -761,7 +761,7 @@ if ($result) {
 			if ($user->rights->produit->supprimer) {
 				print '<td align="right">';
 				if ($i > 0) {
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=delete&amp;id=' . $object->id . '&amp;lineid=' . $objp->rowid . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete&amp;id=' . $object->id . '&amp;lineid=' . $objp->rowid . '">';
 					print img_delete();
 					print '</a>';
 				} else
@@ -812,7 +812,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		
 		print_fiche_titre($langs->trans('PriceByCustomer'));
 		
-		print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="id" value="' . $object->id . '">';
@@ -887,7 +887,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			setEventMessage($prodcustprice->error, 'errors');
 		}
 		
-		print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="' . $prodcustprice->id . '">';
@@ -972,7 +972,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		
 		if (count($prodcustprice->lines) > 0) {
 			
-			print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 			
 			print '<table class="noborder" width="100%">';
@@ -1022,7 +1022,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 		
 		print "\n" . '<div class="tabsAction">' . "\n";
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Ok") . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">' . $langs->trans("Ok") . '</a></div>';
 		print "\n</div><br>\n";
 	} else {
 		
@@ -1045,7 +1045,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		
 		if (count($prodcustprice->lines) > 0) {
 			
-			print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 			
 			print '<table class="noborder" width="100%">';
@@ -1102,13 +1102,13 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->supprimer || $user->rights->service->supprimer) {
 					print '<td align="right">';
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=delete_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
 					print img_delete();
 					print '</a>';
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=edit_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;id=' . $object->id . '&amp;lineid=' . $line->id . '">';
 					print img_edit();
 					print '</a>';
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=showlog_customer_price&amp;id=' . $object->id . '&amp;socid=' . $line->fk_soc . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;id=' . $object->id . '&amp;socid=' . $line->fk_soc . '">';
 					print img_info();
 					print '</a>';
 					print '</td>';
@@ -1132,7 +1132,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n" . '<div class="tabsAction">' . "\n";
 		
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;id=' . $object->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
 		}
 		print "\n</div><br>\n";
 	}

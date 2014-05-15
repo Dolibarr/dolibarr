@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Klik hier om verder gevorderde parameters te zien of
 
 #########
 # upgrade
-#########
 MigrationFixData=Reparatie voor gedenormaliseerde gegevens
 MigrationOrder=Gegevensmigratie van orders van afnemers
 MigrationSupplierOrder=Gegevensmigratie van orders van leveranciers
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Verstreken tijd van de update in seconden
 MigrationActioncommElement=Bijwerken van gegevens over acties
 MigrationPaymentMode=Data migratie voor de betaling mode
 MigrationCategorieAssociation=Overzetten van categoriën
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

@@ -135,7 +135,7 @@ ErrorWarehouseMustDiffers=Kaynak ve hedef depo farklı olmalıdır
 ErrorBadFormat=Hatalı biçim!
 ErrorPaymentDateLowerThanInvoiceDate=Ödeme tarihi (%s) fatura tarihinden (%s) önce bu faturada %s olamaz.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Hata, bu üye henüz bir üçüncü partiye bağlanmamıştır. Üyeyi varolan bir üçüncü partiye bağlayın ya da faturayla abonelik oluşturmadan önce yeni bir üçüncü parti oluşturun.
-ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+ErrorThereIsSomeDeliveries=Hata, bu sevkiyata bağlı bazı teslimatlar var. Silme işlemi reddedildi.
 
 # Warnings
 WarningMandatorySetupNotComplete=Zorunlu kurulum parametreleri henüz tanımlanmamış

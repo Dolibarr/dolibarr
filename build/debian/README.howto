@@ -105,8 +105,8 @@ http://bugs.debian.org/package
 ##### Testing a package into unstable env
 
 Check you have a mysql server available from another interface than localhost
-Uncomment line if required and restart mysql
-bind-address = 127.0.0.1
+Comment line in /etc/mysql/my.cnf if required and restart mysql
+#bind-address = 127.0.0.1
 
 Create a chroot called "unstable-amd64-sbuild"
 > sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
@@ -120,14 +120,16 @@ Puis pour se connecter et préparer l'environnement
 > apt-get install links mysql-client
 
 Pour tester un package
+> On host server, stop any server on port 80 and 3306 (same port will be used by chroot env)
 > cp ../build-area/* /srv/chroot/unstable/tmp
 > sudo schroot -c name_of_chroot
 > cd /tmp
 > lintian --pedantic -E -I dolibarr*.deb
 > lintian --pedantic -E -I dolibarr*.dsc
-> dpkg -i dolibarr*.deb
+> dpkg -i dolibarr*.deb  ou   pour avoir des traces: dpkg -D77777 -i dolibarr*.deb
 > apt-get install -f
 
+Puis http://localhost/dolibarr/ (cela peut etre appeler depuis le hote).
 
 
 
@@ -227,9 +229,13 @@ from origin/upstream and origin/pristine.
 * If new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
 
+* Edit tgz file to remove ckeditor and phpexcel and renama file into dolibarr-x.y.z+dsfgw.tgz
+
 * Staying into git root directory, run
-> git-import-orig -vv ../dolibarr-3.3.4.tgz
-and enter version when requested.
+> git-import-orig -vv ../dolibarr-x.y.z+dsfgw.tgz
+and enter version when requested with format
+x.y.z+dsfgw
+(x.y.z = version, w start from 1 and is increased for each new import)
 
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 

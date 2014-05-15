@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=العودة إلى الوراء وتصحيح ا
 ErrorWrongValueForParameter=قد تكون لديكم مطبوعة خاطئة قيمة معلمة '٪ ق.
 ErrorFailedToCreateDatabase=فشل إنشاء قاعدة بيانات '٪ ق.
 ErrorFailedToConnectToDatabase=فشل في الاتصال بقاعدة البيانات '٪ ق.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP نسخة قديمة جدا. النسخة ٪ ق هو مطلوب.
 WarningPHPVersionTooLow=PHP نسخة قديمة جدا. ومن المتوقع %s نسخة أو أكثر. وينبغي أن تسمح هذه النسخة تثبيت ولكن لم يتم اعتماد.
 ErrorConnectedButDatabaseNotFound=خادم الصدد الى قاعدة البيانات ولكن النجاح في '٪ ق' لم يتم العثور عليه.
 ErrorDatabaseAlreadyExists=قاعدة البيانات '٪ ق' موجود بالفعل.
 IfDatabaseNotExistsGoBackAndUncheckCreate=إذا كان لا وجود قاعدة بيانات ، والتأكد من العودة الخيار "إنشاء قاعدة بيانات".
 IfDatabaseExistsGoBackAndCheckCreate=إذا كانت قاعدة البيانات موجود بالفعل ، من العودة وإلغاء "إنشاء قاعدة بيانات" الخيار.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP الإصدار
 YouCanContinue=يمكنك الاستمرار...
 PleaseBePatient=يرجى التحلي بالصبر...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=ترقية تخزين الشحن 2
 MigrationFinished=الانتهاء من الهجرة
 LastStepDesc=<strong>الخطوة الأخيرة</strong> : تعريف المستخدم وكلمة السر هنا كنت تخطط لاستخدامها للاتصال البرمجيات. لا تفقد هذا كما هو حساب لإدارة جميع الآخرين.
 ActivateModule=تفعيل وحدة %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=إصلاح البيانات الذي لم تتم تسويته
 MigrationOrder=بيانات الهجرة طلبات الزبائن
 MigrationSupplierOrder=بيانات الهجرة من أجل الموردين أوامر
@@ -206,4 +205,7 @@ MigrationProjectUserResp=بيانات fk_user_resp مجال الهجرة من ll
 MigrationProjectTaskTime=تحديث الوقت الذي يقضيه في ثوان
 MigrationActioncommElement=تحديث البيانات على الإجراءات
 MigrationPaymentMode=بيانات الهجرة لطريقة الدفع
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

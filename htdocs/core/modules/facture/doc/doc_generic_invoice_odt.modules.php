@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012	Laurent Destailleur	<ely@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
 * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
-* 
+*
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation; either version 3 of the License, or
@@ -86,119 +86,6 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // Par defaut, si n'etait pas defini
 	}
 
-
-	/**
-	 * Define array with couple substitution key => substitution value
-	 *
-	 * @param   Object			$object             Main object to use as data source
-	 * @param   Translate		$outputlangs        Lang object to use for output
-	 * @return	array								Array of substitution
-	 */
-	function get_substitutionarray_object($object,$outputlangs)
-	{
-		global $conf;
-
-		$invoice_source=new Facture($this->db);
-		if ($object->fk_facture_source > 0)
-		{
-			$invoice_source->fetch($object->fk_facture_source);
-		}
-		$sumpayed = $object->getSommePaiement();
-		$alreadypayed=price($sumpayed,0,$outputlangs);
-
-		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_ref_ext'=>$object->ref_ext,
-		'object_ref_customer'=>$object->ref_client,
-		'object_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
-		'object_source_invoice_ref'=>$invoice_source->ref,
-        'object_hour'=>dol_print_date($object->date,'hour'),
-		'object_date'=>dol_print_date($object->date,'day'),
-		'object_date_rfc'=>dol_print_date($object->date,'dayrfc'),
-		'object_date_limit'=>dol_print_date($object->date_lim_reglement,'day'),
-		'object_date_creation'=>dol_print_date($object->date_creation,'day'),
-		'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
-		'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
-		'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
-		'object_payment_mode_code'=>$object->mode_reglement_code,
-		'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-		'object_payment_term_code'=>$object->cond_reglement_code,
-		'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-
-		'object_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
-		'object_total_vat_locale'=>price($object->total_tva, 0, $outputlangs),
-		'object_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
-		'object_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
-		'object_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
-		'object_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
-		'object_total_ht'=>price2num($object->total_ht),
-		'object_total_vat'=>price2num($object->total_tva),
-		'object_total_localtax1'=>price2num($object->total_localtax1),
-		'object_total_localtax2'=>price2num($object->total_localtax2),
-		'object_total_ttc'=>price2num($object->total_ttc),
-		'object_total_discount_ht' => price2num($object->getTotalDiscount()),
-
-		'object_vatrate'=>(isset($object->tva)?vatrate($object->tva):''),
-		'object_note_private'=>$object->note,
-		'object_note'=>$object->note_public,
-		// Payments
-		'object_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
-		'object_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
-		'object_already_payed'=>$alreadypayed,
-		'object_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
-		);
-
-		// Add vat by rates
-		foreach ($object->lines as $line)
-		{
-			if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
-			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
-		}
-
-		// Retrieve extrafields
-		if(is_array($object->array_options) && count($object->array_options))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
-			$object->fetch_optionals($object->id,$extralabels);
-
-			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key='object',$outputlangs);
-		}
-		return $resarray;
-	}
-
-	/**
-	 * Define array with couple substitution key => substitution value
-	 *
-	 * @param   array		$line			Array of lines
-	 * @param   Translate	$outputlangs    Lang object to use for output
-	 * @return	array						Return substitution array
-	 */
-	function get_substitutionarray_lines($line, Translate $outputlangs)
-	{
-		global $conf;
-
-		return array(
-			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
-			'line_product_ref'=>$line->product_ref,
-			'line_product_label'=>$line->product_label,
-			'line_desc'=>$line->desc,
-			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-			'line_up'=>price($line->subprice, 0, $outputlangs),
-			'line_qty'=>$line->qty,
-			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-			'line_price_ht'=>price2num($line->total_ht),
-			'line_price_ttc'=>price2num($line->total_ttc),
-			'line_price_vat'=>price2num($line->total_tva),
-			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
-			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
-			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
-			'line_date_start'=>dol_print_date($line->date_start, 'day', false, $outputlangs),
-			'line_date_end'=>dol_print_date($line->date_end, 'day', false, $outputlangs),
-		);
-	}
 
 	/**
 	 * Return description of a module
@@ -455,7 +342,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
 				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
-				$array_propal=is_object($propal_object)?$this->get_substitutionarray_propal($propal_object,$outputlangs,'propal'):array();
+				$array_propal=is_object($propal_object)?$this->get_substitutionarray_object($propal_object,$outputlangs,'propal'):array();
 				$array_other=$this->get_substitutionarray_other($user,$outputlangs);
 
 				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal);

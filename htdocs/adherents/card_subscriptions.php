@@ -83,6 +83,12 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+
+
 
 
 /*
@@ -392,9 +398,17 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    $errmsg=$invoice->error;
 	                    $error++;
 	                }
+                }
 
+                if (! $error)
+                {
 	                // Validate invoice
 	                $result=$invoice->validate($user);
+   	                if ($result <= 0)
+	                {
+	                    $errmsg=$invoice->error;
+	                    $error++;
+	                }
                 }
 
                 // Add payment onto invoice
@@ -404,7 +418,6 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-                    // Creation de la ligne paiement
                     $amounts[$invoice->id] = price2num($cotisation);
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $paymentdate;
@@ -415,7 +428,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                     if (! $error)
                     {
-                        $paiement_id = $paiement->create($user);
+	                    // Create payment line for invoice
+                    	$paiement_id = $paiement->create($user);
                         if (! $paiement_id > 0)
                         {
                             $errmsg=$paiement->error;
@@ -425,6 +439,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                     if (! $error)
                     {
+                    	// Add transaction into bank account
                         $bank_line_id=$paiement->addPaymentToBank($user,'payment','(SubscriptionPayment)',$accountid,$emetteur_nom,$emetteur_banque);
                         if (! ($bank_line_id > 0))
                         {
@@ -436,7 +451,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                     if (! $error)
                     {
-                        // Update fk_bank for subscriptions
+                        // Update fk_bank into subscription table
                         $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
                         dol_syslog('sql='.$sql);
@@ -445,6 +460,32 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         {
                             $error++;
                         }
+                    }
+
+                    if (! $error)
+                    {
+                        // Set invoice as paid
+                    	$invoice->set_paid($user);
+                    }
+
+                    if (! $error)
+                    {
+						// Define output language
+						$outputlangs = $langs;
+						$newlang = '';
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+							$newlang = $_REQUEST['lang_id'];
+						if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+							$newlang = $customer->default_lang;
+						if (! empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+						}
+                    	// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+						//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+							facture_pdf_create($db, $invoice, $invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+
+
                     }
                 }
             }

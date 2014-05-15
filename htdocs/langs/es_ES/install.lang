@@ -206,3 +206,6 @@ MigrationProjectTaskTime=Actualización de tiempo dedicado en segundos
 MigrationActioncommElement=Actualización de los datos de acciones sobre elementos
 MigrationPaymentMode=Actualización de los modos de pago
 MigrationCategorieAssociation=Actualización de las categorías
+
+ShowNotAvailableOptions=Mostrar opciones no disponibles
+HideNotAvailableOptions=Ocultar opciones no disponibles

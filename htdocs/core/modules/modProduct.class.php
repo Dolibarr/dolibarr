@@ -206,6 +206,32 @@ class modProduct extends DolibarrModules
 		if (! empty($conf->fournisseur->enabled)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
 		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity("product", 1).')';
 
+		if (! empty($conf->global->PRODUIT_MULTIPRICES))
+		{
+			// Exports product multiprice
+			$r++;
+			$this->export_code[$r]=$this->rights_class.'_'.$key;
+			$this->export_label[$r]="ProductsMultiPrice";	// Translation key (used only if key ExportDataset_xxx_z not found)
+			$this->export_permission[$r]=array(array("produit","export"));
+			$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",
+				'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
+				'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
+				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+				'pr.tva_tx'=>'PriceLevelVATRate',
+				'pr.date_price'=>'DateCreation');
+			$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
+				'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
+				'pr.price_ttc'=>"product",
+				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+				'pr.tva_tx'=>'product',
+				'pr.date_price'=>"product");
+			$this->export_sql_start[$r]='SELECT DISTINCT ';
+			$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
+			$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product';
+			$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity("product", 1).')';
+		}
+
+
 
 		// Imports
 		//--------
@@ -239,15 +265,15 @@ class modProduct extends DolibarrModules
 
 		if (! empty($conf->fournisseur->enabled))
 		{
-			// Import product suppliers
+			// Import suppliers prices (note: this code is duplicated into module service)
 			$r++;
-			$this->import_code[$r]=$this->rights_class.'_'.$r;
-			$this->import_label[$r]="SuppliersPrices";	// Translation key
-			$this->import_icon[$r]='product';
+			$this->import_code[$r]=$this->rights_class.'_supplierprices';
+			$this->import_label[$r]="SuppliersPricesOfProductsOrServices";	// Translation key
+			$this->import_icon[$r]=$this->picto;
 			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 			$this->import_tables_array[$r]=array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
 			$this->import_tables_creator_array[$r]=array('sp'=>'fk_user');
-			$this->import_fields_array[$r]=array('sp.fk_product'=>"Product*",
+			$this->import_fields_array[$r]=array('sp.fk_product'=>"ProductOrService*",
 					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate',
 					'sp.price'=>"PriceQtyMinHT*",
 					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this file not required and calculate it from price and qty
@@ -266,55 +292,29 @@ class modProduct extends DolibarrModules
 			);
 		}
 
-		if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-		// Exports product multiprice
-		//--------
-		$r++;
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]="ProductsMultiPrice";	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_permission[$r]=array(array("produit","export"));
-		$this->export_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",
-			'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
-			'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
-			'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
-			'pr.tva_tx'=>'PriceLevelVATRate',
-			'pr.date_price'=>'DateCreation');
-		$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
-			'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
-			'pr.price_ttc'=>"product",
-			'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
-			'pr.tva_tx'=>'product',
-			'pr.date_price'=>"product");
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'product as p';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_price as pr ON p.rowid = pr.fk_product';
-		$this->export_sql_end[$r] .=' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity("product", 1).')';
-
-
-		// Import product multiprice
-		//--------
-		$r=0;
-
-		$r++;
-		$this->import_code[$r]=$this->rights_class.'_'.$r;
-		$this->import_label[$r]="ProductsMultiPrice";	// Translation key
-		$this->import_icon[$r]=$this->picto;
-		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
-		$this->import_tables_array[$r]=array('pr'=>MAIN_DB_PREFIX.'product_price');
-		$this->import_tables_creator_array[$r]=array('pr'=>'fk_user_author');	// Fields to store import user id
-		$this->import_fields_array[$r]=array('pr.fk_product'=>"ProductRowid*",
-			'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
-			'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
-			'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
-			'pr.tva_tx'=>'PriceLevelVATRate',
-			'pr.date_price'=>'DateCreation*');
-		$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
-		$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",
-			'pr.price_base_type'=>"HT",'pr.price_level'=>"1",
-			'pr.price'=>"100",'pr.price_ttc'=>"110",
-			'pr.price_min'=>"100",'pr.price_min_ttc'=>"110",
-			'pr.tva_tx'=>'19.6',
-			'pr.date_price'=>'2013-04-10');
+		if (! empty($conf->global->PRODUIT_MULTIPRICES))
+		{
+			// Import product multiprice
+			$r++;
+			$this->import_code[$r]=$this->rights_class.'_multiprice';
+			$this->import_label[$r]="ProductsOrServiceMultiPrice";	// Translation key
+			$this->import_icon[$r]=$this->picto;
+			$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r]=array('pr'=>MAIN_DB_PREFIX.'product_price');
+			$this->import_tables_creator_array[$r]=array('pr'=>'fk_user_author');	// Fields to store import user id
+			$this->import_fields_array[$r]=array('pr.fk_product'=>"ProductRowid*",
+				'pr.price_base_type'=>"PriceLevelPriceBase",'pr.price_level'=>"PriceLevel",
+				'pr.price'=>"PriceLevelUnitPriceHT",'pr.price_ttc'=>"PriceLevelUnitPriceTTC",
+				'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
+				'pr.tva_tx'=>'PriceLevelVATRate',
+				'pr.date_price'=>'DateCreation*');
+			$this->import_regex_array[$r]=array('pr.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+			$this->import_examplevalues_array[$r]=array('pr.fk_product'=>"1",
+				'pr.price_base_type'=>"HT",'pr.price_level'=>"1",
+				'pr.price'=>"100",'pr.price_ttc'=>"110",
+				'pr.price_min'=>"100",'pr.price_min_ttc'=>"110",
+				'pr.tva_tx'=>'19.6',
+				'pr.date_price'=>'2013-04-10');
 		}
 
 	}

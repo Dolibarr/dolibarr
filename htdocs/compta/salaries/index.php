@@ -29,9 +29,9 @@ $langs->load("salaries");
 $langs->load("bills");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'salaries', '', '', '');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -101,11 +101,11 @@ if ($result)
 
 	$param='';
 	if ($typeid) $param.='&amp;typeid='.$typeid;
-	
+
 	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
 
 	dol_htmloutput_mesg($mesg);
-	
+
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 
     print '<table class="noborder" width="100%">';
@@ -118,7 +118,7 @@ if ($result)
 		print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre("");
     print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
@@ -133,7 +133,7 @@ if ($result)
 	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";
-	
+
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
@@ -157,7 +157,7 @@ if ($result)
         print "</tr>\n";
 
         $total = $total + $obj->amount;
-        
+
         $i++;
     }
     print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
@@ -165,9 +165,9 @@ if ($result)
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
-	
+
 	print '</form>';
-		
+
     $db->free($result);
 }
 else

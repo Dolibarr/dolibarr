@@ -479,11 +479,11 @@ class FormOther
         $numlines=count($lines);
         for ($i = 0 ; $i < $numlines ; $i++)
         {
-            if ($lines[$i]->fk_parent == $parent)
+        	if ($lines[$i]->fk_parent == $parent)
             {
                 $var = !$var;
 
-				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);
+				//var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project
                 if ($parent == 0)	// We are on a task at first level
@@ -514,7 +514,7 @@ class FormOther
                 $newdisablechildoftaskid=$disablechildoftaskid;
 
                 // Print task
-                if ($lines[$i]->id >= 0)
+                if (isset($lines[$i]->id))		// We use isset because $lines[$i]->id may be null if project has no task and are on root project (tasks may be caught by a left join). We enter here only if '0' or >0
                 {
                 	// Check if we must disable entry
                 	$disabled=0;

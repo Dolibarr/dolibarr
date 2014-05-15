@@ -67,11 +67,18 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('commcard'));
+
 $object = new Societe($db);
 
 /*
  * Actions
  */
+
+$parameters = array('socid' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
+
 
 if ($action == 'setcustomeraccountancycode')
 {
@@ -814,6 +821,11 @@ if ($id > 0)
 	/*
 	 * Barre d'actions
 	 */
+	
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	
+	
 	print '<div class="tabsAction">';
 
 	if (! empty($conf->propal->enabled) && $user->rights->propal->creer)

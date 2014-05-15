@@ -36,7 +36,7 @@ $langs->load("bills");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'tax', '', '', 'charges');
+$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
@@ -247,13 +247,13 @@ if ($conf->tax->enabled)
 	        // Type payment
     	    print '<td>';
     	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
-    	    print $obj->num_payment.'</td>';	
+    	    print $obj->num_payment.'</td>';
 			// Paid
 			print '<td align="right">';
 			if ($obj->totalpaye) print price($obj->totalpaye);
 			print '</td>';
 			print '</tr>';
-			
+
 			$total = $total + $obj->total;
 			$totalnb = $totalnb + $obj->nb;
 			$totalpaye = $totalpaye + $obj->totalpaye;

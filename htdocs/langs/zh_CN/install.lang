@@ -206,3 +206,6 @@ MigrationProjectTaskTime=更新时间花费在几秒钟内
 MigrationActioncommElement=在行动上的更新数据
 MigrationPaymentMode=付款方式的数据迁移
 MigrationCategorieAssociation=迁移类别
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

@@ -232,7 +232,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		
 		print_fiche_titre($langs->trans('PriceByCustomer'));
 		
-		print '<form action="' . $_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
@@ -307,7 +307,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			setEventMessage($prodcustprice->error, 'errors');
 		}
 		
-		print '<form action="' . $_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
+		print '<form action="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="' . $prodcustprice->id . '">';
@@ -394,7 +394,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		
 		if (count($prodcustprice->lines) > 0) {
 			
-			print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 			
 			print '<table class="noborder" width="100%">';
@@ -443,7 +443,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 		
 		print "\n" . '<div class="tabsAction">' . "\n";
-		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?socid=' . $soc->id . '">' . $langs->trans("Ok") . '</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?socid=' . $soc->id . '">' . $langs->trans("Ok") . '</a></div>';
 		print "\n</div><br>\n";
 	} else {
 		
@@ -466,7 +466,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		
 		if (count($prodcustprice->lines) > 0) {
 			
-			print '<form action="' . $_SERVER ["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
+			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="POST">';
 			print '<input type="hidden" name="id" value="' . $object->id . '">';
 			
 			print '<table class="noborder" width="100%">';
@@ -523,13 +523,13 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				// Action
 				if ($user->rights->produit->creer || $user->rights->service->creer) {
 					print '<td align="right">';
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=delete_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
 					print img_delete();
 					print '</a>';
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=edit_customer_price&amp;socid=' . $soc->id . '&amp;lineid=' . $line->id . '">';
 					print img_edit();
 					print '</a>';
-					print '<a href="' . $_SERVER ["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $soc->id . '&amp;prodid=' . $line->fk_product . '">';
+					print '<a href="' . $_SERVER["PHP_SELF"] . '?action=showlog_customer_price&amp;socid=' . $soc->id . '&amp;prodid=' . $line->fk_product . '">';
 					print img_info();
 					print '</a>';
 					print '</td>';
@@ -553,7 +553,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print "\n" . '<div class="tabsAction">' . "\n";
 		
 		if ($user->rights->produit->creer || $user->rights->service->creer) {
-			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER ["PHP_SELF"] . '?action=add_customer_price&amp;socid=' . $soc->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=add_customer_price&amp;socid=' . $soc->id . '">' . $langs->trans("AddCustomerPrice") . '</a></div>';
 		}
 		print "\n</div><br>\n";
 	}

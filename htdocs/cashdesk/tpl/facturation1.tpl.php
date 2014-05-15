@@ -22,6 +22,8 @@ $langs->load("main");
 $langs->load("bills");
 $langs->load("cashdesk");
 
+// Object $form must de defined
+
 ?>
 
 <script type="text/javascript" src="javascript/facturation1.js"></script>

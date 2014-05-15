@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,15 +94,15 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 511;
+		$this->rights[$r][0] = 512;
 		$this->rights[$r][1] = 'Create/modify salaries';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'create';
+		$this->rights[$r][4] = 'write';
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 512;
+		$this->rights[$r][0] = 514;
 		$this->rights[$r][1] = 'Delete salaries';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -109,7 +110,7 @@ class modSalaries extends DolibarrModules
 		$this->rights[$r][5] = '';
 
 		$r++;
-		$this->rights[$r][0] = 515;
+		$this->rights[$r][0] = 517;
 		$this->rights[$r][1] = 'Export salaries';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;

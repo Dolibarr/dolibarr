@@ -185,7 +185,7 @@ class ProjectTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
     	return $localobject;
     }
-	
+
 	/**
      * testProjectOther
      *
@@ -229,28 +229,6 @@ class ProjectTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__." id=".$id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
-    	return $result;
-    }
-
-    /**
-     *	testVerifyNumRef
-     *
-     *	@return	void
-     */
-    public function testVerifyNumRef()
-    {
-    	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		$localobject=new Project($this->savdb);
-    	$result=$localobject->ref='refthatdoesnotexists';
-		$result=$localobject->VerifyNumRef();
-
-		print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 0);
     	return $result;
     }
 

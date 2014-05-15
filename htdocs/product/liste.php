@@ -68,7 +68,6 @@ $limit = $conf->liste_limit;
 
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-//$object->getCanvas($id);
 $canvas=GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))

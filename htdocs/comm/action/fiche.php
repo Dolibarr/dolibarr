@@ -58,7 +58,7 @@ $originid=GETPOST('originid','int');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
@@ -203,7 +203,7 @@ if ($action == 'add_action')
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
-	if (! empty($datea) && GETPOST('percentage') == 0)
+	if (! empty($datep) && GETPOST('percentage') == 0)
 	{
 		$error++;
 		$action = 'create';

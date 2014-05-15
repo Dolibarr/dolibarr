@@ -110,7 +110,7 @@ abstract class CommonDocGenerator
         	'mycompany_web'=>$mysoc->url,
             'mycompany_juridicalstatus'=>$mysoc->forme_juridique,
             'mycompany_managers'=>$mysoc->managers,
-        	'mycompany_capital'=>$mysoc->capital,
+            'mycompany_capital'=>$mysoc->capital,
             'mycompany_barcode'=>$mysoc->barcode,
             'mycompany_idprof1'=>$mysoc->idprof1,
             'mycompany_idprof2'=>$mysoc->idprof2,
@@ -254,24 +254,22 @@ abstract class CommonDocGenerator
 		);
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label('contact', true);
-			$object->fetch_optionals($object->id, $extralabels);
-
-			foreach($extrafields->attribute_label as $key => $label)
+		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
+		$object->fetch_optionals($object->id, $extralabels);
+		
+		foreach($extrafields->attribute_label as $key => $label) 
+		{
+			if ($extrafields->attribute_type[$key] == 'price') 
 			{
-				if ($extrafields->attribute_type[$key] == 'price')
-				{
-					$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
-				}
-				elseif($extrafields->attribute_type[$key] == 'select')
-				{
-					$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
-				}
-				$array_contact = array_merge($array_contact, array('contact_options_' . $key => $object->array_options['options_'. $key]));
+				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
+			elseif($extrafields->attribute_type[$key] == 'select') 
+			{
+				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
+			}
+			$array_contact = array_merge($array_contact, array($array_key.'_options_' . $key => $object->array_options['options_'. $key]));
 		}
 		return $array_contact;
 	}
@@ -299,100 +297,132 @@ abstract class CommonDocGenerator
     }
 
 
-    /**
-     * Define array with couple substitution key => substitution value
-     *
-     * @param   Object			$object             Main object to use as data source
-     * @param   Translate		$outputlangs        Lang object to use for output
+
+	/**
+	 * Define array with couple substitution key => substitution value
+	 *
+	 * @param   Object			$object             Main object to use as data source
+	 * @param   Translate		$outputlangs        Lang object to use for output
      * @param   array_key		$array_key	        Name of the key for return array
-     * @return	array								Array of substitution
-     */
-    function get_substitutionarray_propal($object,$outputlangs,$array_key='object')
-    {
-    	global $conf;
+	 * @return	array								Array of substitution
+	 */
+	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+	{
+		global $conf;
 
-    	$array_propal=array(
-	    	$array_key.'_id'=>$object->id,
-	    	$array_key.'_ref'=>$object->ref,
-	    	$array_key.'_ref_ext'=>$object->ref_ext,
-	    	$array_key.'_ref_customer'=>$object->ref_client,
-	    	$array_key.'_hour'=>dol_print_date($object->date,'hour'),
-    		$array_key.'_date'=>dol_print_date($object->date,'day'),
-	    	$array_key.'_date_end'=>dol_print_date($object->fin_validite,'day'),
-	    	$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
-	    	$array_key.'_date_modification'=>dol_print_date($object->date_modification,'day'),
-	    	$array_key.'_date_validation'=>dol_print_date($object->date_validation,'dayhour'),
-	    	$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
-	    	$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-	    	$array_key.'_payment_term_code'=>$object->cond_reglement_code,
-	    	$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
+		$sumpayed=''; $alreadypayed='';
+		if ($object->element == 'facture')
+		{
+			$invoice_source=new Facture($this->db);
+			if ($object->fk_facture_source > 0)
+			{
+				$invoice_source->fetch($object->fk_facture_source);
+			}
+			$sumpayed = $object->getSommePaiement();
+			$alreadypayed=price($sumpayed,0,$outputlangs);
+		}
 
-    		$array_key.'_total_ht_locale'=>price($object->total_ht,0,$outputlangs),
-	    	$array_key.'_total_vat_locale'=>price($object->total_tva,0,$outputlangs),
-	    	$array_key.'_total_localtax1_locale'=>price($object->total_localtax1,0,$outputlangs),
-	    	$array_key.'_total_localtax2_locale'=>price($object->total_localtax2,0,$outputlangs),
-    		$array_key.'_total_ttc_locale'=>price($object->total_ttc,0,$outputlangs),
-	    	$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(),0,$outputlangs),
-    		$array_key.'_total_ht'=>price2num($object->total_ht),
-	    	$array_key.'_total_vat'=>price2num($object->total_tva),
-	    	$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
-	    	$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
-    		$array_key.'_total_ttc'=>price2num($object->total_ttc),
-	    	$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
+		$resarray=array(
+		$array_key.'_id'=>$object->id,
+		$array_key.'_ref'=>$object->ref,
+		$array_key.'_ref_ext'=>$object->ref_ext,
+		$array_key.'_ref_customer'=>$object->ref_client,
+		$array_key.'_ref_supplier'=>(! empty($object->ref_fournisseur)?$object->ref_fournisseur:''),
+		$array_key.'_source_invoice_ref'=>$invoice_source->ref,
+        $array_key.'_hour'=>dol_print_date($object->date,'hour'),
+		$array_key.'_date'=>dol_print_date($object->date,'day'),
+		$array_key.'_date_rfc'=>dol_print_date($object->date,'dayrfc'),
+		$array_key.'_date_limit'=>(! empty($object->date_lim_reglement)?dol_print_date($object->date_lim_reglement,'day'):''),
+	    $array_key.'_date_end'=>(! empty($object->fin_validite)?dol_print_date($object->fin_validite,'day'):''),
+		$array_key.'_date_creation'=>dol_print_date($object->date_creation,'day'),
+		$array_key.'_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
+		$array_key.'_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
+		$array_key.'_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
+		$array_key.'_date_close'=>(! empty($object->date_cloture)?dol_print_date($object->date_cloture,'dayhour'):''),
+		$array_key.'_payment_mode_code'=>$object->mode_reglement_code,
+		$array_key.'_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
+		$array_key.'_payment_term_code'=>$object->cond_reglement_code,
+		$array_key.'_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
 
-	    	$array_key.'_vatrate'=>vatrate($object->tva),
-	    	$array_key.'_note_private'=>$object->note,
-	    	$array_key.'_note'=>$object->note_public,
-    	);
+		$array_key.'_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
+		$array_key.'_total_vat_locale'=>price($object->total_tva, 0, $outputlangs),
+		$array_key.'_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
+		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
+		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
+		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
+		$array_key.'_total_ht'=>price2num($object->total_ht),
+		$array_key.'_total_vat'=>price2num($object->total_tva),
+		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
+		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
+		$array_key.'_total_ttc'=>price2num($object->total_ttc),
+		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
 
-    	// Add vat by rates
-    	foreach ($object->lines as $line)
-    	{
-    		if (empty($array_propal[$array_key.'_total_vat_'.$line->tva_tx])) $array_propal[$array_key.'_total_vat_'.$line->tva_tx]=0;
-    		$array_propal[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
-    	}
+		$array_key.'_note_private'=>$object->note,
+		$array_key.'_note'=>$object->note_public,
+		// Payments
+		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
+		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
+		$array_key.'_already_payed'=>$alreadypayed,
+		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
+		);
 
-    	// Retrieve extrafields
-    	if(is_array($object->array_options) && count($object->array_options))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-    		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('propal',true);
-    		$object->fetch_optionals($object->id,$extralabels);
+		// Add vat by rates
+		foreach ($object->lines as $line)
+		{
+			if (empty($resarray[$array_key.'_total_vat_'.$line->tva_tx])) $resarray[$array_key.'_total_vat_'.$line->tva_tx]=0;
+			$resarray[$array_key.'_total_vat_'.$line->tva_tx]+=$line->total_tva;
+			$resarray[$array_key.'_total_vat_locale_'.$line->tva_tx]=price($resarray[$array_key.'_total_vat_'.$line->tva_tx]);
+		}
 
-    		$array_propal = $this->fill_substitutionarray_with_extrafields($object,$array_propal,$extrafields,$array_key,$outputlangs);
-    	}
-    	return $array_propal;
-    }
+		// Retrieve extrafields
+		if (is_array($object->array_options) && count($object->array_options))
+		{
+			$extrafieldkey=$this->element;
+			'facture';
 
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
+			$object->fetch_optionals($object->id,$extralabels);
 
-    /**
-     *	Define array with couple substitution key => substitution value
-     *
-     *	@param  array			$line				Array of lines
-     *	@param  Translate		$outputlangs        Lang object to use for output
-     *	@return	array								Substitution array
-     */
-    function get_substitutionarray_propal_lines($line,$outputlangs)
-    {
-    	global $conf;
+			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key=$array_key,$outputlangs);
+		}
+		return $resarray;
+	}
 
-    	return array(
-    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
-    	'line_product_ref'=>$line->product_ref,
-    	'line_product_label'=>$line->product_label,
-    	'line_desc'=>$line->desc,
-    	'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-    	'line_up'=>price($line->subprice),
-    	'line_qty'=>$line->qty,
-    	'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-    	'line_price_ht'=>price($line->total_ht),
-    	'line_price_ttc'=>price($line->total_ttc),
-    	'line_price_vat'=>price($line->total_tva),
-    	'line_date_start'=>$line->date_start,
-    	'line_date_end'=>$line->date_end
-    	);
-    }
+	/**
+	 *	Define array with couple substitution key => substitution value
+	 *
+	 *	@param  array			$line				Array of lines
+	 *	@param  Translate		$outputlangs        Lang object to use for output
+	 *  @return	array								Return a substitution array
+	 */
+	function get_substitutionarray_lines($line,$outputlangs)
+	{
+		global $conf;
+
+		return array(
+			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
+			'line_product_ref'=>$line->product_ref,
+			'line_product_label'=>$line->product_label,
+			'line_desc'=>$line->desc,
+			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
+			'line_up'=>price2num($line->subprice),
+			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
+			'line_qty'=>$line->qty,
+			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
+			'line_price_ht'=>price2num($line->total_ht),
+			'line_price_ttc'=>price2num($line->total_ttc),
+			'line_price_vat'=>price2num($line->total_tva),
+			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
+			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
+			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
+			'line_date_start'=>$line->date_start,
+			'line_date_start_rfc'=>dol_print_date($line->date_start,'rfc'),
+			'line_date_end'=>$line->date_end,
+			'line_date_end_rfc'=>dol_print_date($line->date_end,'rfc')
+		);
+	}
 
     /**
      * Define array with couple substitution key => substitution value

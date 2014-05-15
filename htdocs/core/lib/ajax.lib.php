@@ -348,11 +348,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 			var method = obj.method;
 			var url = obj.url;
 			var htmlname = obj.htmlname;
+			var showempty = obj.showempty;
     		$.getJSON(url,
 					{
 						action: method,
 						id: id,
-						htmlname: htmlname
+						htmlname: htmlname,
+						showempty: showempty
 					},
 					function(response) {
 						$.each(obj.params, function(key,action) {

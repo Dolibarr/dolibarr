@@ -465,26 +465,47 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
         $sql.= " WHERE rowid=" . $this->id;
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
 
+
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
+        if (!$resql)
+        {
+        	$this->errors[] = $this->db->lasterror();
+        	$error++;
+        }
 
-        if ($resql)
+        if (empty($error))
         {
             // We remove directory
             $projectref = dol_sanitizeFileName($this->ref);
@@ -496,9 +517,8 @@ class Project extends CommonObject
                     $res = @dol_delete_dir_recursive($dir);
                     if (!$res)
                     {
-                        $this->error = 'ErrorFailToDeleteDir';
-                        $this->db->rollback();
-                        return 0;
+                        $this->errors[] = 'ErrorFailToDeleteDir';
+                        $error++;
                     }
                 }
             }
@@ -512,18 +532,27 @@ class Project extends CommonObject
                 if ($result < 0)
                 {
                     $error++;
-                    $this->errors = $interface->errors;
+            		foreach ($interface->errors as $errmsg ) {
+            			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+            			$this->errors[] =$errmsg;
+            		}
                 }
                 // End call triggers
             }
+        }
 
-            dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+    	if (empty($error))
+    	{
             $this->db->commit();
             return 1;
         }
         else
-        {
-            $this->error = $this->db->lasterror();
+       {
+        	foreach ( $this->errors as $errmsg )
+        	{
+				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			}
             dol_syslog(get_class($this) . "::delete " . $this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
@@ -737,8 +766,16 @@ class Project extends CommonObject
 
         if ($option != 'nolink')
         {
-            $lien = '<a href="' . DOL_URL_ROOT . '/projet/fiche.php?id=' . $this->id . '">';
-            $lienfin = '</a>';
+        	if (preg_match('/\.php$/',$option))
+        	{
+            	$lien = '<a href="' . dol_buildpath($option,1) . '?id=' . $this->id . '">';
+            	$lienfin = '</a>';
+        	}
+        	else
+        	{
+            	$lien = '<a href="' . DOL_URL_ROOT . '/projet/fiche.php?id=' . $this->id . '">';
+            	$lienfin = '</a>';
+        	}
         }
 
         $picto = 'projectpub';

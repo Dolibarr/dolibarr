@@ -34,7 +34,6 @@ ReturnCP=Späť na predchádzajúcu stránku
 ErrorUserViewCP=Nie ste oprávnený čítať toto žiadosti o dovolenku.
 InfosCP=Informácie o dopyte po prázdninách
 InfosWorkflowCP=Informácie Workflow
-DateCreateCP=Dátum vytvorenia
 RequestByCP=Žiadosť
 TitreRequestCP=List dovolenku
 NbUseDaysCP=Počet dní dovolenky spotrebovaných
@@ -130,7 +129,6 @@ ErrorMailNotSend=Došlo k chybe pri odosielaní e-mail:
 NoCPforMonth=Nie opustiť tento mesiac.
 nbJours=Počet dní
 TitleAdminCP=Konfigurácia sviatky
-
 #Messages
 Hello=Ahoj
 HolidaysToValidate=Overiť dovolenku
@@ -143,10 +141,10 @@ HolidaysRefused=Odopretie prázdniny
 HolidaysRefusedBody=Vaša žiadosť o dovolenku pre %s na %s bol zamietnutý z nasledujúcich dôvodov:
 HolidaysCanceled=Zrušené sviatky
 HolidaysCanceledBody=Vaša žiadosť o dovolenku pre %s na %s bola zrušená.
-
-Permission20001=Čítanie / zápis / prepis ich sviatky
-Permission20002=Prečítajte si / upraviť všetky žiadosti dovolenku
-Permission20003=Odstrániť svoju dovolenku žiadosti
-Permission20004=Definujte užívateľom dovolenku
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Recenzia protokol modifikovaných dovolenku
-Permission20006=Prístup dovolená mesačnú správu
+Permission20006=Read holidays monthly report

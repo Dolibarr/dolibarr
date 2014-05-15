@@ -29,7 +29,7 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-// For MultiCompany module. 
+// For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
@@ -167,7 +167,7 @@ if ($PAYPALTOKEN)
             $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }
             // Fin appel triggers
-            
+
         	// Send an email
 			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 			{
@@ -177,7 +177,7 @@ if ($PAYPALTOKEN)
 				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-				
+
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPaypalPaymentReceived");
 				$tmptag=dolExplodeIntoArray($fulltag,'.','=');
@@ -186,24 +186,24 @@ if ($PAYPALTOKEN)
 				{
 					$langs->load("members");
 					$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
-					$content.=$langs->trans("PaymentSubscription")."\n";
-					$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."\n";
-					$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."\n";
+					$content.=$langs->trans("PaymentSubscription")."<br>\n";
+					$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
+					$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 				}
-				else 
+				else
 				{
-					$content.=$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."\n";
+					$content.=$langs->transnoentitiesnoconv("NewPaypalPaymentReceived")."<br>\n";
 				}
-				$content.="\n";
-				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
-				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
+				$content.="<br>\n";
+				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":<br>\n";
+				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."<br>\n";
 				$content.="tag=".$fulltag." token=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-				
+
 				$ishtml=dol_textishtml($content);	// May contain urls
 
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
-		
+
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
@@ -230,7 +230,7 @@ if ($PAYPALTOKEN)
             echo "Error Severity Code: " . $ErrorSeverityCode."<br>\n";
 
             if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
-            
+
            	// Send an email
 			if (! empty($conf->global->PAYPAL_PAYONLINE_SENDEMAIL))
 			{
@@ -240,7 +240,7 @@ if ($PAYPALTOKEN)
 				$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 				$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 				//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-				
+
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("ValidationOfPaypalPaymentFailed");
 				$content="";
@@ -249,12 +249,12 @@ if ($PAYPALTOKEN)
 				$content.=$langs->transnoentitiesnoconv("TechnicalInformation").":\n";
 				$content.=$langs->transnoentitiesnoconv("ReturnURLAfterPayment").': '.$urlback."\n";
 				$content.="tag=".$fulltag."\ntoken=".$token." paymentType=".$paymentType." currencycodeType=".$currencyCodeType." payerId=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt;
-				
+
 				$ishtml=dol_textishtml($content);	// May contain urls
-				
+
 				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml);
-		
+
 				$result=$mailfile->sendfile();
 				if ($result)
 				{
