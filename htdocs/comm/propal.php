@@ -51,7 +51,6 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 $langs->load("deliveries");
-$langs->load('cc_extras');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 

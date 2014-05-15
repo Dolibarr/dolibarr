@@ -56,7 +56,6 @@ $langs->load('compta');
 $langs->load('products');
 $langs->load('banks');
 $langs->load('main');
-$langs->load('cc_extras');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 

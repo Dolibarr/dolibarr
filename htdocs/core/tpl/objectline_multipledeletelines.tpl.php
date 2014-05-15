@@ -29,7 +29,7 @@
  */
 
 global $langs;
-$langs->load("cc_extras");
+$langs->load("products");
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_multipledeletelines.tpl.php -->
@@ -65,7 +65,23 @@ $langs->load("cc_extras");
 		});
 		
 		//* Check / uncheck #multiple_delete_select_all if all the checkboxes are checked or not
-		$("input[name='multiple_delete_lines[]']").change(function () {
+		$("input[name='multiple_delete_lines[]']").change(update_multiple_delete_lines);
+		
+		// Ask to delete (and then delete if it's OK) !
+		$('#multiple_deleteline_submit').click(function () {
+			$('#addproduct').attr('action', $('#multiple_deleteline_submit').attr('href'));
+			$('#addproduct').submit();
+			return false;
+		});
+		
+		update_multiple_delete_lines();
+		
+		function set_multiple_delete_select_all_label(newLabel) {
+			$("#multiple_delete_select_all").attr('title', newLabel);
+			$("label[for='multiple_delete_select_all']").html(newLabel);
+		}
+		
+		function update_multiple_delete_lines() {
 			var nb_checked = $("input[name='multiple_delete_lines[]']:checked").length;
 			
 			if (nb_checked === 0) {
@@ -78,18 +94,6 @@ $langs->load("cc_extras");
 				$('#multiple_delete_select_all').attr('checked', 'checked');
 				set_multiple_delete_select_all_label('<?php echo $langs->trans('UncheckAll') ?>');
 			}
-		});
-		
-		// Ask to delete (and then delete if it's OK) !
-		$('#multiple_deleteline_submit').click(function () {
-			$('#addproduct').attr('action', $('#multiple_deleteline_submit').attr('href'));
-			$('#addproduct').submit();
-			return false;
-		});
-		
-		function set_multiple_delete_select_all_label(newLabel) {
-			$("#multiple_delete_select_all").attr('title', newLabel);
-			$("label[for='multiple_delete_select_all']").html(newLabel);
 		}
 	});
 </script>
