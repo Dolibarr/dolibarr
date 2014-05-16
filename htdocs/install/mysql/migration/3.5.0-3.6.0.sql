@@ -1104,8 +1104,8 @@ ALTER TABLE llx_stock_mouvement ADD fk_origin integer;
 ALTER TABLE llx_stock_mouvement ADD origintype VARCHAR(32);
 
 -- New 1300 : Add THM on user
-ALTER TABLE llx_user ADD thm double(24,8);
-ALTER TABLE llx_projet_task_time ADD thm double(24,8);
+ALTER TABLE llx_user ADD thm double(24,8) AFTER fk_user;
+ALTER TABLE llx_projet_task_time ADD thm double(24,8) AFTER fk_user;
 
 
 -- New : extrafield on categories
