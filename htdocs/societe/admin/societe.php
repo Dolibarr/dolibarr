@@ -765,18 +765,20 @@ print '</tr>';
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-	print '</a></td>';
+
 }
 else
 {
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a></td>';
 }
+print '</a></td>';
 print '</tr>';
 
 
