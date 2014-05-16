@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -256,7 +256,7 @@ if ($id > 0)
 
 		$head=tax_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
 
 		// Confirmation de la suppression de la charge
 		if ($action == 'paid')
@@ -303,8 +303,8 @@ if ($id > 0)
 		print '<td rowspan="'.$rowspan.'" valign="top">';
 
 		/*
-		* Paiements
-		*/
+		 * Payments
+		 */
 		$sql = "SELECT p.rowid, p.num_paiement, datep as dp, p.amount,";
 		$sql.= "c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
@@ -324,8 +324,12 @@ if ($id > 0)
 			$i = 0; $total = 0;
 			echo '<table class="nobordernopadding" width="100%">';
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Payments").'</td><td>'.$langs->trans("Type").'</td>';
-      print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
+			print '<td>'.$langs->trans("RefPayment").'</td>';
+			print '<td>'.$langs->trans("Date").'</td>';
+			print '<td>'.$langs->trans("Type").'</td>';
+      		print '<td align="right">'.$langs->trans("Amount").'</td>';
+      		print '<td>&nbsp;</td>';
+      		print '</tr>';
 
 			$var=True;
 			while ($i < $num)
@@ -333,15 +337,15 @@ if ($id > 0)
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").'</a> ';
-				print dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
+				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
+				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_paiement."</td>\n";
-        print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
+        		print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 				print "</tr>";
 				$totalpaye += $objp->amount;
 				$i++;
 			}
-      
+
 			if ($object->paye == 0)
 			{
 				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
@@ -363,7 +367,7 @@ if ($id > 0)
 
 		print "</tr>";
 
-    // Period end date
+	    // Period end date
 		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
 		print "<td>";
 		if ($action == 'edit')
@@ -375,7 +379,7 @@ if ($id > 0)
 			print dol_print_date($object->periode,"day");
 		}
 		print "</td></tr>";
-    
+
 		// Due date
 		if ($action == 'edit')
 		{
@@ -406,7 +410,7 @@ if ($id > 0)
 
 		if ($action == 'edit') print "</form>\n";
 
-		print '</div>';
+		dol_fiche_end();
 
 
 		/*

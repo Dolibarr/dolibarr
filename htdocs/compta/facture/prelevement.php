@@ -428,7 +428,7 @@ if ($object->id > 0)
 
 	/*
 	 * Withdrawal request
-	*/
+	 */
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
 	$sql .= " , pfd.date_traite as date_traite";
@@ -462,12 +462,13 @@ if ($object->id > 0)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		if ($num == 0) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 	}
 
 	print "</div><br>\n";

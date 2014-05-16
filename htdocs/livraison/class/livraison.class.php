@@ -54,8 +54,6 @@ class Livraison extends CommonObject
 	var $note_public;
 	var $note_private;
 
-	var $expedition_id;
-
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;

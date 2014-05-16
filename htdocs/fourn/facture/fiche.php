@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -461,6 +461,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             $db->commit();
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	            $outputlangs = $langs;
             	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	if ($result	<= 0)
             	{
@@ -1314,7 +1315,10 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
         $txt=$langs->trans($classname);
-        if ($classname=='CommandeFournisseur') $txt=$langs->trans("SupplierOrder");
+        if ($classname=='CommandeFournisseur') {
+	        $langs->load('orders');
+	        $txt=$langs->trans("SupplierOrder");
+        }
         print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
@@ -1454,7 +1458,7 @@ else
                     //TODO: Possibly will have to control payment information into suppliers
                     //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
                 }
-                $numref = $object->getNextNumRef($soc);
+                $numref = $object->getNextNumRef($societe);
             }
             else
             {

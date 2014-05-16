@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+$chid=GETPOST("id");
+$action=GETPOST('action');
 $amounts = array();
 
 // Security check
@@ -43,7 +44,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($_POST["action"] == 'add_payment')
+if ($action == 'add_payment')
 {
 	$error=0;
 
@@ -171,7 +172,8 @@ if ($_GET["action"] == 'create')
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="id" value="'.$charge->id.'">';
+	print '<input type="hidden" name="id" value="'.$chid.'">';
+	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
@@ -184,7 +186,6 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">".dol_print_date($charge->periode,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
-
 	print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	$sql = "SELECT sum(p.amount) as total";
@@ -198,43 +199,50 @@ if ($_GET["action"] == 'create')
 		$db->free();
 	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2"><b>'.price($sumpaid).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
-	print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpaid).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay").'</td><td colspan="2"><b>'.price($total - $sumpaid).'</b> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
-	print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
+	print '<tr class="liste_titre">';
 
-	print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
+	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
-	print '<td>'.$langs->trans("Comments").'</td></tr>';
+	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
 	$form->select_types_paiements(isset($_POST["paiementtype"])?$_POST["paiementtype"]:$charge->paiementtype, "paiementtype");
 	print "</td>\n";
-
-	print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';
+	print '</tr>';
 
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
-	print '<td>';
+	print '<td colspan="2">';
 	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-	print "<td><input name=\"num_paiement\" type=\"text\"></td></tr>\n";
+	print '<td colspan="2"><input name="num_paiement" type="text"></td></tr>'."\n";
+
+	print '<tr>';
+	print '<td valign="top">'.$langs->trans("Comments").'</td>';
+	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '</tr>';
+
+	print '</table>';
+
+	print '<br>';
 
 	/*
  	 * Autres charges impayees
 	 */
 	$num = 1;
 	$i = 0;
-	print '<tr><td colspan="3">';
 
-	print '<table class="nobordernopadding" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	//print '<td>'.$langs->trans("SocialContribution").'</td>';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
@@ -303,17 +311,6 @@ if ($_GET["action"] == 'create')
 		print '<td align="center">&nbsp;</td>';
 		print "</tr>\n";
 	}
-	print "</table></td></tr>\n";
-	//		}
-	//	      $db->free();
-	//	    }
-	//	  else
-	//	    {
-	//	      print $sql ."<br>".$db->error();
-	//	    }
-	/*
-	*
-	*/
 
 	print "</table>";
 

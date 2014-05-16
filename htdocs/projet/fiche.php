@@ -64,7 +64,7 @@ $result = restrictedArea($user, 'projet', $object->id);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 $date_start=dol_mktime(0,0,0,GETPOST('projectmonth','int'),GETPOST('projectday','int'),GETPOST('projectyear','int'));
-$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));;
+$date_end=dol_mktime(0,0,0,GETPOST('projectendmonth','int'),GETPOST('projectendday','int'),GETPOST('projectendyear','int'));
 
 
 /*
@@ -536,7 +536,7 @@ else
         print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
-        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
         $text=$form->select_company($object->societe->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
@@ -607,7 +607,7 @@ else
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
         // Third party
-        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
         if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';

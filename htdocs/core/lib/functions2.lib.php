@@ -1286,6 +1286,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 
+    dol_syslog('/core/lib/function2.lib.php::getListOfModels sql='.$sql, LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {

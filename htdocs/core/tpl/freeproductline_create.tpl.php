@@ -252,8 +252,10 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 		var remise = $("input[name='remise_percent']:first");
 
 		var rate = $("input[name='"+npRate+"']:first");
+
 		if (rate.val() == '')
 			return true;
+
 		if (! $.isNumeric(rate.val().replace(',','.')))
 		{
 			alert('<?php echo dol_escape_js($langs->trans("rateMustBeNumeric")); ?>');
@@ -274,12 +276,13 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 
 		if (remisejs != 100)
 		{
+			if (remisejs == '') remisejs=0;
+
 			bpjs=price2numjs(buying_price.val());
 			ratejs=price2numjs(rate.val());
-
-			if (npRate == "marginRate")
+			if (npRate == "np_marginRate")
 				price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
-			else if (npRate == "markRate")
+			else if (npRate == "np_markRate")
 				price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
 		}
 		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
@@ -291,6 +294,8 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	/* Function similar to price2num in PHP */
 	function price2numjs(num)
 	{
+		if (num == '') return '';
+
 		<?php
 		$dec=','; $thousand=' ';
 		if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");

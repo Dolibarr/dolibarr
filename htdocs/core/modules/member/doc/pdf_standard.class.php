@@ -161,9 +161,12 @@ class pdf_standard
 
 		// Define photo
 		$dir=$conf->adherent->dir_output;
-		$file=get_exdir($idmember,2).'photos/'.$photo;
-		$photo=$dir.'/'.$file;
-		if (empty($photo) || ! is_readable($photo)) $photo='';
+		if (! empty($photo))
+		{
+			$file=get_exdir($idmember,2).'photos/'.$photo;
+			$photo=$dir.'/'.$file;
+			if (! is_readable($photo)) $photo='';
+		}
 
 		// Define background image
 		$backgroundimage='';

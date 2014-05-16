@@ -517,7 +517,7 @@ if ($resql)
     print "</table><br>";
 
     // Add number of product when there is a filter on period
-    if (count($arrayofuniqueproduct) == 1)
+    if (count($arrayofuniqueproduct) == 1 && is_numeric($year))
     {
     	$productidselected=0;
     	foreach ($arrayofuniqueproduct as $key => $val)

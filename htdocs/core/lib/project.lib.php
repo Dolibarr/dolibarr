@@ -142,18 +142,24 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
-	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
-	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'task_document';
-	$h++;
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+		$head[$h][1] = $langs->trans('Notes');
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		$head[$h][2] = 'task_notes';
+		$h++;
+    }
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'task_notes';
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$listoffiles=dol_dir_list($filesdir,'files',1,'','thumbs');
+	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));
+	$head[$h][2] = 'task_document';
 	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task','remove');

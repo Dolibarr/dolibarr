@@ -157,6 +157,8 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		$object->project = dol_clone($projectstatic);
+
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
 		if ($withproject)
@@ -185,7 +187,7 @@ if ($id > 0 || ! empty($ref))
 
     		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
     		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td>';
@@ -247,7 +249,7 @@ if ($id > 0 || ! empty($ref))
     		print '</td></tr>';
 
     		// Customer
-    		print "<tr><td>".$langs->trans("Company")."</td>";
+    		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
     		print '<td colspan="3">';
     		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
     		else print '&nbsp;';
@@ -271,7 +273,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
-			print '<td>'.$langs->trans("Company").'</td>';
+			print '<td>'.$langs->trans("ThirdParty").'</td>';
 			print '<td>'.$langs->trans("ProjectContact").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
@@ -353,7 +355,7 @@ if ($id > 0 || ! empty($ref))
 		// Liste des contacts lies
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
-		print '<td>'.$langs->trans("Company").'</td>';
+		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		print '<td>'.$langs->trans("ProjectContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
