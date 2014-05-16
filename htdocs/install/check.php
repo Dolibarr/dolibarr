@@ -155,7 +155,7 @@ if ($memmaxorig != '')
 		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
 		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
 	}
-	if ($memmax >= $memrequired)
+	if ($memmax >= $memrequired || $memmax == -1)
 	{
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
 	}
