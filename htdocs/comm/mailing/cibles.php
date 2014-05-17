@@ -100,16 +100,18 @@ if ($action == 'add')
 
 	if ($result > 0)
 	{
+		setEventMessage($langs->trans("XTargetsAdded",$result),'mesgs');
+		
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
 	if ($result == 0)
 	{
-		$mesg='<div class="warning">'.$langs->trans("WarningNoEMailsAdded").'</div>';
+		setEventMessage($langs->trans("WarningNoEMailsAdded"),'warnings');
 	}
 	if ($result < 0)
 	{
-		$mesg='<div class="error">'.$langs->trans("Error").($obj->error?' '.$obj->error:'').'</div>';
+		setEventMessage($langs->trans("Error").($obj->error?' '.$obj->error:''),'errors');
 	}
 }
 

@@ -104,7 +104,7 @@ class mailing_xinputuser extends MailingTargets
 		global $langs;
 
 		$s='';
-		$s.='<input type="text" name="xinputuser" class="flat" size="40">';
+		$s.='<input type="text" name="xinputuser" class="flat" size="40" value="'.GETPOST("xinputuser").'">';
 		return $s;
 	}
 
