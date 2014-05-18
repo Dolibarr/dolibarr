@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - holiday
-HRM=HRM
+HRM=Risorse umane
 Holidays=Ferie
 CPTitreMenu=Ferie
 MenuReportMonth=Estratto conto mensile
@@ -141,10 +141,10 @@ HolidaysRefused=Ferie negate
 HolidaysRefusedBody=La tua richiesta di ferie dal %s al %s è stata negata con la seguente motivazione:
 HolidaysCanceled=Ferie annullate
 HolidaysCanceledBody=La tua richiesta di ferie dal %s al %s è stata annullata.
-Permission20000=Read you own holidays
-Permission20001=Create/modify your holidays
-Permission20002=Create/modify holidays for everybody
-Permission20003=Delete holidays requests
-Permission20004=Setup users holidays
+Permission20000=Visualizza le tue ferie
+Permission20001=Crea/modifica le tue ferie
+Permission20002=Crea/modifica le ferie di tutti
+Permission20003=Cancella richieste ferie
+Permission20004=Imposta ferie
 Permission20005=Controlla il log delle modifiche alle ferie
-Permission20006=Read holidays monthly report
+Permission20006=Visualizza il report sulle ferie del mese
