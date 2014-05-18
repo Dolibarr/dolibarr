@@ -123,13 +123,21 @@ if ($search_refsupp)
 {
 	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
 }
-if ($search_status >= 0) 
+if ($search_status >= 0)
 {
 	if ($search_status == 6 || $search_status == 7) $sql.=" AND fk_statut IN (6,7)";
 	else $sql.=" AND fk_statut = ".$search_status;
 }
 
 $sql.= $db->order($sortfield,$sortorder);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -146,7 +154,7 @@ if ($resql)
 	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
 	if ($search_refsupp) $param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  $param.="&search_status=".$search_status;
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -194,10 +202,10 @@ if ($resql)
 		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td>'."\n";
-		
+
 		// Ref Supplier
 		print '<td>'.$obj->ref_supplier.'</td>'."\n";
-		
+
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
