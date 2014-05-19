@@ -200,6 +200,15 @@ if ($search_user > 0)
 }
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder;
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
 $sql.= $db->plimit($limit + 1,$offset);
 
 //print $sql;
@@ -245,7 +254,7 @@ if ($resql)
 	if ($search_sale > 0) $param.='&search_sale='.$search_sale;
 
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+	print_barre_liste($title, $page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	$i = 0;
 
 	// Lignes des champs de filtre

@@ -451,6 +451,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             $db->commit();
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	            $outputlangs = $langs;
             	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	if ($result	<= 0)
             	{
@@ -1333,7 +1334,10 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
         $txt=$langs->trans($classname);
-        if ($classname=='CommandeFournisseur') $txt=$langs->trans("SupplierOrder");
+        if ($classname=='CommandeFournisseur') {
+	        $langs->load('orders');
+	        $txt=$langs->trans("SupplierOrder");
+        }
         print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";

@@ -207,5 +207,5 @@ MigrationActioncommElement=Aktualisiere die Maßnahmen
 MigrationPaymentMode=Migration der Daten für die Zahlungsart
 MigrationCategorieAssociation=Kategorien verschieben
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Nicht verfügbare Optionen anzeigen
+HideNotAvailableOptions=Nicht verfügbare Optionen ausblenden

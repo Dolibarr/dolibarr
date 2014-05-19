@@ -207,5 +207,5 @@ MigrationActioncommElement=Ενημέρωση στοιχεία για τις δ�
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
 MigrationCategorieAssociation=Μετακίνηση των κατηγοριών
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
+HideNotAvailableOptions=Απόκρυψη μη μη διαθέσιμων επιλογών

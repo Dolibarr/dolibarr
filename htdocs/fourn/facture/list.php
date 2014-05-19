@@ -169,6 +169,14 @@ if (GETPOST("search_montant_ttc"))
 	$sql .= " AND fac.total_ttc = '".$db->escape(price2num(GETPOST("search_montant_ttc")))."'";
 }
 
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -193,7 +201,7 @@ if ($resql)
 	if (GETPOST("search_montant_ht"))   $param.='&amp;search_montant_ht='.urlencode(GETPOST("search_montant_ht"));
 	if (GETPOST("search_montant_ttc"))  $param.='&amp;search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
