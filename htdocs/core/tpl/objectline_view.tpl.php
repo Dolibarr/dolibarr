@@ -123,7 +123,7 @@
   if (! empty($conf->margin->enabled) && empty($user->societe_id)) {
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
   ?>
-  	<td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo price($line->pa_ht); ?></td>
+  	<td align="right" class="nowrap"><?php $coldisplay++; ?><div class="margininfos"><?php echo price($line->pa_ht); ?></div></td>
   	<?php if (! empty($conf->global->DISPLAY_MARGIN_RATES) && $user->rights->margins->liretous) {?>
   	  <td align="right" class="nowrap"><?php $coldisplay++; ?><?php echo (($line->pa_ht == 0)?'n/a':price($line->marge_tx, null, null, null, null, $rounding).'%'); ?></td>
   	<?php
