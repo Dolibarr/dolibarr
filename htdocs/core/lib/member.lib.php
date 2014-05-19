@@ -177,7 +177,7 @@ function member_stats_prepare_head($object)
     
     $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbyregion';
     $head[$h][1] = $langs->trans("Region");
-    $head[$h][2] = 'statscregion';
+    $head[$h][2] = 'statsregion';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/stats/geo.php?mode=memberbystate';
