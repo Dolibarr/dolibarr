@@ -95,7 +95,7 @@ class modBarcode extends DolibarrModules
         						'leftmenu'=>'barcodeprint',
         						'type'=>'left',			                // This is a Left menu entry
 						        'titre'=>'BarCodePrintsheet',
-						        'url'=>'/barcode/printsheet.php?mainmenu=home&amp;leftmenu=modulesadmintools',
+						        'url'=>'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint',
 						        'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
 						        'enabled'=>'$conf->barcode->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.

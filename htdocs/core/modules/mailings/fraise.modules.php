@@ -28,8 +28,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
- *	    \class      mailing_fraise
- *		\brief      Class to generate target according to rule Fraise
+ *	Class to generate target according to rule Fraise
  */
 class mailing_fraise extends MailingTargets
 {
