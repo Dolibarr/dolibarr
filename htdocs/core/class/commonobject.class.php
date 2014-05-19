@@ -3235,8 +3235,8 @@ abstract class CommonObject
         $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 		$marginInfo = $this->getMarginInfos($force_price);
-		print "<div onclick=\"$('#margintable').toggle();\" >&nbsp;</div>";
-		print '<table class="nobordernopadding" id="margintable" width="100%">';
+		print "<div onclick=\"$('.margintable').toggle();\" >&nbsp;</div>";
+		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
