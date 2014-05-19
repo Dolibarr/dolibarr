@@ -1702,7 +1702,7 @@ class Propal extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture=".$this->db->idate($now).", fk_user_cloture=".$user->id;
+        $sql.= " SET fk_statut = ".$statut.", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
         $resql=$this->db->query($sql);
