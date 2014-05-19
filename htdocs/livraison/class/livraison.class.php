@@ -805,7 +805,7 @@ class Livraison extends CommonObject
 		$this->specimen=1;
 		$this->socid = 1;
 		$this->date_delivery = $now;
-		$this->note_public='Pulbic note';
+		$this->note_public='Public note';
 		$this->note_private='Private note';
 
 		$i=0;
