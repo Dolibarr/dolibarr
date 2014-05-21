@@ -57,7 +57,7 @@ if ($action == 'add')
 
     $db->begin();
 
-	// Initialize distinctfkuser with all already existing values of fk_user (user that use a personalized view of boxes for pos)
+	// Initialize distinct fkuser with all already existing values of fk_user (user that use a personalized view of boxes for page "pos")
 	$distinctfkuser=array();
 	if (! $error)
 	{
@@ -85,14 +85,31 @@ if ($action == 'add')
 		}
 	}
 
+	$distinctfkuser['0']='0';	// Add entry for fk_user = 0. We must use string as key and val
+
 	foreach($distinctfkuser as $fk_user)
 	{
-	    if (! $error && $fk_user != 0)    // We will add fk_user = 0 later.
+	    if (! $error && $fk_user != '')
 	    {
+	    	$nbboxonleft=$nbboxonright=0;
+	    	$sql = "SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE position = ".GETPOST("pos","alpha")." AND fk_user = ".$fk_user." AND entity = ".$conf->entity;
+	        dol_syslog("boxes.php activate box sql=".$sql);
+	        $resql = $db->query($sql);
+	        if ($resql)
+	        {
+	        	while($obj = $db->fetch_object($resql))
+	        	{
+					$boxorder=$obj->box_order;
+					if (preg_match('/A/',$boxorder)) $nbboxonleft++;
+					if (preg_match('/B/',$boxorder)) $nbboxonright++;
+	        	}
+	        }
+	        else dol_print_error($db);
+
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 	        $sql.= "box_id, position, box_order, fk_user, entity";
 	        $sql.= ") values (";
-	        $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", 'A01', ".$fk_user.", ".$conf->entity;
+	        $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
 	        $sql.= ")";
 
 	        dol_syslog("boxes.php activate box sql=".$sql);
@@ -103,24 +120,6 @@ if ($action == 'add')
 	            $error++;
 	        }
 	    }
-	}
-
-	// If value 0 was not included, we add it.
-	if (! $error)
-	{
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
-	    $sql.= "box_id, position, box_order, fk_user, entity";
-	    $sql.= ") values (";
-	    $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", 'A01', 0, ".$conf->entity;
-	    $sql.= ")";
-
-	    dol_syslog("boxes.php activate box sql=".$sql);
-	    $resql = $db->query($sql);
-        if (! $resql)
-        {
-		    $errmesg=$db->lasterror();
-            $error++;
-        }
 	}
 
 	if (! $error)
