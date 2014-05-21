@@ -130,6 +130,9 @@ Fix: [ bug #1367 ] "Show invoice" link after a POS sell throws an error.
 Fix: TCPDF error file not found in member card generation.
 Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 Fix: [ bug #1393 ] PHP Warning when creating a supplier invoice.
+Fix: [ bug #1399 ] [pgsql] Silent warning when setting a propal as "facturée" in propal.php
+Fix: When number reach 9999 with default numbering module, next number
+     will be 10000 instead of 0000 and error.
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
