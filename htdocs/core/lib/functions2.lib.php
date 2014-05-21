@@ -536,7 +536,7 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   Societe		$objsoc			The company that own the object we need a counter for
  * @param   string		$date			Date to use for the {y},{m},{d} tags.
  * @param   string		$mode           'next' for next value or 'last' for last value
- * @return 	string					    New value
+ * @return 	string					    New value (numeric) or error message
  */
 function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next')
 {
@@ -798,6 +798,12 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     {
         $counter++;
 
+        // If value for $counter has a length higher than $maskcounter chars
+        if ($counter >= pow(10, dol_strlen($maskcounter)))
+        {
+        	$counter='ErrorMaxNumberReachForThisMask';
+        }
+
         if (! empty($maskrefclient_maskcounter))
         {
             //print "maskrefclient_maskcounter=".$maskrefclient_maskcounter." maskwithnocode=".$maskwithnocode." maskrefclient=".$maskrefclient."\n<br>";
@@ -839,6 +845,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
                 $maskrefclient_counter = $maskrefclient_obj->val;
             }
             else dol_print_error($db);
+
             if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i',$maskrefclient_counter)) $maskrefclient_counter=$maskrefclient_maskoffset;
 			$maskrefclient_counter++;
         }
