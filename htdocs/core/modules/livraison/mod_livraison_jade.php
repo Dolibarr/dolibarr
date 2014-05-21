@@ -78,7 +78,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $fayymm=''; $max='';
 
         $posindice=8;
-        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";   // This is standard SQL
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
         $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
@@ -112,7 +112,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 
         // D'abord on recupere la valeur max
         $posindice=8;
-        $sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";   // This is standard SQL
+        $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
         $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
         $sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
         $sql.= " AND entity = ".$conf->entity;
@@ -134,7 +134,9 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         $date=$object->date_delivery;
         if (empty($date)) $date=dol_now();
         $yymm = strftime("%y%m",$date);
-        $num = sprintf("%04s",$max+1);
+        
+        if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+        else $num = sprintf("%04s",$max+1);
 
         dol_syslog("mod_livraison_jade::getNextValue return ".$this->prefix.$yymm."-".$num);
         return $this->prefix.$yymm."-".$num;

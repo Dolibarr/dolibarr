@@ -72,7 +72,7 @@ class mod_task_simple extends ModeleNumRefTask
         $coyymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(task.ref FROM " . $posindice . ")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(task.ref FROM " . $posindice . ") AS SIGNED)) as max";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "projet_task AS task, ";
 		$sql .= MAIN_DB_PREFIX . "projet AS project WHERE task.fk_projet=project.rowid";
 		$sql .= " AND task.ref LIKE '" . $this->prefix . "____-%'";
@@ -109,7 +109,7 @@ class mod_task_simple extends ModeleNumRefTask
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."projet_task";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 
@@ -130,7 +130,9 @@ class mod_task_simple extends ModeleNumRefTask
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+		
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s",$max+1);
 
 		dol_syslog("mod_task_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
