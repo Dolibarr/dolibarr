@@ -1,15 +1,7 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Adicionar esta página aos Favoritos
-Bookmark=Favorito
-Bookmarks=Favoritos
-NewBookmark=Novo Favorito
+# Dolibarr language file - Source file is en_US - bookmarks
 ShowBookmark=Mostrar Favorito
 OpenANewWindow=Abrir uma nova janela
-ReplaceWindow=Substituir a janela atual
-BookmarkTargetNewWindowShort=Nova janela
-BookmarkTargetReplaceWindowShort=Janela atual
 BookmarkTitle=Título do favorito
-UrlOrLink=URL
 BehaviourOnClick=Comportamento à fazer quando clickamos na URL
 CreateBookmark=Criar favorito
 SetHereATitleForLink=Indicar aqui um título do favorito

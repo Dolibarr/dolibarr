@@ -1,138 +1,21 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 00:09:12
- */
-
-
-
-Accountancy=Rechnungswesen
-AccountancyCard=Rechnungswesenkarte
-Treasury=Vermögensverwaltung
-MenuFinancial=Rechnungswesen
-OptionMode=Buchhaltungsoptionen
-OptionModeTrue=Option Eingang-Ausgang
-OptionModeVirtual=Option Soll-Haben
-OptionModeVirtualDesc=In dieser Option berechnet sich der Umsatz über Zahlungen (Zahlungsdatum).<br> Die Gültigkeit der Zahlen ist nur bei Überprüfung der Zu- und Abgänge auf den Konten über Rechnungen gewährleistet.
-FeatureIsSupportedInInOutModeOnly=Dieses Feautre ist nur in der Soll-Haben-Option verfügbar (siehe Konfiguration des Rechnungswesen-Moduls)
-Param=Einstellungen
-AccountsGeneral=Konten
-Account=Konto
-Accounts=Konten
-BillsForSuppliers=Lieferantenrechnungen
-Income=Einnahmen
-Outcome=Ausgaben
-ReportInOut=Einnahmen/Ausgaben
-PaymentsNotLinkedToInvoice=Zahlungen mit keiner Rechnung und damit auch keinem Partner verbunden
-PaymentsNotLinkedToUser=Zahlungen mit keinem Benutzer verbunden
-Profit=Gewinn
-Balance=Bilanz
-Debit=Soll
-Credit=Haben
-Withdrawal=Entnahme
-Withdrawals=Entnahmen
-AmountHTVATRealReceived=Einnahmen (netto)
-AmountHTVATRealPaid=Ausgaben (netto)
-VATToPay=Zu zahlende MwSt.
+# Dolibarr language file - Source file is en_US - compta
+TaxModuleSetupToModifyRules=Die Einstellungen zur Berechnung finden Sie in den entsprechenden <a href="%s">Modul-Einstellungen</a>
+OptionModeTrueDesc=In diesem Modus erfolgt die Umsatzberechnung über Zahlungseingänge (Zahlungsdatum).<br>Die Gültigkeit der Daten ist nur bei der Überprüfung der Zu- und Abgänge auf den Konten durch Rechnungen gewährleistet.
+VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
+RemainingAmountPayment=Leistende Zahlung übrig:
+AmountToBeCharged=Gesamtbetrag zu zahlen:
 VATReceived=Eingehobene MwSt.
 VATToCollect=Einzuhebende MwSt.
 VATSummary=MwSt. Zahllast
-VATPaid=Bezahlte MwSt.
 VATCollected=Eingehobene MwSt.
-ToPay=Zu zahlen
-ToGet=Zu erhalten
-TaxAndDividendsArea=Steuern-, Sozialabgaben- und Dividendenübersicht
-SocialContribution=Sozialbeitrag
-SocialContributions=Sozialbeiträge
-MenuTaxAndDividends=Steuern und Dividenden
-MenuSocialContributions=Sozialbeiträge
-MenuNewSocialContribution=Neuer Beitrag
-NewSocialContribution=Neuer Sozialbeitrag
-ContributionsToPay=Zu zahlende Beiträge
-AccountancyTreasuryArea=Rechnungswesen/Vermögensverwaltung
-AccountancySetup=Rechnungswesen Einstellungen
-NewPayment=Neue Zahlung
-Payments=Zahlungen
-PaymentCustomerInvoice=Zahlung Kundenrechnung
-PaymentSupplierInvoice=Zahlung Lieferantenrechnung
-PaymentSocialContribution=Zahlung Sozialbeiträge
-PaymentVat=MwSt.-Zahlung
-ListPayment=Liste der Zahlungen
-ListOfPayments=Liste der Zahlungen
-ListOfCustomerPayments=Liste der Kundenzahlungen
-ListOfSupplierPayments=Liste der Lieferantenzahlungen
-DatePayment=Zahlungsdatum
 NewVATPayment=Neue MwSt.-Zahlung
-VATPayment=MwSt.-Zahlung
-VATPayments=MwSt-Zahlungen
-ShowVatPayment=Zeige MwSt. Zahlung
-TotalToPay=Zu zahlender Gesamtbetrag
-TotalVATReceived=Summe vereinnahmte MwSt.
-CustomerAccountancyCode=Kontierungscode Kunde
-AlreadyPaid=Bereits bezahlt
-AccountNumberShort=Kontonummer
-AccountNumber=Kontonummer
-NewAccount=Neues Konto
-SalesTurnover=Umsatz
-ByThirdParties=Durch Partner
-ByUserAuthorOfInvoice=Durch Rechnungsersteller
-AccountancyExport=Rechnungswesen Export
-ErrorWrongAccountancyCodeForCompany=Kontierungscode ungültig für Kunden %s
-SuppliersProductsSellSalesTurnover=Umsatz aus dem Verkauf von Waren dieses Lieferanten.
-CheckReceipt=Scheck erhalten
-CheckReceiptShort=Scheck erhalten
-NewCheckReceipt=Neuen Scheck erhalten
-NewCheckDeposit=Neue Check Hinterlegung
-NewCheckDepositOn=Neue Scheckeinlösung auf Konto: %s
-NoWaitingChecks=Keine Schecks warten auf Einlösung.
-DateChequeReceived=Datum des Scheckerhalts
-NbOfCheques=Anzahl der Schecks
-PaySocialContribution=Sozialbeitragszahlungen
-ConfirmPaySocialContribution=Möchten Sie diesen Sozialbeitrag wirklich als bezahlt markieren?
-DeleteSocialContribution=Sozialbeitrag löschen
-ConfirmDeleteSocialContribution=Möchten Sie diesen Sozialbeitrag wirklich löschen?
-ExportDataset_tax_1=Sozialbeiträge und Zahlungen
-
-//Steuerregeln fehlende Übersetzungen
-
 AnnualSummaryDueDebtMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus<b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
 AnnualSummaryInputOutputMode=Die Jahresbilanz der Einnahmen/Ausgaben im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
-AnnualByCompaniesDueDebtMode=Die Einnahmen/Ausgaben-Bilanz nach Partnern im Modus <b>%sForderungen-Verbindlichkeiten%s</b> meldet <b>Kameralistik</b>.
-AnnualByCompaniesInputOutputMode=Die Einnahmen/Ausgaben-Bilanz im Modus <b>%sEinkünfte-Ausgaben%s</b> meldet <b>Ist-Besteuerung</b>.
-SeeReportInInputOutputMode=Der <b>%sEinkünfte-Ausgaben%s</b>-Bericht medlet <b>Istbesteuerung</b> für eine Berechnung der tatsächlich erfolgten Zahlungsströme.
-SeeReportInDueDebtMode=Der <b>%sForderungen-Verbindlichkeiten%s</b>-Bericht meldet <b>Kameralistik</b> für eine Berechnung auf Basis der ausgestellten Rechnungen. 
-RulesResultDue=- Die angezeigten Beträge verstehen sich inkl. aller Steuern.<br>- Das Ergebnis beinhaltet ausständige Rechnungen, Ausgaben und MwSt., obgleich bezahlt oder nicht. <br>- Es gilt das Freigabedatum von Rechnungen und MwSt., sowie das Fälligkeitsdatum für Ausgaben.
 RulesResultInOut=- Die angezeigten Beträge verstehen sich inkl. aller Steuern.<br>- Das Ergebnis beinhaltet nur tatsächlich bezahlte Rechnungen, Ausgaben und MwSt. <br>- Es gilt das Zahlungsdatum der Rechnungen, Ausgaben und MwSt.<br>
-RulesCADue=- Beinhaltet die fälligen Kundenrechnungen, unabhängig von ihrem Zahlungsstatus. <br>- Es gilt das Freigabedatum der Rechnungen. <br>
-RulesCAIn=- Beinhaltet alle tatsächlich erfolgten Zahlungen von Kunden.<br>- Es gilt das Zahlungsdatum der Rechnungen.<br>
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuerbeleg)
 VATReportByCustomersInDueDebtMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden (Steuersatz)
 VATReportByQuartersInInputOutputMode=Quartalsbericht zur vereinnahmten und bezahlten MwSt. (Steuerbeleg)
 VATReportByQuartersInDueDebtMode=Quartalsbericht zur vereinnahmten und bezahlten MwSt.(Steuersatz)
-SeeVATReportInInputOutputMode=Siehe <b>%sMwSt.-Einnahmen%s</b>-Bericht für eine standardmäßige Berechnung
-SeeVATReportInDueDebtMode=Siehe <b>%sdynamischen MwSt.%s</b>-Bericht für eine Berechnung mit dynamischer Option
-RulesVATIn=- Für Services beinhaltet der Steuerbericht alle vereinnahmten oder bezahlten Steuern nach Zahlungsdatum. Für Warenlieferungen gilt das Rechnungsdatum.
-RulesVATDue=- Für Services beinhaltet der Steuerbericht alle fälligen Rechnungen, bezahlt oder nicht, in Abhängigkeit des Leistungsdatums. Für Warenlieferungen gilt das Rechnungsdatum.
-OptionVatInfoModuleComptabilite=Achtung: Für Vermögenswerte sollte hier das Zustelldatum eingegeben werden.
-PercentOfInvoice=%%/Rechnung
-Dispatch=Versenden
-Dispatched=Versendet
-ToDispatch=Zu versenden
-ReportTurnover=Umsatz
-NotUsedForGoods=Nicht für Waren
-
-OptionModeTrueDesc=In diesem Modus erfolgt die Umsatzberechnung über Zahlungseingänge (Zahlungsdatum).<br>Die Gültigkeit der Daten ist nur bei der Überprüfung der Zu- und Abgänge auf den Konten durch Rechnungen gewährleistet.
-SupplierAccountancyCode=Kontierungscode Lieferant
-
-TaxModuleSetupToModifyRules=Die Einstellungen zur Berechnung finden Sie in den entsprechenden <a href="%s">Modul-Einstellungen</a>
-VATReportBuildWithOptionDefinedInModule=Ausgewiesenen Beträge sind hier anhand von Regeln Tax Modul Setup definiert.
-SocialContributionsPayments=Sozialbeitragszahlungen
-ThirdPartyMustBeEditAsCustomer=Partner muss als Kunde definiert werden
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_AT
-RemainingAmountPayment=Leistende Zahlung übrig:
-AmountToBeCharged=Gesamtbetrag zu zahlen:
 ProposalStats=Statistik über die Vorschläge
 OrderStats=Statistiken über Bestellungen
 InvoiceStats=Statistik auf Rechnungen
@@ -140,4 +23,3 @@ SellsJournal=Vertrieb Journal
 PurchasesJournal=Käufe Journal
 DescSellsJournal=Vertrieb Journal
 WarningDepositsNotIncluded=Einlagen Rechnungen sind in dieser Version nicht mit diesem Rechnungswesen-Modul enthalten.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:38:21).
