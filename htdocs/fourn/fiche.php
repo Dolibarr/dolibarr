@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -369,11 +370,10 @@ if ($object->fetch($id))
 	 */
 	$MAXLIST=5;
 
-	$langs->load('bills');
-	$facturestatic = new FactureFournisseur($db);
-
-	if ($user->rights->fournisseur->facture->lire)
+	if ($user->rights->fournisseur->facture->lire && $conf->facture->enabled)
 	{
+		$facturestatic = new FactureFournisseur($db);
+
 		// TODO move to DAO class
 		$sql = 'SELECT f.rowid,f.libelle,f.ref_supplier,f.fk_statut,f.datef as df,f.total_ttc as amount,f.paye,';
 		$sql.= ' SUM(pf.amount) as am';
@@ -441,7 +441,7 @@ if ($object->fetch($id))
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
 	}
 
-	if ($user->rights->fournisseur->facture->creer)
+	if ($user->rights->fournisseur->facture->creer && $conf->facture->enabled)
 	{
 		$langs->load("bills");
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a>';
