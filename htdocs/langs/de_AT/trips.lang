@@ -1,25 +1,2 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 17:09:12
- */
-
-
-Trip=Reise
-Trips=Reisen
-TripsAndExpenses=Reise- und Fahrtspesen
-TripCard=Reise-Karte
-AddTrip=Reise hinzufügen
-ListOfTrips=Liste der Reisen
-ListOfFees=Liste der Spesen
-NewTrip=Neue Reise
-CompanyVisited=Besuchter Partner
-Kilometers=Kilometerstand
-FeesKilometersOrAmout=Kilometergeld oder Spesenbetrag
-DeleteTrip=Reise löschen
-ConfirmDeleteTrip=Möchten Sie diese Reise wirklich löschen?
-TF_OTHER=Andere
+# Dolibarr language file - Source file is en_US - trips
 TF_LUNCH=Mittagessen
-TF_TRIP=Reise
-ListTripsAndExpenses=Liste der Reisen und Spesen
-TripsAndExpensesStatistics=Reise- und Spesenstatistiken

@@ -1,63 +1,4 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 18:09:12
- */
-
-
-Project=Projekt
-Projects=Projekte
-SharedProject=Jeder
-Myprojects=Meine Projekte
-ProjectsArea=Projektübersicht
-NewProject=Neues Projekt
-AddProject=Projekt hinzufügen
-DeleteAProject=Löschen eines Projekts
-DeleteATask=Löschen einer Aufgabe
-ConfirmDeleteAProject=Möchten Sie dieses Projekt wirklich löschen?
-ConfirmDeleteATask=Möchten Sie diese Aufgabe wirklich löschen?
-OfficerProject=Projektverantwortlicher
-LastProjects=%s neueste Projekte
-AllProjects=Alle Projekte
-ProjectsList=Liste der Projekte
-ShowProject=Zeige Projekt
-SetProject=Projekt setzen
-NoProject=Kein Projekt definiert
-NbOpenTasks=Anzahl der offenen Aufgaben
-NbOfProjects=Anzahl der Projekte
-TimeSpent=Zeitaufwand
-RefTask=Aufgaben Nr.
-LabelTask=Aufgabenbezeichnung
-NewTimeSpent=Neuer Zeitaufwand
-MyTimeSpent=Mein Zeitaufwand
-MyTasks=Meine Aufgaben
-Tasks=Aufgaben
-Task=Aufgabe
-NewTask=Neue Aufgabe
-AddTask=Aufgabe hinzufügen
-AddDuration=Dauer hinzufügen
-Activity=Tätigkeit
-Activities=Aufgaben/Tätigkeiten
-MyActivity=Meine Tätigkeit
-MyActivities=Meine Tätigkeiten
-DurationEffective=Effektivdauer
-MyProjects=Meine Projekte
-Time=Zeitaufwand
-ListProposalsAssociatedProject=Liste der mit diesem Projekt verbundenen Angebote
-ListOrdersAssociatedProject=Liste der mit diesem Projekt verbundenen Bestellungen
-ListInvoicesAssociatedProject=Liste der mit diesem Projekt verbundenen Rechnungen
-ListSupplierOrdersAssociatedProject=Liste der mit diesem Projekt verbundenen Lieferantenbestellungen
-ListSupplierInvoicesAssociatedProject=Liste der mit diesem Projekt verbundenen Lieferantenrechnungen
-ListContractAssociatedProject=Liste der mit diesem Projekt verbundenen Verträge
-ActivityOnProjectThisWeek=Projektaktivitäten dieser Woche
-ActivityOnProjectThisMonth=Projektaktivitäten dieses Monats
-ActivityOnProjectThisYear=Projektaktivitäten dieses Jahres
-ChildOfTask=Kindelement von Projekt/Aufgabe
-NotOwnerOfProject=Nicht Eigner des privaten Projekts
-AffectedTo=Zugewiesen an
-ListPredefinedInvoicesAssociatedProject=Liste der mit diesem Projekt verknüpften Rechnungsvorlagen
-CantRemoveProject=Löschen des Projekts auf Grund verbundener Elemente (Rechnungen, Bestellungen oder andere) nicht möglich. Näheres finden Sie in der Verweiskarte.
-
+# Dolibarr language file - Source file is en_US - projects
 PrivateProject=Projektansprechpartner
 MyProjectsDesc=Diese Ansicht ist auf Projekte beschränkt, zu denen Sie als Kontakt definiert sind (unabhängig vom Typ).
 ProjectsPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Projekte.
@@ -65,33 +6,15 @@ ProjectsDesc=Diese Ansicht zeigt alle Projekte (Ihre Benutzerberechtigung erlaub
 MyTasksDesc=Diese Ansicht ist auf Aufgaben beschränkt, zu denen Sie als Kontakt definiert sind (unabhängig vom Typ).
 TasksPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Aufgaben.
 TasksDesc=Diese Ansicht zeigt alle Aufgaben (Ihre Benutzerberechtigung erlaubt Ihnen eine volle Einsicht aller Aufgaben).
-Progress=Fortschritt
+LastProjects=%s neueste Projekte
+NoProject=Kein Projekt definiert
+RefTask=Aufgaben Nr.
+MyActivities=Meine Tätigkeiten
 ListFichinterAssociatedProject=Liste der mit diesem Projekt verknüpften Eingriffe
 ListTripAssociatedProject=Liste der mit diesem Projekt verknüpften Reise- und Fahrtspesen
-ListActionsAssociatedProject=Liste der mit diesem Projekt verknüpften Maßnahmen
-ValidateProject=Projekt freigeben
-ConfirmValidateProject=Möchten Sie dieses Projekt wirklich freigeben?
 CloseAProject=Schließe Projekt
-ConfirmCloseAProject=Möchten Sie dieses Projekt wirklich schließen?
 ReOpenAProject=Öffne Projekt
-ConfirmReOpenAProject=Möchten Sie dieses Projekt wirklich wiedereröffnen?
-ProjectContact=Projektkontakt
-ActionsOnProject=Projektaktionen
-YouAreNotContactOfProject=Sie sind diesem privaten Projekt nicht als Kontakt zugeordnet.
-DeleteATimeSpent=Lösche einen Zeitaufwand
-ConfirmDeleteATimeSpent=Möchten Sie diesen Zeitaufwand wirklich löschen?
 DoNotShowMyTasksOnly=Zeige auch die Aufgaben Anderer
-ShowMyTasksOnly=Zeige nur meine Aufgaben
-TaskRessourceLinks=Ressourcen
-ProjectsDedicatedToThisThirdParty=Mit diesem Partner verknüpfte Projekte
-NoTasks=Keine Aufgaben für dieses Projekt
-LinkedToAnotherCompany=Mit Partner verknüpft
-TypeContact_project_internal_PROJECTLEADER=Projektleiter
-TypeContact_project_external_PROJECTLEADER=Projektleiter
-TypeContact_project_internal_PROJECTCONTRIBUTOR=Mitwirkender
-TypeContact_project_external_PROJECTCONTRIBUTOR=Mitwirkender
 TypeContact_project_task_internal_TASKEXECUTIVE=Task Exekutive
 TypeContact_project_task_external_TASKEXECUTIVE=Task Exekutive
-TypeContact_project_task_internal_TASKCONTRIBUTOR=Mitwirkender
-TypeContact_project_task_external_TASKCONTRIBUTOR=Mitwirkender
 DocumentModelBaleine=Eine vollständige Projektberichtsvorlage (Logo, ...)
