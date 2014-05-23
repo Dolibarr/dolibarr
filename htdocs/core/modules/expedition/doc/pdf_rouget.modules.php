@@ -182,6 +182,7 @@ class pdf_rouget extends ModelePdfExpedition
 				if (! empty($object->note_public) || ! empty($object->tracking_number))
 				{
 					$tab_top = 88;
+					$tab_top_alt = $tab_top;
 
 					// Tracking number
 					if (! empty($object->tracking_number))
@@ -196,7 +197,9 @@ class pdf_rouget extends ModelePdfExpedition
 								$label=$outputlangs->trans("LinkToTrackYourPackage")."<br>";
 								$label.=$outputlangs->trans("SendingMethod".strtoupper($code))." :";
 								$pdf->SetFont('','B', $default_font_size - 2);
-								$pdf->writeHTMLCell(60, 4, $this->posxdesc-1, $tab_top-1, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+								$pdf->writeHTMLCell(60, 7, $this->posxdesc-1, $tab_top-1, $label." ".$object->tracking_url, 0, 1, false, true, 'L');
+
+								$tab_top_alt += 7;
 							}
 						}
 					}
@@ -205,7 +208,7 @@ class pdf_rouget extends ModelePdfExpedition
 					if (! empty($object->note_public))
 					{
 						$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($object->note_public), 0, 1);
+						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top_alt, dol_htmlentitiesbr($object->note_public), 0, 1);
 					}
 
 					$nexY = $pdf->GetY();
