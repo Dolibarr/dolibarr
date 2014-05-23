@@ -113,6 +113,7 @@ Fix: [ bug #1306 ] Fatal error when adding an external calendar.
 New: Added es_CL language
 Fix: Margin tabs bad data show
 Fix: [ bug #1318 ] Problem with enter key when adding an existing product to a customer invoice.
+Fix: [ bug #1410 ] Add customer order line asks for required Unit Price but doesn't interrupt the creation of the line
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
