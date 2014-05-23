@@ -1407,7 +1407,7 @@ if ($action == 'create')
 	}
 	else
 	{
-		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$datepropal=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 		$form->select_date($datepropal,'liv_','','','',"addprop");
 	}
 	print '</td></tr>';
