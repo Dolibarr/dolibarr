@@ -35,6 +35,7 @@ Fix: [ bug #1397 ] Filter by supplier orders with status Draft does not filter.
 Fix: [ bug #1388 ] Wrong date when invoicing several orders.
 Fix: [ bug #1411 ] Unable to set an expedition note if invoices module is not enabled.
 Fix: [ bug #1407 ] Rouget pdf overlapped when using tracking number and public notes.
+Fix: [ bug #1405 ] Rouget PDF expedition incorrect when two expeditions under the same commande
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
