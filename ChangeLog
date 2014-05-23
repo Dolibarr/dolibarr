@@ -31,6 +31,7 @@ Fix: [ bug #1399 ] [pgsql] Silent warning when setting a propal as "facturée" i
 Fix: When number reach 9999 with default numbering module, next number
      will be 10000 instead of 0000 and error.
 Fix: element page on project give wrong href link
+Fix: [ bug #1397 ] Filter by supplier orders with status Draft does not filter
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
