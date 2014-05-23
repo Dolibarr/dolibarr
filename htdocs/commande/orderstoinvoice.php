@@ -413,7 +413,7 @@ if ($action == 'create' && empty($mesgs))
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	$html->select_date(0,'','','','',"add",1,1);
+	$html->select_date('','','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
