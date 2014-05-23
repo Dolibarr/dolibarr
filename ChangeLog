@@ -120,6 +120,7 @@ New: Added es_CL language
 Fix: Margin tabs bad data show
 Fix: [ bug #1318 ] Problem with enter key when adding an existing product to a customer invoice.
 Fix: [ bug #1388 ] Wrong date when invoicing several orders
+Fix: [ bug #1411 ] Unable to set an expedition note if invoices module is not enabled
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
