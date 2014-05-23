@@ -180,7 +180,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$tab_height = 130;
 				$tab_height_newpage = 150;
 
-				if (! empty($object->note_public) || ! empty($object->tracking_number))
+				if (! empty($object->note_public) || (! empty($object->tracking_number) && ! empty($object->shipping_method_id)))
 				{
 					$tab_top = 88;
 					$tab_top_alt = $tab_top;
