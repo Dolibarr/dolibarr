@@ -1621,9 +1621,12 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 		//Dolibarr version
 	    $doliurl='http://www.dolibarr.org';
 
-	    //local communities
-	    if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
+		//local communities
+		if (preg_match('/fr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.fr';
 		if (preg_match('/es/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.es';
+		if (preg_match('/de/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.de';
+		if (preg_match('/it/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.it';
+		if (preg_match('/gr/i',$langs->defaultlang)) $doliurl='http://www.dolibarr.gr';
 
 	    $appli='Dolibarr';
 	    if (! empty($conf->global->MAIN_APPLICATION_TITLE))

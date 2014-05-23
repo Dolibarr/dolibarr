@@ -1,53 +1,5 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-11 00:10:12
- */
-
-Actions=Aktionen
-ActionsArea=Bereich Maßnahmen (Veranstaltungen und Aufgaben)
-Agenda=Agenda
-Agendas=Tagesordnungen
-Calendar=Kalender
-Calendars=Kalender
-AffectedTo=Zugewiesen an
-DoneBy=Erldedigt von
-Events=Veranstaltungen
-ListOfActions=Veranstaltungsliste
-Location=Ort
-SearchAnAction=Suche Maßnahme / Aufgabe
-MenuToDoActions=Alle unvollständigen Maßnahmen
-MenuDoneActions=Alle abgeschlossenen Maßnahmen
-MenuToDoMyActions=Meine offenen Maßnahmen
-MenuDoneMyActions=Meine abgeschlossenen Maßnahmen
-ListOfEvents=Veranstaltungsliste
-ActionsAskedBy=Maßnahmen erbeten von
-ActionsToDoBy=Maßnahmen zugewiesen an
-ActionsDoneBy=Maßnahmen erledigt von
-AllMyActions=Alle meine Maßnahmen / Aufgaben
-AllActions=Alle Maßnahmen / Aufgaben
+# Dolibarr language file - Source file is en_US - agenda
 ViewList=Liste anzeigen
 ViewCal=Kalender anzeigen
-ViewWithPredefinedFilters=Ansicht mit vordefinierten Filtern
-AutoActions=Automatische Befüllung der Tagesordnung
-AgendaAutoActionDesc=Definieren Sie hier Maßnahmen zur automatischen Übernahme in die Agenda. Ist nichts aktviert (Standard), umfasst die Agenda nur manuell eingetragene Maßnahmen.
-AgendaSetupOtherDesc=Diese Seite ermöglicht die Konfiguration anderer Parameter des Tagesordnungsmoduls.
-ActionsEvents=Veranstaltungen zur automatischen Übernahme in die Agenda
-PropalValidatedInDolibarr=Angebot freigegeben
-InvoiceValidatedInDolibarr=Rechnung freigegeben
 OrderValidatedInDolibarr=Bestellung freigegeben
-NewCompanyToDolibarr=Partner erstellt
-DateActionPlannedStart=Geplantes Startdatum
-DateActionPlannedEnd=Geplantes Enddatum
-DateActionDoneStart=Effektiver Beginn
-DateActionDoneEnd=Effektives Ende
-DateActionStart=Startdatum
-DateActionEnd=Enddatum
-AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
-AgendaUrlOptions2=<b>login=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> erstellte, betroffene oder erledigte Maßnahmen.
-AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> erstellte Maßnahmen.
-AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> betroffene Maßnahmen.
-AgendaUrlOptions5=<b>logind=%s</b> begrenzt die Ausgabe auf von Benutzer <b>%s</b> erledigte Maßnahmen.
-AgendaShowBirthdayEvents=Zeige Geburtstage
-AgendaHideBirthdayEvents=Geburtstage ausblenden
 InterventionValidatedInDolibarr=Eingriff %s freigegeben

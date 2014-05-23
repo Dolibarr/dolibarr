@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=Πληροφορίες Rss
-BoxLastProducts=%s τελευταία προϊόντα/υπηρεσίες
+BoxLastProducts=Τελευταία %s προϊόντα/υπηρεσίες
 BoxProductsAlertStock=Προειδοποίηση προϊόντων σε απόθεμα
-BoxLastProductsInContract=%s τελευταία συμβόλαια με προϊόντα/υπηρεσίες
+BoxLastProductsInContract=Τελευταία %s συμβόλαια με προϊόντα/υπηρεσίες
 BoxLastSupplierBills=Τελευταία τιμολόγια προμηθευτών
 BoxLastCustomerBills=Τελευταία τιμολόγια πελατών
 BoxOldestUnpaidCustomerBills=Παλαιότερα απλήρωτα τιμολόγια πελατών
@@ -84,8 +84,8 @@ BoxCustomersOrdersPerMonth=Παραγγελίες πελατών ανά μήνα
 BoxSuppliersOrdersPerMonth=Παραγγελίες προμηθευτών ανά μήνα
 BoxProposalsPerMonth=Προσφορές ανά μήνα
 NoTooLowStockProducts=Κανένα προϊόν κάτω από το χαμηλό όριο του αποθέματος
-BoxProductDistribution=Κατανομή Προϊόντα/Υπηρεσίες
+BoxProductDistribution=Κατανομή Προϊόντων/Υπηρεσιών
 BoxProductDistributionFor=Κατανομή των %s για %s
 ForCustomersInvoices=Τιμολόγια Πελάτη
 ForCustomersOrders=Παραγγελίες πελατών
-ForProposals=Προτάσεις
+ForProposals=Προσφορές

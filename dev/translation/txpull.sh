@@ -13,7 +13,13 @@ then
 	echo "This pull remote transifex files to local dir."
 	echo "Note:  If you pull a language file (not source), file will be skipped if local file is newer."
 	echo "       Using -f will overwrite local file (does not work with 'all')."
-	echo "Usage: txpull.sh (all|xx_XX) [-r dolibarr.file] [-f]"
+	echo "Usage: ./dev/translation/txpull.sh (all|xx_XX) [-r dolibarr.file] [-f]"
+	exit
+fi
+
+if [ ! -d ".tx" ]
+then
+	echo "Script must be ran from root directory of project with command ./dev/translation/txpull.sh"
 	exit
 fi
 

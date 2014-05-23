@@ -13,10 +13,15 @@ then
 	echo "This push local files to transifex."
 	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
 	echo "       Using -f will overwrite translation but not memory."
-	echo "Usage: txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f] [--no-interactive]"
+	echo "Usage: ./dev/translation/txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f] [--no-interactive]"
 	exit
 fi
 
+if [ ! -d ".tx" ]
+then
+	echo "Script must be ran from root directory of project with command ./dev/translation/txpush.sh"
+	exit
+fi
 
 if [ "x$1" = "xall" ]
 then

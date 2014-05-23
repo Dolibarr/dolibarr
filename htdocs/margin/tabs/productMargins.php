@@ -245,7 +245,7 @@ if ($id > 0 || ! empty($ref))
 				$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
 				$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
 			}
-			print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
+			print '<tr class="liste_total">';
 			print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
 			print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
 			print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";

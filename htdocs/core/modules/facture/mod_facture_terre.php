@@ -73,7 +73,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$this->prefixinvoice."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -95,7 +95,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$this->prefixcreditnote."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -116,7 +116,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$fayymm='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$this->prefixdeposit."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -154,7 +154,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		// D'abord on recupere la valeur max
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(facnumber FROM ".$posindice.")) as max";	// This is standard SQL
+		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -175,7 +175,8 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		if ($mode == 'last')
 		{
-            $num = sprintf("%04s",$max);
+    		if ($max >= (pow(10, 4) - 1)) $num=$max;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+    		else $num = sprintf("%04s",$max);
 
             $ref='';
             $sql = "SELECT facnumber as ref";
@@ -198,7 +199,9 @@ class mod_facture_terre extends ModeleNumRefFactures
 		{
     		$date=$facture->date;	// This is invoice date (not creation date)
     		$yymm = strftime("%y%m",$date);
-    		$num = sprintf("%04s",$max+1);
+
+    		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+    		else $num = sprintf("%04s",$max+1);
 
     		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
     		return $prefix.$yymm."-".$num;

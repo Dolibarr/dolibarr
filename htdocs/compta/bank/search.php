@@ -167,9 +167,9 @@ if ($resql)
 
 	print '<form method="post" action="search.php" name="search_form">';
 	
-	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('DateOperationShort') . ': ';
+	$moreforfilter .= $langs->trans('Period') . ' ' . $langs->trans('StartDate') . ': ';
 	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 1, 1);
-	$moreforfilter .= $langs->trans('PeriodEndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
+	$moreforfilter .= $langs->trans('EndDate') . ':' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 1, 1);
 	
 	
 	if ($moreforfilter) {

@@ -155,7 +155,7 @@ if ($memmaxorig != '')
 		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
 		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
 	}
-	if ($memmax >= $memrequired)
+	if ($memmax >= $memrequired || $memmax == -1)
 	{
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
 	}
@@ -212,13 +212,13 @@ else
 		else dolibarr_install_syslog("failed to create a new file ".$conffile." into current dir ".getcwd().". Check permission.", LOG_ERR);
 	}
 
-	// First install, on ne peut pas upgrader
+	// First install, we can't upgrade
 	$allowupgrade=0;
 }
 
 
 
-// Si fichier absent et n'a pu etre cree
+// File is missng and can't be created
 if (! file_exists($conffile))
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffiletoshow);
@@ -231,7 +231,7 @@ if (! file_exists($conffile))
 }
 else
 {
-	// Si fichier present mais ne peut etre modifie
+	// File exists but can't be modified
 	if (!is_writable($conffile))
 	{
 		if ($confexists)
@@ -248,7 +248,7 @@ else
 
 		$allowinstall=0;
 	}
-	// Si fichier present et peut etre modifie
+	// File exists and can be modified
 	else
 	{
 		if ($confexists)
@@ -267,12 +267,12 @@ else
 	}
 	print "<br>\n";
 
-	// Si prerequis ok, on affiche le bouton pour passer a l'etape suivante
+	// Requirements ok, we display the next step button
 	if ($checksok)
 	{
 		$ok=0;
 
-		// Try to create db connexion
+		// Try to create db connection
 		if (file_exists($conffile))
 		{
 			include_once $conffile;
@@ -523,5 +523,5 @@ $("div#AShowChoices a").click(function() {
 
 </script>';
 
-pFooter(1);	// 1 car ne doit jamais afficher bouton Suivant
+pFooter(true);	// Never display next button
 
