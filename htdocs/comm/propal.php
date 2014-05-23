@@ -1368,7 +1368,7 @@ if ($action == 'create')
 
 	// Date
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	$form->select_date('','','','','',"addprop");
+	$form->select_date('','','','','',"addprop",1,1);
 	print '</td></tr>';
 
 	// Validaty duration
