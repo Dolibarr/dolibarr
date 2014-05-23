@@ -617,27 +617,27 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && ($qty < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error++;
+		$error = true;
 	}
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-		$error++;
+		$error = true;
 	}
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
-		$error++;
+		$error = true;
 	}
 	if ($qty == '')
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error++;
+		$error = true;
 	}
 	if (empty($idprod) && empty($product_desc))
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-		$error++;
+		$error = true;
 	}
 
 	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
