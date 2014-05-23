@@ -28,7 +28,6 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
@@ -372,6 +371,9 @@ if ($object->fetch($id))
 
 	if ($user->rights->fournisseur->facture->lire && $conf->facture->enabled)
 	{
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+
 		$facturestatic = new FactureFournisseur($db);
 
 		// TODO move to DAO class
