@@ -1461,7 +1461,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="createmode" value="empty">';
 	}
 
-	print '<table>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<table>';
 	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
 	{
 		// For backward compatibility
@@ -1532,14 +1532,11 @@ if ($action == 'create')
 				print '<td><input type="text" size="2" name="remise'.$i.'" value="'.$soc->remise_percent.'">%</td>';
 				print '</tr>';
 			}
-
 			print "</table>";
-
 		}
 		print '</td></tr>';
 	}
-	print '</table>';
-	print '<br>';
+	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table><br>';
 
 	$langs->load("bills");
 	print '<center>';
