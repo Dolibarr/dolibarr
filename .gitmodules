@@ -130,3 +130,6 @@
 [submodule "htdocs/custom/dol2speed"]
 	path = htdocs/custom/dol2speed
 	url = git@bitbucket.org:speedealing/dol2speed.git
+[submodule "htdocs/custom/pos"]
+	path = htdocs/custom/pos
+	url = gitolite@forge.speedealing.com:pos/pos.git
