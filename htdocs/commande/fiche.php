@@ -560,7 +560,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->commande->creer)
 else if ($action == 'addline' && $user->rights->commande->creer)
 {
 	$langs->load('errors');
-	$error = false;
+	$error = 0;
 
 	// Set if we used free entry or predefined product
 	if (GETPOST('addline_libre')

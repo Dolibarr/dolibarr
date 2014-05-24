@@ -194,6 +194,7 @@ class FormProjets
 		if (!empty($this->societe->id)) {
 			$sql.= " AND fk_soc=".$this->societe->id;
 		}
+		$sql.= ' AND entity='.$conf->entity;
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);

@@ -63,7 +63,7 @@ if ($actionsave)
 	// Save agendas
 	while ($i <= $MAXAGENDA)
 	{
-		$name=trim(GETPOST('agenda_ext_name'.$i),'alpha');
+		$name=trim(GETPOST('agenda_ext_name'.$i,'alpha'));
 		$src=trim(GETPOST('agenda_ext_src'.$i,'alpha'));
 		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
 		if ($color=='-1') $color='';
@@ -76,7 +76,7 @@ if ($actionsave)
 			break;
 		}
 
-		//print 'color='.$color;
+		//print '-name='.$name.'-color='.$color;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,$name,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,$src,'chaine',0,'',$conf->entity);
