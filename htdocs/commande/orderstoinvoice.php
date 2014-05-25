@@ -373,7 +373,7 @@ if ($action == 'create' && empty($mesgs))
 		$remise_percent 	= $soc->remise_percent;
 	}
 	$remise_absolue 	= 0;
-	$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+	$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 	$absolute_discount=$soc->getAvailableDiscounts();
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
