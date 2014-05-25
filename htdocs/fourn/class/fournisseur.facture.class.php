@@ -444,10 +444,10 @@ class FactureFournisseur extends CommonInvoice
                     $this->lines[$i]->rowid				= $obj->rowid;
                     $this->lines[$i]->description		= $obj->description;
                     $this->lines[$i]->product_ref		= $obj->product_ref;       // Internal reference
-                    $this->lines[$i]->ref				= $obj->product_ref;       // TODO deprecated. Replace with next line
-                    //$this->lines[$i]->ref_supplier		= $obj->ref_supplier;      // Reference product supplier TODO Rename field ref into ref_supplier into table llx_facture_fourn_det and update it into updateline
-                    $this->lines[$i]->libelle			= $obj->label;           // deprecated
-                    $this->lines[$i]->product_desc		= $obj->product_desc;    // Description du produit
+                    $this->lines[$i]->ref				= $obj->product_ref;       // deprecated.
+                    $this->lines[$i]->ref_supplier		= $obj->ref_supplier;      // Reference product supplier TODO Rename field ref to ref_supplier into table llx_facture_fourn_det and llx_commande_fournisseurdet and update fields it into updateline
+                    $this->lines[$i]->libelle			= $obj->label;             // This field may contains label of product (when invoice create from order)
+                    $this->lines[$i]->product_desc		= $obj->product_desc;      // Description du produit
                     $this->lines[$i]->pu_ht				= $obj->pu_ht;
                     $this->lines[$i]->pu_ttc			= $obj->pu_ttc;
                     $this->lines[$i]->tva_tx			= $obj->tva_tx;
@@ -1033,6 +1033,8 @@ class FactureFournisseur extends CommonInvoice
      *	de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue).
+     *
+     *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      *
      *	@param    	string	$desc            	Description de la ligne
      *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
