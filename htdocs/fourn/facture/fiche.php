@@ -542,7 +542,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 	}
 	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)			
+			)
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -593,6 +593,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 
             $type = $productsupplier->type;
 
+            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
             $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
         if ($idprod == 0)
