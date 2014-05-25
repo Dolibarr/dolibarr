@@ -180,15 +180,16 @@ class Fournisseur extends Societe
 	function ListArray()
 	{
 		global $conf;
+		global $user;
 
 		$arr = array();
 
 		$sql = "SELECT s.rowid, s.nom";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.fournisseur = 1";
 		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-		if (!$this->user->rights->societe->client->voir && !$this->user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
 
 		$resql=$this->db->query($sql);
 
