@@ -627,25 +627,25 @@ abstract class CommonObject
 
     /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type is used to find others.
-     *  If not defined, ->element must be defined to know default barcode type.
+     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *  if it is not defined, ->element must be defined to know default barcode type.
      *
-     *	@return		int			<0 if KO, >=0 if OK
+     *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
      */
     function fetch_barcode()
     {
         global $conf;
 
         dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
-
+        
         $idtype=$this->barcode_type;
-        if (! $idtype)
+        if (empty($idtype) && $idtype != '0')	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
         {
             if ($this->element == 'product')      $idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
             else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-            else dol_print_error('','Call fetch_barcode with barcode_type not defined and cant be guessed');
+            else dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
         }
-
+        
         if ($idtype > 0)
         {
             if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder))    // If data not already loaded
