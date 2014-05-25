@@ -368,6 +368,15 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
+    		else
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
 
     		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
@@ -429,7 +438,7 @@ else
     				print '<td>'.$objp->barcode.'</td>';
     			}
 
-    			// Date
+    			// Modification Date
     			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
 
     			// Duration
@@ -454,7 +463,8 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->produit->creer) {
+    			if ($user->rights->produit->creer)
+    			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
         			{
@@ -489,7 +499,12 @@ else
     				}
     				else
     				{
-    					print '<td>&nbsp;</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
     				}
     			}
 
