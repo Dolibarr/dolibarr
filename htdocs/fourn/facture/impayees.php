@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-if (! $user->rights->facture->lire) accessforbidden();
+if (! $user->rights->fournisseur->facture->lire) accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");

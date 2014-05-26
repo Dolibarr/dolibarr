@@ -437,11 +437,15 @@ else
     			if (! empty($conf->service->enabled) && $type != 0)
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-    				else print $objp->duration;
+    				if (preg_match('/([0-9]+)[a-z]/i',$objp->duration))
+    				{
+	    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([0-9]+)h/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				else print $objp->duration;
+    				}
     				print '</td>';
     			}
 
