@@ -118,10 +118,12 @@ class AdherentType extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+        	$action='update';
+        	
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('membertypedao'));
         	$parameters=array('membertype'=>$this->id);
-        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,'update');    // Note that $action and $object may have been modified by some hooks
+        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
         	if (empty($reshook))
         	{
         		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
