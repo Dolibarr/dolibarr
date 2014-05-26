@@ -42,6 +42,9 @@ $confirm	= GETPOST('confirm','alpha');
 
 $object = new PaiementFourn($db);
 
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('viewpaiementcard'));
+
 /*
  * Actions
  */
@@ -233,7 +236,10 @@ if ($result > 0)
 	    	print '</tr>';
         }
     }
-
+		
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+	
 	print '</table>';
 
 	dol_htmloutput_mesg($mesg);
@@ -276,7 +282,7 @@ if ($result > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				print '<tr id="row-'.$objp->facid.'" '.$bc[$var].'>';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 				print ($objp->ref?$objp->ref:$objp->rowid);
@@ -298,6 +304,9 @@ if ($result > 0)
 				}
 				$total = $total + $objp->amount;
 				$i++;
+				
+				$parameters=array();
+				$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
 			}
 		}
 		$var=!$var;

@@ -212,7 +212,7 @@ if ($action == 'create' || $action == 'add_paiement')
 
             print_fiche_titre($langs->trans('DoPayment'));
 
-            print '<form name="addpaiement" action="paiement.php" method="post">';
+            print '<form id="payment_form" name="addpaiement" action="paiement.php" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add_paiement">';
             print '<input type="hidden" name="facid" value="'.$facid.'">';
@@ -276,7 +276,10 @@ if ($action == 'create' || $action == 'add_paiement')
 	                {
 	                    $i = 0;
 	                    print '<br>';
-
+						
+						$parameters=array();
+						$reshook=$hookmanager->executeHooks('formAddObjectLine',$parameters,$facture,$action);    // Note that $action and $object may have been modified by hook
+						
 	                    print $langs->trans('Invoices').'<br>';
 	                    print '<table class="noborder" width="100%">';
 	                    print '<tr class="liste_titre">';
@@ -319,7 +322,13 @@ if ($action == 'create' || $action == 'add_paiement')
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
-	                        print "</td></tr>\n";
+	                        print "</td>";
+							
+	                        $parameters=array();
+							$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
+							
+	                        print "</tr>\n";
+							
 	                        $total+=$objp->total_ht;
 	                        $total_ttc+=$objp->total_ttc;
 	                        $totalrecu+=$objp->am;
@@ -502,7 +511,10 @@ if (empty($action))
             print '<td class="nowrap">';
             print $invoicesupplierstatic->getNomUrl(1);
             print '</td>';*/
-
+			
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('printObjectLine',$parameters,$objp,$action); // Note that $action and $object may have been modified by hook
+			
             print '</tr>';
             $i++;
         }
