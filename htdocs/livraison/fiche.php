@@ -807,4 +807,3 @@ else
 
 llxFooter();
 $db->close();
-?>

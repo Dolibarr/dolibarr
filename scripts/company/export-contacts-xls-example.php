@@ -122,4 +122,3 @@ $objWriter->save($fname);
 print 'File '.$fname.' was generated.'."\n";
 
 exit(0);
-?>

@@ -119,4 +119,3 @@ function contract_admin_prepare_head()
 		return $head;
 }
 
-?>

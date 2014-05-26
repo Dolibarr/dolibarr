@@ -134,4 +134,3 @@ function fichinter_admin_prepare_head()
 }
 
 
-?>

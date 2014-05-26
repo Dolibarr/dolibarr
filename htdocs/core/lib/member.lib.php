@@ -205,4 +205,3 @@ function member_stats_prepare_head($object)
 
     return $head;
 }
-?>

@@ -653,4 +653,3 @@ class Facturation
 
 }
 
-?>

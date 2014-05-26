@@ -511,4 +511,3 @@ print '<br>';
 $db->close();
 
 llxFooter();
-?>

@@ -193,4 +193,3 @@ print '</div>'."\n";
 llxFooter();
 
 $db->close();
-?>

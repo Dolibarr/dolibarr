@@ -115,4 +115,3 @@ if (! empty($field) && ! empty($element) && ! empty($table_element) && ! empty($
 	}
 }
 
-?>

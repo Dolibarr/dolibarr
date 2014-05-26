@@ -519,4 +519,3 @@ class Opensurveysondage extends CommonObject
 		$this->sujet = trim($this->sujet);
 	}
 }
-?>

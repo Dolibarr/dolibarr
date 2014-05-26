@@ -247,4 +247,3 @@ function project_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	}
 }
 
-?>
