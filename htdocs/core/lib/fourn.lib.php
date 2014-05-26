@@ -198,4 +198,3 @@ function supplierorder_admin_prepare_head($object)
 }
 
 
-?>

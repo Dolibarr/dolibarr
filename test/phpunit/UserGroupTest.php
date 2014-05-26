@@ -284,4 +284,3 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

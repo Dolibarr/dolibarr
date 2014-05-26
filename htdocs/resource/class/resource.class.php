@@ -894,4 +894,3 @@ class Resource extends CommonObject
         return $result;
     }
 }
-?>

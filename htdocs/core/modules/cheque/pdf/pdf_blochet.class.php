@@ -403,4 +403,3 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 }
 
-?>

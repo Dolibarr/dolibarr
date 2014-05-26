@@ -286,4 +286,3 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	else return $result;
 }
 
-?>

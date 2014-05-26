@@ -107,4 +107,3 @@ class modNotification extends DolibarrModules
     }
 
 }
-?>

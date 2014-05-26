@@ -124,4 +124,3 @@ if (! empty($tag) && ($unsuscrib=='1'))
 }
 
 $db->close();
-?>
