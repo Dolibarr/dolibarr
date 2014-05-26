@@ -143,4 +143,3 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	}
 
 }
-?>

@@ -569,4 +569,3 @@ llxFooter();
 
 $db->close();
 
-?>

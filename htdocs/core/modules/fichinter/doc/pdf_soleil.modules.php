@@ -600,4 +600,3 @@ class pdf_soleil extends ModelePDFFicheinter
 
 }
 
-?>

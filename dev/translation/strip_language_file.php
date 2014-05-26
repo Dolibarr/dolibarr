@@ -264,4 +264,3 @@ foreach($filesToProcess as $fileToProcess)
 
 
 return 0;
-?>

@@ -133,14 +133,3 @@ print '</ul>';
 llxFooter();
 
 $db->close();
-?>
-
-
-
-
-
-
-
-
-
-

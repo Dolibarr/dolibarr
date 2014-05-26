@@ -775,4 +775,3 @@ function xml2php($xml)
 
 }
 
-?>

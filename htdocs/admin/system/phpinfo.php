@@ -120,4 +120,3 @@ foreach($phparray as $key => $value)
 llxFooter();
 
 $db->close();
-?>

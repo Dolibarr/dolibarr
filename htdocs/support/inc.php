@@ -239,4 +239,3 @@ function pFooter($nonext=0,$setuplang='')
 	print '</html>'."\n";
 }
 
-?>

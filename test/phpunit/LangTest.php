@@ -174,4 +174,3 @@ class LangTest extends PHPUnit_Framework_TestCase
         return;
     }
 }
-?>

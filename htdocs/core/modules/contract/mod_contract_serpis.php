@@ -144,4 +144,3 @@ class mod_contract_serpis extends ModelNumRefContracts
 	}
 
 }
-?>

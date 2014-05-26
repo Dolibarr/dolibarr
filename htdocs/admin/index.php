@@ -116,4 +116,3 @@ if (empty($reshook))
 llxFooter();
 
 $db->close();
-?>
