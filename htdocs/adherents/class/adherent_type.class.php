@@ -99,8 +99,10 @@ class AdherentType extends CommonObject
      */
     function update($user)
     {
-    	global $hookmanager;
-    	
+    	global $hookmanager,$conf;
+
+    	$error=0;
+
         $this->libelle=trim($this->libelle);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
@@ -119,7 +121,7 @@ class AdherentType extends CommonObject
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('membertypedao'));
         	$parameters=array('membertype'=>$this->id);
-        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,'update');    // Note that $action and $object may have been modified by some hooks
         	if (empty($reshook))
         	{
         		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -132,8 +134,8 @@ class AdherentType extends CommonObject
         		}
         	}
         	else if ($reshook < 0) $error++;
-        	
-        	
+
+
             return 1;
         }
         else

@@ -138,7 +138,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
         if ($_POST["userid"] != $object->user_id)  // If link differs from currently in database
         {
             $result=$object->setUserId($_POST["userid"]);
-            if ($result < 0) dol_print_error($object->db,$object->error);
+            if ($result < 0) dol_print_error('',$object->error);
             $_POST['action']='';
             $action='';
         }
@@ -172,7 +172,7 @@ if ($action == 'setsocid')
             if (! $error)
             {
                 $result=$object->setThirdPartyId(GETPOST('socid','int'));
-                if ($result < 0) dol_print_error($object->db,$object->error);
+                if ($result < 0) dol_print_error('',$object->error);
                 $_POST['action']='';
                 $action='';
             }
