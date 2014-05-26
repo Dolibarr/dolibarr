@@ -82,7 +82,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
     $sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.
     dol_syslog('define_holiday update lastUpdate entry sql='.$sql);
-    $result = $db->query($sql);    
+    $result = $db->query($sql);
 
     $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
 
@@ -91,21 +91,24 @@ if ($action == 'update' && isset($_POST['update_cp']))
 }
 elseif($action == 'add_event')
 {
-    $error = false;
+    $error = 0;
 
     if(!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
         $event = $_POST['list_event'];
-    } else { $error = true;
+    } else { $error++;
     }
 
     if(!empty($_POST['userCP']) && $_POST['userCP'] > 0) {
         $userCP = $_POST['userCP'];
-    } else { $error = true;
+    } else { $erro++;
     }
 
-    if($error) {
+    if ($error)
+    {
         $message = '<div class="error">'.$langs->trans('ErrorAddEventToUserCP').'</div>';
-    } else {
+    }
+    else
+	{
         $nb_holiday = $holiday->getCPforUser($userCP);
         $add_holiday = $holiday->getValueEventCp($event);
         $new_holiday = $nb_holiday + $add_holiday;

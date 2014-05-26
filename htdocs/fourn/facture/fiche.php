@@ -374,6 +374,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                         if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
+                        // FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
                         $result = $object->addline(
                             $desc,
                             $lines[$i]->subprice,
@@ -542,7 +543,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 	}
 	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)			
+			)
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -593,6 +594,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 
             $type = $productsupplier->type;
 
+            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
             $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
         if ($idprod == 0)
@@ -631,19 +633,17 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             {
                 $ht = price2num($_POST['amount']);
                 $price_base_type = 'HT';
-
-                //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-                $result=$object->addline($product_desc, $ht, $tauxtva, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
             else
-            {
+           {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-                $result=$object->addline($product_desc, $ht, $tauxtva,$localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
-        }
+            //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
+            // FIXME Must add $productsupplier->ref_supplier and $productsupplier->label if there were loaded by get_buyprice previously.
+            $result=$object->addline($product_desc, $ht, $tauxtva, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+       }
     }
 
     //print "xx".$tva_tx; exit;
@@ -1122,10 +1122,10 @@ if ($action == 'create')
             $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_supplier_id)?$soc->mode_reglement_supplier_id:0));
             $remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
             $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-            $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+            $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
             $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
             $datedue=($datetmp==''?-1:$datetmp);
         }
@@ -1135,7 +1135,7 @@ if ($action == 'create')
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
         $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-        $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+        $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
         $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
         $datedue=($datetmp==''?-1:$datetmp);
     }

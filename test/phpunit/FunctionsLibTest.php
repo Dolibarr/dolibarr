@@ -186,6 +186,9 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='xxx<br style="eee" >';
         $after=dol_textishtml($input);
         $this->assertTrue($after);
+        $input='<h2>abc</h2>';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after);
 
         // False
         $input='xxx < br>';
@@ -528,16 +531,16 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     public function testVerifCond()
     {
         $verifcond=verifCond('1==1');
-        $this->assertTrue($verifcond);
+        $this->assertTrue($verifcond,'Test a true comparison');
 
         $verifcond=verifCond('1==2');
-        $this->assertFalse($verifcond);
+        $this->assertFalse($verifcond,'Test a false comparison');
 
         $verifcond=verifCond('$conf->facture->enabled');
-        $this->assertTrue($verifcond);
+        $this->assertTrue($verifcond,'Test that conf property of a module report true when enabled');
 
         $verifcond=verifCond('$conf->moduledummy->enabled');
-        $this->assertFalse($verifcond);
+        $this->assertFalse($verifcond,'Test that conf property of a module report false when disabled');
 
         $verifcond=verifCond('');
         $this->assertTrue($verifcond);

@@ -77,14 +77,14 @@ if ($id > 0 || ! empty($ref))
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($action == 'setnote_public' && $user->rights->facture->creer)
+if ($action == 'setnote_public')
 {
 	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_public'), ENT_QUOTES),'_public');
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-else if ($action == 'setnote_private' && $user->rights->facture->creer)
+else if ($action == 'setnote_private')
 {
 	$object->fetch($id);
 	$result=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES),'_private');
