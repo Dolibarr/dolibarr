@@ -42,6 +42,7 @@ class FactureFournisseur extends CommonInvoice
     public $fk_element='fk_facture_fourn';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
+    var $rowid;
     var $ref;
     var $product_ref;
     var $ref_supplier;
