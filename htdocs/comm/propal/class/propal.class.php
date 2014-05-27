@@ -2783,7 +2783,7 @@ class PropaleLigne  extends CommonObject
 		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql.= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql.= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql.= ' pd.date_start, pd.date_end';
+		$sql.= ' pd.date_start, pd.date_end, pd.product_type';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql.= ' WHERE pd.rowid = '.$rowid;
@@ -2820,6 +2820,7 @@ class PropaleLigne  extends CommonObject
 			$this->marque_tx		= $marginInfos[2];
 
 			$this->special_code		= $objp->special_code;
+			$this->product_type		= $objp->product_type;
 			$this->rang				= $objp->rang;
 
 			$this->ref				= $objp->product_ref;      // deprecated
