@@ -1437,7 +1437,7 @@ else if ($id > 0 || ! empty($ref))
 
 				// Duration
 				print '<td align="right">';
-				$form->select_duration('duration',$objp->duree);
+				$form->select_duration('duration',$objp->duree,0,'text');
 				print '</td>';
 
 				print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -1488,7 +1488,7 @@ else if ($id > 0 || ! empty($ref))
 
 			// Duration
 			print '<td align="right">';
-			$form->select_duration('duration',(!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')));
+			$form->select_duration('duration',(!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')),0,'text');
 			print '</td>';
 
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
