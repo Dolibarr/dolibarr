@@ -30,6 +30,7 @@ create table llx_entrepot
   address         varchar(255),
   zip             varchar(10),
   town            varchar(50),
+  email             varchar(255),       -- email du responsable de l'entrepot
   fk_departement  integer,
   fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
