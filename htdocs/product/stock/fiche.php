@@ -68,6 +68,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 	$object->address     = $_POST["address"];
 	$object->zip         = $_POST["zipcode"];
 	$object->town        = $_POST["town"];
+	$object->email        = $_POST["email"];
 	$object->country_id  = $_POST["country_id"];
 
 	if ($object->libelle) {
@@ -118,6 +119,7 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		$object->address     = $_POST["address"];
 		$object->zip         = $_POST["zipcode"];
 		$object->town        = $_POST["town"];
+		$object->email        = $_POST["email"];
 		$object->country_id  = $_POST["country_id"];
 
 		if ( $object->update($_POST["id"], $user) > 0)
@@ -203,6 +205,9 @@ if ($action == 'create')
 	print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
+	
+	// Email
+	print '<tr><td >'.$langs->trans("Email").'</td><td colspan="3"><input name="email" size="40" value="'.$object->email.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 	print '<select name="statut" class="flat">';
@@ -277,6 +282,9 @@ else
 			}
 			print $object->country;
 			print '</td></tr>';
+
+			// Email
+			print '<tr><td >'.$langs->trans("Email").'</td><td colspan="3">'.$object->email.'</td></tr>';
 
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
@@ -536,6 +544,10 @@ else
 			print $form->select_country($object->country_id?$object->country_id:$mysoc->country_code,'country_id');
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td></tr>';
+
+			// Email
+			print '<tr><td >'.$langs->trans("Email").'</td><td colspan="3"><input name="email" size="40" value="'.$object->email.'"></td></tr>';
+
 
 			print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
 			print '<select name="statut" class="flat">';
