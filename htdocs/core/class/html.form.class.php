@@ -1258,7 +1258,7 @@ class Form
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
      *
      *  @param		int			$selected				Preselected products
-     *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
      *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		int			$price_level			Level of price to show
@@ -1267,7 +1267,7 @@ class Form
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
-     *  @param      int		$socid     		Thridparty Id
+     *  @param      int			$socid					Thirdparty Id
      *  @return		void
      */
     function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(),$socid=0)
@@ -1319,13 +1319,13 @@ class Form
      *	@param      int		$selected       Preselected product
      *	@param      string	$htmlname       Name of select html
      *  @param		string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param      int		$limit          Limite sur le nombre de lignes retournees
+     *	@param      int		$limit          Limit on number of returned lines
      *	@param      int		$price_level    Level of price to show
      * 	@param      string	$filterkey      Filter on product
      *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param      int		$finished       Filter on finished field: 2=No filter
      *  @param      int		$outputmode     0=HTML select string, 1=Array
-     *  @param      int		$socid     		Thridparty Id
+     *  @param      int		$socid     		Thirdparty Id
      *  @return     array    				Array of keys for json
      */
     function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0)
