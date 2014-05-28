@@ -1496,7 +1496,12 @@ TasksNumberingModules=Tasks numbering module
 TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
-ECMAutoTree = Automatic tree folder and document  
-
+ECMAutoTree = Automatic tree folder and document
+##### Fiscal Year #####
+Fiscalyear=Fiscal years
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+Opened=Opened
+Closed=Closed
 
 Format=Format

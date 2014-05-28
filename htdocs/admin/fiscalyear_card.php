@@ -1,0 +1,325 @@
+<?php
+/* Copyright (C) 2014	Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *  \file       	htdocs/admin/fiscalyear_card.php
+ *  \brief      	Page to show a fiscal yeartrip
+ */
+
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
+
+$langs->load("admin");
+$langs->load("compta");
+
+// Security check
+if (! $user->admin) accessforbidden();
+
+$error=0;
+
+$action = GETPOST('action','alpha');
+$confirm = GETPOST('confirm','alpha');
+$id = GETPOST('id','int');
+
+// List of statut
+static $tmpstatut2label=array(
+		'0'=>'OpenFiscalYear',
+		'1'=>'CloseFiscalYear'
+);
+$statut2label=array('');
+foreach ($tmpstatut2label as $key => $val) $statut2label[$key]=$langs->trans($val);
+
+$mesg = '';
+
+$object = new Fiscalyear($db);
+
+/*
+ * Actions
+ */
+
+include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+
+if ($action == 'confirm_delete' && $confirm == "yes")
+{
+    $result=$object->delete($id);
+    if ($result >= 0)
+    {
+        header("Location: fiscalyear.php");
+        exit;
+    }
+    else
+    {
+        $mesg=$object->error;
+    }
+}
+
+else if ($action == 'add')
+{
+    if (! GETPOST('cancel','alpha'))
+    {
+        $error=0;
+		
+		$object->datestart		= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
+        $object->dateend		= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+        $object->label			= GETPOST('label','alpha');
+        $object->statut     	= GETPOST('statut','int');;
+
+		/*
+        if (empty($object->datestart) && empty($object->dateend))
+        {
+            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+            $error++;
+        }
+		*/
+        if (empty($object->label))
+        {
+            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
+            $error++;
+        }
+
+        if (! $error)
+        {
+            $id = $object->create($user);
+
+            if ($id > 0)
+            {
+                header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+                exit;
+            }
+            else
+            {
+                $mesg=$object->error;
+                $action='create';
+            }
+        }
+        else
+        {
+            $action='create';
+        }
+    }
+    else
+    {
+        header("Location: fiscalyear.php");
+        exit;
+    }
+}
+
+// Update record
+else if ($action == 'update')
+{
+    if (! GETPOST('cancel','alpha'))
+    {
+        $result = $object->fetch($id);
+		
+		$object->datestart		= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
+        $object->dateend		= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+        $object->label			= GETPOST('label','alpha');
+		$object->statut     	= GETPOST('statut','int');
+
+        $result = $object->update($user);
+
+        if ($result > 0)
+        {
+            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+            exit;
+        }
+        else
+        {
+            $mesg=$object->error;
+        }
+    }
+    else
+    {
+        header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
+        exit;
+    }
+}
+
+/*
+ * View
+ */
+
+llxHeader();
+
+$form = new Form($db);
+
+/*
+ * Action create
+*/
+if ($action == 'create')
+{
+    print_fiche_titre($langs->trans("NewFiscalYear"));
+
+    dol_htmloutput_errors($mesg);
+
+    $datestart = dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
+	$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
+
+    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="add">';
+
+    print '<table class="border" width="100%">';
+
+	// Label
+    print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
+	
+	// Date start
+    print "<tr>";
+    print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
+    print $form->select_date($datestart?$datestart:-1,'','','','','add',1,1);
+    print '</td></tr>';
+	
+	// Date end
+	print "<tr>";
+    print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
+    print $form->select_date($dateend?$dateend:-1,'','','','','add',1,1);
+    print '</td></tr>';
+	
+	// Statut
+    print '<tr>';
+    print '<td class="fieldrequired">'.$langs->trans("Statut").'</td><td class="valeur">'.$form->selectarray('statut',$statut2label,GETPOST('statut')).'</td>';
+    print '</tr>';
+
+    print '</table>';
+
+    print '<br><center><input class="button" type="submit" value="'.$langs->trans("Save").'"> &nbsp; &nbsp; ';
+    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></center';
+
+    print '</form>';
+}
+else if ($id)
+{
+    $result = $object->fetch($id);
+    if ($result > 0)
+    {
+        dol_htmloutput_mesg($mesg);
+
+        if ($action == 'edit')
+        {
+			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input type="hidden" name="action" value="update">';
+            print '<input type="hidden" name="id" value="'.$id.'">';
+
+            print '<table class="border" width="100%">';
+
+            // Ref
+            print "<tr>";
+            print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
+            print $object->rowid;
+            print '</td></tr>';
+			
+            // Label
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
+            print '<input name="label" class="flat" size="32" value="'.$object->label.'">';
+            print '</td></tr>';
+			
+			// Date start
+            print '<tr><td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
+            print $form->select_date($object->datestart,'','','','','update');
+            print '</td></tr>';
+
+            // Date end
+            print '<tr><td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
+            print $form->select_date($object->dateend,'','','','','update');
+            print '</td></tr>';
+
+            print '</table>';
+
+            print '<br><center><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+            print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+            print '</center>';
+
+            print '</form>';
+
+            print '</div>';
+        }
+        else
+        {
+            /*
+             * Confirm delete
+            */
+            if ($action == 'delete')
+            {
+                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteFiscalYear"),$langs->trans("ConfirmDeleteFiscalYear"),"confirm_delete");
+
+            }
+
+            print '<table class="border" width="100%">';
+
+            $linkback = '<a href="'.DOL_URL_ROOT.'/admin/fiscalyear.php">'.$langs->trans("BackToList").'</a>';
+
+            // Ref
+            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td width="50%">';
+            print $object->rowid;
+			print '</td><td width="25%">';
+			print $linkback;
+            print '</td></tr>';
+			
+			// Label
+            print '<tr><td valign="top">';
+            print $form->editfieldkey("Label",'label',$object->label,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'alpha:32');
+            print '</td><td colspan="2">';
+            print $form->editfieldval("Label",'label',$object->label,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'alpha:32');
+            print "</td></tr>";
+
+            // Date start
+            print '<tr><td>';
+            print $form->editfieldkey("Date",'datestart',$object->datestart,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print '</td><td colspan="2">';
+            print $form->editfieldval("Date",'datestart',$object->datestart,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print '</td></tr>';
+			
+			// Date end
+            print '<tr><td>';
+            print $form->editfieldkey("Date",'dateend',$object->dateend,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print '</td><td colspan="2">';
+            print $form->editfieldval("Date",'dateend',$object->dateend,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print '</td></tr>';
+
+            // Statut
+            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$object->getLibStatut(4).'</td></tr>';
+
+            print "</table><br>";
+
+            print '</div>';
+
+            /*
+             * Barre d'actions
+            */
+
+            print '<div class="tabsAction">';
+
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+            
+			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+            
+            print '</div>';
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+llxFooter();
+$db->close();
