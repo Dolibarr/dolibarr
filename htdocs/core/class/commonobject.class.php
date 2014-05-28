@@ -627,25 +627,25 @@ abstract class CommonObject
 
     /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type is used to find others.
-     *  If not defined, ->element must be defined to know default barcode type.
+     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *  if it is not defined, ->element must be defined to know default barcode type.
      *
-     *	@return		int			<0 if KO, >=0 if OK
+     *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
      */
     function fetch_barcode()
     {
         global $conf;
 
         dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
-
+        
         $idtype=$this->barcode_type;
-        if (! $idtype)
+        if (empty($idtype) && $idtype != '0')	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
         {
             if ($this->element == 'product')      $idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
             else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-            else dol_print_error('','Call fetch_barcode with barcode_type not defined and cant be guessed');
+            else dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
         }
-
+        
         if ($idtype > 0)
         {
             if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder))    // If data not already loaded
@@ -1518,7 +1518,7 @@ abstract class CommonObject
      *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
      *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force use total of rounding, '1'=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-     *  @param	Societe	$seller				If roundingadjust is 0, it means we recalculate total for lines before calculating total for object. For this, we need seller object.
+     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object. For this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
     function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller='')

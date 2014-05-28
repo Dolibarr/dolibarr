@@ -224,4 +224,3 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 }
 
-?>

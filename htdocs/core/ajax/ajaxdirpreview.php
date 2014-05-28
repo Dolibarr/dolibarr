@@ -253,4 +253,3 @@ if ($section)
 
 // Close db if mode is not noajax
 if ((! isset($mode) || $mode != 'noajax') && is_object($db)) $db->close();
-?>

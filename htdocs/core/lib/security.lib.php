@@ -311,7 +311,9 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             }
         }
 
-        //print "Delete access is ko";
+	    // If a or and at least one ok
+	    if (preg_match('/\|/', $features) && $nbko < count($featuresarray)) $deleteok=1;
+
         if (! $deleteok) accessforbidden();
         //print "Delete access is ok";
     }

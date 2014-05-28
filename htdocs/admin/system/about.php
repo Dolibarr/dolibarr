@@ -113,28 +113,23 @@ print '<li><a href="http://plus.google.com/+DolibarrOrg" target="_blank">Google 
 print '</ul>';
 
 
-print $langs->trans("OfficialWebHostingService").':';
-$url='http://wiki.dolibarr.org/index.php/Cloud_Solutions'; $title=$langs->trans('List');
+print $langs->trans("OtherResources").':';
+print '<ul>';
+
+$url='http://saas.dolibarr.org'; $title=$langs->trans("OfficialWebHostingService");
 if (preg_match('/^fr_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
 if (preg_match('/^es_/i',$langs->getDefaultLang())) $url='http://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
-print '<ul>';
 print '<li>';
 print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
 print '</li>';
+$url='http://partners.dolibarr.org'; $title=$langs->trans("ReferencedPreferredPartners");
+print '<li>';
+print '<a target="_blank" href="'.$url.'">'.$title.'</a>';
+print '</li>';
+
 print '</ul>';
 
 
 llxFooter();
 
 $db->close();
-?>
-
-
-
-
-
-
-
-
-
-

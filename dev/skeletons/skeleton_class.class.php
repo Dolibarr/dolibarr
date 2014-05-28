@@ -371,4 +371,3 @@ class Skeleton_Class extends CommonObject
 	}
 
 }
-?>

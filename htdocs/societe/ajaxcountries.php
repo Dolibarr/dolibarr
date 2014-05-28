@@ -76,4 +76,3 @@ if (! empty($country))
 	}
 }
 
-?>

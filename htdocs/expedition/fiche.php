@@ -1688,4 +1688,3 @@ else if ($id || $ref)
 llxFooter();
 
 $db->close();
-?>

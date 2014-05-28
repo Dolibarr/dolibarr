@@ -99,8 +99,10 @@ class AdherentType extends CommonObject
      */
     function update($user)
     {
-    	global $hookmanager;
-    	
+    	global $hookmanager,$conf;
+
+    	$error=0;
+
         $this->libelle=trim($this->libelle);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
@@ -116,6 +118,8 @@ class AdherentType extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+        	$action='update';
+        	
         	// Actions on extra fields (by external module or standard code)
         	$hookmanager->initHooks(array('membertypedao'));
         	$parameters=array('membertype'=>$this->id);
@@ -132,8 +136,8 @@ class AdherentType extends CommonObject
         		}
         	}
         	else if ($reshook < 0) $error++;
-        	
-        	
+
+
             return 1;
         }
         else

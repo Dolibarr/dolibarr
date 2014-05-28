@@ -179,4 +179,3 @@ else
 $db->close();
 
 llxFooter();
-?>

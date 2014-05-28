@@ -267,7 +267,10 @@ class Product extends CommonObject
     	$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
-		// Check parameters
+        // Barcode value
+        $this->barcode=trim($this->barcode);
+		
+        // Check parameters
 		if (empty($this->libelle))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
@@ -277,7 +280,7 @@ class Product extends CommonObject
 		{
 			// Load object modCodeProduct
 			$module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
-			if ($module != 'mod_codeproduct_leopard')	// Do not load module file
+			if ($module != 'mod_codeproduct_leopard')	// Do not load module file for leopard
 			{
 				if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
 				{
@@ -306,11 +309,11 @@ class Product extends CommonObject
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
 		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
-
+		
 		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
-
+        
         if ($result >= 0)
         {
 			$sql = "SELECT count(*) as nb";
@@ -453,7 +456,8 @@ class Product extends CommonObject
 
 
     /**
-     *    Check properties of product are ok (like name, barcode, ...)
+     *    Check properties of product are ok (like name, barcode, ...).
+     *    All properties must be already loaded on object (this->barcode, this->barcode_type_code, ...).
      *
      *    @return     int		0 if OK, <0 if KO
      */
@@ -470,7 +474,7 @@ class Product extends CommonObject
             $result = -2;
         }
 
-        $rescode = $this->check_barcode($this->barcode);
+        $rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
         if ($rescode <> 0)
         {
         	if ($rescode == -1)
@@ -492,15 +496,16 @@ class Product extends CommonObject
     }
 
     /**
-     *  Check customer code
+     *  Check barcode
      *
      *	@param	string	$valuetotest	Value to test
+     *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
      *  @return int						0 if OK
      * 									-1 ErrorBadBarCodeSyntax
      * 									-2 ErrorBarCodeRequired
      * 									-3 ErrorBarCodeAlreadyUsed
      */
-    function check_barcode($valuetotest)
+    function check_barcode($valuetotest,$typefortest)
     {
         global $conf;
         if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
@@ -515,9 +520,9 @@ class Product extends CommonObject
             }
 
             $mod = new $module();
-
-            dol_syslog(get_class($this)."::check_barcode barcode=".$valuetotest." module=".$module);
-            $result = $mod->verif($this->db, $valuetotest, $this, 0);
+            
+            dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
+            $result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
             return $result;
         }
         else
@@ -566,7 +571,7 @@ class Product extends CommonObject
 
         if (empty($this->country_id))           $this->country_id = 0;
 
-        //Gencod
+        // Barcode value
         $this->barcode=trim($this->barcode);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -581,7 +586,7 @@ class Product extends CommonObject
         {
         	$result = $this->verify();	// We don't check when update called during a create because verify was already done
         }
-
+        
         if ($result >= 0)
         {
 	        // For automatic creation
@@ -595,7 +600,7 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-
+				
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
@@ -622,7 +627,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= " WHERE rowid = " . $id;
-
+				
 			dol_syslog(get_class($this)."update sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)

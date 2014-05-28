@@ -155,4 +155,3 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>
