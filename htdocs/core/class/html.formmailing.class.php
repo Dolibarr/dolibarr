@@ -73,5 +73,4 @@ class FormMailing  extends Form
 		$out .= '</select>';
 		return $out;
 	}
-
 }
