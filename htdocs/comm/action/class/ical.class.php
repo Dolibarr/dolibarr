@@ -56,14 +56,13 @@ class ICal
     {
         $this->file = $file;
         $file_text='';
-        
+
         $tmparray=file($file);
         if (is_array($tmparray))
         {
         	$file_text = join("", $tmparray); //load file
-        	$file_text = preg_replace("/[\r\n]{1,} ([:;])/","\\1",$file_text);
+        	$file_text = preg_replace("/[\r\n]{1,} /","",$file_text);
         }
-        
         return $file_text; // return all text
     }
 
@@ -115,6 +114,7 @@ class ICal
             {
                 // get Key and Value VCALENDAR:Begin -> Key = VCALENDAR, Value = begin
                 list($key, $value) = $this->retun_key_value($text);
+				//var_dump($text.' -> '.$key.' - '.$value);
 
                 switch ($text) // search special string
                 {
@@ -165,6 +165,8 @@ class ICal
                 }
             }
         }
+
+        //var_dump($this->cal);
         return $this->cal;
     }
 
@@ -236,6 +238,7 @@ class ICal
      */
     function retun_key_value($text)
     {
+    	/*
         preg_match("/([^:]+)[:]([\w\W]+)/", $text, $matches);
 
         if (empty($matches))
@@ -246,8 +249,8 @@ class ICal
         {
             $matches = array_splice($matches, 1, 2);
             return $matches;
-        }
-
+        }*/
+		return explode(':',$text,2);
     }
 
     /**

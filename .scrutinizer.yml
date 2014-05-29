@@ -100,8 +100,9 @@ tools:
                 comparison_of_bit_result:  true
             basic_semantic_checks:
                 enabled:              true
+            # Disabled unused code. In most cases, we want to keep it.
             unused_code:
-                enabled:              true
+                enabled:              false		
             deprecation_checks:
                 enabled:              true
             useless_function_calls:

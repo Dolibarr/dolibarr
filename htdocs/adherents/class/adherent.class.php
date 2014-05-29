@@ -95,6 +95,8 @@ class Adherent extends CommonObject
     var $first_subscription_date;
     var $first_subscription_amount;
     var $last_subscription_date;
+    var $last_subscription_date_start;
+    var $last_subscription_date_end;
     var $last_subscription_amount;
     var $subscriptions=array();
 

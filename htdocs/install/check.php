@@ -443,7 +443,8 @@ else
             $choice .= '<td class="listofchoices">';
             $choice .= $langs->trans("UpgradeDesc");
 
-            if ($recommended_choice) {
+            if ($recommended_choice)
+            {
                 $choice .= '<br>';
                 //print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
                 $choice .= '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
@@ -473,6 +474,13 @@ else
             } else {
                 $notavailable_choices[] = $choice;
             }
+		}
+
+		// If there is no choice at all, we show all of them.
+		if (empty($available_choices))
+		{
+			$available_choices=$notavailable_choices;
+			$notavailable_choices=array();
 		}
 
         // Array of install choices

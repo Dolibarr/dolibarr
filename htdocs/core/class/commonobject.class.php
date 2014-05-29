@@ -627,10 +627,10 @@ abstract class CommonObject
 
     /**
      *	Load data for barcode into properties ->barcode_type*
-     *	Properties ->barcode_type is used to find others.
-     *  If not defined, ->element must be defined to know default barcode type.
+     *	Properties ->barcode_type that is id of barcode type is used to find other properties, but
+     *  if it is not defined, ->element must be defined to know default barcode type.
      *
-     *	@return		int			<0 if KO, >=0 if OK
+     *	@return		int			<0 if KO, 0 if can't guess type of barcode (ISBN, EAN13...), >0 if OK (all barcode properties loaded)
      */
     function fetch_barcode()
     {
@@ -639,11 +639,11 @@ abstract class CommonObject
         dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
 
         $idtype=$this->barcode_type;
-        if (! $idtype)
+        if (empty($idtype) && $idtype != '0')	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
         {
             if ($this->element == 'product')      $idtype = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
             else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-            else dol_print_error('','Call fetch_barcode with barcode_type not defined and cant be guessed');
+            else dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
         }
 
         if ($idtype > 0)
@@ -1518,7 +1518,7 @@ abstract class CommonObject
      *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
      *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force use total of rounding, '1'=Force use rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-     *  @param	Societe	$seller				If roundingadjust is 0, it means we recalculate total for lines before calculating total for object. For this, we need seller object.
+     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object. For this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
     function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller='')
@@ -3237,6 +3237,7 @@ abstract class CommonObject
 		$marginInfo = $this->getMarginInfos($force_price);
 
 		print '<table class="nobordernopadding" width="100%">';
+
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -3250,38 +3251,49 @@ abstract class CommonObject
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
 			print '<td align="right">'.$langs->trans('MarkRate').'</td>';
 		print '</tr>';
-		//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-		print '<tr class="impair">';
-		print '<td>'.$langs->trans('MarginOnProducts').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-		print '</tr>';
-		print '<tr class="pair">';
-		print '<td>'.$langs->trans('MarginOnServices').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-		print '</tr>';
-		//}
-		print '<tr class="impair">';
-		print '<td>'.$langs->trans('TotalMargin').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
-		print '</tr>';
+
+		if (! empty($conf->product->enabled))
+		{
+			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
+			print '<tr class="impair">';
+			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
+			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			print '</tr>';
+		}
+
+		if (! empty($conf->service->enabled))
+		{
+			print '<tr class="pair">';
+			print '<td>'.$langs->trans('MarginOnServices').'</td>';
+			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			print '</tr>';
+		}
+
+		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+		{
+			print '<tr class="impair">';
+			print '<td>'.$langs->trans('TotalMargin').'</td>';
+			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
+			print '</tr>';
+		}
 		print '</table>';
 	}
 

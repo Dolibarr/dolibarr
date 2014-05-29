@@ -170,4 +170,3 @@ print '<br /><br /><div style="text-align:center"><input type="submit" class="bu
 $db->close();
 
 llxFooter();
-?>

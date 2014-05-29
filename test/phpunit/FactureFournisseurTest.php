@@ -265,4 +265,3 @@ class FactureFournisseurTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

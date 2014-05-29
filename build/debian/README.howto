@@ -229,7 +229,9 @@ from origin/upstream and origin/pristine.
 * If new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
 
-* Edit tgz file to remove ckeditor and phpexcel and renama file into dolibarr-x.y.z+dsfgw.tgz
+* Edit tgz file to remove ckeditor and phpexcel and rename file into 
+dolibarr-x.y.z+dsfgw.tgz
+(x.y.z = version, w start from 1 and is increased for each new import)
 
 * Staying into git root directory, run
 > git-import-orig -vv ../dolibarr-x.y.z+dsfgw.tgz

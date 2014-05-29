@@ -368,6 +368,15 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
+    		else
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
 
     		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
@@ -429,18 +438,22 @@ else
     				print '<td>'.$objp->barcode.'</td>';
     			}
 
-    			// Date
+    			// Modification Date
     			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
 
     			// Duration
     			if (! empty($conf->service->enabled) && $type != 0)
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-    				else print $objp->duration;
+    				if (preg_match('/([0-9]+)[a-z]/i',$objp->duration))
+    				{
+	    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([0-9]+)h/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				else print $objp->duration;
+    				}
     				print '</td>';
     			}
 
@@ -454,7 +467,8 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->produit->creer) {
+    			if ($user->rights->produit->creer)
+    			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
         			{
@@ -489,7 +503,12 @@ else
     				}
     				else
     				{
-    					print '<td>&nbsp;</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
     				}
     			}
 

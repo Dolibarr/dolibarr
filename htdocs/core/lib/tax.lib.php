@@ -588,4 +588,3 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     return $list;
 }
 
-?>

@@ -363,6 +363,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                         if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
+                        // FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
                         $result = $object->addline(
                             $desc,
                             $lines[$i]->subprice,
@@ -466,9 +467,10 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
     }
 }
 
-// Modification d'une ligne
+// Edit line
 elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 {
+	// TODO Missing transaction
     if (GETPOST('etat') == '1' && ! GETPOST('cancel')) // si on valide la modification
     {
         $object->fetch($id);
@@ -516,6 +518,8 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 
 elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 {
+	$db->begin();
+
     $ret=$object->fetch($id);
     if ($ret < 0)
     {
@@ -601,6 +605,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 
             $type = $productsupplier->type;
 
+            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
             $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
     	if ($idprod == -2 || $idprod == 0)
@@ -655,6 +660,8 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     //print "xx".$tva_tx; exit;
     if (! $error && $result > 0)
     {
+    	$db->commit();
+
     	// Define output language
     	$outputlangs = $langs;
         $newlang=GETPOST('lang_id','alpha');
@@ -704,9 +711,13 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     	unset($_POST['date_endmonth']);
     	unset($_POST['date_endyear']);
     }
-    else if (empty($mesg))
-    {
-        $mesg='<div class="error">'.$object->error.'</div>';
+    else
+	{
+    	$db->rollback();
+		if (empty($mesg))
+	    {
+	        $mesg='<div class="error">'.$object->error.'</div>';
+	    }
     }
 
     $action = '';
@@ -1141,10 +1152,10 @@ if ($action == 'create')
             $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_supplier_id)?$soc->mode_reglement_supplier_id:0));
             $remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
             $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-            $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+            $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
             $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
             $datedue=($datetmp==''?-1:$datetmp);
         }
@@ -1154,7 +1165,7 @@ if ($action == 'create')
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
         $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-        $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+        $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
         $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
         $datedue=($datetmp==''?-1:$datetmp);
     }
@@ -2056,24 +2067,9 @@ else
 		// Form to add new line
         if ($object->statut == 0 && $action != 'edit_line')
         {
-            /*print '<tr class="liste_titre">';
-            print '<td>';
-            print '<a name="add"></a>'; // ancre
-            print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
-            print '<td align="right">'.$langs->trans('VAT').'</td>';
-            print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-            print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-            print '<td align="right">'.$langs->trans('Qty').'</td>';
-            print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-            print '<td align="right">&nbsp;</td>';
-            print '<td align="right">&nbsp;</td>';
-            print '<td>&nbsp;</td>';
-            print '<td>&nbsp;</td>';
-            print '</tr>';*/
-
        		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 			$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
-			if ($object->statut == 0 && $user->rights->propal->creer)
+			if ($object->statut == 0 && $user->rights->fournisseur->facture->creer)
 			{
 				if ($action != 'editline')
 				{
@@ -2086,108 +2082,6 @@ else
 					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 				}
 			}
-
-            // Add free products/services form
-			/*
-            $var=true;
-            print '<tr '.$bc[$var].'>';
-            print '<td>';
-
-            $forceall=1;	// For suppliers, we always show all types
-            print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
-            if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-            || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
-
-            if (is_object($hookmanager))
-            {
-                $parameters=array();
-                $reshook=$hookmanager->executeHooks('formCreateSupplierProductOptions',$parameters,$object,$action);
-            }
-
-            $nbrows=ROWS_2;
-            if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-            $doleditor=new DolEditor('dp_desc',GETPOST("dp_desc"),'',100,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
-            $doleditor->Create();
-
-            print '</td>';
-            print '<td align="right">';
-            print $form->load_tva('tauxtva',(GETPOST('tauxtva')?GETPOST('tauxtva'):-1),$societe,$mysoc);
-            print '</td>';
-            print '<td align="right">';
-            print '<input size="4" name="amount" type="text" value="'.GETPOST("amount").'">';
-            print '</td>';
-            print '<td align="right">';
-            print '<input size="4" name="amountttc" type="text" value="'.GETPOST("amountttc").'">';
-            print '</td>';
-            print '<td align="right">';
-            print '<input size="1" name="qty" type="text" value="1" value="'.GETPOST("qty").'">';
-            print '</td>';
-            print '<td align="right" class="nowrap"><input size="1" name="remise_percent" type="text" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):'0').'"><span class="hideonsmartphone">%</span></td>';
-            print '<td>&nbsp;</td>';
-            print '<td>&nbsp;</td>';
-            print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre"></td></tr>';
-
-            // Ajout de produits/services predefinis
-            if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-            {
-                print '<script type="text/javascript">
-                		jQuery(document).ready(function() {
-                			jQuery(\'#idprodfournprice\').change(function() {
-                				if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
-                			});
-                		});
-                </script>';
-
-                print '<tr class="liste_titre">';
-                print '<td colspan="4">';
-                print $langs->trans("AddNewLine").' - ';
-                if (! empty($conf->service->enabled))
-                {
-                    print $langs->trans('RecordedProductsAndServices');
-                }
-                else
-                {
-                    print $langs->trans('RecordedProducts');
-                }
-                print '</td>';
-                print '<td align="right">'.$langs->trans('Qty').'</td>';
-            	print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-                print '<td>&nbsp;</td>';
-                print '<td colspan="4">&nbsp;</td>';
-                print '</tr>';
-
-                $var=! $var;
-                print '<tr '.$bc[$var].'>';
-                print '<td colspan="4">';
-
-                $ajaxoptions=array(
-						'update' => array('qty_predef'=>'qty','remise_percent_predef' => 'discount'),	// html id tag will be edited with which ajax json response key
-                		'disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
-                		'error' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
-                );
-                $form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions);
-
-                if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
-
-                if (is_object($hookmanager))
-				{
-			        $parameters=array('htmlname'=>'idprodfournprice');
-				    $reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
-				}
-
-				$nbrows=ROWS_2;
-				if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-				$doleditor = new DolEditor('np_desc', GETPOST('np_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
-				$doleditor->Create();
-
-                print '</td>';
-                print '<td align="right"><input type="text" id="qty_predef" name="qty_predef" value="1" size="1"></td>';
-            	print '<td align="right" class="nowrap"><input size="1" id="remise_percent_predef" name="remise_percent_predef" type="text" value="'.(GETPOST('remise_percent_predef')?GETPOST('remise_percent_predef'):'0').'"><span class="hideonsmartphone">%</span></td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '<td align="center" valign="middle" colspan="2"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans("Add").'" name="addline_predefined"></td>';
-                print '</tr>';
-            }*/
         }
 
         print '</table>';

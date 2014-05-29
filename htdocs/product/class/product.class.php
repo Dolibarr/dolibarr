@@ -267,7 +267,10 @@ class Product extends CommonObject
     	$this->accountancy_code_buy = trim($this->accountancy_code_buy);
 		$this->accountancy_code_sell= trim($this->accountancy_code_sell);
 
-		// Check parameters
+        // Barcode value
+        $this->barcode=trim($this->barcode);
+		
+        // Check parameters
 		if (empty($this->libelle))
 		{
 			$this->error='ErrorMandatoryParametersNotProvided';
@@ -277,7 +280,7 @@ class Product extends CommonObject
 		{
 			// Load object modCodeProduct
 			$module=(! empty($conf->global->PRODUCT_CODEPRODUCT_ADDON)?$conf->global->PRODUCT_CODEPRODUCT_ADDON:'mod_codeproduct_leopard');
-			if ($module != 'mod_codeproduct_leopard')	// Do not load module file
+			if ($module != 'mod_codeproduct_leopard')	// Do not load module file for leopard
 			{
 				if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php')
 				{
@@ -306,11 +309,11 @@ class Product extends CommonObject
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
 		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
-
+		
 		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
-
+        
         if ($result >= 0)
         {
 			$sql = "SELECT count(*) as nb";
@@ -453,7 +456,8 @@ class Product extends CommonObject
 
 
     /**
-     *    Check properties of product are ok (like name, barcode, ...)
+     *    Check properties of product are ok (like name, barcode, ...).
+     *    All properties must be already loaded on object (this->barcode, this->barcode_type_code, ...).
      *
      *    @return     int		0 if OK, <0 if KO
      */
@@ -470,7 +474,7 @@ class Product extends CommonObject
             $result = -2;
         }
 
-        $rescode = $this->check_barcode($this->barcode);
+        $rescode = $this->check_barcode($this->barcode,$this->barcode_type_code);
         if ($rescode <> 0)
         {
         	if ($rescode == -1)
@@ -492,15 +496,16 @@ class Product extends CommonObject
     }
 
     /**
-     *  Check customer code
+     *  Check barcode
      *
      *	@param	string	$valuetotest	Value to test
+     *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
      *  @return int						0 if OK
      * 									-1 ErrorBadBarCodeSyntax
      * 									-2 ErrorBarCodeRequired
      * 									-3 ErrorBarCodeAlreadyUsed
      */
-    function check_barcode($valuetotest)
+    function check_barcode($valuetotest,$typefortest)
     {
         global $conf;
         if (! empty($conf->barcode->enabled) && ! empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
@@ -515,9 +520,9 @@ class Product extends CommonObject
             }
 
             $mod = new $module();
-
-            dol_syslog(get_class($this)."::check_barcode barcode=".$valuetotest." module=".$module);
-            $result = $mod->verif($this->db, $valuetotest, $this, 0);
+            
+            dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
+            $result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
             return $result;
         }
         else
@@ -566,7 +571,7 @@ class Product extends CommonObject
 
         if (empty($this->country_id))           $this->country_id = 0;
 
-        //Gencod
+        // Barcode value
         $this->barcode=trim($this->barcode);
 
 		$this->accountancy_code_buy = trim($this->accountancy_code_buy);
@@ -581,7 +586,7 @@ class Product extends CommonObject
         {
         	$result = $this->verify();	// We don't check when update called during a create because verify was already done
         }
-
+        
         if ($result >= 0)
         {
 	        // For automatic creation
@@ -595,7 +600,7 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-
+				
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
@@ -622,7 +627,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= " WHERE rowid = " . $id;
-
+				
 			dol_syslog(get_class($this)."update sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1038,14 +1043,14 @@ class Product extends CommonObject
 
 
 	/**
-	 *	Lit le prix pratique par un fournisseur
-	 *	On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref
+	 *	Read price used by a provider
+	 *	We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref
 	 *
 	 *  @param     	int		$prodfournprice     Id du tarif = rowid table product_fournisseur_price
 	 *  @param     	double	$qty                Quantity asked
 	 *	@param		int		$product_id			Filter on a particular product id
 	 * 	@param		string	$fourn_ref			Filter on a supplier ref
-	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve
+	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
@@ -1076,7 +1081,7 @@ class Product extends CommonObject
 			{
 				// We do same select again but searching with qty, ref and id product
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.tva_tx";
+				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
 				$sql.= " AND pfp.fk_product = ".$product_id;
@@ -1091,9 +1096,11 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-						$this->buyprice = $obj->price;                      // \deprecated
+						$this->buyprice = $obj->price;                      // deprecated
+						$this->fourn_qty = $obj->quantity;					// min quantity for price
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-						$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
+						$this->ref_fourn = $obj->ref_supplier;              // deprecated
+						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$result=$obj->fk_product;
 						return $result;

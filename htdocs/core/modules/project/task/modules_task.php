@@ -248,4 +248,3 @@ function task_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0, $h
 	}
 }
 
-?>

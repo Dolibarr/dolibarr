@@ -444,4 +444,3 @@ if ($db->connected) $db->close();
 
 // Return code if ran from command line
 if ($ret) exit($ret);
-?>
