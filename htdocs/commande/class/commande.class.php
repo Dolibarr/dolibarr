@@ -1387,7 +1387,7 @@ class Commande extends CommonOrder
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
                	$this->fetch_optionals($this->id,$extralabels);
 
-                $this->db->free();
+                $this->db->free($result);
 
                 /*
                  * Lines

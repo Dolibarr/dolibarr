@@ -243,7 +243,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $object->fetch($facid);
 
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';
     $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';

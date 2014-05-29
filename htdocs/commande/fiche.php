@@ -476,7 +476,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->commande->creer) {
 // Add a new line
 else if ($action == 'addline' && $user->rights->commande->creer) {
 	$langs->load('errors');
-	$error = false;
+	$error = 0;
 
 	// Set if we used free entry or predefined product
 	$predef='';
@@ -1319,13 +1319,13 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->client;
-			$cond_reglement_id = (! empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (! empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
-			$mode_reglement_id = (! empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (! empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$availability_id = (! empty($objectsrc->availability_id) ? $objectsrc->availability_id : (! empty($soc->availability_id) ? $soc->availability_id : 0));
-			$demand_reason_id = (! empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (! empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			$remise_percent = (! empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (! empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			$remise_absolue = (! empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (! empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
+			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
+			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 			$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
@@ -1335,17 +1335,19 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
 		}
-	} else {
-		$cond_reglement_id = $soc->cond_reglement_id;
-		$mode_reglement_id = $soc->mode_reglement_id;
-		$availability_id = $soc->availability_id;
-		$demand_reason_id = $soc->demand_reason_id;
-		$remise_percent = $soc->remise_percent;
-		$remise_absolue = 0;
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
-		$projectid = 0;
 	}
-	$absolute_discount = $soc->getAvailableDiscounts();
+	else
+	{
+		$cond_reglement_id  = $soc->cond_reglement_id;
+		$mode_reglement_id  = $soc->mode_reglement_id;
+		$availability_id    = $soc->availability_id;
+		$demand_reason_id   = $soc->demand_reason_id;
+		$remise_percent     = $soc->remise_percent;
+		$remise_absolue     = 0;
+		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+		$projectid          = 0;
+	}
+	$absolute_discount=$soc->getAvailableDiscounts();
 
 	$nbrow = 10;
 
@@ -1414,12 +1416,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '</td></tr>';
 
 	// Date de livraison
-	print "<tr><td>" . $langs->trans("DeliveryDate") . '</td><td colspan="2">';
-	if (empty($datedelivery)) {
-		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY))
-			$datedelivery = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		else
-			$datedelivery = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
+	print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
+	if (empty($datedelivery))
+	{
+		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 	}
 	$form->select_date($datedelivery, 'liv_', '', '', '', "crea_commande", 1, 1);
 	print "</td></tr>";

@@ -2270,6 +2270,8 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
+.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff; }
+
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1) ?>) right center no-repeat; }
 .ui-autocomplete {
 	       position:absolute;
@@ -2483,7 +2485,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 {
     line-height: 1em !important;
 }
-.ui-autocomplete-input { margin: 0; }
+.ui-autocomplete-input { margin: 0; padding: 2px; }
 
 
 /* ============================================================================== */
