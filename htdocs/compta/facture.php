@@ -2072,7 +2072,7 @@ if ($action == 'create')
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 			//Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
@@ -2085,7 +2085,7 @@ if ($action == 'create')
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
-		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 

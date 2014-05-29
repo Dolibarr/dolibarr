@@ -30,8 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $langs->load("agenda");
 $langs->load("admin");
@@ -218,8 +217,7 @@ print '</table>';
 print '<br>';
 
 print '<center>';
-
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
 print "</center>";
 
 print "</form>\n";
