@@ -191,8 +191,9 @@ class Form
                 $ret.='</td>';
                 if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
                 {
-                	$ret.='<td align="left"><input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-                	$ret.='<br><br>'."\n";
+                	$ret.='<td align="left">';
+                	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
+                	$ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
                 }
@@ -4091,7 +4092,7 @@ class Form
             //Check if fetch_barcode() failed
         	if ($result < 1) return '<!-- ErrorFetchBarcode -->';
         }
-        
+
         // Barcode image
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
         $out ='<!-- url barcode = '.$url.' -->';
