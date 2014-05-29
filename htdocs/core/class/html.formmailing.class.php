@@ -43,6 +43,14 @@ class FormMailing  extends Form
 		return 1;
 	}
 
+	/**
+	 * Output a select with destinaries status
+	 * 
+	 * @param string $selectedid the selected id
+	 * @param string $htmlname name of controm
+	 * @param number $show_empty show empty option
+	 * @return string HTML select
+	 */
 	public function select_destinaries_status($selectedid='',$htmlname='dest_status', $show_empty=0) {
 
 		global $langs;
