@@ -4589,4 +4589,3 @@ function natural_search($fields, $value)
     return " AND " . ($end > 1? '(' : '') . $res;
 }
 
-?>

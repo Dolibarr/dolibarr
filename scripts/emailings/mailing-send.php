@@ -144,19 +144,21 @@ if ($resql)
 						$other3=$other[2];
 						$other4=$other[3];
 						$other5=$other[4];
+						// Array of possible substitutions (See also fie mailing-send.php that should manage same substitutions)
 						$substitutionarray=array(
 							'__ID__' => $obj->source_id,
 							'__EMAIL__' => $obj->email,
-							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
-							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>',
-							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
 							'__LASTNAME__' => $obj2->lastname,
 							'__FIRSTNAME__' => $obj2->firstname,
+							'__MAILTOEMAIL__' => '<a href="mailto:'.$obj2->email.'">'.$obj2->email.'</a>',
 							'__OTHER1__' => $other1,
 							'__OTHER2__' => $other2,
 							'__OTHER3__' => $other3,
 							'__OTHER4__' => $other4,
-							'__OTHER5__' => $other5
+							'__OTHER5__' => $other5,
+							'__SIGNATURE__' => '',	// Signature is empty when ran from command line (user is a bot)
+							'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$obj2->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>',
+							'__UNSUBSCRIBE__' => '<a href="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-unsubscribe.php?tag='.$obj2->tag.'&unsuscrib=1&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" target="_blank">'.$langs->trans("MailUnsubcribe").'</a>'
 						);
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{

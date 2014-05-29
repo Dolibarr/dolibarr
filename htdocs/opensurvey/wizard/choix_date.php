@@ -555,4 +555,3 @@ print '</center></div>'."\n";
 llxFooter();
 
 $db->close();
-?>

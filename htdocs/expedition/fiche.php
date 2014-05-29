@@ -313,9 +313,15 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 
     if ($action == 'settrackingnumber')		$object->tracking_number = trim(GETPOST('trackingnumber','alpha'));
     if ($action == 'settrackingurl')		$object->tracking_url = trim(GETPOST('trackingurl','int'));
-    if ($action == 'settrueWeight')			$object->trueWeight = trim(GETPOST('trueWeight','int'));
+    if ($action == 'settrueWeight')	{
+    	$object->trueWeight = trim(GETPOST('trueWeight','int'));
+		$object->weight_units = GETPOST('weight_units','int');
+    }		
     if ($action == 'settrueWidth')			$object->trueWidth = trim(GETPOST('trueWidth','int'));
-    if ($action == 'settrueHeight')			$object->trueHeight = trim(GETPOST('trueHeight','int'));
+    if ($action == 'settrueHeight'){
+    				$object->trueHeight = trim(GETPOST('trueHeight','int'));
+					$object->size_units = GETPOST('size_units','int');
+	}
     if ($action == 'settrueDepth')			$object->trueDepth = trim(GETPOST('trueDepth','int'));
     if ($action == 'setshipping_method_id')	$object->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
@@ -1149,8 +1155,25 @@ else if ($id || $ref)
 
 		// Weight
 		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
-		print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+		
+		if($action=='edittrueWeight') {
+			
+			print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input name="action" value="settrueWeight" type="hidden">';
+			print '<input name="id" value="'.$object->id.'" type="hidden">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
+			print $formproduct->select_measuring_units("weight_units","weight",$object->weight_units);
+			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print '</form>';
+			
+		}
+		else {
+			print $object->trueWeight;
+			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+		}		
+
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
@@ -1167,8 +1190,26 @@ else if ($id || $ref)
 
 		// Height
 		print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
-		print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+		if($action=='edittrueHeight') {
+			
+			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input name="action" value="settrueHeight" type="hidden">';
+			print '<input name="id" value="'.$object->id.'" type="hidden">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
+			print $formproduct->select_measuring_units("size_units","size",$object->size_units);
+			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print '</form>';
+			
+		}
+		else {
+			print $object->trueHeight;
+			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+		
+		}
+		
+		
 		print '</td></tr>';
 
 		// Depth
@@ -1647,4 +1688,3 @@ else if ($id || $ref)
 llxFooter();
 
 $db->close();
-?>

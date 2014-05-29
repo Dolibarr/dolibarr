@@ -256,4 +256,3 @@ function commande_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 		return -1;
 	}
 }
-?>

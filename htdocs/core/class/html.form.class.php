@@ -4087,11 +4087,11 @@ class Form
         // Complete object if not complete
         if (empty($object->barcode_type_code) || empty($object->barcode_type_coder))
         {
-            $result = $object->fetch_barcode();
-	        //Check if fetch_barcode() failed
+        	$result = $object->fetch_barcode();
+            //Check if fetch_barcode() failed
         	if ($result < 1) return '<!-- ErrorFetchBarcode -->';
         }
-
+        
         // Barcode image
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
         $out ='<!-- url barcode = '.$url.' -->';

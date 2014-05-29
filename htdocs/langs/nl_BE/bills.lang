@@ -1,30 +1,20 @@
-# Dolibarr language file - nl_BE - bills
-Bill=Factuur
-Bills=Facturen
+# Dolibarr language file - Source file is en_US - bills
 BillsCustomers=Facturen klanten
 BillsSuppliers=Facturen leveranciers
-BillsCustomersUnpaid=Onbetaalde facturen klanten 
+BillsCustomersUnpaid=Onbetaalde facturen klanten
 BillsCustomersUnpaidForCompany=Onbetaalde facturen leveranciers  voor %s
 BillsSuppliersUnpaid=Onbetaalde facturen leveranciers
-BillsUnpaid=Onbetaald
 BillsStatistics=Facturen statistieken
 InvoiceStandard=Standaard factuur
 InvoiceStandardAsk=Standaard factuur
 InvoiceStandardDesc=Dit soort factuur is de standaard factuur.
-InvoiceReplacement=Vervangingsfactuur
-InvoiceReplacementAsk=Vervangingsfactuur voor factuur
-InvoiceAvoir=Creditnota
 InvoiceAvoirAsk=Creditnota ter correctie van factuur
 InvoiceAvoirDesc=De <b>Creditnota</b> is een negatieve factuur gebruikt om gevallen op te lossen waar een factuur een hoger bedrag heeft dan is of zal betaald worden (voor alle mogelijke redenen).
 ReplaceInvoice=Vervangingsfactuur %s
-ReplacedByInvoice=Vervangen door factuur %s
-CorrectInvoice=Correcte factuur %s
 NoReplacableInvoice=Geen vervangingsfacturen
 NoInvoiceToCorrect=Geen factuur te corrigeren
 InvoiceHasAvoir=Gecorrigeerd door 1 of meerdere facturen
 CardBill=Factuurkaart
-Invoice=Factuur
-Invoices=Facturen
 InvoiceLine=Factuurlijn
 InvoiceCustomer=Factuur klant
 CustomerInvoice=Factuur klant
@@ -33,9 +23,6 @@ SupplierInvoice=Leveranciers factuur
 SuppliersInvoices=Leveranciers facturen
 SupplierBill=Factuur leverancier
 SupplierBills=Facturen leveranciers
-Payment=Betaling
-Payments=Betalingen
-ReceivedPayments=Ontvangen betalingen
 ReceivedCustomersPayments=Betalingen ontvangen van klanten
 ReceivedCustomersPaymentsToValid=Te valideren betalingen ontvangen van klanten
 PaymentsReportsForYear=Betalingsrapporten voor %s
@@ -55,53 +42,32 @@ AddBill=Factuur toevoegen
 DeleteBill=Factuur verwijderen
 SearchACustomerInvoice=Zoek een factuur van klant
 SearchASupplierInvoice=Zoek een factuur van leverancier
-SearchABill=Zoek een factuur
 CancelBill=Annuleer een factuur
-SendByMail=EMail
 SendRemindByMail=EMail herinnering
 DoPayment=Doe betaling
 EnterPaymentReceivedFromCustomer=Voeg betaling in ontvangen van klant
 EnterPaymentDueToCustomer=Make payment due to customer
 Amount=Bedrag
-PriceBase=Basisprijs
 BillStatus=Status factuur
 BillStatusDraft=Klad (moet gevalideerd worden)
-BillStatusPaid=Betaald
 BillStatusCanceled=Geannuleerd
 BillStatusValidated=Gevalideerd (moet betaald worden)
-BillStatusStarted=Gestart
-BillStatusNotPaid=Niet betaald
 BillStatusClosedUnpaid=Afgesloten (onbetaald)
-BillStatusClosedPaidPartially=Betaald (gedeeltelijk)
 BillShortStatusDraft=Klad
-BillShortStatusPaid=Betaald
 BillShortStatusCanceled=Geannuleerd
-BillShortStatusValidated=Gevalideerd
-BillShortStatusStarted=Gestart
-BillShortStatusNotPaid=Niet betaald
 BillShortStatusClosedUnpaid=Afgesloten
-BillShortStatusClosedPaidPartially=Betaald (gedeeltelijk)
-PaymentStatusToValidShort=Te valideren
 ErrorVATIntraNotConfigured=Intracommunautair BTW nummer nog niet gedefiniëerd
 ErrorNoPaiementModeConfigured=Nog geen betalingswijze gedefiniëerd
 ErrorCreateBankAccount=Maak een bankrekening aan, ga dan naar "Home" -"Opstelling" en definiëer in de "Factuurmodule" de betalingswijzen
-ErrorBillNotFound=Factuur %s bestaat niet
 ErrorInvoiceAlreadyReplaced=Fout, u probeert een factuur te valideren om factuur %s te vervangen, maar deze is reeds vervangen door factuur %s.
 ErrorDiscountAlreadyUsed=Fout, korting reeds gebruikt
 ErrorInvoiceAvoirMustBeNegative=Fout, correctiefactuur moet een negatief bedrag hebben
 ErrorInvoiceOfThisTypeMustBePositive=Fout, dit type factuur moet een positief bedrag hebben
 ErrorCantCancelIfReplacementInvoiceNotValidated=Fout, kan geen factuur annuleren die is vervangen door een andere factuur die nog in klad status is
-BillFrom=Van
 BillTo=Aan
-ActionsOnBill=Acties op factuur
-NewBill=Nieuwe factuur
 Prélèvements=Domiciliëring
-Prélèvements=Domiciliëringen
-LastBills=Laatste %s facturen
 LastCustomersBills=Laatste %s facturen klanten
 LastSuppliersBills=Laatste %s facturen leveranciers
-AllBills=Alle facturen
-OtherBills=Andere facturen
 DraftBills=Klad facturen
 CustomersDraftInvoices=Klad facturen klanten
 SuppliersDraftInvoices=Klad facturen leveranciers
@@ -118,27 +84,10 @@ ConfirmClassifyPaidPartiallyReasonDiscountVat=Remainder to pay <b>(%s %s)</b> is
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Slechte klant
 ConfirmClassifyPaidPartiallyReasonProductReturned=Een deel van de producten geretourt
 ConfirmClassifyPaidPartiallyReasonOther=Bedrag geschrapt om andere reden
-ConfirmClassifyPaidPartiallyNoVat=Deze keuze is mogelijk als uw factuur werd uitgerust met de juiste verwijzing. (Voorbeeld: "fiscale netto korting)
-ConfirmClassifyPaidPartiallyVat=Deze keuze is mogelijk als uw factuur werd uitgerust met de juiste verwijzing. (Voorbeeld: alleen de belasting die overeenkomt met de werkelijk betaalde prijs is aftrekbaar)
-ConfirmClassifyPaidPartiallyAvoir=Gebruik deze keuze als alle andere niet van toepassing zijn
-ConfirmClassifyPaidPartiallyBadCustomer=Deze keuze wordt gebruikt voor slechte klanten met geen hoop op betaling
-ConfirmClassifyPaidPartiallyOther=Gebruik deze keuze als alle andere niet van toepassing zijn
 ConfirmCustomerPayment=Bevestigt u de betaling van <b>%s</b> %s?
-ValidateBill=Valideer factuur
-NumberOfBills=Aantal facturen
-NumberOfBillsByMonth=Aantal facturen per maand
 AmountOfBillsByMonthHT=Bedrag van de facturen per maand (excl. BTW)
-ShowBill=Toon factuur
-ShowInvoice=Toon factuur
-ShowInvoiceReplace=Toon vervangingsfactuur
-ShowInvoiceAvoir=Toon creditnota
-ShowPayment=Toon betaling
-File=Bestand
-AlreadyPaid=Reeds betaald
 RemainderToPay=Rest te betalen
 RemainderToTake=Rest te ontvangen
-EscompteOffered=Korting aangeboden (betaling vóór termijn)
-CreateDraft=Creëer klad
 SendBillRef=Verstuur factuur %s
 SendReminderBillRef=Verstuur factuur %s (herinnering)
 StandingOrders=Standing orders
@@ -146,25 +95,15 @@ StandingOrder=Standing order
 NoDraftBills=Geen klad facturen
 NoOtherDraftBills=Geen andere klad facturen
 RefBill=Factuur ref
-ToBill=Te factureren
 RemainderToBill=Herinneringen te factureren
 SendBillByMail=Verstuur factuur via email
 SendReminderBillByMail=Verstuur herinnering via email
 RelatedCommercialProposals=Gerelateerde commerciële voorstellen
 MenuToValid=Te valideren
-DateMaxPayment=Betaling vóór
-DateEcheance=Vervaldatum
-DateInvoice=Factuurdatum
-NoInvoice=Geen factuur
-ClassifyBill=Classifiseer factuur
-NoSupplierBillsUnpaid=Geen onbetaalde leveranciers facturen
 SupplierBillsToPay=Te betalen leveranciers facturen
-CustomerBillsUnpaid=Onbetaalde facturen klanten 
+CustomerBillsUnpaid=Onbetaalde facturen klanten
 DispenseMontantLettres=The written invoices through mecanographic procedures are dispensed by the order in letters
 NonPercuRecuperable=Niet recupereerbaar
-SetConditions=Stel betalingsvoorwaarden in
-SetMode=Stel betalingswijze in
-Billed=Gefactureerd
 RepeatableInvoice=Herhaalbare factuur
 RepeatableInvoices=Herhaalbare facturen
 Repeatable=Herhaalbaar
@@ -172,46 +111,27 @@ ChangeIntoRepeatableInvoice=Verander in herhaalbaar
 CreateRepeatableInvoice=Maak een herhaalbare factuur
 CreateFromRepeatableInvoice=Maak van herhaalbare factuur
 ExportDataset_invoice_1=Lijst facturen klanten en factuur lijnen
-ProformaBill=Proforma factuur:
 Reduction=Korting
 ReductionShort=Kort.
 Reductions=Kortingen
 ReductionsShort=Kort.
-Discount=Korting
-Discounts=Kortingen
-RelativeDiscount=Relative korting
-GlobalDiscount=Globale korting
-CreditNote=Creditnota
-CreditNotes=Creditnota's
-NewGlobalDiscount=Nieuwe korting
-NoteReason=Nota/Reden
-ReasonDiscount=Reden
 AddDiscount=Korting toevoegen
 AddGlobalDiscount=Korting toevoegen
-DiscountOfferedBy=Verleend door
+RelativeDiscount=Relative korting
+GlobalDiscount=Globale korting
+NoteReason=Nota/Reden
 DiscountStillRemaining=Korting nog steeds geldig / nog niet gerekend
 DiscountAlreadyCounted=Korting al gerekend
 BillAddress=Facturatieadres
-WatermarkOnDraftBill=Watermerk over klad facturen (geen indien leeg)
 HelpEscompte=Deze korting wordt verleend aan klanten waarvan de betaling voor de verstreken termijn is uitgevoerd.
-# PaymentConditions
+WatermarkOnDraftBill=Watermerk over klad facturen (geen indien leeg)
 PaymentConditionShortRECEP=Contant
 PaymentConditionRECEP=Contant
-PaymentConditionShort30D=30 dagen
 PaymentCondition30D=30 dagen op factuurdatum
 PaymentConditionShort30DENDMONTH=30 D einde m.
-PaymentCondition30DENDMONTH=30 dagen einde maand
-PaymentConditionShort60D=60 dagen
 PaymentCondition60D=60 dagen op factuurdatum
 PaymentConditionShort60DENDMONTH=60 D einde m.
-PaymentCondition60DENDMONTH=60 dagen einde maand
 PaymentConditionShortPT_DELIVERY=Bij levering
-PaymentConditionPT_DELIVERY=Bij levering
-PaymentConditionShortPT_ORDER=Bij bestelling
-PaymentConditionPT_ORDER=Bij bestelling
-PaymentConditionShortPT_5050=50-50
-PaymentConditionPT_5050=50%% voorschot, 50%% bij levering
-# PaymentType
 PaymentTypeVIR=Overschrijving
 PaymentTypeShortVIR=Overschrijving
 PaymentTypePRE=Bank's order
@@ -220,32 +140,18 @@ PaymentTypeLIQ=Rembours
 PaymentTypeShortLIQ=Rembours
 PaymentTypeCB=Kredietkaart
 PaymentTypeShortCB=Kredietkaart
-PaymentTypeCHQ=Cheque
-PaymentTypeShortCHQ=Cheque
-
-PaymentTypeTYP=TIP
-PaymentTypeShortTYP=TIP
 PaymentTypeVAD=Online betaling
 PaymentTypeShortVAD=Online betaling
-
 BankDetails=Bank details
 BankCode=Bank code
 DeskCode=Desk code
-BankAccountNumber=Rekeningnummer
-BankAccountNumberKey=Sleutel
 Residence=Domiciliering
 IBANNumber=IBAN nummer
-IBAN=IBAN
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT nummer
-ExtraInfos=Extra info
 RegulatedOn=Regulariseerd op
 ChequeNumber=Cheque N°
 ChequeOrTransferNumber=Cheque/Overschrijving N°
-NetToBePaid=Netto te betalen
-PhoneNumber=Tel
-FullPhoneNumber=Telefoonnummer
-TeleFax=Fax
 PrettyLittleSentence=Accept the amount of payments due by cheques issued in my name as a Member of an accounting association approved by the Fiscal Administration.
 IntracommunityVATNumber=BTW nummer intracommunautair
 PaymentByChequeOrderedTo=Cheque payment are payable to %s send to
@@ -255,66 +161,11 @@ PaymentByTransferOnThisBankAccount=Betaling via overschrijving op volgend bankre
 VATIsNotUsedForInvoice=* TVA non applicable art-293B du CGI
 LawApplicationPart1=Par application de la loi 80.335 du 12/05/80
 LawApplicationPart2=les marchandises demeurent la propriété du
-LawApplicationPart3=vendeur jusqu'à complet encaissement de 
+LawApplicationPart3=vendeur jusqu'à complet encaissement de
 LawApplicationPart4=leurs prix.
 LimitedLiabilityCompanyCapital=SARL au Capital de
-UseDiscount=Gebruik korting
 UsBillingContactAsIncoiveRecipientIfExist=Gebruik de klant zijn contactadres indien ingesteld, in de plaats van het adres van derde partijen als begunstigde voor facturen
-
-# oursin PDF model
-Of=du
-
-# bernique PDF model
-PDFBerniqueDescription=Factuurmodel Bernique
-
-# bigorneau PDF Model
-PDFBigorneauDescription=Factuurmodel Bigorneau
-
-# bulot PDF Model
-PDFBulotDescription=Factuurmodel Bulot
-
-# crabe PDF Model
 PDFCrabeDescription=Factuurmodel Crabe. Een volledig factuurmodel (Ondersteunt BTW optie, kortingen, betalingsvoorwaarden, etc...)
-
-# huitre PDF Model
-PDFHuitreDescription=Factuurmodel Huitre
-
-# oursin PDF Model
-PDFOursinDescription=Factuurmodel oursin
-
-# tourteau PDF Model
-PDFTourteauDescription=Factuurmodel Tourteau
-
-
-
-
-# NumRef Modules
-
-# deneb
-DenebNumRefModelDesc1=Geeft het nummer in de vorm, PREF-31-12-2004-01, waar pref het voorvoegsel is , gevolgd door de datum (31 december 2004) en een teller.
-DenebNumRefModelDesc2=Indien de constante FACTURE_DENEB_DELTA is gedefiniëerd, een compensatie wordt toegepast op de meter
-
-# mars
-MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.
-MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
-MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
-
-# neptune
-NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
-NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
-
-# orion
-OrionNumRefModelDesc1=Return the number under the format FAYYNNNNN where YY is the year and NNNNN the increment number starting at 1.
-OrionNumRefModelDesc2=The year is increased by 1 WITHOUT an initialisation to zero at the start of the fiscal year.
-OrionNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
-OrionNumRefModelDesc4=In this example, we shall have on the 1st of September 2006 an invoice named FA700354.
-
-# terre
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
+MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.
 TerreNumRefModelError=Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
-
-# titan
-TitanNumRefModelDesc1=Return the number with format FAYYNNNNN where YY is the year and NNNNN is the increment number starting from 1.
-TitanNumRefModelDesc2=The year is incremented by 1 and the increment number is initialized to zero at the start of the fiscal year.
-TitanNumRefModelDesc3=Define the variable SOCIETE_FISCAL_MONTH_START with the month at the start of the fiscal year, example: 9 for September.
-TitanNumRefModelDesc4=In this example, we shall have on the 1st September 2006 an invoice named FA0700001

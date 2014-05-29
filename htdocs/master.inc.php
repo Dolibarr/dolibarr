@@ -247,4 +247,3 @@ if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR')
 // We force FPDF
 if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;
 
-?>

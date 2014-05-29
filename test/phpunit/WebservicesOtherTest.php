@@ -213,4 +213,3 @@ class WebservicesOtherTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

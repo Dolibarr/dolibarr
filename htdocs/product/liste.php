@@ -188,6 +188,14 @@ else
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
     $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+
+    $nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+	}
+
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
@@ -228,7 +236,8 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+
+    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
     	if (! empty($catid))
     	{
@@ -359,6 +368,15 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
+    		else
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
 
     		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
@@ -420,7 +438,7 @@ else
     				print '<td>'.$objp->barcode.'</td>';
     			}
 
-    			// Date
+    			// Modification Date
     			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
 
     			// Duration
@@ -445,7 +463,8 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->produit->creer) {
+    			if ($user->rights->produit->creer)
+    			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
         			{
@@ -480,7 +499,12 @@ else
     				}
     				else
     				{
-    					print '<td>&nbsp;</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
     				}
     			}
 
@@ -500,7 +524,7 @@ else
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
-    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);
 

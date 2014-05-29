@@ -143,10 +143,11 @@ class mailing_pomme extends MailingTargets
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		global $conf, $langs;
+		$langs->load("companies");
 
 		$cibles = array();
 
-		// La requete doit retourner: id, email, fk_contact, name, firstname
+		// La requete doit retourner: id, email, fk_contact, lastname, firstname
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
 		$sql.= " u.lastname, u.firstname as firstname, u.civilite as civility_id, u.login, u.office_phone";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";

@@ -798,7 +798,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fetch_thirdparty();
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
-			if ($_POST['origin'] && $_POST['originid']) {
+			if ($_POST['origin'] && $_POST['originid'])
+			{
 				// Parse element/subelement (ex: project_task)
 				$element = $subelement = $_POST['origin'];
 				if (preg_match('/^([^_]+)_([^_]+)/i', $_POST['origin'], $regs)) {
@@ -835,15 +836,20 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 				$id = $object->create($user);
 
-				if ($id > 0) {
+				if ($id > 0)
+				{
 					// If deposit invoice
-					if ($_POST['type'] == 3) {
+					if ($_POST['type'] == 3)
+					{
 						$typeamount = GETPOST('typedeposit', 'alpha');
 						$valuedeposit = GETPOST('valuedeposit', 'int');
 
-						if ($typeamount == 'amount') {
+						if ($typeamount == 'amount')
+						{
 							$amountdeposit = $valuedeposit;
-						} else {
+						}
+						else
+						{
 							$amountdeposit = 0;
 
 							dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
@@ -853,7 +859,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 							dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add deposit lines");
 							$result = $srcobject->fetch($object->origin_id);
-							if ($result > 0) {
+							if ($result > 0)
+							{
 								$totalamount = 0;
 								$lines = $srcobject->lines;
 								$numlines=count($lines);
@@ -898,7 +905,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								0,
 								$langs->trans('Deposit')
 							);
-					} else {
+					}
+					else
+					{
 
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
@@ -907,10 +916,10 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
-						if ($result > 0) {
+						if ($result > 0)
+						{
 							$lines = $srcobject->lines;
-							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
-								$lines = $srcobject->fetch_lines();
+							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) $lines = $srcobject->fetch_lines();
 
 							$fk_parent_line=0;
 							$num=count($lines);
@@ -919,7 +928,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
-								if ($lines [$i]->subprice < 0) {
+								if ($lines [$i]->subprice < 0)
+								{
 									// Negative line, we create a discount line
 									$discount = new DiscountAbsolute($db);
 									$discount->fk_soc = $object->socid;
@@ -1659,19 +1669,19 @@ else if ($action == 'builddoc') // En get ou en post
 	if (GETPOST('fk_bank'))
 		$object->fk_bank = GETPOST('fk_bank');
 
-		// Define output language
+	// Define output language
 	$outputlangs = $langs;
 	$newlang = '';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
-		$newlang = GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-		$newlang = $object->client->default_lang;
-	if (! empty($newlang)) {
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id');
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->client->default_lang;
+	if (! empty($newlang))
+	{
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
 	$result = facture_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	if ($result <= 0) {
+	if ($result <= 0)
+	{
 		dol_print_error($db, $result);
 		exit();
 	}

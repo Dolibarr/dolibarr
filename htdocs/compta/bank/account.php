@@ -855,4 +855,3 @@ else
 llxFooter();
 
 $db->close();
-?>

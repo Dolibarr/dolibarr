@@ -297,4 +297,3 @@ class CoreTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($result,$expectedresult);
     }
 }
-?>

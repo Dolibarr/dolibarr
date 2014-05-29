@@ -253,4 +253,3 @@ print "</form>\n";
 llxFooter();
 
 $db->close();
-?>

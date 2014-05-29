@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
@@ -587,7 +587,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromClone($socid=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$user,$langs,$hookmanager;
 
 		$error=0;
 
@@ -2056,7 +2056,7 @@ class Facture extends CommonInvoice
 
 			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -2133,7 +2133,7 @@ class Facture extends CommonInvoice
 				if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$result=$this->update_price(1,'auto');	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+				$result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
 				if ($result > 0)
 				{
 					$this->db->commit();

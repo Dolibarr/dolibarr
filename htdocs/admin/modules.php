@@ -540,4 +540,3 @@ if ($mode != 'marketplace') print '<div class="info">'.showModulesExludedForExte
 llxFooter();
 
 $db->close();
-?>

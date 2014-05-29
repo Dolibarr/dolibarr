@@ -258,4 +258,3 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 	}
 }
 
-?>

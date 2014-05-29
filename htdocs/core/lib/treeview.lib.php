@@ -165,4 +165,3 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 	if (empty($pere['rowid'])) print '</ul>';
 }
 
-?>
