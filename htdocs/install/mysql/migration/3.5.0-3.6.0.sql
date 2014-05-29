@@ -1197,3 +1197,5 @@ create table llx_c_type_resource
 )ENGINE=innodb;
 
 ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, code);
+
+ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_fk_mailing_email (fk_mailing,email);
