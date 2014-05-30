@@ -76,7 +76,7 @@ foreach($fulltree as $key => $val)
 	$userstatic->id=$val['id'];
 	$userstatic->ref=$val['label'];
 	$userstatic->firstname=$val['firstname'];
-	$userstatic->lastname=$val['name'];
+	$userstatic->lastname=$val['lastname'];
 	$userstatic->statut=$val['statut'];
 	$li=$userstatic->getNomUrl(1,'').' ('.$val['login'].(empty($conf->multicompany->enabled)?'':' - '.$langs->trans("Instance").' '.$val['entity']).')';
 
