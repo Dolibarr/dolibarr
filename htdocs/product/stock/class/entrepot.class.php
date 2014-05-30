@@ -42,6 +42,7 @@ class Entrepot extends CommonObject
 	var $statut;
 	var $lieu;
 	var $address;
+	var $email;
 	//! Code Postal
 	var $zip;
 	var $town;
@@ -141,8 +142,9 @@ class Entrepot extends CommonObject
 		$this->lieu=$this->db->escape(trim($this->lieu));
 
 		$this->address=$this->db->escape(trim($this->address));
-        $this->zip=$this->zip?trim($this->zip):trim($this->zip);
-        $this->town=$this->town?trim($this->town):trim($this->town);
+        	$this->zip=$this->zip?trim($this->zip):trim($this->zip);
+        	$this->town=$this->town?trim($this->town):trim($this->town);
+        	$this->email=$this->email?trim($this->email):trim($this->email);
 		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
@@ -153,6 +155,7 @@ class Entrepot extends CommonObject
 		$sql .= ", address = '" . $this->db->escape($this->address) ."'";
 		$sql .= ", zip = '" . $this->db->escape($this->zip) ."'";
 		$sql .= ", town = '" . $this->db->escape($this->town) ."'";
+		$sql .= ", email = '" . $this->db->escape($this->email) ."'";
 		$sql .= ", fk_pays = " . $this->country_id;
 		$sql .= " WHERE rowid = " . $id;
 
@@ -244,7 +247,7 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, label, description, statut, lieu, address, email, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 
 		if ($id)
@@ -275,6 +278,7 @@ class Entrepot extends CommonObject
 				$this->address        = $obj->address;
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
+				$this->email           = $obj->email;
 				$this->country_id     = $obj->country_id;
 
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
