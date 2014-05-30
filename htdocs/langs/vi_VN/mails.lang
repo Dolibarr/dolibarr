@@ -79,6 +79,7 @@ MailtoEMail=Hyper link to email
 ActivateCheckRead=Allow to use the "Unsubcribe" link
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails

@@ -8,7 +8,6 @@ NotActiveModCP=Per vedere questa pagina devi attivare il modulo ferie.
 NotConfigModCP=Per vedere questa pagina devi configurare il modulo ferie. <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> Clicca qui </ a> per attivarlo.
 NoCPforUser=Non hai richieste di ferie.
 AddCP=Richiedi ferie
-CPErrorSQL=Si è verificato un errore SQL:
 Employe=Dipendente
 DateDebCP=Data di inizio
 DateFinCP=Data di fine

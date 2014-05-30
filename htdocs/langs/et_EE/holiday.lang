@@ -8,7 +8,6 @@ NotActiveModCP=Selle lehe vaatamiseks pead sisse lülitama puhkuste mooduli
 NotConfigModCP=Selle lehe vaatamiseks pead seadistama puhkuste mooduli. Selle jaoks <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">klõpsa siia</a>.
 NoCPforUser=Sul ei ole puhkuse vajadust.
 AddCP=Taotle puhkust
-CPErrorSQL=Tekkis SQLi viga:
 Employe=Töötaja
 DateDebCP=Alguskuupäev
 DateFinCP=Lõppkuupäev

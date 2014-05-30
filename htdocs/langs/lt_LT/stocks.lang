@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Tai sąrašas visų atidarytų tiekėjo užsakymų
 Replenishments=Papildymai
 NbOfProductBeforePeriod=Produkto %s kiekis atsargose iki pasirinkto periodo (< %s)
 NbOfProductAfterPeriod=Produkto %s kiekis sandėlyje po pasirinkto periodo (> %s)
+MassMovement=Mass movement
 MassStockMovement=Masinis atsargų judėjimas
 SelectProductInAndOutWareHouse=Pasirinkite produktą, kiekį, sandėlį šaltinį ir galutinį sandėlį, tada spauskite "%s". Kai tai bus padaryta visiems reikiamiems judėjimams, spauskite "%s".
 RecordMovement=Įrašyti perdavimą

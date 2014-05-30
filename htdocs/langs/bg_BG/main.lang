@@ -551,6 +551,7 @@ MailSentBy=E-mail, изпратен от
 TextUsedInTheMessageBody=Email body
 SendAcknowledgementByMail=Изпращане на уведомление по имейл
 NoEMail=Няма имейл
+NoMobilePhone=No mobile phone
 Owner=Собственик
 DetectedVersion=Открита версия
 FollowingConstantsWillBeSubstituted=Следните константи ще бъдат заменени със съответната стойност.

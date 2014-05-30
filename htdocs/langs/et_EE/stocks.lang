@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=See on kõigi avatud ostutellimuste nimekiri
 Replenishments=Värskendamised
 NbOfProductBeforePeriod=Toote %s laojääk enne valitud perioodi (< %s)
 NbOfProductAfterPeriod=Toote %s laojääk pärast valitud perioodi (> %s)
+MassMovement=Mass movement
 MassStockMovement=Massiline lao liikumine
 SelectProductInAndOutWareHouse=Vali toode, kogus, lähteladu ja sihtladu, siis klõpsa "%s". Kui see on kõigi soovitud liikumiste jaoks tehtud, klõpsa "%s".
 RecordMovement=Registreeri ülekanne

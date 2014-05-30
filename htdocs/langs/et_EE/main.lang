@@ -551,6 +551,7 @@ MailSentBy=E-posti saatis
 TextUsedInTheMessageBody=E-kirja sisu
 SendAcknowledgementByMail=Saada kinnitus e-postiga
 NoEMail=E-posti aadress puudub
+NoMobilePhone=No mobile phone
 Owner=Omanik
 DetectedVersion=Tuvastatud versioon
 FollowingConstantsWillBeSubstituted=Järgnevad konstandid asendatakse vastavate väärtustega.

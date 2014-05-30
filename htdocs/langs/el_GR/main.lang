@@ -551,6 +551,7 @@ MailSentBy=Το email στάλθηκε από
 TextUsedInTheMessageBody=Κείμενο email
 SendAcknowledgementByMail=Αποστολή επιβεβαίωσης με email
 NoEMail=Χωρίς email
+NoMobilePhone=Χωρείς κινητό τηλέφωνο
 Owner=Ιδιοκτήτης
 DetectedVersion=Εντοπισμένη έκδοση
 FollowingConstantsWillBeSubstituted=Οι ακόλουθες σταθερές θα αντικαταστασθούν με τις αντίστοιχες τιμές

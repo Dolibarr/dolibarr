@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=%s günde süresi dolacak Hizmetler Listesi
 ListOfServicesToExpireWithDurationNeg=%s günden fazla günde süresi dolacak Hizmetler Listesi
 ListOfServicesToExpire=Süresi dolacak hizmetler listesi
 NoteListOfYourExpiredServices=Bu liste yalnızca satış temsilcisi olarak bağlı olduğunuz üçüncü partilere ait hizmet sözleşmelerini içerir.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşme imzalalayacak satış temsilcisi

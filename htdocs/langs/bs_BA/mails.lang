@@ -79,6 +79,7 @@ MailtoEMail=Hyper link na e-poštu
 ActivateCheckRead=Dozvoli korištenje "Ispiši se" linka
 ActivateCheckReadKey=Kljul korišten za enkriptovanje linka koristi se za "Pročitaj potvrdu" i "Ispiši se" mogućnosti
 EMailSentToNRecipients=E-pošta poslana %s primaocima
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails

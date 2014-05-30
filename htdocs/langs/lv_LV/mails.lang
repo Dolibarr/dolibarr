@@ -79,6 +79,7 @@ MailtoEMail=Saite uz e-pastu
 ActivateCheckRead=Ļauj izmantot &quot;Unsubcribe&quot; saiti
 ActivateCheckReadKey=Galvenais izmantot, lai šifrētu URL izmantošanu, lai &quot;izlasītu saņemšanai&quot; un &quot;Unsubcribe&quot; funkciju
 EMailSentToNRecipients=E-pastu nosūtīja %s saņēmējiem.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails

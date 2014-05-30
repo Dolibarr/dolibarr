@@ -551,6 +551,7 @@ MailSentBy=Email sent
 TextUsedInTheMessageBody=Email líkami
 SendAcknowledgementByMail=Senda Ack. með tölvupósti
 NoEMail=No email
+NoMobilePhone=No mobile phone
 Owner=Eigandi
 DetectedVersion=Uppgötva útgáfa
 FollowingConstantsWillBeSubstituted=Eftir Fastar verður staðgengill með samsvarandi gildi.

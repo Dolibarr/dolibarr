@@ -8,7 +8,6 @@ NotActiveModCP=Trebuie să activaţi modulul de concedii pentru a vedea această
 NotConfigModCP=Trebuie să configuraţi modulul de concedii pentru a vedea această pagină.Pentru aceasta , <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> clic aici </ a>.
 NoCPforUser=Nu aveţi o cerere de concediu.
 AddCP=Aplică pentru concediu
-CPErrorSQL=O eroare SQL întâlnită
 Employe=Angajat
 DateDebCP=Dată început
 DateFinCP=Dată sfărşit

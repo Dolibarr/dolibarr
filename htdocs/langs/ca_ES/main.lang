@@ -551,6 +551,7 @@ MailSentBy=Mail enviat per
 TextUsedInTheMessageBody=Text utilitzat en el cos del missatge
 SendAcknowledgementByMail=Enviament rec. per e-mail
 NoEMail=Sense e-mail
+NoMobilePhone=No mobile phone
 Owner=Propietari
 DetectedVersion=Versió detectada
 FollowingConstantsWillBeSubstituted=Les següents constants seran substituïdes pel seu valor corresponent.

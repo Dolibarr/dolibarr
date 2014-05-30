@@ -8,7 +8,6 @@ NotActiveModCP=Vous devez activer le module Congés pour afficher cette page.
 NotConfigModCP=Vous devez configurer le module Congés pour afficher cette page. Pour effectuer cette opération, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">cliquer ici</a>.
 NoCPforUser=Vous n'avez pas encore de demande de congés.
 AddCP=Créer demande de congés
-CPErrorSQL=Une erreur SQL est survenue :
 Employe=Employé
 DateDebCP=Date Début
 DateFinCP=Date Fin

@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Toto je seznam všech otevřených dodavatelských objed
 Replenishments=Splátky
 NbOfProductBeforePeriod=Množství produktů %s na skladě, než zvolené období (&lt;%s)
 NbOfProductAfterPeriod=Množství produktů %s na skladě po zvolené období (&gt; %s)
+MassMovement=Mass movement
 MassStockMovement=Mass pohyb zásob
 SelectProductInAndOutWareHouse=Vyberte produkt, množství, zdrojový sklad a cílový sklad, pak klikněte na &quot;%s&quot;. Jakmile se tak stane pro všechny požadované pohyby, klikněte na &quot;%s&quot;.
 RecordMovement=Záznam transfert

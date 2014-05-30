@@ -8,7 +8,6 @@ NotActiveModCP=Вы должны включить модуль Выходные 
 NotConfigModCP=You must configure the module holidays to view this page. To do this, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click here </ a>.
 NoCPforUser=You don't have a demand for holidays.
 AddCP=Apply for holidays
-CPErrorSQL=Произошла ошибка SQL:
 Employe=Сотрудник
 DateDebCP=Начальная дата
 DateFinCP=Конечная дата

@@ -551,6 +551,7 @@ MailSentBy=البريد الإلكتروني التي بعث بها
 TextUsedInTheMessageBody=هيئة البريد الإلكتروني
 SendAcknowledgementByMail=ارسال Ack. عن طريق البريد الإلكتروني
 NoEMail=أي بريد إلكتروني
+NoMobilePhone=No mobile phone
 Owner=مالك
 DetectedVersion=اكتشاف نسخة
 FollowingConstantsWillBeSubstituted=الثوابت التالية ستكون بديلا المقابلة القيمة.

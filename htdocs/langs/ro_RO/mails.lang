@@ -79,6 +79,7 @@ MailtoEMail=Hyper link către email
 ActivateCheckRead=Permite utiliyarea linkului  "Dezabonare"
 ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare"
 EMailSentToNRecipients=EMail trimis la %s destinatari.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails

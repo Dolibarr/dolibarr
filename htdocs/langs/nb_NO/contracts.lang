@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Liste over tjenester som utløper innen %s da
 ListOfServicesToExpireWithDurationNeg=Liste over tjenester utløpt fra mer enn %s dager
 ListOfServicesToExpire=Liste over utløpende tjenester
 NoteListOfYourExpiredServices=Denne listen inneholder kun tjenester av kontrakter for tredjeparter du er koblet til som salgsrepresentant.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten

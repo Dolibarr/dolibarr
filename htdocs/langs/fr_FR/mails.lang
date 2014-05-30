@@ -79,6 +79,7 @@ MailtoEMail=Écrire un e-mail (lien)
 ActivateCheckRead=Permettre l'utilisation du lien de désinscription
 ActivateCheckReadKey=Clé de sécurité permettant le chiffrement des URL utilisées dans les fonctions d'accusé de lecture et de désinscription
 EMailSentToNRecipients=Email envoyé à %s destinataires.
+XTargetsAdded=<b>%s</b> destinataires ajoutés dans la liste cible
 EachInvoiceWillBeAttachedToEmail=Un document utilisant le modèle par défaut de facture sera généré et attaché à l'email.
 MailTopicSendRemindUnpaidInvoices=Rappel de la facture %s (%s)
 SendRemind=Envoyer relance par EMail

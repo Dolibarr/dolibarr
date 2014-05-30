@@ -551,6 +551,7 @@ MailSentBy=E-mail zaslána
 TextUsedInTheMessageBody=E-mail tělo
 SendAcknowledgementByMail=Poslat Ack. e-mailem
 NoEMail=Žádný e-mail
+NoMobilePhone=No mobile phone
 Owner=Majitel
 DetectedVersion=Zjištěná verze
 FollowingConstantsWillBeSubstituted=Následující konstanty bude nahrazen odpovídající hodnotou.
