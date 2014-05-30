@@ -1666,7 +1666,7 @@ else if ($action == 'builddoc') // En get ou en post
 	// Save last template used to generate document
 	if (GETPOST('model'))
 		$object->setDocModel($user, GETPOST('model', 'alpha'));
-	if (GETPOST('fk_bank'))
+	if (GETPOST('fk_bank'))	// this field may come from an external module
 		$object->fk_bank = GETPOST('fk_bank');
 
 	// Define output language
