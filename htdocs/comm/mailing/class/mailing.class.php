@@ -529,7 +529,7 @@ class Mailing extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string        			Label
 	 */
-	static public function LibStatutDest($statut,$mode=0)
+	static public function libStatutDest($statut,$mode=0)
 	{
 		global $langs;
 		$langs->load('mails');

@@ -457,7 +457,7 @@ if ($object->fetch($id) >= 0)
 		print '</td>';
 		//Statut
 		print '<td class="liste_titre" align="right">';
-		print $formmailing->select_destinaries_status($search_dest_status,'search_dest_status',1);
+		print $formmailing->selectDestinariesStatus($search_dest_status,'search_dest_status',1);
 		print '</td>';
 		//Search Icon
 		print '<td class="liste_titre" align="right">';
@@ -531,7 +531,7 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
 					print '<td align="right" class="nowrap">';
-					print $object::LibStatutDest($obj->statut,2);
+					print $object::libStatutDest($obj->statut,2);
 					print '</td>';
 				}
 				

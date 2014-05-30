@@ -51,7 +51,7 @@ class FormMailing  extends Form
 	 * @param number $show_empty show empty option
 	 * @return string HTML select
 	 */
-	public function select_destinaries_status($selectedid='',$htmlname='dest_status', $show_empty=0) {
+	public function selectDestinariesStatus($selectedid='',$htmlname='dest_status', $show_empty=0) {
 
 		global $langs;
 		$langs->load("mails");
