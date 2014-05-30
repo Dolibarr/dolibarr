@@ -79,6 +79,7 @@ MailtoEMail=Hyper σύνδεσμο σε email
 ActivateCheckRead=Επιτρέπετε τη χρήση του "Unsubcribe" σύνδεσμου
 ActivateCheckReadKey=Κλειδί χρήσης για την κρυπτογράφηση του URL για "Διαβάστε Παραλαβή" και "Διαγραφή" χαρακτηριστικό
 EMailSentToNRecipients=EMail αποστέλλονται στους παραλήπτες %s.
+XTargetsAdded=<b>%s</b> παραλήπτες που προστέθηκαν στο κατάλογο των στόχων
 EachInvoiceWillBeAttachedToEmail=Ένα έγγραφο χρησιμοποιώντας το προεπιλεγμένο τιμολόγιο θα δημιουργηθεί και θα επισυνάπτεται σε κάθε email.
 MailTopicSendRemindUnpaidInvoices=Υπενθύμιση του τιμολογίου %s (%s)
 SendRemind=Αποστολή υπενθύμισης με EMails

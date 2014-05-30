@@ -551,6 +551,7 @@ MailSentBy=Email poslal
 TextUsedInTheMessageBody=Vsebina Email-a
 SendAcknowledgementByMail=Pošlji potrditev po email-u
 NoEMail=Ni email-a
+NoMobilePhone=No mobile phone
 Owner=Lastnik
 DetectedVersion=Zaznana različica
 FollowingConstantsWillBeSubstituted=Naslednje konstante bodo zamenjane z ustrezno vrednostjo.

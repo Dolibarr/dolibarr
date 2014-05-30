@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Šis ir saraksts ar visiem atvērtajiem piegādātāju p
 Replenishments=Papildinājumus
 NbOfProductBeforePeriod=Daudzums produktu %s noliktavā pirms izvēlētajā periodā (&lt;%s)
 NbOfProductAfterPeriod=Daudzums produktu %s krājumā pēc izvēlētā perioda (&gt; %s)
+MassMovement=Mass movement
 MassStockMovement=Masveida krājumu pārvietošana
 SelectProductInAndOutWareHouse=Izvēlieties produktu, daudzumu, avota noliktavu un mērķa noliktavu, tad noklikšķiniet uz &quot;%s&quot;. Kad tas ir izdarīts visām nepieciešamajām kustībām, noklikšķiniet uz &quot;%s&quot;.
 RecordMovement=Ierakstīt transfert

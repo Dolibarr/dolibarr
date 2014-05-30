@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Это список всех открытых заказ
 Replenishments=Пополнения
 NbOfProductBeforePeriod=Количество продукта %s в остатке на начало выбранного периода (< %s)
 NbOfProductAfterPeriod=Количество продукта %s в остатке на конец выбранного периода (< %s)
+MassMovement=Mass movement
 MassStockMovement=Массовое перемещение остатков
 SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
 RecordMovement=Record transfert

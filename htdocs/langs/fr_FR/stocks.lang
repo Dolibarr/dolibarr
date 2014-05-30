@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Voici la liste des commandes fournisseurs en cours
 Replenishments=Réapprovisionnement
 NbOfProductBeforePeriod=Quantité du produit <b>%s</b> en stock avant la période sélectionnée (< <b>%s</b>)
 NbOfProductAfterPeriod=Quantité du produit <b>%s</b> en stock après la période sélectionnée (> <b>%s</b>)
+MassMovement=Mouvement en masse
 MassStockMovement=Mouvement de stock en masse
 SelectProductInAndOutWareHouse=Sélectionner un produit, une quantité à transférer, un entrepôt source et destination et cliquer sur "%s". Une fois tous les mouvements choisis, cliquer sur "%s".
 RecordMovement=Enregistrer transferts

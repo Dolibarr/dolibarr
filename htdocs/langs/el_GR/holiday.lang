@@ -8,7 +8,6 @@ NotActiveModCP=Πρέπει να ενεργοποιήσετε τις άδειε�
 NotConfigModCP=Πρέπει να ρυθμίσετε τις άδειες στο module για να δείτε αυτή τη σελίδα. Για να το κάνετε αυτό, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> πατήστε εδώ </ a>.
 NoCPforUser=Δεν υπάρχει ζήτηση για άδεια.
 AddCP=Εφαρμογή για άδεια
-CPErrorSQL=Παρουσιάστηκε σφάλμα στην SQL:
 Employe=Εργαζόμενος
 DateDebCP=Ημερ. έναρξης
 DateFinCP=Ημερ. τέλους

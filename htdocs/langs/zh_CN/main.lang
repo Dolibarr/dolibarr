@@ -551,6 +551,7 @@ MailSentBy=通过电子邮件发送
 TextUsedInTheMessageBody=电子邮件正文
 SendAcknowledgementByMail=发送的ACK。通过电子邮件
 NoEMail=没有电子邮件
+NoMobilePhone=No mobile phone
 Owner=业主
 DetectedVersion=检测到的版本
 FollowingConstantsWillBeSubstituted=以下常量将与相应的值代替。

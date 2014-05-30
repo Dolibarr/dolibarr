@@ -38,7 +38,7 @@ ConfirmCloseService=Ertu viss um að þú viljir loka þessum þjónustu <b>með
 ValidateAContract=Staðfesta samning
 ActivateService=Virkja þjónusta
 ConfirmActivateService=Ertu viss um að þú viljir virkja þessa þjónustu <b>með%</b> dagsetning <b>s?</b>
-# RefContract=Contract reference
+RefContract=Contract reference
 DateContract=Samningur dagsetningu
 DateServiceActivate=Þjónusta Virkjunardagsetning
 DateServiceUnactivate=Þjónusta deactivation dagsetningu
@@ -85,10 +85,12 @@ PaymentRenewContractId=Endurnýja samning línu (númer %s )
 ExpiredSince=Gildistími
 RelatedContracts=Svipaðir samningar
 NoExpiredServices=Engar útrunnin virk þjónusta
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sölufulltrúi undirrita samning

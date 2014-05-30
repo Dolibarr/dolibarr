@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Seznam služeb, které vyprší v %s dnů
 ListOfServicesToExpireWithDurationNeg=Seznam služeb uplynula od více než %s dnů
 ListOfServicesToExpire=Seznam služeb vyprší
 NoteListOfYourExpiredServices=Tento seznam obsahuje pouze služby smluv pro třetí strany si jsou propojeny jako obchodního zástupce.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Obchodní zástupce podpisu smlouvy

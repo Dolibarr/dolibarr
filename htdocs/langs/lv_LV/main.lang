@@ -551,6 +551,7 @@ MailSentBy=Nosūtīts e-pasts ar
 TextUsedInTheMessageBody=E-pasts ķermeņa
 SendAcknowledgementByMail=Send Ack. pa e-pastu
 NoEMail=Nav e-pasta
+NoMobilePhone=No mobile phone
 Owner=Īpašnieks
 DetectedVersion=Noteiktā versija
 FollowingConstantsWillBeSubstituted=Šādas konstantes tiks aizstāts ar atbilstošo vērtību.

@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Aceasta este lista cu toate comenzile furnizor deschise
 Replenishments=Reaprovizionări
 NbOfProductBeforePeriod=Cantitatea de produs %s în stoc înainte de perioada selectată  (< %s)
 NbOfProductAfterPeriod=Cantitatea de produs %s în stoc după perioada selectată (> %s)
+MassMovement=Mass movement
 MassStockMovement=Transfer stoc în masă
 SelectProductInAndOutWareHouse=Selectați un produs, o cantitate, un depozit sursă și un depozit țintă, apoi faceți clic pe"%s". Odată făcut acest lucru pentru toate transferurile cerute, faceți clic pe "%s".
 RecordMovement=Înregistrare transfer

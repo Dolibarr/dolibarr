@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Список услуг, истекающих
 ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
 ListOfServicesToExpire=Список истекающих услуг
 NoteListOfYourExpiredServices=Этот список содержит только услуги по договорам с Контрагентами, с которыми связаны как торговый представитель
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Торговый представитель подписания контракта

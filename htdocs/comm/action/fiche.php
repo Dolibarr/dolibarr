@@ -203,12 +203,6 @@ if ($action == 'add_action')
 		$action = 'create';
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
 	}
-	if (! empty($datep) && GETPOST('percentage') == 0)
-	{
-		$error++;
-		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
-	}
 
 	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{

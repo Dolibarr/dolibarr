@@ -8,7 +8,6 @@ NotActiveModCP=您必须启用假期模块，才能浏览这个页面。
 NotConfigModCP=查看此页面，您必须配置模块假期。<a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">请点击这里</a>
 NoCPforUser=You don't have a demand for holidays.
 AddCP=申请假期
-CPErrorSQL=An SQL error occurred:
 Employe=雇员
 DateDebCP=开始日期
 DateFinCP=结束日期

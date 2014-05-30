@@ -79,6 +79,7 @@ MailtoEMail=E-kirja hüperlink
 ActivateCheckRead=Luba "Tühista tellimus" lingi kasutamine
 ActivateCheckReadKey="Vaata kviitungit" ja "Tühista tellimus" linkide URLi krüpteerimiseks kasutatav võti
 EMailSentToNRecipients=E-kiri saadetud %s aadressile.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails
