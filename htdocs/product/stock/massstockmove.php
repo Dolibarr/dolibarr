@@ -265,7 +265,15 @@ print '<tr '.$bc[$var].'>';
 print '<td colspan="2">';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
-print $form->select_produits($id_product,'productid',$filtertype);
+if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
+{
+	$limit='';
+}
+else
+{
+	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
+}	
+print $form->select_produits($id_product,'productid',$filtertype,$limit);
 print '</td>';
 // In warehouse
 print '<td>';
