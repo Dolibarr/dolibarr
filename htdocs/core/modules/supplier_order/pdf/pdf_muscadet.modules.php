@@ -991,7 +991,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
-		$posy+=2;
+		$posy+=5;
 		$pdf->SetTextColor(0,0,60);
 
 		// Show list of linked objects
