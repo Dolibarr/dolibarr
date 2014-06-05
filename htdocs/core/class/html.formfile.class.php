@@ -257,7 +257,7 @@ class FormFile
      */
     function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
     {
-        global $langs,$conf,$hookmanager;
+        global $langs,$conf,$user,$hookmanager;
         global $bc;
 
         // filedir = $conf->...->dir_ouput."/".get_exdir(id)
