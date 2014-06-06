@@ -435,7 +435,9 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	// Add a background image on document
 	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))
 	{
+        $pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
 		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, 0, 0, 0, $page_height);
+        $pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
 	}
 }
 
