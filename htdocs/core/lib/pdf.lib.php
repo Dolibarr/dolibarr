@@ -436,7 +436,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 	if (! empty($conf->global->MAIN_USE_BACKGROUND_ON_PDF))
 	{
         $pdf->SetAutoPageBreak(0,0);	// Disable auto pagebreak before adding image
-		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, 0, 0, 0, $page_height);
+		$pdf->Image($conf->mycompany->dir_output.'/logos/'.$conf->global->MAIN_USE_BACKGROUND_ON_PDF, (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_X)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_X:0), (isset($conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y)?$conf->global->MAIN_USE_BACKGROUND_ON_PDF_Y:0), 0, $page_height);
         $pdf->SetAutoPageBreak(1,0);	// Restore pagebreak
 	}
 }
