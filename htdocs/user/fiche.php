@@ -1300,19 +1300,23 @@ else
             }
 
             // Multicompany
-            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            // TODO This should be done with hook formObjectOption
+            if (is_object($mc))
             {
-            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
-            	if ($object->admin && ! $object->entity)
-            	{
-            		print $langs->trans("AllEntities");
-            	}
-            	else
-            	{
-            		$mc->getInfo($object->entity);
-            		print $mc->label;
-            	}
-            	print "</td></tr>\n";
+	            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+	            {
+	            	print '<tr><td valign="top">'.$langs->trans("Entity").'</td><td width="75%" class="valeur">';
+	            	if ($object->admin && ! $object->entity)
+	            	{
+	            		print $langs->trans("AllEntities");
+	            	}
+	            	else
+	            	{
+	            		$mc->getInfo($object->entity);
+	            		print $mc->label;
+	            	}
+	            	print "</td></tr>\n";
+	            }
             }
 
           	// Other attributes
