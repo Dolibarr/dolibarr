@@ -131,18 +131,21 @@ class Commande extends CommonOrder
 
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-        	$mybool=false;
-
-            $file = $conf->global->COMMANDE_ADDON.".php";
-            $classname = $conf->global->COMMANDE_ADDON;
-
-            // Include file with class
-            foreach ($conf->file->dol_document_root as $dirroot)
-            {
-            	$dir = $dirroot."/core/modules/commande/";
-            	// Load file with numbering class (if found)
-            	$mybool|=@include_once $dir.$file;
-            }
+		$mybool=false;
+		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir)
+		{
+	            $file = $conf->global->COMMANDE_ADDON.".php";
+	            $classname = $conf->global->COMMANDE_ADDON;
+	
+	            // Include file with class
+	            foreach ($conf->file->dol_document_root as $dirroot)
+	            {
+	            	$dir = $dirroot.$reldir."/core/modules/commande/";
+	            	// Load file with numbering class (if found)
+	            	$mybool|=@include_once $dir.$file;
+	            }
+		}
 
             if (! $mybool)
             {
