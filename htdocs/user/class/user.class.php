@@ -2231,16 +2231,24 @@ class User extends CommonObject
 	 */
 	function get_full_tree($markafterid=0)
 	{
+		global $conf,$user;
+
 		$this->users = array();
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
-
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
+		{
+			$sql.= " WHERE u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+		}
 		dol_syslog(get_class($this)."::get_full_tree get user list sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2255,6 +2263,7 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
 				$this->users[$obj->rowid]['login'] = $obj->login;
 				$this->users[$obj->rowid]['statut'] = $obj->statut;
+				$this->users[$obj->rowid]['entity'] = $obj->entity;
 				$i++;
 			}
 		}
