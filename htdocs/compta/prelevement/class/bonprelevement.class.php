@@ -651,7 +651,7 @@ class BonPrelevement extends CommonObject
     {
         global $conf;
 
-        $sql = "SELECT sum(f.total_ttc)";
+        $sql = "SELECT sum(f.total_ttc) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f,";
         $sql.= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         //$sql.= " ,".MAIN_DB_PREFIX."c_paiement as cp";
@@ -1410,6 +1410,34 @@ class BonPrelevement extends CommonObject
 			fputs($this->file, '		</PmtInf>'.$CrLf);
 			fputs($this->file, '	</CstmrDrctDbtInitn>'.$CrLf);
 			fputs($this->file, '</Document>'.$CrLf);
+			
+			$sql = "SELECT pl.amount";
+			$sql.= " FROM";
+			$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+			$sql.= " ".MAIN_DB_PREFIX."facture as f,";
+			$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
+			$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
+			$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
+			$sql.= " AND pf.fk_facture = f.rowid";
+			
+			//Lines
+			$i = 0;
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+			
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$this->total = $this->total + $obj->amount;
+					$i++;
+				}
+			}
+			else
+			{
+				$result = -2;
+			}
 
         }
 
