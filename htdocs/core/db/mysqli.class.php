@@ -265,6 +265,8 @@ class DoliDBMysqli extends DoliDB
             $ret = mysqli_query($this->db,$query);
         }
 
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset

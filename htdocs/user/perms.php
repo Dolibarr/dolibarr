@@ -306,7 +306,6 @@ $sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fu
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
-dol_syslog("sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {

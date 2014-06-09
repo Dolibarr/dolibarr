@@ -875,7 +875,6 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("sql=".$sql);
 			if ($this->db->query($sql))
 			{
 				$this->fk_contrat = $contractid;

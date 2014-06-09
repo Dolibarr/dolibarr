@@ -212,7 +212,6 @@ if ($testmodifier)
 	$sql.= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql.= " WHERE id_users = '".$db->escape($idtomodify)."'";
 
-	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 }

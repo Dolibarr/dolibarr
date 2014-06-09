@@ -71,7 +71,6 @@ if ($id != 'all')
 	$sql.= " LIMIT 1";
 }
 
-dol_syslog("sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {

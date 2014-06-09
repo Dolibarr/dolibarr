@@ -1582,7 +1582,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		// Check loops on each other
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid";	// So we update only records linked to themself
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1623,7 +1622,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
 		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1643,7 +1641,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
 		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

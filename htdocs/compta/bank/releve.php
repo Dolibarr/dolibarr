@@ -277,7 +277,6 @@ else
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
-	dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{

@@ -474,7 +474,6 @@ class Opensurveysondage extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
 		$sql.= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
 		$resql = $this->db->query($sql);
-		dol_syslog("sql=".$sql);
 
 		if (!$resql) {
 			return false;
