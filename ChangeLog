@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.4 compared to 3.5.2 *****
+Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown properly in module configuration
+
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
