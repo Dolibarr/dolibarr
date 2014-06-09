@@ -2,7 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 3.5.4 compared to 3.5.2 *****
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown properly in module configuration
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
