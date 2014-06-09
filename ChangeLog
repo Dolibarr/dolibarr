@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or limit date for payment
+
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
