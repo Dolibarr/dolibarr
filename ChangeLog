@@ -7,6 +7,8 @@ Fix: [ bug #1415 ] Intervention document model name and suppliers model names is
      properly in module configuration
 Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the 
      supplier order card
+Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
+     limit date for payment
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
