@@ -376,13 +376,16 @@ foreach ($dirmodels as $reldir)
 		    {
 		    	if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
 		    	{
+				    $var=!$var;
+
 		    		$name = substr($file, 4, dol_strlen($file) -16);
 		    		$classname = substr($file, 0, dol_strlen($file) -12);
 
-		    		$var=!$var;
+				    require_once $dir.'/'.$file;
+				    $module = new $classname($db);
 
 		    		print '<tr '.$bc[$var].'><td>';
-		    		echo "$name";
+				    print (empty($module->name)?$name:$module->name);
 		    		print "</td><td>\n";
 		    		require_once $dir.$file;
 		    		$module = new $classname($db);
