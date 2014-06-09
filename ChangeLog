@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the supplier order card
+
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
