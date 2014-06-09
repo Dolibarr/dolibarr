@@ -17,9 +17,9 @@
 ; ----- Change this -----
 AppName=DoliWamp
 ; DoliWamp-x.x.x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
-AppVerName=DoliWamp-3.5.3
+AppVerName=DoliWamp-3.5.4
 ; DoliWamp-x.x x or DoliWamp-x.x.x-alpha or DoliWamp-x.x.x-beta or DoliWamp-x.x.x-rc or DoliWamp-x.x.x
-OutputBaseFilename=DoliWamp-3.5.3
+OutputBaseFilename=DoliWamp-3.5.4
 ; ----- End of change
 ;OutputManifestFile=build\doliwampbuild.log
 ; Define full path from which all relative path are defined
