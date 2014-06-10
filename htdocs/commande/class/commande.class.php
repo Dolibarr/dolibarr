@@ -452,8 +452,13 @@ class Commande extends CommonOrder
         }
         else
         {
-            $this->db->rollback();
-            return -1;
+	        foreach($this->errors as $errmsg)
+	        {
+		        dol_syslog(get_class($this)."::set_reopen ".$errmsg, LOG_ERR);
+		        $this->error.=($this->error?', '.$errmsg:$errmsg);
+	        }
+	        $this->db->rollback();
+	        return -1*$error;
         }
     }
 
