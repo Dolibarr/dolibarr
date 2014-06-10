@@ -584,8 +584,14 @@ class Commande extends CommonOrder
 			else
 			{
 				$this->error=$mouvP->error;
+
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
 				$this->db->rollback();
-				return -1;
+				return -1*$error;
 			}
 		}
 		else
