@@ -10,6 +10,7 @@ Fix: [ bug #1416 ] Supplier order does not list document models in the select bo
 Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
      limit date for payment
 Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and LINEORDER_INSERT ignore interception on error
+Fix: [ bug #1450 ] Several Customer order's triggers do not report the error from the trigger handler
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
