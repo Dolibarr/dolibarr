@@ -2521,9 +2521,13 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
-            $this->db->rollback();
-            return -1;
+	        foreach($this->errors as $errmsg)
+	        {
+		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+		        $this->error.=($this->error?', '.$errmsg:$errmsg);
+	        }
+	        $this->db->rollback();
+	        return -1*$error;
         }
     }
 
