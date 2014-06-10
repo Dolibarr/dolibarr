@@ -120,7 +120,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 			}
 			else
 			{
-				$mesg='<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error, 'errors');
 				$action='';
 			}
 		}
@@ -140,7 +140,7 @@ else if ($action == 'reopen' && $user->rights->commande->creer)
 		}
 		else
 		{
-			$mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -154,9 +154,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 		header('Location: index.php');
 		exit;
 	}
-	else
-	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+	else {
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -187,7 +186,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -445,6 +444,10 @@ else if ($action == 'add' && $user->rights->commande->creer)
 else if ($action == 'classifybilled' && $user->rights->commande->creer)
 {
 	$ret=$object->classifyBilled();
+
+	if ($ret < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 // Positionne ref commande client
@@ -1076,7 +1079,9 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
 	$result = $object->cloture($user);
-	if ($result < 0) $mesgs=$object->errors;
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
@@ -1097,6 +1102,10 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 	if (! $error)
 	{
 		$result = $object->cancel($idwarehouse);
+
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
 	}
 }
 
