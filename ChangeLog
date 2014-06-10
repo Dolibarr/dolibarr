@@ -9,7 +9,7 @@ Fix: [ bug #1416 ] Supplier order does not list document models in the select bo
      supplier order card
 Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
      limit date for payment
-Fix: [ bug #1449 ] Trigger ORDER_CREATE ignores interception on error
+Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and LINEORDER_INSERT ignore interception on error
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
@@ -29,7 +29,7 @@ Fix: [ bug #1353 ] Email notifications, wrong URL.
 Fix: [ bug #1362 ] Note is not saved.
 Fix: tr/td balance.
 Fix: [ bug #1360 ] note indicator for member tab.
-Fix: Nb of notes and doc not visible onto tasks.
+Fix: Nb of notes and doc not visible onto task
 Fix: [ bug #1372 ] Margin calculation does not work in proposals.
 Fix: [ bug #1381 ] PHP Warning when listing stock transactions page.
 Fix: [ bug #1367 ] "Show invoice" link after a POS sell throws an error.
