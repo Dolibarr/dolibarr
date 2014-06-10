@@ -1792,7 +1792,7 @@ class Commande extends CommonOrder
                     else
                     {
                         $this->db->rollback();
-                        $this->error=$this->db->lasterror();
+                        $this->error=$line->error;
                         return -1;
                     }
                 }
@@ -2399,11 +2399,10 @@ class Commande extends CommonOrder
             }
             else
             {
-                $this->error=$this->db->lasterror();
-        		$this->errors=array($this->db->lasterror());
-                $this->db->rollback();
-                dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
-                return -1;
+	            $this->error=$this->line->error;
+
+	            $this->db->rollback();
+	            return -1;
             }
         }
         else
