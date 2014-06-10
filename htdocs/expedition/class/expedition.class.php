@@ -272,8 +272,22 @@ class Expedition extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
-					$this->db->commit();
-					return $this->id;
+					if (! $error)
+					{
+						$this->db->commit();
+						return $this->id;
+					}
+					else
+					{
+						foreach($this->errors as $errmsg)
+						{
+							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+							$this->error.=($this->error?', '.$errmsg:$errmsg);
+						}
+						$this->db->rollback();
+						return -1*$error;
+					}
+
 				}
 				else
 				{
