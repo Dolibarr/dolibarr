@@ -130,7 +130,7 @@ if ($socid > 0)
 
 	// Nouvelle valeur
 	print '<tr><td colspan="2">';
-	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:$objsoc->remise_percent).'">%</td></tr>';
+	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:'').'">%</td></tr>';
 
 	// Motif/Note
 	print '<tr><td colspan="2" width="25%">';
