@@ -2226,9 +2226,14 @@ class Commande extends CommonOrder
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::classifyBilled ".$this->error, LOG_ERR);
+
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(get_class($this)."::classifyBilled ".$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
 				$this->db->rollback();
-				return -2;
+				return -1*$error;
 			}
 		}
 		else
