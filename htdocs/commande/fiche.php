@@ -120,7 +120,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 			}
 			else
 			{
-				$mesg='<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error, 'errors');
 				$action='';
 			}
 		}
