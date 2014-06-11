@@ -385,7 +385,7 @@ class UserGroup extends CommonObject
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
-			if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
+			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		}
 		else {
 			// Where pour la liste des droits a supprimer
