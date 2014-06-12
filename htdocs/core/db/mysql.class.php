@@ -273,7 +273,7 @@ class DoliDBMysql extends DoliDB
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_ERROR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;

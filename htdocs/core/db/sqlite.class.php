@@ -409,8 +409,8 @@ class DoliDBSqlite extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                if (preg_match('/[0-9]/',$this->lasterrno)) dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno." ".$this->lasterror, LOG_WARNING);
-                else dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+                if (preg_match('/[0-9]/',$this->lasterrno)) dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno." ".$this->lasterror, LOG_ERROR);
+                else dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_ERROR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
