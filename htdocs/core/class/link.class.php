@@ -280,7 +280,6 @@ class Link extends CommonObject
                 return 0;
             }
         } else {
-            dol_syslog(get_class($this) . "::FetchAll fails sql=" . $sql, LOG_ERR);
             return -1;
         }
     }
@@ -348,7 +347,7 @@ class Link extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "links";
         $sql.= " WHERE rowid = " . $this->id;
 
-        dol_syslog(get_class($this)."::delete sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql))
         {
             $error++;

@@ -2178,7 +2178,7 @@ class ContratLigne
 		if (! $sql) return -1;
 
 		//print $sql;
-		dol_syslog(get_class($this)."::get_element_list sql=" . $sql);
+		dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
