@@ -169,7 +169,6 @@ class mod_facture_terre extends ModeleNumRefFactures
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 

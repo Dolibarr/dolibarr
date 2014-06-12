@@ -319,7 +319,6 @@ class Contrat extends CommonObject
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
-				dol_syslog(get_class($this)."::validate Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
 			}
@@ -1089,7 +1088,6 @@ class Contrat extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::addline ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}

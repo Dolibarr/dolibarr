@@ -127,7 +127,6 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         }
         else
         {
-        	dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
         	return -1;
         }
 

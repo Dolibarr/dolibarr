@@ -549,7 +549,6 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
-			dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
 			$this->error=$this->db->lasterror();
 			$error++;
 		}

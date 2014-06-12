@@ -188,12 +188,11 @@ abstract class DolibarrModules
         {
             if (! $err)
             {
-                dol_syslog(get_class($this)."::_remove sql=".$array_sql[$i], LOG_DEBUG);
+                dol_syslog(get_class($this)."::_remove", LOG_DEBUG);
                 $result=$this->db->query($array_sql[$i]);
                 if (! $result)
                 {
                     $this->error=$this->db->error();
-                    dol_syslog(get_class($this)."::_remove Error ".$this->error, LOG_ERR);
                     $err++;
                 }
             }
@@ -859,7 +858,7 @@ abstract class DolibarrModules
         $sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
         $sql_del.= " AND entity IN (0,".$entity.")";
 
-        dol_syslog(get_class($this)."::insert_permissions sql=".$sql_del);
+        dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
         $resql=$this->db->query($sql_del);
         if ($resql)
         {

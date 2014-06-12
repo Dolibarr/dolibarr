@@ -127,7 +127,6 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
         }
         else
         {
-            dol_syslog("mod_livraison_jade::getNextValue sql=".$sql, LOG_ERR);
             return -1;
         }
 

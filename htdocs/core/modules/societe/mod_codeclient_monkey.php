@@ -124,6 +124,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 
+		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -133,7 +135,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 

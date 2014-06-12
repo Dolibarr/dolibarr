@@ -233,7 +233,6 @@ class Commande extends CommonOrder
         $resql=$this->db->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
             dol_print_error($this->db);
             $error++;
         }

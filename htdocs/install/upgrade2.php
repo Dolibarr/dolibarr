@@ -1148,7 +1148,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
         $select_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn';
         $select_sql.= ' WHERE fk_facture_fourn IS NOT NULL';
 
-        dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$select_sql);
+        dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn", LOG_DEBUG);
         $select_resql = $db->query($select_sql);
         if ($select_resql)
         {

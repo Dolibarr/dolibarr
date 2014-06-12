@@ -2158,12 +2158,11 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-		dol_syslog(get_class($this)."::deleteExtraFields delete sql=".$sql_del);
+		dol_syslog(get_class($this)."::deleteExtraFields delete", LOG_DEBUG);
 		$resql=$this->db->query($sql_del);
 		if (! $resql)
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::deleteExtraFields ".$this->error,LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -2229,7 +2228,7 @@ abstract class CommonObject
             $this->db->begin();
 
             $sql_del = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields WHERE fk_object = ".$this->id;
-            dol_syslog(get_class($this)."::insertExtraFields delete sql=".$sql_del);
+            dol_syslog(get_class($this)."::insertExtraFields delete", LOG_DEBUG);
             $this->db->query($sql_del);
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
             foreach($this->array_options as $key => $value)

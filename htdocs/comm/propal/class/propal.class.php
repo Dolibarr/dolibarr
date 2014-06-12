@@ -2955,7 +2955,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog(get_class($this).'::insert Error '.$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -3006,7 +3005,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog("PropaleLigne::delete Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }

@@ -472,7 +472,6 @@ class Societe extends CommonObject
                 else
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::Create fails insert sql=".$sql, LOG_ERR);
                     $result=-2;
                 }
                 $this->db->rollback();
@@ -884,9 +883,6 @@ class Societe extends CommonObject
                 }
                 else
                 {
-
-                    $this->error = $langs->trans("Error", LOG_DEBUG);
-                    dol_syslog(get_class($this)."::Update fails update sql=".$sql, LOG_ERR);
                     $result =  -2;
                 }
                 $this->db->rollback();

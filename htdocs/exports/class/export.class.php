@@ -592,7 +592,6 @@ class Export
 		else
 		{
 			$this->error=$this->db->error()." - sql=".$sql;
-			dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

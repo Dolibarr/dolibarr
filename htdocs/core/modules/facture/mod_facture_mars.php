@@ -153,7 +153,6 @@ class mod_facture_mars extends ModeleNumRefFactures
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::getNextValue sql=".$sql, LOG_ERR);
 			return -1;
 		}
 

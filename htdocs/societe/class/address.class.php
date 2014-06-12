@@ -219,7 +219,6 @@ class Address
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::Update error sql=".$sql, LOG_ERR);
 					$result=-2;
 				}
 				$this->db->rollback();

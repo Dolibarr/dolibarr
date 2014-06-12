@@ -409,7 +409,6 @@ class Fichinter extends CommonObject
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
-				dol_syslog(get_class($this)."::setValid Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
 			}
@@ -1160,7 +1159,6 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dol_syslog("FichinterLigne::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1301,7 +1299,6 @@ class FichinterLigne
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
 			$resql = $this->db->query($sql);
-			dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 
 			if ($resql)
 			{
@@ -1333,7 +1330,6 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::deleteline Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}

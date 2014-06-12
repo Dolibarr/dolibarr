@@ -507,7 +507,6 @@ class FactureRec extends Facture
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("FactureRec::addline sql=".$this->error, LOG_ERR);
 				return -1;
 			}
 		}

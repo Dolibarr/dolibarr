@@ -136,7 +136,6 @@ class Link extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::Create fails insert sql=".$sql, LOG_ERR);
                 $result=-2;
             }
             $this->db->rollback();

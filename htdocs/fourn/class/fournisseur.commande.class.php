@@ -259,14 +259,12 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->db->error()." sql=".$sql;
-                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
                 return -1;
             }
         }
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -346,7 +344,6 @@ class CommandeFournisseur extends CommonOrder
             $resql=$this->db->query($sql);
             if (! $resql)
             {
-                dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
                 dol_print_error($this->db);
                 $error++;
             }

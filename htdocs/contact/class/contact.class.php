@@ -729,7 +729,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel.=" WHERE rowid = ".$obj->rowid;
-					dol_syslog(get_class($this)."::delete sql=".$sqldel);
+					dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (! $result)
 					{

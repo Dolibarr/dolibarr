@@ -280,7 +280,7 @@ if ($resql)
 
 				$sqlenddate="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
 
-				dol_syslog("update global status sql=".$sqlenddate, LOG_DEBUG);
+				dol_syslog("update global status", LOG_DEBUG);
 				print "Update status of emailing id ".$id." to ".$statut."\n";
 				$resqlenddate=$db->query($sqlenddate);
 				if (! $resqlenddate)

@@ -516,7 +516,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::create error ".$this->error." sql=".$sql, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1315,7 +1314,6 @@ class Facture extends CommonInvoice
 				if (! $this->db->query($sql))
 				{
 					$this->error=$this->db->error()." sql=".$sql;
-					dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -5;
 				}
@@ -1344,9 +1342,15 @@ class Facture extends CommonInvoice
 
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
+
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 			if ($this->db->query($sql) && $this->delete_linked_contact())
 			{
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
+
+				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -1384,7 +1388,6 @@ class Facture extends CommonInvoice
 				else
 				{
 					$this->error=$this->db->lasterror()." sql=".$sql;
-					dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -6;
 				}
@@ -1392,7 +1395,6 @@ class Facture extends CommonInvoice
 			else
 			{
 				$this->error=$this->db->lasterror()." sql=".$sql;
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -4;
 			}
@@ -1400,7 +1402,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -1771,7 +1772,6 @@ class Facture extends CommonInvoice
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
-				dol_syslog(get_class($this)."::validate Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
 			}
@@ -3255,7 +3255,7 @@ class Facture extends CommonInvoice
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 		$sql.= ' ORDER BY l.rang ASC, l.rowid';
 
-		dol_syslog(get_class($this).'::getLinesArray sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::getLinesArray',LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -3305,7 +3305,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("Error sql=".$sql.", error=".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -3802,7 +3801,6 @@ class FactureLigne  extends CommonInvoiceLine
 		else
 		{
 			$this->error=$this->db->error()." sql=".$sql;
-			dol_syslog(get_class($this)."::delete Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
