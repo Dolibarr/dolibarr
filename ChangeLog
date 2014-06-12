@@ -11,6 +11,7 @@ Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice l
      limit date for payment
 Fix: Filter on status was not visible when selected from url.
 Fix: Filtering on status was last when asking to sort.
+Fix: [ bug #1454 ] Mention de bas de page erroné
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
