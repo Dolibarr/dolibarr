@@ -373,7 +373,8 @@ class DoliDBMssql extends DoliDB
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
 
-				dol_syslog(get_class($this)."::query SQL error: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;

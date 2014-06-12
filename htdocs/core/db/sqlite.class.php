@@ -410,7 +410,9 @@ class DoliDBSqlite extends DoliDB
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
 
-	            $errormsg = get_class($this)."::query SQL error: ".$this->lasterror;
+	            dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+
+	            $errormsg = get_class($this)."::query SQL Error message: ".$this->lasterror;
 
 				if (preg_match('/[0-9]/',$this->lasterrno)) {
                     $errormsg .= ' ('.$this->lasterrno.')';
