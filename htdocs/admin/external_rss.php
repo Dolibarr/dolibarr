@@ -229,7 +229,7 @@ $sql ="SELECT rowid, file, note FROM ".MAIN_DB_PREFIX."boxes_def";
 $sql.=" WHERE file = 'box_external_rss.php'";
 $sql.=" ORDER BY note";
 
-dol_syslog("select rss boxes sql=".$sql,LOG_DEBUG);
+dol_syslog("select rss boxes", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

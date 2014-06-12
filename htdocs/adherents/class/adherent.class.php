@@ -310,7 +310,7 @@ class Adherent extends CommonObject
         $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null");
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -335,7 +335,7 @@ class Adherent extends CommonObject
                     $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
                     $sql.= " fk_member = '".$this->id."'";
                     $sql.= " WHERE rowid = ".$this->user_id;
-                    dol_syslog(get_class($this)."::create sql=".$sql);
+                    dol_syslog(get_class($this)."::create", LOG_DEBUG);
                     $resql = $this->db->query($sql);
                     if (! $resql)
                     {
@@ -455,7 +455,7 @@ class Adherent extends CommonObject
         $sql.= ", fk_user_mod=".($user->id>0?$user->id:'null');	// Can be null because member can be create by a guest
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::update update member sql=".$sql);
+        dol_syslog(get_class($this)."::update update member", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -501,14 +501,14 @@ class Adherent extends CommonObject
             {
                 dol_syslog(get_class($this)."::update update link to user");
                 $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
-                dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::update", LOG_DEBUG);
                 $resql = $this->db->query($sql);
                 if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
                 // If there is a user linked to this member
                 if ($this->user_id > 0)
                 {
                     $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id." WHERE rowid = ".$this->user_id;
-                    dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+                    dol_syslog(get_class($this)."::update", LOG_DEBUG);
                     $resql = $this->db->query($sql);
                     if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
                 }
@@ -650,7 +650,7 @@ class Adherent extends CommonObject
         $sql.= " WHERE fk_adherent='".$this->id."'";
         $sql.= " ORDER by dateadh DESC";	// Sort by start subscription date
 
-        dol_syslog(get_class($this)."::update_end_date sql=".$sql);
+        dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -663,7 +663,7 @@ class Adherent extends CommonObject
             $sql.= " datefin=".($datefin != '' ? "'".$this->db->idate($datefin)."'" : "null");
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::update_end_date sql=".$sql);
+            dol_syslog(get_class($this)."::update_end_date", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -711,7 +711,7 @@ class Adherent extends CommonObject
 
         // Remove category
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_member WHERE fk_member = ".$rowid;
-        dol_syslog(get_class($this)."::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql)
         {
@@ -726,7 +726,7 @@ class Adherent extends CommonObject
         if (! $error)
         {
         	 $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-        	dol_syslog(get_class($this)."::delete sql=".$sql);
+        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	$resql=$this->db->query($sql);
         	if (! $resql)
         	{
@@ -769,7 +769,7 @@ class Adherent extends CommonObject
         if (! $error)
         {
         	$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-        	dol_syslog(get_class($this)."::delete sql=".$sql);
+        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	$resql=$this->db->query($sql);
         	if (! $resql)
         	{
@@ -846,7 +846,7 @@ class Adherent extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
 
         //dol_syslog("Adherent::Password sql=hidden");
-        dol_syslog(get_class($this)."::setPassword sql=".$sql);
+        dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -922,7 +922,7 @@ class Adherent extends CommonObject
 
         // If user is linked to this member, remove old link to this member
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL WHERE fk_member = ".$this->id;
-        dol_syslog(get_class($this)."::setUserId sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -1; }
 
@@ -931,7 +931,7 @@ class Adherent extends CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = ".$this->id;
             $sql.= " WHERE rowid = ".$userid;
-            dol_syslog(get_class($this)."::setUserId sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::setUserId", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -2; }
         }
@@ -960,7 +960,7 @@ class Adherent extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = null";
             $sql.= " WHERE fk_soc = '".$thirdpartyid."'";
             $sql.= " AND entity = ".$conf->entity;
-            dol_syslog(get_class($this)."::setThirdPartyId sql=".$sql);
+            dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
             $resql = $this->db->query($sql);
         }
 
@@ -968,7 +968,7 @@ class Adherent extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET fk_soc = ".($thirdpartyid>0 ? $thirdpartyid : 'null');
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::setThirdPartyId sql=".$sql);
+        dol_syslog(get_class($this)."::setThirdPartyId", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1088,7 +1088,7 @@ class Adherent extends CommonObject
         	$sql.= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
         }
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1198,7 +1198,7 @@ class Adherent extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."cotisation as c";
         $sql.= " WHERE c.fk_adherent = ".$this->id;
         $sql.= " ORDER BY c.dateadh";
-        dol_syslog(get_class($this)."::fetch_subscriptions sql=".$sql);
+        dol_syslog(get_class($this)."::fetch_subscriptions", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1356,7 +1356,7 @@ class Adherent extends CommonObject
         $sql.= ", fk_user_valid=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::validate sql=".$sql);
+        dol_syslog(get_class($this)."::validate", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -1902,7 +1902,7 @@ class Adherent extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
         $sql.= ' WHERE a.rowid = '.$id;
 
-        dol_syslog(get_class($this)."::info sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {

@@ -78,7 +78,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
 	$sql.= " WHERE entity = ".$conf->entity;
 
-	dol_syslog("listevents purge sql=".$sql);
+	dol_syslog("listevents purge", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if (! $resql)
 	{

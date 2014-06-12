@@ -173,7 +173,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
 
-		dol_syslog("fiche.php: select targets sql=".$sql, LOG_DEBUG);
+		dol_syslog("fiche.php: select targets", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -295,7 +295,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 							{
 								//Update status communication of thirdparty prospect
 								$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT source_id FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE rowid=".$obj->rowid.")";
-								dol_syslog("fiche.php: set prospect thirdparty status sql=".$sql, LOG_DEBUG);
+								dol_syslog("fiche.php: set prospect thirdparty status", LOG_DEBUG);
 								$resql2=$db->query($sql);
 								if (! $resql2)
 								{
@@ -304,7 +304,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 
 							    //Update status communication of contact prospect
 								$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
-								dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
+								dol_syslog("fiche.php: set prospect contact status", LOG_DEBUG);
 
 								$resql2=$db->query($sql);
 								if (! $resql2)
@@ -363,7 +363,7 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 			}
 
 			$sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$object->id;
-			dol_syslog("comm/mailing/fiche.php: update global status sql=".$sql, LOG_DEBUG);
+			dol_syslog("comm/mailing/fiche.php: update global status", LOG_DEBUG);
 			$resql2=$db->query($sql);
 			if (! $resql2)
 			{

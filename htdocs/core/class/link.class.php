@@ -93,7 +93,7 @@ class Link extends CommonObject
         $sql .= ", '" . $this->objecttype . "'";
         $sql .= ", " . $this->objectid . ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "links");
@@ -256,7 +256,7 @@ class Link extends CommonObject
             $sql .= " ORDER BY " . $sortfield . " " . $sortorder;
         }
 
-        dol_syslog(get_class($this)."::fetchAll sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -305,7 +305,7 @@ class Link extends CommonObject
         $sql .= " WHERE rowid = " . $rowid;
         if($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

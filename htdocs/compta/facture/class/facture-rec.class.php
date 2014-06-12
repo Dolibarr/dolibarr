@@ -216,7 +216,7 @@ class FactureRec extends Facture
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql.= ' WHERE f.rowid='.$rowid;
 
-        dol_syslog("FactureRec::Fetch rowid=".$rowid." sql=".$sql, LOG_DEBUG);
+        dol_syslog("FactureRec::Fetch rowid=".$rowid."", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -497,7 +497,7 @@ class FactureRec extends Facture
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code.")";
 
-			dol_syslog(get_class($this)."::addline sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				$this->id=$facid;

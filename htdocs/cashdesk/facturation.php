@@ -65,7 +65,7 @@ if ( GETPOST('filtre') ) {
 	else $sql.= ")";
 	$sql.= " ORDER BY label";
 
-	dol_syslog("facturation.php sql=".$sql);
+	dol_syslog("facturation.php", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{

@@ -744,7 +744,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
     //print $sql.'<br>';
-    dol_syslog("functions2::get_next_value mode=".$mode." sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -783,7 +783,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
-        dol_syslog("functions2::get_next_value sql=".$sql);
+        dol_syslog("functions2::get_next_value", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -1168,7 +1168,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         $i++;
     }
     $sql.= ")";
-    dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
 
     $resql=$db->query($sql);
     if (! $resql)
@@ -1187,7 +1187,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
             $sql.= " '".$key."','".$db->escape($value)."')";
 
-            dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+            dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
             $result=$db->query($sql);
             if (! $result)
             {

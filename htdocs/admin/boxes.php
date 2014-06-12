@@ -66,7 +66,7 @@ if ($action == 'add')
 		$sql.= " WHERE param = 'MAIN_BOXES_".$db->escape(GETPOST("pos","alpha"))."' AND value = '1'";
 		$sql.= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
-		dol_syslog("boxes.php search fk_user to activate box for sql=".$sql);
+		dol_syslog("boxes.php search fk_user to activate box for", LOG_DEBUG);
 		if ($resql)
 		{
 		    $num = $db->num_rows($resql);
@@ -93,7 +93,7 @@ if ($action == 'add')
 	    {
 	    	$nbboxonleft=$nbboxonright=0;
 	    	$sql = "SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE position = ".GETPOST("pos","alpha")." AND fk_user = ".$fk_user." AND entity = ".$conf->entity;
-	        dol_syslog("boxes.php activate box sql=".$sql);
+	        dol_syslog("boxes.php activate box", LOG_DEBUG);
 	        $resql = $db->query($sql);
 	        if ($resql)
 	        {
@@ -112,7 +112,7 @@ if ($action == 'add')
 	        $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
 	        $sql.= ")";
 
-	        dol_syslog("boxes.php activate box sql=".$sql);
+	        dol_syslog("boxes.php activate box", LOG_DEBUG);
 	        $resql = $db->query($sql);
 	        if (! $resql)
 	        {
@@ -235,7 +235,7 @@ $sql.= " AND b.box_id = bd.rowid";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
-dol_syslog("Search available boxes sql=".$sql, LOG_DEBUG);
+dol_syslog("Search available boxes", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -271,7 +271,7 @@ if ($resql)
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND LENGTH(box_order) <= 2";
 
-		dol_syslog("Execute requests to renumber box order sql=".$sql);
+		dol_syslog("Execute requests to renumber box order", LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result)
 		{

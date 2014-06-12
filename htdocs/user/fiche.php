@@ -395,7 +395,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             		$sql.= " WHERE rowid=".$object->id;
             	}
             	$resql=$db->query($sql);
-            	dol_syslog("fiche::update sql=".$sql, LOG_DEBUG);
+            	dol_syslog("fiche::update", LOG_DEBUG);
             	if (! $resql)
             	{
             		$error++;

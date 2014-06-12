@@ -73,7 +73,7 @@ class InfoBox
             }
         }
 
-        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')." sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -212,7 +212,7 @@ class InfoBox
         $sql.= " AND fk_user = ".$userid;
         $sql.= " AND position = ".$zone;
 
-        dol_syslog(get_class()."::saveboxorder sql=".$sql);
+        dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {
@@ -243,7 +243,7 @@ class InfoBox
                         $sql.= " ".$conf->entity;
                         $sql.= ")";
 
-                        dol_syslog(get_class()."::saveboxorder sql=".$sql);
+                        dol_syslog(get_class()."::saveboxorder", LOG_DEBUG);
                         $result = $db->query($sql);
                         if ($result < 0)
                         {

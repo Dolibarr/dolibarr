@@ -78,7 +78,7 @@ abstract class CommonObject
 			return -1;
 		}
 
-		dol_syslog(get_class()."::isExistingObject sql=".$sql);
+		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -212,7 +212,7 @@ abstract class CommonObject
         $sql.= "'".$this->db->idate($datecreate)."'";
         $sql.= ", 4, '". $id_type_contact . "' ";
         $sql.= ")";
-        dol_syslog(get_class($this)."::add_contact sql=".$sql);
+        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -316,7 +316,7 @@ abstract class CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
 
-        dol_syslog(get_class($this)."::delete_contact sql=".$sql);
+        dol_syslog(get_class($this)."::delete_contact", LOG_DEBUG);
         if ($this->db->query($sql))
         {
             if (! $notrigger)
@@ -361,7 +361,7 @@ abstract class CommonObject
         $sql.= " WHERE element_id =".$this->id;
         $sql.= " AND fk_c_type_contact IN (".$listId.")";
 
-        dol_syslog(get_class($this)."::delete_linked_contact sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -406,7 +406,7 @@ abstract class CommonObject
         if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
         $sql.=" ORDER BY t.lastname ASC";
 
-        dol_syslog(get_class($this)."::liste_contact sql=".$sql);
+        dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -461,7 +461,7 @@ abstract class CommonObject
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
 
-        dol_syslog(get_class($this)."::swapContactStatus sql=".$sql);
+        dol_syslog(get_class($this)."::swapContactStatus", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -563,7 +563,7 @@ abstract class CommonObject
         $sql.= " AND tc.active = 1";
         if ($status) $sql.= " AND ec.statut = ".$status;
 
-        dol_syslog(get_class($this)."::getIdContact sql=".$sql);
+        dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -805,7 +805,7 @@ abstract class CommonObject
         if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
-        dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -931,7 +931,7 @@ abstract class CommonObject
         else $sql.= ' SET fk_projet = NULL';
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog(get_class($this)."::setProject sql=".$sql);
+        dol_syslog(get_class($this)."::setProject", LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $this->fk_project = $projectid;
@@ -1075,7 +1075,7 @@ abstract class CommonObject
         // if ($this->element == 'facture') $sql.= " AND fk_statut < 2";
         // if ($this->element == 'propal')  $sql.= " AND fk_statut = 0";
 
-        dol_syslog(get_class($this)."::setDocModel sql=".$sql);
+        dol_syslog(get_class($this)."::setDocModel", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1119,7 +1119,7 @@ abstract class CommonObject
 		if (! $renum) $sql.= ' AND rang = 0';
 		if ($renum) $sql.= ' AND rang <> 0';
 
-		dol_syslog(get_class($this)."::line_order sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::line_order", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1139,7 +1139,7 @@ abstract class CommonObject
 			if ($fk_parent_line) $sql.= ' AND fk_parent_line IS NULL';
 			$sql.= ' ORDER BY rang ASC, rowid '.$rowidorder;
 
-			dol_syslog(get_class($this)."::line_order search all parent lines sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::line_order search all parent lines", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1191,7 +1191,7 @@ abstract class CommonObject
 		$sql.= ' AND fk_parent_line = '.$id;
 		$sql.= ' ORDER BY rang ASC';
 
-		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id." sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1259,7 +1259,7 @@ abstract class CommonObject
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element_line.' SET rang  = '.$rang;
 		$sql.= ' WHERE rowid = '.$rowid;
 
-		dol_syslog(get_class($this)."::updateRangOfLine sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::updateRangOfLine", LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -1353,7 +1353,7 @@ abstract class CommonObject
         $sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE rowid ='.$rowid;
 
-        dol_syslog(get_class($this)."::getRangOfLine sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1396,7 +1396,7 @@ abstract class CommonObject
             $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
             $sql.= ' AND fk_parent_line = '.$fk_parent_line;
 
-            dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -1417,7 +1417,7 @@ abstract class CommonObject
             $sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.$this->table_element_line;
             $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
 
-            dol_syslog(get_class($this)."::line_max sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -1445,7 +1445,7 @@ abstract class CommonObject
         $sql.= " SET ref_ext = '".$this->db->escape($ref_ext)."'";
         $sql.= " WHERE ".(isset($this->table_rowid)?$this->table_rowid:'rowid')." = ". $this->id;
 
-        dol_syslog(get_class($this)."::update_ref_ext sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update_ref_ext", LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $this->ref_ext = $ref_ext;
@@ -1483,7 +1483,7 @@ abstract class CommonObject
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
 
-    	dol_syslog(get_class($this)."::update_note sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::update_note", LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
     		if ($suffix == '_public') $this->note_public = $note;
@@ -1558,7 +1558,7 @@ abstract class CommonObject
         }
         $sql.= ' ORDER by rowid';	// We want to be sure to always use same order of line to not change lines differently when option MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND is used
 
-        dol_syslog(get_class($this)."::update_price sql=".$sql);
+        dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1658,7 +1658,7 @@ abstract class CommonObject
                 $sql .= ' WHERE rowid = '.$this->id;
 
                 //print "xx".$sql;
-                dol_syslog(get_class($this)."::update_price sql=".$sql);
+                dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if (! $resql)
                 {
@@ -1710,7 +1710,7 @@ abstract class CommonObject
         $sql.= ", '".$this->element."'";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add_object_linked sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::add_object_linked", LOG_DEBUG);
 		if ($this->db->query($sql))
 	  	{
 	  		$this->db->commit();
@@ -1787,7 +1787,7 @@ abstract class CommonObject
         $sql .= ' ORDER BY sourcetype';
         //print $sql;
 
-        dol_syslog(get_class($this)."::fetchObjectLink sql=".$sql);
+        dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1912,7 +1912,7 @@ abstract class CommonObject
     		$sql.= " AND sourcetype = '".$this->element."'";
     	}
 
-    	dol_syslog(get_class($this)."::updateObjectLinked sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::updateObjectLinked", LOG_DEBUG);
     	if ($this->db->query($sql))
     	{
     		return 1;
@@ -1966,7 +1966,7 @@ abstract class CommonObject
 			$sql.= " (fk_target = ".$this->id." AND targettype = '".$this->element."')";
 		}
 
-		dol_syslog(get_class($this)."::deleteObjectLinked sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::deleteObjectLinked", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			return 1;
@@ -2001,7 +2001,7 @@ abstract class CommonObject
         $sql.= " SET ".$fieldstatus." = ".$status;
         $sql.= " WHERE rowid=".$elementId;
 
-        dol_syslog(get_class($this)."::setStatut sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
         if ($this->db->query($sql))
         {
         	$this->db->commit();
@@ -2110,7 +2110,7 @@ abstract class CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."_extrafields";
             $sql.= " WHERE fk_object = ".$rowid;
 
-            dol_syslog(get_class($this)."::fetch_optionals sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::fetch_optionals", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -2258,7 +2258,7 @@ abstract class CommonObject
             }
             $sql.=")";
 
-            dol_syslog(get_class($this)."::insertExtraFields insert sql=".$sql);
+            dol_syslog(get_class($this)."::insertExtraFields insert", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if (! $resql)
             {
@@ -2527,7 +2527,7 @@ abstract class CommonObject
     	$sql.= " SET extraparams = ".(! empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
     	$sql.= " WHERE rowid = ".$this->id;
 
-    	dol_syslog(get_class($this)."::setExtraParameters sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::setExtraParameters", LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if (! $resql)
     	{
@@ -3328,7 +3328,7 @@ abstract class CommonObject
 		$sql.= ", '".$mandatory."'";
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::add_element_resource sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			$this->db->commit();
@@ -3359,7 +3359,7 @@ abstract class CommonObject
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid =".$rowid;
 
-	    dol_syslog(get_class($this)."::delete_resource sql=".$sql);
+	    dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
 	    if ($this->db->query($sql))
 	    {
 	        if (! $notrigger)

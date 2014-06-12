@@ -79,7 +79,7 @@ class FormProjets
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		$sql.= " ORDER BY p.title ASC";
 
-		dol_syslog(get_class($this)."::select_projects sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::select_projects", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

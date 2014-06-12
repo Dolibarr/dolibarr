@@ -68,7 +68,7 @@ $sql.= " AND d.entity IN (".getEntity().")";
 $sql.= " WHERE t.entity IN (".getEntity().")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
-dol_syslog("index.php::select nb of members by type sql=".$sql, LOG_DEBUG);
+dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -106,7 +106,7 @@ $sql.= " AND d.statut = 1 AND d.datefin >= '".$db->idate($now)."'";
 $sql.= " AND t.rowid = d.fk_adherent_type";
 $sql.= " GROUP BY d.fk_adherent_type";
 
-dol_syslog("index.php::select nb of uptodate members by type sql=".$sql, LOG_DEBUG);
+dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

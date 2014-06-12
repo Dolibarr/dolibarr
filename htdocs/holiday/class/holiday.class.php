@@ -137,7 +137,7 @@ class Holiday extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -200,7 +200,7 @@ class Holiday extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
         $sql.= " WHERE cp.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -294,7 +294,7 @@ class Holiday extends CommonObject
             $sql.= $order;
         }
 
-        dol_syslog(get_class($this)."::fetchByUser sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchByUser", LOG_DEBUG);
         $resql=$this->db->query($sql);
 
         // Si pas d'erreur SQL
@@ -405,7 +405,7 @@ class Holiday extends CommonObject
             $sql.= $order;
         }
 
-        dol_syslog(get_class($this)."::fetchAll sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
         $resql=$this->db->query($sql);
 
         // Si pas d'erreur SQL
@@ -544,7 +544,7 @@ class Holiday extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -591,7 +591,7 @@ class Holiday extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -787,7 +787,7 @@ class Holiday extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as u";
         $sql.= " ORDER BY u.rowid";
 
-        dol_syslog(get_class($this)."::selectUserGroup sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::selectUserGroup", LOG_DEBUG);
         $result = $this->db->query($sql);
 
         // Si pas d'erreur SQL
@@ -1071,7 +1071,7 @@ class Holiday extends CommonObject
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE statut > 0";
 
-                dol_syslog(get_class($this)."::fetchUsers sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1109,7 +1109,7 @@ class Holiday extends CommonObject
                 $sql = "SELECT u.fk_user";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as u";
 
-                dol_syslog(get_class($this)."::fetchUsers sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1153,7 +1153,7 @@ class Holiday extends CommonObject
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE statut > 0";
 
-                dol_syslog(get_class($this)."::fetchUsers sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1193,7 +1193,7 @@ class Holiday extends CommonObject
                 $sql.= " ".MAIN_DB_PREFIX."user as u";
                 $sql.= " WHERE cpu.fk_user = u.rowid";
 
-                dol_syslog(get_class($this)."::fetchUsers sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
 
                 // Si pas d'erreur SQL
@@ -1369,7 +1369,7 @@ class Holiday extends CommonObject
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_events as cpe";
 
-        dol_syslog(get_class($this)."::fetchEventsCP sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchEventsCP", LOG_DEBUG);
         $resql=$this->db->query($sql);
 
         // Si pas d'erreur SQL
@@ -1434,7 +1434,7 @@ class Holiday extends CommonObject
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::createEventCP sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::createEventCP", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) {
             $error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -1627,7 +1627,7 @@ class Holiday extends CommonObject
 
         $this->db->begin();
 
-   	   	dol_syslog(get_class($this)."::addLogCP sql=".$sql, LOG_DEBUG);
+   	   	dol_syslog(get_class($this)."::addLogCP", LOG_DEBUG);
    	   	$resql=$this->db->query($sql);
        	if (! $resql) {
        	    $error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -1690,7 +1690,7 @@ class Holiday extends CommonObject
             $sql.= $order;
         }
 
-        dol_syslog(get_class($this)."::fetchLog sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchLog", LOG_DEBUG);
         $resql=$this->db->query($sql);
 
         // Si pas d'erreur SQL

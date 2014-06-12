@@ -255,7 +255,7 @@ class ExtraFields
 			$sql.= " '".$params."'";
 			$sql.=')';
 
-			dol_syslog(get_class($this)."::create_label sql=".$sql);
+			dol_syslog(get_class($this)."::create_label", LOG_DEBUG);
 			if ($this->db->query($sql))
 			{
 				return 1;
@@ -318,7 +318,7 @@ class ExtraFields
 			$sql.= " AND entity IN  (0,".$conf->entity.')';
 			$sql.= " AND elementtype = '".$elementtype."'";
 
-			dol_syslog(get_class($this)."::delete_label sql=".$sql);
+			dol_syslog(get_class($this)."::delete_label", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -480,7 +480,7 @@ class ExtraFields
 			$sql.= " '".$pos."',";
 			$sql.= " '".$param."'";
 			$sql.= ")";
-			dol_syslog(get_class($this)."::update_label sql=".$sql);
+			dol_syslog(get_class($this)."::update_label", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -537,7 +537,7 @@ class ExtraFields
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
 		$sql.= " ORDER BY pos";
 
-		dol_syslog(get_class($this)."::fetch_name_optionals_label sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_name_optionals_label", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

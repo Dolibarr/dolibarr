@@ -227,7 +227,7 @@ class CompanyBankAccount extends Account
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
         $sql.= " WHERE rowid  = ".$this->id;
 
-        dol_syslog(get_class($this)."::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
             return 1;

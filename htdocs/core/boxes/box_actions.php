@@ -77,7 +77,7 @@ class box_actions extends ModeleBoxes
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("Box_actions::loadBox sql=".$sql, LOG_DEBUG);
+			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
 			$result = $db->query($sql);
 			if ($result)
 			{

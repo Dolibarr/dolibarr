@@ -200,7 +200,7 @@ class Address
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $this->db->escape($id) ."'";
 
-			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

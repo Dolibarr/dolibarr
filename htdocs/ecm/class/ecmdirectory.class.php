@@ -142,7 +142,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " '".$this->fk_user_c."'";
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -210,7 +210,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -257,7 +257,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::changeNbOfFiles sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::changeNbOfFiles", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -291,7 +291,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
 		$sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -348,7 +348,7 @@ class EcmDirectory // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
@@ -499,7 +499,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
+		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -563,7 +563,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " ORDER BY c.label, c.rowid";
 
-		dol_syslog(get_class($this)."::get_full_arbo sql=".$sql);
+		dol_syslog(get_class($this)."::get_full_arbo", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -688,7 +688,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " WHERE entity = ".$conf->entity;
 		}
 
-		dol_syslog(get_class($this)."::refreshcachenboffile sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::refreshcachenboffile", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

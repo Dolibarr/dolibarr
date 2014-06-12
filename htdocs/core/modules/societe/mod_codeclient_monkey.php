@@ -225,7 +225,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
 		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
 
-		dol_syslog(get_class($this)."::verif_dispo sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::verif_dispo", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
 		{

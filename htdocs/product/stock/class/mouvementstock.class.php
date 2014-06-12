@@ -112,7 +112,7 @@ class MouvementStock
 			$sql.= " '".$origintype."'";
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::_create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -138,7 +138,7 @@ class MouvementStock
 				$sql = "SELECT rowid, reel, pmp FROM ".MAIN_DB_PREFIX."product_stock";
 				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -203,7 +203,7 @@ class MouvementStock
 					$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -230,7 +230,7 @@ class MouvementStock
 				// May be this request is better:
 				// UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -298,7 +298,7 @@ class MouvementStock
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
 
-		dol_syslog(get_class($this)."::_createSubProduct sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::_createSubProduct", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

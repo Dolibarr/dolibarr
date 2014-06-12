@@ -393,7 +393,7 @@ function dolibarr_del_const($db, $name, $entity=1)
     $sql.= ")";
     if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_del_const sql=".$sql);
+    dol_syslog("admin.lib::dolibarr_del_const", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -427,7 +427,7 @@ function dolibarr_get_const($db, $name, $entity=1)
     $sql.= " WHERE name = ".$db->encrypt($name,1);
     $sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_get_const sql=".$sql);
+    dol_syslog("admin.lib::dolibarr_get_const", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -474,7 +474,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     $sql.= " WHERE name = ".$db->encrypt($name,1);
     if ($entity >= 0) $sql.= " AND entity = ".$entity;
 
-    dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+    dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
     $resql=$db->query($sql);
 
     if (strcmp($value,''))	// true if different. Must work for $value='0' or $value=0
@@ -487,7 +487,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 
         //print "sql".$value."-".pg_escape_string($value)."-".$sql;exit;
         //print "xx".$db->escape($value);
-        dol_syslog("admin.lib::dolibarr_set_const sql=".$sql, LOG_DEBUG);
+        dol_syslog("admin.lib::dolibarr_set_const", LOG_DEBUG);
         $resql=$db->query($sql);
     }
 
@@ -1041,7 +1041,7 @@ function form_constantes($tableau,$strictw3c=0)
         $sql.= " ORDER BY name ASC, entity DESC";
         $result = $db->query($sql);
 
-        dol_syslog("List params sql=".$sql);
+        dol_syslog("List params", LOG_DEBUG);
         if ($result)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
@@ -1215,7 +1215,7 @@ function addDocumentModel($name, $type, $label='', $description='')
     $sql.= (! empty($description)?"'".$db->escape($description)."'":"null");
     $sql.= ")";
 
-    dol_syslog("admin.lib::addDocumentModel sql=".$sql);
+    dol_syslog("admin.lib::addDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -1248,7 +1248,7 @@ function delDocumentModel($name, $type)
 	$sql.= " AND type = '".$type."'";
 	$sql.= " AND entity = ".$conf->entity;
 
-	dol_syslog("admin.lib::delDocumentModel sql=".$sql);
+	dol_syslog("admin.lib::delDocumentModel", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{

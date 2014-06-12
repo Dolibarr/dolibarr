@@ -519,7 +519,7 @@ class Export
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
-		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -628,7 +628,7 @@ class Export
 		$sql.= (! empty($filter)?"'".$filter."'":"null");
 		$sql.= ")";
 
-		dol_syslog("Export::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Export::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -657,7 +657,7 @@ class Export
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 
-		dol_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Export::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -706,7 +706,7 @@ class Export
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 

@@ -361,7 +361,7 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0)
 $sql.= ' ORDER BY datep';
 //print $sql;
 
-dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
+dol_syslog("comm/action/index.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -472,7 +472,7 @@ if ($showbirthday)
     }
     $sql.= ' ORDER BY birthday';
 
-    dol_syslog("comm/action/index.php sql=".$sql, LOG_DEBUG);
+    dol_syslog("comm/action/index.php", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {

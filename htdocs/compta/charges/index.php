@@ -207,7 +207,7 @@ if ($conf->tax->enabled)
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
-	dol_syslog("compta/charges/index.php: select payment sql=".$sql);
+	dol_syslog("compta/charges/index.php: select payment", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{

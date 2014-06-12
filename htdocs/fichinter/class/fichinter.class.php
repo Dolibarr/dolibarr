@@ -151,7 +151,7 @@ class Fichinter extends CommonObject
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -162,7 +162,7 @@ class Fichinter extends CommonObject
 				$this->ref='(PROV'.$this->id.')';
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."fichinter SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
-				dol_syslog(get_class($this)."::create sql=".$sql);
+				dol_syslog(get_class($this)."::create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
@@ -234,7 +234,7 @@ class Fichinter extends CommonObject
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 
@@ -280,7 +280,7 @@ class Fichinter extends CommonObject
 		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
 		else $sql.= " WHERE f.rowid=".$rowid;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -350,7 +350,7 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("Fichinter::setDraft sql=".$sql);
+			dol_syslog("Fichinter::setDraft", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -405,7 +405,7 @@ class Fichinter extends CommonObject
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND fk_statut = 0";
 
-			dol_syslog(get_class($this)."::setValid sql=".$sql);
+			dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -723,14 +723,14 @@ class Fichinter extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter = ".$this->id;
 
-		dol_syslog("Fichinter::delete sql=".$sql);
+		dol_syslog("Fichinter::delete", LOG_DEBUG);
 		if ( $this->db->query($sql) )
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " WHERE rowid = ".$this->id;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("Fichinter::delete sql=".$sql);
+			dol_syslog("Fichinter::delete", LOG_DEBUG);
 			if ( $this->db->query($sql) )
 			{
 
@@ -982,7 +982,7 @@ class Fichinter extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.= ' WHERE fk_fichinter = '.$this->id;
 
-		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1057,7 +1057,7 @@ class FichinterLigne
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
 		$sql.= ' WHERE ft.rowid = '.$rowid;
 
-		dol_syslog("FichinterLigne::fetch sql=".$sql);
+		dol_syslog("FichinterLigne::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1125,7 +1125,7 @@ class FichinterLigne
 		$sql.= ' '.$rangToUse;
 		$sql.= ')';
 
-		dol_syslog("FichinterLigne::insert sql=".$sql);
+		dol_syslog("FichinterLigne::insert", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1188,7 +1188,7 @@ class FichinterLigne
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog("FichinterLigne::update sql=".$sql);
+		dol_syslog("FichinterLigne::update", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1246,7 +1246,7 @@ class FichinterLigne
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter=".$this->fk_fichinter;
 
-		dol_syslog("FichinterLigne::update_total sql=".$sql);
+		dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1259,7 +1259,7 @@ class FichinterLigne
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
 			$sql.= " AND entity = ".$conf->entity;
 
-			dol_syslog("FichinterLigne::update_total sql=".$sql);
+			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1301,7 +1301,7 @@ class FichinterLigne
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
 			$resql = $this->db->query($sql);
-			dol_syslog(get_class($this)."::deleteline sql=".$sql);
+			dol_syslog(get_class($this)."::deleteline", LOG_DEBUG);
 
 			if ($resql)
 			{

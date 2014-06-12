@@ -189,7 +189,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -211,7 +211,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

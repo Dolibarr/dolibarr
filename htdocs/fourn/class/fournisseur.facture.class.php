@@ -196,7 +196,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= $this->date_echeance!=''?"'".$this->db->idate($this->date_echeance)."'":"null";
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -206,7 +206,7 @@ class FactureFournisseur extends CommonInvoice
             $this->ref='(PROV'.$this->id.')';
             $sql = 'UPDATE '.MAIN_DB_PREFIX."facture_fourn SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
-            dol_syslog(get_class($this)."::create sql=".$sql);
+            dol_syslog(get_class($this)."::create", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql) $error++;
 
@@ -226,7 +226,7 @@ class FactureFournisseur extends CommonInvoice
                 $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
                 $sql .= ' VALUES ('.$this->id.');';
 
-                dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::create", LOG_DEBUG);
                 $resql_insert=$this->db->query($sql);
                 if ($resql_insert)
                 {
@@ -350,7 +350,7 @@ class FactureFournisseur extends CommonInvoice
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -453,7 +453,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
         $sql.= ' WHERE fk_facture_fourn='.$this->id;
 
-        dol_syslog(get_class($this)."::fetch_lines sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
         $resql_rows = $this->db->query($sql);
         if ($resql_rows)
         {
@@ -591,7 +591,7 @@ class FactureFournisseur extends CommonInvoice
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -647,12 +647,12 @@ class FactureFournisseur extends CommonInvoice
         $this->db->begin();
 
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det WHERE fk_facture_fourn = '.$rowid.';';
-        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn WHERE rowid = '.$rowid;
-            dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql2 = $this->db->query($sql);
             if (! $resql2) {
             	$error++;
@@ -763,7 +763,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' SET paye = 1, fk_statut=2';
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog("FactureFournisseur::set_paid sql=".$sql);
+        dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -813,7 +813,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' SET paye=0, fk_statut=1, close_code=null, close_note=null';
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog("FactureFournisseur::set_unpaid sql=".$sql);
+        dol_syslog("FactureFournisseur::set_unpaid", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -891,7 +891,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " SET ref='".$num."', fk_statut = 1, fk_user_valid = ".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::validate sql=".$sql);
+        dol_syslog(get_class($this)."::validate", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1011,7 +1011,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " SET fk_statut = 0";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog(get_class($this)."::set_draft sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::set_draft", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1110,7 +1110,7 @@ class FactureFournisseur extends CommonInvoice
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
         $sql.= ' VALUES ('.$this->id.')';
-        dol_syslog(get_class($this)."::addline sql=".$sql);
+        dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -1241,7 +1241,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", info_bits = ".$info_bits;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this)."::updateline sql=".$sql);
+        dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1306,7 +1306,7 @@ class FactureFournisseur extends CommonInvoice
 	        // Supprime ligne
 	        $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_fourn_det ';
 	        $sql.= ' WHERE rowid = '.$rowid;
-        	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 	        $resql = $this->db->query($sql);
 	        if (! $resql)
 	        {

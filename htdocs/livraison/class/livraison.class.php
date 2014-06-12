@@ -128,7 +128,7 @@ class Livraison extends CommonObject
 		$sql.= ", ".(!empty($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null");
 		$sql.= ")";
 
-		dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Livraison::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -140,7 +140,7 @@ class Livraison extends CommonObject
 			$sql.= "SET ref = '".$this->db->escape($numref)."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog("Livraison::create sql=".$sql, LOG_DEBUG);
+			dol_syslog("Livraison::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -241,7 +241,7 @@ class Livraison extends CommonObject
 		$sql.= " ".($description?"'".$this->db->escape($description)."'":"null").",";
 		$sql.= $qty.")";
 
-		dol_syslog(get_class($this)."::create_line sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create_line", LOG_DEBUG);
 		if (! $this->db->query($sql) )
 		{
 			$error++;
@@ -271,7 +271,7 @@ class Livraison extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
 		$sql.= " WHERE l.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -685,7 +685,7 @@ class Livraison extends CommonObject
 		$sql.= " WHERE ld.fk_origin_line = cd.rowid";
 		$sql.= " AND ld.fk_livraison = ".$this->id;
 
-		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -915,7 +915,7 @@ class Livraison extends CommonObject
 			$sql.= " SET date_delivery = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
+			dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{

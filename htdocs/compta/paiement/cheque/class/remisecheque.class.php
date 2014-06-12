@@ -73,7 +73,7 @@ class RemiseCheque extends CommonObject
 		if ($id)  $sql.= " AND bc.rowid = ".$id;
 		if ($ref) $sql.= " AND bc.number = '".$this->db->escape($ref)."'";
 
-		dol_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("RemiseCheque::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -155,7 +155,7 @@ class RemiseCheque extends CommonObject
 		$sql.= ", ''";
 		$sql.= ")";
 
-		dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+		dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -172,7 +172,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " SET number='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid='".$this->id."';";
 
-				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if (! $resql)
 				{
@@ -192,7 +192,7 @@ class RemiseCheque extends CommonObject
 				$sql.= " AND b.fk_account='".$account_id."'";
 				if ($limit) $sql.= $this->db->plimit($limit);
 
-				dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -225,7 +225,7 @@ class RemiseCheque extends CommonObject
 						$sql.= " SET fk_bordereau = ".$this->id;
 						$sql.= " WHERE rowid = ".$lineid;
 
-						dol_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+						dol_syslog("RemiseCheque::Create", LOG_DEBUG);
 						$resql = $this->db->query($sql);
 						if (!$resql)
 						{
@@ -351,7 +351,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND statut = 0";
 
-			dol_syslog("RemiseCheque::Validate sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::Validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ( $resql )
 			{
@@ -410,7 +410,7 @@ class RemiseCheque extends CommonObject
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND number not like '(%'";
 
-		dol_syslog("Remisecheque::getNextNumber sql=".$sql);
+		dol_syslog("Remisecheque::getNextNumber", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -510,7 +510,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " AND bc.entity = ".$conf->entity;
 			$sql.= " ORDER BY b.dateo ASC, b.rowid ASC";
 
-			dol_syslog("RemiseCheque::generatePdf sql=".$sql, LOG_DEBUG);
+			dol_syslog("RemiseCheque::generatePdf", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result)
 			{

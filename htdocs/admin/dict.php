@@ -528,7 +528,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
         $sql.=",1)";
 
-        dol_syslog("actionadd sql=".$sql);
+        dol_syslog("actionadd", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
@@ -576,7 +576,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
 
-        dol_syslog("actionmodify sql=".$sql);
+        dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
         $resql = $db->query($sql);
         if (! $resql)
@@ -599,7 +599,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
 
-    dol_syslog("delete sql=".$sql);
+    dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
     if (! $result)
     {
@@ -826,7 +826,7 @@ if ($id)
     print '</form>';
 
     // List of available values in database
-    dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
+    dol_syslog("htdocs/admin/dict", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {

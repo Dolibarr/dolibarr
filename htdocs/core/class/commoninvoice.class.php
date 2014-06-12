@@ -47,7 +47,7 @@ abstract class CommonInvoice extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table;
 		$sql.= ' WHERE '.$field.' = '.$this->id;
 
-		dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -229,7 +229,7 @@ class FormCompany
 		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND p.code = '".$country_codeid."'";
 		$sql .= " ORDER BY p.code, d.code_departement";
 
-		dol_syslog(get_class($this)."::select_departement sql=".$sql);
+		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -306,7 +306,7 @@ class FormCompany
 		$sql.= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1";
 		$sql.= " ORDER BY p.code, p.libelle ASC";
 
-		dol_syslog(get_class($this)."::select_region sql=".$sql);
+		dol_syslog(get_class($this)."::select_region", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -369,7 +369,7 @@ class FormCompany
 		$sql = "SELECT rowid, code, civilite as civility_label, active FROM ".MAIN_DB_PREFIX."c_civilite";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog("Form::select_civility sql=".$sql);
+		dol_syslog("Form::select_civility", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -447,7 +447,7 @@ class FormCompany
 		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY p.code";
 
-		dol_syslog(get_class($this)."::select_juridicalstatus sql=".$sql);
+		dol_syslog(get_class($this)."::select_juridicalstatus", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

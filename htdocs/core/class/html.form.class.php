@@ -486,7 +486,7 @@ class Form
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
 
-        dol_syslog(get_class($this)."::select_country sql=".$sql);
+        dol_syslog(get_class($this)."::select_country", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -795,7 +795,7 @@ class Form
         $sql.=$this->db->order("nom","ASC");
 		if ($limit > 0) $sql.=$this->db->plimit($limit);
 
-        dol_syslog(get_class($this)."::select_thirdparty_list sql=".$sql);
+        dol_syslog(get_class($this)."::select_thirdparty_list", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -889,7 +889,7 @@ class Form
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
-        dol_syslog(get_class($this)."::select_remises sql=".$sql);
+        dol_syslog(get_class($this)."::select_remises", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -995,7 +995,7 @@ class Form
         if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0 ";
         $sql.= " ORDER BY sp.lastname ASC";
 
-        dol_syslog(get_class($this)."::select_contacts sql=".$sql);
+        dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1162,7 +1162,7 @@ class Form
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
         $sql.= " ORDER BY u.lastname ASC";
 
-        dol_syslog(get_class($this)."::select_dolusers sql=".$sql);
+        dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1412,7 +1412,7 @@ class Form
         $sql.= $db->plimit($limit);
 
         // Build output string
-        dol_syslog(get_class($this)."::select_produits_list search product sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1435,7 +1435,7 @@ class Form
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql.= " ORDER BY quantity ASC";
 
-					dol_syslog(get_class($this)."::select_produits_list search price by qty sql=".$sql);
+					dol_syslog(get_class($this)."::select_produits_list search price by qty", LOG_DEBUG);
 					$result2 = $this->db->query($sql);
 					if ($result2)
 					{
@@ -1775,7 +1775,7 @@ class Form
 
         // Build output string
 
-        dol_syslog(get_class($this)."::select_produits_fournisseurs_list sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_fournisseurs_list", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1921,7 +1921,7 @@ class Form
         $sql.= " AND p.rowid = ".$productid;
         $sql.= " ORDER BY s.nom, pfp.ref_fourn DESC";
 
-        dol_syslog(get_class($this)."::select_product_fourn_price sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_product_fourn_price", LOG_DEBUG);
         $result=$this->db->query($sql);
 
         if ($result)
@@ -2005,7 +2005,7 @@ class Form
         $sql .= " WHERE a.fk_soc = ".$socid;
         $sql .= " ORDER BY a.label ASC";
 
-        dol_syslog(get_class($this)."::select_address sql=".$sql);
+        dol_syslog(get_class($this)."::select_address", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2167,7 +2167,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this)."::loadCacheInputReason sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::loadCacheInputReason", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2248,7 +2248,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
         $sql.= " ORDER BY id";
-        dol_syslog(get_class($this)."::load_cache_types_paiements sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::load_cache_types_paiements", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2437,7 +2437,7 @@ class Form
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY label";
 
-        dol_syslog(get_class($this)."::select_comptes sql=".$sql);
+        dol_syslog(get_class($this)."::select_comptes", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -4224,7 +4224,7 @@ class Form
         if (is_array($include) && $includeGroups) $sql.= " AND ug.rowid IN ('".$includeGroups."')";
         $sql.= " ORDER BY ug.nom ASC";
 
-        dol_syslog(get_class($this)."::select_dolgroups sql=".$sql);
+        dol_syslog(get_class($this)."::select_dolgroups", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

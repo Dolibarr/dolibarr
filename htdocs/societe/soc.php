@@ -432,7 +432,7 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 	if (! $this->db->query($sql))
                 	{
                 		$error++;

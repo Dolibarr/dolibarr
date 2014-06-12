@@ -279,7 +279,7 @@ class BonPrelevement extends CommonObject
         $sql.= " WHERE p.rowid = ".$rowid;
         $sql.= " AND p.entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -779,7 +779,7 @@ class BonPrelevement extends CommonObject
             //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
             //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
-            dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::Create", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -896,7 +896,7 @@ class BonPrelevement extends CommonObject
                 $sql.= " WHERE ref LIKE '".$ref."%'";
                 $sql.= " AND entity = ".$conf->entity;
 
-                dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::Create", LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -922,7 +922,7 @@ class BonPrelevement extends CommonObject
                 $sql.= ", '".$this->db->idate($now)."'";
                 $sql.= ")";
 
-                dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::Create", LOG_DEBUG);
                 $resql = $this->db->query($sql);
 
                 if ($resql)
@@ -983,7 +983,7 @@ class BonPrelevement extends CommonObject
                         $sql.= ", fk_prelevement_bons = ".$prev_id;
                         $sql.= " WHERE rowid = ".$fac[1];
 
-                        dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+                        dol_syslog(get_class($this)."::Create", LOG_DEBUG);
                         $resql=$this->db->query($sql);
                         if (! $resql)
                         {
@@ -1040,7 +1040,7 @@ class BonPrelevement extends CommonObject
             $sql.= " WHERE rowid = ".$prev_id;
             $sql.= " AND entity = ".$conf->entity;
 
-            dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::Create", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
