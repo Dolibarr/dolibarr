@@ -1079,8 +1079,16 @@ class DoliDBMysql extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
-            return -1;
+            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') 
+            {
+        		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
+	            return -1;
+            }
+            else 
+            {
+            	// If user already exists, we continue to set permissions
+            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
+            }
         }
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log

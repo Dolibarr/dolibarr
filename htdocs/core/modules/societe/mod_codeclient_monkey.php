@@ -119,7 +119,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		// D'abord on recupere la valeur max (reponse immediate car champ indexe)
 		$posindice=8;
-        $sql = "SELECT MAX(SUBSTRING(".$field." FROM ".$posindice.")) as max";   // This is standard SQL
+        $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max";   // This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE ".$field." LIKE '".$prefix."____-%'";
 		$sql.= " AND entity IN (".getEntity('societe', 1).")";
@@ -139,7 +139,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 
 		$date	= dol_now();
 		$yymm	= strftime("%y%m",$date);
-		$num	= sprintf("%04s",$max+1);
+		
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s",$max+1);
 
 		dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
 		return $prefix.$yymm."-".$num;

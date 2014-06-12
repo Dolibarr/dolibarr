@@ -85,18 +85,35 @@ print '</br>';
 // OPCode cache
 print '<br>';
 print '<strong>'.$langs->trans("OPCodeCache").'</strong>: ';
-$test1=function_exists('xcache_info');
-if ($test1)
+$foundcache=0;
+$test=function_exists('xcache_info');
+if (! $foundcache && $test)
 {
+	$foundcache++;
 	print img_picto('','tick.png').' '.$langs->trans("XCacheInstalled");
 	print ' '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xcache.php'.'">Xcache admin page</a>';
 }
-else
+$test=function_exists('eaccelerator_info');
+if (! $foundcache && $test)
 {
-	$test2=function_exists('eaccelerator_info');
-	if ($test2) print img_picto('','tick.png').' '.$langs->trans("EAcceleratorInstalled");
-	else print $langs->trans("NoOPCodeCacheFound");
+	$foundcache++;
+	print img_picto('','tick.png').' '.$langs->trans("EAcceleratorInstalled");
 }
+$test=function_exists('apc_cache_info');
+if (! $foundcache && $test)
+{
+	//var_dump(apc_cache_info());
+	if (ini_get('apc.enabled'))
+	{
+		$foundcache++;
+		print img_picto('','tick.png').' '.$langs->trans("APCInstalled");
+	}
+	else
+	{
+		print img_picto('','warning').' '.$langs->trans("APCCacheInstalledButDisabled");
+	}
+}
+if (! $foundcache) print $langs->trans("NoOPCodeCacheFound");
 print '<br>';
 
 // HTTPCacheStaticResources

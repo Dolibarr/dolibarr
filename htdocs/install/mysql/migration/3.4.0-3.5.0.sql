@@ -11,8 +11,10 @@
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
--- To make pk to be auto increment (mysql):   VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- To make pk to be auto increment (postgres) VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To remove a not null status (mysql):    VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN colname integer NULL;
+-- To remove a not null status (postgres): VPGSQL8.2 ALTER TABLE llx_table ALTER colname DROP NOT NULL;
 
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
@@ -323,6 +325,8 @@ ALTER TABLE llx_facture_fourn ADD fk_mode_reglement integer NULL AFTER fk_cond_r
 
 ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_mode_reglement	integer NULL;
 ALTER TABLE llx_facture_fourn MODIFY COLUMN fk_cond_reglement	integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_mode_reglement DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_cond_reglement DROP NOT NULL;
 
 
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
