@@ -169,7 +169,6 @@ class DiscountAbsolute
         else
         {
             $this->error=$this->db->lasterror().' - sql='.$sql;
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
     }

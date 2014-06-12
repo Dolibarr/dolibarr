@@ -1074,7 +1074,6 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_print_error($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 	}

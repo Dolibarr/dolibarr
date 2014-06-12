@@ -795,13 +795,12 @@ class Product extends CommonObject
 			{
 				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
 				$sqlz.= " WHERE rowid = ".$id;
-				dol_syslog(get_class($this).'::delete sql='.$sqlz, LOG_DEBUG);
+				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
 				$resultz = $this->db->query($sqlz);
 				if ( ! $resultz )
 				{
 					$error++;
 					$this->errors[] = $this->db->lasterror();
-					dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
 				}
 			}
 
@@ -896,11 +895,10 @@ class Product extends CommonObject
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
-				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				dol_syslog(get_class($this).'::setMultiLangs');
 				if (! $this->db->query($sql2))
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 					return -1;
 				}
 			}
@@ -924,11 +922,10 @@ class Product extends CommonObject
 
 				// on ne sauvegarde pas des champs vides
 				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				dol_syslog(get_class($this).'::setMultiLangs');
 				if (! $this->db->query($sql2))
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 					return -1;
 				}
 			}

@@ -1193,7 +1193,6 @@ class Societe extends CommonObject
     	else
     	{
     		$this->error=$this->db->error().' sql='.$sql;
-    		dol_syslog(get_class($this)."::searchByName ".$this->error, LOG_ERR);
     		return -1;
     	}
     }

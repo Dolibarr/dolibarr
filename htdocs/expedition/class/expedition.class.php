@@ -473,14 +473,13 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this).'::Fetch Error -2');
+				dol_syslog(get_class($this).'::Fetch Error -2', LOG_ERR);
 				$this->error='Delivery with id '.$id.' not found sql='.$sql;
 				return -2;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::Fetch Error -1');
 			$this->error=$this->db->error();
 			return -1;
 		}

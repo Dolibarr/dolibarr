@@ -269,7 +269,6 @@ class FactureRec extends Facture
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;

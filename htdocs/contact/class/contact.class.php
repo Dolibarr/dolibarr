@@ -328,7 +328,6 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror().' sql='.$sql;
-			dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
             $this->db->rollback();
 			return -1;
 		}

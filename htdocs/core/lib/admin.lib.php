@@ -215,7 +215,6 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
                 }
                 else
                 {
-                    dol_syslog('Admin.lib::run_sql Failed to get max rowid for '.$table.' '.$db->lasterror().' sql='.$sqlgetrowid, LOG_ERR);
                     if (! $silent) print '<tr><td valign="top" colspan="2">';
                     if (! $silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
                     if (! $silent) print '</tr>';
@@ -226,7 +225,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             $from='__+MAX_'.$table.'__';
             $to='+'.$listofmaxrowid[$table];
             $newsql=str_replace($from,$to,$newsql);
-            dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.') sql='.$newsql, LOG_DEBUG);
+            dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
             $arraysql[$i]=$newsql;
         }
@@ -251,7 +250,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
 
             // Ajout trace sur requete (eventuellement a commenter si beaucoup de requetes)
             if (! $silent) print '<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".dol_htmlentities($newsql,ENT_NOQUOTES)."'</td></tr>\n";
-            dol_syslog('Admin.lib::run_sql Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+            dol_syslog('Admin.lib::run_sql Request '.($i+1), LOG_DEBUG);
 			$sqlmodified=0;
 
             // Replace for encrypt data
@@ -300,7 +299,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
                 $sqlmodified++;
             }
 
-            if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i+1).' sql='.$newsql, LOG_DEBUG);
+            if ($sqlmodified) dol_syslog('Admin.lib::run_sql New Request '.($i+1), LOG_DEBUG);
 
             $result=$db->query($newsql,$usesavepoint);
             if ($result)

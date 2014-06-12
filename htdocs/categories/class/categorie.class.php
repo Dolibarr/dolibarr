@@ -633,7 +633,6 @@ class Categorie extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::getObjectsInCateg ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -677,7 +676,6 @@ class Categorie extends CommonObject
 			return $this->db->fetch_object($resql)->nb;
 		} else {
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::containsObject ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1218,7 +1216,6 @@ class Categorie extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::rechercher ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1438,7 +1435,7 @@ class Categorie extends CommonObject
 	                $sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 	                $sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
 	            }
-	            dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+	            dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
@@ -1464,7 +1461,7 @@ class Categorie extends CommonObject
 
 	            // on ne sauvegarde pas des champs vides
 	            if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-	                dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+	                dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();

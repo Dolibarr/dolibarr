@@ -929,7 +929,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1427,7 +1426,7 @@ class Facture extends CommonInvoice
 		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
 		else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
 
-		dol_syslog(get_class($this).'::calculate_date_lim_reglement sql='.$sqltemp);
+		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
 		$resqltemp=$this->db->query($sqltemp);
 		if ($resqltemp)
 		{

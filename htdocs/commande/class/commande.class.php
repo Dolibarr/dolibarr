@@ -1401,7 +1401,6 @@ class Commande extends CommonOrder
             else
             {
                 $this->error='Order with id '.$id.' not found sql='.$sql;
-                dol_syslog(get_class($this).'::fetch '.$this->error);
                 return 0;
             }
         }

@@ -929,7 +929,7 @@ class Holiday extends CommonObject
                 $sql2 = "UPDATE ".MAIN_DB_PREFIX."holiday_users SET";
                 $sql2.= " nb_holiday = nb_holiday + ".$nb_holiday;
 
-                dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql2);
+                dol_syslog(get_class($this).'::updateSoldeCP', LOG_DEBUG);
                 $result= $this->db->query($sql2);
 
 	            if ($result) return 1;

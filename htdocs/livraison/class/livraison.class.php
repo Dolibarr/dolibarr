@@ -318,7 +318,6 @@ class Livraison extends CommonObject
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 			$this->error=$this->db->error();
 			return -1;
 		}
