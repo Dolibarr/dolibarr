@@ -416,7 +416,7 @@ class DoliDBSqlite extends DoliDB
                     $errormsg .= ' ('.$this->lasterrno.')';
                 }
 
-	            dol_syslog($errormsg, LOG_ERROR);
+	            dol_syslog($errormsg, LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
