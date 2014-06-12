@@ -380,7 +380,7 @@ class Address
 		}
 		else
 		{
-			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
+			dol_syslog('Erreur Societe::Fetch echec', LOG_DEBUG);
 			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			$this->error=$this->db->error();
 			$result = -3;

@@ -655,7 +655,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_name)       $sql .= " AND (p.lastname LIKE '%".$db->escape($search_name)."%' OR p.firstname LIKE '%".$db->escape($search_name)."%')";
     $sql.= " ORDER BY $sortfield $sortorder";
 
-    dol_syslog('core/lib/company.lib.php :: show_contacts sql='.$sql,LOG_DEBUG);
+    dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 

@@ -834,7 +834,7 @@ class Holiday extends CommonObject
         $sql.= " value = '".$value."'";
         $sql.= " WHERE name = '".$name."'";
 
-        dol_syslog(get_class($this).'::updateConfCP name='.$name.' sql='.$sql);
+        dol_syslog(get_class($this).'::updateConfCP name='.$name.'', LOG_DEBUG);
         $result = $this->db->query($sql);
         if($result) {
             return true;
@@ -855,7 +855,7 @@ class Holiday extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
         $sql.= " WHERE name = '".$name."'";
 
-        dol_syslog(get_class($this).'::getConfCP name='.$name.' sql='.$sql);
+        dol_syslog(get_class($this).'::getConfCP name='.$name.'', LOG_DEBUG);
         $result = $this->db->query($sql);
 
         // Si pas d'erreur
@@ -903,7 +903,7 @@ class Holiday extends CommonObject
                 $sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
                 $sql.= " WHERE name = 'lastUpdate'";
 
-                dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql);
+                dol_syslog(get_class($this).'::updateSoldeCP', LOG_DEBUG);
                 $result = $this->db->query($sql);
 
                 // On ajoute x jours à chaque utilisateurs
@@ -948,7 +948,7 @@ class Holiday extends CommonObject
             $sql.= " nb_holiday = ".$nbHoliday;
             $sql.= " WHERE fk_user = '".$userID."'";
 
-			dol_syslog(get_class($this).'::updateSoldeCP sql='.$sql);
+			dol_syslog(get_class($this).'::updateSoldeCP', LOG_DEBUG);
             $result = $this->db->query($sql);
 
             if ($result) return 1;
@@ -1040,7 +1040,7 @@ class Holiday extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users";
         $sql.= " WHERE fk_user = '".$user_id."'";
 
-        dol_syslog(get_class($this).'::getCPforUser sql='.$sql);
+        dol_syslog(get_class($this).'::getCPforUser', LOG_DEBUG);
         $result = $this->db->query($sql);
         if($result) {
             $obj = $this->db->fetch_object($result);

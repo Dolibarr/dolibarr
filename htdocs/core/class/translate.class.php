@@ -674,7 +674,7 @@ class Translate
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 		$sql.= " WHERE ".$fieldkey." = '".($keyforselect?$keyforselect:$key)."'";
-		dol_syslog(get_class($this).'::getLabelFromKey sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::getLabelFromKey', LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -754,7 +754,7 @@ class Translate
 		if (! empty($currency_code)) $sql.=" AND code_iso = '".$currency_code."'";
 		//$sql.= " ORDER BY code_iso ASC"; // Not required, a sort is done later
 
-		dol_syslog(get_class($this).'::loadCacheCurrencies sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::loadCacheCurrencies', LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

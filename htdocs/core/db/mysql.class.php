@@ -273,7 +273,9 @@ class DoliDBMysql extends DoliDB
 				$this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_ERROR);
+
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERROR);
+                dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERROR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;
@@ -829,13 +831,7 @@ class DoliDBMysql extends DoliDB
         {
             if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') 
             {
-        		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
 	            return -1;
-            }
-            else 
-            {
-            	// If user already exists, we continue to set permissions
-            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }
         }
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
@@ -843,7 +839,6 @@ class DoliDBMysql extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
@@ -853,7 +848,6 @@ class DoliDBMysql extends DoliDB
 	    $resql=$this->query($sql);
 		if (! $resql)
 		{
-			dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
 			return -1;
 		}
 

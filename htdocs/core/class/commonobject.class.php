@@ -653,7 +653,7 @@ abstract class CommonObject
                 $sql = "SELECT rowid, code, libelle as label, coder";
                 $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
                 $sql.= " WHERE rowid = ".$idtype;
-                dol_syslog(get_class($this).'::fetch_barcode sql='.$sql);
+                dol_syslog(get_class($this).'::fetch_barcode', LOG_DEBUG);
                 $resql = $this->db->query($sql);
             	if ($resql)
                 {
@@ -739,7 +739,7 @@ abstract class CommonObject
         $sql.= " WHERE ".$field." = '".$key."'";
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this).'::fetchObjectFrom sql='.$sql);
+        dol_syslog(get_class($this).'::fetchObjectFrom', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -765,7 +765,7 @@ abstract class CommonObject
         $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this).'::getValueFrom sql='.$sql);
+        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2484,7 +2484,7 @@ abstract class CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element."det";
         $sql.= " WHERE ".$this->fk_element." = ".$this->id;
 
-        dol_syslog(get_class($this).'::getTotalDiscount sql='.$sql);
+        dol_syslog(get_class($this).'::getTotalDiscount', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

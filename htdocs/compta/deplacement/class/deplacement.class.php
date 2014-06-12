@@ -415,7 +415,7 @@ class Deplacement extends CommonObject
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'deplacement as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
-		dol_syslog(get_class($this).'::info sql='.$sql);
+		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
 
 		if ($result)

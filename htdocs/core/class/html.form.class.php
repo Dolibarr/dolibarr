@@ -604,7 +604,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
         $sql.= " ORDER BY lower(c.libelle) ASC";
 
-        dol_syslog(get_class($this).'::load_cache_types_fees sql='.$sql, LOG_DEBUG);
+        dol_syslog(get_class($this).'::load_cache_types_fees', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1554,7 +1554,7 @@ class Form
             $sql.= " ORDER BY date_price";
             $sql.= " DESC LIMIT 1";
 
-            dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.' sql='.$sql);
+            dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
             $result2 = $this->db->query($sql);
             if ($result2)
             {
@@ -2055,7 +2055,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
-        dol_syslog(get_class($this).'::load_cache_conditions_paiements sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).'::load_cache_conditions_paiements', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2094,7 +2094,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this).'::load_cache_availability sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).'::load_cache_availability', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {

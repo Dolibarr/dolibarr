@@ -65,7 +65,7 @@ class FormCompany
 		$sql.= " WHERE active = 1";
 		if ($filter) $sql.=" ".$filter;
 		$sql.= " ORDER by id";
-		dol_syslog(get_class($this).'::typent_array sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -104,7 +104,7 @@ class FormCompany
 		$sql.= " WHERE active = 1";
 		if ($filter) $sql.=" ".$filter;
 		$sql .= " ORDER BY id ASC";
-		dol_syslog(get_class($this).'::effectif_array sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::effectif_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -1327,7 +1327,7 @@ class Propal extends CommonObject
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this).'::valid sql='.$sql);
+            dol_syslog(get_class($this).'::valid', LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 if (! $notrigger)
@@ -2633,7 +2633,7 @@ class Propal extends CommonObject
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
         $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 
-        dol_syslog(get_class($this).'::getLinesArray sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2921,7 +2921,7 @@ class PropaleLigne  extends CommonObject
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ')';
 
-        dol_syslog(get_class($this).'::insert sql='.$sql, LOG_DEBUG);
+        dol_syslog(get_class($this).'::insert', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

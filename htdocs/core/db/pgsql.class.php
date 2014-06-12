@@ -506,9 +506,7 @@ class DoliDBPgsql extends DoliDB
     				$this->lasterror = $this->error();
     				$this->lasterrno = $this->errno();
 			    }
-				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." - ".pg_last_error($this->db)." => ".$this->errno(), LOG_ERROR);
-				//print "\n>> ".$query."<br>\n";
-				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
+				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$this->lasterror." (".$this->lasterrno.")", LOG_ERROR);
 
 				if ($usesavepoint && $this->transaction_opened)	// Warning, after that errno will be erased
 				{

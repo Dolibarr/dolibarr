@@ -399,7 +399,7 @@ class ExtraFields
 					{
 						$sql="ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
-					dol_syslog(get_class($this).'::update sql='.$sql);
+					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql=$this->db->query($sql,1,'dml');
 					return 1;
 				}
@@ -754,7 +754,7 @@ class ExtraFields
 				$sql.=preg_replace('/^ AND /','',$sqlwhere);
 				//print $sql;
 
-				dol_syslog(get_class($this).'::showInputField type=sellist sql='.$sql);
+				dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -964,7 +964,7 @@ class ExtraFields
 			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
 			//$sql.= ' AND entity = '.$conf->entity;
 
-			dol_syslog(get_class($this).':showOutputField:$type=sellist sql='.$sql);
+			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{

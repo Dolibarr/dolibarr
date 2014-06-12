@@ -302,7 +302,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
                 $sql .= " WHERE p.fk_soc = ".$object->id;
                 
-                dol_syslog('doc_generic_odt :: sql='.$sql,LOG_DEBUG);
+                dol_syslog('doc_generic_odt ::', LOG_DEBUG);
                 $result = $this->db->query($sql);
                 $num = $this->db->num_rows($result);
                 

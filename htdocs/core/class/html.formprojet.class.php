@@ -197,7 +197,7 @@ class FormProjets
 		$sql.= ' AND entity='.$conf->entity;
 		$sql.= " ORDER BY ref DESC";
 
-		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::select_element', LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)

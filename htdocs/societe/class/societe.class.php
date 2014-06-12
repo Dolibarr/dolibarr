@@ -2272,7 +2272,7 @@ class Societe extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
             $sql.= " SET parent = ".($id > 0 ? $id : "null");
             $sql.= " WHERE rowid = " . $this->id;
-			dol_syslog(get_class($this).'::set_parent sql='.$sql);
+			dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {

@@ -955,7 +955,7 @@ class Facture extends CommonInvoice
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 		$sql.= ' ORDER BY l.rang';
 
-		dol_syslog(get_class($this).'::fetch_lines sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
