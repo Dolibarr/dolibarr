@@ -1349,10 +1349,10 @@ class Propal extends CommonObject
 					{
 						// Rename of propal directory ($this->ref = old ref, $num = new ref)
 						// to  not lose the linked files
-						$facref = dol_sanitizeFileName($this->ref);
-						$snumfa = dol_sanitizeFileName($num);
-						$dirsource = $conf->propal->dir_output.'/'.$facref;
-						$dirdest = $conf->propal->dir_output.'/'.$snumfa;
+						$oldref = dol_sanitizeFileName($this->ref);
+						$newref = dol_sanitizeFileName($num);
+						$dirsource = $conf->propal->dir_output.'/'.$oldref;
+						$dirdest = $conf->propal->dir_output.'/'.$newref;
 						if (file_exists($dirsource))
 						{
 							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -1362,15 +1362,17 @@ class Propal extends CommonObject
 
 								dol_syslog("Rename ok");
 								// Deleting old PDF in new rep
-								dol_delete_file($conf->propal->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
+								dol_delete_file($conf->propal->dir_output.'/'.$newref.'/'.$oldref.'*.*');
 							}
 						}
 					}
 
+					$this->ref=$num;
                     $this->brouillon=0;
                     $this->statut = 1;
                     $this->user_valid_id=$user->id;
                     $this->datev=$now;
+
                     $this->db->commit();
                     return 1;
                 }
