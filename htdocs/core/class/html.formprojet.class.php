@@ -222,7 +222,7 @@ class FormProjets
 			$this->db->free($resql);
 		}else {
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this) . "::select_element " . $errmsg, LOG_ERR);
+			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
 			return -1;
 		}
 	}
