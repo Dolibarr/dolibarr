@@ -252,7 +252,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::add ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -415,7 +414,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -526,7 +524,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -976,7 +973,6 @@ class ActionComm extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::build_exportfile ".$this->db->lasterror(), LOG_ERR);
                 return -1;
             }
 

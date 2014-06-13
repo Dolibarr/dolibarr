@@ -443,7 +443,6 @@ class Propal extends CommonObject
                 else
                 {
                     $this->error=$this->db->error();
-                    dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
                     $this->db->rollback();
                     return -1;
                 }
@@ -597,7 +596,6 @@ class Propal extends CommonObject
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -888,7 +886,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::create -2 ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
@@ -896,7 +893,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::create -1 ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -1226,7 +1222,6 @@ class Propal extends CommonObject
                 else
                 {
                     $this->error=$this->db->error();
-                    dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
                     return -1;
                 }
 
@@ -1246,7 +1241,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1420,7 +1414,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::set_date ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1447,7 +1440,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_echeance Erreur SQL".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -2133,7 +2125,6 @@ class Propal extends CommonObject
                     else
                     {
                         $this->error=$this->db->lasterror();
-                        dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                         $this->db->rollback();
                         return 0;
                     }
@@ -2141,7 +2132,6 @@ class Propal extends CommonObject
                 else
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -3;
                 }
@@ -2149,7 +2139,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
@@ -2157,7 +2146,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -2684,7 +2672,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::getLinesArray Error sql=$sql, error=".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -3115,7 +3102,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }
@@ -3149,7 +3135,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("PropaleLigne::update_total Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }

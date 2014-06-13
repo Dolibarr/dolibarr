@@ -91,7 +91,6 @@ class ExpeditionLigneBatch extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(__METHOD__ .$this->error, LOG_ERR);
             return -1;
         }
     }

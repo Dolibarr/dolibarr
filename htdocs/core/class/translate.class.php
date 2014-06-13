@@ -688,7 +688,6 @@ class Translate
 		else
 		{
 			$this->error=$db->lasterror();
-			dol_syslog(get_class($this).'::getLabelFromKey error='.$this->error,LOG_ERR);
 			return -1;
 		}
 	}

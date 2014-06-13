@@ -598,7 +598,6 @@ class Expedition extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 				return -2;
 			}
 		}
@@ -1138,7 +1137,6 @@ class Expedition extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this).'::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}
@@ -1332,7 +1330,6 @@ class Expedition extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}

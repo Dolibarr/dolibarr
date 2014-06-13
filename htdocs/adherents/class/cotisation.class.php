@@ -91,7 +91,6 @@ class Cotisation extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -183,7 +182,6 @@ class Cotisation extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

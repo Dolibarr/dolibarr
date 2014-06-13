@@ -125,7 +125,6 @@ if ($action == 'order' && isset($_POST['valid']))
 				{
                     $error=$db->lasterror();
                     dol_print_error($db);
-                    dol_syslog('replenish.php: '.$error, LOG_ERR);
                 }
                 $db->free($resql);
                 unset($_POST['fourn' . $i]);

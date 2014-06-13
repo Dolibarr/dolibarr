@@ -184,7 +184,7 @@ if ($action == 'setdoc')
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
-    dol_syslog("societe.php ".$sql);
+    dol_syslog("societe.php", LOG_DEBUG);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -192,7 +192,6 @@ if ($action == 'setdoc')
 	}
 	else
 	{
-        dol_syslog("societe.php ".$db->lasterror(), LOG_ERR);
 	    $db->rollback();
 	}
 }

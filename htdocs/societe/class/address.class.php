@@ -317,7 +317,6 @@ class Address
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::Fetch '.$this->db->error(), LOG_ERR);
 			$this->error=$this->db->error();
 		}
 	}

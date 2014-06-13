@@ -378,7 +378,6 @@ class Adherent extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -623,7 +622,6 @@ class Adherent extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::Update ".$this->error,LOG_ERR);
             return -2;
         }
     }
@@ -683,7 +681,6 @@ class Adherent extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::update_end_date ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -718,7 +715,6 @@ class Adherent extends CommonObject
         	$error++;
         	$this->error .= $this->db->lasterror();
         	$errorflag=-1;
-        	dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
 
         }
 
@@ -733,7 +729,6 @@ class Adherent extends CommonObject
         		$error++;
         		$this->error .= $this->db->lasterror();
         		$errorflag=-2;
-        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         	}
         }
 
@@ -746,7 +741,6 @@ class Adherent extends CommonObject
         		$error++;
         		$this->error .= $this->db->lasterror();
         		$errorflag=-3;
-        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         	}
         }
 
@@ -776,7 +770,6 @@ class Adherent extends CommonObject
         		$error++;
         		$this->error .= $this->db->lasterror();
         		$errorflag=-5;
-        		dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
         	}
         }
 
@@ -978,7 +971,6 @@ class Adherent extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::setThirdPartyId ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -1169,7 +1161,6 @@ class Adherent extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }

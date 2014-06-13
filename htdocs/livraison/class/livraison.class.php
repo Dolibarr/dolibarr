@@ -434,7 +434,6 @@ class Livraison extends CommonObject
 					{
 						$this->db->rollback();
 						$this->error=$this->db->error()." - sql=$sql";
-						dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -891,7 +890,6 @@ class Livraison extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." - sql=$sqlSourceLine";
-			dol_syslog(get_class($this)."::getRemainingDelivered ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -921,7 +919,6 @@ class Livraison extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}

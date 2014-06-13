@@ -638,7 +638,6 @@ class Export
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("Export::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}

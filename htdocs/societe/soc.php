@@ -437,7 +437,6 @@ if (empty($reshook))
                 	{
                 		$error++;
                 		$this->error .= $this->db->lasterror();
-                		dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
                 	}
                 }
 

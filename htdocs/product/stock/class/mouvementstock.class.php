@@ -121,7 +121,6 @@ class MouvementStock
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 				$error = -1;
 			}
 
@@ -155,7 +154,6 @@ class MouvementStock
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create echec update ".$this->error, LOG_ERR);
 					$error = -2;
 				}
 			}
@@ -208,7 +206,6 @@ class MouvementStock
 				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -3;
 				} else if(empty($fk_product_stock)){
 					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
@@ -235,7 +232,6 @@ class MouvementStock
 				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -4;
 				}
 			}
@@ -313,7 +309,6 @@ class MouvementStock
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::_createSubProduct ".$this->error, LOG_ERR);
 			$error = -2;
 		}
 

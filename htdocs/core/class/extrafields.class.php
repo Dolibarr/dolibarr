@@ -286,7 +286,6 @@ class ExtraFields
 			if ($result < 0)
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			}
 
 			$result=$this->delete_label($attrname,$elementtype);

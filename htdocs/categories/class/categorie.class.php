@@ -1439,7 +1439,6 @@ class Categorie extends CommonObject
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
-	                dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 	                return -1;
 	            }
 	        }
@@ -1465,7 +1464,6 @@ class Categorie extends CommonObject
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
-	                dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 	                return -1;
 	            }
 	        }

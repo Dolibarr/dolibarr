@@ -301,7 +301,6 @@ class DiscountAbsolute
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::link_to_invoice ".$this->error,LOG_ERR);
             return -3;
         }
     }
@@ -328,7 +327,6 @@ class DiscountAbsolute
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::unlink_invoice ".$this->error,LOG_ERR);
             return -3;
         }
     }

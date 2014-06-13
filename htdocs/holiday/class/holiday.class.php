@@ -238,7 +238,6 @@ class Holiday extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -351,7 +350,6 @@ class Holiday extends CommonObject
         {
             // Erreur SQL
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetchByUser ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -461,7 +459,6 @@ class Holiday extends CommonObject
         {
             // Erreur SQL
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetchAll ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -813,7 +810,6 @@ class Holiday extends CommonObject
         {
             // Erreur SQL
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::selectUserGroup ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -869,7 +865,6 @@ class Holiday extends CommonObject
 
             // Erreur SQL
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::getConfCP ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1101,7 +1096,6 @@ class Holiday extends CommonObject
                 {
                     // Erreur SQL
                     $this->error="Error ".$this->db->lasterror();
-                    dol_syslog(get_class($this)."::fetchUsers ".$this->error, LOG_ERR);
                     return -1;
                 }
 
@@ -1139,7 +1133,6 @@ class Holiday extends CommonObject
                 {
                     // Erreur SQL
                     $this->error="Error ".$this->db->lasterror();
-                    dol_syslog(get_class($this)."::fetchUsers ".$this->error, LOG_ERR);
                     return -1;
                 }
             }
@@ -1181,7 +1174,6 @@ class Holiday extends CommonObject
                 {
                     // Erreur SQL
                     $this->error="Error ".$this->db->lasterror();
-                    dol_syslog(get_class($this)."::fetchUsers ".$this->error, LOG_ERR);
                     return -1;
                 }
 
@@ -1221,7 +1213,6 @@ class Holiday extends CommonObject
                 {
                     // Erreur SQL
                     $this->error="Error ".$this->db->lasterror();
-                    dol_syslog(get_class($this)."::fetchUsers ".$this->error, LOG_ERR);
                     return -1;
                 }
             }
@@ -1307,7 +1298,6 @@ class Holiday extends CommonObject
             } else {
                 // Erreur SQL
                 $this->error="Error ".$this->db->lasterror();
-                dol_syslog(get_class($this)."::verifNbUsers ".$this->error, LOG_ERR);
                 return -1;
             }
 
@@ -1345,7 +1335,6 @@ class Holiday extends CommonObject
             } else {
                 // Erreur SQL
                 $this->error="Error ".$this->db->lasterror();
-                dol_syslog(get_class($this)."::verifNbUsers ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1403,7 +1392,6 @@ class Holiday extends CommonObject
         {
             // Erreur SQL
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetchEventsCP ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1728,7 +1716,6 @@ class Holiday extends CommonObject
   		{
   		    // Erreur SQL
   		    $this->error="Error ".$this->db->lasterror();
-  		    dol_syslog(get_class($this)."::fetchLog ".$this->error, LOG_ERR);
   		    return -1;
   		}
     }

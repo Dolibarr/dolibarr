@@ -122,7 +122,6 @@ class Mailing extends CommonObject
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -132,7 +131,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -166,7 +164,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -348,7 +345,6 @@ class Mailing extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog("Mailing::createFromClone ".$this->error, LOG_ERR);
 					return -1;
 				}
 				
@@ -392,7 +388,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -418,7 +413,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -445,7 +439,6 @@ class Mailing extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("Mailing::Valid ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

@@ -169,7 +169,6 @@ class Entrepot extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -218,7 +217,6 @@ class Entrepot extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -226,7 +224,6 @@ class Entrepot extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 

@@ -414,7 +414,6 @@ class FactureFournisseur extends CommonInvoice
                 if ($result < 0)
                 {
                     $this->error=$this->db->error();
-                    dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
                     return -3;
                 }
 
@@ -498,7 +497,6 @@ class FactureFournisseur extends CommonInvoice
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this).'::fetch_lines: Error '.$this->error,LOG_ERR);
             return -3;
         }
     }
@@ -738,7 +736,6 @@ class FactureFournisseur extends CommonInvoice
         else
         {
         	$this->error=$this->db->lasterror();
-        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
         	$this->db->rollback();
         	return -$error;
         }
@@ -1265,7 +1262,6 @@ class FactureFournisseur extends CommonInvoice
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::updateline error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1311,7 +1307,6 @@ class FactureFournisseur extends CommonInvoice
 	        {
 	        	$error++;
 	        	$this->error=$this->db->lasterror();
-	        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 	        }
     	}
 

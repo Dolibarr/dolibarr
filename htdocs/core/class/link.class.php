@@ -222,7 +222,6 @@ class Link extends CommonObject
             else
             {
                 $this->error = $langs->trans("Error sql = " . $sql);
-                dol_syslog(get_class($this) . "::Update fails update = " . $this->error, LOG_ERR);
                 $result =  -2;
             }
             $this->db->rollback();
@@ -324,7 +323,6 @@ class Link extends CommonObject
             }
         } else {
             $this->error=$this->db->lasterror();
-            dol_syslog($this->error, LOG_ERR);
             return -1;
         }
     }
@@ -352,7 +350,6 @@ class Link extends CommonObject
         {
             $error++;
             $this->error = $this->db->lasterror();
-            dol_syslog(get_class($this)."::delete error -4 " . $this->error, LOG_ERR);
         }
 
 

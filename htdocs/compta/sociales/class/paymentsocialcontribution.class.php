@@ -139,7 +139,6 @@ class PaymentSocialContribution extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -209,7 +208,6 @@ class PaymentSocialContribution extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -569,7 +567,6 @@ class PaymentSocialContribution extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update_fk_bank ".$this->error, LOG_ERR);
 			return 0;
 		}
 	}

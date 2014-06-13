@@ -237,7 +237,6 @@ class Opensurveysondage extends CommonObject
         else
        {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             $ret=-1;
         }
 

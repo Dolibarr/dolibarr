@@ -248,7 +248,6 @@ class Task extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -783,7 +782,6 @@ class Task extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::addTimeSpent error -1 ".$this->error,LOG_ERR);
             $ret = -1;
         }
 
@@ -797,7 +795,6 @@ class Task extends CommonObject
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
                 $ret = -2;
             }
         }
@@ -812,7 +809,6 @@ class Task extends CommonObject
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
                 $ret = -2;
             }
         }
@@ -863,7 +859,6 @@ class Task extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetchTimeSpent ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -909,7 +904,6 @@ class Task extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::updateTimeSpent error -1 ".$this->error,LOG_ERR);
             $ret = -1;
         }
 
@@ -925,7 +919,6 @@ class Task extends CommonObject
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
                 $ret = -2;
             }
         }
@@ -982,7 +975,6 @@ class Task extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::addTimeSpent error -3 ".$this->error, LOG_ERR);
                 $result = -2;
             }
         }

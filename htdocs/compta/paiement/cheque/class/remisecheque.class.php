@@ -250,7 +250,6 @@ class RemiseCheque extends CommonObject
 			$this->errno = -1;
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("RemiseCheque::Create Error ".$this->error, LOG_ERR);
 		}
 
 	    if (! $this->errno && ! empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
@@ -715,7 +714,6 @@ class RemiseCheque extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog("RemiseCheque::set_date ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -750,7 +748,6 @@ class RemiseCheque extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("RemiseCheque::set_number ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}

@@ -113,7 +113,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -169,7 +168,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -233,7 +231,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -615,7 +612,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}

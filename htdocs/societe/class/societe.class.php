@@ -1087,7 +1087,6 @@ class Societe extends CommonObject
         }
         else
         {
-            dol_syslog($this->db->error(), LOG_ERR);
             $this->error=$this->db->error();
             $result = -3;
         }
@@ -1266,7 +1265,6 @@ class Societe extends CommonObject
                 {
                     $error++;
                     $this->error .= $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -1294,7 +1292,6 @@ class Societe extends CommonObject
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -2 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -1319,7 +1316,6 @@ class Societe extends CommonObject
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -2694,7 +2690,6 @@ class Societe extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
                 $this->db->rollback();
                 return -1;

@@ -244,7 +244,6 @@ class Import
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}

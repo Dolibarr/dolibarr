@@ -201,7 +201,6 @@ class Fichinter extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -256,7 +255,6 @@ class Fichinter extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -326,7 +324,6 @@ class Fichinter extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::fetch ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -361,7 +358,6 @@ class Fichinter extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dol_syslog("Fichinter::setDraft ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -882,7 +878,6 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog($this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -924,7 +919,6 @@ class Fichinter extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("Error sql=$sql, error=".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1214,7 +1208,6 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1222,7 +1215,6 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1266,7 +1258,6 @@ class FichinterLigne
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog("FichinterLigne::update_total Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -1274,7 +1265,6 @@ class FichinterLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}

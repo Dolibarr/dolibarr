@@ -155,7 +155,6 @@ class Account extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::add_url_line ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -330,7 +329,6 @@ class Account extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::addline ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }
@@ -437,7 +435,6 @@ class Account extends CommonObject
                 if (! $resql)
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog($this->error, LOG_ERR);
                     return -3;
                 }
             }
@@ -1251,7 +1248,6 @@ class AccountLine extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
             return -1;
         }
     }

@@ -914,7 +914,6 @@ class Facture extends CommonInvoice
 				if ($result < 0)
 				{
 					$this->error=$this->db->error();
-					dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 					return -3;
 				}
 				return 1;
@@ -1014,7 +1013,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this).'::fetch_lines '.$this->error,LOG_ERR);
 			return -3;
 		}
 	}
@@ -2141,7 +2139,6 @@ class Facture extends CommonInvoice
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -2325,7 +2322,6 @@ class Facture extends CommonInvoice
 		if (! $result)
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::deleteline Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -2822,7 +2818,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::list_replacable_invoices ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2878,7 +2873,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::list_avoir_invoices ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -3650,7 +3644,6 @@ class FactureLigne  extends CommonInvoiceLine
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -3761,7 +3754,6 @@ class FactureLigne  extends CommonInvoiceLine
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -3839,7 +3831,6 @@ class FactureLigne  extends CommonInvoiceLine
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

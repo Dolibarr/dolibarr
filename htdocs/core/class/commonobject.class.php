@@ -241,7 +241,6 @@ abstract class CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog($this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -264,7 +263,6 @@ abstract class CommonObject
             if ($this->add_contact($contact['id'], $contact['fk_c_type_contact'], $contact['source']) < 0)
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::copy_contact error=".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -336,7 +334,6 @@ abstract class CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_contact error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -369,7 +366,6 @@ abstract class CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_linked_contact error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -576,7 +572,6 @@ abstract class CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::getIdContact ".$this->error, LOG_ERR);
             return null;
         }
 
@@ -1454,7 +1449,6 @@ abstract class CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update_ref_ext error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1494,7 +1488,6 @@ abstract class CommonObject
     	else
     	{
     		$this->error=$this->db->lasterror();
-    		dol_syslog(get_class($this)."::update_note error=".$this->error, LOG_ERR);
     		return -1;
     	}
     }
@@ -1664,7 +1657,6 @@ abstract class CommonObject
                 {
                     $error++;
                     $this->error=$this->db->error();
-                    dol_syslog(get_class($this)."::update_price error=".$this->error,LOG_ERR);
                 }
             }
 
@@ -1920,7 +1912,6 @@ abstract class CommonObject
     	else
     	{
     		$this->error=$this->db->lasterror();
-    		dol_syslog(get_class($this)."::updateObjectLinked error=".$this->error, LOG_ERR);
     		return -1;
     	}
     }
@@ -1974,7 +1965,6 @@ abstract class CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::deleteObjectLinked error=".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2011,7 +2001,6 @@ abstract class CommonObject
         else
         {
         	$this->error=$this->db->lasterror();
-        	dol_syslog(get_class($this)."::setStatut ".$this->error, LOG_ERR);
         	$this->db->rollback();
         	return -1;
         }
@@ -2262,7 +2251,6 @@ abstract class CommonObject
             if (! $resql)
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -2435,7 +2423,6 @@ abstract class CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::delete error -1 ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -2505,7 +2492,6 @@ abstract class CommonObject
         		$i++;
         	}
         }
-        else dol_syslog(get_class($this).'::getTotalDiscount '.$this->db->lasterror(), LOG_ERR);
 
         //print $total_discount; exit;
         return price2num($total_discount);
@@ -2531,7 +2517,6 @@ abstract class CommonObject
     	if (! $resql)
     	{
     		$this->error=$this->db->lasterror();
-    		dol_syslog(get_class($this)."::setExtraParameters ".$this->error, LOG_ERR);
     		$this->db->rollback();
     		return -1;
     	}
@@ -3378,7 +3363,6 @@ abstract class CommonObject
 	    else
 	    {
 	        $this->error=$this->db->lasterror();
-	        dol_syslog(get_class($this)."::delete_resource error=".$this->error, LOG_ERR);
 	        return -1;
 	    }
 	}

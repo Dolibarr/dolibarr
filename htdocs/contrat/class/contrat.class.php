@@ -171,7 +171,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::active_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -219,7 +218,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::close_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -794,7 +792,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$langs->trans("UnknownError: ".$this->db->error()." -", LOG_DEBUG);
-			dol_syslog(get_class($this)."::create - 10 - ".$this->error, LOG_ERR);
 
 			$this->db->rollback();
 			return -1;
@@ -939,7 +936,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::delete ERROR ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1261,7 +1257,6 @@ class Contrat extends CommonObject
 			if (! $resql)
 			{
 				$this->error="Error ".$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				return -1;
 			}
 
@@ -1995,7 +1990,6 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2108,7 +2102,6 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -2156,7 +2149,6 @@ class ContratLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}

@@ -163,7 +163,6 @@ class InfoBox
         {
             //dol_print_error($db);
             $error=$db->lasterror();
-            dol_syslog(get_class()."::listBoxes Error ".$error, LOG_ERR);
         }
 
         return $boxes;

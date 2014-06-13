@@ -283,7 +283,6 @@ class FactureRec extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -358,7 +357,6 @@ class FactureRec extends Facture
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog('Facture::fetch_lines: Error '.$this->error, LOG_ERR);
 			return -3;
 		}
 	}

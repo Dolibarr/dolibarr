@@ -227,7 +227,6 @@ class Paiement extends CommonObject
 					else
 					{
 						$this->error=$this->db->lasterror();
-						dol_syslog(get_class($this).'::Create insert paiement_facture error='.$this->error, LOG_ERR);
 						$error++;
 					}
 				}
@@ -250,7 +249,6 @@ class Paiement extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this).'::Create insert paiement error='.$this->error, LOG_ERR);
 			$error++;
 		}
 
@@ -592,7 +590,6 @@ class Paiement extends CommonObject
             else
             {
                 $this->error='Error -1 '.$this->db->error();
-                dol_syslog(get_class($this)."::update_date ".$this->error, LOG_ERR);
                 return -2;
             }
         }
@@ -623,7 +620,6 @@ class Paiement extends CommonObject
             else
             {
                 $this->error='Error -1 '.$this->db->error();
-                dol_syslog(get_class($this)."::update_num ".$this->error, LOG_ERR);
                 return -2;
             }
         }

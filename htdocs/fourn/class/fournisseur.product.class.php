@@ -88,7 +88,6 @@ class ProductFournisseur extends Product
         if (! $resql2)
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::remove_fournisseur ".$this->error, LOG_ERR);
             $ok=0;
         }
 
@@ -130,7 +129,6 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::remove_product_fournisseur_price ".$this->error,LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -371,7 +369,6 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::fetch_product_fournisseur_price error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -449,7 +446,6 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::list_product_fournisseur_price error=".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -513,7 +509,6 @@ class ProductFournisseur extends Product
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::find_min_price_product_fournisseur error=".$this->error, LOG_ERR);
             return -1;
         }
     }

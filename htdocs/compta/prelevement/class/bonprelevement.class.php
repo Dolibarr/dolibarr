@@ -556,8 +556,6 @@ class BonPrelevement extends CommonObject
             }
             else
            {
-                dol_syslog(get_class($this)."::set_infotrans Erreur 1", LOG_ERR);
-                dol_syslog($this->db->error());
                 $error++;
             }
 

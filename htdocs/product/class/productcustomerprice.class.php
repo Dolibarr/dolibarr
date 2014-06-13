@@ -288,7 +288,6 @@ class Productcustomerprice extends CommonObject
 			return 1;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -394,7 +393,6 @@ class Productcustomerprice extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_all " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -499,7 +497,6 @@ class Productcustomerprice extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_all_log " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -784,7 +781,6 @@ class Productcustomerprice extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::setPriceOnAffiliateThirdparty " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}

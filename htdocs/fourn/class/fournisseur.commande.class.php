@@ -294,7 +294,6 @@ class CommandeFournisseur extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::log ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -401,7 +400,6 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
-                dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 $this->error=$this->db->lasterror();
                 return -1;
@@ -671,7 +669,6 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->db->rollback();
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::approve Error ",$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -820,7 +817,6 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
-                dol_syslog(get_class($this)."::cCommande Error -1", LOG_ERR);
                 $result = -1;
             }
         }
@@ -968,7 +964,6 @@ class CommandeFournisseur extends CommonOrder
 	            else
 	            {
 	                $this->error=$this->db->error();
-	                dol_syslog(get_class($this)."::create: Failed -2 - ".$this->error, LOG_ERR);
 	                $this->db->rollback();
 	                return -2;
 	            }
@@ -977,7 +972,6 @@ class CommandeFournisseur extends CommonOrder
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::create: Failed -1 - ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -1222,7 +1216,6 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::addline ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1467,7 +1460,6 @@ class CommandeFournisseur extends CommonOrder
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -$error;
 		}
@@ -1550,7 +1542,6 @@ class CommandeFournisseur extends CommonOrder
                 {
                     $this->db->rollback();
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::Livraison Error ".$this->error, LOG_ERR);
                     $result = -1;
                 }
             }
@@ -1593,7 +1584,6 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1804,7 +1794,6 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::updateline ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -2109,7 +2098,6 @@ class CommandeFournisseurLigne
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }

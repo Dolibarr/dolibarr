@@ -394,7 +394,6 @@ class Commande extends CommonOrder
         {
             $this->error=$this->db->error();
             $this->db->rollback();
-            dol_syslog($this->error, LOG_ERR);
             return -1;
         }
     }
@@ -506,7 +505,6 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog($this->error, LOG_ERR);
 
                 $this->db->rollback();
                 return -1;
@@ -587,7 +585,6 @@ class Commande extends CommonOrder
 		{
 			$this->error=$this->db->error();
 			$this->db->rollback();
-			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1406,7 +1403,6 @@ class Commande extends CommonOrder
         }
         else
         {
-            dol_syslog(get_class($this).'::fetch Error rowid='.$id, LOG_ERR);
             $this->error=$this->db->error();
             return -1;
         }
@@ -1574,7 +1570,6 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->error();
-            dol_syslog('Commande::fetch_lines: Error '.$this->error, LOG_ERR);
             return -3;
         }
     }
@@ -1654,7 +1649,6 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::loadExpeditions ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -1911,7 +1905,6 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_date ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1946,7 +1939,6 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -2180,7 +2172,6 @@ class Commande extends CommonOrder
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this).'::set_ref_client Erreur '.$this->error.' - '.$sql, LOG_ERR);
                 return -2;
             }
         }
@@ -2227,7 +2218,6 @@ class Commande extends CommonOrder
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::classifyBilled ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
@@ -2235,7 +2225,6 @@ class Commande extends CommonOrder
 		else
 		{
 			$this->error=$this->db->error();
-            dol_syslog(get_class($this)."::classifyBilled Error ".$this->error, LOG_ERR);
             $this->db->rollback();
 			return -1;
 		}
@@ -2398,7 +2387,6 @@ class Commande extends CommonOrder
                 $this->error=$this->db->lasterror();
         		$this->errors=array($this->db->lasterror());
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -2446,7 +2434,6 @@ class Commande extends CommonOrder
         	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	if (! $this->db->query($sql) )
         	{
-        		dol_syslog(get_class($this)."::delete error", LOG_ERR);
         		$error++;
         	}
 
@@ -2455,7 +2442,6 @@ class Commande extends CommonOrder
         	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         	if (! $this->db->query($sql) )
         	{
-        		dol_syslog(get_class($this)."::delete error", LOG_ERR);
         		$error++;
         	}
 
@@ -2517,7 +2503,6 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -2990,7 +2975,6 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -3182,7 +3166,6 @@ class OrderLine extends CommonOrderLine
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("OrderLine::delete ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -3299,7 +3282,6 @@ class OrderLine extends CommonOrderLine
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }
@@ -3407,7 +3389,6 @@ class OrderLine extends CommonOrderLine
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -3446,7 +3427,6 @@ class OrderLine extends CommonOrderLine
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("OrderLine::update_total Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }

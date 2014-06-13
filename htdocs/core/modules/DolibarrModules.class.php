@@ -120,7 +120,6 @@ abstract class DolibarrModules
                     if (! $ignoreerror)
                     {
                         $this->error=$this->db->lasterror();
-                        dol_syslog(get_class($this)."::_init Error ".$this->error, LOG_ERR);
                         $err++;
                     }
                     else
@@ -587,7 +586,6 @@ abstract class DolibarrModules
                         else
 						{
                             $this->error=$this->db->lasterror();
-                            dol_syslog(get_class($this)."::insert_boxes ".$this->error, LOG_ERR);
                             $this->db->rollback();
                         }
                     }
@@ -596,7 +594,6 @@ abstract class DolibarrModules
                 else
               {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::insert_boxes ".$this->error, LOG_ERR);
                     $err++;
                 }
             }
@@ -638,7 +635,6 @@ abstract class DolibarrModules
                 if (! $resql)
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete_boxes ".$this->error, LOG_ERR);
                     $err++;
                 }
 
@@ -651,7 +647,6 @@ abstract class DolibarrModules
                 if (! $resql)
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete_boxes ".$this->error, LOG_ERR);
                     $err++;
                 }
             }
@@ -679,7 +674,6 @@ abstract class DolibarrModules
         if (! $this->db->query($sql))
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_tabs ".$this->error, LOG_ERR);
             $err++;
         }
 
@@ -786,7 +780,6 @@ abstract class DolibarrModules
                     dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
                     if (! $this->db->query($sql) )
                     {
-                        dol_syslog(get_class($this)."::insert_const ".$this->db->lasterror(), LOG_ERR);
                         $err++;
                     }
                 }
@@ -829,7 +822,6 @@ abstract class DolibarrModules
                 if (! $this->db->query($sql))
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete_const ".$this->error, LOG_ERR);
                     $err++;
                 }
             }
@@ -910,7 +902,6 @@ abstract class DolibarrModules
                         if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
                         {
                             $this->error=$this->db->lasterror();
-                            dol_syslog(get_class($this)."::insert_permissions errno = ".$this->db->errno()." error ".$this->error, LOG_ERR);
                             $err++;
                             break;
                         }
@@ -959,7 +950,6 @@ abstract class DolibarrModules
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::insert_permissions ".$this->error, LOG_ERR);
             $err++;
         }
 
@@ -985,7 +975,6 @@ abstract class DolibarrModules
         if (! $this->db->query($sql))
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_permissions ".$this->error, LOG_ERR);
             $err++;
         }
 
@@ -1117,7 +1106,6 @@ abstract class DolibarrModules
         if (! $resql)
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_menus ".$this->error, LOG_ERR);
             $err++;
         }
 
@@ -1218,7 +1206,6 @@ abstract class DolibarrModules
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::insert_dirs ".$this->error, LOG_ERR);
             $err++;
         }
 
@@ -1245,7 +1232,6 @@ abstract class DolibarrModules
         if (! $this->db->query($sql))
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete_dirs ".$this->error, LOG_ERR);
             $err++;
         }
 
@@ -1326,7 +1312,6 @@ abstract class DolibarrModules
     			    {
         			    $error++;
         				$this->error=$this->db->lasterror();
-        				dol_syslog(get_class($this)."::insert_const_".$key." ".$this->error, LOG_ERR);
     			    }
     			    else
     			    {
@@ -1365,7 +1350,6 @@ abstract class DolibarrModules
     			if (! $this->db->query($sql))
     			{
     				$this->error=$this->db->lasterror();
-    				dol_syslog(get_class($this)."::delete_const_".$key." ".$this->error, LOG_ERR);
     				$err++;
     			}
     		}

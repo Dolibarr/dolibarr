@@ -211,7 +211,6 @@ class AdherentType extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog("Adherent_type::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }

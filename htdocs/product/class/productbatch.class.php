@@ -185,7 +185,6 @@ class Productbatch extends CommonObject
 		else
 		{
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -456,7 +455,6 @@ class Productbatch extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -517,7 +515,6 @@ class Productbatch extends CommonObject
         else
         {
       	    $error="Error ".$db->lasterror();
-            dol_syslog("productbatch::find_all ".$error, LOG_ERR);
             return -1;
         }
     }

@@ -173,7 +173,6 @@ class EcmDirectory // extends CommonObject
 			else
 			{
 				$this->error="Error ".$this->db->lasterror();
-				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -216,7 +215,6 @@ class EcmDirectory // extends CommonObject
 		{
 			$error++;
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
 		}
 
 		if (! $error && ! $notrigger)
@@ -262,7 +260,6 @@ class EcmDirectory // extends CommonObject
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::changeNbOfFiles ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -318,7 +315,6 @@ class EcmDirectory // extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -354,7 +350,6 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -2;
 		}
 
@@ -698,7 +693,6 @@ class EcmDirectory // extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::refreshcachenboffile ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}

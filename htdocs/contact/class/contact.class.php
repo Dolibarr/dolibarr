@@ -598,7 +598,6 @@ class Contact extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 					return -1;
 				}
 
@@ -623,7 +622,6 @@ class Contact extends CommonObject
 					else
 					{
 						$this->error=$this->db->error();
-						dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 						return -1;
 					}
 				}
@@ -639,7 +637,6 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -684,7 +681,6 @@ class Contact extends CommonObject
 		else
 		{
 			$this->error=$this->db->error()." - ".$sql;
-			dol_syslog(get_class($this)."::load_ref_elements Error ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -757,7 +753,6 @@ class Contact extends CommonObject
 				$error++;
 				$this->error .= $this->db->lasterror();
 				$errorflag=-1;
-				dol_syslog(get_class($this)."::delete error ".$errorflag." ".$this->error, LOG_ERR);
 			}
 		}
 

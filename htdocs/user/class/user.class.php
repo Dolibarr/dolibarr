@@ -278,7 +278,6 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::fetch Error -2, fails to get setup user", LOG_ERR);
 				return -2;
 			}
 		}
@@ -702,13 +701,15 @@ class User extends CommonObject
 
 		$this->fetch($this->id);
 
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+
 		// Supprime droits
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
+
 		if (! $error && ! $this->db->query($sql))
 		{
 			$error++;
         	$this->error = $this->db->lasterror();
-        	dol_syslog(get_class($this)."::delete error -1 ".$this->error, LOG_ERR);
 		}
 
 		// Remove group
@@ -717,7 +718,6 @@ class User extends CommonObject
 		{
 			$error++;
         	$this->error = $this->db->lasterror();
-        	dol_syslog(get_class($this)."::delete error -2 ".$this->error, LOG_ERR);
 		}
 
 		// Si contact, supprime lien
@@ -728,7 +728,6 @@ class User extends CommonObject
 			{
 				$error++;
 	        	$this->error = $this->db->lasterror();
-	        	dol_syslog(get_class($this)."::delete error -3 ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -752,7 +751,6 @@ class User extends CommonObject
 	       	{
 	       		$error++;
 	       		$this->error = $this->db->lasterror();
-	       		dol_syslog(get_class($this)."::delete error -5 ".$this->error, LOG_ERR);
 	       	}
         }
 
@@ -889,7 +887,6 @@ class User extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -2;
 				}
@@ -898,7 +895,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -965,7 +961,6 @@ class User extends CommonObject
 			else
 			{
 				$this->error=$this->db->error();
-				dol_syslog(get_class($this)."::create_from_contact ".$this->error, LOG_ERR);
 
 				$this->db->rollback();
 				return -1;
@@ -1034,7 +1029,6 @@ class User extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
 					return -1;
@@ -1050,8 +1044,6 @@ class User extends CommonObject
 		else
 		{
 			// $this->error deja positionne
-			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error, LOG_ERR);
-
 			$this->db->rollback();
 			return -2;
 		}
@@ -1294,7 +1286,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::update error=".$this->error,LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -1700,7 +1691,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::SetInGroup ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -1758,7 +1748,6 @@ class User extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::RemoveFromGroup ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}

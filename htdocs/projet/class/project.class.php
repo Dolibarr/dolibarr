@@ -261,7 +261,6 @@ class Project extends CommonObject
             else
             {
                 $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
                 $result = -2;
             }
         }
