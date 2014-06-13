@@ -536,7 +536,7 @@ else
         print '<td><input size="30" name="title" value="'.$object->title.'"></td></tr>';
 
         // Customer
-        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
         $text=$form->select_company($object->societe->id,'socid','',1,1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
         print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
@@ -607,7 +607,7 @@ else
         print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
         // Third party
-        print '<tr><td>'.$langs->trans("Thirdparty").'</td><td>';
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
         if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
         else print'&nbsp;';
         print '</td></tr>';
