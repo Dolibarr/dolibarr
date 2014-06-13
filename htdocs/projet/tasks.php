@@ -35,8 +35,7 @@ $langs->load("users");
 $langs->load("projects");
 
 $action = GETPOST('action', 'alpha');
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
+$taskref = GETPOST('ref', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 
 $mode = GETPOST('mode', 'alpha');
@@ -47,10 +46,14 @@ $object = new Project($db);
 $taskstatic = new Task($db);
 $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
-if ($ref)
+if (!empty($taskref))
 {
-	$object->fetch(0,$ref);
-	$id=$object->id;
+    $projectid=explode('_',$_POST['task_parent'])[0];
+    $resql = $db->query("SELECT p.rowid as projectid, p.ref as projectref FROM ".MAIN_DB_PREFIX."projet as p WHERE p.rowid = ".$projectid);
+    $projectref = $db->fetch_object($resql)->projectref;
+	$object->fetch(0,$projectref);
+    if($projectid != 0)
+        $id = $projectid;
 }
 
 // fetch optionals attributes and labels
@@ -74,8 +77,6 @@ $description=GETPOST('description');
 $planned_workload=GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60;
 
 $userAccess=0;
-
-
 
 /*
  * Actions
@@ -105,8 +106,6 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 
 		if (! $error)
 		{
-			$tmparray=explode('_',$_POST['task_parent']);
-			$projectid=$tmparray[0];
 			if (empty($projectid)) $projectid = $id; // If projectid is ''
 			$task_parent=$tmparray[1];
 			if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
@@ -177,9 +176,9 @@ $userstatic=new User($db);
 $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Tasks"),$help_url);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || ! empty($projectref))
 {
-	$object->fetch($id, $ref);
+	$object->fetch($id, $projectref);
 	if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
 	$res=$object->fetch_optionals($object->id,$extralabels_projet);
 
@@ -258,7 +257,7 @@ if ($id > 0 || ! empty($ref))
 
 if ($action == 'create' && $user->rights->projet->creer && (empty($object->societe->id) || $userWrite > 0))
 {
-	if ($id > 0 || ! empty($ref)) print '<br>';
+	if ($id > 0 || ! empty($projectref)) print '<br>';
 
 	print_fiche_titre($langs->trans("NewTask"));
 
@@ -314,7 +313,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 
 	// planned workload
 	print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
-	print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
+	print $form->select_duration('planned_workload', $planned_workload?$planned_workload : $object->planned_workload,0,'text');
 	print '</td></tr>';
 
 	// Progress
