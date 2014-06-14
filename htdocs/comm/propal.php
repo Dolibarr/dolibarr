@@ -473,7 +473,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					$result = $interface->run_triggers('PROPAL_SENTBYMAIL', $object, $user, $langs, $conf);
 					if ($result < 0) {
 						$error ++;
-						$this->errors = $interface->errors;
+						$object->errors = $interface->errors;
 					}
 					// Fin appel triggers
 
