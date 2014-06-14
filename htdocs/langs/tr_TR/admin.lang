@@ -116,7 +116,7 @@ LanguageBrowserParameter=Parametre %s
 LocalisationDolibarrParameters=Yerelleştirme parametreleri
 ClientTZ=İstemci Zaman Dilimi (kullanıcı)
 ClientHour=İstemci zamanı (kullanıcı)
-OSTZ=Server OS Time Zone
+OSTZ=Sunucu OS Zaman Dilimi
 PHPTZ=PHP Saat Dilimi (sunucu)
 PHPServerOffsetWithGreenwich=PHP sunucusu Greenwich genişlik sapması (saniye)
 ClientOffsetWithGreenwich=İstemci/Tarayıcı Greenwich genişlik sapması (saniye)
@@ -474,7 +474,7 @@ Module410Desc=WebT akvimi entegrasyonu
 Module500Name=Özel giderler (vergi, sosyal katkı payları, temettüler)
 Module500Desc=Vergiler, sosyal katkı payları, temettüler ve maaşlar gibi özel giderlerin yönetimi
 Module510Name=Ücretler
-Module510Desc=Management of employees salaries and payments
+Module510Desc=Çalışanların maaş ve ödeme yönetimi
 Module600Name=Duyurlar
 Module600Desc=Dolibarr iş etkinleri için üçüncü partilerin ilgililerine eposta ile duyurular gönderin
 Module700Name=Bağışlar
@@ -683,6 +683,10 @@ Permission401=İndirim oku
 Permission402=İndirim oluştur/değiştir
 Permission403=İndirim doğrula
 Permission404=İndirim sil
+Permission510=Read Salaries
+Permission512=Create/modify salaries
+Permission514=Delete salaries
+Permission517=Export salaries
 Permission531=Hizmet oku
 Permission532=Hizmet oluştur/değiştir
 Permission534=Hizmet sil
@@ -1001,7 +1005,7 @@ ExtraFieldsSupplierOrders=Tamamlayıcı öznitelikler (siparişler)
 ExtraFieldsSupplierInvoices=Tamamlayıcı öznitelikler (faturalar)
 ExtraFieldsProject=Tamamlayıcı öznitelikler (projeler)
 ExtraFieldsProjectTask=Tamamlayıcı öznitelikler (görevler)
-ExtraFieldHasWrongValue=Attribute %s has a wrong value.
+ExtraFieldHasWrongValue=Öznitelik %s için hatalı değer.
 AlphaNumOnlyCharsAndNoSpace=boşluk olmadan yalnızca alfasayısal karakterler
 AlphaNumOnlyLowerCharsAndNoSpace=yalnızca boşluksuz olarak alfasayısal ve küçük harfli karakterler
 SendingMailSetup=E-posta gönderilerinin kurulumu
@@ -1218,7 +1222,7 @@ LDAPTCPConnectOK=LDAP sunucusu için TCP bağlantı başarılı (Sunucu =%s, Por
 LDAPTCPConnectKO=LDAP sunucusuna TCP bağlantısı başarısız (Server =%s başarısız, Port =% s)
 LDAPBindOK=Connect/Authentificate to LDAP server successful (Server=%s, Port=%s, Admin=%s, Password=%s)
 LDAPBindKO=LDAP sunucusuna bağlantı/kimlik doğrulama başarısız (Server=%s, Port=%s, Yönetici=%s, Parola=%s
-LDAPUnbindSuccessfull=Disconnect successful
+LDAPUnbindSuccessfull=Bağlantı keme başarılı
 LDAPUnbindFailed=Bağlantı kesme başarısız
 LDAPConnectToDNSuccessfull=Bağlantı au DN (%) ¿½ ussie ri s
 LDAPConnectToDNFailed=Bağlantı au DN (% s) ï ¿½ chouï ¿½ e
