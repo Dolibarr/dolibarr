@@ -90,7 +90,7 @@ print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
 
-$total = 0; $found = 0;
+$total = array(); $found = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
@@ -119,17 +119,19 @@ foreach ($accounts as $key=>$type)
 		print '</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
 		print '</td>';
 		print '</tr>';
 
-		$total += $solde;
+		$total[$acc->currency_code] += $solde;
 	}
 }
 if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
-print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
-
+foreach ($total as $key=>$solde)
+{
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+}
 
 //print '<tr><td colspan="5">&nbsp;</td></tr>';
 
@@ -144,7 +146,7 @@ print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
 
-$total = 0; $found = 0;
+$total = array(); $found = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
@@ -165,16 +167,19 @@ foreach ($accounts as $key=>$type)
 		print '<td>&nbsp;</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
 		print '</td>';
 		print '</tr>';
 
-		$total += $solde;
+		$total[$acc->currency_code] += $solde;
 	}
 }
 if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
-print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
+foreach ($total as $key=>$solde)
+{
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+}
 
 
 
@@ -193,7 +198,7 @@ print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
 
-$total = 0; $found = 0;
+$total = array(); $found = 0;
 $var=true;
 foreach ($accounts as $key=>$type)
 {
@@ -222,16 +227,19 @@ foreach ($accounts as $key=>$type)
 		print '</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
 		print '</td>';
 		print '</tr>';
 
-		$total += $solde;
+		$total[$acc->currency_code] += $solde;
 	}
 }
 if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
 // Total
-print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
+foreach ($total as $key=>$solde)
+{
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+}
 
 print "</table>";
 
