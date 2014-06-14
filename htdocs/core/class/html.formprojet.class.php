@@ -168,6 +168,7 @@ class FormProjets
 	 */
 	function select_element($table_element)
 	{
+		global $conf;
 
 		$projectkey="fk_projet";
 		switch ($table_element)
@@ -195,7 +196,7 @@ class FormProjets
 		if (!empty($this->societe->id)) {
 			$sql.= " AND fk_soc=".$this->societe->id;
 		}
-		$sql.= ' AND entity='.$conf->entity;
+		$sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
@@ -219,6 +220,10 @@ class FormProjets
 			return $sellist ;
 
 			$this->db->free($resql);
+		}else {
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this) . "::select_element " . $this->error, LOG_ERR);
+			return -1;
 		}
 	}
 
