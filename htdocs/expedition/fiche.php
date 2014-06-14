@@ -500,7 +500,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -863,7 +863,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')]))) 
+                if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_object($product->stock_warehouse[GETPOST('entrepot_id','int')]))) 
 				{
 	                // Quantity to send
 	                print '<td align="center">';
