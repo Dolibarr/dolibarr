@@ -19,7 +19,8 @@
 
 create table llx_c_currencies
 (
-  code_iso		varchar(3)  PRIMARY KEY,
+  rowid			int(11)		NOT NULL AUTO_INCREMENT,
+  code_iso		varchar(3)  NOT NULL,
   label			varchar(64) NOT NULL,
   unicode		varchar(32) DEFAULT NULL,
   active		tinyint		DEFAULT 1  NOT NULL
