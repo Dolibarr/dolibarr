@@ -192,6 +192,16 @@ if ($id > 0 || ! empty($ref))
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
+	   	// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		print dol_print_date($object->date_start,'day');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+		print dol_print_date($object->date_end,'day');
+		print '</td></tr>';
+
 		print "</table>";
 
 		print '</div>';

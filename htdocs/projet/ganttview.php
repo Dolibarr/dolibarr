@@ -137,6 +137,17 @@ if ($id > 0 || ! empty($ref))
     // Statut
     print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
+   	// Date start
+	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+	print dol_print_date($object->date_start,'day');
+	print '</td></tr>';
+
+	// Date end
+	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+	print dol_print_date($object->date_end,'day');
+	print '</td></tr>';
+
+
     print '</table>';
 
     print '</div>';
@@ -184,8 +195,8 @@ if (count($tasksarray)>0)
 
 	// Show Gant diagram from $taskarray using JSGantt
 
-	$dateformat=$langs->trans("FormatDateShort");				// Used by include ganttchart.php later
-	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.php later
+	$dateformat=$langs->trans("FormatDateShort");				// Used by include ganttchart.inc.php later
+	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
 	$array_contacts=array();
 	$tasks=array();
 	$project_dependencies=array();
@@ -244,7 +255,7 @@ if (count($tasksarray)>0)
 	{
 	    //var_dump($_SESSION);
 		print '<div id="tabs" class="ganttcontainer" style="border: 1px solid #ACACAC;">'."\n";
-		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.php';
+		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
 	}
 	else
