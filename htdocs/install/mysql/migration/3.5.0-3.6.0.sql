@@ -1204,4 +1204,4 @@ ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, c
 
 -- Add rowid on llx_c_currencies
 ALTER TABLE llx_c_currencies DROP PRIMARY KEY;
-ALTER TABLE llx_c_currencies ADD rowid INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
+ALTER TABLE llx_c_currencies ADD rowid integer AUTO_INCREMENT PRIMARY KEY FIRST;
