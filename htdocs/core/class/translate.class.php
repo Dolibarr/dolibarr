@@ -748,7 +748,7 @@ class Translate
 
 		if (! empty($currency_code) && isset($this->cache_currencies[$currency_code])) return 0;    // Value already into cache
 
-		$sql = "SELECT rowid, code_iso, label, unicode";
+		$sql = "SELECT code_iso, label, unicode";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
 		$sql.= " WHERE active = 1";
 		if (! empty($currency_code)) $sql.=" AND code_iso = '".$currency_code."'";
@@ -769,7 +769,6 @@ class Translate
 				$obj = $db->fetch_object($resql);
 
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-                $this->cache_currencies[$obj->code_iso]['rowid'] = $obj->rowid;
 				$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$this->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
 				$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode($obj->unicode, true);
 				$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
