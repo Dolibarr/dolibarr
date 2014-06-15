@@ -19,7 +19,7 @@
 
 create table llx_c_currencies
 (
-  rowid			int(11)		NOT NULL AUTO_INCREMENT,
+  rowid			integer		AUTO_INCREMENT PRIMARY KEY,
   code_iso		varchar(3)  NOT NULL,
   label			varchar(64) NOT NULL,
   unicode		varchar(32) DEFAULT NULL,
