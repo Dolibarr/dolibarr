@@ -1060,8 +1060,6 @@ class FactureFournisseur extends CommonInvoice
      *	par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,idprod)
      *	et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue).
      *
-     *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
-     *
      *	@param    	string	$desc            	Description de la ligne
      *	@param    	double	$pu              	Prix unitaire (HT ou TTC selon price_base_type, > 0 even for credit note)
      *	@param    	double	$txtva           	Taux de tva force, sinon -1
@@ -1079,6 +1077,8 @@ class FactureFournisseur extends CommonInvoice
      *  @param      int		$rang            	Position of line
      *  @param		int		$notrigger			Disable triggers
      *	@return    	int             			>0 if OK, <0 if KO
+     *
+     *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      */
     function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false)
     {
