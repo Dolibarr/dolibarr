@@ -17,7 +17,7 @@
 
 /**
  *       \file       htdocs/boutique/osc_master.inc.php
- *       \brief      Fichier de preparation de l'environnement Dolibarr pour OSCommerce
+ *       \brief      File of preparation of the environment Dolibarr for OSCommerce
  */
 
 
