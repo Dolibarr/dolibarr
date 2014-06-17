@@ -940,8 +940,8 @@ class Product extends CommonObject
 	/**
 	 *	Delete Translation
 	 *
-	 *	@param $langstodelete		string	code langue to delete
-	 *	@return						int		<0 if KO, >0 if OK
+	 *	@param 		string	$langstodelete code langue to delete
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function delMultiLangs($langstodelete)
 	{
