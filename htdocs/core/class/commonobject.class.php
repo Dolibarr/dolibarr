@@ -1093,7 +1093,7 @@ abstract class CommonObject
     /**
      *  Change the currency
      *
-     *  @param		int		$id		Id of new currency
+     *  @param		int		$currency_code		Id of new currency
      *  @return		int				>0 if OK, <0 if KO
      */
     function setCurrency($currency_code)
