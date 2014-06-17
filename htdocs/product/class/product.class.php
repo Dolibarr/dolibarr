@@ -940,14 +940,14 @@ class Product extends CommonObject
 	/**
 	 *	Update ou cree les traductions des infos produits
 	 *
-	 *	$langs_to_delete    string	code langue to delete
-	 *	@return				int		<0 if KO, >0 if OK
+	 *	@param $langstodelete		string	code langue to delete
+	 *	@return						int		<0 if KO, >0 if OK
 	 */
-	function delMultiLangs($langs_to_delete)
+	function delMultiLangs($langstodelete)
 	{
 	
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
-		$sql.= " WHERE fk_product=".$this->id." AND lang='".$langs_to_delete."'";
+		$sql.= " WHERE fk_product=".$this->id." AND lang='".$langstodelete."'";
 	
 		dol_syslog(get_class($this).'::delMultiLangs sql='.$sql);
 		if (! $this->db->query($sql))
