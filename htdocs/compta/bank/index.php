@@ -133,12 +133,13 @@ foreach ($total as $key=>$solde)
 	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
-//print '<tr><td colspan="5">&nbsp;</td></tr>';
-
+print '</table>';
+print '<br>';
 
 /*
  * Comptes caisse/liquide (courant = 2)
  */
+print '<table class="liste" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CashAccounts").'</td><td width="20%">&nbsp;</td>';
 print '<td align="left">&nbsp;</td>';
 print '<td align="left" width="100">&nbsp;</td>';
@@ -181,19 +182,18 @@ foreach ($total as $key=>$solde)
 	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
 }
 
-
-
-//print '<tr><td colspan="5">&nbsp;</td></tr>';
-
+print '</table>';
+print '<br>';
 
 /*
  * Comptes placements (courant = 0)
  */
+print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("SavingAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("Numero").'</td>';
-print '<td align="center" width="100">'.$langs->trans("TransactionsToConciliate").'</td>';
+print '<td align="center">'.$langs->trans("TransactionsToConciliate").'</td>';
 print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
