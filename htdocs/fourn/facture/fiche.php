@@ -1167,7 +1167,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$fac_ori->ref).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:'').'" type="text"></td>';
     print '</tr>';
 
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
@@ -1254,7 +1254,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:$fac_ori->libelle).'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
