@@ -20,6 +20,7 @@ Fix: [ bug #1454 ] Mention de bas de page erroné
 Fix: Do not display dictionnay for non activated module 
 Fix: Link element from element project pages
 Fix: [ bug #1349 ] AJAX contact selector does not work fine in Project card
+Fix: [ bug #1452 ] variable used but not defined
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
