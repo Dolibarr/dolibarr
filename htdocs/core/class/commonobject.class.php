@@ -1094,35 +1094,31 @@ abstract class CommonObject
      *  Change the currency
      *
      *  @param		int		$currency_code		Id of new currency
-     *  @return		int				>0 if OK, <0 if KO
+     *  @return		int				1 if OK, 0 if KO
      */
     function setCurrency($currency_code)
     {
-        dol_syslog(get_class($this).'::setCurrency('.$currency_code.')');
-        if ($this->statut >= 0 || $this->element == 'societe')
+        if (! $this->table_element)
         {
+            dol_syslog(get_class($this)."::setCurrency was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        dol_syslog(get_class($this).'::setCurrency('.$code_currency.')');
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET fk_currency = '".$currency_code."'";
-            $sql.= " WHERE rowid=".$this->id;
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET fk_currency = '".$currency_code."'";
+        $sql.= " WHERE rowid=".$this->id;
 
-            if ($this->db->query($sql))
-            {
-                $this->currency_code = $currency_code;
-                return 1;
-            }
-            else
-            {
-                dol_syslog(get_class($this).'::setCurrency Error '.$sql.' - '.$this->db->error());
-                $this->error=$this->db->error();
-                return -1;
-            }
+        if ($this->db->query($sql))
+        {
+            $this->currency_code = $currency_code;
+            return 1;
         }
         else
         {
-            dol_syslog(get_class($this).'::setCurrency, status of the object is incompatible');
-            $this->error='Status of the object is incompatible '.$this->statut;
-            return -2;
+            dol_syslog(get_class($this).'::setCurrency Error '.$sql.' - '.$this->db->error());
+            $this->error=$this->db->error();
+            return 0;
         }
     }
 

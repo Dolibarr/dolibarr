@@ -60,6 +60,7 @@ class Commande extends CommonOrder
     var $brouillon;
     var $cond_reglement_id;
     var $cond_reglement_code;
+    var $currency_code;
     var $mode_reglement_id;
     var $mode_reglement_code;
     var $availability_id;
@@ -648,7 +649,7 @@ class Commande extends CommonOrder
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
         $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
-        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
+        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_currency, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
@@ -663,6 +664,7 @@ class Commande extends CommonOrder
         $sql.= ", '".$this->modelpdf."'";
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
+        $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
         $sql.= ", ".($this->availability_id>0?"'".$this->availability_id."'":"null");
         $sql.= ", ".($this->demand_reason_id>0?"'".$this->demand_reason_id."'":"null");
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
@@ -1314,6 +1316,7 @@ class Commande extends CommonOrder
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
+        $sql.= ', c.fk_currency as currency_code';
         $sql.= ', ca.code as availability_code';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
@@ -1367,6 +1370,7 @@ class Commande extends CommonOrder
                 $this->cond_reglement_code	= $obj->cond_reglement_code;
                 $this->cond_reglement		= $obj->cond_reglement_libelle;
                 $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
+                $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;
                 $this->demand_reason_id		= $obj->fk_input_reason;
