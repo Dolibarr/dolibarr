@@ -106,6 +106,13 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
+// currency
+if ($action == 'setcurrency' && $user->rights->societe->creer)
+{
+    $object->fetch($id);
+    $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
+    if ($result < 0) dol_print_error($db,$object->error);
+}
 // assujetissement a la TVA
 if ($action == 'setassujtva' && $user->rights->societe->creer)
 {
@@ -356,6 +363,25 @@ if ($id > 0)
 	}
 	print "</td>";
 	print '</tr>';
+
+    // Currency accepted
+    print '<tr><td class="nowrap">';
+    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print $langs->trans('Currency');
+    print '<td>';
+    if (($action != 'editcurrency') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcurrency&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetCurrency'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editcurrency')
+    {
+        $form->form_select_currency($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->currency_code, 'currency_code');
+    }
+    else
+    {
+        $form->form_select_currency($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->currency_code, 'none');
+    }
+    print "</td>";
+    print '</tr>';
 
 	// Relative discounts (Discounts-Drawbacks-Rebates)
 	print '<tr><td class="nowrap">';

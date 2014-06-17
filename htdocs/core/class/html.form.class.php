@@ -3293,6 +3293,41 @@ class Form
 
 
     /**
+     *    Display form to select currency
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id currency
+     *    @param    string	$htmlname    Name of select html field
+     *    @return	void
+     */
+    function form_select_currency($page, $selected='', $htmlname='currency_code')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setcurrency">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_currency($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                print $selected;
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
+
+    /**
      *	Load into the cache vat rates of a country
      *
      *	@param	string	$country_code		Country code

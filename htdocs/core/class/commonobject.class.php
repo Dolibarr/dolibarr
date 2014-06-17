@@ -1091,6 +1091,43 @@ abstract class CommonObject
 
 
     /**
+     *  Change the currency
+     *
+     *  @param		int		$id		Id of new currency
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setCurrency($currency_code)
+    {
+        dol_syslog(get_class($this).'::setCurrency('.$currency_code.')');
+        if ($this->statut >= 0 || $this->element == 'societe')
+        {
+
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+            $sql.= " SET fk_currency = '".$currency_code."'";
+            $sql.= " WHERE rowid=".$this->id;
+
+            if ($this->db->query($sql))
+            {
+                $this->currency_code = $currency_code;
+                return 1;
+            }
+            else
+            {
+                dol_syslog(get_class($this).'::setCurrency Error '.$sql.' - '.$this->db->error());
+                $this->error=$this->db->error();
+                return -1;
+            }
+        }
+        else
+        {
+            dol_syslog(get_class($this).'::setCurrency, status of the object is incompatible');
+            $this->error='Status of the object is incompatible '.$this->statut;
+            return -2;
+        }
+    }
+
+
+    /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
      *

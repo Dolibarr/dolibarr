@@ -210,6 +210,7 @@ class Societe extends CommonObject
     var $remise_percent;
     var $mode_reglement_id;
     var $cond_reglement_id;
+    var $currency_code;
     var $mode_reglement_supplier_id;
     var $cond_reglement_supplier_id;
 	var $fk_prospectlevel;
@@ -408,7 +409,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, import_key)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_currency, import_key)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->canvas."'":"null");
@@ -416,6 +417,7 @@ class Societe extends CommonObject
             $sql.= ", ".(! empty($this->ref_int) ? "'".$this->ref_int."'":"null");
             $sql.= ", ".(! empty($this->ref_ext) ? "'".$this->ref_ext."'":"null");
             $sql.= ", 0";
+            $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
             $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
 
             dol_syslog(get_class($this)."::create sql=".$sql);
@@ -932,7 +934,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_effectif as effectif_id';
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-        $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
+        $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj, s.fk_currency as currency_code';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
@@ -1052,6 +1054,7 @@ class Societe extends CommonObject
                 $this->remise_percent		= $obj->remise_client;
                 $this->mode_reglement_id 	= $obj->mode_reglement;
                 $this->cond_reglement_id 	= $obj->cond_reglement;
+                $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
                 $this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
                 $this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
 
