@@ -15,7 +15,7 @@ fi
 # To detect
 if [ "x$1" = "xlist" ]
 then
-    for file in `find . -type f`
+    for file in `find . -type f -name *.lang`
     do
         if [ `sort "$file" | uniq -d | wc -l` -gt 0 ]
         then
@@ -27,7 +27,7 @@ fi
 # To fix
 if [ "x$1" = "xfix" ]
 then
-    for file in `find . -type f`
+    for file in `find . -type f -name *.lang`
     do
     	awk -i inplace ' !x[$0]++' "$file"
     done;

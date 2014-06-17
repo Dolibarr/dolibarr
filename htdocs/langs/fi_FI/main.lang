@@ -551,6 +551,7 @@ MailSentBy=Sähköposti lähetetään
 TextUsedInTheMessageBody=Sähköposti elin
 SendAcknowledgementByMail=Lähetä Ack. sähköpostitse
 NoEMail=Ei sähköpostia
+NoMobilePhone=No mobile phone
 Owner=Omistaja
 DetectedVersion=Tunnistettu versio
 FollowingConstantsWillBeSubstituted=Seuraavat vakiot voidaan korvata ja vastaava arvo.

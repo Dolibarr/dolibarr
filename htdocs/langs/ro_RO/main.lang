@@ -551,6 +551,7 @@ MailSentBy=E-mail trimis de
 TextUsedInTheMessageBody=Continut Email
 SendAcknowledgementByMail=Trimite A.R. prin e-mail
 NoEMail=Nici un email
+NoMobilePhone=No mobile phone
 Owner=Proprietar
 DetectedVersion=Versiunea Detectată
 FollowingConstantsWillBeSubstituted=Următoarele constante vor fi înlocuite cu valoarea corespunzătoare.

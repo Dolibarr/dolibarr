@@ -1198,4 +1198,6 @@ create table llx_c_type_resource
 
 ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, code);
 
-ALTER TABLE llx_mailing_cibles ADD INDEX idx_mailing_cibles_fk_mailing_email (fk_mailing,email);
+-- Fix: Missing instruction not correctly done into 3.5
+-- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_mode_reglement DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_cond_reglement DROP NOT NULL;

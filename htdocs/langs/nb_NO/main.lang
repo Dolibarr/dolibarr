@@ -551,6 +551,7 @@ MailSentBy=E-post sendt av
 TextUsedInTheMessageBody=E-mail meldingstekst
 SendAcknowledgementByMail=Send bekreftelse med e-post
 NoEMail=Ingen e-post
+NoMobilePhone=No mobile phone
 Owner=Eier
 DetectedVersion=Oppdager versjon
 FollowingConstantsWillBeSubstituted=Følgende konstanter vil bli erstattet med korresponderende verdi.

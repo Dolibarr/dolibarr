@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=بروتوكول نقل الملفات العملاء الإعداد وحدة
-NewFTPClient=جديد الإعداد بروتوكول نقل الملفات الصدد
-FTPArea=بروتوكول نقل الملفات المنطقة
-FTPAreaDesc=هذه الشاشة تظهر لك المحتوى من وجهة نظر خادم بروتوكول نقل الملفات
-SetupOfFTPClientModuleNotComplete=إعداد وحدة من بروتوكول نقل الملفات العملاء ويبدو أن عدم اكتمال
-FTPFeatureNotSupportedByYourPHP=الخاص بي لا يدعم وظائف بروتوكول نقل الملفات
-FailedToConnectToFTPServer=فشل الاتصال بخادم بروتوكول نقل الملفات (%s الخادم ، %s منفذ)
-FailedToConnectToFTPServerWithCredentials=فشل في تسجيل الدخول إلى خادم بروتوكول نقل الملفات مع تعريف الدخول / كلمة المرور
-FTPFailedToRemoveFile=فشل لإزالة <b>%s</b> الملف.
-FTPFailedToRemoveDir=فشل لإزالة <b>%s</b> الدليل (راجع الأذونات وهذا الدليل فارغ).
-# FTPPassiveMode=Passive mode
+FTPClientSetup=راه اندازی ماژول FTP کارفرما
+NewFTPClient=جدید راه اندازی اتصال به FTP
+FTPArea=منطقه FTP
+FTPAreaDesc=این صفحه نمایش نشان می دهد محتوای شما را از مشخصات سرور FTP
+SetupOfFTPClientModuleNotComplete=راه اندازی ماژول سرویس گیرنده FTP به نظر می رسد کامل نیست
+FTPFeatureNotSupportedByYourPHP=PHP شما توابع FTP پشتیبانی نمی کند
+FailedToConnectToFTPServer=برای اتصال به سرور FTP با شکست مواجه شد (%s سرور، پورت٪ بازدید کنندگان)
+FailedToConnectToFTPServerWithCredentials=برای ورود به سایت به سرور FTP با ورود به سیستم / رمز عبور تعریف شده شکست خورده
+FTPFailedToRemoveFile=حذف <b>فایل%s</b> شکست خورد.
+FTPFailedToRemoveDir=برای حذف <b>دایرکتوری%s</b> شکست خورد (مجوز ورود و پوشه خالی است).
+FTPPassiveMode=حالت منفعل

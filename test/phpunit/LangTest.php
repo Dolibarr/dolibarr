@@ -154,11 +154,11 @@ class LangTest extends PHPUnit_Framework_TestCase
 
 			$result=$tmplangs->trans("SeparatorDecimal");
 			print __METHOD__." SeparatorDecimal=".$result."\n";
-			$this->assertContains($result,array('.',',','/',' ','','None'));
+			$this->assertContains($result,array('.',',','/',' ','','None'), 'Error for code '.$code);
 
 			$result=$tmplangs->trans("SeparatorThousand");
 			print __METHOD__." SeparatorThousand=".$result."\n";
-			$this->assertContains($result,array('.',',','/',' ','','None','Space'));
+			$this->assertContains($result, array('.',',','/',' ','','None','Space'), 'Error for code '.$code);
 
 			// Test java string contains only d,M,y,/,-,. and not m,...
 			$result=$tmplangs->trans("FormatDateShortJava");

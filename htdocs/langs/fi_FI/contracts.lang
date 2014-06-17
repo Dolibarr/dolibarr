@@ -38,7 +38,7 @@ ConfirmCloseService=Oletko varma, että haluat sulkea tämän palvelun <b>päiv�
 ValidateAContract=Vahvista sopimus
 ActivateService=Ota palvelu
 ConfirmActivateService=Oletko varma, että haluat aktivoida tämän palvelun <b>päivämäärä %s?</b>
-# RefContract=Contract reference
+RefContract=Contract reference
 DateContract=Sopimuspäivä
 DateServiceActivate=Tiedoksiantopäivä aktivointi
 DateServiceUnactivate=Tiedoksiantopäivä unactivation
@@ -85,10 +85,12 @@ PaymentRenewContractId=Uudista sopimus linja (numero %s)
 ExpiredSince=Vanhenemispäivä
 RelatedContracts=Liittyvien sopimusten
 NoExpiredServices=Ei päättynyt aktiiviset palvelut
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Myyntiedustajaasi allekirjoittamalla sopimuksen

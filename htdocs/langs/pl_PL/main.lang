@@ -551,6 +551,7 @@ MailSentBy=E-mail został wysłany przez
 TextUsedInTheMessageBody=Email ciała
 SendAcknowledgementByMail=Wyślij Ack. przez e-mail
 NoEMail=Brak e-mail
+NoMobilePhone=No mobile phone
 Owner=Właściciel
 DetectedVersion=Wykryto wersji
 FollowingConstantsWillBeSubstituted=Po stałych będzie zastąpić o odpowiedniej wartości.

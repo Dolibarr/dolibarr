@@ -38,7 +38,7 @@ ConfirmCloseService=あなたは日付の<b>%s</b>でこのサービスを閉じ
 ValidateAContract=契約を検証
 ActivateService=サービスをアクティブに
 ConfirmActivateService=あなたは日付の<b>%s</b>でこのサービスをアクティブにしてもよろしいですか？
-# RefContract=Contract reference
+RefContract=Contract reference
 DateContract=契約日
 DateServiceActivate=サービスのアクティブ化の日付
 DateServiceUnactivate=サービスの非アクティブ化の日付
@@ -85,10 +85,12 @@ PaymentRenewContractId=契約回線（番号の%s）を​​更新
 ExpiredSince=有効期限の日付
 RelatedContracts=関連する契約
 NoExpiredServices=アクティブなサービスの期限が切れない
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=営業担当者の署名の契約

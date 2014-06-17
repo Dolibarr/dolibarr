@@ -79,6 +79,7 @@ MailtoEMail=Hiper sąsaja e-paštui
 ActivateCheckRead=Leisti naudotis "Unsubcribe" sąsaja
 ActivateCheckReadKey=Naudoti raktą URL naudojimo užšifravimui "Skaityti siuntą" ir "Pašalinti" funkcijai
 EMailSentToNRecipients=E-laiškas išsiųstas %s gavėjams.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=Dokumentas, naudojantis sąskaitos-faktūros šabloną pagal nutylėjimą, bus sukurtas ir pridedamas prie kiekvieno e-laiško.
 MailTopicSendRemindUnpaidInvoices=Sąskaitos-faktūros %s (%s) priminimas
 SendRemind=Siųsti priminimą e-paštu

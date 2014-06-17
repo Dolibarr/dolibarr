@@ -500,7 +500,7 @@ print "</tr>\n";
 clearstatcache();
 
 $var=true;
-foreach ($dirmodels as $reldir)
+foreach ($def as $reldir)
 {
     foreach (array('','/doc') as $valdir)
     {

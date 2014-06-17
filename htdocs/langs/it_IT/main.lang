@@ -551,6 +551,7 @@ MailSentBy=Email inviate da
 TextUsedInTheMessageBody=Testo dell'email
 SendAcknowledgementByMail=Invia ricevuta via email
 NoEMail=Nessuna email
+NoMobilePhone=No mobile phone
 Owner=Proprietario
 DetectedVersion=Versione riconosciuta
 FollowingConstantsWillBeSubstituted=Le seguenti costanti saranno sostitute con i valori corrispondenti

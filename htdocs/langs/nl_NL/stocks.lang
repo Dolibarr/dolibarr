@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Lijst van alle open leveranciersbestellingen
 Replenishments=Bevoorradingen
 NbOfProductBeforePeriod=Aantal op voorraad van product %s voor de gekozen periode (<%s)
 NbOfProductAfterPeriod=Aantal op voorraad van product %s na de gekozen periode (<%s)
+MassMovement=Mass movement
 MassStockMovement=Globale voorraadbeweging
 SelectProductInAndOutWareHouse=Kies een product, een aantal, een van-magazijn, een naar-magazijn, en klik "%s".  Als alle nodige bewegingen zijn aangeduid, klik op "%s".
 RecordMovement=Kaart overbrengen

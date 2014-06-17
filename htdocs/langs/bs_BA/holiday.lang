@@ -8,7 +8,6 @@ NotActiveModCP=Morate omogućiti modul godišnji odmori da bi vidjeli ovu strani
 NotConfigModCP=Morate konfigurisati modul godišnji odmori da bi vidjeli ovu stranicu. Da bi ste uradili ovo, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">kliknite ovdje<a>.
 NoCPforUser=Nema te zahtjeva za godišnje odmore.
 AddCP=Prijavi se za godišnji odmor
-CPErrorSQL=Desila se SQL greška:
 Employe=Zaposlenik
 DateDebCP=Datum početka
 DateFinCP=Datum završetka

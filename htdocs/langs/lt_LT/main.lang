@@ -551,6 +551,7 @@ MailSentBy=E-Laišką atsiuntė
 TextUsedInTheMessageBody=E-laiško pagrindinė dalis
 SendAcknowledgementByMail=Siųsti patvirtinimą e-paštu
 NoEMail=E-laiškų nėra
+NoMobilePhone=No mobile phone
 Owner=Savininkas
 DetectedVersion=Aptikta versija
 FollowingConstantsWillBeSubstituted=Šios konstantos bus pakeistos atitinkamomis reikšmėmis

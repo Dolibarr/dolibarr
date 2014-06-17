@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Ovo je lista svih otvorenih narudžbi dobavljača
 Replenishments=Nadopune
 NbOfProductBeforePeriod=Količina proizvoda %s u zalihi prije odabranog perioda (%s)
 NbOfProductAfterPeriod=Količina proizvoda %s u zalihi poslije odabranog perioda (> %s)
+MassMovement=Mass movement
 MassStockMovement=Masovno kretanje zalihe
 SelectProductInAndOutWareHouse=Odaberite proizvod, kolilinu, izvordno skladište i ciljano skladište. zatim kliknite "%s". Kada je ovo završeno za sva potrebna kretanja, kliknite "%s".
 RecordMovement=Zapiši transfer

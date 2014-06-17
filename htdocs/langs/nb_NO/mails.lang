@@ -79,6 +79,7 @@ MailtoEMail=Link til e-post
 ActivateCheckRead=Tillate å bruke "Avmelding" linken
 ActivateCheckReadKey=Key bruk for å kryptere URL bruk for "Les kvittering" og "melder"-funksjonen
 EMailSentToNRecipients=E-post sendt til %s mottakere.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=Et dokument med standard faktura dokumentmal vil bli opprettet og sendt med hver e-post.
 MailTopicSendRemindUnpaidInvoices=Påminnelse om faktura %s (%s)
 SendRemind=Send påminnelse som e-post

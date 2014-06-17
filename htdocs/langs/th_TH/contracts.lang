@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=List of Services to expire in %s days
 ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
 ListOfServicesToExpire=List of Services to expire
 NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract

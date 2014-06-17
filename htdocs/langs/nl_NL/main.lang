@@ -551,6 +551,7 @@ MailSentBy=E-mail verzonden door
 TextUsedInTheMessageBody=E-mailinhoud
 SendAcknowledgementByMail=Stuur Bevestiging per e-mail
 NoEMail=Geen e-mail
+NoMobilePhone=No mobile phone
 Owner=Eigenaar
 DetectedVersion=Gedetecteerd versie
 FollowingConstantsWillBeSubstituted=De volgende constanten worden vervangen met de overeenkomstige waarde.

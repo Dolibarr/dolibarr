@@ -65,6 +65,7 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
 
 TODO
 - New: Predefined product and free product use same form.
@@ -105,6 +106,15 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 
 
+
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown
+     properly in module configuration
+Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the 
+     supplier order card
+Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
+     limit date for payment
+
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
@@ -133,6 +143,13 @@ Fix: [ bug #1393 ] PHP Warning when creating a supplier invoice.
 Fix: [ bug #1399 ] [pgsql] Silent warning when setting a propal as "facturée" in propal.php
 Fix: When number reach 9999 with default numbering module, next number
      will be 10000 instead of 0000 and error.
+Fix: element page on project give wrong href link.
+Fix: [ bug #1397 ] Filter by supplier orders with status Draft does not filter.
+Fix: [ bug #1388 ] Wrong date when invoicing several orders.
+Fix: [ bug #1411 ] Unable to set an expedition note if invoices module is not enabled.
+Fix: [ bug #1407 ] Rouget pdf overlapped when using tracking number and public notes.
+Fix: [ bug #1405 ] Rouget PDF expedition incorrect when two expeditions under the same commande
+Fix: [ bug #1434 ] Muscadet supplier order document model linked objects overlap the text
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
@@ -220,6 +237,7 @@ Fix: [ bug #1306 ] Fatal error when adding an external calendar.
 New: Added es_CL language
 Fix: Margin tabs bad data show
 Fix: [ bug #1318 ] Problem with enter key when adding an existing product to a customer invoice.
+Fix: [ bug #1410 ] Add customer order line asks for required Unit Price but doesn't interrupt the creation of the line
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:

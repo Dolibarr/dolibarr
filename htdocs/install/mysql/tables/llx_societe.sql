@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 --
@@ -22,11 +22,11 @@
 create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
-  nom                      varchar(60),                                 -- company reference name
-  entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
+  nom                      varchar(60),                                -- company reference name
+  entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
 
-  ref_ext                  varchar(128),                                 -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(60),                                 -- reference into an internal system (used by dolibarr)
+  ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)
+  ref_int                  varchar(60),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,

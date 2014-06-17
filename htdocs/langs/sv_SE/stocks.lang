@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Detta är en lista över alla öppna leverantörsorder
 Replenishments=Påfyllningar
 NbOfProductBeforePeriod=Antal av produkt %s i lager före vald period (< %s)
 NbOfProductAfterPeriod=Antal av produkt %s i lager efter vald period (> %s)
+MassMovement=Mass movement
 MassStockMovement=Mass stock movement
 SelectProductInAndOutWareHouse=Välj produkt, antal, ursprungslager och mållager och klicka "%s". När det är gjort för alla lageröverföringar klicka på "%s".
 RecordMovement=Spela in överföring

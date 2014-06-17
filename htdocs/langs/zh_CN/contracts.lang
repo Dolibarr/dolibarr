@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=在 %s 天内将期满的服务列表
 ListOfServicesToExpireWithDurationNeg=服务超过 %s 天过期列表
 ListOfServicesToExpire=服务到期列表
 NoteListOfYourExpiredServices=此列表只包含你作为一个销售代表与第三方的服务合同 。
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=销售代表签订合同

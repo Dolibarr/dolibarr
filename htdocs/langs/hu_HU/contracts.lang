@@ -38,7 +38,7 @@ ConfirmCloseService=Biztos le akarja zárni a <b>%s</b> dátummal ellátott szol
 ValidateAContract=Szerződés hitelesítése
 ActivateService=Aktív szolgáltatás
 ConfirmActivateService=Biztos aktiválni akarja a <b>%s</b> dátummal ellátott szolgáltatást?
-# RefContract=Contract reference
+RefContract=Contract reference
 DateContract=Szerződés dátuma
 DateServiceActivate=Szolgáltatás aktiválásának dátuma
 DateServiceUnactivate=Szolgáltatás deaktiválásának dátuma
@@ -85,10 +85,12 @@ PaymentRenewContractId=Szerződés sor megújítása (%s)
 ExpiredSince=Lejárati dátum
 RelatedContracts=Csatlakozó szerződések
 NoExpiredServices=Nincs lejárt aktív szolgáltatások
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Értékesítési képviselő a szerződés aláírásakor
