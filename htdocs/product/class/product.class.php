@@ -860,7 +860,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	Update ou cree les traductions des infos produits
+	 *	Update or create transltation for product
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
@@ -938,7 +938,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	Update ou cree les traductions des infos produits
+	 *	Delete Translation
 	 *
 	 *	@param $langstodelete		string	code langue to delete
 	 *	@return						int		<0 if KO, >0 if OK
