@@ -71,9 +71,10 @@ class box_task extends ModeleBoxes {
 		if ($user->rights->projet->lire)
 		{
 			
-			$sql = "SELECT pt.fk_statut, count(pt.rowid) as nb, sum(pt.total_ht) as Mnttot, sum(pt.planned_workload) as Dureetot";
-			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt";
+			$sql = "SELECT pt.fk_statut, count(pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
+			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
 			$sql.= " WHERE DATE_FORMAT(pt.datec,'%Y') = ".date("Y")." ";
+			$sql.= " AND pt.rowid = ptt.fk_task";
 			$sql.= " GROUP BY pt.fk_statut ";
 			$sql.= " ORDER BY pt.fk_statut DESC";
 			$sql.= $db->plimit($max, 0);
@@ -98,10 +99,10 @@ class box_task extends ModeleBoxes {
 					'url' => DOL_URL_ROOT."/projet/tasks/index.php?leftmenu=projects&viewstatut=".$objp->fk_statut
 					);
 					$totalnb += $objp->nb;
-					$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->Dureetot,'all',25200,5));
-					$totalDuree += $objp->Dureetot;
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format($objp->Mnttot, 0, ',', ' ')."&nbsp;".$langs->trans("Currency".$conf->currency));
-					$totalMnt += $objp->Mnttot;
+					$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->plannedtot,'all',25200,5));
+					$totalplannedtot += $objp->plannedtot;
+					$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
+					$totaldurationtot += $objp->durationtot;
 					
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
 
@@ -114,8 +115,8 @@ class box_task extends ModeleBoxes {
 		// Add the sum à the bottom of the boxes
 		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'colspan=2 align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalDuree,'all',25200,5));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalMnt, 0, ',', ' ')."&nbsp;".$langs->trans("Currency".$conf->currency));
+		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
+		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
 		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");	
 		
 	}
