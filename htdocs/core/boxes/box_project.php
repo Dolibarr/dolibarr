@@ -66,21 +66,20 @@ class box_projet extends ModeleBoxes {
 		
 
 
-		$textHead = $langs->trans("Projet")."&nbsp;".date("Y");
+		$textHead = $langs->trans("Projet");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire)
 		{
 			
-			$sql = "SELECT p.fk_statut, count(p.rowid) as nb";
+			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."projet as p";
 			$sql.= ")";
 			$sql.= " WHERE p.fk_soc = s.rowid";
 			$sql.= " AND s.entity = ".$conf->entity;
-			$sql.= " AND DATE_FORMAT(p.datec,'%Y') = ".date("Y")." ";
-			$sql.= " GROUP BY p.fk_statut ";
-			$sql.= " ORDER BY p.fk_statut DESC";
+			$sql.= " AND p.fk_statut = 1"; // Seulement les projets ouverts
+			$sql.= " ORDER BY p.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
@@ -94,38 +93,36 @@ class box_projet extends ModeleBoxes {
 					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"','logo' => 'object_projectpub');
 
 					$objp = $db->fetch_object($result);
+					$projectstatic->fetch($objp->rowid);
+					
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-					'text' =>$langs->trans("Project")."&nbsp;".$projectstatic->LibStatut($objp->fk_statut,0)
+					'text' =>$projectstatic->getNomUrl(1)
 					);
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="right"',
-					'text' => $objp->nb."&nbsp;".$langs->trans("Projects"),
-					'url' => DOL_URL_ROOT."/projet/liste.php?mainmenu=project&viewstatut=".$objp->fk_statut
+					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
+					'text' => $objp->title
 					);
-					$totalnb += $objp->nb;
 					
-					$sql = "SELECT sum(pt.total_ht) as Mnttot, count(*) as nb";
+					$sql = "SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
 					$sql.= " WHERE pt.fk_projet = p.rowid";
 					$sql.= " AND p.entity = ".$conf->entity;
-					$sql.= " AND (DATE_FORMAT(p.datec,'%Y') = ".date("Y").")";
-					$sql.= " AND p.fk_statut=".$objp->fk_statut;
 					$resultTask = $db->query($sql);
 					if ($resultTask)
 					{
 						$objTask = $db->fetch_object($resultTask);
 						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format($objTask->nb , 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-						$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format($objTask->Mnttot, 0, ',', ' ')."&nbsp;".$langs->trans("Currency".$conf->currency));
-
-						$totalMnt += $objTask->Mnttot;
+						if ($objTask->nb  > 0 )
+							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb) , 0, ',', ' ')." %&nbsp;".$langs->trans("Progress"));
+						else
+							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
 					}
 					else
 					{
 						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format(0 , 0, ',', ' '));
-						$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => dol_trunc(number_format(0 , 0, ',', ' '),40)."&nbsp;".$langs->trans("Currency".$conf->currency));
+						$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 					}
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"', 'text' => $projectstatic->LibStatut($objp->fk_statut,3));
 
 					$i++;
 				}
@@ -135,9 +132,8 @@ class box_projet extends ModeleBoxes {
 
 		// Add the sum à the bottom of the boxes
 		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'colspan=2 align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
+		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalMnt, 0, ',', ' ')."&nbsp;".$langs->trans("Currency".$conf->currency));
 		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");	
 		
 	}
