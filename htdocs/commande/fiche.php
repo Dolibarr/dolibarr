@@ -464,13 +464,15 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 		}
 	}
 }
+
 // currency
-else if ($action == 'setcurrency' && $user->rights->societe->creer)
+else if ($action == 'setcurrency' && $user->rights->commande->creer)
 {
     $object->fetch($id);
     $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
+
 else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
 	$result = $object->set_remise($user, GETPOST('remise_percent'));
 }
