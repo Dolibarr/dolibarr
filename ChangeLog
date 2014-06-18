@@ -66,6 +66,7 @@ For users:
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
 - Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
+- New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
 
 TODO
 - New: Predefined product and free product use same form.
