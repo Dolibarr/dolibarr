@@ -195,7 +195,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 	else
 	{
 		$langs->load("errors");
-		setEventMessage($langs->trans($object->error), 'errors');
+		if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
+		else setEventMessage($langs->trans($object->error), 'errors');
 	}
 }
 

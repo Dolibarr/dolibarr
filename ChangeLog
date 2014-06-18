@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: [ bug #1445 ] html fix : missing </tr>
 Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown
      properly in module configuration
 Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the 
@@ -11,6 +12,13 @@ Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice l
      limit date for payment
 Fix: Filter on status was not visible when selected from url.
 Fix: Filtering on status was last when asking to sort.
+Fix: [ bug #1432 ] Trigger SHIPPING_CREATE ignores interception on error.
+Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and LINEORDER_INSERT ignore interception on error.
+Fix: [ bug #1450 ] Several Customer order's triggers do not report the error from the trigger handler.
+Fix: [ bug #1451 ] Interrupted order clone through trigger, loads nonexistent order.
+Fix: [ bug #1454 ] Mention de bas de page erroné
+Fix: Do not display dictionnay for non activated module 
+Fix: Link element from element project pages
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
