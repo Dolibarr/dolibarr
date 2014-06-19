@@ -40,7 +40,7 @@ if (! $result)
 {
 	dol_print_error('',"erreur de connexion ");
 } else {
-	$num = sizeof($result);
+	$num = count($result);
 	$var=True;
 	$comm=array();
 	if ($num > 0)
@@ -75,4 +75,3 @@ if (! $result)
 llxFooter();
 
 $db->close();
-?>
