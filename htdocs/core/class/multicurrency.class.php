@@ -98,7 +98,7 @@ class multicurrency
             return -1;
         }
 
-        $array = @fgetcsv($fp , 4096 , ', ');
+        $array = @fgetcsv($fp, 4096, ', ');
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'c_currencies_rate';
         $sql.= ' SET rate='.$array[1];
         $sql.= ', source="Yahoo Finance"';
@@ -126,7 +126,7 @@ class multicurrency
             return -1;
         }
 
-        $array = @fgetcsv($fp , 4096 , ', ');
+        $array = @fgetcsv($fp, 4096, ', ');
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'c_currencies_rate';
         $sql.= ' (cur_from, cur_to, rate, source)';
         $sql.= ' VALUES ("'.$db->escape($from).'","'.$db->escape($to).'","'.$array[1].'","Yahoo Finance")';
