@@ -19,6 +19,7 @@ Fix: [ bug #1451 ] Interrupted order clone through trigger, loads nonexistent or
 Fix: [ bug #1454 ] Mention de bas de page erroné
 Fix: Do not display dictionnay for non activated module 
 Fix: Link element from element project pages
+Fix: [ bug #1509 ] Expedition admin free text & watermark submit error
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
