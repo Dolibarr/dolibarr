@@ -29,6 +29,7 @@ Fix: If multiprice level is used the VAT on addline is not correct
 Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on supplier order part)
 Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
 Fix: [ bug #1455 ] outstanding amount
+Fix: [ bug #1425 ]
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.

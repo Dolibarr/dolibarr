@@ -606,7 +606,7 @@ class pdf_einstein extends ModelePDFCommandes
 		}*/
 
 	    // Show planed date of delivery
-        if ($object->date_livraison)
+        if (! empty($object->date_livraison))
 		{
             $outputlangs->load("sendings");
 			$pdf->SetFont('','B', $default_font_size - 2);
