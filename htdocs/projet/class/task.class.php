@@ -852,7 +852,7 @@ class Task extends CommonObject
                 $this->id					= $obj->fk_task;
                 $this->timespent_date		= $obj->task_date;
                 $this->timespent_duration	= $obj->task_duration;
-                $this->timespent_user		= $obj->fk_user;
+                $this->timespent_fk_user	= $obj->fk_user;
                 $this->timespent_note		= $obj->note;
             }
 
