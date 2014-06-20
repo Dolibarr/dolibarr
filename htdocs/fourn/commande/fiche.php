@@ -1731,6 +1731,30 @@ elseif (! empty($object->id))
 		// TODO Use the predefinedproductline_create.tpl.php file
 
 		// Add free products/services form
+		
+		//Fix Bug [ bug #1254 ] Error when using "Enter" on qty input box of a product
+		//this Fix Will be obsolete in 3.6 because 3.6 get one form to do every things
+		if (! empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript">
+            	jQuery(document).ready(function() {
+					
+					$("#qty").bind("keypress", {}, keypressInBox);
+					$("#remise_percent").bind("keypress", {}, keypressInBox);
+					$("#pu").bind("keypress", {}, keypressInBox);
+					
+				});
+				
+				function keypressInBox(e) {
+				    var code = (e.keyCode ? e.keyCode : e.which);
+				    if (code == 13) { //Enter keycode                        
+				        e.preventDefault();
+				
+				       $(\'#addFreeProductButton\').click();
+				    }
+				};
+            </script>';
+		}
+		
 		$var=true;
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
@@ -1755,22 +1779,40 @@ elseif (! empty($object->id))
 		print '<td align="center">';
 		print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$object->thirdparty,$mysoc);
 		print '</td>';
-		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
-		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-		print '<td align="right" class="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
-		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre"></td>';
+		print '<td align="right"><input type="text" id="pu" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
+		print '<td align="right"><input type="text" id="qty" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
+		print '<td align="right" class="nowrap"><input type="text" id="remise_percent" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
+		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre" id="addFreeProductButton"></td>';
 		print '</tr>';
 
 		// Ajout de produits/services predefinis
 		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 		{
-			print '<script type="text/javascript">
-            	jQuery(document).ready(function() {
-            		jQuery(\'#idprodfournprice\').change(function() {
-            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
-            		});
-            	});
-            </script>';
+			
+			if (! empty($conf->use_javascript_ajax)) {
+				print '<script type="text/javascript">
+	            	jQuery(document).ready(function() {
+	            		jQuery(\'#idprodfournprice\').change(function() {
+	            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
+	            		});
+						
+						//Fix Bug [ bug #1254 ] Error when using "Enter" on qty input box of a product
+						//this Fix Will be obsolete in 3.6 because 3.6 get one form to do every things
+						$("#qty_predef").bind("keypress", {}, keypressInBox);
+						$("#remise_percent_predef").bind("keypress", {}, keypressInBox);
+						
+					});
+					
+					function keypressInBox(e) {
+					    var code = (e.keyCode ? e.keyCode : e.which);
+					    if (code == 13) { //Enter keycode                        
+					        e.preventDefault();
+					
+					       $(\'#addPredefinedProductButton\').click();
+					    }
+					};
+	            </script>';
+			}
 
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
