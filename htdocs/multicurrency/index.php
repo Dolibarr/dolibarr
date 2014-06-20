@@ -31,29 +31,29 @@ $offset = $limit * $page ;
 
 llxHeader("",$langs->trans("Currencies"));
 
-print_barre_liste($langs->trans("Currencies Rates"), $page, 'index.php');
+print_barre_liste($langs->trans("CurrenciesRates"), $page, 'index.php');
 
 $sql = "SELECT cur_from, cur_to, rate, valid, source FROM ".MAIN_DB_PREFIX."c_currencies_rate ORDER BY cur_from ASC LIMIT ".$offset.",".$limit.";";
 $result=$db->query($sql);
 
 if (! $result)
 {
-	dol_print_error('',"erreur de connexion ");
+    dol_print_error('',"erreur de connexion ");
 } else {
-	$num = count($result);
-	$var=True;
-	$comm=array();
-	if ($num > 0)
-	{
+    $num = count($result);
+    $var=True;
+    $comm=array();
+    if ($num > 0)
+    {
 		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
-		print '<td>Currency from</td>';
-		print '<td>Currency to</td>';
-		print '<td>Taux</td>';
-		print '<td>Validité</td>';
-		print '<td>Source</td>';
+		print '<td>'.$langs->trans("Currencyfrom").'</td>';
+		print '<td>'.$langs->trans("Currencyto").'</td>';
+		print '<td>'.$langs->trans("Rates").'</td>';
+		print '<td>'.$langs->trans("Validity").'</td>';
+		print '<td>'.$langs->trans("Source").'</td>';
 		print "</tr>\n";
-	
+			
 		while ($rate = $db->fetch_object($result))
 		{
 			// Détail rate currency

@@ -716,7 +716,7 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 			$info_bits |= 0x01;
 
 		if (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))) {
-			$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $object->currency_code));
 			setEventMessage($mesg, 'errors');
 		} else {
 			// Insert line
@@ -831,7 +831,7 @@ else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('sa
 		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 		if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $object->currency_code)), 'errors');
 			$error ++;
 		}
 	} else {
@@ -1156,7 +1156,7 @@ if ($action == 'create') {
 		$absolute_discount = $soc->getAvailableDiscounts();
 		print '. ';
 		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $object->currency_code));
 		else
 			print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
@@ -1459,7 +1459,7 @@ if ($action == 'create') {
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	if ($absolute_discount) {
 		if ($object->statut > 0) {
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount, 0, $langs, 0, 0, -1, $object->currency_code));
 		} else {
 			// Remise dispo de type non avoir
 			$filter = 'fk_facture_source IS NULL';
@@ -1468,7 +1468,7 @@ if ($action == 'create') {
 		}
 	}
 	if ($absolute_creditnote) {
-		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $conf->currency)) . '. ';
+		print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote, 0, $langs, 0, 0, -1, $object->currency_code)) . '. ';
 	}
 	if (! $absolute_discount && ! $absolute_creditnote)
 		print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
@@ -1663,7 +1663,7 @@ if ($action == 'create') {
 		print $langs->trans('OutstandingBill');
 		print '</td><td align=right colspan=3>';
 		print price($soc->get_OutstandingBill()) . ' / ';
-		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
+		print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $object->currency_code);
 		print '</td>';
 		print '</tr>';
 	}
@@ -1715,19 +1715,6 @@ if ($action == 'create') {
 		}
 	}
 
-	// Amount HT
-	print '<tr><td height="10" width="25%">' . $langs->trans('AmountHT') . '</td>';
-	print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</b></td>';
-	print '<td></td>';
-
-	// Margin Infos
-	if (! empty($conf->margin->enabled)) {
-		print '<td valign="top" width="50%" rowspan="4">';
-		$object->displayMarginInfos();
-		print '</td>';
-	}
-	print '</tr>';
-
 	// Currency accepted
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -1746,29 +1733,42 @@ if ($action == 'create') {
 	}
 	print "</td>";
 	print '</tr>';
-	
+
+	// Amount HT
+	print '<tr><td height="10" width="25%">' . $langs->trans('AmountHT') . '</td>';
+	print '<td align="right" class="nowrap"><b>' . price($object->total_ht, '', $langs, 0, - 1, - 1, $object->currency_code) . '</b></td>';
+	print '<td></td>';
+
+	// Margin Infos
+	if (! empty($conf->margin->enabled)) {
+		print '<td valign="top" width="50%" rowspan="4">';
+		$object->displayMarginInfos();
+		print '</td>';
+	}
+	print '</tr>';
+
 	// Amount VAT
 	print '<tr><td height="10">' . $langs->trans('AmountVAT') . '</td>';
-	print '<td align="right" class="nowrap">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td align="right" class="nowrap">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $object->currency_code) . '</td>';
 	print '<td></td></tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1") 	// Localtax1
 	{
 		print '<tr><td height="10">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td align="right" class="nowrap">' . price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+		print '<td align="right" class="nowrap">' . price($object->total_localtax1, '', $langs, 0, - 1, - 1, $object->currency_code) . '</td>';
 		print '<td></td></tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1") 	// Localtax2
 	{
 		print '<tr><td height="10">' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-		print '<td align="right" class="nowrap">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+		print '<td align="right" class="nowrap">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $object->currency_code) . '</td>';
 		print '<td></td></tr>';
 	}
 
 	// Amount TTC
 	print '<tr><td height="10">' . $langs->trans('AmountTTC') . '</td>';
-	print '<td align="right" class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
+	print '<td align="right" class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $object->currency_code) . '</td>';
 	print '<td></td></tr>';
 
 	// Statut

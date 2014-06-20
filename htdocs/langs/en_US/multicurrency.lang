@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+Currencies=Currencies
+CurrenciesRates=Currencies Rates
+Currencyfrom=From Currency
+Currencyto=To Currency
+Rates=Rates
+Validity=Validity
