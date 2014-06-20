@@ -736,7 +736,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('FICHINTER_SENTBYMAIL',$object,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+					$error++; $object->errors=$interface->errors;
 				}
 				// Fin appel triggers
 

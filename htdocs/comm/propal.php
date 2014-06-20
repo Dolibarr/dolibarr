@@ -550,7 +550,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers('PROPAL_SENTBYMAIL',$object,$user,$langs,$conf);
 					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
+						$error++; $object->errors=$interface->errors;
 					}
 					// Fin appel triggers
 

@@ -1783,7 +1783,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$interface=new Interfaces($db);
 					$result=$interface->run_triggers('BILL_SENTBYMAIL',$object,$user,$langs,$conf);
 					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
+						$error++; $object->errors=$interface->errors;
 					}
 					// Fin appel triggers
 
