@@ -27,9 +27,8 @@ require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 /**
  * Class to manage the box to show last task
  */
-class box_task extends ModeleBoxes 
+class box_task extends ModeleBoxes
 {
-
 	var $boxcode="projet";
 	var $boximg="object_projecttask";
 	var $boxlabel;
@@ -41,9 +40,9 @@ class box_task extends ModeleBoxes
 	var $info_box_contents = array();
 
 	/**
-	 *      \brief      Constructeur de la classe
-         *  @return	void
-	 */
+	*      \brief      Constructeur de la classe
+	*  @return	void
+	*/
 	function box_task()
 	{
 		global $langs;
@@ -51,13 +50,13 @@ class box_task extends ModeleBoxes
 		$langs->load("projects");
 		$this->boxlabel="Tasks";
 	}
-
-    /**
-     *  Load data for box to show them later
-     *
-     *  @param	int		$max        Maximum number of records to load
-     *  @return	void
-     */
+	
+	/**
+	 *  Load data for box to show them later
+	 *
+	 *  @param	int		$max        Maximum number of records to load
+	 *  @return	void
+	 */
 	function loadBox($max=5)
 	{
 		global $conf, $user, $langs, $db;

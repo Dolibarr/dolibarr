@@ -18,15 +18,13 @@
  *	\file       htdocs/core/boxes/box_activite.php
  *	\ingroup    projet
  *	\brief      Module to show Projet activity of the current Year
- *	\version	$Id: box_projet.php,v 1.1 2012/09/11 Charles-François BENKE
  */
-
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
 /**
  * Class to manage the box to show last projet
  */
-class box_project extends ModeleBoxes 
+class box_project extends ModeleBoxes
 {
 	var $boxcode="project";
 	var $boximg="object_projectpub";
@@ -51,11 +49,11 @@ class box_project extends ModeleBoxes
 	}
 
 	/**
-     	 *  Load data for box to show them later
-     	 *
-	 *  @param	int		$max        Maximum number of records to load
-         *  @return	void
-	 */
+	*  Load data for box to show them later
+	*
+	*  @param	int		$max        Maximum number of records to load
+	*  @return	void
+	*/
 	function loadBox($max=5)
 	{
 		global $conf, $user, $langs, $db;
