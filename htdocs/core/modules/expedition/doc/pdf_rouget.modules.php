@@ -504,7 +504,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("RefSending") ." : ".$object->ref, '', 'R');
 
-		//Date Expedition
+		// Date Expedition
 		$posy+=4;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
@@ -530,7 +530,7 @@ class pdf_rouget extends ModelePdfExpedition
 		$origin_id 	= $object->origin_id;
 
 	    // TODO move to external function
-		if ($conf->$origin->enabled)
+		if (! empty($conf->$origin->enabled))
 		{
 			$outputlangs->load('orders');
 
@@ -616,7 +616,7 @@ class pdf_rouget extends ModelePdfExpedition
 				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,(!empty($object->contact)?$object->contact:null),$usecontact,'targetwithdetails');
 
 			// Show recipient
 			$widthrecbox=100;
