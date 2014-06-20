@@ -55,7 +55,7 @@ function check_user_password_ldap($usertotest,$passwordtotest,$entitytotest)
 	$login='';
 	$resultFetchUser='';
 
-	if (! empty($_POST["username"]))
+	if (!empty($_POST["username"]) || $usertotest)
 	{
 		// If test username/password asked, we define $test=false and $login var if ok, set $_SESSION["dol_loginmesg"] if ko
 		$ldaphost=$dolibarr_main_auth_ldap_host;
