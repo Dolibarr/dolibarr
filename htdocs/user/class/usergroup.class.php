@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (c) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,7 +286,7 @@ class UserGroup extends CommonObject
 
 			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
 			// TODO A virer quand sera gere par l'appelant
-			if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
+			//if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
 		}
 		else {
 			// Where pour la liste des droits a ajouter
@@ -385,7 +386,7 @@ class UserGroup extends CommonObject
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
-			if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
+			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		}
 		else {
 			// Where pour la liste des droits a supprimer

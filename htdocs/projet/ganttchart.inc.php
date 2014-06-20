@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/projet/ganttchart.php
+ *	\file       htdocs/projet/ganttchart.inc.php
  *	\ingroup    projet
  *	\brief      Gantt diagram of a project
  */

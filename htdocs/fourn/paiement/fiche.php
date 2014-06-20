@@ -103,7 +103,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
-if ($action == 'setnum' && ! empty($_POST['num_paiement']))
+if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
     $res = $object->update_num($_POST['num_paiement']);

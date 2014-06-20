@@ -1128,6 +1128,10 @@ class Expedition extends CommonObject
 
 				// Eat-by date
 				if (! empty($conf->productbatch->enabled)) {
+                    /* test on conf at begining of file sometimes doesn't include expeditionbatch
+                     * May be conf is not well initialized for dark reason 
+                     */
+                    require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 					$line->detail_batch=ExpeditionLigneBatch::FetchAll($this->db,$obj->line_id);
 				}
 				$this->lines[$i] = $line;
