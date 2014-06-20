@@ -48,6 +48,7 @@ $sall = GETPOST('sall', 'alpha');
 $type = GETPOST('type','int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
+$mode = GETPOST('mode','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -191,8 +192,8 @@ $usevirtualstock=-1;
 if ($virtualdiffersfromphysical)
 {
 	$usevirtualstock=($conf->global->STOCK_USE_VIRTUAL_STOCK?1:0);
-	if (GETPOST('mode')=='virtual') $usevirtualstock=1;
-	if (GETPOST('mode')=='physical') $usevirtualstock=0;
+	if ($mode=='virtual') $usevirtualstock=1;
+	if ($mode=='physical') $usevirtualstock=0;
 }
 
 $title = $langs->trans('Status');
@@ -240,8 +241,30 @@ $sql.= ' GROUP BY p.rowid, p.ref, p.label, p.price';
 $sql.= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql.= ', p.duration, p.tobuy, p.seuil_stock_alerte';
 $sql.= ', p.desiredstock, s.fk_product';
-$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-$sql.= ' AND p.desiredstock > 0';
+
+if($usevirtualstock) {
+	$sqlCommandesCli = "(SELECT SUM(cd.qty) as qty";
+	$sqlCommandesCli.= " FROM ".MAIN_DB_PREFIX."commandedet as cd";
+	$sqlCommandesCli.= ", ".MAIN_DB_PREFIX."commande as c";
+	$sqlCommandesCli.= " WHERE c.rowid = cd.fk_commande";
+	$sqlCommandesCli.= " AND c.entity = ".$conf->entity;
+	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
+	$sqlCommandesCli.= " AND c.fk_statut in (1,2))";
+	
+	$sqlCommandesFourn = "(SELECT SUM(cd.qty) as qty";
+	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
+	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
+	$sqlCommandesFourn.= " WHERE c.rowid = cd.fk_commande";
+	$sqlCommandesFourn.= " AND c.entity = ".$conf->entity;
+	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
+	$sqlCommandesFourn.= " AND c.fk_statut in (3))";
+	
+	$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql.= ' - '.$db->ifsql($sqlCommandesCli.' IS NULL', '0', $sqlCommandesCli).' + '.$db->ifsql($sqlCommandesFourn.' IS NULL', '0', $sqlCommandesFourn);
+} else {
+	$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql.= ' AND p.desiredstock > 0';
+}
 if ($salert == 'on')	// Option to see when stock is lower than alert
 {
     $sql .= ' AND SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").') < p.seuil_stock_alerte AND p.seuil_stock_alerte is not NULL';
@@ -295,6 +318,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters = '&sref=' . $sref . '&snom=' . $snom;
 	$filters .= '&sall=' . $sall;
 	$filters .= '&salert=' . $salert;
+	$filters .= '&mode=' . $mode;
 	print_barre_liste(
 		$texte,
 		$page,
@@ -310,6 +334,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters .= '&fourn_id=' . $fourn_id;
 	$filters .= (isset($type)?'&type=' . $type:'');
 	$filters .=  '&salert=' . $salert;
+	$filters .= '&mode=' . $mode;
 	print_barre_liste(
 		$texte,
 		$page,
@@ -335,6 +360,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 $param = (isset($type)? '&type=' . $type : '');
 $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
 $param .= '&sref=' . $sref;
+$param .= '&mode=' . $mode;
 
 // Lignes des titres
 print '<tr class="liste_titre">'.
@@ -589,6 +615,7 @@ if ($num > $conf->liste_limit)
 		$filters = '&sref=' . $sref . '&snom=' . $snom;
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
+		$filters .= '&mode=' . $mode;
 		print_barre_liste(
 			'',
 			$page,
@@ -606,6 +633,7 @@ if ($num > $conf->liste_limit)
 		$filters .= '&fourn_id=' . $fourn_id;
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
+		$filters .= '&mode=' . $mode;
 		print_barre_liste(
 			'',
 			$page,

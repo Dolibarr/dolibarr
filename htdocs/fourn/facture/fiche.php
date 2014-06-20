@@ -300,6 +300,9 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
+		
+		// Auto calculation of date due if not filled by user
+		if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
 
         // If creation from another object of another module
         if ($_POST['origin'] && $_POST['originid'])
