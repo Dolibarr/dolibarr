@@ -23,9 +23,13 @@
 
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 
-class box_projet extends ModeleBoxes {
+/**
+ * Class to manage the box to show last projet
+ */
+class box_project extends ModeleBoxes 
+{
 
-	var $boxcode="projet";
+	var $boxcode="project";
 	var $boximg="object_projectpub";
 	var $boxlabel;
 	//var $depends = array("projet");
@@ -38,7 +42,7 @@ class box_projet extends ModeleBoxes {
 	/**
 	 *      \brief      Constructeur de la classe
 	 */
-	function box_projet()
+	function box_project()
 	{
 		global $langs;
 		$langs->load("boxes");
@@ -49,7 +53,8 @@ class box_projet extends ModeleBoxes {
 
 	/**
 	 *      \brief      Charge les donnees en memoire pour affichage ulterieur
-	 *      \param      $max        Nombre maximum d'enregistrements a charger
+	 *  @param	int		$max        Maximum number of records to load
+         *  @return	void
 	 */
 	function loadBox($max=5)
 	{
@@ -103,10 +108,10 @@ class box_projet extends ModeleBoxes {
 					'text' => $objp->title
 					);
 					
-					$sql = "SELECT count(*) as nb, sum(progress) as totprogress";
-					$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
-					$sql.= " WHERE pt.fk_projet = p.rowid";
-					$sql.= " AND p.entity = ".$conf->entity;
+					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
+					$sql.=" FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
+					$sql.=" WHERE pt.fk_projet = p.rowid";
+					$sql.=" AND p.entity = ".$conf->entity;
 					$resultTask = $db->query($sql);
 					if ($resultTask)
 					{
