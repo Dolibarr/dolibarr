@@ -87,8 +87,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
-		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, email, label)";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->email)."','".$this->db->escape($this->libelle)."')";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);
 		$result=$this->db->query($sql);
