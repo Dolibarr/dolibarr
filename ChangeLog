@@ -3,6 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
 Fix: [ bug #1428 ] "Nothing" is shown in the middle of the screen in a supplier order.
 Fix: The object deliverycompany was not used anymore and output of
      details for delivery reports was lost during 3.5. Rewrite code to
