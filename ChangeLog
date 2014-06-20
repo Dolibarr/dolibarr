@@ -3,6 +3,9 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: The object deliverycompany was not used anymore and output of
+     details for delivery reports was lost during 3.5. Rewrite code to
+     restore feature.
 Fix: [ bug #1445 ] html fix : missing </tr>
 Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown
      properly in module configuration

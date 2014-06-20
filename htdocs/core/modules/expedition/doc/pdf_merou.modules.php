@@ -602,8 +602,7 @@ class pdf_merou extends ModelePdfExpedition
 			$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
 		}
 
-		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,$object->contact,$usecontact,'target');
-
+		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,((!empty($object->contact))?$object->contact:null),$usecontact,'targetwithdetails');
 
 		$blDestX=$blExpX+55;
 		$blW=50;
