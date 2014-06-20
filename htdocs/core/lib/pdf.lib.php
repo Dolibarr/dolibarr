@@ -956,19 +956,30 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
 		if (! empty($conf->global->MAIN_MULTILANGS) && ($outputlangs->defaultlang != $langs->defaultlang))
 		{
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && $label == $prodser->label)     $label=$prodser->multilangs[$outputlangs->defaultlang]["label"];
+			$translatealsoifmodified=(! empty($conf->global->MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED));	// By default if value was modified manually, we keep it (no translation because we don't have it)
 
-			//Manage HTML entities description test
-			//Cause $prodser->description is store with htmlentities but $desc no
-			$needdesctranslation=false;
+			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
+			// ($textwasmodified is replaced with $textwasmodifiedorcompleted and we add completion).
+
+			// Set label
+			// If we want another language, and if label is same than default language (we did force it to a specific value), we can use translation.
+			//var_dump($outputlangs->defaultlang.' - '.$langs->defaultlang.' - '.$label.' - '.$prodser->label);exit;
+			$textwasmodified=($label == $prodser->label);
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["label"]) && ($textwasmodified || $translatealsoifmodified))     $label=$prodser->multilangs[$outputlangs->defaultlang]["label"];
+
+			// Set desc
+			// Manage HTML entities description test because $prodser->description is store with htmlentities but $desc no
+			$textwasmodified=false;
 			if (!empty($desc) && dol_textishtml($desc) && !empty($prodser->description) && dol_textishtml($prodser->description)) {
-				$needdesctranslation=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
+				$textwasmodified=(strpos(dol_html_entity_decode($desc,ENT_QUOTES | ENT_HTML401),dol_html_entity_decode($prodser->description,ENT_QUOTES | ENT_HTML401))!==false);
 			} else {
-				$needdesctranslation=($desc == $prodser->description);
+				$textwasmodified=($desc == $prodser->description);
 			}
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($textwasmodified || $translatealsoifmodified))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
 
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["description"]) && ($needdesctranslation))  $desc=$prodser->multilangs[$outputlangs->defaultlang]["description"];
-			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && $note == $prodser->note)        $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
+			// Set note
+			$textwasmodified=($note == $prodser->note);
+			if (! empty($prodser->multilangs[$outputlangs->defaultlang]["note"]) && ($textwasmodified || $translatealsoifmodified))  $note=$prodser->multilangs[$outputlangs->defaultlang]["note"];
 		}
 	}
 
