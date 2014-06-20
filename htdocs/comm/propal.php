@@ -739,7 +739,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					$tva_npr ==$prod->multiprices_recuperableonly[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
