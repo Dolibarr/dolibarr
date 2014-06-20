@@ -2025,7 +2025,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
         print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
         print $langs->trans('Currency');
         print '<td>';
-        if (($action != 'editcurrency') && $user->rights->commande->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcurrency&amp;id='.$object->id.'">'.img_edit($langs->trans('SetCurrency'),1).'</a></td>';
+        if (($action != 'editcurrency') && $user->rights->commande->creer && ! empty($object->brouillon) && ! empty($conf->multicurrency->enabled))
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcurrency&amp;id='.$object->id.'">'.img_edit($langs->trans('SetCurrency'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
         if ($action == 'editcurrency')
