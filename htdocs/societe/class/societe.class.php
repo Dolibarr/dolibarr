@@ -2870,7 +2870,7 @@ class Societe extends CommonObject
 
 			// Set outstanding amount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " outstanding_limit= ".($outstanding!=''?$outstanding:'null');
+			$sql.= " outstanding_limit= '".($outstanding!=''?$outstanding:'null')."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::set_outstanding sql=".$sql);

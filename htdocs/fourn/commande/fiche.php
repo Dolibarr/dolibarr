@@ -192,7 +192,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	}
 	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)			
+			)
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -215,7 +215,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     }
     if (! GETPOST('addline_predefined') && ( GETPOST('pu')==='')) // Unit price can be 0 but not ''
     {
-    	
+
         setEventMessage($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), 'errors');
         $error++;
     }
@@ -754,10 +754,10 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
-		
+
 		// Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
-		
+
         $id = $object->create($user);
 		if ($id < 0)
 		{
@@ -1112,12 +1112,12 @@ if ($action=="create")
 	// Other options
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-	
+
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
     	print $object->showOptionals($extrafields,'edit');
     }
-	
+
 	// Bouton "Create Draft"
     print "</table>\n";
 
@@ -1134,9 +1134,9 @@ elseif (! empty($object->id))
 
 	$title=$langs->trans("SupplierOrder");
 	dol_fiche_head($head, 'card', $title, 0, 'order');
-	
+
 	$res=$object->fetch_optionals($object->id,$extralabels);
-	
+
 	/*
 	 * Confirmation de la suppression de la commande
 	 */
@@ -1464,7 +1464,7 @@ elseif (! empty($object->id))
 			}
 		}
 	}
-	
+
 	// Ligne de	3 colonnes
 	print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	print '<td align="right"><b>'.price($object->total_ht).'</b></td>';
@@ -1725,6 +1725,30 @@ elseif (! empty($object->id))
 		// TODO Use the predefinedproductline_create.tpl.php file
 
 		// Add free products/services form
+
+		//Fix Bug [ bug #1254 ] Error when using "Enter" on qty input box of a product
+		//this Fix Will be obsolete in 3.6 because 3.6 get one form to do every things
+		if (! empty($conf->use_javascript_ajax)) {
+			print '<script type="text/javascript">
+            	jQuery(document).ready(function() {
+
+					$("#qty").bind("keypress", {}, keypressInBox);
+					$("#remise_percent").bind("keypress", {}, keypressInBox);
+					$("#pu").bind("keypress", {}, keypressInBox);
+
+				});
+
+				function keypressInBox(e) {
+				    var code = (e.keyCode ? e.keyCode : e.which);
+				    if (code == 13) { //Enter keycode
+				        e.preventDefault();
+
+				       $(\'#addFreeProductButton\').click();
+				    }
+				};
+            </script>';
+		}
+
 		$var=true;
 		print '<tr '.$bc[$var].'>';
 		print '<td>';
@@ -1749,22 +1773,40 @@ elseif (! empty($object->id))
 		print '<td align="center">';
 		print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$object->thirdparty,$mysoc);
 		print '</td>';
-		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
-		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-		print '<td align="right" class="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
-		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre"></td>';
+		print '<td align="right"><input type="text" id="pu" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
+		print '<td align="right"><input type="text" id="qty" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
+		print '<td align="right" class="nowrap"><input type="text" id="remise_percent" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
+		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre" id="addFreeProductButton"></td>';
 		print '</tr>';
 
 		// Ajout de produits/services predefinis
 		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 		{
-			print '<script type="text/javascript">
-            	jQuery(document).ready(function() {
-            		jQuery(\'#idprodfournprice\').change(function() {
-            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
-            		});
-            	});
-            </script>';
+
+			if (! empty($conf->use_javascript_ajax)) {
+				print '<script type="text/javascript">
+	            	jQuery(document).ready(function() {
+	            		jQuery(\'#idprodfournprice\').change(function() {
+	            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
+	            		});
+
+						//Fix Bug [ bug #1254 ] Error when using "Enter" on qty input box of a product
+						//this Fix Will be obsolete in 3.6 because 3.6 get one form to do every things
+						$("#qty_predef").bind("keypress", {}, keypressInBox);
+						$("#remise_percent_predef").bind("keypress", {}, keypressInBox);
+
+					});
+
+					function keypressInBox(e) {
+					    var code = (e.keyCode ? e.keyCode : e.which);
+					    if (code == 13) { //Enter keycode
+					        e.preventDefault();
+
+					       $(\'#addPredefinedProductButton\').click();
+					    }
+					};
+	            </script>';
+			}
 
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
@@ -1923,8 +1965,6 @@ elseif (! empty($object->id))
 
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		//print '<table width="100%"><tr><td width="50%" valign="top">';
-		//print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -1953,10 +1993,6 @@ elseif (! empty($object->id))
         $formactions=new FormActions($db);
         $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
 
-		print '</div></div></div>';
-
-		//print '</td><td valign="top" width="50%">';
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
@@ -2025,7 +2061,6 @@ elseif (! empty($object->id))
 		*/
 
 		print '</div></div></div>';
-		//print '</td></tr></table>';
 	}
 
 	/*
