@@ -41,6 +41,7 @@ class box_task extends ModeleBoxes
 
 	/**
 	*      \brief      Constructeur de la classe
+	*
 	*  @return	void
 	*/
 	function box_task()

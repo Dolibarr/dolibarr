@@ -114,16 +114,16 @@ class box_project extends ModeleBoxes
 					if ($resultTask)
 					{
 						$objTask = $db->fetch_object($resultTask);
-						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format($objTask->nb , 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
+						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format($objTask->nb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 						if ($objTask->nb  > 0 )
-							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb) , 0, ',', ' ')." %&nbsp;".$langs->trans("Progress"));
+							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => number_format(($objTask->totprogress/$objTask->nb), 0, ',', ' ')." %&nbsp;".$langs->trans("Progress"));
 						else
 							$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 						$totalnbTask += $objTask->nb;
 					}
 					else
 					{
-						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format(0 , 0, ',', ' '));
+						$this->info_box_contents[$i][3] = array('td' => 'align="right"', 'text' => number_format(0, 0, ',', ' '));
 						$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => "N/A&nbsp;");
 					}
 
