@@ -808,6 +808,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
             var input = this.input = $( "<input>" )
                 .insertAfter( select )
                 .val( value )
+                .attr('id', 'inputautocomplete'+select.attr('id'))
                 .autocomplete({
                     delay: 0,
                     minLength: this.options.minLengthToAutocomplete,
