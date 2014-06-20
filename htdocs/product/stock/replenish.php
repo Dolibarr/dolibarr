@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013   Cédric Salvador    	<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013   Laurent Destaileur	<ely@users.sourceforge.net>
+/* Copyright (C) 2013      Cédric Salvador    	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013-2014 Laurent Destaileur	<ely@users.sourceforge.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,10 @@ if (!$sortorder) {
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+// Force limit to non (currently solution to solve loosing selection when using pagination. No pagination on this page)
+$limit = 0;
+
+
 /*
  * Actions
  */
@@ -82,10 +86,10 @@ if ($action == 'order' && isset($_POST['valid']))
     $linecount = GETPOST('linecount', 'int');
     $box = 0;
     unset($_POST['linecount']);
-    if ($linecount > 0) 
+    if ($linecount > 0)
     {
     	$db->begin();
-    	
+
         $suppliers = array();
         for ($i = 0; $i < $linecount; $i++)
         {
@@ -158,21 +162,21 @@ if ($action == 'order' && isset($_POST['valid']))
             }
             $i++;
         }
-        
-        if (! $fail && $id) 
+
+        if (! $fail && $id)
         {
         	$db->commit();
-        	
+
             setEventMessage($langs->trans('OrderCreated'), 'mesgs');
             header('Location: replenishorders.php');
             exit;
         }
         else
         {
-        	$db->rollback();	
+        	$db->rollback();
         }
     }
-    if ($box == 0) 
+    if ($box == 0)
     {
         setEventMessage($langs->trans('SelectProductWithNotNullQty'), 'warnings');
     }
@@ -182,6 +186,8 @@ if ($action == 'order' && isset($_POST['valid']))
 /*
  * View
  */
+
+$form = new Form($db);
 
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
@@ -250,7 +256,7 @@ if($usevirtualstock) {
 	$sqlCommandesCli.= " AND c.entity = ".$conf->entity;
 	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesCli.= " AND c.fk_statut in (1,2))";
-	
+
 	$sqlCommandesFourn = "(SELECT SUM(cd.qty) as qty";
 	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
 	$sqlCommandesFourn.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
@@ -258,7 +264,7 @@ if($usevirtualstock) {
 	$sqlCommandesFourn.= " AND c.entity = ".$conf->entity;
 	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
 	$sqlCommandesFourn.= " AND c.fk_statut in (3))";
-	
+
 	$sql.= ' HAVING p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql.= ' - '.$db->ifsql($sqlCommandesCli.' IS NULL', '0', $sqlCommandesCli).' + '.$db->ifsql($sqlCommandesFourn.' IS NULL', '0', $sqlCommandesFourn);
 } else {
@@ -362,9 +368,9 @@ $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
 $param .= '&sref=' . $sref;
 $param .= '&mode=' . $mode;
 
-// Lignes des titres
-print '<tr class="liste_titre">'.
-	'<td><input type="checkbox" onClick="toggle(this)" /></td>';
+// Lines of title
+print '<tr class="liste_titre"><td><input type="checkbox" onClick="toggle(this)" /></td>';
+
 print_liste_field_titre(
 	$langs->trans('Ref'),
 	$_SERVER["PHP_SELF"],
@@ -481,7 +487,7 @@ print '<td class="liste_titre">&nbsp;</td>'.
 $prod = new Product($db);
 
 $var = True;
-while ($i < min($num, $limit))
+while ($i < ($limit ? min($num, $limit) : $num))
 {
 	$objp = $db->fetch_object($resql);
 
@@ -503,13 +509,15 @@ while ($i < min($num, $limit))
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
-		$form = new Form($db);
 		$var =! $var;
 		$prod->ref = $objp->ref;
 		$prod->id = $objp->rowid;
 		$prod->type = $objp->fk_product_type;
+
+		// Get number already ordered.
 		$ordered = ordered($prod->id);
 
+		// Defined current stock number and warning if required
 		if ($usevirtualstock)
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
@@ -531,26 +539,29 @@ while ($i < min($num, $limit))
 			$stock = $objp->stock_physique;
 		}
 		$warning='';
-
 		if ($objp->seuil_stock_alerte && ($stock < $objp->seuil_stock_alerte))
 		{
 			$warning = img_warning($langs->trans('StockTooLow')) . ' ';
 		}
+
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
 		$stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
+		/*
 		$disabled = '';
-		if($ordered > 0) {
-			if($ordered + $stock >= $objp->desiredstock) {
-				$picto = img_picto('', './img/yes', '', 1);
+		if($ordered > 0)
+		{
+			if ($ordered + $stock >= $objp->desiredstock)
+			{
+				$picto = img_picto('', 'ok', '');
 				$disabled = 'disabled="disabled"';
 			}
 			else {
-				$picto = img_picto('', './img/no', '', 1);
+				$picto = img_picto($langs->trans("NotEnough"), 'warning', '');
 			}
 		} else {
-			$picto = img_picto('', './img/no', '', 1);
-		}
+			$picto = img_picto('', 'info', '');
+		}*/
 
 		print '<tr '.$bc[$var].'>';
 
@@ -558,13 +569,12 @@ while ($i < min($num, $limit))
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
-		print '<td class="nowrap">'.
-			$prod->getNomUrl(1, '', 16).
-			'</td>'.
-			'<td>' . $objp->label . '</td>'.
-			'<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" >';
+		print '<td class="nowrap">'.$prod->getNomUrl(1, '', 16).'</td>';
 
-		if (!empty($conf->service->enabled) && $type == 1) {
+		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
+
+		if (!empty($conf->service->enabled) && $type == 1)
+		{
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				$duration =  $regs[1] . ' ' . $langs->trans('DurationYear');
 			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
@@ -574,19 +584,17 @@ while ($i < min($num, $limit))
 			} else {
 				$duration = $objp->duration;
 			}
-			print '<td align="center">'.
-				$duration.
-				'</td>';
+			print '<td align="center">'.$duration.'</td>';
 		}
 
-		print '<td align="right">' . $objp->desiredstock . '</td>'.
-			'<td align="right">'.
-			$warning . $stock.
-			'</td>'.
-			'<td align="right">'.
-			'<a href="replenishorders.php?sproduct=' . $prod->id . '">'.
-			$ordered . '</a> ' . $picto.
-			'</td>';
+		// Desired stock
+		print '<td align="right">' . $objp->desiredstock . '</td>';
+
+		// Current stock
+		print '<td align="right">'. $warning . $stock. '</td>';
+
+		// Already ordered
+		print '<td align="right"><a href="replenishorders.php?sproduct=' . $prod->id . '">'. $ordered . '</a> ' . $picto. '</td>';
 
 		// To order
 		//print '<td align="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
