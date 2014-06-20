@@ -457,6 +457,8 @@ function dol_escape_js($stringtoescape, $mode=0)
  *  @param      string		$stringtoescape		String to escape
  *  @param		int			$keepb				Do not clean b tags
  *  @return     string     				 		Escaped string
+ *
+ *  @see		dol_string_nohtmltag
  */
 function dol_escape_htmltag($stringtoescape,$keepb=0)
 {
@@ -3436,6 +3438,8 @@ function picto_required()
  *	@param	string	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
+ *
+ * 	@see		dol_escape_htmltag
  */
 function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 {
