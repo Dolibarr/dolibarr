@@ -24,7 +24,11 @@
 include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
 
-class box_task extends ModeleBoxes {
+/**
+ * Class to manage the box to show last task
+ */
+class box_task extends ModeleBoxes 
+{
 
 	var $boxcode="projet";
 	var $boximg="object_projecttask";
@@ -38,6 +42,7 @@ class box_task extends ModeleBoxes {
 
 	/**
 	 *      \brief      Constructeur de la classe
+         *  @return	void
 	 */
 	function box_task()
 	{
