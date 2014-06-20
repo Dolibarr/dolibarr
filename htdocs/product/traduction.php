@@ -55,6 +55,12 @@ if ($cancel == $langs->trans("Cancel"))
 	$action = '';
 }
 
+if ($action == 'delete' && GETPOST('langtodelete','alpha'))
+{
+	$product = new Product($db);
+	$product->fetch($id);
+	$product->delMultiLangs(GETPOST('langtodelete','alpha'));
+}
 
 // Validation de l'ajout
 if ($action == 'vadd' &&
@@ -209,7 +215,7 @@ else
 		{
 			$cnt_trans++;
 			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b><br>";
+			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
 			print '<table class="border" width="100%">';
 			print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$product->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$product->multilangs[$key]["description"].'</td></tr>';
@@ -257,8 +263,8 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Translation').'</td><td>';
-    print $formadmin->select_language('','forcelangprod',0,$product->multilangs);
+	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Language').'</td><td>';
+    print $formadmin->select_language('','forcelangprod',0,$product->multilangs,1);
 	print '</td></tr>';
 	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
 	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
