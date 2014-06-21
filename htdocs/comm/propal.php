@@ -178,7 +178,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 		}
 	} else {
 		$langs->load("errors");
-		setEventMessage($langs->trans($object->error), 'errors');
+		if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
+		else setEventMessage($langs->trans($object->error), 'errors');
 	}
 }
 
@@ -472,7 +473,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					$interface = new Interfaces($db);
 					$result = $interface->run_triggers('PROPAL_SENTBYMAIL', $object, $user, $langs, $conf);
 					if ($result < 0) {
-						$error ++;
+						$error++;
 						$object->errors = $interface->errors;
 					}
 					// Fin appel triggers
@@ -609,12 +610,17 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
 				// On defini prix unitaire
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level) {
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level)
+				{
 					$pu_ht = $prod->multiprices [$object->client->price_level];
 					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
 					$price_min = $prod->multiprices_min [$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-				} elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 					$prodcustprice = new Productcustomerprice($db);
@@ -631,7 +637,9 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;

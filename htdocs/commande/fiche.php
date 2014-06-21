@@ -104,18 +104,30 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer) {
-	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
-		$mesg = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
-	} else {
-		if ($object->id > 0) {
-			$result = $object->createFromClone($socid);
-			if ($result > 0) {
-				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
-				exit();
-			} else {
-				$mesg = '<div class="error">' . $object->error . '</div>';
-				$action = '';
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer)
+{
+	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		if ($object->id > 0)
+		{
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = dol_clone($object);
+
+			$result=$object->createFromClone($socid);
+			if ($result > 0)
+			{
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+				exit;
+			}
+			else
+			{
+				setEventMessage($object->error, 'errors');
+				$object = $orig;
+				$action='';
 			}
 		}
 	}
@@ -125,11 +137,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 else if ($action == 'reopen' && $user->rights->commande->creer) {
 	if ($object->statut == 3) {
 		$result = $object->set_reopen($user);
-		if ($result > 0) {
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-			exit();
-		} else {
-			$mesg = '<div class="error">' . $object->error . '</div>';
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -139,9 +154,10 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 	$result = $object->delete($user);
 	if ($result > 0) {
 		header('Location: index.php');
-		exit();
-	} else {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		exit;
+	}
+	else {
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -165,10 +181,12 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-		exit();
-	} else {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+	else
+	{
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -383,8 +401,13 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 	}
 }
 
-else if ($action == 'classifybilled' && $user->rights->commande->creer) {
-	$ret = $object->classifyBilled();
+else if ($action == 'classifybilled' && $user->rights->commande->creer)
+{
+	$ret=$object->classifyBilled();
+
+	if ($ret < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 // Positionne ref commande client
@@ -560,12 +583,17 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
 				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level)) {
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
+				{
 					$pu_ht = $prod->multiprices [$object->client->price_level];
 					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
 					$price_min = $prod->multiprices_min [$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-				} elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 					$prodcustprice = new Productcustomerprice($db);
@@ -582,7 +610,9 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -906,8 +936,9 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 
 else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer) {
 	$result = $object->cloture($user);
-	if ($result < 0)
-		$mesgs = $object->errors;
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider) {
@@ -924,6 +955,10 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 
 	if (! $error) {
 		$result = $object->cancel($idwarehouse);
+
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
 	}
 }
 

@@ -616,7 +616,7 @@ class FormFile
               		}
 				}
 
-			 	if (count($file_list) == 0)
+			 	if (count($file_list) == 0 && $headershown)
 	            {
     	        	$out.='<tr><td colspan="3">'.$langs->trans("None").'</td></tr>';
         	    }

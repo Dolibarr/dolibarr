@@ -76,7 +76,7 @@ else if ($action == 'set_SHIPPING_FREE_TEXT')
 	$freetext=GETPOST('SHIPPING_FREE_TEXT','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
-	if ($res < 0)
+	if ($res > 0)
 		setEventMessage($langs->trans("SetupSaved"));
 	else
 		setEventMessage($langs->trans("Error"), 'errors');
@@ -87,7 +87,7 @@ else if ($action == 'set_SHIPPING_DRAFT_WATERMARK')
 	$draft=GETPOST('SHIPPING_DRAFT_WATERMARK','alpha');
 	$res = dolibarr_set_const($db, "SHIPPING_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
 
-	if ($res < 0)
+	if ($res > 0)
 		setEventMessage($langs->trans("SetupSaved"));
 	else
 		setEventMessage($langs->trans("Error"), 'errors');
