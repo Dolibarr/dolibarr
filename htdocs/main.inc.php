@@ -1825,7 +1825,7 @@ if (! function_exists("llxFooter"))
 	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($comment='',$zone='pivate')
+    function llxFooter($comment='',$zone='private')
     {
         global $conf, $langs;
 
