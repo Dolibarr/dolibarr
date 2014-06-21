@@ -113,7 +113,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 		if ($object->id > 0)
 		{
 			//Because createFromClone modifies the object, we must clone it so that we can restore it later
-			$orig = clone $object;
+			$orig = dol_clone($object);
 
 			$result=$object->createFromClone($socid);
 			if ($result > 0)
