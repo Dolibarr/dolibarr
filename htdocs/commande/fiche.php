@@ -209,6 +209,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->modelpdf = GETPOST('model');
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
 		$object->mode_reglement_id = GETPOST('mode_reglement_id');
+		$object->currency_code = GETPOST('currency_code');
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
 		$object->date_livraison = $datelivraison;
@@ -468,7 +469,6 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 // currency
 else if ($action == 'setcurrency' && $user->rights->commande->creer)
 {
-    $object->fetch($id);
     $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
     if ($result < 0) dol_print_error($db,$object->error);
 }
@@ -1329,6 +1329,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$soc = $objectsrc->client;
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$currency_code      = (!empty($objectsrc->currency_code)?$objectsrc->currency_code:(!empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
@@ -1348,6 +1349,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	{
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
+		$currency_code      = $soc->currency_code;
 		$availability_id    = $soc->availability_id;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
@@ -1441,6 +1443,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	// Mode de reglement
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
 	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
+	print '</td></tr>';
+
+	// Currency
+	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
+	$form->select_currency($currency_code, 'currency_code');
 	print '</td></tr>';
 
 	// Delivery delay

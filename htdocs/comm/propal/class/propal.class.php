@@ -315,7 +315,7 @@ class Propal extends CommonObject
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
     {
-    	global $mysoc;
+    	global $conf, $mysoc;
 
         dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -331,6 +331,16 @@ class Propal extends CommonObject
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
+
+        if (! empty($conf->multicurrency->enabled) && $this->currency_code!=MAIN_MONNAIE)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
+            $multi= new Multicurrency($db);
+            $rate = $multi->converter(MAIN_MONNAIE, $this->currency_code);
+            $pu_ht  = price2num($pu_ht * $rate);
+            $pu_ttc = price2num($pu_ttc * $rate);
+        }
+
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);

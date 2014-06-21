@@ -967,6 +967,7 @@ class Commande extends CommonOrder
             $this->fk_project           = $object->fk_project;
             $this->cond_reglement_id    = $object->cond_reglement_id;
             $this->mode_reglement_id    = $object->mode_reglement_id;
+            $this->currency_code        = $object->currency_code;
             $this->availability_id      = $object->availability_id;
             $this->demand_reason_id     = $object->demand_reason_id;
             $this->date_livraison       = $object->date_livraison;
