@@ -45,7 +45,8 @@ class Entrepot extends CommonObject
 	//! Code Postal
 	var $zip;
 	var $town;
-
+	var $email;
+	
 	var $country;
 	var $country_id;
 	var $country_code;
@@ -86,8 +87,8 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
-		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, email, label)";
+		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->email)."','".$this->db->escape($this->libelle)."')";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);
 		$result=$this->db->query($sql);
@@ -141,6 +142,7 @@ class Entrepot extends CommonObject
 		$this->lieu=$this->db->escape(trim($this->lieu));
 
 		$this->address=$this->db->escape(trim($this->address));
+		$this->email=$this->db->escape(trim($this->email));
         $this->zip=$this->zip?trim($this->zip):trim($this->zip);
         $this->town=$this->town?trim($this->town):trim($this->town);
 		$this->country_id=($this->country_id > 0 ? $this->country_id : $this->country_id);
@@ -151,6 +153,7 @@ class Entrepot extends CommonObject
 		$sql .= ", statut = " . $this->statut;
 		$sql .= ", lieu = '" . $this->db->escape($this->lieu) ."'";
 		$sql .= ", address = '" . $this->db->escape($this->address) ."'";
+		$sql .= ", email = '" . $this->db->escape($this->email) ."'";
 		$sql .= ", zip = '" . $this->db->escape($this->zip) ."'";
 		$sql .= ", town = '" . $this->db->escape($this->town) ."'";
 		$sql .= ", fk_pays = " . $this->country_id;
@@ -244,7 +247,7 @@ class Entrepot extends CommonObject
 	{
 		global $conf;
 
-		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, email, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 
 		if ($id)
@@ -275,6 +278,7 @@ class Entrepot extends CommonObject
 				$this->address        = $obj->address;
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
+				$this->email        = $obj->email;
 				$this->country_id     = $obj->country_id;
 
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -550,5 +554,6 @@ class Entrepot extends CommonObject
         $this->town='MyTown';
         $this->country_id=1;
         $this->country_code='FR';
+        $this->email = 'specimen@specimen.com';
     }
 }
