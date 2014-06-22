@@ -1,43 +1,27 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = Par
 CronAbout = Par Cron
 CronAboutPage = Cron par lapu
-
-#
 # Right
-#
 Permission23101 = Lasīt plānoto uzdevumu
 Permission23102 = Izveidot/atjaunināt plānoto uzdevumu
 Permission23103 = Dzēst plānoto uzdevumu
 Permission23104 = Izpildīt plānoto uzdevumu
-
-#
 # Admin
-#
 CronSetup= Plānotais darbu vadības iestatīšana
-# URLToLaunchCronJobs=URL to check and launch cron jobs if required
-# OrToLaunchASpecificJob=Or to check and launch a specific job
+URLToLaunchCronJobs=URL to check and launch cron jobs if required
+OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
 FileToLaunchCronJobs=Komandrindas uzsākt cron darbavietas
 CronExplainHowToRunUnix=Par Unix vidē, jums vajadzētu izmantot crontab palaist komandrindas viena otras minūtes
 CronExplainHowToRunWin=Microsoft (tm), Windows environement jūs varat izmantot regulāro uzdevums rīkus, lai palaistu komandrindas viena otras minūtes
-
-
-#
 # Menu
-#
 CronJobs=Plānotais darba vietas
 CronListActive= Saraksts aktīvo darbu
 CronListInactive= Saraksts ar invaliditāti darba vietas
 CronListActive= Saraksts aktīvo darbu
-
-
-#
 # Page list
-#
 CronDateLastRun=Pēdējā run
 CronLastOutput=Pēdējo reizi palaist izejas
 CronLastResult=Pēdējais rezultāts kods
@@ -70,10 +54,7 @@ CronLabel=Apraksts
 CronNbRun=Nb. sākt
 CronEach=Katru
 JobFinished=Darba uzsākta un pabeigta
-
-#
 #Page card
-#
 CronAdd= Pievienot darbu
 CronHourStart= Starta laiks un uzdevuma datumu
 CronEvery= Un izpildīt uzdevumu katrā
@@ -95,20 +76,12 @@ CronObjectHelp=Objekta nosaukums, lai slodze. <BR> Par exemple atnest metodi Dol
 CronMethodHelp=Objekts metode, lai palaistu. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / product.class.php, metodes vērtība ir ir <i>fecth</i>
 CronArgsHelp=Šī metode argumentus. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / product.class.php, no paramters vērtība var būt <i>0, ProductRef</i>
 CronCommandHelp=Sistēma komandrindas izpildīt.
-
-#
 # Info
-#
 CronInfoPage=Informācija
-
-
-#
 # Common
-#
 CronType=Darba veids
 CronType_method=Zvanu metode ir Dolibarr klases
 CronType_command=Shell komandu
 CronMenu=Cron
 CronCannotLoadClass=Nevar ielādēt klases %s vai objektu %s
-
 UseMenuModuleToolsToAddCronJobs=Iet uz izvēlni &quot;Home - moduļi instrumenti - Darbs sarakstu&quot;, lai redzētu un rediģēt plānoto darbu.

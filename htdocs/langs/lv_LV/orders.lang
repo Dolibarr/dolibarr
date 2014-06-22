@@ -101,7 +101,6 @@ RelatedOrders=Saistītie pasūtījumi
 OnProcessOrders=Šajā procesā pasūtījumiem
 RefOrder=Ref. pasūtījuma
 RefCustomerOrder=Ref. klienta rīkojums
-CustomerOrder=Klienta rīkojums
 RefCustomerOrderShort=Ref. Cust. pasūtījums
 SendOrderByMail=Nosūtīt pasūtījumu pa pastu
 ActionsOnOrder=Notikumi pēc pasūtījuma
@@ -132,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Pastāvīga COMMANDE_ADDON nav noteikts
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Neizdevās ielādēt moduļa failu &quot;%s&quot;
 Error_FailedToLoad_COMMANDE_ADDON_File=Neizdevās ielādēt moduļa failu '%s'
 Error_OrderNotChecked=Nav pasūtījumus izvēlētā rēķina
-
-
 # Sources
 OrderSource0=Commercial priekšlikums
 OrderSource1=Internets
@@ -144,7 +141,6 @@ OrderSource5=Tirdzniecības
 OrderSource6=Glabājiet
 QtyOrdered=Pasūtītais daudzums
 AddDeliveryCostLine=Pievienot piegādes izmaksu līnijas, kas norāda svaru pasūtījuma
-
 # Documents models
 PDFEinsteinDescription=Pilnīgā kārtībā modelis (logo. ..)
 PDFEdisonDescription=Vienkāršs pasūtīt modeli
@@ -155,7 +151,6 @@ OrderByFax=Faksa
 OrderByEMail=E-Mail
 OrderByWWW=Online
 OrderByPhone=Telefons
-
 CreateInvoiceForThisCustomer=Rēķinu pasūtījumi
 NoOrdersToInvoice=Nav pasūtījumi apmaksājamo
 CloseProcessedOrdersAutomatically=Klasificēt &quot;apstrādā&quot; visus atlasītos pasūtījumus.
@@ -165,4 +160,4 @@ Ordered=Sakārtots
 OrderCreated=Jūsu pasūtījumi ir radīti
 OrderFail=Kļūda notika laikā jūsu pasūtījumu radīšanu
 CreateOrders=Izveidot pasūtījumus
-# ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
+ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".
