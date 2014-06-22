@@ -3768,13 +3768,14 @@ class Form
     /**
      *	Function to show a form to select a duration on a page
      *
-     *	@param	string	$prefix   	prefix
-     *	@param  int		$iSecond  	Default preselected duration (number of seconds)
-     * 	@param	int		$disabled	Disable the combo box
-     * 	@param	string	$typehour	if 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     *	@param	string	$prefix   		Prefix
+     *	@param  int		$iSecond  		Default preselected duration (number of seconds)
+     * 	@param	int		$disabled		Disable the combo box
+     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     *  @param	string	$minunderhours	If 1, show minutes selection under the hours
      *  @return	void
      */
-    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select')
+    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0)
     {
     	global $langs;
 
@@ -3805,7 +3806,11 @@ class Form
         {
         	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.((int) $hourSelected).'">';
         }
-        print $langs->trans('Hours'). "&nbsp;";
+        print $langs->trans('Hours');
+
+        if ($minunderhours) print '<br>';
+        else print "&nbsp;";
+
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
         for ($min = 0; $min <= 55; $min=$min+5)
         {
