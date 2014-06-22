@@ -1095,6 +1095,14 @@ class Commande extends CommonOrder
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
+        if (! empty($conf->multicurrency->enabled) && $this->currency_code!=MAIN_MONNAIE)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
+            $multi= new Multicurrency($db);
+            $rate = $multi->converter(MAIN_MONNAIE, $this->currency_code);
+            $pu_ht  = price2num($pu_ht * $rate);
+            $pu_ttc = price2num($pu_ttc * $rate);
+        }
     	$pa_ht=price2num($pa_ht);
         $txtva = price2num($txtva);
         $txlocaltax1 = price2num($txlocaltax1);

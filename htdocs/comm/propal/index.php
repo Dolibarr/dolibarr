@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
+if (! empty($conf->multicurrency->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
 
 $langs->load("propal");
 $langs->load("companies");
@@ -352,7 +353,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
-				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, MAIN_MAX_DECIMALS_TOT, -1, $obj->currency_code).'</td>';
+				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
@@ -364,13 +365,23 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
 			else if ($found>0)
-			{
-				foreach ($total as $key=>$solde)
-				{
-					print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")." (".$key.")</td><td align=\"right\">".price($solde, 0, $langs, 0, MAIN_MAX_DECIMALS_TOT, -1, $key)."</td><td>&nbsp;</td></tr>";
-				}
-			}
-			print "</table><br>";
+            {
+                foreach ($total as $key=>$solde)
+                {
+                    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").' ('.$key.')</td><td align="right">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td><td>&nbsp;</td></tr>';
+                }
+                if (! empty($conf->multicurrency->enabled) && $found>0)
+                {
+                    $estimated=0;
+                    $multi= new Multicurrency($db);
+                    foreach ($total as $key=>$solde)
+                    {
+                        $estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+                    }
+                    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td align="right">'.price($estimated, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, MAIN_MONNAIE).'</td><td>&nbsp;</td></tr>';
+                }
+            }
+            print "</table><br>";
 		}
 	}
 	else
