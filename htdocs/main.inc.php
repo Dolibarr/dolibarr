@@ -891,11 +891,11 @@ if (! function_exists("llxHeader"))
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 		// top menu and left menu area
-		if (empty($conf->global->MAIN_HIDE_TOP_MENU))
+		if (empty($conf->dol_hide_topmenu))
 		{
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
 		}
-		if (empty($conf->global->MAIN_HIDE_LEFT_MENU))
+		if (empty($conf->dol_hide_leftmenu))
 		{
 			left_menu('', $help_url, '', '', 1, $title);
 		}
