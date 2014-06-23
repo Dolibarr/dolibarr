@@ -3051,6 +3051,7 @@ class Facture extends CommonInvoice
 		$this->date_lim_reglement = $nownotime + 3600 * 24 *30;
 		$this->cond_reglement_id   = 1;
 		$this->cond_reglement_code = 'RECEP';
+        $this->currency_code = 'EUR';
 		$this->date_lim_reglement=$this->calculate_date_lim_reglement();
 		$this->mode_reglement_id   = 0;		// Not forced to show payment mode CHQ + VIR
 		$this->mode_reglement_code = '';	// Not forced to show payment mode CHQ + VIR

@@ -2842,6 +2842,7 @@ class Commande extends CommonOrder
         $this->date_lim_reglement=$this->date+3600*24*30;
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_code = 'CHQ';
+        $this->currency_code = 'EUR';
         $this->availability_code   = 'DSP';
         $this->demand_reason_code  = 'SRC_00';
         $this->note_public='This is a comment (public)';
