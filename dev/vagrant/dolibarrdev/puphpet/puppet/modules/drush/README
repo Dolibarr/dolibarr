@@ -1,0 +1,226 @@
+DRUSH PUPPET MODULE
+===================
+
+This module manages Drush, a command line shell and scripting interface for
+Drupal.
+
+It can install and upgrade Drush from Debian packages or source, as well as
+download, enable and disable Drupal modules and themes, build codebases from
+Drush makefiles, run arbitrary Drush commands and optionally log its output.
+
+
+DEPENDENCIES
+------------
+
+None.
+
+
+REQUIREMENTS
+------------
+
+The Drush Puppet module is designed to work on Debian GNU/Linux systems and
+derivatives. It provides rudimentary support for apt-get, but defaults to
+letting the OS's default packaging system handle installation. As such, it
+should work with other *nix systems, assuming Drush is available for install
+in the OS's packaging system, or Drush is installed from source using the
+provided 'drush::git' class.
+
+
+INSTALLATION
+------------
+
+To use this module, follow these directions:
+
+1. Your modules directory will need all the files included in this
+   repository placed under a directory called "drush".
+
+2. To install Drush, add one of these entries to your manifests (such as in
+   manifests/nodes.pp):
+
+       include drush
+
+   or
+
+       class {'drush':
+         ensure => latest,
+       }
+
+  The following parameters are available:
+
+    api: The major version of Drush to install. Currently supports '4' or '5'.
+    dist: The Debian distribution from which to install via apt-get. Defaults
+        to 'stable'. Set to false to suppres adding custom sources for install
+        via apt-get.
+    ensure: What state the package should be in. Valid values are 'present'
+        (also called 'installed'), 'absent', 'purged', 'held', of 'latest'.
+
+2a. To install Drush from source, add one of these entries to your manifests:
+
+       include drush::git::drush
+
+   or
+
+       class {'drush::git::drush':
+         git_branch => '8.x-6.x',
+         update     => true,
+       }
+
+
+  The following parameters are available:
+
+    git_branch: The git branch to track.
+    git_tag: The git tag to check out.
+    git_url: The git URL from which to clone the repository.
+    update: Whether to update to the latest code with each Puppet run.
+        Defaults to false.
+
+
+USAGE
+-----
+
+1. To run a Drush command, use the drush::run defined type like so:
+
+       drush::run { '@dev uli --uid=42': }
+
+  The following parameters are all optional:
+
+    command: The command to run. Defaults to the name of the resource.
+    site_alias: The alias against which to run the command.
+    options: Options to pass to Drush.
+    arguments: Arguments to pass to the command.
+    site_path: The path to the site or code-base in which to run the command.
+    drush_user: The user under which to execute the command.
+    drush_home: Set the drush_user's home directory, for alias search paths.
+    log: Path to the logfile in which to log all Drush output.
+    creates, unless, onlyif, refreshonly: Control whether the command is
+        executed at each Puppet run. Identical to these paramaters on the
+        built-in 'exec' resource.
+    timeout: The maximum time the command should take, specified in seconds.
+        Defaults to 300 seconds. Disable the timeout by setting to 0.
+    paths: provide alternative paths to search for your Drush executable.
+
+2. To download projects from drupal.org to a site, add lines such as the
+   following to your manifests:
+
+       drush::dl {'token':
+         site_path => '/var/aegir/platforms/drupal/sites/example.com',
+         log       => '/var/aegir/drush.log',
+       }
+
+  The following parameters are all optional:
+
+    type: The type of package to download. Defaults to 'module'.
+    version: The version of the package to download.
+    site_path: Operates the same as for drush::run. Set this parameter to avoid
+        having a package downloaded repeatedly, as it will allow Puppet to see
+        whether it already exists. Alternatively, do not set this parameter to
+        have the package continuously updated.
+    site_alias, options, arguments, drush_user, drush_home, log: All operate
+        the same as for drush::run.
+
+3. To enable or disable projects on a Drupal site, add lines such as the following to your
+   manifests:
+
+       drush::en {'token':
+         site_alias => '@www.example.com',
+       }
+
+       drush::dis {'@prod devel, devel-generate':}
+
+  The following parameters are all optional:
+
+    site_alias, options, arguments, site_path, drush_user, drush_home, log: All
+        operate the same as for drush::run.
+
+4. To display the status of a site in your Puppet log, add lines such as the
+   following to your manifests:
+
+       drush::dis {'@prod status':
+         options => '--full',
+       }
+
+  The following parameters are all optional:
+
+    site_alias, options, arguments, site_path, drush_user, drush_home, log: All
+        operate the same as for drush::run.
+
+
+5. To build a Drupal code-base using Drush Make, add lines such as the following to your
+   manifests:
+
+       drush::make {'/var/aegir/platform/Drupal7':
+         makefile => '/var/aegir/makefiles/drupal7.make',
+       }
+
+  There is one required parameter:
+
+    makefile: The path to the makefile to use in building the code-base.
+
+  The following parameters are all optional:
+
+    make_path: The path to build the code-base. Defaults to the name of the
+        resource.
+    options, drush_user, drush_home, log: All operate the same as for
+        drush::run.
+
+
+6. The module also provides a simple way to clone git repos and keep them up-
+   to-date:
+
+       drush::git { 'git://git.drupal.org:project/provision':
+         path => '/var/aegir/.drush',
+       }
+
+  There is one required parameter:
+
+    path: Where to clone the git repo.
+
+  The following parameters are all optional:
+
+    git_branch: The git branch to checkout. 
+    git_tag: The git tag to check out. Overrides 'branch' if also specified.
+    git_repo: The git repository to clone. Defaults to the resource name.
+    dir_name: The name of the directory in which to clone the git repo.
+    update: Run 'git pull -r' in this repo on every Puppet run.
+    paths: Alternative search paths for your git binary.
+
+
+DEVELOPING
+----------
+
+The drush::run defined type provides a basis on which to build pretty much any
+Drush command imagineable. The other provided commands build upon it to provide
+convenience resources for common use-cases. While quite simple, they should
+form a good basis for creating your own custom defined types.
+
+For more complex examples, take a look at the puppet-aegir module, which
+extends this API further in the context of the Aegir Hosting System. It can be
+found at:
+
+    https://drupal.org/project/puppet-aegir
+
+Along similar lines, Skynet takes this way too far:
+
+    https://drupal.org/project/skynet
+
+The drush::git resource is a minimalist general-purpose function to allow
+cloning and updating git repositories. It is not intended to be a full-featured
+git class/resource. It will not attempt to install git for you either, but this
+should be sufficient:
+
+    package {'git':}
+
+This Puppet module is published under the GNU GPLv2 (General Public License,
+Version 2), and as such is, and will always remain, Free Software. Engagement
+in the development process by users and other developers is very much appreci-
+ated. So, please feel free to post to the issue queue, submit bug reports and
+feature requests, and ask questions about how to use or extend it.
+
+
+-------------------------------------------------------------------------------
+Current maintainers: Christopher Gervais (mailto:chris@praxis.coop)
+                     Guillaume Boudrias (mailto:gboudrias@praxis.coop)
+Original authors: Christopher Gervais (mailto:chris@koumbit.org)
+                  Antoine Beaupré (mailto:anarcat@koumbit.org)
+Copyright:: Copyright (c) 2011-2013 Réseau Koumbit Networks
+License::   GPLv2 or later

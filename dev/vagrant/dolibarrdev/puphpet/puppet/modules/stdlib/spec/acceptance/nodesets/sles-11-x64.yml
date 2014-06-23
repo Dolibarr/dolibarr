@@ -1,0 +1,10 @@
+HOSTS:
+  sles-11-x64.local:
+    roles:
+      - master
+    platform: sles-11-x64
+    box : sles-11sp1-x64-vbox4210-nocm
+    box_url : http://puppet-vagrant-boxes.puppetlabs.com/sles-11sp1-x64-vbox4210-nocm.box
+    hypervisor : vagrant
+CONFIG:
+    type: foss

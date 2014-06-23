@@ -1,0 +1,72 @@
+#!/bin/bash
+#
+# MySQL Backup Script
+#  Dumps mysql databases to a file for another backup tool to pick up.
+#
+# MySQL code:
+# GRANT SELECT, RELOAD, LOCK TABLES ON *.* TO 'user'@'localhost'
+# IDENTIFIED BY 'password';
+# FLUSH PRIVILEGES;
+#
+##### START CONFIG ###################################################
+
+USER=<%= @backupuser %>
+PASS=<%= @backuppassword %>
+DIR=<%= @backupdir %>
+ROTATE=<%= [ Integer(@backuprotate) - 1, 0 ].max %>
+
+PREFIX=mysql_backup_
+<% if @ignore_events %>
+EVENTS="--ignore-table=mysql.event"
+<% else %>
+EVENTS="--events"
+<% end %>
+
+##### STOP CONFIG ####################################################
+PATH=/usr/bin:/usr/sbin:/bin:/sbin
+
+
+
+set -o pipefail
+
+cleanup()
+{
+    find "${DIR}/" -maxdepth 1 -type f -name "${PREFIX}*.sql*" -mtime +${ROTATE} -print0 | xargs -0 -r rm -f
+}
+
+<% if @delete_before_dump -%>
+cleanup
+
+<% end -%>
+<% if @backupdatabases.empty? -%>
+<% if @file_per_database -%>
+mysql -s -r -N -e 'SHOW DATABASES' | while read dbname
+do
+  mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+    ${EVENTS} \
+    ${dbname} <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}${dbname}_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+done
+<% else -%>
+mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \
+ ${EVENTS} \
+ --all-databases <% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+<% end -%>
+<% else -%>
+<% @backupdatabases.each do |db| -%>
+mysqldump -u${USER} -p${PASS} --opt --flush-logs --single-transaction \ 
+    ${EVENTS} \
+ <%= db %><% if @backupcompress %>| bzcat -zc <% end %>> ${DIR}/${PREFIX}<%= db %>_`date +%Y%m%d-%H%M%S`.sql<% if @backupcompress %>.bz2<% end  %>
+<% end -%>
+<% end -%>
+
+<% unless @delete_before_dump -%>
+if [ $? -eq 0 ] ; then
+    cleanup
+fi
+<% end -%>
+
+<% if @postscript -%>
+  <%- [@postscript].flatten.compact.each do |script|%>
+<%= script %>
+  <%- end -%>
+<% end -%>

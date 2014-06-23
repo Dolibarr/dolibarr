@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+# Client program for the mcollective puppi agent 
+#
+# Released under Apache License 2.0
+
+require 'mcollective'
+
+include MCollective::RPC
+
+options = rpcoptions do |parser, options|
+    options[:timeout] = 180
+
+    parser.define_head "Execute Puppi commands"
+    parser.banner = "Usage: mc-puppi [filters] command [project] [puppioptions]"
+    parser.separator ""
+    parser.separator "Available commands:"
+    parser.separator "  check [project] - Run puppi check"
+    parser.separator "  info [topic] - Run puppi info. For all or specified topic"
+    parser.separator "  log [topic] - Run puppi log. For all or specified topic"
+    parser.separator "  todo - Run puppi todo"
+    parser.separator "  deploy <project> - Run puppi deploy on the defined project"
+    parser.separator "  configure <project> - Run puppi configure on the defined project"
+    parser.separator "  rollback <project> - Run puppi rollback latest on the defined project"
+    parser.separator "  init <project> - Run puppi init on the defined project"
+end
+
+if MCollective::Util.empty_filter?(options[:filter])
+    print("Do you really want to operate on services unfiltered? (y/n): ")
+    STDOUT.flush
+
+    exit unless STDIN.gets.chomp =~ /^y$/
+end
+
+if ARGV.length >= 1
+    command = ARGV.shift
+    project = ARGV.shift
+    puppioptions = ARGV.shift
+
+    unless command =~ /^(check|deploy|rollback|init|configure|info|log|todo)$/
+        puts("Command has to be check|info|log|deploy|rollback|init|configure|todo")
+        exit 1
+    end
+else
+    puts("Please specify at least a command")
+    exit 1
+end
+
+mc = rpcclient("puppi", :options => options)
+mc.progress = true
+# mc.send(command, {:project => project}) do |resp|
+args = {};
+args[:project] = project if project
+args[:puppioptions] = puppioptions if puppioptions
+mc.send(command, args) do |resp|
+    begin
+#        puts resp[:serverid]
+        puts resp[:body][:data]
+#        puts resp[:body][:exitcode]
+
+    rescue RPCError => er
+        puts "RPC Agent error: #{er}"
+    end
+end
+

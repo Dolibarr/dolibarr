@@ -1,0 +1,11 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant::Config.run do |config|
+  config.vm.box = "Debian 6.0.7 x64"
+  config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/debian-607-x64-vbox4210.box"
+
+  config.vm.provision :shell,
+    :path => "./tests/.ci/vagrant_test.sh"
+
+end

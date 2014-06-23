@@ -1,0 +1,112 @@
+#!/bin/bash
+#
+# supervisord   This scripts turns supervisord on
+#
+# Author:       Mike McGrath <mmcgrath@redhat.com> (based off yumupdatesd)
+#               Jason Koppe <jkoppe@indeed.com> adjusted to read sysconfig,
+#                   use supervisord tools to start/stop, conditionally wait
+#                   for child processes to shutdown, and startup later
+#
+# chkconfig:    345 83 04
+#
+# description:  supervisor is a process control utility.  It has a web based
+#               xmlrpc interface as well as a few other nifty features.
+# processname:  supervisord
+# config: <%= @config_file %>
+# pidfile: <%= @pid_file %>
+#
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+# source system settings
+[ -e <%= @init_extras %> ] && . <%= @init_extras %>
+
+RETVAL=0
+DAEMON=/usr/bin/supervisord
+DESC=supervisord
+
+running_pid()
+{
+    # Check if a given process pid's cmdline matches a given name
+    pid=$1
+    name=$2
+    [ -z "$pid" ] && return 1
+    [ ! -d /proc/$pid ] &&  return 1
+    (cat /proc/$pid/cmdline | tr "\000" "\n"|grep -q $name) || return 1
+    return 0
+}
+
+running()
+{
+# Check if the process is running looking at /proc
+# (works for all users)
+
+    # No pidfile, probably no daemon present
+    [ ! -f "$PIDFILE" ] && return 1
+    # Obtain the pid and check it against the binary name
+    pid=`cat $PIDFILE`
+    running_pid $pid $DAEMON || return 1
+    return 0
+}
+
+start() {
+    echo -n "Starting $DESC: "
+    if [ -e $PIDFILE ]; then 
+        echo "ALREADY STARTED"
+        return 1
+    else
+        # start supervisord with options from sysconfig (stuff like -c)
+        daemon $DAEMON $OPTIONS
+        # only create the subsyslock if we created the PIDFILE
+        [ -e $PIDFILE ] && touch /var/lock/subsys/supervisord
+        return 0
+    fi
+}
+
+stop() {
+    echo -n "Stopping supervisord: "
+    killproc -p $PIDFILE $DESC 
+    # always remove the subsys.  we might have waited a while, but just remove it at this point.
+    rm -f /var/lock/subsys/supervisord
+    return 0
+}
+
+restart() {
+        stop
+        start
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart|force-reload)
+        restart
+        ;;
+    reload)
+        /usr/bin/supervisorctl $OPTIONS reload
+        RETVAL=$?
+        ;;
+    condrestart)
+        [ -f /var/lock/subsys/supervisord ] && restart
+        RETVAL=$?
+        ;;
+    status)
+        echo -n "supervisord is "
+        if running ;  then
+            echo "running"
+        else
+            echo "not running."
+            exit 1
+    fi
+    ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart|reload|force-reload|condrestart}"
+        exit 1
+esac
+
+exit $RETVAL

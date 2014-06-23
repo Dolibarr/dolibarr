@@ -1,0 +1,19 @@
+HOSTS:
+  pe-aix-71-acceptance:
+    roles:
+      - master
+      - dashboard
+      - database
+      - agent
+      - default
+    platform: aix-7.1-power
+    hypervisor: aix
+    ip: pe-aix-71-acceptance.delivery.puppetlabs.net
+CONFIG:
+  type: pe
+  nfs_server: NONE
+  consoleport: 443
+  datastore: instance0
+  folder: Delivery/Quality Assurance/Enterprise/Dynamic
+  resourcepool: delivery/Quality Assurance/Enterprise/Dynamic
+  pooling_api: http://vcloud.delivery.puppetlabs.net/
