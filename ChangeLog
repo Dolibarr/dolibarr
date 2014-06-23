@@ -37,6 +37,7 @@ Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on su
 Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
 Fix: [ bug #1455 ] outstanding amount
 Fix: [ bug #1425 ]
+Fix: [ bug #1425 ] LINEBILL_SUPPLIER_DELETE failure trigger leads to an endless loop
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
