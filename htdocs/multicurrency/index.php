@@ -29,6 +29,8 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+$langs->load("multicurrency");
+
 llxHeader("",$langs->trans("Currencies"));
 
 print_barre_liste($langs->trans("CurrenciesRates"), $page, 'index.php');

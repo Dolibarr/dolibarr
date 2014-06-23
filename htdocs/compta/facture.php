@@ -301,6 +301,13 @@ else if ($action == 'setrevenuestamp' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
+// currency
+else if ($action == 'setcurrency' && $user->rights->facture->creer)
+{
+    $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
+    if ($result < 0) dol_print_error($db,$object->error);
+}
+
 else if ($action == 'setremisepercent' && $user->rights->facture->creer) {
 	$object->fetch($id);
 	$result = $object->set_remise($user, $_POST['remise_percent']);
@@ -622,6 +629,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project = $_POST['projectid'];
 			$object->cond_reglement_id = $_POST['cond_reglement_id'];
 			$object->mode_reglement_id = $_POST['mode_reglement_id'];
+            $object->currency_code = GETPOST('currency_code');
 			$object->remise_absolue = $_POST['remise_absolue'];
 			$object->remise_percent = $_POST['remise_percent'];
 
@@ -669,6 +677,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project = $_POST['projectid'];
 			$object->cond_reglement_id = 0;
 			$object->mode_reglement_id = $_POST['mode_reglement_id'];
+            $object->currency_code = GETPOST('currency_code');
 			$object->remise_absolue = $_POST['remise_absolue'];
 			$object->remise_percent = $_POST['remise_percent'];
 
@@ -792,6 +801,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project = $_POST['projectid'];
 			$object->cond_reglement_id = ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
 			$object->mode_reglement_id = $_POST['mode_reglement_id'];
+            $object->currency_code = GETPOST('currency_code');
 			$object->amount = $_POST['amount'];
 			$object->remise_absolue = $_POST['remise_absolue'];
 			$object->remise_percent = $_POST['remise_percent'];
@@ -1881,6 +1891,7 @@ if ($action == 'create')
 
 			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$currency_code      = (! empty($objectsrc->currency_code)?$objectsrc->currency_code:(! empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
@@ -1895,6 +1906,7 @@ if ($action == 'create')
 	{
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
+		$currency_code      = $soc->currency_code;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
 		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';		// Do not set 0 here (0 for a date is 1970)
@@ -2208,6 +2220,11 @@ if ($action == 'create')
 	// Payment mode
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
 	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
+	print '</td></tr>';
+
+	// Currency
+	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
+	$form->select_currency($currency_code, 'currency_code');
 	print '</td></tr>';
 
 	// Project
@@ -3154,22 +3171,43 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
+    // Currency accepted
+    print '<tr><td class="nowrap">';
+    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print $langs->trans('Currency');
+    print '<td>';
+    if (($action != 'editcurrency') && $user->rights->facture->creer && ! empty($object->brouillon) && ! empty($conf->multicurrency->enabled)  && empty($object->lines))
+        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcurrency&amp;id='.$object->id.'">'.img_edit($langs->trans('SetCurrency'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editcurrency')
+    {
+        $form->form_select_currency($_SERVER['PHP_SELF'].'?id='.$object->id, $object->currency_code, 'currency_code');
+    }
+    else
+    {
+        $form->form_select_currency($_SERVER['PHP_SELF'].'?id='.$object->id, $object->currency_code, 'none');
+    }
+    print "</td>";
+    print '</tr>';
+    
+
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-	print '<td align="right" colspan="3" nowrap>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
-	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right" colspan="3" nowrap>' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	print '<td align="right" colspan="3" nowrap>' . price($object->total_ht, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
+	print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right" colspan="3" nowrap>' . price($object->total_tva, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 	print '</tr>';
 
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) 	// Localtax1 (example RE)
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-		print '<td align="right" colspan="3" nowrap>' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<td align="right" colspan="3" nowrap>' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) 	// Localtax2 (example IRPF)
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-		print '<td align="right" colspan="3" nowrap>' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<td align="right" colspan="3" nowrap>' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 	}
 
 	// Revenue stamp
@@ -3198,7 +3236,7 @@ if ($action == 'create')
 	}
 
 	// Total with tax
-	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td align="right" colspan="3" nowrap>' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+	print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td align="right" colspan="3" nowrap>' . price($object->total_ttc, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 
 	// Statut
 	print '<tr><td>' . $langs->trans('Status') . '</td>';

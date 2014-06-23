@@ -429,7 +429,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             if ($facture->type != 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToCredit').'</span></td>';
             if ($facture->type == 2) print '<td><span class="fieldrequired">'.$langs->trans('AccountToDebit').'</span></td>';
             print '<td>';
-            $form->select_comptes($accountid,'accountid',0,'',2);
+            $filtre= 'currency_code="'.$facture->currency_code.'"';
+            $form->select_comptes($accountid,'accountid',0, $filtre,2);
             print '</td>';
         }
         else

@@ -2430,7 +2430,7 @@ class Form
 
         $langs->load("admin");
 
-        $sql = "SELECT rowid, label, bank, clos as status";
+        $sql = "SELECT rowid, label, bank, currency_code, clos as status";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
         if ($statut != 2) $sql.= " AND clos = '".$statut."'";
@@ -2462,7 +2462,7 @@ class Form
                     {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $obj->label;
+                    print $obj->label.' ('.$obj->currency_code.')';
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;

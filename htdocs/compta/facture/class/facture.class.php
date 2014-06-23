@@ -101,6 +101,7 @@ class Facture extends CommonInvoice
 	var $date_lim_reglement;
 	var $cond_reglement_id;			// Id in llx_c_paiement
 	var $cond_reglement_code;		// Code in llx_c_paiement
+    var $currency_code;
 	var $mode_reglement_id;			// Id in llx_c_paiement
 	var $mode_reglement_code;		// Code in llx_c_paiement
 	var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
@@ -240,7 +241,7 @@ class Facture extends CommonInvoice
 		$sql.= ", note_public";
 		$sql.= ", ref_client, ref_int";
 		$sql.= ", fk_facture_source, fk_user_author, fk_projet";
-		$sql.= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
+		$sql.= ", fk_cond_reglement, fk_mode_reglement, fk_currency, date_lim_reglement, model_pdf";
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -261,6 +262,7 @@ class Facture extends CommonInvoice
 		$sql.= ",".($this->fk_project?$this->fk_project:"null");
 		$sql.= ','.$this->cond_reglement_id;
 		$sql.= ",".$this->mode_reglement_id;
+        $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
 		$sql.= ", '".$this->db->idate($datelim)."', '".$this->modelpdf."')";
 
 		dol_syslog(get_class($this)."::create sql=".$sql);
@@ -728,6 +730,7 @@ class Facture extends CommonInvoice
 		$this->fk_project           = $object->fk_project;
 		$this->cond_reglement_id    = $object->cond_reglement_id;
 		$this->mode_reglement_id    = $object->mode_reglement_id;
+        $this->currency_code        = $object->currency_code;
 		$this->availability_id      = $object->availability_id;
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->date_livraison       = $object->date_livraison;
@@ -835,6 +838,7 @@ class Facture extends CommonInvoice
 		$sql.= ', f.note_private, f.note_public, f.fk_statut, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.model_pdf';
 		$sql.= ', f.fk_facture_source';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet, f.extraparams';
+		$sql.= ', f.fk_currency as currency_code';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
@@ -881,6 +885,7 @@ class Facture extends CommonInvoice
 				$this->mode_reglement_id	= $obj->fk_mode_reglement;
 				$this->mode_reglement_code	= $obj->mode_reglement_code;
 				$this->mode_reglement		= $obj->mode_reglement_libelle;
+                $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
 				$this->cond_reglement_id	= $obj->fk_cond_reglement;
 				$this->cond_reglement_code	= $obj->cond_reglement_code;
 				$this->cond_reglement		= $obj->cond_reglement_libelle;
@@ -1959,6 +1964,14 @@ class Facture extends CommonInvoice
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
+        if (! empty($conf->multicurrency->enabled) && $this->currency_code!=MAIN_MONNAIE)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
+            $multi= new Multicurrency($db);
+            $rate = $multi->converter(MAIN_MONNAIE, $this->currency_code);
+            $pu_ht  = price2num($pu_ht * $rate);
+            $pu_ttc = price2num($pu_ttc * $rate);
+        }
 		$pa_ht=price2num($pa_ht);
 		$txtva=price2num($txtva);
 		$txlocaltax1=price2num($txlocaltax1);
