@@ -41,10 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->projet->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (! empty($conf->multicurrency->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
 
 $langs->load('bills');
 $langs->load('companies');
@@ -140,7 +138,7 @@ $facturestatic=new Facture($db);
 
 if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.fk_currency as currency_code,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
@@ -408,7 +406,7 @@ if ($resql)
 
             print '<td align="right">'.price($objp->total_tva,0,$langs).'</td>';
 
-            print '<td align="right">'.price($objp->total_ttc,0,$langs).'</td>';
+            print '<td align="right">'.price($objp->total_ttc,0,$langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $objp->currency_code).'</td>';
 
             print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>';
 

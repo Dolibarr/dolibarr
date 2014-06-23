@@ -33,6 +33,8 @@ if (! empty($conf->commande->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->tax->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if (! empty($conf->multicurrency->enabled))
+    require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
 
 // L'espace compta/treso doit toujours etre actif car c'est un espace partage
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
@@ -144,7 +146,7 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
  */
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
+	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_currency as currency_code, f.type,";
 	$sql.= " s.nom, s.rowid as socid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
@@ -173,7 +175,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			$companystatic=new Societe($db);
 
 			$i = 0;
-			$tot_ttc = 0;
+			$tot_ttc = array(); $found=0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
@@ -189,16 +191,30 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$companystatic->client=1;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
+				print '<td align="right" class="nowrap">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '</tr>';
-				$tot_ttc+=$obj->total_ttc;
+				$tot_ttc[$obj->currency_code]+=$obj->total_ttc;
 				$i++;
+				$found++;
 				$var=!$var;
 			}
 
-			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
-			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
-			print '</tr>';
+            foreach ($tot_ttc as $key=>$solde)
+            {
+                print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").' ('.$key.')</td>';
+                print '<td colspan="2" align="right">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td>';
+                print '</tr>';
+            }
+            if (! empty($conf->multicurrency->enabled) && $found)
+            {
+                $estimated=0;
+                $multi= new Multicurrency($db);
+                foreach ($tot_ttc as $key=>$solde)
+                {
+                    $estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+                }
+                print '<tr class="liste_total"><td align="left">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td colspan="2" align="right">'.price($estimated, 0, $langs, 0, MAIN_MAX_DECIMALS_TOT, -1, MAIN_MONNAIE).'</td></tr>';
+            }
 		}
 		else
 		{
