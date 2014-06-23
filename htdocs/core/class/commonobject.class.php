@@ -1796,11 +1796,11 @@ abstract class CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                if ($obj->fk_source == $sourceid)
+                if ($obj->fk_source == $sourceid && $obj->sourcetype == $sourcetype)
                 {
                     $this->linkedObjectsIds[$obj->targettype][]=$obj->fk_target;
                 }
-                if ($obj->fk_target == $targetid)
+                if ($obj->fk_target == $targetid && $obj->targettype == $targettype)
                 {
                     $this->linkedObjectsIds[$obj->sourcetype][]=$obj->fk_source;
                 }
@@ -1854,7 +1854,7 @@ abstract class CommonObject
                         $classfile = 'fournisseur.commande'; $classname = 'CommandeFournisseur';
                     }
 
-                    if ($conf->$module->enabled && $element != $this->element)
+                    if ($conf->$module->enabled)
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 
