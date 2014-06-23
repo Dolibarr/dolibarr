@@ -308,7 +308,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$langs->load("boxes");
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.fk_currency as currency_code, f.paye, f.tms,";
 	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
@@ -372,7 +372,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print $thirdpartystatic->getNomUrl(1,'customer',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
 				print '</tr>';
@@ -731,7 +731,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.total_ttc, f.paye, f.tms,";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.total_ttc, f.fk_currency as currency_code, f.paye, f.tms,";
 	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
@@ -794,8 +794,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->client=1;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</a></td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
+				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
 				print '</tr>';
