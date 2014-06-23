@@ -57,6 +57,5 @@ Somewhat bleeding edge vagrant box for develop branch related work.
     - Initial data: dev/initdata/mysqldump_dolibarr-3.5.0.sql
 - Debugger: XDebug
 - Profiler: Xhprof
-- phpMyAdmin: <http://192.168.42.101/phpmyadmin>
 
 You can access MailCatcher to read all outgoing emails at http://192.168.42.101:1080
