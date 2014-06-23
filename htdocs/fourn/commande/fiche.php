@@ -488,7 +488,7 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourn
         setEventMessage($object->error, 'errors');
     }
 
-    // If we have permission, and if we don't need to provide th idwarehouse, we go directly on approved step
+    // If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
     if ($user->rights->fournisseur->commande->approuver && ! (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
     {
         $action='confirm_approve';
@@ -499,8 +499,18 @@ else if ($action == 'confirm_approve' && $confirm == 'yes' && $user->rights->fou
 {
     $idwarehouse=GETPOST('idwarehouse', 'int');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change)
     {
         if (! $idwarehouse || $idwarehouse == -1)
         {
@@ -1193,8 +1203,18 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'approve')
 	{
+        $qualified_for_stock_change=0;
+	    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	    {
+	    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	    }
+	    else
+	    {
+	    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	    }
+
 		$formquestion=array();
-		if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+		if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $qualified_for_stock_change)
 		{
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';

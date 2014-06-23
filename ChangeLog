@@ -3,6 +3,9 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Question about warehouse must not be done when module stock is disabled.
+Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
+     (missing test at some places).
 Fix: Renaming a project with uplaoded files failed.
 Fix: [ bug #1476 ] Invoice creation form loses invoice date when there is a validation error.
 Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
