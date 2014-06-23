@@ -179,6 +179,8 @@ elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->
 	else
 	{
 		$mesg='<div class="error">'.$object->error.'</div>';
+		/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+		$action='';
 	}
 }
 
