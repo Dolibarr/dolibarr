@@ -1,0 +1,98 @@
+ModPagespeed on
+
+ModPagespeedInheritVHostConfig <%= @inherit_vhost_config %>
+AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER text/html
+<% if @filter_xhtml -%>
+AddOutputFilterByType MOD_PAGESPEED_OUTPUT_FILTER application/xhtml+xml
+<% end -%>
+ModPagespeedFileCachePath "<%= @cache_path %>"
+ModPagespeedLogDir "<%= @log_dir %>"
+    
+<% @memache_servers.each do |server| -%>
+ModPagespeedMemcachedServers <%= server -%>
+<% end -%>
+
+ModPagespeedRewriteLevel <%= @rewrite_level -%>
+
+<% @disable_filters.each do |filter| -%>
+ModPagespeedDisableFilters <%= filter -%>
+<% end -%>
+    
+<% @enable_filters.each do |filter| -%>
+ModPagespeedEnableFilters <%= filter -%>
+<% end -%>
+
+<% @forbid_filters.each do |filter| -%>
+ModPagespeedForbidFilters <%= filter -%>
+<% end -%>
+
+ModPagespeedRewriteDeadlinePerFlushMs <%= @rewrite_deadline_per_flush_ms %>
+
+<% if @additional_domains -%>
+ModPagespeedDomain <%= @additional_domains -%>
+<% end -%>
+
+ModPagespeedFileCacheSizeKb          <%= @file_cache_size_kb %>
+ModPagespeedFileCacheCleanIntervalMs <%= @file_cache_clean_interval_ms %>
+ModPagespeedLRUCacheKbPerProcess     <%= @lru_cache_per_process %>
+ModPagespeedLRUCacheByteLimit        <%= @lru_cache_byte_limit %>
+ModPagespeedCssFlattenMaxBytes       <%= @css_flatten_max_bytes %>
+ModPagespeedCssInlineMaxBytes        <%= @css_inline_max_bytes %>
+ModPagespeedCssImageInlineMaxBytes   <%= @css_image_inline_max_bytes %>
+ModPagespeedImageInlineMaxBytes      <%= @image_inline_max_bytes %>
+ModPagespeedJsInlineMaxBytes         <%= @js_inline_max_bytes %>
+ModPagespeedCssOutlineMinBytes       <%= @css_outline_min_bytes %>
+ModPagespeedJsOutlineMinBytes        <%= @js_outline_min_bytes %>
+
+
+ModPagespeedFileCacheInodeLimit <%= @inode_limit %>
+ModPagespeedImageMaxRewritesAtOnce <%= @image_max_rewrites_at_once %>
+
+ModPagespeedNumRewriteThreads <%= @num_rewrite_threads %>
+ModPagespeedNumExpensiveRewriteThreads <%= @num_expensive_rewrite_threads %>
+
+ModPagespeedStatistics <%= @collect_statistics %>
+
+<Location /mod_pagespeed_statistics>
+    # You may insert other "Allow from" lines to add hosts you want to
+    # allow to look at generated statistics.  Another possibility is
+    # to comment out the "Order" and "Allow" options from the config
+    # file, to allow any client that can reach your server to examine
+    # statistics.  This might be appropriate in an experimental setup or
+    # if the Apache server is protected by a reverse proxy that will
+    # filter URLs in some fashion.
+    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+    Require ip 127.0.0.1 ::1 <%= Array(@allow_view_stats).join(" ") %>
+    <%- else -%>
+    Order allow,deny
+    Allow from 127.0.0.1 ::1 <%= Array(@allow_view_stats).join(" ") %>
+    <%- end -%>
+    SetHandler mod_pagespeed_statistics
+</Location>
+
+ModPagespeedStatisticsLogging <%= @statistics_logging %>
+<Location /pagespeed_console>
+    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+    Require ip 127.0.0.1 ::1 <%= Array(@allow_pagespeed_console).join(" ") %>
+    <%- else -%>
+    Order allow,deny
+    Allow from 127.0.0.1 ::1 <%= Array(@allow_pagespeed_console).join(" ") %>
+    <%- end -%>
+    SetHandler pagespeed_console
+</Location>
+
+ModPagespeedMessageBufferSize <%= @message_buffer_size %>
+
+<Location /mod_pagespeed_message>
+    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+    Require ip 127.0.0.1 ::1 <%= Array(@allow_pagespeed_message).join(" ") %>
+    <%- else -%>
+    Order allow,deny
+    Allow from 127.0.0.1 ::1 <%= Array(@allow_pagespeed_message).join(" ") %>
+    <%- end -%>
+    SetHandler mod_pagespeed_message
+</Location>
+
+<% @additional_configuration.each_pair do |key, value| -%>
+<%= key %> <%= value %>
+<% end -%>

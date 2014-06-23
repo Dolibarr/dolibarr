@@ -1,0 +1,24 @@
+The following public key can be used to verify RPM packages built and
+signed by Red Hat, Inc.  This key is used for packages in Red Hat
+products shipped after November 2006, and for all updates to those
+products.
+
+Questions about this key should be sent to security@redhat.com.
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1.2.6 (GNU/Linux)
+
+mQGiBEV2EyQRBAD4/SR69qoLzK4HIa6g9iS+baiX0o3NjkLftFHg/xy+IMOMg//i
+4c5bUpLKDTMH3+yT0G8qpul/RALUFOESKFkZm3/SlkJKuroXcB8U6s2dh5XX9DDB
+ISqRwL7M5qB8rfDPKHN+k/XwJ9CNpHMdNxnnc2WhnnmHNp6NrD/bUEH4vwCglMa0
+rFRXPaN7407DARGHvW/jugsEANFaeZsFwos/sajL1XQRfHZUTnvDjJgz31IFY+OL
+DlOVAOtV/NaECMwIJsMIhoisW4Luwp4m75Qh3ogq3bwqSWNLsfJ9WFnNqXOgamyD
+h/F4q492z6FpyIb1JZLABBSH7LEQjHlR/s/Ct5JEWc5MyfzdjBi6J9qCh3y/IYL0
+EbfRA/4yoJ/fH9uthDLZsZRWmnGJvb+VpRvcVs8IQ4aIAcOMbWu2Sp3U9pm6cxZF
+N7tShmAwiiGj9UXVtlhpj3lnqulLMD9VqXGF0YgDOaQ7CP/99OEEhUjBj/8o8udF
+gxc1i2WJjc7/sr8IMbDv/SNToi0bnZUxXa/BUjj92uaQ6/LupbQxUmVkIEhhdCwg
+SW5jLiAocmVsZWFzZSBrZXkpIDxzZWN1cml0eUByZWRoYXQuY29tPohfBBMRAgAf
+BQJFdhMkAhsDBgsJCAcDAgQVAggDAxYCAQIeAQIXgAAKCRBTJoEBNwFxhogXAKCD
+TuYeyQrkYXjg9JmOdTZvsIVfZgCcCWKJXtfbC5dbv0piTHI/cdwVzJo=
+=mhzo
+-----END PGP PUBLIC KEY BLOCK-----

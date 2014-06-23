@@ -1,0 +1,123 @@
+#!/bin/sh
+##based loosely on my sysconfig and initd scripts from centos, but tweaked to work without having to
+##hack up the debian init script.  -keen99 4/2013
+
+<% if @maxconnections -%>
+BEANSTALKD_MAXCONNECTIONS=<%= @maxconnections %>
+<% else -%>
+#use default ulimit
+#BEANSTALKD_MAXCONNECTIONS=1024
+<% end -%>
+
+
+BEANSTALKD_ADDR=<%= @listenaddress %>
+BEANSTALKD_PORT=<%= @listenport %>
+BEANSTALKD_USER=<%= @user %>
+
+# Job size is left to the default. Uncomment and set it
+# to a value to have it take affect.
+<% if @maxjobsize -%>
+BEANSTALKD_MAX_JOB_SIZE=<%= @maxjobsize %>
+<% else -%>
+#use default
+#BEANSTALKD_MAX_JOB_SIZE=65535
+<% end -%>
+
+# Using the binlog is off by default.
+#
+# The direcory to house the binlog.
+<% if @binlogdir -%>
+BEANSTALKD_BINLOG_DIR=<%= @binlogdir %>
+<% else -%>
+#use default
+#BEANSTALKD_BINLOG_DIR=/var/lib/beanstalkd/binlog
+<% end -%>
+
+# fsync the binlog at most once every N milliseconds.
+# setting this to 0 means 'always fsync'. If this is unset,
+# and the binlog is used, then no explicit fsync is ever
+# performed.  That is, the -F option is used.
+<% if @binlogfsync -%>
+BEANSTALKD_BINLOG_FSYNC_PERIOD=<%= @bbinlogfsync %>
+<% else -%>
+#use default
+#BEANSTALKD_BINLOG_FSYNC_PERIOD=
+<% end -%>
+
+# The size of each binlog file.  This is rounded
+# up to the nearest 512 byte boundary.
+<% if @binlogsize -%>
+BEANSTALKD_BINLOG_SIZE=<%= @binlogsize %>
+<% else -%>
+#use default
+#BEANSTALKD_BINLOG_SIZE=10485760
+<% end -%>
+
+
+
+
+##the debian init script leaves everything to be desired.  so lets put our setup logic here.
+
+case "$1" in
+	start|restart|force-reload|reload)
+		exec=$DAEMON
+		[ -x $exec ] || exit 5
+		
+		# if not running, start it up here, usually something like "daemon $exec"
+		options="-l ${BEANSTALKD_ADDR} -p ${BEANSTALKD_PORT} -u ${BEANSTALKD_USER}"
+		if [ "${BEANSTALKD_MAX_JOB_SIZE}" != ""  ]; then
+			options="${options} -z ${BEANSTALKD_MAX_JOB_SIZE}"
+		fi
+		
+		if [ "${BEANSTALKD_BINLOG_DIR}" != "" ]; then
+			if [ ! -d "${BEANSTALKD_BINLOG_DIR}" ]; then
+				echo "Creating binlog directory (${BEANSTALKD_BINLOG_DIR})"
+				mkdir -p ${BEANSTALKD_BINLOG_DIR} && chown ${BEANSTALKD_USER}:${BEANSTALKD_USER} ${BEANSTALKD_BINLOG_DIR}
+			fi
+			options="${options} -b ${BEANSTALKD_BINLOG_DIR}"
+			if [ "${BEANSTALKD_BINLOG_FSYNC_PERIOD}" != "" ]; then
+				options="${options} -f ${BEANSTALKD_BINLOG_FSYNC_PERIOD}"
+			else
+				options="${options} -F"
+			fi
+			if [ "${BEANSTALKD_BINLOG_SIZE}" != "" ]; then
+				options="${options} -s ${BEANSTALKD_BINLOG_SIZE}"
+			fi
+		
+			##1.4.6 at least is prone to leave a lock file around after shutting down
+			##this breaks startup after upgrade to 1.5, so work around this
+			##unknown if this happens w/o binlog enabled...
+			#check for stale lock file in binlog
+			if [ -e "${BEANSTALKD_BINLOG_DIR}/lock" ]
+			 then
+				if ! ps xa| grep -v grep | grep -q $exec
+				 then
+					echo "found old lock file and beanstalk isn't running - deleting it"
+					rm -f ${BEANSTALKD_BINLOG_DIR}/lock
+				fi
+			fi
+		fi
+	
+		if [ -n "${BEANSTALKD_MAXCONNECTIONS}" ]; then
+			#increase open files ulimit to support higher concurrent connections
+			echo "increasing open file limit to $BEANSTALKD_MAXCONNECTIONS"
+			ulimit -n $BEANSTALKD_MAXCONNECTIONS
+		fi
+
+		DAEMON_OPTS="-l $BEANSTALKD_LISTEN_ADDR -p $BEANSTALKD_LISTEN_PORT"
+		DAEMON_OPTS="$options"
+
+	;;
+	*)
+		#nothing, please keep moving
+	;;
+esac
+
+
+
+DAEMONUSER=$BEANSTALKD_USER
+
+
+## Uncomment to enable startup during boot.
+START=yes
+
