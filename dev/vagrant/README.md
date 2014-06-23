@@ -45,9 +45,9 @@ Somewhat bleeding edge vagrant box for develop branch related work.
 
 - IP: 192.168.42.101
 - Vhost: dev.dolibarr.org
-- OS: Debian Wheezy 7.2
-- Webserver: Apache 2.2
-- PHP: mod_php 5.5
+- OS: Debian Wheezy 7.5
+- Webserver: Apache 2.2.22
+- PHP: mod_php 5.5.13-1~dotdeb.1
 - Database: MySQL 5.5
     - Root user: root
     - Root password: root
