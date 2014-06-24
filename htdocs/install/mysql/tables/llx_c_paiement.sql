@@ -32,7 +32,7 @@ create table llx_c_paiement
   libelle    		varchar(30),
   type       		smallint,	
   active     		tinyint DEFAULT 1  NOT NULL,
-  accountancy_code	varchar(32) DEFAULT NULL,
+  accountancy_code	varchar(32) NULL,
   module     		varchar(32) NULL
 )ENGINE=innodb;
 
