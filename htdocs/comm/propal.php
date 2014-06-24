@@ -975,10 +975,12 @@ else if ($action == 'setmode' && $user->rights->propal->creer) {
 }
 
 // currency
-else if ($action == 'setcurrency' && $user->rights->propal->creer)
-{
+else if ($action == 'setcurrency' && $user->rights->propal->creer) {
     $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
-    if ($result < 0) dol_print_error($db,$object->error);
+}
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
+	$result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
 
 /*
@@ -1193,6 +1195,11 @@ if ($action == 'create') {
 	// Currency
 	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
 	$form->select_currency($currency_code, 'currency_code');
+	print '</td></tr>';
+
+	// Bank Account
+	print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+	$form->select_comptes($fk_account, 'fk_account');
 	print '</td></tr>';
 
 	// What trigger creation
@@ -1745,6 +1752,26 @@ if ($action == 'create') {
 	else
 	{
 		$form->form_select_currency($_SERVER['PHP_SELF'].'?id='.$object->id, $object->currency_code, 'none');
+	}
+	print "</td>";
+	print '</tr>';
+
+	// Bank Account
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('BankAccount');
+	print '<td>';
+    if (($action != 'editbankaccount') && $user->rights->propal->creer && ! empty($object->brouillon) && ! empty($conf->multicurrency->enabled))
+        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editbankaccount')
+	{
+		$form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account');
+	}
+	else
+	{
+		$form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
 	print "</td>";
 	print '</tr>';

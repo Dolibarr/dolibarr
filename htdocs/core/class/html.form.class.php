@@ -2480,6 +2480,43 @@ class Form
     }
 
     /**
+     *    Display form to select bank account
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id of bank account
+     *    @param    string	$htmlname    Name of select html field
+     *    @return	void
+     */
+    function form_select_comptes($page, $selected='', $htmlname='fk_account')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setbankaccount">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_comptes($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+                $bankstatic=new Account($this->db);
+                $bankstatic->fetch($selected);
+                print $bankstatic->label.' ('.$bankstatic->currency_code.')';
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
+    /**
      *    Return list of categories having choosed type
      *
      *    @param	int		$type				Type de categories (0=product, 1=supplier, 2=customer, 3=member)

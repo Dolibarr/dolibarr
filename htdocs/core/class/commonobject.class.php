@@ -1124,6 +1124,39 @@ abstract class CommonObject
 
 
     /**
+     *  Change the bank account
+     *
+     *  @param		int		$fk_account		Id of bank account
+     *  @return		int				1 if OK, 0 if KO
+     */
+    function setBankAccount($fk_account)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET fk_account = '".$fk_account."'";
+        $sql.= " WHERE rowid=".$this->id;
+
+        if ($this->db->query($sql))
+        {
+            $this->fk_account = $fk_account;
+            return 1;
+        }
+        else
+        {
+            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+            $this->error=$this->db->error();
+            return 0;
+        }
+    }
+
+
+    /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
      *

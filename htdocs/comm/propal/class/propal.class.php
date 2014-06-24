@@ -80,6 +80,7 @@ class Propal extends CommonObject
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $currency_code;
+    var $fk_account;				// Id of bank account
     var $mode_reglement_id;
     var $mode_reglement_code;
     var $remise;
@@ -1073,6 +1074,7 @@ class Propal extends CommonObject
         $sql.= ", p.fk_input_reason";
         $sql.= ", p.fk_cond_reglement";
         $sql.= ", p.fk_mode_reglement";
+        $sql.= ', p.fk_account';
         $sql.= ', p.fk_currency as currency_code';
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
@@ -1138,6 +1140,7 @@ class Propal extends CommonObject
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
                 $this->mode_reglement_code  = $obj->mode_reglement_code;
                 $this->mode_reglement       = $obj->mode_reglement;
+                $this->fk_account           = $obj->fk_account;
                 $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
                 $this->cond_reglement_id    = $obj->fk_cond_reglement;
                 $this->cond_reglement_code  = $obj->cond_reglement_code;
