@@ -1734,17 +1734,6 @@ elseif (! empty($object->id))
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'edit_line')
 	{
-		/*print '<tr class="liste_titre">';
-		print '<td>';
-		print '<a name="add"></a>'; // ancre
-		print $langs->trans('AddNewLine').' - '.$langs->trans("FreeZone").'</td>';
-		print '<td align="right">'.$langs->trans('VAT').'</td>';
-		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-		print '<td align="right">'.$langs->trans('Qty').'</td>';
-		print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-		print '<td colspan="4">&nbsp;</td>';
-		print '</tr>';*/
-
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector;
 		$forceall=1; $senderissupplier=1; $dateSelector=0;
@@ -1761,97 +1750,6 @@ elseif (! empty($object->id))
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			}
 		}
-
-/*
-	$var=true;
-		print '<tr '.$bc[$var].'>';
-		print '<td>';
-
-		$forceall=1;
-		print $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,0,$forceall);
-		if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-				|| (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
-
-		if (is_object($hookmanager))
-		{
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
-		}
-
-		$nbrows=ROWS_2;
-		if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-		$doleditor = new DolEditor('dp_desc', GETPOST('dp_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
-		$doleditor->Create();
-
-		print '</td>';
-		print '<td align="center">';
-		print $form->load_tva('tva_tx',(GETPOST('tva_tx')?GETPOST('tva_tx'):-1),$object->thirdparty,$mysoc);
-		print '</td>';
-		print '<td align="right"><input type="text" name="pu" size="5" value="'.GETPOST('pu').'"></td>';
-		print '<td align="right"><input type="text" name="qty" value="'.(GETPOST('qty')?GETPOST('qty'):'1').'" size="2"></td>';
-		print '<td align="right" class="nowrap"><input type="text" name="remise_percent" size="1" value="'.(GETPOST('remise_percent')?GETPOST('remise_percent'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
-		print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline_libre"></td>';
-		print '</tr>';
-
-		// Ajout de produits/services predefinis
-		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-		{
-			print '<script type="text/javascript">
-            	jQuery(document).ready(function() {
-            		jQuery(\'#idprodfournprice\').change(function() {
-            			if (jQuery(\'#idprodfournprice\').val() > 0) jQuery(\'#np_desc\').focus();
-            		});
-            	});
-            </script>';
-
-			print '<tr class="liste_titre">';
-			print '<td colspan="3">';
-			print $langs->trans("AddNewLine").' - ';
-			if (! empty($conf->service->enabled))
-			{
-				print $langs->trans('RecordedProductsAndServices');
-			}
-			else
-			{
-				print $langs->trans('RecordedProducts');
-			}
-			print '</td>';
-			print '<td align="right">'.$langs->trans('Qty').'</td>';
-			print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-			print '<td colspan="4">&nbsp;</td>';
-			print '</tr>';
-
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
-			print '<td colspan="3">';
-
-
-			$ajaxoptions=array(
-					'update' => array('qty_predef'=>'qty','remise_percent_predef' => 'discount'),	// html id tag will be edited with which ajax json response key
-					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
-					'error' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
-			);
-			$form->select_produits_fournisseurs($object->fourn_id, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions);
-
-			if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) print '<br>';
-
-			if (is_object($hookmanager))
-			{
-				$parameters=array('htmlname'=>'idprodfournprice');
-				$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
-			}
-
-			$nbrows=ROWS_2;
-			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
-			$doleditor = new DolEditor('np_desc', GETPOST('np_desc'), '', 100, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_DETAILS, $nbrows, 70);
-			$doleditor->Create();
-
-			print '</td>';
-			print '<td align="right"><input type="text" size="2" id="qty_predef" name="qty_predef" value="'.(GETPOST('qty_predef')?GETPOST('qty_predef'):'1').'"></td>';
-			print '<td align="right" class="nowrap"><input type="text" size="1" id="remise_percent_predef" name="remise_percent_predef" value="'.(GETPOST('remise_percent_predef')?GETPOST('remise_percent_predef'):$object->thirdparty->remise_percent).'"><span class="hideonsmartphone">%</span></td>';
-			print '<td align="center" colspan="4"><input type="submit" id="addPredefinedProductButton" class="button" value="'.$langs->trans('Add').'" name="addline_predefined"></td>';
-			print '</tr>';
-		}*/
 	}
 	print '</table>';
 
@@ -1962,8 +1860,6 @@ elseif (! empty($object->id))
 
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		//print '<table width="100%"><tr><td width="50%" valign="top">';
-		//print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -1992,10 +1888,6 @@ elseif (! empty($object->id))
         $formactions=new FormActions($db);
         $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
 
-		print '</div></div></div>';
-
-		//print '</td><td valign="top" width="50%">';
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
@@ -2064,7 +1956,6 @@ elseif (! empty($object->id))
 		*/
 
 		print '</div></div></div>';
-		//print '</td></tr></table>';
 	}
 
 	/*

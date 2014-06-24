@@ -104,18 +104,30 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer) {
-	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
-		$mesg = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
-	} else {
-		if ($object->id > 0) {
-			$result = $object->createFromClone($socid);
-			if ($result > 0) {
-				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
-				exit();
-			} else {
-				$mesg = '<div class="error">' . $object->error . '</div>';
-				$action = '';
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer)
+{
+	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		if ($object->id > 0)
+		{
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = dol_clone($object);
+
+			$result=$object->createFromClone($socid);
+			if ($result > 0)
+			{
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+				exit;
+			}
+			else
+			{
+				setEventMessage($object->error, 'errors');
+				$object = $orig;
+				$action='';
 			}
 		}
 	}
@@ -125,11 +137,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 else if ($action == 'reopen' && $user->rights->commande->creer) {
 	if ($object->statut == 3) {
 		$result = $object->set_reopen($user);
-		if ($result > 0) {
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-			exit();
-		} else {
-			$mesg = '<div class="error">' . $object->error . '</div>';
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -139,9 +154,10 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 	$result = $object->delete($user);
 	if ($result > 0) {
 		header('Location: index.php');
-		exit();
-	} else {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		exit;
+	}
+	else {
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -165,10 +181,12 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-		exit();
-	} else {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+	else
+	{
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -382,8 +400,13 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 	}
 }
 
-else if ($action == 'classifybilled' && $user->rights->commande->creer) {
-	$ret = $object->classifyBilled();
+else if ($action == 'classifybilled' && $user->rights->commande->creer)
+{
+	$ret=$object->classifyBilled();
+
+	if ($ret < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 // Positionne ref commande client
@@ -476,7 +499,7 @@ else if ($action == 'setremiseabsolue' && $user->rights->commande->creer) {
 // Add a new line
 else if ($action == 'addline' && $user->rights->commande->creer) {
 	$langs->load('errors');
-	$error = false;
+	$error = 0;
 
 	// Set if we used free entry or predefined product
 	$predef='';
@@ -552,12 +575,17 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
 				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level)) {
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
+				{
 					$pu_ht = $prod->multiprices [$object->client->price_level];
 					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
 					$price_min = $prod->multiprices_min [$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-				} elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 					$prodcustprice = new Productcustomerprice($db);
@@ -574,7 +602,9 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -898,8 +928,9 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 
 else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer) {
 	$result = $object->cloture($user);
-	if ($result < 0)
-		$mesgs = $object->errors;
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider) {
@@ -916,6 +947,10 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 
 	if (! $error) {
 		$result = $object->cancel($idwarehouse);
+
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
 	}
 }
 
@@ -1319,13 +1354,13 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->client;
-			$cond_reglement_id = (! empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (! empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
-			$mode_reglement_id = (! empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (! empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$availability_id = (! empty($objectsrc->availability_id) ? $objectsrc->availability_id : (! empty($soc->availability_id) ? $soc->availability_id : 0));
-			$demand_reason_id = (! empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (! empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
-			$remise_percent = (! empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (! empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			$remise_absolue = (! empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (! empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
-			$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
+			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
+			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
+			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 			$datedelivery = (! empty($objectsrc->date_livraison) ? $objectsrc->date_livraison : '');
 
@@ -1335,17 +1370,19 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(- 1, 'external', 1);
 		}
-	} else {
-		$cond_reglement_id = $soc->cond_reglement_id;
-		$mode_reglement_id = $soc->mode_reglement_id;
-		$availability_id = $soc->availability_id;
-		$demand_reason_id = $soc->demand_reason_id;
-		$remise_percent = $soc->remise_percent;
-		$remise_absolue = 0;
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
-		$projectid = 0;
 	}
-	$absolute_discount = $soc->getAvailableDiscounts();
+	else
+	{
+		$cond_reglement_id  = $soc->cond_reglement_id;
+		$mode_reglement_id  = $soc->mode_reglement_id;
+		$availability_id    = $soc->availability_id;
+		$demand_reason_id   = $soc->demand_reason_id;
+		$remise_percent     = $soc->remise_percent;
+		$remise_absolue     = 0;
+		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+		$projectid          = 0;
+	}
+	$absolute_discount=$soc->getAvailableDiscounts();
 
 	$nbrow = 10;
 
@@ -1414,12 +1451,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '</td></tr>';
 
 	// Date de livraison
-	print "<tr><td>" . $langs->trans("DeliveryDate") . '</td><td colspan="2">';
-	if (empty($datedelivery)) {
-		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY))
-			$datedelivery = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		else
-			$datedelivery = empty($conf->global->MAIN_AUTOFILL_DATE) ? - 1 : 0;
+	print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
+	if (empty($datedelivery))
+	{
+		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 	}
 	$form->select_date($datedelivery, 'liv_', '', '', '', "crea_commande", 1, 1);
 	print "</td></tr>";

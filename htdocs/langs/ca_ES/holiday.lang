@@ -8,7 +8,6 @@ NotActiveModCP=Heu d'activar el mòdul Vacacions per veure aquesta pàgina.
 NotConfigModCP=Heu de configurar el mòdul Vacacions per veure aquesta pàgina. per configurar, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">feu clic aquí</a>.
 NoCPforUser=No té peticions de vacances.
 AddCP=Crear petició de vacances
-CPErrorSQL=S'ha produït un error de SQL:
 Employe=Empleat
 DateDebCP=Data inici
 DateFinCP=Data fi

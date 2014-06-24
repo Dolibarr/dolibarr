@@ -8,7 +8,6 @@ NotActiveModCP=Sinun täytyy aktivoida lomat -moduuli nähdäksesi tämän sivun
 NotConfigModCP=You must configure the module holidays to view this page. To do this, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click here </ a>.
 NoCPforUser=Sinulla ei ole voimassa olevaa lomatoivomusta.
 AddCP=Apply for holidays
-CPErrorSQL=An SQL error occurred:
 Employe=Työntekijä
 DateDebCP=Aloituspäivämäärä
 DateFinCP=Lopetuspäivä

@@ -551,6 +551,7 @@ MailSentBy=E-posta ile gönderildi
 TextUsedInTheMessageBody=Mesaj gövdesinde yazı kullanıldı.
 SendAcknowledgementByMail=Alındı bilgisini e-posta ile gönder.
 NoEMail=E-posta yok
+NoMobilePhone=No mobile phone
 Owner=Sahibi
 DetectedVersion=Belirlenen sürüm
 FollowingConstantsWillBeSubstituted=Aşağıdaki değişmezler uygun değerlerin yerine konacaktır.

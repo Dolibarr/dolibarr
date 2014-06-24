@@ -8,7 +8,6 @@ NotActiveModCP=Bu sayfayı görmek için tatiller modülünü etkinleştirmelisi
 NotConfigModCP=Bu sayfayı görmek için tatiller modülünü etkinleştirmelisiniz. Bunu yapmak için, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> buraya tıklayın </ a>.
 NoCPforUser=Bir tatil isteğiniz yok.
 AddCP=Tatil için başvur
-CPErrorSQL=Bir SQL hatası oluştu:
 Employe=Çalışan
 DateDebCP=Başlama tarihi
 DateFinCP=Bitiş tarihi

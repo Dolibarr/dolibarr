@@ -74,10 +74,10 @@ class modSalaries extends DolibarrModules
 		$this->conflictwith = array();
 		$this->langfiles = array("salaries");
 
-		// Constantes
+		// Constants
 		$this->const = array();
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 
 		// Permissions
@@ -151,7 +151,7 @@ class modSalaries extends DolibarrModules
 	{
 		global $conf;
 
-		// Nettoyage avant activation
+		// Clean before activation
 		$this->remove($options);
 
 		$sql = array();

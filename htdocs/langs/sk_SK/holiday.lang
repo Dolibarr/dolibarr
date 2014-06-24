@@ -8,7 +8,6 @@ NotActiveModCP=Musíte umožniť modul sviatky zobrazenie tejto stránky.
 NotConfigModCP=Musíte nakonfigurovať modul dovolenku na zobrazenie tejto stránky. Ak to chcete vykonať, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">kliknite sem</a> </ a> <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">.</a>
 NoCPforUser=Nemáte dopyt na dovolenku.
 AddCP=Použiť pre dovolenku
-CPErrorSQL=SQL chyba:
 Employe=Zamestnanec
 DateDebCP=Dátum začatia
 DateFinCP=Dátum ukončenia

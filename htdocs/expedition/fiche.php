@@ -144,7 +144,7 @@ if ($action == 'add')
 				$j++;
 				$batch="batchl".$i."_".$j;
 				$qty = "qtyl".$i.'_'.$j;
-				
+
 			}
 			$batch_line[$i]['detail']=$sub_qty;
 			$batch_line[$i]['qty']=$subtotalqty;
@@ -316,7 +316,7 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
     if ($action == 'settrueWeight')	{
     	$object->trueWeight = trim(GETPOST('trueWeight','int'));
 		$object->weight_units = GETPOST('weight_units','int');
-    }		
+    }
     if ($action == 'settrueWidth')			$object->trueWidth = trim(GETPOST('trueWidth','int'));
     if ($action == 'settrueHeight'){
     				$object->trueHeight = trim(GETPOST('trueHeight','int'));
@@ -500,7 +500,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -863,7 +863,7 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-				if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_array($product->stock_warehouse[GETPOST('entrepot_id','int')]))) 
+                if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_object($product->stock_warehouse[GETPOST('entrepot_id','int')])))
 				{
 	                // Quantity to send
 	                print '<td align="center">';
@@ -874,7 +874,7 @@ if ($action == 'create')
 	                }
 	                else print $langs->trans("NA");
 	                print '</td>';
-	
+
 	                // Stock
 	                if (! empty($conf->stock->enabled))
 	                {
@@ -901,9 +901,9 @@ if ($action == 'create')
 	                    }
 	                    print '</td>';
 	                }
-	
+
 	                print "</tr>\n";
-	
+
 	                // Show subproducts of product
 					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 					{
@@ -936,7 +936,7 @@ if ($action == 'create')
 						print '<tr><td colspan="3" ></td><td align="center">';
 						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
 						print '</td>';
-						
+
 						print '<td align="left">';
 						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 						print $langs->trans("DetailBatchFormat", dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->batch, $dbatch->qty);
@@ -1148,16 +1148,16 @@ else if ($id || $ref)
 		}
 		else
 		{
-			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
 		}
 		print '</td>';
 		print '</tr>';
 
 		// Weight
 		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		
+
 		if($action=='edittrueWeight') {
-			
+
 			print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input name="action" value="settrueWeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
@@ -1167,12 +1167,12 @@ else if ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-			
+
 		}
 		else {
 			print $object->trueWeight;
 			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
-		}		
+		}
 
 		if ($totalWeight > 0)
 		{
@@ -1191,7 +1191,7 @@ else if ($id || $ref)
 		// Height
 		print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
 		if($action=='edittrueHeight') {
-			
+
 			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 			print '<input name="action" value="settrueHeight" type="hidden">';
 			print '<input name="id" value="'.$object->id.'" type="hidden">';
@@ -1201,15 +1201,15 @@ else if ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-			
+
 		}
 		else {
 			print $object->trueHeight;
 			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
-		
+
 		}
-		
-		
+
+
 		print '</td></tr>';
 
 		// Depth
@@ -1431,7 +1431,7 @@ else if ($id || $ref)
 			}
 
 			// Batch number managment
-			if (! empty($conf->productbatch->enabled)) {  
+			if (! empty($conf->productbatch->enabled)) {
 				if (isset($lines[$i]->detail_batch) ) {
 					print '<td align="center">';
 					$detail = '';

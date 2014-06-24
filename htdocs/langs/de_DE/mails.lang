@@ -79,6 +79,7 @@ MailtoEMail=Verknüpfung zu E-Mail
 ActivateCheckRead=Erlaube den Zugriff auf den "Abmelde"-Link
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=E-Mail versandt an %s Empfänger.
+XTargetsAdded=<b>%s</b> Empfänger der Liste zugefügt
 EachInvoiceWillBeAttachedToEmail=Ein Dokument mit der Standard-Vorlage für Rechnungen wird erstellt und an jede E-Mail angehängt.
 MailTopicSendRemindUnpaidInvoices=Zahlungserinnerung für Rechnung %s (%s)
 SendRemind=Zahlungserinnerung per E-Mail senden

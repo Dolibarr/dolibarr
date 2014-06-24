@@ -232,12 +232,12 @@ if ($id > 0 || ! empty($ref))
 
 	// Date start
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-	print dol_print_date($object->date_start,'dayhour');
+	print dol_print_date($object->date_start,'day');
 	print '</td></tr>';
 
 	// Date end
 	print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-	print dol_print_date($object->date_end,'dayhour');
+	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
 
 	// Other options

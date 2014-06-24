@@ -1,0 +1,29 @@
+server {
+   listen                80;
+   server_name           localhost;
+
+   index index.php index.html index.htm;
+
+   access_log            /var/log/nginx/log/host.access.log;
+   error_log             /var/log/nginx/log/host.error.log;
+
+   location / {
+     root  <%= @webroot %>;
+     try_files  $uri  $uri/  /index.php?$args ;
+     index  index.html index.htm index.php;
+   }
+
+   location ~ \.php$ {
+     root  <%= @webroot %>;
+     try_files  $uri  $uri/  /index.php?$args ;
+     index  index.html index.htm index.php;
+
+     fastcgi_index index.php;
+     fastcgi_param PATH_INFO $fastcgi_path_info;
+     fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+     fastcgi_pass  <%= @fastcgi_pass %>;
+     fastcgi_split_path_info ^(.+\.php)(/.+)$;
+     include fastcgi_params;
+   }
+ }

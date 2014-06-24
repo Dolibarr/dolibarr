@@ -487,7 +487,7 @@ jQuery(document).ready(function() {
 function setforfree() {
 	jQuery("#search_idprod").val('');
 	jQuery("#idprod").val('');
-	jQuery("#idprodfournprice").val('');
+	jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
 	jQuery("#search_idprodfournprice").val('');
 	jQuery("#prod_entry_mode_free").attr('checked',true);
 	jQuery("#prod_entry_mode_predef").attr('checked',false);

@@ -60,18 +60,18 @@ $cp = new Holiday($db);
 if ($action == "add")
 {
     $message = '';
-    $error = false;
+    $error = 0;
 
     // Option du groupe de validation
     /*if (!$cp->updateConfCP('userGroup',$_POST['userGroup']))
     {
-        $error = true;
+        $error++;
     }*/
 
     // Option du délai pour faire une demande de congés payés
     if (!$cp->updateConfCP('delayForRequest',$_POST['delayForRequest']))
     {
-        $error = true;
+        $error++;
     }
 
     // Option du nombre de jours à ajouter chaque mois
@@ -79,67 +79,69 @@ if ($action == "add")
 
     if(!$cp->updateConfCP('nbHolidayEveryMonth',$nbHolidayEveryMonth))
     {
-        $error = true;
+        $error++;
     }
 
     // Option du nombre de jours pour un mariage
     $OptMariageCP = price2num($_POST['OptMariage'],5);
 
     if(!$cp->updateConfCP('OptMariage',$OptMariageCP)) {
-        $error = true;
+        $error++;
     }
 
     // Option du nombre de jours pour un décés d'un proche
     $OptDecesProcheCP = price2num($_POST['OptDecesProche'],5);
 
     if(!$cp->updateConfCP('OptDecesProche',$OptDecesProcheCP)) {
-        $error = true;
+        $error++;
     }
 
     // Option du nombre de jours pour un mariage d'un enfant
     $OptMariageProcheCP = price2num($_POST['OptMariageProche'],5);
 
     if(!$cp->updateConfCP('OptMariageProche',$OptMariageProcheCP)) {
-        $error = true;
+        $error++;
     }
 
     // Option du nombre de jours pour un décés d'un parent
     $OptDecesParentsCP = price2num($_POST['OptDecesParents'],5);
 
     if(!$cp->updateConfCP('OptDecesParents',$OptDecesParentsCP)) {
-        $error = true;
+        $error++;
     }
 
     // Option pour avertir le valideur si délai de demande incorrect
     if(isset($_POST['AlertValidatorDelay'])) {
         if(!$cp->updateConfCP('AlertValidatorDelay','1')) {
-            $error = true;
+            $error++;
         }
     } else {
         if(!$cp->updateConfCP('AlertValidatorDelay','0')) {
-            $error = true;
+            $error++;
         }
     }
 
     // Option pour avertir le valideur si solde des congés de l'utilisateur inccorect
     if(isset($_POST['AlertValidatorSolde'])) {
         if(!$cp->updateConfCP('AlertValidatorSolde','1')) {
-            $error = true;
+            $error++;
         }
     } else {
         if(!$cp->updateConfCP('AlertValidatorSolde','0')) {
-            $error = true;
+            $error++;
         }
     }
 
     // Option du nombre de jours à déduire pour 1 jour de congés
     $nbHolidayDeducted = price2num($_POST['nbHolidayDeducted'],2);
 
-    if(!$cp->updateConfCP('nbHolidayDeducted',$nbHolidayDeducted)) {
-        $error = true;
+    if(!$cp->updateConfCP('nbHolidayDeducted',$nbHolidayDeducted))
+    {
+        $error++;
     }
 
-    if ($error) {
+    if ($error)
+    {
         $message = '<div class="error">'.$langs->trans('ErrorUpdateConfCP').'</div>';
     } else {
         $message = '<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
@@ -151,8 +153,8 @@ if ($action == "add")
 
     $result = $db->query($sql);
     $num = $db->num_rows($sql);
-
-    if($num < 1) {
+    if($num < 1)
+    {
         $cp->createCPusers();
         $message.= '<br /><div class="warning">'.$langs->trans('AddCPforUsers').'</div>';
     }
@@ -202,7 +204,7 @@ elseif ($action == 'create_event')
 }
 elseif($action == 'event' && isset($_POST['update_event']))
 {
-    $error = false;
+    $error = 0;
 
     $eventId = array_keys($_POST['update_event']);
     $eventId = $eventId[0];
@@ -213,19 +215,21 @@ elseif($action == 'event' && isset($_POST['update_event']))
     $eventValue = $optValue;
     $eventValue = $eventValue[$eventId];
 
-    if(!empty($eventName)) {
+    if (!empty($eventName))
+    {
         $eventName = trim($eventName);
     } else {
-        $error = true;
+        $error++;
     }
 
-    if(!empty($eventValue)) {
+    if (!empty($eventValue))
+    {
         $eventValue = price2num($eventValue,2);
     } else {
-        $error = true;
+        $error++;
     }
 
-    if(!$error)
+    if (!$error)
     {
         // Mise à jour des congés de l'utilisateur
         $update = $cp->updateEventCP($eventId,$eventName,$eventValue);

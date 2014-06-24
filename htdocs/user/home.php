@@ -148,26 +148,30 @@ if ($resql)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
-		else if (! empty($conf->multicompany->enabled))
-        {
-        	if ($obj->admin && ! $obj->entity)
-        	{
-        		print $langs->trans("AllEntities");
-        	}
-        	else
-        	{
-        		$mc->getInfo($obj->entity);
-        		print $mc->label;
-        	}
-        }
-		else if ($obj->ldap_sid)
-		{
-			print $langs->trans("DomainUser");
-		}
 		else
 		{
 			print $langs->trans("InternalUser");
 		}
+		if ($obj->ldap_sid)
+		{
+			print ' ('.$langs->trans("DomainUser").')';
+		}
+        // TODO This should be done with a hook
+        if (is_object($mc))
+        {
+			if (! empty($conf->multicompany->enabled))
+	        {
+	        	if ($obj->admin && ! $obj->entity)
+	        	{
+	        		print ' ('.$langs->trans("AllEntities").')';
+	        	}
+	        	else
+	        	{
+	        		$mc->getInfo($obj->entity);
+	        		print ' ('.$mc->label.')';
+	        	}
+	        }
+        }
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';

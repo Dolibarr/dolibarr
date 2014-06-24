@@ -1,0 +1,49 @@
+---
+:info:
+  -
+    :command: "<%= scope.lookupvar('puppi::params::info_package_query') %> %{package}"
+    :description: "Package info"
+  -
+    :command: "<%= scope.lookupvar('puppi::params::info_package_list') %> %{package} | egrep '(/bin|^/etc|/sbin|log$)'"
+    :description: "Interesting files from package"
+  -
+    :command: "head %{config_file}"
+    :description: "Main configuration file"
+  -
+    :command: "ls -latr %{config_dir}"
+    :description: "Configuration directory"
+  -
+    :command: "ls -latr %{data_dir}"
+    :description: "Data directory"
+  -
+    :command: "ls -latr %{log_dir}"
+    :description: "Logs directory"
+  -
+    :command: "tail %{log_file}"
+    :description: "Latest log entries"
+  -
+    :command: "service %{service status}"
+    :description: "Service status"
+  -
+    :command: "ps -adef | grep %{process} | grep -v grep | head -20"
+    :description: "Running process"
+  -
+    :command: "netstat -natup | grep %{port} | head -20"
+    :description: "Network connections"
+
+:check:
+  -
+    :command: "service %{service} status"
+    :description: "Service status"
+  -
+    :command: "check_tcp %{port}"
+    :description: "Check listening port"
+  -
+    :command: "check_procs c 1: -C %{process}"
+    :description: "Check process"
+
+:log:
+  -
+    :command: "tail -f %{log_file}"
+    :description: "Tailing logs"
+

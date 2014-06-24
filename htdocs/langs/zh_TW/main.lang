@@ -551,6 +551,7 @@ MailSentBy=通過電子郵件發送
 TextUsedInTheMessageBody=電子郵件正文
 SendAcknowledgementByMail=發送的ACK。通過電子郵件
 NoEMail=沒有電子郵件
+NoMobilePhone=No mobile phone
 Owner=業主
 DetectedVersion=檢測到的版本
 FollowingConstantsWillBeSubstituted=以下常量將與相應的值代替。

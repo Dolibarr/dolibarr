@@ -8,7 +8,6 @@ NotActiveModCP=Turite įjungti atostogų modulį, kad galėtumėte mstyti šį p
 NotConfigModCP=Reikia sukonfigūruoti atostogų modulį, kad galėtumėte matyti šį puslapį. Norėdami tai padaryti, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> spauskite čia</a>.
 NoCPforUser=Jūs neturite atostogų paraiškų.
 AddCP=Prašyti atostogų
-CPErrorSQL=Įvyko SQL klaida:
 Employe=Darbuotojas
 DateDebCP=Pradžios data
 DateFinCP=Pabaigos data

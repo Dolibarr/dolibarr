@@ -269,7 +269,7 @@ class Product extends CommonObject
 
         // Barcode value
         $this->barcode=trim($this->barcode);
-		
+
         // Check parameters
 		if (empty($this->libelle))
 		{
@@ -309,11 +309,11 @@ class Product extends CommonObject
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
 		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
-		
+
 		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
-        
+
         if ($result >= 0)
         {
 			$sql = "SELECT count(*) as nb";
@@ -520,7 +520,7 @@ class Product extends CommonObject
             }
 
             $mod = new $module();
-            
+
             dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
             $result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
             return $result;
@@ -586,7 +586,7 @@ class Product extends CommonObject
         {
         	$result = $this->verify();	// We don't check when update called during a create because verify was already done
         }
-        
+
         if ($result >= 0)
         {
 	        // For automatic creation
@@ -600,7 +600,7 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-				
+
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
@@ -627,7 +627,7 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= " WHERE rowid = " . $id;
-				
+
 			dol_syslog(get_class($this)."update sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -859,7 +859,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	Update ou cree les traductions des infos produits
+	 *	Update or add a translation for a product
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
@@ -936,6 +936,29 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 *	Delete a language for this product
+	 *
+	 *  @param		string	$langtodelete		Language to delete
+	 *	@return		int							<0 if KO, >0 if OK
+	 */
+	function delMultiLangs($langtodelete)
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
+		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
+
+		dol_syslog("Delete translation sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error="Error: ".$this->db->error()." - ".$sql;
+			return -1;
+		}
+	}
 
 	/**
 	 *	Load array this->multilangs
@@ -973,7 +996,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+			$this->error="Error: ".$this->db->error()." - ".$sql;
 			return -1;
 		}
 	}
@@ -1043,14 +1066,14 @@ class Product extends CommonObject
 
 
 	/**
-	 *	Lit le prix pratique par un fournisseur
-	 *	On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref
+	 *	Read price used by a provider
+	 *	We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref
 	 *
 	 *  @param     	int		$prodfournprice     Id du tarif = rowid table product_fournisseur_price
 	 *  @param     	double	$qty                Quantity asked
 	 *	@param		int		$product_id			Filter on a particular product id
 	 * 	@param		string	$fourn_ref			Filter on a supplier ref
-	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve
+	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
@@ -1081,7 +1104,7 @@ class Product extends CommonObject
 			{
 				// We do same select again but searching with qty, ref and id product
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.tva_tx";
+				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
 				$sql.= " AND pfp.fk_product = ".$product_id;
@@ -1096,9 +1119,11 @@ class Product extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj && $obj->quantity > 0)		// If found
 					{
-						$this->buyprice = $obj->price;                      // \deprecated
+						$this->buyprice = $obj->price;                      // deprecated
+						$this->fourn_qty = $obj->quantity;					// min quantity for price
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-						$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
+						$this->ref_fourn = $obj->ref_supplier;              // deprecated
+						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$result=$obj->fk_product;
 						return $result;

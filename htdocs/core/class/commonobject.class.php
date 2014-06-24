@@ -637,7 +637,7 @@ abstract class CommonObject
         global $conf;
 
         dol_syslog(get_class($this).'::fetch_barcode this->element='.$this->element.' this->barcode_type='.$this->barcode_type);
-        
+
         $idtype=$this->barcode_type;
         if (empty($idtype) && $idtype != '0')	// If type of barcode no set, we try to guess. If set to '0' it means we forced to have type remain not defined
         {
@@ -645,7 +645,7 @@ abstract class CommonObject
             else if ($this->element == 'societe') $idtype = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
             else dol_syslog('Call fetch_barcode with barcode_type not defined and cant be guessed', LOG_WARNING);
         }
-        
+
         if ($idtype > 0)
         {
             if (empty($this->barcode_type) || empty($this->barcode_type_code) || empty($this->barcode_type_label) || empty($this->barcode_type_coder))    // If data not already loaded
@@ -2121,7 +2121,7 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	//Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
                             // we can add this attribute to adherent object
@@ -3237,6 +3237,7 @@ abstract class CommonObject
 		$marginInfo = $this->getMarginInfos($force_price);
 
 		print '<table class="nobordernopadding" width="100%">';
+
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -3250,38 +3251,49 @@ abstract class CommonObject
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
 			print '<td align="right">'.$langs->trans('MarkRate').'</td>';
 		print '</tr>';
-		//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-		print '<tr class="impair">';
-		print '<td>'.$langs->trans('MarginOnProducts').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
-		print '</tr>';
-		print '<tr class="pair">';
-		print '<td>'.$langs->trans('MarginOnServices').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
-		print '</tr>';
-		//}
-		print '<tr class="impair">';
-		print '<td>'.$langs->trans('TotalMargin').'</td>';
-		print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
-		print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-			print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-			print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
-		print '</tr>';
+
+		if (! empty($conf->product->enabled))
+		{
+			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
+			print '<tr class="impair">';
+			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
+			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['margin_on_products'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, $rounding).'%').'</td>';
+			print '</tr>';
+		}
+
+		if (! empty($conf->service->enabled))
+		{
+			print '<tr class="pair">';
+			print '<td>'.$langs->trans('MarginOnServices').'</td>';
+			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['margin_on_services'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, $rounding).'%').'</td>';
+			print '</tr>';
+		}
+
+		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+		{
+			print '<tr class="impair">';
+			print '<td>'.$langs->trans('TotalMargin').'</td>';
+			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';
+			print '<td align="right">'.price($marginInfo['total_margin'], null, null, null, null, $rounding).'</td>';
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td align="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, $rounding).'%').'</td>';
+			if (! empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td align="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, $rounding).'%').'</td>';
+			print '</tr>';
+		}
 		print '</table>';
 	}
 

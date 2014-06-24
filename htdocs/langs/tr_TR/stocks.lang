@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Bu liste tüm açık tedarikçi siparişlerinindir
 Replenishments=İkmal
 NbOfProductBeforePeriod=Stoktaki %s ürününün, seçilen dönemden (<%s) önceki miktarıdır
 NbOfProductAfterPeriod=Stoktaki %s ürününün, seçilen dönemden (<%s) sonraki miktarıdır
+MassMovement=Mass movement
 MassStockMovement=Toplu stok hareketi
 SelectProductInAndOutWareHouse=Bir ürün, bir miktar, bir kaynak depo ve bir hedef depo seçin, sonra "%s" e tıklayın. Bütün gerekli hareketler için bu işlem yapıldığında "%s" e tıklayın.
 RecordMovement=Kayıt aktarımı

@@ -1137,12 +1137,17 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
 				// We define price for product
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level)) {
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
+				{
 					$pu_ht = $prod->multiprices [$object->client->price_level];
 					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
 					$price_min = $prod->multiprices_min [$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-				} elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 					$prodcustprice = new Productcustomerprice($db);
@@ -1159,7 +1164,9 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1606,8 +1613,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$interface = new Interfaces($db);
 					$result = $interface->run_triggers('BILL_SENTBYMAIL', $object, $user, $langs, $conf);
 					if ($result < 0) {
-						$error ++;
-						$this->errors = $interface->errors;
+						$error++;
+						$object->errors = $interface->errors;
 					}
 					// Fin appel triggers
 
@@ -1666,7 +1673,7 @@ else if ($action == 'builddoc') // En get ou en post
 	// Save last template used to generate document
 	if (GETPOST('model'))
 		$object->setDocModel($user, GETPOST('model', 'alpha'));
-	if (GETPOST('fk_bank'))
+	if (GETPOST('fk_bank'))	// this field may come from an external module
 		$object->fk_bank = GETPOST('fk_bank');
 
 	// Define output language
@@ -1871,10 +1878,12 @@ if ($action == 'create')
 			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
 
 			$soc = $objectsrc->thirdparty;
-			$cond_reglement_id = (! empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (! empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
-			$mode_reglement_id = (! empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (! empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-			$remise_percent = (! empty($objectsrc->remise_percent) ? $objectsrc->remise_percent : (! empty($soc->remise_percent) ? $soc->remise_percent : 0));
-			$remise_absolue = (! empty($objectsrc->remise_absolue) ? $objectsrc->remise_absolue : (! empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
+
+			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
+			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
@@ -1884,11 +1893,11 @@ if ($action == 'create')
 	}
 	else
 	{
-		$cond_reglement_id = $soc->cond_reglement_id;
-		$mode_reglement_id = $soc->mode_reglement_id;
-		$remise_percent = $soc->remise_percent;
-		$remise_absolue = 0;
-		$dateinvoice = empty($conf->global->MAIN_AUTOFILL_DATE) ? -1 : '';	// Do not set 0 here (0 for a date is 1970)
+		$cond_reglement_id 	= $soc->cond_reglement_id;
+		$mode_reglement_id 	= $soc->mode_reglement_id;
+		$remise_percent 	= $soc->remise_percent;
+		$remise_absolue 	= 0;
+		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';		// Do not set 0 here (0 for a date is 1970)
 	}
 	$absolute_discount = $soc->getAvailableDiscounts();
 

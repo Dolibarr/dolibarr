@@ -551,6 +551,7 @@ MailSentBy=E-Mail Absender
 TextUsedInTheMessageBody=E-Mail Text
 SendAcknowledgementByMail=Kenntnisnahme per E-Mail bestätigen
 NoEMail=Keine E-Mail
+NoMobilePhone=No mobile phone
 Owner=Eigentümer
 DetectedVersion=Erkannte Version
 FollowingConstantsWillBeSubstituted=Nachfolgende Konstanten werden durch entsprechende Werte ersetzt.

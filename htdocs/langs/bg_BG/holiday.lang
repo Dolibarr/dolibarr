@@ -8,7 +8,6 @@ NotActiveModCP=Трябва да вкючите модула за отпуски
 NotConfigModCP=Необходимо е да конфигурирате модула за отпуски за да видите тази страница. За да направите това, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> щтракнете тук </ a>.
 NoCPforUser=You don't have a demand for holidays.
 AddCP=Кандидатстване за отпуск
-CPErrorSQL=Възникна SQL грешка:
 Employe=Служител
 DateDebCP=Начална дата
 DateFinCP=Крайна дата

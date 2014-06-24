@@ -112,6 +112,7 @@ ReplenishmentOrdersDesc=Questa è una lista di tutti gli ordini di acquisto aper
 Replenishments=Rifornimento
 NbOfProductBeforePeriod=Quantità del prodotto %s in magazzino prima del periodo selezionato (< %s)
 NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+MassMovement=Mass movement
 MassStockMovement=Mass stock movement
 SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
 RecordMovement=Record transfert

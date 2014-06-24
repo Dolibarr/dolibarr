@@ -551,6 +551,7 @@ MailSentBy=によって送信される電子メール
 TextUsedInTheMessageBody=電子メールの本文
 SendAcknowledgementByMail=Ackを送信します。電子メールによる
 NoEMail=まだメールしない
+NoMobilePhone=No mobile phone
 Owner=所有者
 DetectedVersion=検出されたバージョン
 FollowingConstantsWillBeSubstituted=以下の定数は、対応する値を持つ代替となります。

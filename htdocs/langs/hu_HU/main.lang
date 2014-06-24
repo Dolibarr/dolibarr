@@ -551,6 +551,7 @@ MailSentBy=Email feladója
 TextUsedInTheMessageBody=Email test
 SendAcknowledgementByMail=Visszaigazolás küldése (email)
 NoEMail=Nincs email
+NoMobilePhone=No mobile phone
 Owner=Tulajdonos
 DetectedVersion=Észlelt verzió
 FollowingConstantsWillBeSubstituted=Az alábbi konstansok helyettesítve leszenek a hozzájuk tartozó értékekkel.

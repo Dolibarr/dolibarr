@@ -1,32 +1,35 @@
 ---
 vagrantfile-local:
     vm:
-        box: debian-wheezy72-x64-vbox43
-        box_url: 'http://box.puphpet.com/debian-wheezy72-x64-vbox43.box'
+        box: puphpet/debian75-x64
+        box_url: puphpet/debian75-x64
         hostname: null
+        memory: '512'
+        chosen_provider: virtualbox
         network:
             private_network: 192.168.42.101
-            forwarded_port:
-                XnCD0YcW5aic:
-                    host: '9252'
-                    guest: '22'
+            forwarded_port: {  }
         provider:
             virtualbox:
                 modifyvm:
                     natdnshostresolver1: on
-                    memory: '512'
                 setextradata:
                     VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root: 1
+            vmware:
+                numvcpus: 1
+            parallels:
+                cpus: 1
         provision:
             puppet:
                 manifests_path: puphpet/puppet
                 manifest_file: manifest.pp
+                module_path: puphpet/puppet/modules
                 options:
                     - '--verbose'
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
                     - '--parser future'
         synced_folder:
-            bH8PX003LLNi:
+            PL1BkioqqvGY:
                 source: ../../../
                 target: /var/www
                 nfs: 'false'
@@ -60,12 +63,15 @@ mailcatcher:
         http_port: '1080'
         mailcatcher_path: /usr/local/bin
         log_path: /var/log/mailcatcher/mailcatcher.log
+firewall:
+    install: '1'
+    rules: null
 apache:
     install: '1'
     settings:
         user: www-data
         group: www-data
-        default_vhost: true
+        default_vhost: false
         manage_user: false
         manage_group: false
         sendfile: 0
@@ -73,7 +79,7 @@ apache:
         - php
         - rewrite
     vhosts:
-        2iyFAvXD9OZU:
+        CGyWQB0fx4x0:
             servername: dev.dolibarr.org
             docroot: /var/www/htdocs
             port: '80'
@@ -91,7 +97,7 @@ apache:
 nginx:
     install: 0
     vhosts:
-        N7iqVXFhLCgi:
+        jeF1sybIJ3V2:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
@@ -103,10 +109,13 @@ nginx:
                 - index.php
             envvars:
                 - 'APP_ENV dev'
+            ssl_cert: ''
+            ssl_key: ''
 php:
     install: '1'
     version: '55'
     composer: '1'
+    composer_home: ''
     modules:
         php:
             - cli
@@ -141,10 +150,9 @@ drush:
 mysql:
     install: '1'
     root_password: root
-    phpmyadmin: '1'
     adminer: 0
     databases:
-        8oNQ7e6GCpdw:
+        2OfuuapoIqsl:
             grant:
                 - ALTER
                 - CREATE
@@ -171,7 +179,6 @@ postgresql:
 mariadb:
     install: 0
     root_password: '123'
-    phpmyadmin: 0
     adminer: 0
     databases: {  }
     version: '10.0'

@@ -233,7 +233,9 @@ OfficialWebSiteFr=Site web officiel francophone
 OfficialWiki=Wiki de documentation Dolibarr
 OfficialDemo=Démo en ligne Dolibarr
 OfficialMarketPlace=Place de marché officielle des modules et extensions complémentaires
-OfficialWebHostingService=Service d'hébergement partenaires (Cloud)
+OfficialWebHostingService=Services d'hébergements référencés (Cloud)
+ReferencedPreferredPartners=Preferred Partners
+OtherResources=Autres ressources
 ForDocumentationSeeWiki=Pour la documentation utilisateur, développeur ou les FAQs,<br>consultez le wiki Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 ForAnswersSeeForum=Pour tout autre question/aide, vous pouvez utiliser le forum Dolibarr:<br><b><a href="%s" target="_blank">%s</a></b>
 HelpCenterDesc1=Cette application, indépendante de Dolibarr,  permet de vous aider à obtenir un service d'assistance sur Dolibarr.
@@ -370,8 +372,8 @@ ExtrafieldSeparator=Séparateur de champ
 ExtrafieldCheckBox=Case à cocher
 ExtrafieldRadio=Bouton radio
 ExtrafieldParamHelpselect=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...<br><br>Pour que la liste soit dépendante d'une autre :<br>1,valeur1|code_liste_parent:clef_parent<br>2,valeur2|code_liste_parent:clef_parent
-ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
-ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
+ExtrafieldParamHelpcheckbox=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
+ExtrafieldParamHelpradio=La liste doit être de la forme clef,valeur<br><br> par exemple : <br>1,valeur1<br>2,valeur2<br>3,valeur3<br>...
 ExtrafieldParamHelpsellist=La liste vient d'une table<br>Syntaxe: <br>nom_de_table:nom_de_champ:id_champ::filtre<br>Exemple : <br>c_typent:libelle:id::filter<br><br>filter peux être un test simple (exemple active=1 pour ne proposer que les valeur active)<br>si vous voulez faire un filtre sur des attributs supplémentaires, utilisez la syntax extra.champ=... (où champ est la code de l'attribut supplémentaire)<br><br>Pour que la liste soit dépendante d'une autre :<br>c_typent:libelle:id:code_liste_parent|colonne_parent:filter
 LibraryToBuildPDF=Bibliothèque utilisée pour la génération des PDF
 WarningUsingFPDF=Attention : votre fichier <b>conf.php</b> contient la directive <b>dolibarr_pdf_force_fpdf=1</b>. Cela signifie que vous utilisez la librairie FPDF pour générer vos fichiers PDF. Cette librairie est ancienne et ne couvre pas de nombreuses fonctionnalités (Unicode, transparence des images, langues cyrilliques, arabes ou asiatiques...), aussi vous pouvez rencontrer des problèmes durant la génération des PDF.<br>Pour résoudre cela et avoir une prise en charge complète de PDF, vous pouvez télécharger la <a href="http://www.tcpdf.org/" target="_blank">bibliothèque TCPDF</a> puis commenter ou supprimer la ligne <b>$dolibarr_pdf_force_fpdf=1</b>, et ajouter à la place <b>$dolibarr_lib_TCPDF_PATH='chemin_vers_TCPDF'</b>
@@ -495,15 +497,15 @@ Module2400Name=Agenda
 Module2400Desc=Gestion des actions (événements et tâches) et de l'agenda
 Module2500Name=Gestion électronique de documents
 Module2500Desc=Permet de stocker et administrer une base de documents
-Module2600Name= WebServices
-Module2600Desc= Active le serveur de Web Services de Dolibarr
-Module2700Name= Gravatar
-Module2700Desc= Utilise le service en ligne Gravatar (www.gravatar.com) pour afficher les photos d'utilisateurs/membres (en fonction leur e-mail). Besoin d'un accès Internet
+Module2600Name=WebServices
+Module2600Desc=Active le serveur de Web Services de Dolibarr
+Module2700Name=Gravatar
+Module2700Desc=Utilise le service en ligne Gravatar (www.gravatar.com) pour afficher les photos d'utilisateurs/membres (en fonction leur e-mail). Besoin d'un accès Internet
 Module2800Desc=Client FTP
-Module2900Name= GeoIPMaxmind
-Module2900Desc= Capacités de conversion GeoIP Maxmind
-Module3100Name= Skype
-Module3100Desc= Ajouter un button Skype dans les fiches adhérents / tiers / contacts
+Module2900Name=GeoIPMaxmind
+Module2900Desc=Capacités de conversion GeoIP Maxmind
+Module3100Name=Skype
+Module3100Desc=Ajouter un button Skype dans les fiches adhérents / tiers / contacts
 Module5000Name=Multi-société
 Module5000Desc=Permet de gérer plusieurs sociétés
 Module6000Name=Workflow
@@ -681,6 +683,10 @@ Permission401=Consulter les avoirs
 Permission402=Créer/modifier les avoirs
 Permission403=Valider les avoirs
 Permission404=Supprimer les avoirs
+Permission510=Consulter les salaires
+Permission512=Créer/modifier les salaires
+Permission514=Supprimer les salaires
+Permission517=Exporter les salaires
 Permission531=Consulter les services
 Permission532=Créer/modifier les services
 Permission534=Supprimer les services
@@ -1214,9 +1220,9 @@ LDAPSynchroKO=Échec du test de synchronisation
 LDAPSynchroKOMayBePermissions=Échec du test de synchronisation. Vérifier que la connexion au serveur est correctement configurée et permet les mises à jour LDAP
 LDAPTCPConnectOK=Connexion TCP au serveur LDAP réussie (Serveur=%s, Port=%s)
 LDAPTCPConnectKO=Connexion TCP au serveur LDAP échouée (Serveur=%s, Port=%s)
-LDAPBindOK=Connexion/Authentification au serveur LDAP réussie (Serveur=%s, Port=%s, Admin=%s, Password=%s)
+LDAPBindOK=Connection/Authentification au serveur LDAP réussie (Serveur=%s, Port=%s, Admin=%s, Password=%s)
 LDAPBindKO=Connexion/Authentification au serveur LDAP échouée (Serveur=%s, Port=%s, Admin=%s, Password=%s)
-LDAPUnbindSuccessfull=Déconnexion réussie
+LDAPUnbindSuccessfull=Déconnection réussie
 LDAPUnbindFailed=Déconnexion échouée
 LDAPConnectToDNSuccessfull=Connexion au DN (%s) réussie
 LDAPConnectToDNFailed=Connexion au DN (%s) échouée
@@ -1429,7 +1435,7 @@ OptionVATDefault=Standard
 OptionVATDebitOption=Option services sur Débit
 OptionVatDefaultDesc=TVA sur encaissement, l'exigibilité de la TVA est:<br>- sur livraison pour les biens (en pratique on utilise la date de facturation)<br>- sur paiement pour les services
 OptionVatDebitOptionDesc=TVA sur débit, l'exigibilité de la TVA est:<br>- sur livraison pour les biens (en pratique on utilise la date de facturation)<br>- sur facturation (débit) pour les services
-SummaryOfVatExigibilityUsedByDefault=Moment d'exigibilité par défaut de la TVA pour l'option choisie :
+SummaryOfVatExigibilityUsedByDefault=Moment d'exigibilité par défaut de la TVA pour l'option choisie:
 OnDelivery=Sur livraison
 OnPayment=Sur paiement
 OnInvoice=Sur facture

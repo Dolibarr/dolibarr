@@ -809,7 +809,7 @@ class User extends CommonObject
 
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
-		$sql.= " AND entity IN (0,".$conf->entity.")";
+		$sql.= " AND entity IN (0,".$this->db->escape($conf->entity).")";
 
 		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -828,7 +828,7 @@ class User extends CommonObject
 			else
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid,entity)";
-				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->entity.")";
+				$sql.= " VALUES('".$this->db->idate($this->datec)."','".$this->db->escape($this->login)."','".$this->ldap_sid."',".$this->db->escape($this->entity).")";
 				$result=$this->db->query($sql);
 
 				dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
@@ -925,7 +925,7 @@ class User extends CommonObject
 		$this->lastname		= $contact->lastname;
 		$this->firstname	= $contact->firstname;
 		$this->email		= $contact->email;
-    $this->skype 		= $contact->skype;
+    	$this->skype 		= $contact->skype;
 		$this->office_phone	= $contact->phone_pro;
 		$this->office_fax	= $contact->fax;
 		$this->user_mobile	= $contact->phone_mobile;
@@ -1878,7 +1878,7 @@ class User extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param	string	$info		Info string loaded by _load_ldap_info
+	 *	@param	array	$info		Info array loaded by _load_ldap_info
 	 *	@param	int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *								1=
 	 *								2=Return key only (uid=qqq)
@@ -2231,16 +2231,24 @@ class User extends CommonObject
 	 */
 	function get_full_tree($markafterid=0)
 	{
+		global $conf,$user;
+
 		$this->users = array();
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
 		$this->load_parentof();
 
 		// Init $this->users array
-		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut";	// Distinct reduce pb with old tables with duplicates
+		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
-
+		if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
+		{
+			$sql.= " WHERE u.entity IS NOT NULL";
+		}
+		else
+		{
+			$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+		}
 		dol_syslog(get_class($this)."::get_full_tree get user list sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2255,6 +2263,7 @@ class User extends CommonObject
 				$this->users[$obj->rowid]['lastname'] = $obj->lastname;
 				$this->users[$obj->rowid]['login'] = $obj->login;
 				$this->users[$obj->rowid]['statut'] = $obj->statut;
+				$this->users[$obj->rowid]['entity'] = $obj->entity;
 				$i++;
 			}
 		}

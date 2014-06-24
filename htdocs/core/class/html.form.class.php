@@ -191,8 +191,9 @@ class Form
                 $ret.='</td>';
                 if ($typeofdata != 'day' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
                 {
-                	$ret.='<td align="left"><input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-                	$ret.='<br><br>'."\n";
+                	$ret.='<td align="left">';
+                	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
+                	$ret.='<br>'."\n";
                 	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 	$ret.='</td>';
                 }
@@ -1258,7 +1259,7 @@ class Form
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
      *
      *  @param		int			$selected				Preselected products
-     *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
      *  @param		int			$filtertype				Filter on product type (''=nofilter, 0=product, 1=service)
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		int			$price_level			Level of price to show
@@ -1267,7 +1268,7 @@ class Form
      *  @param		string		$selected_input_value	Value of preselected input text (with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
-     *  @param      int		$socid     		Thridparty Id
+     *  @param      int			$socid					Thirdparty Id
      *  @return		void
      */
     function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(),$socid=0)
@@ -1319,13 +1320,13 @@ class Form
      *	@param      int		$selected       Preselected product
      *	@param      string	$htmlname       Name of select html
      *  @param		string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
-     *	@param      int		$limit          Limite sur le nombre de lignes retournees
+     *	@param      int		$limit          Limit on number of returned lines
      *	@param      int		$price_level    Level of price to show
      * 	@param      string	$filterkey      Filter on product
      *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param      int		$finished       Filter on finished field: 2=No filter
      *  @param      int		$outputmode     0=HTML select string, 1=Array
-     *  @param      int		$socid     		Thridparty Id
+     *  @param      int		$socid     		Thirdparty Id
      *  @return     array    				Array of keys for json
      */
     function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0)
@@ -2667,7 +2668,7 @@ class Form
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
             $button='';
-            if (! is_int($useajax))
+            if (! is_numeric($useajax))
             {
                 $button=$useajax;
                 $useajax=1;
@@ -3732,13 +3733,14 @@ class Form
     /**
      *	Function to show a form to select a duration on a page
      *
-     *	@param	string	$prefix   	prefix
-     *	@param  int		$iSecond  	Default preselected duration (number of seconds)
-     * 	@param	int		$disabled	Disable the combo box
-     * 	@param	string	$typehour	if 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     *	@param	string	$prefix   		Prefix
+     *	@param  int		$iSecond  		Default preselected duration (number of seconds)
+     * 	@param	int		$disabled		Disable the combo box
+     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     *  @param	string	$minunderhours	If 1, show minutes selection under the hours
      *  @return	void
      */
-    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select')
+    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0)
     {
     	global $langs;
 
@@ -3769,7 +3771,11 @@ class Form
         {
         	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.((int) $hourSelected).'">';
         }
-        print $langs->trans('Hours'). "&nbsp;";
+        print $langs->trans('Hours');
+
+        if ($minunderhours) print '<br>';
+        else print "&nbsp;";
+
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
         for ($min = 0; $min <= 55; $min=$min+5)
         {
@@ -4091,7 +4097,7 @@ class Form
             //Check if fetch_barcode() failed
         	if ($result < 1) return '<!-- ErrorFetchBarcode -->';
         }
-        
+
         // Barcode image
         $url=DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&generator='.urlencode($object->barcode_type_coder).'&code='.urlencode($object->barcode).'&encoding='.urlencode($object->barcode_type_code);
         $out ='<!-- url barcode = '.$url.' -->';

@@ -1,0 +1,65 @@
+{
+    "name": "puppetlabs-apache",
+    "version": "1.0.1",
+    "source": "https://github.com/puppetlabs/puppetlabs-apache",
+    "author": "Puppet Labs",
+    "license": "Apache-2.0",
+    "project_page": "https://github.com/puppetlabs/puppetlabs-apache",
+    "summary": "Puppet module for Apache",
+    "operatingsystem_support": [
+      {
+        "operatingsystem": "RedHat",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "CentOS",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+
+        ]
+      },
+      {
+        "operatingsystem": "OracleLinux",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+
+        ]
+      },
+      {
+        "operatingsystem": "Scientific",
+        "operatingsystemrelease": [
+          "5",
+          "6",
+          "7"
+
+        ]
+      },
+      {
+        "operatingsystem": "Debian",
+        "operatingsystemrelease": [
+          "6",
+          "7"
+        ]
+      },
+      {
+        "operatingsystem": "Ubuntu",
+        "operatingsystemrelease": [
+          "10.04",
+          "12.04",
+          "14.04"
+        ]
+      }
+    ],
+    "requirements": [
+      { "name": "puppet", "version_requirement": "3.x" }
+    ],
+    "dependencies": []
+}

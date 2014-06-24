@@ -312,6 +312,7 @@ if ($object->fetch($id))
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
+		$sql.= " AND p.entity =".$conf->entity;
 		$sql.= " ORDER BY p.date_commande DESC";
 		$sql.= " ".$db->plimit($MAXLIST);
 		$resql=$db->query($sql);
@@ -380,6 +381,7 @@ if ($object->fetch($id))
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
 		$sql.= ' WHERE f.fk_soc = '.$object->id;
+		$sql.= " AND f.entity =".$conf->entity;
 		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref_supplier,f.fk_statut,f.datef,f.total_ttc,f.paye';
 		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);

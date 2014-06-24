@@ -79,6 +79,7 @@ MailtoEMail=Хипер-връзка на приятел
 ActivateCheckRead=Оставя се да се използва за четене тракер получаване и връзката unsubcribe
 ActivateCheckReadKey=Key използване за криптиране на използването на URL адрес за обратна разписка и функция unsubcribe
 EMailSentToNRecipients=EMail sent to %s recipients.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails

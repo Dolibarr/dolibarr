@@ -551,6 +551,7 @@ MailSentBy=Отправлено по Email
 TextUsedInTheMessageBody=Текст Email
 SendAcknowledgementByMail=Отправить Подтверждение по Email
 NoEMail=Нет Email
+NoMobilePhone=No mobile phone
 Owner=Владелец
 DetectedVersion=Обнаруженная версия
 FollowingConstantsWillBeSubstituted=Следующие константы будут подменять соответствующие значения.

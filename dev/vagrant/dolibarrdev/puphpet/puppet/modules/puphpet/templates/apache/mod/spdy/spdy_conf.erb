@@ -1,0 +1,8 @@
+# FcgidMaxRequestsPerProcess should be <= PHP_FCGI_MAX_REQUESTS
+FcgidMaxRequestsPerProcess 10000
+
+<Location />
+    AddHandler fcgid-script .php
+    Options +ExecCGI
+    FcgidWrapper /usr/local/bin/php-wrapper .php
+</Location>

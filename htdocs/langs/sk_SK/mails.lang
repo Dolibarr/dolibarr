@@ -79,6 +79,7 @@ MailtoEMail=Hyper odkaz na e-mail
 ActivateCheckRead=Nechá sa použiť &quot;&quot; Unsubcribe odkaz
 ActivateCheckReadKey=Tlačidlo slúži pre šifrovanie URL využitie pre &quot;prečítanie&quot; a &quot;Unsubcribe&quot; funkcia
 EMailSentToNRecipients=Email bol odoslaný na %s príjemcom.
+XTargetsAdded=<b>%s</b> recipients added into target list
 EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
 MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
 SendRemind=Send reminder by EMails

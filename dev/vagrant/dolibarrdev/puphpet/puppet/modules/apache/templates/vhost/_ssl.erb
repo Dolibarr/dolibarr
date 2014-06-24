@@ -1,0 +1,41 @@
+<% if @ssl -%>
+
+  ## SSL directives
+  SSLEngine on
+  SSLCertificateFile      "<%= @ssl_cert %>"
+  SSLCertificateKeyFile   "<%= @ssl_key %>"
+<% if @ssl_chain -%>
+  SSLCertificateChainFile "<%= @ssl_chain %>"
+<% end -%>
+  SSLCACertificatePath    "<%= @ssl_certs_dir %>"
+<% if @ssl_ca -%>
+  SSLCACertificateFile    "<%= @ssl_ca %>"
+<% end -%>
+<% if @ssl_crl_path -%>
+  SSLCARevocationPath     "<%= @ssl_crl_path %>"
+<% end -%>
+<% if @ssl_crl -%>
+  SSLCARevocationFile     "<%= @ssl_crl %>"
+<% end -%>
+<% if @ssl_proxyengine -%>
+  SSLProxyEngine On
+<% end -%>
+<% if @ssl_protocol -%>
+  SSLProtocol             <%= @ssl_protocol %>
+<% end -%>
+<% if @ssl_cipher -%>
+  SSLCipherSuite          <%= @ssl_cipher %>
+<% end -%>
+<% if @ssl_honorcipherorder -%>
+  SSLHonorCipherOrder     <%= @ssl_honorcipherorder %>
+<% end -%>
+<% if @ssl_verify_client -%>
+  SSLVerifyClient         <%= @ssl_verify_client %>
+<% end -%>
+<% if @ssl_verify_depth -%>
+  SSLVerifyDepth          <%= @ssl_verify_depth %>
+<% end -%>
+<% if @ssl_options -%>
+  SSLOptions <%= Array(@ssl_options).join(' ') %>
+<% end -%>
+<% end -%>
