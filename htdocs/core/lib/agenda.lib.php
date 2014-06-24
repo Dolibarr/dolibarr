@@ -78,12 +78,12 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		print '</td></tr>';
 
-		print '<tr>';
+		/*print '<tr>';
 		print '<td class="nowrap">';
 		print $langs->trans("or") . ' ' . $langs->trans("ActionsDoneBy");
 		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		print $form->select_dolusers($filterd, 'userdone', 1, '', ! $canedit);
-		print '</td></tr>';
+		print '</td></tr>';*/
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);

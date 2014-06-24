@@ -618,7 +618,7 @@ class pdf_azur extends ModelePDFPropales
 		$posxval=52;
 
         // Show shipping date
-        if ($object->date_livraison)
+        if (! empty($object->date_livraison))
 		{
             $outputlangs->load("sendings");
 			$pdf->SetFont('','B', $default_font_size - 2);

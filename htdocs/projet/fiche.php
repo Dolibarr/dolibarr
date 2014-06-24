@@ -56,7 +56,7 @@ if ($object->id > 0)
 }
 
 // Security check
-$socid=0;
+$socid=GETPOST('socid');
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $object->id);
 
@@ -376,6 +376,10 @@ if ($action == 'create' && $user->rights->projet->creer)
     /*
      * Create
      */
+
+	$thirdparty=new Societe($db);
+	if ($socid > 0) $thirdparty->fetch($socid);
+
     print_fiche_titre($langs->trans("NewProject"));
 
     dol_htmloutput_mesg($mesg);
@@ -388,12 +392,28 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<table class="border" width="100%">';
 
     $defaultref='';
-    $obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
-    if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
+    $modele = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
+
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
     {
-        require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.'.php';
-        $modProject = new $obj;
-        $defaultref = $modProject->getNextValue($soc,$object);
+    	$file=dol_buildpath($reldir."core/modules/project/".$modele.'.php',0);
+    	if (file_exists($file))
+    	{
+    		$filefound=1;
+    		$classname = $modele;
+    		break;
+    	}
+    }
+
+    if ($filefound)
+    {
+	    $result=dol_include_once($reldir."core/modules/project/".$modele.'.php');
+	    $modProject = new $classname;
+
+	    $defaultref = $modProject->getNextValue($thirdparty,$object);
     }
 
     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';

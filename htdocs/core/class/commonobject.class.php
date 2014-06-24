@@ -2083,7 +2083,7 @@ abstract class CommonObject
 
                     foreach ($tab as $key => $value)
                     {
-                    	//Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
+                    	// Test fetch_array ! is_int($key) because fetch_array seult is a mix table with Key as alpha and Key as int (depend db engine)
                         if ($key != 'rowid' && $key != 'tms' && $key != 'fk_member' && ! is_int($key))
                         {
                             // we can add this attribute to adherent object

@@ -190,6 +190,8 @@ class DoliDBPgsql extends DoliDB
               else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
 		    }
 
+    		$line=preg_replace('/ as signed\)/i',' as integer)',$line);
+
 		    if ($type == 'dml')
 		    {
                 $line=preg_replace('/\s/',' ',$line);   // Replace tabulation with space
@@ -214,8 +216,7 @@ class DoliDBPgsql extends DoliDB
 
     			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
-    			$line=preg_replace('/as signed/i','as integer',$line);
-    			 
+
     			// blob -> text
     			$line=preg_replace('/\w*blob/i','text',$line);
 

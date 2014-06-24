@@ -2614,7 +2614,7 @@ class Form
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
             $button='';
-            if (! is_int($useajax))
+            if (! is_numeric($useajax))
             {
                 $button=$useajax;
                 $useajax=1;
@@ -3469,7 +3469,7 @@ class Form
         if($m == '') $m=0;
         if($empty == '') $empty=0;
 
-        if ($set_time === '' && $empty == 0) 
+        if ($set_time === '' && $empty == 0)
         {
         	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
         	$set_time = dol_now('tzuser')-(getServerTimeZoneInt('now')*3600); // set_time must be relative to PHP server timezone
