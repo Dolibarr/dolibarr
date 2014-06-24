@@ -1751,6 +1751,7 @@ abstract class CommonObject
         	$justsource=true;
         	if (! empty($targettype)) $withtargettype=true;
         }
+
         if (! empty($targetid) && ! empty($targettype) && empty($sourceid))
         {
         	$justtarget=true;
