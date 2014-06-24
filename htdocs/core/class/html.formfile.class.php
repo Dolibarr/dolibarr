@@ -482,7 +482,7 @@ class FormFile
 
             // Language code (if multilang)
             $out.= '<th align="center" class="formdoc liste_titre">';
-            if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
+            if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang && (! empty($modellist) || $showempty))
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
                 $formadmin=new FormAdmin($this->db);
@@ -508,6 +508,7 @@ class FormFile
                	$genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
+            if (empty($modellist) && ! $showempty) $genbutton='';
             $out.= $genbutton;
             $out.= '</th>';
 
