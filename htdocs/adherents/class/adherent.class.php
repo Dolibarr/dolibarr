@@ -1822,7 +1822,7 @@ class Adherent extends CommonObject
     /**
      *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
      *
-     *	@param	string	$info		Info string loaded by _load_ldap_info
+     *	@param	array	$info		Info array loaded by _load_ldap_info
      *	@param	int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
      *								1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
      *								2=Return key only (uid=qqq)

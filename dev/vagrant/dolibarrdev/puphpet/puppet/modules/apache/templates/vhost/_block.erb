@@ -1,0 +1,14 @@
+<% if @block and ! @block.empty? -%>
+
+  ## Block access statements
+<% if @block.include? 'scm' -%>
+  # Block access to SCM directories.
+  <DirectoryMatch .*\.(svn|git|bzr)/.*>
+  <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+    Require all denied
+  <%- else -%>
+    Deny From All
+  <%- end -%>
+  </DirectoryMatch>
+<% end -%>
+<% end -%>

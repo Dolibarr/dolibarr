@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - projects
-# RefProject=Ref. project
+RefProject=Ref. project
 ProjectId=Projekta ID
 Project=Projekts
 Projects=Projekti
@@ -32,10 +32,10 @@ TimeSpent=Laiks, kas pavadīts
 TimesSpent=Laiks, kas patērēts
 RefTask=Ref. uzdevums
 LabelTask=Label uzdevums
-# TaskTimeSpent=Time spent on tasks
-# TaskTimeUser=User
-# TaskTimeNote=Note
-# TaskTimeDate=Date
+TaskTimeSpent=Time spent on tasks
+TaskTimeUser=Lietotājs
+TaskTimeNote=Piezīme
+TaskTimeDate=Datums
 NewTimeSpent=Jauns pavadītais laiks
 MyTimeSpent=Mans laiks pavadīts
 MyTasks=Mani uzdevumi
@@ -106,15 +106,18 @@ ProjectReportDate=Mainīt uzdevumu datums atbilstoši projekta sākuma datumu
 ErrorShiftTaskDate=Nav iespējams novirzīt uzdevumu datumu saskaņā ar jaunu projektu uzsākšanas datuma
 ProjectsAndTasksLines=Projekti un uzdevumi
 ProjectCreatedInDolibarr=Projekta %s izveidots
+TaskCreatedInDolibarr=Uzdevums %s izveidots
+TaskModifiedInDolibarr=Uzdevums %s labots
+TaskDeletedInDolibarr=Uzdevums %s dzēsts
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projekta vadītājs
 TypeContact_project_external_PROJECTLEADER=Projekta vadītājs
-# TypeContact_project_internal_PROJECTCONTRIBUTOR=Contributor
-# TypeContact_project_external_PROJECTCONTRIBUTOR=Contributor
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Ieguldītājs
+TypeContact_project_external_PROJECTCONTRIBUTOR=Ieguldītājs
 TypeContact_project_task_internal_TASKEXECUTIVE=Uzdevums izpildvaras
 TypeContact_project_task_external_TASKEXECUTIVE=Uzdevums izpildvaras
-# TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
-# TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Ieguldītājs
+TypeContact_project_task_external_TASKCONTRIBUTOR=Ieguldītājs
 SelectElement=Izvēlieties elementu
 AddElement=Saite uz elementa
 # Documents models

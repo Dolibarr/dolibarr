@@ -1,0 +1,7 @@
+<% if @error_documents and ! @error_documents.empty? -%>
+  <%- [@error_documents].flatten.compact.each do |error_document| -%>
+    <%- if error_document["error_code"] != '' and error_document["document"] != '' -%>
+  ErrorDocument <%= error_document["error_code"] %> <%= error_document["document"] %>
+    <%- end -%>
+  <%- end -%>
+<% end -%>

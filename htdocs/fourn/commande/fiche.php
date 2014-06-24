@@ -1860,8 +1860,6 @@ elseif (! empty($object->id))
 
 
 		print '<div class="fichecenter"><div class="fichehalfleft">';
-		//print '<table width="100%"><tr><td width="50%" valign="top">';
-		//print '<a name="builddoc"></a>'; // ancre
 
 		/*
 		 * Documents generes
@@ -1890,10 +1888,6 @@ elseif (! empty($object->id))
         $formactions=new FormActions($db);
         $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
 
-		print '</div></div></div>';
-
-		//print '</td><td valign="top" width="50%">';
-		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		if ($user->rights->fournisseur->commande->commander && $object->statut == 2)
 		{
@@ -1962,7 +1956,6 @@ elseif (! empty($object->id))
 		*/
 
 		print '</div></div></div>';
-		//print '</td></tr></table>';
 	}
 
 	/*

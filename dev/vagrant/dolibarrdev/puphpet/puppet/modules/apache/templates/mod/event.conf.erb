@@ -1,0 +1,9 @@
+<IfModule mpm_event_module>
+  ServerLimit         <%= @serverlimit %>
+  StartServers        <%= @startservers %>
+  MaxClients          <%= @maxclients %>
+  MinSpareThreads     <%= @minsparethreads %>
+  MaxSpareThreads     <%= @maxsparethreads %>
+  ThreadsPerChild     <%= @threadsperchild %>
+  MaxRequestsPerChild <%= @maxrequestsperchild %>
+</IfModule>

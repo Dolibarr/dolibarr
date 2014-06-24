@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>extract.pp</title>
+  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div id="jump_to">
+    Jump To &hellip;
+    <div id="jump_wrapper">
+      <div id="jump_page">
+          <a class="source" href="deploy.html">deploy.pp</a>
+          <a class="source" href="extract.html">extract.pp</a>
+          <a class="source" href="file.html">file.pp</a>
+          <a class="source" href="init.html">init.pp</a>
+      </div>
+    </div>
+  </div>
+  <table cellspacing=0 cellpadding=0>
+  <thead>
+    <tr>
+      <th class=docs><h1>extract.pp</h1></th>
+      <th class=code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='section-Define:_staging::extract'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-Define:_staging::extract">&#182;</a>
+        </div>
+        <h3>Define: staging::extract</h3>
+
+<p>Define resource to extract files from staging directories to target directories.</p>
+
+<h3>Parameters:</h3>
+
+<ul>
+<li>[<em>target</em>]:  the target extraction directory (default: )</li>
+<li>[<em>source</em>]:  the source compression file, supports tar, tar.gz, zip, war (default: undef)</li>
+<li>[<em>creates</em>]:  the file created after extraction. if unspecified defaults ${staging::path}/${caller_module_name}/${name} ${target}/${name} (default: undef)</li>
+<li>[<em>unless</em>]:  alternative way to conditionally check whether to extract file. (default: undef)</li>
+<li>[<em>onlyif</em>]:  alternative way to conditionally check whether to extract file. (default: undef)</li>
+<li>[<em>user</em>]:  extract file as this user. (default: undef)</li>
+<li>[<em>group</em>]:   extract file as this group. (default: undef)</li>
+<li>[<em>environment</em>]:  environment variables. (default: undef)</li>
+<li>[<em>subdir</em>]:  subdir per module in staging directory. (default: $caller_module_name)</li>
+</ul>
+
+
+<h3>Usage:</h3>
+
+<pre><code>$caller_module_name = 'demo'
+
+class { 'staging':
+  path =&gt; '/tmp/staging',
+}
+
+staging::file { 'sample.tar.gz':
+  source =&gt; 'puppet:///modules/staging/sample.tar.gz'
+}
+
+staging::extract { 'sample.tar.gz':
+  target  =&gt; '/tmp/staging',
+  creates =&gt; '/tmp/staging/sample',
+  require =&gt; Staging::File['sample.tar.gz'],
+}
+</code></pre>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">define</span> <span class="n">staging</span><span class="o">::</span><span class="n">extract</span> <span class="p">(</span>
+  <span class="vg">$target</span><span class="p">,</span>              
+  <span class="vg">$source</span>      <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$creates</span>     <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$unless</span>      <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$onlyif</span>      <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$user</span>        <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$group</span>       <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$environment</span> <span class="o">=</span> <span class="k">undef</span><span class="p">,</span> 
+  <span class="vg">$subdir</span>      <span class="o">=</span> <span class="vg">$caller_module_name</span> 
+<span class="p">)</span> <span class="p">{</span>
+
+  <span class="kp">include</span> <span class="n">staging</span>
+
+  <span class="k">if</span> <span class="vg">$source</span> <span class="p">{</span>
+    <span class="vg">$source_path</span> <span class="o">=</span> <span class="vg">$source</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="vg">$source_path</span> <span class="o">=</span> <span class="s2">&quot;${staging::path}/${subdir}/${name}&quot;</span>
+  <span class="p">}</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-2'>
+      <td class=docs>
+        <div class="pilwrap">
+          <a class="pilcrow" href="#section-2">&#182;</a>
+        </div>
+        <p>Use user supplied creates path, set default value if creates, unless or
+onlyif is not supplied.</p>
+
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="k">if</span> <span class="vg">$creates</span> <span class="p">{</span>
+    <span class="vg">$creates_path</span> <span class="o">=</span> <span class="vg">$creates</span>
+  <span class="p">}</span> <span class="k">elsif</span> <span class="o">!</span> <span class="p">(</span><span class="vg">$unless</span> <span class="ow">or</span> <span class="vg">$onlyif</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="vg">$name</span> <span class="o">=~</span> <span class="sr">/.tar.gz$/</span> <span class="p">{</span>
+      <span class="vg">$folder</span>       <span class="o">=</span> <span class="n">staging_parse</span><span class="p">(</span><span class="vg">$name</span><span class="p">,</span> <span class="s1">&#39;basename&#39;</span><span class="p">,</span> <span class="s1">&#39;.tar.gz&#39;</span><span class="p">)</span>
+      <span class="vg">$creates_path</span> <span class="o">=</span> <span class="s2">&quot;${target}/${folder}&quot;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="vg">$folder</span>       <span class="o">=</span> <span class="n">staging_parse</span><span class="p">(</span><span class="vg">$name</span><span class="p">,</span> <span class="s1">&#39;basename&#39;</span><span class="p">)</span>
+      <span class="vg">$creates_path</span> <span class="o">=</span> <span class="s2">&quot;${target}/${folder}&quot;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">if</span> <span class="n">scope_defaults</span><span class="p">(</span><span class="s1">&#39;Exec&#39;</span><span class="p">,</span><span class="s1">&#39;path&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="no">Exec</span><span class="p">{</span>
+      <span class="n">cwd</span>         <span class="o">=&gt;</span> <span class="vg">$target</span><span class="p">,</span>
+      <span class="n">user</span>        <span class="o">=&gt;</span> <span class="vg">$user</span><span class="p">,</span>
+      <span class="n">group</span>       <span class="o">=&gt;</span> <span class="vg">$group</span><span class="p">,</span>
+      <span class="n">environment</span> <span class="o">=&gt;</span> <span class="vg">$environment</span><span class="p">,</span>
+      <span class="n">creates</span>     <span class="o">=&gt;</span> <span class="vg">$creates_path</span><span class="p">,</span>
+      <span class="k">unless</span>      <span class="o">=&gt;</span> <span class="vg">$unless</span><span class="p">,</span>
+      <span class="n">onlyif</span>      <span class="o">=&gt;</span> <span class="vg">$onlyif</span><span class="p">,</span>
+      <span class="n">logoutput</span>   <span class="o">=&gt;</span> <span class="n">on_failure</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="no">Exec</span><span class="p">{</span>
+      <span class="n">path</span>        <span class="o">=&gt;</span> <span class="vg">$:</span><span class="ss">:path</span><span class="p">,</span>
+      <span class="n">cwd</span>         <span class="o">=&gt;</span> <span class="vg">$target</span><span class="p">,</span>
+      <span class="n">user</span>        <span class="o">=&gt;</span> <span class="vg">$user</span><span class="p">,</span>
+      <span class="n">group</span>       <span class="o">=&gt;</span> <span class="vg">$group</span><span class="p">,</span>
+      <span class="n">environment</span> <span class="o">=&gt;</span> <span class="vg">$environment</span><span class="p">,</span>
+      <span class="n">creates</span>     <span class="o">=&gt;</span> <span class="vg">$creates_path</span><span class="p">,</span>
+      <span class="k">unless</span>      <span class="o">=&gt;</span> <span class="vg">$unless</span><span class="p">,</span>
+      <span class="n">onlyif</span>      <span class="o">=&gt;</span> <span class="vg">$onlyif</span><span class="p">,</span>
+      <span class="n">logoutput</span>   <span class="o">=&gt;</span> <span class="n">on_failure</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">case</span> <span class="vg">$name</span> <span class="p">{</span>
+    <span class="sr">/.tar$/</span><span class="p">:</span> <span class="p">{</span>
+      <span class="vg">$command</span> <span class="o">=</span> <span class="s2">&quot;tar xf ${source_path}&quot;</span>
+    <span class="p">}</span>
+
+    <span class="sr">/(.tgz|.tar.gz)$/</span><span class="p">:</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="vg">$:</span><span class="ss">:osfamily</span> <span class="o">==</span> <span class="s1">&#39;Solaris&#39;</span> <span class="p">{</span>
+        <span class="vg">$command</span> <span class="o">=</span> <span class="s2">&quot;gunzip -dc &lt; ${source_path} | tar xf - &quot;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="vg">$command</span> <span class="o">=</span> <span class="s2">&quot;tar xzf ${source_path}&quot;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="sr">/.zip$/</span><span class="p">:</span> <span class="p">{</span>
+      <span class="vg">$command</span> <span class="o">=</span> <span class="s2">&quot;unzip ${source_path}&quot;</span>
+    <span class="p">}</span>
+
+    <span class="sr">/.war$/</span><span class="p">:</span> <span class="p">{</span>
+      <span class="vg">$command</span> <span class="o">=</span> <span class="s2">&quot;jar xf ${source_path}&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">default</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nb">fail</span><span class="p">(</span><span class="s2">&quot;staging::extract: unsupported file format ${name}.&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nb">exec</span> <span class="p">{</span> <span class="s2">&quot;extract ${name}&quot;</span><span class="p">:</span>
+    <span class="n">command</span> <span class="o">=&gt;</span> <span class="vg">$command</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre></div>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>

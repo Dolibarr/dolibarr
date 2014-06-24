@@ -102,7 +102,7 @@ class FormMail
         $this->withfilereadonly=0;
         $this->withbodyreadonly=0;
         $this->withdeliveryreceiptreadonly=0;
-        $this->withfckeditor=0;
+        $this->withfckeditor=-1;	// -1 = Auto
 
         return 1;
     }
@@ -222,7 +222,7 @@ class FormMail
         global $conf, $langs, $user, $hookmanager, $form;
 
         if (! is_object($form)) $form=new Form($this->db);
-        
+
         $langs->load("other");
         $langs->load("mails");
 
@@ -619,9 +619,12 @@ class FormMail
 
         			// Editor wysiwyg
         			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        			if (!empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
-        				$this->withfckeditor=1;
+        			if ($this->withfckeditor == -1)
+        			{
+        				if (! empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $this->withfckeditor=1;
+						else $this->withfckeditor=0;
         			}
+
         			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
         			$out.= $doleditor->Create(1);
         		}

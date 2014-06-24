@@ -1,0 +1,13 @@
+FORGE
+  remote: http://forge.puppetlabs.com
+  specs:
+    puppetlabs/apt (1.2.0)
+      puppetlabs/stdlib (>= 2.2.1)
+    puppetlabs/concat (1.0.0)
+    puppetlabs/stdlib (4.1.0)
+
+DEPENDENCIES
+  puppetlabs/apt (>= 1.0.0)
+  puppetlabs/concat (>= 1.0.0)
+  puppetlabs/stdlib (>= 0.1.6)
+

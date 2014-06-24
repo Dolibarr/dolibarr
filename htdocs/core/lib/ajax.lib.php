@@ -368,6 +368,13 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 							}
 						});
 						$("select#" + htmlname).html(response.value);
+						if (response.num) {
+							var selecthtml_str = response.value;
+							var selecthtml_dom=$.parseHTML(selecthtml_str);
+							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+						} else {
+							$("#inputautocomplete"+htmlname).val("");
+						}
 					});
 		}
 

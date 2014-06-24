@@ -19,15 +19,15 @@
 /**
  *	\file       htdocs/boutique/index.php
  *	\ingroup    boutique
- *	\brief      Page accueil zone boutique
+ *	\brief      Main page of shop zone
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
-$langs->load("boutique");
+$langs->load("shop");
 $langs->load("orders");
 
+require_once DOL_DOCUMENT_ROOT.'/boutique/osc_master.inc.php';
 
 llxHeader("",$langs->trans("OSCommerceShop"),"");
 
@@ -39,10 +39,8 @@ print '<tr><td valign="top" width="40%" class="notopnoleft">';
 
 
 /*
- /* Chiffre d'affaires
+ * Turnover
  */
-//print_barre_liste("Chiffre d'affaires", $page, "ca.php");
-
 print_titre($langs->trans('SalesTurnover'));
 
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
@@ -92,7 +90,7 @@ print '</td><td valign="top" width="60%" class="notopnoleftnoright">';
 print_titre($langs->trans("Orders"));
 
 /*
- * 5 derniees commandes recues
+ * Last 5 successful commands
  select o.orders_id, o.customers_id, o.customers_name, o.date_purchased, o.payement_method, o.status, t.value
  from orders_total as t
  join orders as o on o.orders_id = t.orders_id where t.class = 'ot_subtotal' order by o.date_purchased desc
@@ -130,7 +128,7 @@ else
 }
 
 /*
- * 5 derni�res commandes en attente
+ * Last 5 commands in wait
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -165,7 +163,7 @@ else
 }
 
 /*
- * Commandes � traiter
+ * Commands to treat
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -202,7 +200,7 @@ else
 
 print '</td></tr><tr>';
 /*
- * Derniers clients qui ont command�
+ * Last customers who commanded
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
