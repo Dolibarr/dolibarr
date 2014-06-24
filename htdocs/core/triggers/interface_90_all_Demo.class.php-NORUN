@@ -441,8 +441,6 @@ class InterfaceDemo
         }
 		elseif ($action == 'LINEBILL_SUPPLIER_DELETE')
         {
-        	$object->error='Erreur trigger';
-        	return -1;
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         
