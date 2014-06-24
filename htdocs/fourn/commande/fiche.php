@@ -931,7 +931,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
                         if ($error)
                         {
-                            dol_print_error($db);
+                            setEventMessage($object->error, 'errors');
                         }
                         else
                         {
@@ -1057,6 +1057,7 @@ if ($action=="create")
 	print_fiche_titre($langs->trans('NewOrder'));
 
 	dol_htmloutput_mesg($mesg);
+	dol_htmloutput_events();
 
 	$societe='';
 	if ($socid>0)
