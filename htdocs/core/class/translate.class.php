@@ -345,6 +345,8 @@ class Translate
 	{
 		global $db;
 
+		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
+
 		//print 'xx'.$key;
 		$newstr=$key;
 		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
@@ -659,7 +661,7 @@ class Translate
 
         //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
-		// Check if in language array (this can call getTradFromKey)
+		// Check if a translation is available (this can call getTradFromKey)
 		if ($this->transnoentitiesnoconv($key) != $key)
 		{
 			return $this->transnoentitiesnoconv($key);    // Found in language array

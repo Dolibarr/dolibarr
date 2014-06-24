@@ -1,0 +1,57 @@
+                                              _
+                                             / )
+                                        .--.; |    _...,-"""-,
+                         .-""-.-""""-. /   _`'-._.'   /`      \
+                        /'     \      \|  (/'-._/     )        ;
+                .-""""-;       (       '--' /-'    _           |
+              .'       |        ;    e     /       a  ,       ;
+             /          \       |      __.'`-.__,    ;       /
+            /            `._     ;    .-'     `--.,__.\    /`
+           //|              \     \,-'                /\_.'
+          // |               `;.___>              /,-'.
+        /`|  /                |`\      _..---\    |    \
+        |/  /     _,.-----\   |  \   /`|      |   |\    \
+           /    .;   |    |   |   \ /  |      |   | \    )
+          |    / |   \    /   |\..' \   \     |   \  \..'
+       jgs \../  \.../    \.../ \.../---'     \.../
+
+Read me for some important information!
+
+If Puppet did not blow up (you do not see a sea of red above), then your VM
+was generated successfully!
+
+* A unique private key was generated for you! It is located at
+  "puphpet/files/dot/ssh/id_rsa". If you are on Windows, a PuTTY-friendly key
+  was also generated at same location with a ".ppk" extension.
+* If you want to use your own private key for future provisions, overwrite the
+  generated key above with your own. Make sure to follow the naming pattern,
+  and include a ".pub" public key.
+* If you wish to add packages, modules, Apache/Nginx vhosts, or anything else,
+  open up "puphpet/config.yaml" and make changes within! Some things will
+  have random strings like "DIdXRs2OI2LJ" - you must create a random string
+  as well! To do so, please apply face to keyboard and roll.
+* If you change "puphpet/config.yaml", simple run "$ vagrant provision" and
+  your VM will be updated with the changes you requested!
+
+Did something go wrong? Don't worry! I can (maybe) help! Please go to our
+Github issues page at https://github.com/puphpet/puphpet/issues and search for
+your problem. If you do not find your problem answered, open a new ticket!
+
+----------------------------------------------------------------------------
+PLEASE REMEMBER TO INCLUDE THE CONTENTS OF YOUR "puphpet/config.yaml" FILE.
+----------------------------------------------------------------------------
+
+Make sure to xxx out any potential API keys or passwords that you do not want
+others to see!
+
+Happy programming!
+                                                            - Juan Treminio
+
+┈╭━━━━━━━━━━━━┳━━╮┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+ ┃         ╭╯ ┃ ▋┃╭━┓   ____                _      _    _                    _
+╭┫         ┃  ┃  ┃┃╭┛  |  _ \ ___  __ _  __| |    / \  | |__   _____   _____| |
+┃┃         ╰━━╯ ┃╰╯┃   | |_) / _ \/ _` |/ _` |   / _ \ | '_ \ / _ \ \ / / _ \ |
+╯┃              ╰┳━╯   |  _ <  __/ (_| | (_| |  / ___ \| |_) | (_) \ V /  __/_|
+ ┃               ┃     |_| \_\___|\__,_|\__,_| /_/   \_\_.__/ \___/ \_/ \___(_)
+ ┃ ┏━┳━━━━━━━┓ ┏ ┃
+▔┗━┻━┛▔▔▔▔▔▔▔┗━┻━┛▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔

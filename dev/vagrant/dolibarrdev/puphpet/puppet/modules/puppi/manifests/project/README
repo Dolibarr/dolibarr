@@ -1,0 +1,31 @@
+In this directory you find some examples of deploy procedures
+for general purposes deploys (single wars, single files, tarballs, list
+of files from a list...) described in a single define.
+
+They are made in order to be generic enough to adapt to different 
+environments and scenarious but you might need to design your
+own deployment process.
+
+In order to do that you can create a new define that includes:
+- All the variables, required or optional, you may want
+- One puppi:project statement 
+- All the puppi::deploy statements you need (each one runs a command)
+- All the puppi::rollback statements you need
+- One or more puppi::report statements for reporting
+
+The examples provided here make use of the scripts provided in
+puppi/files/scripts and tend to split the deploy procedures in many 
+different, reusable, scripts (one gets the source file(s), another 
+archives the current content, another one actually copies the files
+to deploy and so on) but you can use just a single new script or 
+whatever combination you might prefer.
+
+The default puppi scripts and the general ordering of commands
+execution in these sample deploy defines follow this scheme:
+Priority - Kind of operations
+1x - Pre Deploy checks 
+2x - Files retrieving and preparation
+3x - Operations to accomplish before the deploy (Archiving, Services stopping..)
+40 - Deploy.sh - The script that actually copied the files on deploy dir
+4x - Operations to accomplish after the deploy (Services start...)
+8x - Post Deploy checks

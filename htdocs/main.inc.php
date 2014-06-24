@@ -361,16 +361,16 @@ if (! defined('NOLOGIN'))
         // It is not already authenticated and it requests the login / password
         include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-        $dol_dst_observed=GETPOST("dst_observed",3);
-        $dol_dst_first=GETPOST("dst_first",3);
-        $dol_dst_second=GETPOST("dst_second",3);
-        $dol_screenwidth=GETPOST("screenwidth",3);
-        $dol_screenheight=GETPOST("screenheight",3);
-        $dol_hide_topmenu=GETPOST('dol_hide_topmenu',3);
-        $dol_hide_leftmenu=GETPOST('dol_hide_leftmenu',3);
-        $dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen',3);
-        $dol_no_mouse_hover=GETPOST('dol_no_mouse_hover',3);
-        $dol_use_jmobile=GETPOST('dol_use_jmobile',3);
+        $dol_dst_observed=GETPOST("dst_observed",'int',3);
+        $dol_dst_first=GETPOST("dst_first",'int',3);
+        $dol_dst_second=GETPOST("dst_second",'int',3);
+        $dol_screenwidth=GETPOST("screenwidth",'int',3);
+        $dol_screenheight=GETPOST("screenheight",'int',3);
+        $dol_hide_topmenu=GETPOST('dol_hide_topmenu','int',3);
+        $dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int',3);
+        $dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int',3);
+        $dol_no_mouse_hover=GETPOST('dol_no_mouse_hover','int',3);
+        $dol_use_jmobile=GETPOST('dol_use_jmobile','int',3);
         //dol_syslog("POST key=".join(array_keys($_POST),',').' value='.join($_POST,','));
 
         // If in demo mode, we check we go to home page through the public/demo/index.php page
@@ -891,11 +891,11 @@ if (! function_exists("llxHeader"))
 		top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
 		// top menu and left menu area
-		if (empty($conf->global->MAIN_HIDE_TOP_MENU))
+		if (empty($conf->dol_hide_topmenu))
 		{
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring);
 		}
-		if (empty($conf->global->MAIN_HIDE_LEFT_MENU))
+		if (empty($conf->dol_hide_leftmenu))
 		{
 			left_menu('', $help_url, '', '', 1, $title);
 		}
@@ -1037,11 +1037,11 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
         $themeparam.=($ext?'&amp;'.$ext:'');
         if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu'); }
-        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu'); }
-        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen'); }
-        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover'); }
-        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile'); }
+        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
+        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
+        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
+        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
+        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
@@ -1825,7 +1825,7 @@ if (! function_exists("llxFooter"))
 	 * @param	string	$zone		'private' (for private pages) or 'public' (for public pages)
      * @return	void
      */
-    function llxFooter($comment='',$zone='pivate')
+    function llxFooter($comment='',$zone='private')
     {
         global $conf, $langs;
 

@@ -105,6 +105,38 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 
 
+
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
+Fix: [ bug #1428 ] "Nothing" is shown in the middle of the screen in a supplier order.
+Fix: The object deliverycompany was not used anymore and output of
+     details for delivery reports was lost during 3.5. Rewrite code to
+     restore feature.
+Fix: [ bug #1445 ] html fix : missing </tr>
+Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown
+     properly in module configuration
+Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the 
+     supplier order card
+Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
+     limit date for payment
+Fix: Filter on status was not visible when selected from url.
+Fix: Filtering on status was last when asking to sort.
+Fix: [ bug #1432 ] Trigger SHIPPING_CREATE ignores interception on error.
+Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and LINEORDER_INSERT ignore interception on error.
+Fix: [ bug #1450 ] Several Customer order's triggers do not report the error from the trigger handler.
+Fix: [ bug #1451 ] Interrupted order clone through trigger, loads nonexistent order.
+Fix: [ bug #1454 ] Mention de bas de page erroné
+Fix: Do not display dictionnay for non activated module 
+Fix: Link element from element project pages
+Fix: [ bug #1509 ] Expedition admin free text & watermark submit error
+Fix: [ bug #1349 ] AJAX contact selector does not work fine in Project card
+Fix: [ bug #1452 ] variable used but not defined
+Fix: If multiprice level is used the VAT on addline is not correct
+Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on supplier order part)
+Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
+Fix: [ bug #1455 ] outstanding amount
+Fix: [ bug #1425 ]
+
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
@@ -139,6 +171,7 @@ Fix: [ bug #1388 ] Wrong date when invoicing several orders.
 Fix: [ bug #1411 ] Unable to set an expedition note if invoices module is not enabled.
 Fix: [ bug #1407 ] Rouget pdf overlapped when using tracking number and public notes.
 Fix: [ bug #1405 ] Rouget PDF expedition incorrect when two expeditions under the same commande
+Fix: [ bug #1434 ] Muscadet supplier order document model linked objects overlap the text
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.

@@ -160,18 +160,21 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = GETPOST("entity",'int');
 	}
-	else if (defined('DOLENTITY') && is_int(DOLENTITY))				// For public page with MultiCompany module
+	else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 	{
 		$conf->entity = DOLENTITY;
 	}
-	else if (!empty($_COOKIE['DOLENTITY']))							// For other application with MultiCompany module
+	else if (!empty($_COOKIE['DOLENTITY']))						// For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
 	{
 		$conf->entity = $_COOKIE['DOLENTITY'];
 	}
-	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
+	else if (! empty($conf->multicompany->force_entity) && is_numeric($conf->multicompany->force_entity)) // To force entity in login page
 	{
 		$conf->entity = $conf->multicompany->force_entity;
 	}
+
+	// Sanitize entity
+	if (! is_numeric($conf->entity)) $conf->entity=1;
 
 	//print "Will work with data into entity instance number '".$conf->entity."'";
 

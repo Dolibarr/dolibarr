@@ -329,7 +329,7 @@ class modSociete extends DolibarrModules
             unset($this->export_entities_array[$r]['s.code_fournisseur']);
         }
         // Add extra fields
-        $sql="SELECT name, label FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople'";
+        $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople'";
         $resql=$this->db->query($sql);
         if ($resql)    // This can fail when class is used on old database (during migration for example)
         {

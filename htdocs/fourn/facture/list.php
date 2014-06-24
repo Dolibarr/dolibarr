@@ -119,7 +119,7 @@ if ($socid)
 {
 	$sql .= " AND s.rowid = ".$socid;
 }
-if (GETPOST('filtre'))
+if (GETPOST('filtre') && GETPOST('filtre') != -1)		// GETPOST('filtre') may be a string
 {
 	$filtrearr = explode(",", GETPOST('filtre'));
 	foreach ($filtrearr as $fil)
@@ -191,15 +191,16 @@ if ($resql)
 		$soc->fetch($socid);
 	}
 
-	$param='&amp;socid='.$socid;
-	if ($month) $param.='&amp;month='.urlencode($month);
-	if ($year)  $param.='&amp;year=' .urlencode($year);
-	if (GETPOST("search_ref"))          $param.='&amp;search_ref='.urlencode(GETPOST("search_ref"));
-	if (GETPOST("search_ref_supplier")) $param.='&amp;search_ref_supplier'.urlencode(GETPOST("search_ref_supplier"));
-	if (GETPOST("search_libelle"))      $param.='&amp;search_libelle='.urlencode(GETPOST("search_libelle"));
-	if (GETPOST("search_societe"))      $param.='&amp;search_societe='.urlencode(GETPOST("search_societe"));
-	if (GETPOST("search_montant_ht"))   $param.='&amp;search_montant_ht='.urlencode(GETPOST("search_montant_ht"));
-	if (GETPOST("search_montant_ttc"))  $param.='&amp;search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
+	$param='&socid='.$socid;
+	if ($month) $param.='&month='.urlencode($month);
+	if ($year)  $param.='&year=' .urlencode($year);
+	if (GETPOST("search_ref"))          $param.='&search_ref='.urlencode(GETPOST("search_ref"));
+	if (GETPOST("search_ref_supplier")) $param.='&search_ref_supplier'.urlencode(GETPOST("search_ref_supplier"));
+	if (GETPOST("search_libelle"))      $param.='&search_libelle='.urlencode(GETPOST("search_libelle"));
+	if (GETPOST("search_societe"))      $param.='&search_societe='.urlencode(GETPOST("search_societe"));
+	if (GETPOST("search_montant_ht"))   $param.='&search_montant_ht='.urlencode(GETPOST("search_montant_ht"));
+	if (GETPOST("search_montant_ttc"))  $param.='&search_montant_ttc='.urlencode(GETPOST("search_montant_ttc"));
+	if (GETPOST("filtre") && GETPOST('filtre') != -1) $param.='&filtre='.urlencode(GETPOST("filtre"));
 
 	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -242,7 +243,9 @@ if ($resql)
 	print '<input class="flat" type="text" size="8" name="search_montant_ht" value="'.GETPOST("search_montant_ht").'">';
 	print '</td><td class="liste_titre" align="right">';
 	print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.GETPOST("search_montant_ttc").'">';
-	print '</td><td class="liste_titre" colspan="2" align="center">';
+	print '</td><td class="liste_titre" align="center">';
+	$liststatus=array('paye:0'=>$langs->trans("Unpayed"), 'paye:1'=>$langs->trans("Payed"));
+	print $form->selectarray('filtre', $liststatus, GETPOST('filtre'), 1);
 	print '<input type="image" class="liste_titre" align="right" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";

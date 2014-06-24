@@ -1,0 +1,8 @@
+#!/bin/bash
+# File Managed by Puppet
+export PATH=$PATH:/bin:/sbin:/usr/bin:usr/sbin
+<% if scope.lookupvar('::operatingsystem') == 'Debian' or scope.lookupvar('::operatingsystem') == 'Ubuntu' -%>
+apt-get update ; apt-get install -y <%= @packages %>
+<% elsif scope.lookupvar('::operatingsystem') == 'Centos' or scope.lookupvar('::operatingsystem') == 'RedHat' -%>
+yum install -y <%= @packages %>
+<% end -%>

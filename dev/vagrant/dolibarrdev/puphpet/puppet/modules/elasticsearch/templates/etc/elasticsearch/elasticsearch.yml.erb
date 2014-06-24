@@ -1,0 +1,93 @@
+<%-
+
+  # Function to make a structured and sorted yaml representation out of a hash
+  def recursive_hash_to_yml_string(hash, depth=0)
+    spacer = ""
+    depth.times { spacer += "  "}
+    hash.keys.sort.each do |sorted_key|
+      @yml_string += spacer + sorted_key + ": "
+      if hash[sorted_key].is_a?(Array)
+         keyspacer = ""
+         sorted_key.length.times { keyspacer += " " }
+         @yml_string += "\n"
+         hash[sorted_key].each do |item|
+           @yml_string += spacer + keyspacer + "- " + item +"\n"
+         end
+      elsif hash[sorted_key].is_a?(Hash)
+        @yml_string += "\n"
+        recursive_hash_to_yml_string(hash[sorted_key], depth+1)
+      else
+        @yml_string += "#{hash[sorted_key].to_s}\n"
+      end
+    end
+  end
+
+  # Function to transform shorted write up of the keys into full hash representation
+  def transform(hash)
+  return_vals = []
+
+  hash.each do |key,val|
+    if m = /^([^.]+)\.(.*)$/.match(key)
+      temp = { m[1] => { m[2] => val } }
+      transform(temp).each do |stuff|
+        return_vals << stuff
+      end
+    else
+      if val.is_a?(Hash)
+        transform(val).each do |stuff|
+          return_vals << { key => stuff }
+        end
+      else
+        return_vals << { key => val }
+      end
+    end
+  end
+
+  return_vals
+  end
+
+  # Function to deep merge hashes with same keys
+  class ::Hash
+    def deep_merge_with_array_values_concatenated(hash)
+    target = dup
+
+    hash.keys.each do |key|
+      if hash[key].is_a? Hash and self[key].is_a? Hash
+        target[key] = target[key].deep_merge_with_array_values_concatenated(hash[key])
+        next
+      end
+
+      if hash[key].is_a?(Array) && target[key].is_a?(Array)
+        target[key] = target[key] + hash[key]
+      else
+        target[key] = hash[key]
+      end
+    end
+
+    target
+    end
+  end
+
+  # initial string
+  @yml_string = "### MANAGED BY PUPPET ###\n"
+
+  if !scope.lookupvar('elasticsearch::config').empty?
+
+    @yml_string += "---\n"
+
+    ## Transform shorted keys into full write up
+    transformed_config = transform(scope.lookupvar('elasticsearch::config'))
+
+    # Merge it back into a hash
+    tmphash = { }
+    transformed_config.each do |subhash|
+      tmphash = tmphash.deep_merge_with_array_values_concatenated(subhash)
+    end
+
+    # Transform it into yaml
+    recursive_hash_to_yml_string(tmphash)
+
+  end
+
+-%>
+<%= @yml_string -%>

@@ -1,0 +1,171 @@
+<% if @_directories and ! @_directories.empty? -%>
+  <%- [@_directories].flatten.compact.each do |directory| -%>
+    <%- if directory['path'] and directory['path'] != '' -%>
+  <%- if directory['provider'] and directory['provider'].match('(directory|location|files)') -%>
+    <%- if /^(.*)match$/ =~ directory['provider'] -%>
+      <%- provider = $1.capitalize + 'Match' -%>
+    <%- else -%>
+      <%- provider = directory['provider'].capitalize -%>
+    <%- end -%>
+  <%- else -%>
+    <%- provider = 'Directory' -%>
+  <%- end -%>
+  <%- path = directory['path'] -%>
+
+  <<%= provider %> "<%= path %>">
+    <%- if directory['headers'] -%>
+      <%- Array(directory['headers']).each do |header| -%>
+    Header <%= header %>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['options'] -%>
+    Options <%= Array(directory['options']).join(' ') %>
+    <%- end -%>
+    <%- if provider == 'Directory' -%>
+      <%- if directory['index_options'] -%>
+    IndexOptions <%= Array(directory['index_options']).join(' ') %>
+      <%- end -%>
+      <%- if directory['index_order_default'] -%>
+    IndexOrderDefault <%= Array(directory['index_order_default']).join(' ') %>
+      <%- end -%>
+      <%- if directory['allow_override'] -%>
+    AllowOverride <%= Array(directory['allow_override']).join(' ') %>
+      <%- elsif provider == 'Directory' -%>
+    AllowOverride None
+      <%- end -%>
+    <%- end -%>
+    <%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+      <%- if directory['require'] and directory['require'] != '' -%>
+    Require <%= Array(directory['require']).join(' ') %>
+      <%- else -%>
+    Require all granted
+      <%- end -%>
+    <%- else -%>
+      <%- if directory['order'] and directory['order'] != '' -%>
+    Order <%= Array(directory['order']).join(',') %>
+      <%- else -%>
+    Order allow,deny
+      <%- end -%>
+      <%- if directory['deny'] and directory['deny'] != '' -%>
+    Deny <%= directory['deny'] %>
+      <%- end -%>
+      <%- if directory['allow'] and ! [ false, 'false', '' ].include?(directory['allow']) -%>
+        <%- if directory['allow'].kind_of?(Array) -%>
+          <%- Array(directory['allow']).each do |access| -%>
+    Allow <%=  access %>
+        <%- end -%>
+      <%- else -%>
+    Allow <%= directory['allow'] %>
+      <%- end -%>
+      <%- elsif [ 'from all', 'from All' ].include?(directory['deny']) -%>
+      <%- elsif ! directory['deny'] and [ false, 'false', '' ].include?(directory['allow']) -%>
+    Deny from all
+      <%- else -%>
+    Allow from all
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['addhandlers'] and ! directory['addhandlers'].empty? -%>
+      <%- [directory['addhandlers']].flatten.compact.each do |addhandler| -%>
+    AddHandler <%= addhandler['handler'] %> <%= Array(addhandler['extensions']).join(' ') %>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['sethandler'] and directory['sethandler'] != '' -%>
+    SetHandler <%= directory['sethandler'] %>
+    <%- end -%>
+    <%- if directory['passenger_enabled'] and directory['passenger_enabled'] != '' -%>
+    PassengerEnabled <%= directory['passenger_enabled'] %>
+    <%- end -%>
+    <%- if directory['php_admin_flags'] and ! directory['php_admin_flags'].empty? -%>
+      <%- directory['php_admin_flags'].each do |flag,value| -%>
+      <%- value = if value =~ /true|yes|on|1/i then 'on' else 'off' end -%>
+    php_admin_flag <%= "#{flag} #{value}" %>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['php_admin_values'] and ! directory['php_admin_values'].empty? -%>
+      <%- directory['php_admin_values'].each do |key,value| -%>
+    php_admin_value <%= "#{key} #{value}" %>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['directoryindex'] and directory['directoryindex'] != '' -%>
+    DirectoryIndex <%= directory['directoryindex'] %>
+    <%- end -%>
+    <%- if directory['error_documents'] and ! directory['error_documents'].empty? -%>
+      <%- [directory['error_documents']].flatten.compact.each do |error_document| -%>
+    ErrorDocument <%= error_document['error_code'] %> <%= error_document['document'] %>
+      <%- end -%>
+    <%- end -%>
+    <%- if directory['auth_type'] -%>
+    AuthType <%= directory['auth_type'] %>
+    <%- end -%>
+    <%- if directory['auth_name'] -%>
+    AuthName "<%= directory['auth_name'] %>"
+    <%- end -%>
+    <%- if directory['auth_digest_algorithm'] -%>
+    AuthDigestAlgorithm <%= directory['auth_digest_algorithm'] %>
+    <%- end -%>
+    <%- if directory['auth_digest_domain'] -%>
+    AuthDigestDomain <%= Array(directory['auth_digest_domain']).join(' ') %>
+    <%- end -%>
+    <%- if directory['auth_digest_nonce_lifetime'] -%>
+    AuthDigestNonceLifetime <%= directory['auth_digest_nonce_lifetime'] %>
+    <%- end -%>
+    <%- if directory['auth_digest_provider'] -%>
+    AuthDigestProvider <%= directory['auth_digest_provider'] %>
+    <%- end -%>
+    <%- if directory['auth_digest_qop'] -%>
+    AuthDigestQop <%= directory['auth_digest_qop'] %>
+    <%- end -%>
+    <%- if directory['auth_digest_shmem_size'] -%>
+    AuthDigestShmemSize <%= directory['auth_digest_shmem_size'] %>
+    <%- end -%>
+    <%- if directory['auth_basic_authoritative'] -%>
+    AuthBasicAuthoritative <%= directory['auth_basic_authoritative'] %>
+    <%- end -%>
+    <%- if directory['auth_basic_fake'] -%>
+    AuthBasicFake <%= directory['auth_basic_fake'] %>
+    <%- end -%>
+    <%- if directory['auth_basic_provider'] -%>
+    AuthBasicProvider <%= directory['auth_basic_provider'] %>
+    <%- end -%>
+    <%- if directory['auth_user_file'] -%>
+    AuthUserFile <%= directory['auth_user_file'] %>
+    <%- end -%>
+    <%- if directory['auth_group_file'] -%>
+    AuthGroupFile <%= directory['auth_group_file'] %>
+    <%- end -%>
+    <%- if directory['auth_require'] -%>
+    Require <%= directory['auth_require'] %>
+    <%- end -%>
+    <%- if directory['fallbackresource'] -%>
+    FallbackResource <%= directory['fallbackresource'] %>
+    <%- end -%>
+    <%- if directory['expires_active'] -%>
+    ExpiresActive <%= directory['expires_active'] %>
+    <%- end -%>
+    <%- if directory['expires_default'] -%>
+    ExpiresDefault <%= directory['expires_default'] %>
+    <%- end -%>
+    <%- if directory['expires_by_type'] -%>
+    <%- Array(directory['expires_by_type']).each do |rule| -%>
+    ExpiresByType <%= rule %>
+    <%- end -%>
+    <%- end -%>
+    <%- if directory['force_type'] -%>
+    ForceType <%= directory['force_type'] %>
+    <%- end -%>
+    <%- if directory['ssl_options'] -%>
+    SSLOptions <%= Array(directory['ssl_options']).join(' ') %>
+    <%- end -%>
+    <%- if directory['suphp'] and @suphp_engine == 'on' -%>
+    suPHP_UserGroup <%= directory['suphp']['user'] %> <%= directory['suphp']['group'] %>
+    <%- end -%>
+    <%- if directory['fcgiwrapper'] -%>
+    FcgidWrapper <%= directory['fcgiwrapper']['command'] %> <%= directory['fcgiwrapper']['suffix'] %> <%= directory['fcgiwrapper']['virtual'] %>
+    <%- end -%>
+    <%- if directory['custom_fragment'] -%>
+    <%= directory['custom_fragment'] %>
+    <%- end -%>
+  </<%= provider %>>
+    <%- end -%>
+  <%- end -%>
+<% end -%>

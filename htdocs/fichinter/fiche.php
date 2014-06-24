@@ -730,7 +730,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('FICHINTER_SENTBYMAIL',$object,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+					$error++; $object->errors=$interface->errors;
 				}
 				// Fin appel triggers
 
@@ -1332,9 +1332,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<input type="hidden" name="action" value="addline">';
 	}
 
-	/*
-	 * Lignes d'intervention
-	 */
+	// Intervention lines
 	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
 	$sql.= ' ft.date as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
@@ -1419,7 +1417,7 @@ else if ($id > 0 || ! empty($ref))
 				print '</tr>';
 			}
 
-			// Ligne en mode update
+			// Line in update mode
 			if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id','int') == $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
@@ -1452,9 +1450,7 @@ else if ($id > 0 || ! empty($ref))
 
 		$db->free($resql);
 
-		/*
-		 * Add line
-		*/
+		// Add new line
 		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
 		{
 			if (! $num) print '<br><table class="noborder" width="100%">';
@@ -1483,14 +1479,16 @@ else if ($id > 0 || ! empty($ref))
 			print '<td align="center" class="nowrap">';
 			$now=dol_now();
 			$timearray=dol_getdate($now);
-			if (!GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+			if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 			else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
 			$form->select_date($timewithnohour,'di',1,1,0,"addinter");
 			print '</td>';
 
 			// Duration
 			print '<td align="right">';
-			$form->select_duration('duration',(!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')));
+			$selectmode='select';
+			if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+			$form->select_duration('duration', (!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')), 0, $selectmode, 1);
 			print '</td>';
 
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
@@ -1513,8 +1511,8 @@ else if ($id > 0 || ! empty($ref))
 
 
 	/*
-	 * Barre d'actions
-	*/
+	 * Actions buttons
+	 */
 	print '<div class="tabsAction">';
 
 	if ($user->societe_id == 0)

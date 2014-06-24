@@ -23,5 +23,5 @@ DeleteIntoSpip=حذف از SPIP
 DeleteIntoSpipConfirmation=آیا مطمئن هستید که می خواهید به حذف این عضو از SPIP؟
 DeleteIntoSpipError=به سرکوب کاربر از SPIP ناموفق
 SPIPConnectionFailed=برای اتصال به SPIP ناموفق
-SuccessToAddToMailmanList=اضافه کردن به٪ s به پستچی فهرست٪ و یا پایگاه داده SPIP انجام می شود
-SuccessToRemoveToMailmanList=حذف از٪ s از پستچی فهرست٪ و یا پایگاه داده SPIP انجام می شود
+SuccessToAddToMailmanList=اضافه کردن به%s به پستچی فهرست٪ و یا پایگاه داده SPIP انجام می شود
+SuccessToRemoveToMailmanList=حذف از%s از پستچی فهرست٪ و یا پایگاه داده SPIP انجام می شود

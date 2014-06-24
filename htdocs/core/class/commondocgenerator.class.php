@@ -258,14 +258,14 @@ abstract class CommonDocGenerator
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
 		$object->fetch_optionals($object->id, $extralabels);
-		
-		foreach($extrafields->attribute_label as $key => $label) 
+
+		foreach($extrafields->attribute_label as $key => $label)
 		{
-			if ($extrafields->attribute_type[$key] == 'price') 
+			if ($extrafields->attribute_type[$key] == 'price')
 			{
 				$object->array_options['options_' . $key] = price($object->array_options ['options_' . $key], 0, $outputlangs, 0, 0, - 1, $conf->currency);
 			}
-			elseif($extrafields->attribute_type[$key] == 'select') 
+			elseif($extrafields->attribute_type[$key] == 'select')
 			{
 				$object->array_options['options_' . $key] = $extrafields->attribute_param[$key]['options'][$object->array_options['options_' . $key]];
 			}
@@ -377,12 +377,11 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
-			$extrafieldkey=$this->element;
-			'facture';
+			$extrafieldkey=$object->element;
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
-			$extralabels = $extrafields->fetch_name_optionals_label('facture',true);
+			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
 			$object->fetch_optionals($object->id,$extralabels);
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key=$array_key,$outputlangs);

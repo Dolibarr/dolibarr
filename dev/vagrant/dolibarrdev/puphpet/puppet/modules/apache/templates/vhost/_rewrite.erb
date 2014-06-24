@@ -1,0 +1,43 @@
+<%- if @rewrites -%>
+  ## Rewrite rules
+  RewriteEngine On
+  <%- if @rewrite_base -%>
+  RewriteBase <%= @rewrite_base %>
+  <%- end -%>
+
+  <%- [@rewrites].flatten.compact.each do |rewrite_details| -%>
+    <%- if rewrite_details['comment'] -%>
+  #<%= rewrite_details['comment'] %>
+    <%- end -%>
+    <%- if rewrite_details['rewrite_base'] -%>
+  RewriteBase <%= rewrite_details['rewrite_base'] %>
+    <%- end -%>
+    <%- if rewrite_details['rewrite_cond'] -%>
+      <%- Array(rewrite_details['rewrite_cond']).each do |commands| -%>
+        <%- Array(commands).each do |command| -%>
+  RewriteCond <%= command %>
+        <%- end -%>
+      <%- end -%>
+    <%- end -%>
+    <%- Array(rewrite_details['rewrite_rule']).each do |commands| -%>
+      <%- Array(commands).each do |command| -%>
+  RewriteRule <%= command %>
+      <%- end -%>
+
+    <%- end -%>
+  <%- end -%>
+<%- end -%>
+<%# reverse compatibility %>
+<% if @rewrite_rule and !@rewrites -%>
+  ## Rewrite rules
+  RewriteEngine On
+<% if @rewrite_base -%>
+  RewriteBase <%= @rewrite_base %>
+<% end -%>
+<% if @rewrite_cond -%>
+<% Array(@rewrite_cond).each do |cond| -%>
+  RewriteCond <%= cond %>
+<% end -%>
+<% end -%>
+  RewriteRule <%= @rewrite_rule %>
+<%- end -%>
