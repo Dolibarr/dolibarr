@@ -252,6 +252,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$object->duree_validite = $duration;
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
+				$object->currency_code = GETPOST('currency_code');
 				$object->remise_percent = GETPOST('remise_percent');
 				$object->remise_absolue = GETPOST('remise_absolue');
 				$object->socid = GETPOST('socid');
@@ -277,6 +278,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->duree_validite = GETPOST('duree_validite');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
+			$object->currency_code = GETPOST('currency_code');
 
 			$object->contactid = GETPOST('contactidp');
 			$object->fk_project = GETPOST('projectid');
@@ -1186,6 +1188,11 @@ if ($action == 'create') {
 	// Mode of payment
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
 	$form->select_types_paiements($soc->mode_reglement_id, 'mode_reglement_id');
+	print '</td></tr>';
+
+	// Currency
+	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
+	$form->select_currency($currency_code, 'currency_code');
 	print '</td></tr>';
 
 	// What trigger creation
