@@ -188,6 +188,10 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 {
     $object->fetch($id);
     $result=$object->set_paid($user);
+    if ($result<0)
+    {
+        setEventMessage($object->error,'errors');
+    }
 }
 
 // Set supplier ref
@@ -523,6 +527,10 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
         if ($result >= 0)
         {
             unset($_POST['label']);
+        }
+        else
+        {
+            setEventMessage($object->error,'errors');
         }
     }
 }
@@ -1074,6 +1082,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_mesg($mesg);
+    dol_htmloutput_events();
 
     $societe='';
     if ($_GET['socid'])
