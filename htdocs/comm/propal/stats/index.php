@@ -276,7 +276,7 @@ foreach ($data as $val)
     print '<tr height="24">';
     print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
     print '<td align="right">'.$val['nb'].'</td>';
-    print '<td align="right">'.price(price2num($val['total'],'MT'),1).'</td>';
+    print '<td align="right">a'.price(price2num($val['total'],'MT'),1).'</td>';
     print '<td align="right">'.price(price2num($val['avg'],'MT'),1).'</td>';
     print '</tr>';
     $oldyear=$year;
