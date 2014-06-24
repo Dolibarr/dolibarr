@@ -1,0 +1,40 @@
+---
+branches:
+  only:
+    - master
+language: ruby
+bundler_args: --without development
+script: bundle exec rake spec SPEC_OPTS='--format documentation'
+# work around RubyGems 2.2.0 breaking ruby 1.8.7
+# https://github.com/rubygems/rubygems/pull/763
+# https://github.com/freerange/mocha/commit/66bab2a8f4e7cd8734bf88e6f32157c0d5153125
+before_install:
+  - gem update --system 2.1.11
+  - gem --version
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - 2.0.0
+env:
+  matrix:
+    - PUPPET_GEM_VERSION="2.7.3" FACTER_GEM_VERSION="1.6.0"
+    - PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.6.0"
+    - PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.7.0"
+    - PUPPET_GEM_VERSION="~> 3.0"
+matrix:
+  fast_finish: true
+  exclude:
+    - rvm: 1.9.3
+      env: PUPPET_GEM_VERSION="2.7.3" FACTER_GEM_VERSION="1.6.0"
+    - rvm: 1.9.3
+      env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.6.0"
+    - rvm: 1.9.3
+      env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.7.0"
+    - rvm: 2.0.0
+      env: PUPPET_GEM_VERSION="2.7.3" FACTER_GEM_VERSION="1.6.0"
+    - rvm: 2.0.0
+      env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.6.0"
+    - rvm: 2.0.0
+      env: PUPPET_GEM_VERSION="~> 2.7.0" FACTER_GEM_VERSION="~> 1.7.0"
+notifications:
+  email: false

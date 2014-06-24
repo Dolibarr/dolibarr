@@ -1,0 +1,15 @@
+# General configuration file for Puppi tools
+# This file is managed by Puppet
+
+# Directory locations
+basedir="<%= scope.lookupvar('puppi::params::basedir') %>"
+checksdir="<%= scope.lookupvar('puppi::params::checksdir') %>"
+workdir="<%= scope.lookupvar('puppi::params::workdir') %>"
+projectsdir="<%= scope.lookupvar('puppi::params::projectsdir') %>"
+scriptsdir="<%= scope.lookupvar('puppi::params::scriptsdir') %>"
+libdir="<%= scope.lookupvar('puppi::params::libdir') %>"
+archivedir="<%= scope.lookupvar('puppi::params::archivedir') %>"
+logdir="<%= scope.lookupvar('puppi::params::logdir') %>"
+logsdir="<%= scope.lookupvar('puppi::params::logsdir') %>"
+infodir="<%= scope.lookupvar('puppi::params::infodir') %>"
+tododir="<%= scope.lookupvar('puppi::params::tododir') %>"

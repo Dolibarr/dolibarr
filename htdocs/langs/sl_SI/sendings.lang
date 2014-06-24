@@ -13,7 +13,7 @@ LastSendings=Zadnjih %s pošiljk
 SearchASending=Iskanje pošiljke
 StatisticsOfSendings=Statistika pošiljk
 NbOfSendings=Število pošiljk
-# NumberOfShipmentsByMonth=Number of shipments by month
+NumberOfShipmentsByMonth=Število pošiljk po mesecih
 SendingCard=Kartica pošiljke
 NewSending=Nova pošiljka
 CreateASending=Kreiraj pošiljko
@@ -50,7 +50,7 @@ Enlevement=Prevzeto s strani kupca
 DocumentModelSimple=Enostaven vzorec dokumenta
 DocumentModelMerou=Vzorec dokumenta Merou A5
 WarningNoQtyLeftToSend=Pozor, noben proizvod ne čaka na pošiljanje.
-# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+StatsOnShipmentsOnlyValidated=Statistika na osnovi potrjenih pošiljk. Uporabljen je datum potrditve pošiljanja (planiran datum dobave ni vedno znan)
 DateDeliveryPlanned=Planiran datum dobave
 DateReceived=Datum prejema dobave
 SendShippingByEMail=Pošlji odpremnico po e-mailu
@@ -58,19 +58,17 @@ SendShippingRef=Pošlji odpremnico %s
 ActionsOnShipping=Aktivnosti v zvezi z odpremnico
 LinkToTrackYourPackage=Povezave za sledenje vaše pošiljke
 ShipmentCreationIsDoneFromOrder=Za trenutek je oblikovanje nove pošiljke opravi od naročila kartice.
-# RelatedShippings=Related shippings
-# ShipmentLine=Shipment line
-# CarrierList=List of transporters
+RelatedShippings=Povezane pošiljke
+ShipmentLine=Vrstica na odpremnici
+CarrierList=Seznam prevoznikov
 
 # Sending methods
 SendingMethodCATCH=Lasten prevzem kupca
 SendingMethodTRANS=Direkten prevoz
 SendingMethodCOLSUI=Zbirnik
-
 # ModelDocument
 DocumentModelSirocco=Enostaven vzorec dobavnice
 DocumentModelTyphon=Popolnejši vzorec dobavnice (logo...)
-
 Error_EXPEDITION_ADDON_NUMBER_NotDefined==
-# SumOfProductVolumes=Sum of product volumes
-# SumOfProductWeights=Sum of product weights
+SumOfProductVolumes=Vsota volumnov proizvodov
+SumOfProductWeights=Vsota tež proizvodov

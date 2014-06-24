@@ -21,5 +21,5 @@ NewPaypalPaymentReceived=Jauns Paypal maksājums saņemts
 NewPaypalPaymentFailed=Jauns Paypal maksājumu mēģināju, bet neizdevās
 PAYPAL_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
 ReturnURLAfterPayment=Return URL after payment
-ValidationOfPaypalPaymentFailed=Validation of Paypal payment failed
+ValidationOfPaypalPaymentFailed=Paypal rēķina apmaksas pārbaude neizdevās
 PaypalConfirmPaymentPageWasCalledButFailed=Payment confirmation page for Paypal was called by Paypal but confirmation failed

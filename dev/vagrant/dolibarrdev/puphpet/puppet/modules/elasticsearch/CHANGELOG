@@ -1,0 +1,91 @@
+0.2.2 ( Jan 23, 2014 )
+  Ensure exec names are unique. This caused issues when using our logstash module
+  Add spec tests for plugin define
+
+0.2.1 ( Jan 22, 2014 )
+  Simplify the management of the defaults file ( PR #64 )
+  Doc improvements for the plugin define ( PR #66 )
+  Allow creation of data directory ( PR #68 )
+  Fail early when package version and package_url are defined
+
+0.2.0 ( Nov 19, 2013 )
+  Large rewrite of the entire module described below
+  Make the core more dynamic for different service providers and multi instance capable
+  Add better testing and devided into different files
+  Fix template function. Replace of template is now only done when the file is changed
+  Add different ways to install the package except from the repository ( puppet/http/https/ftp/file )
+  Update java class to install openjdk 1.7
+  Add tests for python function
+  Update config file template to fix scoping issue ( from PR #57 )
+  Add validation of templates
+  Small changes for preperation for system tests
+  Update readme for new functionality
+  Added more test scenario's
+  Added puppet parser validate task for added checking
+  Ensure we don't add stuff when removing the module
+  Update python client define
+  Add ruby client define
+  Add tests for ruby clients and update python client tests
+
+0.1.3 ( Sep 06, 2013 )
+  Exec path settings has been updated to fix warnings ( PR #37, #47 )
+  Adding define to install python bindings ( PR #43 )
+  Scope deprecation fixes ( PR #41 )
+  feature to install plugins ( PR #40 )
+
+0.1.2 ( Jun 21, 2013 )
+  Update rake file to ignore the param inherit
+  Added missing documentation to the template define
+  Fix for template define to allow multiple templates ( PR #36 by Bruce Morrison )
+
+0.1.1 ( Jun 14, 2013 )
+  Add Oracle Linux to the OS list ( PR #25 by Stas Alekseev )
+  Respect the restart_on_change on the defaults ( PR #29 by Simon Effenberg )
+  Make sure the config can be empty as advertised in the readme
+  Remove dependency cycle when the defaults file is updated ( PR #31 by Bruce Morrison )
+  Enable retry on the template insert in case ES isn't started yet ( PR #32 by Bruce Morrison )
+  Update templates to avoid deprecation notice with Puppet 3.2.x
+  Update template define to avoid auto insert issue with ES
+  Update spec tests to reflect changes to template define
+
+0.1.0 ( May 09, 2013 )
+  Populate .gitignore ( PR #19 by Igor Galić )
+  Add ability to install initfile ( PR #20 by Justin Lambert )
+  Add ability to manage default file* service parameters ( PR #21 by Mathieu Bornoz )
+  Providing complete containment of the module ( PR #24 by Brian Lalor )
+  Add ability to specify package version ( PR #25 by Justin Lambert )
+  Adding license file
+
+0.0.7 ( Mar 23, 2013 )
+  Ensure config directory is created and managed ( PR #13 by Martin Seener )
+  Dont backup package if it changes
+  Create explicit dependency on template directory ( PR #16 by Igor Galić )
+  Make the config directory variable ( PR #17 by Igor Galić and PR #18 by Vincent Janelle )
+  Fixing template define
+
+0.0.6 ( Mar 05, 2013 )
+  Fixing issue with configuration not printing out arrays
+  New feature to write the config hash shorter
+  Updated readme to reflect the new feature
+  Adding spec tests for config file generation
+
+0.0.5 ( Mar 03, 2013 )
+  Option to disable restart on config file change ( PR #10 by Chris Boulton )
+
+0.0.4 ( Mar 02, 2013 )
+  Fixed a major issue with the config template ( Issue #9 )
+
+0.0.3 ( Mar 02, 2013 )
+  Adding spec tests
+  Fixed init issue on Ubuntu ( Issue #6 by Marcus Furlong )
+  Fixed config template problem ( Issue #8 by surfchris )
+  New feature to manage templates
+
+0.0.2 ( Feb 16, 2013 )
+  Feature to supply a package instead of being dependent on the repository
+  Feature to install java in case one doesn't manage it externally
+  Adding RedHat and Amazon as Operating systems
+  fixed a typo - its a shard not a shared :) ( PR #5 by Martin Seener )
+
+0.0.1 ( Jan 13, 2013 )
+  Initial release of the module

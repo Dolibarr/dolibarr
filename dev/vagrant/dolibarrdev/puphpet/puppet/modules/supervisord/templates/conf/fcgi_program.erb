@@ -1,0 +1,96 @@
+[fcgi-program:<%= @name %>]
+command=<%= @command %>
+socket=<%= @socket %>
+<% if @socket_owner -%>
+socket_owner=<%= @socket_owner %>
+<% end -%>
+<% if @socket_mode -%>
+socket_mode=<%= @socket_mode %>
+<% end -%>
+<% if @process_name -%>
+process_name=<%= @process_name %>
+<% end -%>
+<% if @numprocs -%>
+numprocs=<%= @numprocs %>
+<% end -%>
+<% if @numprocs_start -%>
+numprocs_start=<%= @numprocs_start %>
+<% end -%>
+<% if @priority -%>
+priority=<%= @priority %>
+<% end -%>
+<% if @autostart -%>
+autostart=<%= @autostart %>
+<% end -%>
+<% if @autorestart -%>
+autorestart=<%= @autorestart %>
+<% end -%>
+<% if @startsecs -%>
+startsecs=<%= @startsecs %>
+<% end -%>
+<% if @startretries -%>
+startretries=<%= @startretries %>
+<% end -%>
+<% if @exitcodes -%>
+exitcodes=<%= @exitcodes %>
+<% end -%>
+<% if @stopsignal -%>
+stopsignal=<%= @stopsignal %>
+<% end -%>
+<% if @stopwaitsec -%>
+stopwaitsec=<%= @stopwaitsec %>
+<% end -%>
+<% if @stopasgroup -%>
+stopasgroup=<%= @stopasgroup %>
+<% end -%>
+<% if @killasgroup -%>
+killasgroup=<%= @killasgroup %>
+<% end -%>
+<% if @user -%>
+user=<%= @user %>
+<% end -%>
+<% if @redirect_stderr -%>
+redirect_stderr=<%= @redirect_stderr %>
+<% end -%>
+<% if @stdout_logfile -%>
+stdout_logfile=<%= @stdout_logfile %>
+<% end -%>
+<% if @stdout_logfile_maxbytes -%>
+stdout_logfile_maxbytes=<%= @stdout_logfile_maxbytes %>
+<% end -%>
+<% if @stdout_logfile_backups -%>
+stdout_logfile_backups=<%= @stdout_logfile_backups %>
+<% end -%>
+<% if @stdout_capture_maxbytes -%>
+stdout_capture_maxbytes=<%= @stdout_capture_maxbytes %>
+<% end -%>
+<% if @stdout_events_enabled -%>
+stdout_events_enabled=<%= @stdout_events_enabled %>
+<% end -%>
+<% if @stderr_logfile -%>
+stderr_logfile=<%= @stderr_logfile %>
+<% end -%>
+<% if @stderr_logfile_maxbytes -%>
+stderr_logfile_maxbytes=<%= @stderr_logfile_maxbytes %>
+<% end -%>
+<% if @stderr_logfile_backups -%>
+stderr_logfile_backups=<%= @stderr_logfile_backups %>
+<% end -%>
+<% if @stderr_capture_maxbytes -%>
+stderr_capture_maxbytes=<%= @stderr_capture_maxbytes %>
+<% end -%>
+<% if @stderr_events_enabled -%>
+stderr_events_enabled=<%= @stderr_events_enabled %>
+<% end -%>
+<% if @env_string -%>
+environment=<%= @env_string %>
+<% end -%>
+<% if @directory -%>
+directory=<%= @directory %>
+<% end -%>
+<% if @umask -%>
+umask=<%= @umask %>
+<% end -%>
+<% if @serverurl -%>
+serverurl=<%= @serverurl %>
+<% end -%>

@@ -1,0 +1,10 @@
+Path: .
+URL: http://example.com/svn/trunk
+Repository Root: http://example.com/svn
+Repository UUID: 75246ace-e253-0410-96dd-a7613ca8dc81
+Revision: 4
+Node Kind: directory
+Schedule: normal
+Last Changed Author: jon
+Last Changed Rev: 3
+Last Changed Date: 2008-08-07 11:34:25 -0700 (Thu, 07 Aug 2008)

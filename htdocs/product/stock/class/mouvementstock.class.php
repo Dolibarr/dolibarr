@@ -265,7 +265,7 @@ class MouvementStock
 		if (! $error)
 		{
 			$this->db->commit();
-			return 1;
+			return $mvid;
 		}
 		else
 		{
