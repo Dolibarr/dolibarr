@@ -35,8 +35,8 @@
 abstract class CommonObject
 {
     protected $db;
-    public $error;
-    public $errors;
+    //public $error;                //Just one error, deprecated
+    public $errors;                 //Stack of error
     public $canvas;                // Contains canvas name if it is
 
     public $name;
@@ -52,7 +52,84 @@ abstract class CommonObject
 
     // No constructor as it is an abstract class
 
+    /**
+     * Magic function for managing deprecated property and setting others
+     * 
+     * @param   string    $name   name of the property
+     * @param   mixed     $value  value assigned to property
+     * @return  void
+     */
+    public function __set($name,$value)
+    {
+        if ($name == 'error') 
+        {
+            trigger_error('property error is deprecated, prefer usage of errors',E_USER_DEPRECATED);
+            $this->errors[]=$value;
+        } 
+        else
+        {
+            $this->$name = $value;
+            return;
+        } 
+    }
 
+    /**
+     * Magic function for managing deprecated property and getting others
+     * 
+     * @param   string  $name   name of the property
+     * @return  mixed           value of the property
+     */
+    public function __get($name)
+    {
+        if ($name == 'error') 
+        {
+            trigger_error('property error is deprecated, prefer usage of errors',E_USER_DEPRECATED);
+            return end($this->errors);
+        } 
+        else
+        {
+            return $this->$name;
+        } 
+    }
+    
+    /**
+     * Magic function for managing deprecated property and testing others
+     * 
+     * @param   string  $name   name of the property
+     * @return  boolean         result of empty on the property
+     */
+    public function __isset($name)
+    {
+        if ($name == 'error') 
+        {
+            trigger_error('property error is deprecated, prefer usage of errors',E_USER_DEPRECATED);
+            return empty($this->errors);
+        } 
+        else
+        {
+            return empty($this->$name);
+        }
+    }
+
+    /**
+     * Magic function for managing deprecated property and unsetting others
+     * 
+     * @param   string  $name   name of the property
+     * @return  void
+     */
+    public function __unset($name)
+    {
+        if ($name == 'error') 
+        {
+            trigger_error('property error is deprecated, prefer usage of errors',E_USER_DEPRECATED);
+            return array_pop($this->errors);
+        } 
+        else
+        {
+            unset($this->$name);
+        }
+    }
+    
     /**
      * Check an object id/ref exists
      * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
