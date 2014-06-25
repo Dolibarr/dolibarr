@@ -2485,9 +2485,10 @@ class Form
      *    @param	string	$page        Page
      *    @param    int		$selected    Id of bank account
      *    @param    string	$htmlname    Name of select html field
+     *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return	void
      */
-    function form_select_comptes($page, $selected='', $htmlname='fk_account')
+    function form_select_comptes($page, $selected='', $htmlname='fk_account', $addempty=0)
     {
         global $langs;
         if ($htmlname != "none")
@@ -2497,7 +2498,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $this->select_comptes($selected,$htmlname);
+            $this->select_comptes($selected, $htmlname, 0, '', $addempty);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';

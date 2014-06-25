@@ -253,6 +253,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->currency_code = GETPOST('currency_code');
+				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->remise_percent = GETPOST('remise_percent');
 				$object->remise_absolue = GETPOST('remise_absolue');
 				$object->socid = GETPOST('socid');
@@ -279,7 +280,8 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->currency_code = GETPOST('currency_code');
-
+			$object->fk_account = GETPOST('fk_account', 'int');
+				
 			$object->contactid = GETPOST('contactidp');
 			$object->fk_project = GETPOST('projectid');
 			$object->modelpdf = GETPOST('model');
@@ -1199,7 +1201,7 @@ if ($action == 'create') {
 
 	// Bank Account
 	print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
-	$form->select_comptes($fk_account, 'fk_account');
+	$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 	print '</td></tr>';
 
 	// What trigger creation
@@ -1767,7 +1769,7 @@ if ($action == 'create') {
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount')
 	{
-		$form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account');
+		$form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 	}
 	else
 	{

@@ -1136,15 +1136,16 @@ abstract class CommonObject
             dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
+        if ($fk_account<0) $fk_account='NULL';
         dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET fk_account = '".$fk_account."'";
+        $sql.= " SET fk_account = ".$fk_account;
         $sql.= " WHERE rowid=".$this->id;
 
         if ($this->db->query($sql))
         {
-            $this->fk_account = $fk_account;
+            $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
             return 1;
         }
         else
