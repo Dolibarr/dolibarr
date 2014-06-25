@@ -65,6 +65,9 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
+- Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
+- Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
 
 TODO
 - New: Predefined product and free product use same form.

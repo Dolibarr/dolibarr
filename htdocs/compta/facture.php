@@ -124,7 +124,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->c
 				header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
 				exit();
 			} else {
-				$mesgs [] = $object->error;
+				setEventMessage($object->error, 'errors');
 				$action = '';
 			}
 		}
@@ -140,7 +140,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		} else {
-			$mesgs [] = '<div class="error">' . $object->error . '</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -164,7 +164,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 		header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
 		exit();
 	} else {
-		$mesgs [] = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
+		$action='';
 	}
 }
 
@@ -195,7 +196,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			exit();
 		}
 	} else {
-		$mesgs [] = '<div clas="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 		$action = '';
 	}
 }
@@ -453,7 +454,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 
 		// On verifie si aucun paiement n'a ete effectue
 		if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
-			$object->set_draft($user, $idwarehouse);
+			$result=$object->set_draft($user, $idwarehouse);
+			if ($result<0) setEventMessage($object->error,'errors');
 
 			// Define output language
 			$outputlangs = $langs;
@@ -478,6 +480,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 else if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement) {
 	$object->fetch($id);
 	$result = $object->set_paid($user);
+	if ($result<0) setEventMessage($object->error,'errors');
 } // Classif "paid partialy"
 else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement) {
 	$object->fetch($id);
@@ -485,6 +488,7 @@ else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->righ
 	$close_note = $_POST["close_note"];
 	if ($close_code) {
 		$result = $object->set_paid($user, $close_code, $close_note);
+		if ($result<0) setEventMessage($object->error,'errors');
 	} else {
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), 'errors');
 	}
@@ -495,6 +499,7 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes') {
 	$close_note = $_POST["close_note"];
 	if ($close_code) {
 		$result = $object->set_canceled($user, $close_code, $close_note);
+		if ($result<0) setEventMessage($object->error,'errors');
 	} else {
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), 'errors');
 	}
