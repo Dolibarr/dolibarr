@@ -597,10 +597,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 		// Replacement invoice
 	if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
 	{
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		}
 
 		if (! ($_POST['fac_replacement'] > 0)) {
@@ -613,17 +614,17 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$result = $object->fetch($_POST['fac_replacement']);
 			$object->fetch_thirdparty();
 
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note = trim($_POST['note']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
-			$object->fk_project = $_POST['projectid'];
-			$object->cond_reglement_id = $_POST['cond_reglement_id'];
-			$object->mode_reglement_id = $_POST['mode_reglement_id'];
-			$object->remise_absolue = $_POST['remise_absolue'];
-			$object->remise_percent = $_POST['remise_percent'];
+			$object->date				= $dateinvoice;
+			$object->note_public		= trim($_POST['note_public']);
+			$object->note				= trim($_POST['note']);
+			$object->ref_client			= $_POST['ref_client'];
+			$object->ref_int			= $_POST['ref_int'];
+			$object->modelpdf			= $_POST['model'];
+			$object->fk_project			= $_POST['projectid'];
+			$object->cond_reglement_id	= $_POST['cond_reglement_id'];
+			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$object->remise_absolue		= $_POST['remise_absolue'];
+			$object->remise_percent		= $_POST['remise_percent'];
 
 			// Proprietes particulieres a facture de remplacement
 			$object->fk_facture_source = $_POST['fac_replacement'];
@@ -644,8 +645,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), 'errors');
 		}
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture))
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
 		{
 			$error ++;
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->trans("Date")), 'errors');
@@ -653,24 +654,19 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 		if (! $error)
 		{
-			// Si facture avoir
-			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-
-			// $result=$object->fetch($_POST['fac_avoir']);
-
-			$object->socid = GETPOST('socid', 'int');
-			$object->number = $_POST['facnumber'];
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note = trim($_POST['note']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
-			$object->fk_project = $_POST['projectid'];
-			$object->cond_reglement_id = 0;
-			$object->mode_reglement_id = $_POST['mode_reglement_id'];
-			$object->remise_absolue = $_POST['remise_absolue'];
-			$object->remise_percent = $_POST['remise_percent'];
+			$object->socid				= GETPOST('socid','int');
+			$object->number				= $_POST['facnumber'];
+			$object->date				= $dateinvoice;
+			$object->note_public		= trim($_POST['note_public']);
+			$object->note				= trim($_POST['note']);
+			$object->ref_client			= $_POST['ref_client'];
+			$object->ref_int			= $_POST['ref_int'];
+			$object->modelpdf			= $_POST['model'];
+			$object->fk_project			= $_POST['projectid'];
+			$object->cond_reglement_id	= 0;
+			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$object->remise_absolue		= $_POST['remise_absolue'];
+			$object->remise_percent		= $_POST['remise_percent'];
 
 			// Proprietes particulieres a facture avoir
 			$object->fk_facture_source = $_POST['fac_avoir'];
@@ -737,23 +733,24 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	// Standard invoice or Deposit invoice created from a Predefined invoice
 	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
 	{
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		}
 
 		if (! $error)
 		{
-			$object->socid = GETPOST('socid', 'int');
-			$object->type = $_POST['type'];
-			$object->number = $_POST['facnumber'];
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note_private = trim($_POST['note_private']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
+			$object->socid			= GETPOST('socid','int');
+			$object->type           = $_POST['type'];
+			$object->number         = $_POST['facnumber'];
+			$object->date           = $dateinvoice;
+			$object->note_public	= trim($_POST['note_public']);
+			$object->note_private   = trim($_POST['note_private']);
+			$object->ref_client     = $_POST['ref_client'];
+			$object->ref_int     	= $_POST['ref_int'];
+			$object->modelpdf       = $_POST['model'];
 
 			// Source facture
 			$object->fac_rec = $_POST['fac_rec'];
@@ -771,30 +768,32 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
 		}
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		}
 
 		if (! $error)
 		{
 			// Si facture standard
-			$object->socid = GETPOST('socid', 'int');
-			$object->type = GETPOST('type');
-			$object->number = $_POST['facnumber'];
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note_private = trim($_POST['note_private']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
-			$object->fk_project = $_POST['projectid'];
-			$object->cond_reglement_id = ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
-			$object->mode_reglement_id = $_POST['mode_reglement_id'];
-			$object->amount = $_POST['amount'];
-			$object->remise_absolue = $_POST['remise_absolue'];
-			$object->remise_percent = $_POST['remise_percent'];
+			$object->socid				= GETPOST('socid','int');
+			$object->type				= GETPOST('type');
+			$object->number				= $_POST['facnumber'];
+			$object->date				= $dateinvoice;
+			$object->note_public		= trim($_POST['note_public']);
+			$object->note_private		= trim($_POST['note_private']);
+			$object->ref_client			= $_POST['ref_client'];
+			$object->ref_int			= $_POST['ref_int'];
+			$object->modelpdf			= $_POST['model'];
+			$object->fk_project			= $_POST['projectid'];
+			$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
+			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$object->amount				= $_POST['amount'];
+			$object->remise_absolue		= $_POST['remise_absolue'];
+			$object->remise_percent		= $_POST['remise_percent'];
+
 			$object->fetch_thirdparty();
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
@@ -1883,7 +1882,7 @@ if ($action == 'create')
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
@@ -1897,7 +1896,7 @@ if ($action == 'create')
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
-		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';		// Do not set 0 here (0 for a date is 1970)
+		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
 	}
 	$absolute_discount = $soc->getAvailableDiscounts();
 

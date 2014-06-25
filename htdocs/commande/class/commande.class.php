@@ -291,13 +291,6 @@ class Commande extends CommonOrder
             }
         }
 
-        // Set new ref and current status
-        if (! $error)
-        {
-            $this->ref = $num;
-            $this->statut = 1;
-        }
-
         if (! $error)
         {
             // Appel des triggers
@@ -306,6 +299,13 @@ class Commande extends CommonOrder
             $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
+        }
+
+        // Set new ref and current status
+        if (! $error)
+        {
+            $this->ref = $num;
+            $this->statut = 1;
         }
 
         if (! $error)
@@ -484,7 +484,7 @@ class Commande extends CommonOrder
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET fk_statut = 3,';
             $sql.= ' fk_user_cloture = '.$user->id.',';
-            $sql.= ' date_cloture = '.$this->db->idate($now);
+            $sql.= " date_cloture = '".$this->db->idate($now)."'";
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
             if ($this->db->query($sql))
@@ -2590,8 +2590,8 @@ class Commande extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-				
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date; 
+
+				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
                 if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
             }
             return 1;
