@@ -67,9 +67,7 @@ For users:
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
 - Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
 - New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
-
-TODO
-- New: Predefined product and free product use same form.
+- Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
 
 For translators:
 - Update language files.
@@ -91,6 +89,8 @@ For developers:
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
 - New: Add hooks on project card page.
+- New: Add call_trigger method on CommonObject class. So new trigger call within object is just : 
+$result = $this->call_trigger($trigger_name, $user) 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -98,11 +98,11 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascript function ac_delay() that is not used anymore by core code.
-- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Properties "dictionnaries" into module descriptor files have been renamed into "dictionaries".
 - Method form->select_currency() has been removed. Use instead print form->selectCurrency().
 - Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
 - The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
-  So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
+  So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
 
