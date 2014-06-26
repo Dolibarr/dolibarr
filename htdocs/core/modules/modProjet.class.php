@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Charles-Fr BENKE	<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,6 +117,11 @@ class modProjet extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array();
+		$r=0;
+		$this->boxes[$r][1] = "box_project.php";
+		$r++;
+		$this->boxes[$r][1] = "box_task.php";
+		$r++;
 
 		// Permissions
 		$this->rights = array();
