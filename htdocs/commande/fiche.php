@@ -1426,7 +1426,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	{
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
-		$currency_code      = $soc->currency_code;
+		$currency_code      = (! empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE);
 		$fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
 		$demand_reason_id   = $soc->demand_reason_id;

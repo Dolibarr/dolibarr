@@ -1194,10 +1194,11 @@ if ($action == 'create') {
 	$form->select_types_paiements($soc->mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 
-	// Currency
-	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
-	$form->select_currency($currency_code, 'currency_code');
-	print '</td></tr>';
+    // Currency
+    print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
+    $currency_code = (! empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE);
+    $form->select_currency($currency_code, 'currency_code');
+    print '</td></tr>';
 
 	// Bank Account
 	print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
