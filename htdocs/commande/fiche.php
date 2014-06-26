@@ -228,6 +228,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
 		$object->mode_reglement_id = GETPOST('mode_reglement_id');
 		$object->currency_code = GETPOST('currency_code');
+        $object->fk_account = GETPOST('fk_account', 'int');
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
 		$object->date_livraison = $datelivraison;
@@ -493,7 +494,11 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 else if ($action == 'setcurrency' && $user->rights->commande->creer)
 {
     $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
-    if ($result < 0) dol_print_error($db,$object->error);
+}
+
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
@@ -1401,6 +1406,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$currency_code      = (!empty($objectsrc->currency_code)?$objectsrc->currency_code:(!empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE));
+			$fk_account         = (!empty($objectsrc->fk_account)?$objectsrc->fk_account:(!empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
@@ -1421,6 +1427,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
 		$currency_code      = $soc->currency_code;
+		$fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
@@ -1520,6 +1527,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
 	$form->select_currency($currency_code, 'currency_code');
 	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
 
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
@@ -2155,7 +2167,27 @@ if ($action == 'create' && $user->rights->commande->creer) {
         print "</td>";
         print '</tr>';
 
-			// Total HT
+        // Bank Account
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('BankAccount');
+        print '<td>';
+        if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editbankaccount')
+        {
+            $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+        }
+        else
+        {
+            $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+        }
+        print "</td>";
+        print '</tr>';
+
+        // Total HT
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 		print '<td align="right">' . price($object->total_ht, 1, '', 1, - 1, - 1, $object->currency_code) . '</td>';
 

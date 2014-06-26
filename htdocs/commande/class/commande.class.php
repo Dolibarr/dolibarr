@@ -61,6 +61,7 @@ class Commande extends CommonOrder
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $currency_code;
+    var $fk_account;
     var $mode_reglement_id;
     var $mode_reglement_code;
     var $availability_id;
@@ -660,7 +661,7 @@ class Commande extends CommonOrder
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
         $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
-        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_currency, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
+        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_currency, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
@@ -676,6 +677,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
         $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->availability_id>0?"'".$this->availability_id."'":"null");
         $sql.= ", ".($this->demand_reason_id>0?"'".$this->demand_reason_id."'":"null");
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
@@ -1341,6 +1343,7 @@ class Commande extends CommonOrder
 
         $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
         $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva as total_tva, c.localtax1 as total_localtax1, c.localtax2 as total_localtax2, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_availability, c.fk_input_reason';
+        $sql.= ', c.fk_account';
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
@@ -1402,6 +1405,7 @@ class Commande extends CommonOrder
                 $this->cond_reglement		= $obj->cond_reglement_libelle;
                 $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
                 $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
+                $this->fk_account           = $obj->fk_account;
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;
                 $this->demand_reason_id		= $obj->fk_input_reason;
