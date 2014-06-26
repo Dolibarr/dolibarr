@@ -15,8 +15,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Return a string to outptu a keypad
+ *
+ * @param	string		$keypadname		Key pad name
+ * @param 	string		$formname		Form name
+ * @return	string						HTML code to show a js keypad.
+ */
 function genkeypad($keypadname, $formname)
 {
+	if (empty($conf->global->CASHDESK_SHOW_KEYPAD)) return '';
+
 	// défine the font size of button
 	$btnsize=32;
 	$sz='<input type="button" id="closekeypad'.$keypadname.'" value="X" style="display:none;" onclick="closekeypad(\''.$keypadname.'\')"/>'."\n";
@@ -33,7 +42,7 @@ function genkeypad($keypadname, $formname)
 	$sz.='<input type="button" style="font-size:'.$btnsize.'px;" value=" 1 " onclick="addvalue(\''.$keypadname.'\',\''.$formname.'\',1);"/>'."\n";
 	$sz.='<input type="button" style="font-size:'.$btnsize.'px;" value=" 2 " onclick="addvalue(\''.$keypadname.'\',\''.$formname.'\',2);"/>'."\n";
 	$sz.='<input type="button" style="font-size:'.$btnsize.'px;" value=" 3 " onclick="addvalue(\''.$keypadname.'\',\''.$formname.'\',3);"/><br/>'."\n";
-	
+
 	$sz.='<input type="button" style="font-size:'.$btnsize.'px;" value=" 0 " onclick="addvalue(\''.$keypadname.'\',\''.$formname.'\',0);"/>'."\n";
 	$sz.='<input type="button" style="font-size:'.$btnsize.'px;" value="&larr;" ';
 	$sz.=' onclick="document.getElementById(\''.$keypadname.'\').value=document.getElementById(\''.$keypadname.'\').value.substr(0,document.getElementById(\''.$keypadname.'\').value.length-1);modif();"/>'."\n";
