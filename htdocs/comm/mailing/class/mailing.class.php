@@ -60,6 +60,9 @@ class Mailing extends CommonObject
 	
 	var $extraparams=array();
 
+	public $statut_dest=array();
+	public $statuts=array();
+
 
 	/**
      *  Constructor
@@ -75,6 +78,12 @@ class Mailing extends CommonObject
 		$this->statuts[1] = 'MailingStatusValidated';
 		$this->statuts[2] = 'MailingStatusSentPartialy';
 		$this->statuts[3] = 'MailingStatusSentCompletely';
+		
+		$this->statut_dest[-1] = 'MailingStatusError';
+		$this->statut_dest[1] = 'MailingStatusSent';
+		$this->statut_dest[2] = 'MailingStatusRead';
+		$this->statut_dest[3] = 'MailingStatusNotContact';
+				
 	}
 
 	/**
@@ -510,6 +519,61 @@ class Mailing extends CommonObject
 			if ($statut == 2)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut3');
 			if ($statut == 3)  return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
+	}
+
+	
+	/**
+	 *  Renvoi le libelle d'un statut donne
+	 *
+	 *  @param	int		$statut        	Id statut
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string        			Label
+	 */
+	static public function libStatutDest($statut,$mode=0)
+	{
+		global $langs;
+		$langs->load('mails');
+	
+		if ($mode == 0)
+		{
+			return $langs->trans($this->statut_dest[$statut]);
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans($this->statut_dest[$statut]);
+		}
+		if ($mode == 2)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		if ($mode == 3)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		if ($mode == 4)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		if ($mode == 5)
+		{
+			if ($statut==-1) return $langs->trans("MailingStatusError").' '.img_error();
+			if ($statut==1) return $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
+			if ($statut==2) return $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
+			if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut8');
+		}
+		
+		
+		
+		
 	}
 
 }

@@ -144,12 +144,12 @@ class mailing_pomme extends MailingTargets
 	{
 		global $conf, $langs;
 		$langs->load("companies");
-		
+
 		$cibles = array();
 
 		// La requete doit retourner: id, email, fk_contact, lastname, firstname
 		$sql = "SELECT u.rowid as id, u.email as email, null as fk_contact,";
-		$sql.= " u.lastname as lastname, u.firstname as firstname, u.civilite as civility_id, u.login, u.office_phone";
+		$sql.= " u.lastname, u.firstname as firstname, u.civilite as civility_id, u.login, u.office_phone";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";
