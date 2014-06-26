@@ -43,8 +43,8 @@
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='') {
-
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='')
+{
 	global $conf, $user, $langs, $db;
 
 	// Filters
@@ -87,13 +87,19 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
+
 		print '<tr>';
 		print '<td class="nowrap">';
 		print $langs->trans("Type");
 		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-
 		print $formactions->select_type_actions($actioncode, "actioncode", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : 0));
+		print '</td></tr>';
 
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("Status");
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
+		$formactions->form_select_status_action('formaction',$status,1,'complete',1,2);
 		print '</td></tr>';
 	}
 

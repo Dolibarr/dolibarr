@@ -355,6 +355,7 @@ ActionsDoneShort=Effectuées
 ActionNotApplicable=Non applicable
 ActionRunningNotStarted=A réaliser
 ActionRunningShort=En cours
+ActionUncomplete=Incomplet
 ActionDoneShort=Terminé
 CompanyFoundation=Société ou institution
 ContactsForCompany=Contacts de ce tiers
