@@ -554,17 +554,29 @@ class FormMail
         	if (! empty($this->withbody))
         	{
         		$defaultmessage="";
+        		
+        		// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $this->param['langsmodels'];
+        		
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				
 
         		// TODO    A partir du type, proposer liste de messages dans table llx_c_email_template
-        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentThirdparty"); }
+        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
+        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
+        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
+        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
+        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
+        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
         		elseif (! is_numeric($this->withbody))						{ $defaultmessage=$this->withbody; }
 
         		// Complete substitution array
