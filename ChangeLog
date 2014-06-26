@@ -65,6 +65,7 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
 
 TODO
 - New: Predefined product and free product use same form.
@@ -89,6 +90,8 @@ For developers:
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
 - New: Add hooks on project card page.
+- New: Add call_trigger method on CommonObject class. So new trigger call within object it's just : 
+$result = $this->call_trigger($triger_name, $user) and do what you need to do if trigger fail 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
