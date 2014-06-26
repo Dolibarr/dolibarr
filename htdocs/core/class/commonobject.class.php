@@ -205,7 +205,7 @@ abstract class CommonObject
         $datecreate = dol_now();
 
         $this->db->begin();
-        
+
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -223,7 +223,7 @@ abstract class CommonObject
             	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
 	            if ($result < 0) { $this->db->rollback(); return -1; }
             }
-            
+
             $this->db->commit();
             return 1;
         }
@@ -310,7 +310,7 @@ abstract class CommonObject
 
 
         $this->db->begin();
-        
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
 
@@ -3293,12 +3293,17 @@ abstract class CommonObject
 
     	if (! $user->rights->margins->liretous) return;
 
-        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		print '<table class="nobordernopadding" width="100%">';
+		if (! empty($conf->global->MARGININFO_HIDE_SHOW))
+		{
+			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
+			if ($conf->global->MARGININFO_HIDE_SHOW == 2) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';	// hide by default
+		}
 
+		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -3417,7 +3422,7 @@ abstract class CommonObject
 
 
 	    $this->db->begin();
-	    
+
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid =".$rowid;
 
@@ -3459,13 +3464,13 @@ abstract class CommonObject
         	}
         }
     }
-    
+
     /**
      * Call trigger based on this instance
-     * 
+     *
      *  NB: Error from trigger are stacked in errors
      *  NB2: if trigger fail, action should be canceled.
-     * 
+     *
      * @param   string    $trigger_name   trigger's name to execute
      * @param   User      $user           Object user
      * @return  int                       Result of run_triggers
@@ -3473,7 +3478,7 @@ abstract class CommonObject
     function call_trigger($trigger_name, $user)
     {
         global $langs,$conf;
-        
+
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($this->db);
         $result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
@@ -3482,13 +3487,13 @@ abstract class CommonObject
             {
                 $this->errors=array_merge($this->errors,$interface->errors);
             }
-            else 
+            else
             {
                 $this->errors=$interface->errors;
             }
         }
         return $result;
-        
+
     }
 
 }

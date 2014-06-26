@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - donations
 Donation=Don
 Donations=Dons
-DonationRef=Réf. donation
+DonationRef=Numéro d'ordre du reçu
 Donor=Donateur
 Donors=Donateurs
 AddDonation=Ajouter don
@@ -22,11 +22,19 @@ DonationStatusPromiseNotValidatedShort=Non validée
 DonationStatusPromiseValidatedShort=Validée
 DonationStatusPaidShort=Payé
 ValidPromess=Valider promesse
-DonationReceipt=Reçu de dons
+DonationTitle=Reçu au titre des dons
+DonationReceipt=Reçu au titre des dons<br>à certains organismes d'intéret général
+DonationDatePayment=Date de versement ou du don
 BuildDonationReceipt=Créer reçu
 DonationsModels=Modèles de documents de bon de réception de dons
 LastModifiedDonations=Les %s derniers dons modifiés
 SearchADonation=Rechercher un don
 DonationRecipient=Bénéficiaire des versements
 ThankYou=Merci
-IConfirmDonationReception=Le bénéficiaire reconnait avoir reçu au titre des versements ouvrant droit à réduction d'impôt, la somme de
+FreeTextOnDonations=Message affiché sur le récépissé de versements ou dons
+IConfirmDonationReception=Le bénéficiaire reconnait avoir reçu au titre des dons et versements ouvrant droit à réduction d'impôt, la somme de
+# French Options
+FrenchOptions=Options éligibles en France
+DONATION_ART200=Les dons ou versements reçus sont éligibles à l'article 200 du CGI
+DONATION_ART238=Les dons ou versements reçus sont éligibles à l'article 238bis du CGI
+DONATION_ART885=Les dons ou versements reçus sont éligibles à l'article 885-0 V bis A du CGI
