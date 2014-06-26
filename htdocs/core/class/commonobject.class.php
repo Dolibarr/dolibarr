@@ -3232,10 +3232,14 @@ abstract class CommonObject
 
     	if (! $user->rights->margins->liretous) return;
 
-        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
 		$marginInfo = $this->getMarginInfos($force_price);
-		print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
+		if ($conf->global->MARGININFO_HIDE_SHOW > 0)
+			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
+		if ($conf->global->MARGININFO_HIDE_SHOW == 2) // hide by default
+			print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
+			
 		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
