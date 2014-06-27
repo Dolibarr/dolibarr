@@ -39,7 +39,7 @@
  * @param 	string	$filterd		Filter of done by user
  * @param 	int		$pid			Product id
  * @param 	int		$socid			Third party id
- * @param	array	$showextcals	Array with list of external calendars, or -1 to show no legend
+ * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
  * @return	void
  */
@@ -78,12 +78,12 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		print '</td></tr>';
 
-		print '<tr>';
+		/*print '<tr>';
 		print '<td class="nowrap">';
 		print $langs->trans("or") . ' ' . $langs->trans("ActionsDoneBy");
 		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		print $form->select_dolusers($filterd, 'userdone', 1, '', ! $canedit);
-		print '</td></tr>';
+		print '</td></tr>';*/
 
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions=new FormActions($db);
@@ -136,7 +136,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '});' . "\n";
 		print '</script>' . "\n";
 		print '<table>';
-		if (! empty($conf->global->MAIN_JS_SWITCH_AGENDA))
+		if (! empty($conf->use_javascript_ajax))
 		{
 			if (count($showextcals) > 0)
 			{
@@ -147,7 +147,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 					print '<tr><td>';
 					print '<script type="text/javascript">' . "\n";
 					print 'jQuery(document).ready(function () {' . "\n";
-					print 'jQuery("#check_' . $htmlname . '").click(function() { jQuery(".family_' . $htmlname . '").toggle(); });' . "\n";
+					print '		jQuery("#check_' . $htmlname . '").click(function() {';
+					print ' 		/* alert("'.$htmlname.'"); */';
+					print ' 		jQuery(".family_' . $htmlname . '").toggle();';
+					print '		});' . "\n";
 					print '});' . "\n";
 					print '</script>' . "\n";
 					print '<input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'];
@@ -434,9 +437,9 @@ function actions_prepare_head($object)
 	$head[$h][1] = $langs->trans('Info');
 	$head[$h][2] = 'info';
 	$h++;
-	
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'action');
-	
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'action','remove');
 
 	return $head;

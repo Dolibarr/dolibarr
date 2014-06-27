@@ -30,8 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $langs->load("agenda");
 $langs->load("admin");
@@ -63,7 +62,7 @@ if ($actionsave)
 	// Save agendas
 	while ($i <= $MAXAGENDA)
 	{
-		$name=trim(GETPOST('agenda_ext_name'.$i),'alpha');
+		$name=trim(GETPOST('agenda_ext_name'.$i,'alpha'));
 		$src=trim(GETPOST('agenda_ext_src'.$i,'alpha'));
 		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
 		if ($color=='-1') $color='';
@@ -76,7 +75,7 @@ if ($actionsave)
 			break;
 		}
 
-		//print 'color='.$color;
+		//print '-name='.$name.'-color='.$color;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,$name,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,$src,'chaine',0,'',$conf->entity);
@@ -218,8 +217,7 @@ print '</table>';
 print '<br>';
 
 print '<center>';
-
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
 print "</center>";
 
 print "</form>\n";

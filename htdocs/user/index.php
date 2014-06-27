@@ -42,7 +42,6 @@ if ($user->societe_id > 0)
 $sall=GETPOST('sall','alpha');
 $search_user=GETPOST('search_user','alpha');
 $search_statut=GETPOST('search_statut','alpha');
-if ($search_statut=='') $search_statut=1; // always display activ customer first
 
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
@@ -82,14 +81,14 @@ if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf
 }
 else
 {
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
 if (! empty($socid)) $sql.= " AND u.fk_societe = ".$socid;
 if (! empty($search_user))
 {
     $sql.= " AND (u.login LIKE '%".$db->escape($search_user)."%' OR u.lastname LIKE '%".$db->escape($search_user)."%' OR u.firstname LIKE '%".$db->escape($search_user)."%')";
 }
-if ($search_statut!='')
+if ($search_statut != '' && $search_statut >= 0)
 {
 	$sql.= " AND (u.statut=".$search_statut.")";
 }
@@ -103,8 +102,10 @@ if ($result)
     $i = 0;
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    
-    $param="search_user=$search_user&amp;sall=$sall";
+
+    $param="search_user=".$search_user."&sall=".$sall;
+    $param.="&search_statut=".$search_statut;
+
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield,$sortorder);
@@ -116,19 +117,20 @@ if ($result)
     print_liste_field_titre($langs->trans("Status"),"index.php","u.statut",$param,"",'align="center"',$sortfield,$sortorder);
     print '<td width="1%">&nbsp;</td>';
     print "</tr>\n";
-    
+
     //SearchBar
     print '<tr class="liste_titre">';
     print '<td colspan="6">&nbsp;</td>';
 
+	// Status
     print '<td>';
-    print $form->selectarray('search_statut', array('0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+    print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
     print '</td>';
-    
+
     print '<td class="liste_titre" align="right">';
     print '<input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td>';
-    
+
     print "</tr>\n";
     $var=True;
     while ($i < $num)

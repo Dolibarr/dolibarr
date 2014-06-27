@@ -203,8 +203,8 @@ class Expedition extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".($this->ref_customer?"'".$this->ref_customer."'":"null");
-		$sql.= ", ".($this->ref_int?"'".$this->ref_int."'":"null");
+		$sql.= ", ".($this->ref_customer?"'".$this->db->escape($this->ref_customer)."'":"null");
+		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
@@ -272,8 +272,22 @@ class Expedition extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
-					$this->db->commit();
-					return $this->id;
+					if (! $error)
+					{
+						$this->db->commit();
+						return $this->id;
+					}
+					else
+					{
+						foreach($this->errors as $errmsg)
+						{
+							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+							$this->error.=($this->error?', '.$errmsg:$errmsg);
+						}
+						$this->db->rollback();
+						return -1*$error;
+					}
+
 				}
 				else
 				{

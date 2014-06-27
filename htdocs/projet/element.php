@@ -209,13 +209,18 @@ foreach ($listofreferent as $key => $value)
 	$classname=$value['class'];
 	$tablename=$value['table'];
 	$qualified=$value['test'];
+	
 	if ($qualified)
 	{
 		print '<br>';
 
 		print_titre($langs->trans($title));
-
+		
 		$selectList=$formproject->select_element($tablename);
+		if ($selectList<0) {
+			setEventMessage($formproject->error,'errors');
+		}
+		
 		if ($selectList)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
@@ -314,7 +319,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				if ($key == 'invoice' && ! empty($conf->facture->enabled) && $user->rights->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
 				}
 			}
 			if ($project->societe->fournisseur)

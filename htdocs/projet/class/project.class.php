@@ -247,8 +247,9 @@ class Project extends CommonObject
                 		$newdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($this->ref);
                 		if (file_exists($olddir))
                 		{
-                			$res=@dol_move($olddir, $newdir);
-                			if (! $res)
+							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							$res=dol_move($olddir, $newdir);
+							if (! $res)
                 			{
                 				$this->error='ErrorFailToMoveDir';
                 				$error++;
@@ -511,7 +512,7 @@ class Project extends CommonObject
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
-        
+
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -556,7 +557,7 @@ class Project extends CommonObject
             	// End call triggers
             }
         }
-        
+
         if (empty($error)) {
             $this->db->commit();
             return 1;

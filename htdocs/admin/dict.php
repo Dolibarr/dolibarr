@@ -522,9 +522,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            //$oldid=$id;
-            //$_POST=array('id'=>$oldid);	// Clean $_POST array, we keep only
-            //$_GET["id"]=$_POST["id"];   // Force affichage dictionnaire en cours d'edition
+            $_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {

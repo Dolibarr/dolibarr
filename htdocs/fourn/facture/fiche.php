@@ -129,7 +129,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     }
 
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
@@ -179,6 +179,8 @@ elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->
 	else
 	{
 		$mesg='<div class="error">'.$object->error.'</div>';
+		/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+		$action='';
 	}
 }
 
@@ -186,6 +188,10 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 {
     $object->fetch($id);
     $result=$object->set_paid($user);
+    if ($result<0)
+    {
+        setEventMessage($object->error,'errors');
+    }
 }
 
 // Set supplier ref
@@ -373,6 +379,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         if ($lines[$i]->date_fin_reel) $date_end=$lines[$i]->date_fin_reel;
                         if ($lines[$i]->date_end) $date_end=$lines[$i]->date_end;
 
+                        // FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
                         $result = $object->addline(
                             $desc,
                             $lines[$i]->subprice,
@@ -521,6 +528,10 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
         {
             unset($_POST['label']);
         }
+        else
+        {
+            setEventMessage($object->error,'errors');
+        }
     }
 }
 
@@ -542,7 +553,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 	}
 	if (GETPOST('addline_predefined')
 			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
-			)			
+			)
 	{
 		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
 		$idprod=GETPOST('idprod', 'int');
@@ -593,6 +604,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 
             $type = $productsupplier->type;
 
+            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
             $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1tx, $localtax2tx, $qty, $idprod, $remise_percent, '', '', 0, $npr);
         }
         if ($idprod == 0)
@@ -631,19 +643,17 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             {
                 $ht = price2num($_POST['amount']);
                 $price_base_type = 'HT';
-
-                //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-                $result=$object->addline($product_desc, $ht, $tauxtva, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
             else
-            {
+           {
                 $ttc = price2num($_POST['amountttc']);
                 $ht = $ttc / (1 + ($tauxtva / 100));
                 $price_base_type = 'HT';
-                //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-                $result=$object->addline($product_desc, $ht, $tauxtva,$localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
             }
-        }
+            //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
+            // FIXME Must add $productsupplier->ref_supplier and $productsupplier->label if there were loaded by get_buyprice previously.
+            $result=$object->addline($product_desc, $ht, $tauxtva, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+       }
     }
 
     //print "xx".$tva_tx; exit;
@@ -881,7 +891,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -1072,6 +1082,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_mesg($mesg);
+    dol_htmloutput_events();
 
     $societe='';
     if ($_GET['socid'])
@@ -1122,10 +1133,10 @@ if ($action == 'create')
             $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_supplier_id)?$soc->mode_reglement_supplier_id:0));
             $remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+            $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
             $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-            $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+            $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
             $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
             $datedue=($datetmp==''?-1:$datetmp);
         }
@@ -1135,7 +1146,7 @@ if ($action == 'create')
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
         $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
-        $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datetmp);
+        $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
         $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
         $datedue=($datetmp==''?-1:$datetmp);
     }
@@ -1164,10 +1175,10 @@ if ($action == 'create')
     {
         print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
     }
-    print '</td>';
+    print '</td></tr>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$fac_ori->ref).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:'').'" type="text"></td>';
     print '</tr>';
 
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
@@ -1254,7 +1265,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:$fac_ori->libelle).'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
@@ -1475,7 +1486,17 @@ else
             }*/
             $formquestion=array();
 
-            if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+            $qualified_for_stock_change=0;
+		    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+		    }
+		    else
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+		    }
+
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
             {
                 $langs->load("stocks");
                 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';

@@ -141,7 +141,7 @@ class Task extends CommonObject
                 // End call triggers
             }
         }
-        
+
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -311,7 +311,7 @@ class Task extends CommonObject
                 // End call triggers
             }
         }
-        
+
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -834,7 +834,7 @@ class Task extends CommonObject
                 $this->id					= $obj->fk_task;
                 $this->timespent_date		= $obj->task_date;
                 $this->timespent_duration	= $obj->task_duration;
-                $this->timespent_user		= $obj->fk_user;
+                $this->timespent_fk_user	= $obj->fk_user;
                 $this->timespent_note		= $obj->note;
             }
 
@@ -1018,7 +1018,7 @@ class Task extends CommonObject
 		// Load source object
 		$clone_task->fetch($fromid);
 		$origin_task->fetch($fromid);
-		
+
 		$defaultref='';
 		$obj = empty($conf->global->PROJECT_TASK_ADDON)?'mod_task_simple':$conf->global->PROJECT_TASK_ADDON;
 		if (! empty($conf->global->PROJECT_TASK_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$conf->global->PROJECT_TASK_ADDON.".php"))

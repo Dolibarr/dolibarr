@@ -273,8 +273,6 @@ class modProduct extends DolibarrModules
 
 		// Import product multiprice
 		//--------
-		$r=0;
-
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]="ProductsMultiPrice";	// Translation key

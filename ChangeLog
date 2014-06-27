@@ -2,6 +2,47 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Question about warehouse must not be done when module stock is disabled.
+Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
+     (missing test at some places).
+Fix: Renaming a project with uplaoded files failed.
+Fix: [ bug #1476 ] Invoice creation form loses invoice date when there is a validation error.
+Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
+Fix: [ bug #1428 ] "Nothing" is shown in the middle of the screen in a supplier order.
+Fix: The object deliverycompany was not used anymore and output of
+     details for delivery reports was lost during 3.5. Rewrite code to
+     restore feature.
+Fix: [ bug #1445 ] html fix : missing </tr>
+Fix: [ bug #1415 ] Intervention document model name and suppliers model names is not shown
+     properly in module configuration
+Fix: [ bug #1416 ] Supplier order does not list document models in the select box of the 
+     supplier order card
+Fix: [ bug #1443 ] Payment conditions is erased after editing supplier invoice label or 
+     limit date for payment
+Fix: Filter on status was not visible when selected from url.
+Fix: Filtering on status was last when asking to sort.
+Fix: [ bug #1432 ] Trigger SHIPPING_CREATE ignores interception on error.
+Fix: [ bug #1449 ] Trigger ORDER_CREATE, LINEORDER_DELETE, LINEORDER_UPDATE and LINEORDER_INSERT ignore interception on error.
+Fix: [ bug #1450 ] Several Customer order's triggers do not report the error from the trigger handler.
+Fix: [ bug #1451 ] Interrupted order clone through trigger, loads nonexistent order.
+Fix: [ bug #1454 ] Mention de bas de page erroné
+Fix: Do not display dictionnay for non activated module 
+Fix: Link element from element project pages
+Fix: [ bug #1509 ] Expedition admin free text & watermark submit error
+Fix: [ bug #1349 ] AJAX contact selector does not work fine in Project card
+Fix: [ bug #1452 ] variable used but not defined
+Fix: If multiprice level is used the VAT on addline is not correct
+Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on supplier order part)
+Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
+Fix: [ bug #1455 ] outstanding amount
+Fix: [ bug #1425 ] LINEBILL_SUPPLIER_DELETE failure trigger leads to an endless loop
+Fix: [ bug #1460 ] Several supplier order triggers do not show error messages
+Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order line insertion
+Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
+Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
+Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
+
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
 Fix: [ bug #1351 ] VIES verification link broken.
@@ -27,6 +68,16 @@ Fix: [ bug #1367 ] "Show invoice" link after a POS sell throws an error.
 Fix: TCPDF error file not found in member card generation.
 Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 Fix: [ bug #1393 ] PHP Warning when creating a supplier invoice.
+Fix: [ bug #1399 ] [pgsql] Silent warning when setting a propal as "facturée" in propal.php
+Fix: When number reach 9999 with default numbering module, next number
+     will be 10000 instead of 0000 and error.
+Fix: element page on project give wrong href link.
+Fix: [ bug #1397 ] Filter by supplier orders with status Draft does not filter.
+Fix: [ bug #1388 ] Wrong date when invoicing several orders.
+Fix: [ bug #1411 ] Unable to set an expedition note if invoices module is not enabled.
+Fix: [ bug #1407 ] Rouget pdf overlapped when using tracking number and public notes.
+Fix: [ bug #1405 ] Rouget PDF expedition incorrect when two expeditions under the same commande
+Fix: [ bug #1434 ] Muscadet supplier order document model linked objects overlap the text
 
 ***** ChangeLog for 3.5.2 compared to 3.5.1 *****
 Fix: Can't add user for a task.
@@ -114,6 +165,7 @@ Fix: [ bug #1306 ] Fatal error when adding an external calendar.
 New: Added es_CL language
 Fix: Margin tabs bad data show
 Fix: [ bug #1318 ] Problem with enter key when adding an existing product to a customer invoice.
+Fix: [ bug #1410 ] Add customer order line asks for required Unit Price but doesn't interrupt the creation of the line
 
 ***** ChangeLog for 3.5 compared to 3.4.* *****
 For users:
