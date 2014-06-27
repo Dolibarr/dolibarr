@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -81,7 +81,8 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch($id, $ref);
 }
 
-
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks 
 
 /*
  * Actions
@@ -129,7 +130,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     }
 
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
@@ -179,6 +180,8 @@ elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->
 	else
 	{
 		$mesg='<div class="error">'.$object->error.'</div>';
+		/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+		$action='';
 	}
 }
 
@@ -462,7 +465,6 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
             $db->commit();
 
             if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-	            $outputlangs = $langs;
             	$result=supplier_invoice_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	if ($result	<= 0)
             	{
@@ -881,7 +883,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -1167,7 +1169,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$fac_ori->ref).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:'').'" type="text"></td>';
     print '</tr>';
 
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
@@ -1254,7 +1256,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:$fac_ori->libelle).'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
@@ -1315,10 +1317,7 @@ if ($action == 'create')
         print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
 
         $txt=$langs->trans($classname);
-        if ($classname=='CommandeFournisseur') {
-	        $langs->load('orders');
-	        $txt=$langs->trans("SupplierOrder");
-        }
+        if ($classname=='CommandeFournisseur') $txt=$langs->trans("SupplierOrder");
         print '<tr><td>'.$txt.'</td><td colspan="2">'.$objectsrc->getNomUrl(1).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($objectsrc->total_ht).'</td></tr>';
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
@@ -1458,7 +1457,7 @@ else
                     //TODO: Possibly will have to control payment information into suppliers
                     //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
                 }
-                $numref = $object->getNextNumRef($societe);
+                $numref = $object->getNextNumRef($soc);
             }
             else
             {
@@ -1475,7 +1474,17 @@ else
             }*/
             $formquestion=array();
 
-            if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+            $qualified_for_stock_change=0;
+		    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+		    }
+		    else
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+		    }
+
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
             {
                 $langs->load("stocks");
                 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1955,7 +1964,7 @@ else
             }
             else // Affichage simple de la ligne
             {
-                print '<tr '.$bc[$var].'>';
+                print '<tr id="row-'.$object->lines[$i]->rowid.'" '.$bc[$var].'>';
 
                 // Show product and description
                 print '<td>';

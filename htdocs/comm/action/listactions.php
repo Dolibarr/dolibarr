@@ -211,7 +211,7 @@ if ($resql)
     $head = calendars_prepare_head('');
 
     dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'list');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1);
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$filterg,$pid,$socid,-1);
     dol_fiche_end();
 
     // Add link to show birthdays

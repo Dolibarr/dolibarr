@@ -1566,6 +1566,7 @@ class Commande extends CommonOrder
 
                 $i++;
             }
+
             $this->db->free($result);
 
             return 1;
