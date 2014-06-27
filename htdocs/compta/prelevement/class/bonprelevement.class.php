@@ -1220,8 +1220,7 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Generate a withdrawal file. Generation Formats:
-     *   France: CFONB
-     *   Spain:  AEB19 (if external module EsAEB is enabled)
+     *   European countries: SEPA
      *   Others: Warning message
      *	File is generated with name this->filename
      *
@@ -1238,76 +1237,10 @@ class BonPrelevement extends CommonObject
 
         $this->file = fopen($this->filename,"w");
 
-        // TODO Move code for es and fr into an external module file with selection into setup of prelevement module
-
         $found=0;
 
-        // Build file for Spain
-        if ($mysoc->country_code=='ES')
-        {
-        	if (! empty($conf->esaeb->enabled))
-            {
-            	$found++;
-
-            	dol_include_once('/esaeb/class/esaeb19.class.php');
-
-                //Head
-                $esaeb19 = new AEB19DocWritter;
-                $esaeb19->configuraPresentador($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_PRESENTADOR,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet);
-                $idOrdenante = $esaeb19->agregaOrdenante($this->numero_national_emetteur,$conf->global->ESAEB_SUFIX_ORDENANTE,$this->raison_sociale,$this->emetteur_code_banque,$this->emetteur_code_guichet, $this->emetteur_number_key, $this->emetteur_numero_compte);
-                $this->total = 0;
-                $sql = "SELECT pl.rowid, pl.fk_soc, pl.client_nom, pl.code_banque, pl.code_guichet, pl.cle_rib, pl.number, pl.amount,";
-	        	$sql.= " f.facnumber, pf.fk_facture";
-	        	$sql.= " FROM";
-	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
-	        	$sql.= " ".MAIN_DB_PREFIX."facture as f,";
-	        	$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	        	$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
-	        	$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
-	        	$sql.= " AND pf.fk_facture = f.rowid";
-
-                //Lines
-                $i = 0;
-                $resql=$this->db->query($sql);
-                if ($resql)
-                {
-                    $num = $this->db->num_rows($resql);
-
-					$client = new Societe($this->db);
-
-                    while ($i < $num)
-                    {
-                    	$obj = $this->db->fetch_object($resql);
-						$client->fetch($obj->fk_soc);
-
-                        $esaeb19->agregaRecibo(
-                            $idOrdenante,
-							$client->idprof1,
-                            $obj->client_nom,
-                            $obj->code_banque,
-                            $obj->code_guichet,
-                            $obj->cle_rib,
-                            $obj->number,
-                            $obj->amount,
-                            "Fra.".$obj->facnumber." ".$obj->amount
-                        );
-
-                        $this->total = $this->total + $obj->amount;
-
-                        $i++;
-                    }
-                }
-                else
-              {
-                    $result = -2;
-                }
-
-                fputs($this->file, $esaeb19->generaRemesa());
-            }
-        }
-
         // Build file for European countries
-        if (! $found && $mysoc->isInEEC())
+        if (! $mysoc->isInEEC())
         {
         	$found++;
 
