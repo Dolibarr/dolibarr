@@ -84,12 +84,18 @@ $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GET
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
     $action='show_month'; $day='';
 }                                                   // View by month
-if (GETPOST('viewweek')) {
+if (GETPOST('viewweek') || $action == 'show_week') {
     $action='show_week'; $week=($week?$week:date("W")); $day=($day?$day:date("d"));
 }  // View by week
-if (GETPOST('viewday'))  {
+if (GETPOST('viewday') || $action == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
 }                                  // View by day
+
+if (empty($action))
+{
+	if (empty($conf->global->AGENDA_DEFAULT_VIEW)) $action='show_month';
+	else $action=$conf->global->AGENDA_DEFAULT_VIEW;
+}
 
 $langs->load("agenda");
 $langs->load("other");
@@ -134,6 +140,10 @@ $companystatic=new Societe($db);
 $contactstatic=new Contact($db);
 
 $now=dol_now();
+$nowarray=dol_getdate($now);
+$nowyear=$nowarray['year'];
+$nowmonth=$nowarray['mon'];
+$nowday=$nowarray['mday'];
 
 // Define list of all external calendars
 $listofextcals=array();
@@ -226,7 +236,6 @@ if ($status == 'done') $title=$langs->trans("DoneActions");
 if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
-$region='';
 if ($status)  $param="&status=".$status;
 if ($filter)  $param.="&filter=".$filter;
 if ($filtera) $param.="&filtera=".$filtera;
@@ -243,26 +252,29 @@ $param.="&maxprint=".$maxprint;
 // Show navigation bar
 if (empty($action) || $action=='show_month')
 {
-    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%b %Y");
     $nav.=" </span>\n";
-    $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth.$param."\">".$langs->trans("Today")."</a>)";
     $picto='calendar';
 }
 if ($action=='show_week')
 {
-    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,1,$year),"%Y").", ".$langs->trans("Week")." ".$week;
     $nav.=" </span>\n";
-    $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
     $picto='calendarweek';
 }
 if ($action=='show_day')
 {
-    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day."&amp;region=".$region.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+    $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
     $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$month,$day,$year),"daytextshort");
     $nav.=" </span>\n";
-    $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day."&amp;region=".$region.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+    $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
     $picto='calendarday';
 }
 
@@ -273,9 +285,17 @@ $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');
 
 
 
-$head = calendars_prepare_head('');
+$tabactive='';
+if ($action == 'show_month') $tabactive='cardmonth';
+if ($action == 'show_week') $tabactive='cardweek';
+if ($action == 'show_day')  $tabactive='cardday';
+if ($action == 'show_list') $tabactive='cardlist';
 
-dol_fiche_head($head, 'card', $langs->trans('Events'), 0, $picto);
+$paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
+
+$head = calendars_prepare_head($paramnoaction);
+
+dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
 print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals,$actioncode);
 dol_fiche_end();
 
@@ -919,7 +939,7 @@ else    // View by day
     $newparam=preg_replace('/viewday=[0-9]+&?/i','',$newparam);
     $newparam.='&viewday=1';
     // Code to show just one day
-    $style='cal_current_month';
+    $style='cal_current_month cal_current_month_oneday';
     $today=0;
     $todayarray=dol_getdate($now,'fast');
     if ($todayarray['mday']==$day && $todayarray['mon']==$month && $todayarray['year']==$year) $today=1;

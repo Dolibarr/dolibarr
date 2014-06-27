@@ -43,6 +43,12 @@ $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
 
+if (empty($action))
+{
+	if (empty($conf->global->AGENDA_DEFAULT_VIEW)) $action='show_list';
+	else $action=$conf->global->AGENDA_DEFAULT_VIEW;
+}
+
 $filter=GETPOST("filter",'',3);
 $filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
 $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
@@ -195,9 +201,15 @@ if ($resql)
 	}
 
 
-    $head = calendars_prepare_head('');
+	$tabactive='';
+	if ($action == 'show_month') $tabactive='cardmonth';
+	if ($action == 'show_week') $tabactive='cardweek';
+	if ($action == 'show_day') $tabactive='cardday';
+	if ($action == 'show_list') $tabactive='cardlist';
 
-    dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'list');
+	$head = calendars_prepare_head('');
+
+    dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
     print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1);
     dol_fiche_end();
 

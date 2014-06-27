@@ -54,6 +54,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="month" value="' . $month . '">';
 	print '<input type="hidden" name="day" value="' . $day . '">';
+	print '<input type="hidden" name="action" value="' . $action . '">';
 	print '<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
 	print '<table class="nobordernopadding" width="100%">';
 
@@ -68,13 +69,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $langs->trans("ActionsAskedBy");
 		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
-		print '</td>';
-		print '</tr>';
-
-		print '<tr>';
-		print '<td class="nowrap">';
-		print $langs->trans("or") . ' ' . $langs->trans("ActionsToDoBy");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
+		print ' &nbsp; '.$langs->trans("or") . ' ' . $langs->trans("ActionsToDoBy");
+		print ' &nbsp;';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		print '</td></tr>';
 
@@ -120,7 +116,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</td>';
 
 	// Buttons
-	print '<td align="center" valign="middle" class="nowrap">';
+	/*print '<td align="center" valign="middle" class="nowrap">';
 	print img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="' . $langs->trans("ViewCal") . '">';
 	print '<br>';
 	print img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="' . $langs->trans("ViewWeek") . '">';
@@ -128,7 +124,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewday" value="' . $langs->trans("ViewDay") . '">';
 	print '<br>';
 	print img_picto($langs->trans("ViewList"), 'object_list', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="' . $langs->trans("ViewList") . '">';
-	print '</td>';
+	print '</td>';*/
 
 	// Legend
 	if ($conf->use_javascript_ajax && is_array($showextcals))
@@ -171,6 +167,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	print '</tr>';
 
+	print '<tr><td><input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '"></td></tr>';
 	print '</table>';
 	print '</form>';
 }
@@ -465,10 +462,28 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php'.($param?'?'.$param:'');
-    $head[$h][1] = $langs->trans("Agenda");
-    $head[$h][2] = 'card';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_month'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewCal");
+    $head[$h][2] = 'cardmonth';
     $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_week'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewWeek");
+    $head[$h][2] = 'cardweek';
+    $h++;
+
+	//$paramday=$param;
+	//if (preg_match('/&month=\d+/',$paramday) && ! preg_match('/&day=\d+/',$paramday)) $paramday.='&day=1';
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/index.php?action=show_day'.($param?'&'.$param:'');
+    $head[$h][1] = $langs->trans("ViewDay");
+    $head[$h][2] = 'cardday';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewList");
+    $head[$h][2] = 'cardlist';
+    $h++;
+
 
 	$object=new stdClass();
 
