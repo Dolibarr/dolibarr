@@ -1237,8 +1237,6 @@ class BonPrelevement extends CommonObject
 
         $this->file = fopen($this->filename,"w");
 
-        // TODO Move code for es and fr into an external module file with selection into setup of prelevement module
-
         $found=0;
 
         // Build file for European countries
