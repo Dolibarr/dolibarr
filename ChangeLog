@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+New: [ task #867 ] Remove ESAEB external module code from core
 -
 
 For translators:
