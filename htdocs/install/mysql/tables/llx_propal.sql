@@ -54,6 +54,7 @@ create table llx_propal
 
   fk_account			integer,						-- bank account
   fk_currency			varchar(3),						-- currency code
+  currency_rate         double(24,8)      default 1,    -- currency rate
   fk_cond_reglement		integer,						-- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement		integer,						-- mode de reglement (Virement, Prelevement)
  

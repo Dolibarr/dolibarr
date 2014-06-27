@@ -19,3 +19,16 @@
 
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
+
+ALTER TABLE llx_propal ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
+ALTER TABLE llx_commande ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
+ALTER TABLE llx_facture ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
+
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_currency varchar(3) AFTER fk_account;
+ALTER TABLE llx_commande_fournisseur ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
+
+ALTER TABLE llx_facture_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
+ALTER TABLE llx_facture_fournisseur ADD COLUMN fk_currency varchar(3) AFTER fk_account;
+ALTER TABLE llx_facture_fournisseur ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
+
