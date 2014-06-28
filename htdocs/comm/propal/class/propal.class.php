@@ -704,6 +704,7 @@ class Propal extends CommonObject
             return -4;
         }
 
+        $this->currency_rate = ($this->currency_rate>0?$this->currency_rate:1);
 
         $this->db->begin();
 
@@ -755,7 +756,7 @@ class Propal extends CommonObject
         $sql.= ", ".$this->cond_reglement_id;
         $sql.= ", ".$this->mode_reglement_id;
         $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
-        $sql.= ", ".($this->currency_rate>0?$this->currency_rate:1);
+        $sql.= ", ".$this->currency_rate;
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
