@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 function dispatched($order_id)
 {
     global $db;
-    $sql = 'SELECT fk_product, SUM(qty) from llx_commande_fournisseur_dispatch';
+    $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
     $sql .= ' WHERE fk_commande = ' . $order_id . ' GROUP BY fk_product';
     $sql .= ' ORDER by fk_product';
     $resql = $db->query($sql);
@@ -44,7 +44,7 @@ function dispatched($order_id)
         while($res = $db->fetch_object($resql))
             $dispatched[] = $res;
     }
-    $sql = 'SELECT fk_product, SUM(qty) from llx_commande_fournisseurdet';
+    $sql = 'SELECT fk_product, SUM(qty) FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet';
     $sql .= ' WHERE fk_commande = ' . $order_id . ' GROUP BY fk_product';
     $sql .= ' ORDER by fk_product';
     $resql = $db->query($sql);

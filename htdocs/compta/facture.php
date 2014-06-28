@@ -666,8 +666,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	// Replacement invoice
 	if ($_POST['type'] == 1)
 	{
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture))
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
@@ -685,7 +685,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$result=$object->fetch($_POST['fac_replacement']);
 			$object->fetch_thirdparty();
 
-			$object->date				= $datefacture;
+			$object->date				= $dateinvoice;
 			$object->note_public		= trim($_POST['note_public']);
 			$object->note				= trim($_POST['note']);
 			$object->ref_client			= $_POST['ref_client'];
@@ -715,8 +715,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CorrectInvoice")),'errors');
 		}
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture))
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
@@ -724,14 +724,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 		if (! $error)
 		{
-			// Si facture avoir
-			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-
-			//$result=$object->fetch($_POST['fac_avoir']);
-
 			$object->socid				= GETPOST('socid','int');
 			$object->number				= $_POST['facnumber'];
-			$object->date				= $datefacture;
+			$object->date				= $dateinvoice;
 			$object->note_public		= trim($_POST['note_public']);
 			$object->note				= trim($_POST['note']);
 			$object->ref_client			= $_POST['ref_client'];
@@ -767,8 +762,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	// Standard invoice or Deposit invoice created from a Predefined invoice
 	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
 	{
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture))
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
@@ -779,7 +774,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->socid			= GETPOST('socid','int');
 			$object->type           = $_POST['type'];
 			$object->number         = $_POST['facnumber'];
-			$object->date           = $datefacture;
+			$object->date           = $dateinvoice;
 			$object->note_public	= trim($_POST['note_public']);
 			$object->note_private   = trim($_POST['note_private']);
 			$object->ref_client     = $_POST['ref_client'];
@@ -804,8 +799,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Customer")),'errors');
 		}
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture))
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
@@ -817,7 +812,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->socid				= GETPOST('socid','int');
 			$object->type				= GETPOST('type');
 			$object->number				= $_POST['facnumber'];
-			$object->date				= $datefacture;
+			$object->date				= $dateinvoice;
 			$object->note_public		= trim($_POST['note_public']);
 			$object->note_private		= trim($_POST['note_private']);
 			$object->ref_client			= $_POST['ref_client'];
@@ -1250,7 +1245,7 @@ else if (($action == 'addline' || $action == 'addline_predef') && $user->rights-
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					$tva_npr ==$prod->multiprices_recuperableonly[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
@@ -2074,7 +2069,7 @@ if ($action == 'create')
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
 
 			//Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
@@ -2087,7 +2082,7 @@ if ($action == 'create')
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
-		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 

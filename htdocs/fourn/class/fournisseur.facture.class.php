@@ -651,7 +651,10 @@ class FactureFournisseur extends CommonInvoice
         	$interface=new Interfaces($this->db);
         	$result=$interface->run_triggers('BILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
         	if ($result < 0) {
-        		$error++; $this->errors=$interface->errors;
+        		$error++;
+        		$this->errors=$interface->errors;
+        		$this->db->rollback();
+        	    return -1;      		
         	}
         	// Fin appel triggers
         }
@@ -1103,7 +1106,13 @@ class FactureFournisseur extends CommonInvoice
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEBILL_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0) 
+                    { 
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 
@@ -1193,6 +1202,8 @@ class FactureFournisseur extends CommonInvoice
             $product_type = $type;
         }
 
+        $this->db->begin();
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
         $sql.= " description ='".$this->db->escape($desc)."'";
         $sql.= ", pu_ht = ".price2num($pu_ht);
@@ -1228,17 +1239,26 @@ class FactureFournisseur extends CommonInvoice
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('LINEBILL_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                if ($result < 0) 
+                {
+                    $error++;
+                    $this->errors=$interface->errors;
+                    $this->db->rollback();
+                    return -1;
+                }
                 // Fin appel triggers
             }
 
             // Update total price into invoice record
             $result=$this->update_price();
 
+            $this->db->commit();
+            
             return $result;
         }
         else
         {
+            $this->db->rollback();
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::updateline error=".$this->error, LOG_ERR);
             return -1;

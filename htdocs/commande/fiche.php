@@ -117,7 +117,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 		if ($object->id > 0)
 		{
 			//Because createFromClone modifies the object, we must clone it so that we can restore it later
-			$orig = clone $object;
+			$orig = dol_clone($object);
 
 			$result=$object->createFromClone($socid);
 			if ($result > 0)
@@ -679,7 +679,7 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
 					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					$tva_npr ==$prod->multiprices_recuperableonly[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
@@ -1003,8 +1003,18 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1039,8 +1049,18 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1086,8 +1106,18 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1879,8 +1909,19 @@ else
 				$text.='<br>';
 				$text.=$notify->confirmMessage('ORDER_VALIDATE',$object->socid);
 			}
+
+		    $qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1898,9 +1939,19 @@ else
 		// Confirm back to draft status
 		if ($action == 'modif')
 		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$text=$langs->trans('ConfirmUnvalidateOrder',$object->ref);
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1926,12 +1977,22 @@ else
 
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'cancel')
 		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$text=$langs->trans('ConfirmCancelOrder',$object->ref);
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1948,7 +2009,7 @@ else
 
 		/*
 		 * Confirmation de la suppression d'une ligne produit
-		*/
+		 */
 		if ($action == 'ask_deleteline')
 		{
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
