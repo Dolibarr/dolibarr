@@ -1543,6 +1543,17 @@ else if ($id > 0 || ! empty($ref))
 				else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
 			}
 
+			// Proposal
+			if (! empty($conf->propal->enabled) && $object->statut > 0)
+			{
+				$langs->load("propal");
+				if ($object->statut < 2)
+				{
+					if ($user->rights->propal->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
+				}
+			}
+
 			// Invoicing
 			if (! empty($conf->facture->enabled) && $object->statut > 0)
 			{
@@ -1582,7 +1593,7 @@ else if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Built documents
-		*/
+		 */
 		$filename=dol_sanitizeFileName($object->ref);
 		$filedir=$conf->ficheinter->dir_output . "/".$object->ref;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -1616,7 +1627,7 @@ else if ($id > 0 || ! empty($ref))
 
 	/*
 	 * Action presend
-	*/
+	 */
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
