@@ -701,7 +701,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 		$filename = $attachedfiles['names'];
 		$mimetype = $attachedfiles['mimes'];
 
-		// Envoi de la propal
+		// Send by email
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 		if ($mailfile->error)
@@ -1301,7 +1301,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	print "</table><br>";
+	print "</table>";
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1316,7 +1316,6 @@ else if ($id > 0 || ! empty($ref))
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
-
 
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
@@ -1347,6 +1346,7 @@ else if ($id > 0 || ! empty($ref))
 
 		if ($num)
 		{
+			print '<br>';
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -1451,7 +1451,7 @@ else if ($id > 0 || ! empty($ref))
 		$db->free($resql);
 
 		// Add new line
-		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
+		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
 			if (! $num) print '<br><table class="noborder" width="100%">';
 
@@ -1520,7 +1520,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($action != 'editdescription' && ($action != 'presend'))
 		{
 			// Validate
-			if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
+			if ($object->statut == 0 && $user->rights->ficheinter->creer && (count($object->lines) > 0 || ! empty($conf->global->FICHINTER_DISABLE_DETAILS)))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
 				print '>'.$langs->trans("Valid").'</a></div>';
@@ -1623,7 +1623,7 @@ else if ($id > 0 || ! empty($ref))
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
-		
+
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
