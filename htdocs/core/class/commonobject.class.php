@@ -1100,7 +1100,7 @@ abstract class CommonObject
         }
         dol_syslog(get_class($this).'::setCurrency('.$code_currency.')');
 
-        if (! empty($conf->multicurrency->enabled))
+        if ($currency_code!=MAIN_MONNAIE && ! empty($conf->multicurrency->enabled))
         {
             require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
             $multi= new Multicurrency($db);
@@ -1109,7 +1109,7 @@ abstract class CommonObject
             $currency_rate = 1;
         }
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET fk_currency = '".$currency_code."', currency_rate = '".$currency_rate."'";
+        $sql.= " SET fk_currency = '".$currency_code."', currency_rate = ".$currency_rate;
         $sql.= " WHERE rowid=".$this->id;
 
         if ($this->db->query($sql))

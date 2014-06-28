@@ -2453,6 +2453,8 @@ class Propal extends CommonObject
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_id   = 7;
         $this->mode_reglement_code = 'CHQ';
+        $this->currency_code       = 'EUR';
+        $this->currency_rate       = 1;
         $this->availability_id     = 1;
         $this->availability_code   = 'AV_NOW';
         $this->demand_reason_id    = 1;
