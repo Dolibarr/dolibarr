@@ -1049,7 +1049,7 @@ if ($id > 0)
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";
 			}
-			print '</table><br><br>';
+			print '</table>';
 		}
 
 		dol_fiche_end();
