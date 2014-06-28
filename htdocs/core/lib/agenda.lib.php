@@ -41,9 +41,10 @@
  * @param 	int		$socid			Third party id
  * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
+ * @param	int		$showbirthday	Show check to toggle birthday events
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='')
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='', $showbirthday=0)
 {
 	global $conf, $user, $langs, $db;
 
@@ -56,9 +57,13 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<input type="hidden" name="day" value="' . $day . '">';
 	print '<input type="hidden" name="action" value="' . $action . '">';
 	print '<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
-	print '<table class="nobordernopadding" width="100%">';
 
-	print '<tr><td class="nowrap">';
+	print '<div class="fichecenter">';
+
+	print '<div class="fichehalfleft">';
+
+	//print '<table class="nobordernopadding" width="100%">';
+	//print '<tr><td class="nowrap">';
 
 	print '<table class="nobordernopadding">';
 
@@ -66,12 +71,15 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	{
 		print '<tr>';
 		print '<td class="nowrap">';
-		print $langs->trans("ActionsAskedBy");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
-		print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
-		print ' &nbsp; '.$langs->trans("or") . ' ' . $langs->trans("ActionsToDoBy");
-		print ' &nbsp;';
+		//print $langs->trans("ActionsAskedBy");
+		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
+		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
+		//print ' &nbsp; '.$langs->trans("or") . ' ';
+		print $langs->trans("ActionsForUser").' &nbsp; ';
+		print '</td><td class="nowrap maxwidthonsmartphone">';
+		//print ' &nbsp;';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
+		print ajax_combobox('usertodo');
 		print '</td></tr>';
 
 		/*print '<tr>';
@@ -113,7 +121,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	}
 
 	print '</table>';
-	print '</td>';
+
+	//print '</td>';
+	print '</div>';
+
 
 	// Buttons
 	/*print '<td align="center" valign="middle" class="nowrap">';
@@ -126,10 +137,22 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print img_picto($langs->trans("ViewList"), 'object_list', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="' . $langs->trans("ViewList") . '">';
 	print '</td>';*/
 
+	//print '<td align="center" valign="middle" class="nowrap">';
+	print '<div class="fichehalfright" valign="middle">';
+
+	print '<table><tr><td align="center">';
+	print '<div class="formleftzone">';
+	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '">';
+	print '</div>';
+	print '</td></tr>';
+
 	// Legend
-	if ($conf->use_javascript_ajax && is_array($showextcals))
+	if ($conf->use_javascript_ajax)
 	{
-		print '<td align="center" valign="middle" class="nowrap">';
+		print '<tr><td>';
+
+		//print $langs->trans("Calendars").': ';
+		//print '<td align="center" valign="middle" class="nowrap">';
 		print '<script type="text/javascript">' . "\n";
 		print 'jQuery(document).ready(function () {' . "\n";
 		print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
@@ -137,16 +160,14 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print 'jQuery(".family_birthday").toggle();' . "\n";
 		print '});' . "\n";
 		print '</script>' . "\n";
-		print '<table>';
 		if (! empty($conf->use_javascript_ajax))
 		{
-			if (count($showextcals) > 0)
+			if (is_array($showextcals) && count($showextcals) > 0)
 			{
-				print '<tr><td><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda") . '</td></tr>';
+				print '<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 				foreach ($showextcals as $val)
 				{
 					$htmlname = dol_string_nospecial($val['name']);
-					print '<tr><td>';
 					print '<script type="text/javascript">' . "\n";
 					print 'jQuery(document).ready(function () {' . "\n";
 					print '		jQuery("#check_' . $htmlname . '").click(function() {';
@@ -155,20 +176,21 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 					print '		});' . "\n";
 					print '});' . "\n";
 					print '</script>' . "\n";
-					print '<input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'];
-					print '</td></tr>';
+					print '<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
 				}
 			}
 		}
-		print '<tr><td>'.$langs->trans("AgendaShowBirthdayEvents").' <input type="checkbox" id="check_birthday" name="check_birthday"></td></tr>';
-		print '</table>';
-		print '</td>';
+		if ($showbirthday) print '<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+
+		print '</td></tr>';
 	}
-
-	print '</tr>';
-
-	print '<tr><td><input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '"></td></tr>';
 	print '</table>';
+
+	print '</div>';
+
+	print '</div>';
+	print '<div style="clear:both"></div>';
+
 	print '</form>';
 }
 

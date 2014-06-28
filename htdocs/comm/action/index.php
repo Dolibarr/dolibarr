@@ -296,7 +296,7 @@ $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 $head = calendars_prepare_head($paramnoaction);
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals,$actioncode);
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals,$actioncode,1);
 dol_fiche_end();
 
 $link='';
@@ -327,7 +327,7 @@ $sql.= ' a.datea,';
 $sql.= ' a.datea2,';
 $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
-$sql.= ' a.priority, a.fulldayevent, a.location,';
+$sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
 $sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
@@ -409,6 +409,7 @@ if ($resql)
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
+        $event->transparency=$obj->transparency;
 
         $event->societe->id=$obj->fk_soc;
         $event->contact->id=$obj->fk_contact;
@@ -1033,7 +1034,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
     $ymd=sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day);
 
-    $nextindextouse=count($colorindexused);
+    $nextindextouse=count($colorindexused);	// At first run this is 0, so fist user has 0, next 1, ...
 	//print $nextindextouse;
 
     foreach ($eventarray as $daykey => $notused)
@@ -1074,7 +1075,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	$color=$event->icalcolor;
                     	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other');
                     }
-                    else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday'; }
+                    else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]); }
                     else { $numother++; $cssclass='family_other'; }
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
@@ -1086,21 +1087,25 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     	}
                     	else
                     	{
-                    		$colorindex=$nextindextouse;
-                    		$colorindexused[$idusertouse]=$colorindex;
+                   			$colorindex=$nextindextouse;
+                   			$colorindexused[$idusertouse]=$colorindex;
                     		if (! empty($theme_datacolor[$nextindextouse+1])) $nextindextouse++;	// Prepare to use next color
                     	}
                     	//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
 						// Define color
                     	$color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]);
-                    }
+                  	}
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
                     // Show rect of event
                     print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
                     print '<ul class="cal_event"><li class="cal_event">';
-                    print '<table class="cal_event" style="background: #'.$color.'; -moz-border-radius:4px; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).')); " width="100%"><tr>';
-                    print '<td class="nowrap cal_event">';
+                    print '<table class="cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="';
+                    print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
+                    //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
+                    //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
+                    print ' -moz-border-radius:4px;" width="100%"><tr>';
+                    print '<td class="nowrap cal_event'.($event->type_code == 'BIRTHDAY'?' cal_event_birthday':'').'">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
                         print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');

@@ -2265,7 +2265,7 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
 .cal_event a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
-
+.cal_event_busy      { }
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */

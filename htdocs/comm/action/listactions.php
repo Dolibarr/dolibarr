@@ -210,7 +210,7 @@ if ($resql)
 	$head = calendars_prepare_head('');
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1);
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1,'',0);
     dol_fiche_end();
 
     // Add link to show birthdays
