@@ -831,7 +831,7 @@ class CommandeFournisseur extends CommonOrder
         {
             dol_syslog(get_class($this)."::refuse Not Authorized");
         }
-        return $result ;
+        return $result;
     }
 
     /**
