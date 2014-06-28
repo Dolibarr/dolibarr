@@ -42,6 +42,7 @@ $filter=GETPOST("filter",'',3);
 $filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
 $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
 $filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
+$usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 
@@ -296,8 +297,50 @@ $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 $head = calendars_prepare_head($paramnoaction);
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals,$actioncode,1);
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,$listofextcals,$actioncode,$usergroup);
 dol_fiche_end();
+
+$showextcals=$listofextcals;
+// Legend
+if ($conf->use_javascript_ajax)
+{
+	$s='';
+	//print '<tr><td>';
+
+	//print $langs->trans("Calendars").': ';
+	//print '<td align="center" valign="middle" class="nowrap">';
+	$s.='<script type="text/javascript">' . "\n";
+	$s.='jQuery(document).ready(function () {' . "\n";
+	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
+	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
+	$s.='jQuery(".family_birthday").toggle();' . "\n";
+	$s.='});' . "\n";
+	$s.='</script>' . "\n";
+	if (! empty($conf->use_javascript_ajax))
+	{
+		$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+		if (is_array($showextcals) && count($showextcals) > 0)
+		{
+			foreach ($showextcals as $val)
+			{
+				$htmlname = dol_string_nospecial($val['name']);
+				$s.='<script type="text/javascript">' . "\n";
+				$s.='jQuery(document).ready(function () {' . "\n";
+				$s.='		jQuery("#check_' . $htmlname . '").click(function() {';
+				$s.=' 		/* alert("'.$htmlname.'"); */';
+				$s.=' 		jQuery(".family_' . $htmlname . '").toggle();';
+				$s.='		});' . "\n";
+				$s.='});' . "\n";
+				$s.='</script>' . "\n";
+				$s.='<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
+			}
+		}
+	}
+	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+
+	//print '</td></tr>';
+}
+
 
 $link='';
 // Add link to show birthdays
@@ -314,7 +357,7 @@ if (empty($conf->use_javascript_ajax))
     $link.='</a>';
 }
 
-print_fiche_titre($title,$link.' &nbsp; &nbsp; '.$nav, '');
+print_fiche_titre($s,$link.' &nbsp; &nbsp; '.$nav, '');
 
 
 // Get event in an array
@@ -330,15 +373,16 @@ $sql.= ' a.fk_user_author,a.fk_user_action,a.fk_user_done,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
-$sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
-$sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
+$sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+if ($usergroup) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ugu";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+if ($socid) $sql.= ' AND a.fk_soc = '.$socid;
+if ($usergroup) $sql.= " AND ugu.fk_user = a.fk_user_action";
 if ($action == 'show_day')
 {
     $sql.= " AND (";
@@ -372,12 +416,13 @@ if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }	// Running
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
-if ($filtera > 0 || $filtert > 0 || $filterd > 0)
+if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup)
 {
     $sql.= " AND (";
     if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
     if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
     if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
+	if ($usergroup) $sql.= ($filtera>0||$filtert>0||$filterd>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }
 // Sort on date

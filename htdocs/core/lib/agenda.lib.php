@@ -41,17 +41,16 @@
  * @param 	int		$socid			Third party id
  * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
- * @param	int		$showbirthday	Show check to toggle birthday events
+ * @param	int		$usergroupid	Id of group to filter on users
  * @return	void
  */
-function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='', $showbirthday=0)
+function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='', $usergroupid='')
 {
 	global $conf, $user, $langs, $db;
 
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-	print '<input type="hidden" name="status" value="' . $status . '">';
 	print '<input type="hidden" name="year" value="' . $year . '">';
 	print '<input type="hidden" name="month" value="' . $month . '">';
 	print '<input type="hidden" name="day" value="' . $day . '">';
@@ -80,6 +79,10 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		//print ' &nbsp;';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		print ajax_combobox('usertodo');
+		print ' &nbsp; '.$langs->trans("or") . ' ';
+		print $langs->trans("ActionsForUsersGroup").' &nbsp; ';
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
+		print ajax_combobox('usergroup');
 		print '</td></tr>';
 
 		/*print '<tr>';
@@ -146,44 +149,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</div>';
 	print '</td></tr>';
 
-	// Legend
-	if ($conf->use_javascript_ajax)
-	{
-		print '<tr><td>';
-
-		//print $langs->trans("Calendars").': ';
-		//print '<td align="center" valign="middle" class="nowrap">';
-		print '<script type="text/javascript">' . "\n";
-		print 'jQuery(document).ready(function () {' . "\n";
-		print 'jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
-		print 'jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
-		print 'jQuery(".family_birthday").toggle();' . "\n";
-		print '});' . "\n";
-		print '</script>' . "\n";
-		if (! empty($conf->use_javascript_ajax))
-		{
-			if (is_array($showextcals) && count($showextcals) > 0)
-			{
-				print '<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked="true" disabled="disabled"> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
-				foreach ($showextcals as $val)
-				{
-					$htmlname = dol_string_nospecial($val['name']);
-					print '<script type="text/javascript">' . "\n";
-					print 'jQuery(document).ready(function () {' . "\n";
-					print '		jQuery("#check_' . $htmlname . '").click(function() {';
-					print ' 		/* alert("'.$htmlname.'"); */';
-					print ' 		jQuery(".family_' . $htmlname . '").toggle();';
-					print '		});' . "\n";
-					print '});' . "\n";
-					print '</script>' . "\n";
-					print '<div class="nowrap float"><input type="checkbox" id="check_' . $htmlname . '" name="check_' . $htmlname . '" checked="true"> ' . $val ['name'] . ' &nbsp; </div>';
-				}
-			}
-		}
-		if ($showbirthday) print '<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
-
-		print '</td></tr>';
-	}
 	print '</table>';
 
 	print '</div>';

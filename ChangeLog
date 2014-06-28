@@ -7,6 +7,7 @@ English Dolibarr ChangeLog
 For users:
 New: [ task #867 ] Remove ESAEB external module code from core.
 New: Can create proposal from an intervention.
+New: Can filter events on a group of users.
 
 For translators:
 - Update language files.
