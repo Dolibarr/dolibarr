@@ -81,6 +81,9 @@ For users:
 - Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
 - New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
 - Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
+- Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
+- Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
+- Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
 
 For translators:
 - Update language files.
@@ -122,6 +125,7 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
 Fix: Question about warehouse must not be done when module stock is disabled.
 Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
      (missing test at some places).
@@ -155,8 +159,12 @@ Fix: If multiprice level is used the VAT on addline is not correct
 Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on supplier order part)
 Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
 Fix: [ bug #1455 ] outstanding amount
-Fix: [ bug #1425 ]
 Fix: [ bug #1425 ] LINEBILL_SUPPLIER_DELETE failure trigger leads to an endless loop
+Fix: [ bug #1460 ] Several supplier order triggers do not show error messages
+Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order line insertion
+Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
+Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
+Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
