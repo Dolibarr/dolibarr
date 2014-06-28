@@ -1092,6 +1092,7 @@ abstract class CommonObject
      */
     function setCurrency($currency_code)
     {
+        global $conf;
         if (! $this->table_element)
         {
             dol_syslog(get_class($this)."::setCurrency was called on objet with property table_element not defined",LOG_ERR);
@@ -1099,13 +1100,22 @@ abstract class CommonObject
         }
         dol_syslog(get_class($this).'::setCurrency('.$code_currency.')');
 
+        if (! empty($conf->multicurrency->enabled))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
+            $multi= new Multicurrency($db);
+            $currency_rate = $multi->converter(MAIN_MONNAIE, $currency_code);
+        } else {
+            $currency_rate = 1;
+        }
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET fk_currency = '".$currency_code."'";
+        $sql.= " SET fk_currency = '".$currency_code."', currency_rate = '".$currency_rate."'";
         $sql.= " WHERE rowid=".$this->id;
 
         if ($this->db->query($sql))
         {
             $this->currency_code = $currency_code;
+            $this->currency_rate = $currency_rate;
             return 1;
         }
         else

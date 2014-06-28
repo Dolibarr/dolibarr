@@ -253,6 +253,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->currency_code = GETPOST('currency_code');
+				$object->currency_rate = GETPOST('currency_rate');
 				$object->fk_account = GETPOST('fk_account', 'int');
 				$object->remise_percent = GETPOST('remise_percent');
 				$object->remise_absolue = GETPOST('remise_absolue');
@@ -280,6 +281,14 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$object->currency_code = GETPOST('currency_code');
+            if ($object->currency_code!=MAIN_MONNAIE && ! empty($conf->multicurrency->enabled))
+            {
+                require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
+                $multi= new Multicurrency($db);
+                $object->currency_rate = $multi->converter(MAIN_MONNAIE, $object->currency_code);
+            } else {
+                $object->currency_rate = GETPOST('currency_rate');
+            }
 			$object->fk_account = GETPOST('fk_account', 'int');
 				
 			$object->contactid = GETPOST('contactidp');
@@ -1758,6 +1767,14 @@ if ($action == 'create') {
 	}
 	print "</td>";
 	print '</tr>';
+
+	// Currency rate
+	if ($object->currency_rate!=1)
+	{
+        print '<tr><td height="10" width="25%">' . $langs->trans('CurrencyRate') . '</td>';
+        print '<td align="right" class="nowrap">' . $object->currency_rate . '</td>';
+        print '<td></td>';
+	}
 
 	// Bank Account
 	print '<tr><td class="nowrap">';
