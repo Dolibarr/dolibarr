@@ -28,6 +28,7 @@ $langs->load("cashdesk");
 
 <script type="text/javascript" src="javascript/facturation1.js"></script>
 <script type="text/javascript" src="javascript/dhtml.js"></script>
+<script type="text/javascript" src="javascript/keypad.js"></script>
 
 <!-- ========================= Cadre "Article" ============================= -->
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Article"); ?></legend>
@@ -103,7 +104,9 @@ $langs->load("cashdesk");
             <th><?php echo $langs->trans("VATRate"); ?></th>
             </tr>
 			<tr>
-				<td><input class="texte1" type="text" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" /></td>
+				<td><input class="texte1" type="text" id="txtQte" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" />
+<?php print genkeypad("txtQte", "frmQte");?>
+				</td>
 				<!-- Affichage du stock pour l'article courant -->
 				<td>
 				<input class="texte1_off" type="text" name="txtStock" value="<?php echo $obj_facturation->stock() ?>" disabled="disabled" />
@@ -112,7 +115,9 @@ $langs->load("cashdesk");
 				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" disabled="disabled" /></td>
 				<td><?php echo $conf->currency; ?></td>
     			<!-- Choix de la remise -->
-    			<td><input class="texte1" type="text" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/></td>
+    			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
+<?php print genkeypad("txtRemise", "frmQte");?>
+    			</td>
     			<!-- Affichage du total HT -->
     			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled="disabled" /></td><td><?php echo $conf->currency; ?></td>
                 <!-- Choix du taux de TVA -->
@@ -154,7 +159,9 @@ $langs->load("cashdesk");
 			<!-- Affichage du montant du -->
 			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled="disabled" /></td>
 			<!-- Choix du montant encaisse -->
-			<td><input class="texte2" type="text" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" /></td>
+			<td><input class="texte2" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" />
+<?php print genkeypad("txtEncaisse", "frmDifference");?>
+			</td>
 			<!-- Affichage du montant rendu -->
 			<td><input class="texte2_off" type="text" name="txtRendu" value="0" disabled="disabled" /></td>
 			</tr>

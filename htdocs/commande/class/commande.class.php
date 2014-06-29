@@ -131,18 +131,21 @@ class Commande extends CommonOrder
 
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-        	$mybool=false;
-
-            $file = $conf->global->COMMANDE_ADDON.".php";
-            $classname = $conf->global->COMMANDE_ADDON;
-
-            // Include file with class
-            foreach ($conf->file->dol_document_root as $dirroot)
-            {
-            	$dir = $dirroot."/core/modules/commande/";
-            	// Load file with numbering class (if found)
-            	$mybool|=@include_once $dir.$file;
-            }
+		$mybool=false;
+		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir)
+		{
+	            $file = $conf->global->COMMANDE_ADDON.".php";
+	            $classname = $conf->global->COMMANDE_ADDON;
+	
+	            // Include file with class
+	            foreach ($conf->file->dol_document_root as $dirroot)
+	            {
+	            	$dir = $dirroot.$reldir."/core/modules/commande/";
+	            	// Load file with numbering class (if found)
+	            	$mybool|=@include_once $dir.$file;
+	            }
+		}
 
             if (! $mybool)
             {
@@ -291,13 +294,6 @@ class Commande extends CommonOrder
             }
         }
 
-        // Set new ref and current status
-        if (! $error)
-        {
-            $this->ref = $num;
-            $this->statut = 1;
-        }
-
         if (! $error)
         {
             // Appel des triggers
@@ -306,6 +302,13 @@ class Commande extends CommonOrder
             $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
+        }
+
+        // Set new ref and current status
+        if (! $error)
+        {
+            $this->ref = $num;
+            $this->statut = 1;
         }
 
         if (! $error)
@@ -484,7 +487,7 @@ class Commande extends CommonOrder
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET fk_statut = 3,';
             $sql.= ' fk_user_cloture = '.$user->id.',';
-            $sql.= ' date_cloture = '.$this->db->idate($now);
+            $sql.= " date_cloture = '".$this->db->idate($now)."'";
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
             if ($this->db->query($sql))
@@ -2590,8 +2593,8 @@ class Commande extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-				
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date; 
+
+				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
                 if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
             }
             return 1;

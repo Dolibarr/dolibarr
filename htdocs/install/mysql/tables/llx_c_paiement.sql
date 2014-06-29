@@ -1,6 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2014      Alexandre Spangaro	<alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,12 +27,13 @@
 
 create table llx_c_paiement
 (
-  id         integer     PRIMARY KEY,
-  code       varchar(6)  NOT NULL,
-  libelle    varchar(30),
-  type       smallint,	
-  active     tinyint DEFAULT 1  NOT NULL,
-  module     varchar(32) NULL
+  id				integer     PRIMARY KEY,
+  code       		varchar(6)  NOT NULL,
+  libelle    		varchar(30),
+  type       		smallint,	
+  active     		tinyint DEFAULT 1  NOT NULL,
+  accountancy_code	varchar(32) NULL,
+  module     		varchar(32) NULL
 )ENGINE=innodb;
 
 

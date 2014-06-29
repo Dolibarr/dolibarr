@@ -48,13 +48,15 @@ class FormActions
     /**
      *  Show list of action status
      *
-     * 	@param	string	$formname	Name of form where select in included
-     * 	@param	string	$selected	Preselected value (-1..100)
-     * 	@param	int		$canedit	1=can edit, 0=read only
-     *  @param  string	$htmlname   Name of html prefix for html fields (selectX and valX)
+     * 	@param	string	$formname		Name of form where select is included
+     * 	@param	string	$selected		Preselected value (-1..100)
+     * 	@param	int		$canedit		1=can edit, 0=read only
+     *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
+     *  @param	string	$showempty		Show an empty line if select is used
+     *  @param	string	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
      * 	@return	void
      */
-    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete')
+    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
     {
         global $langs,$conf;
 
@@ -64,6 +66,7 @@ class FormActions
             '50' => $langs->trans("ActionRunningShort"),
             '100' => $langs->trans("ActionDoneShort")
         );
+		// +ActionUncomplete
 
         if (! empty($conf->use_javascript_ajax))
         {
@@ -112,18 +115,32 @@ class FormActions
                     }
                 }
                 </script>\n";
+        }
+        if (! empty($conf->use_javascript_ajax) || $onlyselect)
+        {
+        	//var_dump($selected);
+        	if ($selected == 'done') $selected='100';
             print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
+            if ($showempty) print '<option value=""'.($selected == ''?' selected="selected"':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
-                print '<option value="'.$key.'"'.(($selected == $key) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
+                print '<option value="'.$key.'"'.(($selected == $key && strlen($selected) == strlen($key)) || (($selected > 0 && $selected < 100) && $key == '50') ? ' selected="selected"' : '').'>'.$val.'</option>';
+                if ($key == '50' && $onlyselect == 2)
+                {
+                	print '<option value="todo"'.($selected == 'todo' ? ' selected="selected"' : '').'>'.$langs->trans("ActionUncomplete").' ('.$langs->trans("ActionRunningNotStarted")."+".$langs->trans("ActionRunningShort").')</option>';
+                }
             }
             print '</select>';
             if ($selected == 0 || $selected == 100) $canedit=0;
-            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
-            print '<span class="hideifna">%</span>';
+
+            if (empty($onlyselect))
+            {
+	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled="disabled"').'>';
+    	        print '<span class="hideifna">%</span>';
+            }
         }
         else
-        {
+		{
             print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit?'':' disabled="disabled"').'>%';
         }
     }
@@ -220,7 +237,7 @@ class FormActions
         global $langs,$user,$form;
 
         if (! is_object($form)) $form=new Form($db);
-        
+
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
         $caction=new CActionComm($this->db);
