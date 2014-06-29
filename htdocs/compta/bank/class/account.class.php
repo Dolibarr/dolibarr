@@ -74,6 +74,7 @@ class Account extends CommonObject
     var $type_lib=array();
 
     var $account_number;
+	var $accountancy_journal;
 
     var $currency_code;
     var $min_allowed;
@@ -382,6 +383,7 @@ class Account extends CommonObject
         $sql.= ", label";
         $sql.= ", entity";
         $sql.= ", account_number";
+		$sql.= ", accountancy_journal";
         $sql.= ", currency_code";
         $sql.= ", rappro";
         $sql.= ", min_allowed";
@@ -395,6 +397,7 @@ class Account extends CommonObject
         $sql.= ", '".$this->db->escape($this->label)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", '".$this->db->escape($this->account_number)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_journal)."'";
         $sql.= ", '".$this->currency_code."'";
         $sql.= ", ".$this->rappro;
         $sql.= ", ".price2num($this->min_allowed);
@@ -500,6 +503,7 @@ class Account extends CommonObject
         $sql.= ",rappro = ".$this->rappro;
         $sql.= ",url = ".($this->url?"'".$this->url."'":"null");
         $sql.= ",account_number = '".$this->account_number."'";
+		$sql.= ",accountancy_journal = '".$this->accountancy_journal."'";
 
         $sql.= ",currency_code = '".$this->currency_code."'";
 
@@ -606,7 +610,7 @@ class Account extends CommonObject
         $sql = "SELECT ba.rowid, ba.ref, ba.label, ba.bank, ba.number, ba.courant, ba.clos, ba.rappro, ba.url,";
         $sql.= " ba.code_banque, ba.code_guichet, ba.cle_rib, ba.bic, ba.iban_prefix as iban,";
         $sql.= " ba.domiciliation, ba.proprio, ba.owner_address, ba.state_id, ba.fk_pays as country_id,";
-        $sql.= " ba.account_number, ba.currency_code,";
+        $sql.= " ba.account_number, ba.accountancy_journal, ba.currency_code,";
         $sql.= " ba.min_allowed, ba.min_desired, ba.comment,";
         $sql.= ' p.code as country_code, p.libelle as country,';
         $sql.= ' d.code_departement as state_code, d.nom as state';
@@ -656,6 +660,7 @@ class Account extends CommonObject
                 $this->country       = $obj->country;
 
                 $this->account_number = $obj->account_number;
+				$this->accountancy_journal = $obj->accountancy_journal;
 
                 $this->currency_code  = $obj->currency_code;
                 $this->account_currency_code  = $obj->currency_code;
