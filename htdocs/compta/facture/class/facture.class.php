@@ -1564,7 +1564,11 @@ class Facture extends CommonInvoice
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+					$error++; 
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -1;
+					
 				}
 				// Fin appel triggers
 
@@ -1808,7 +1812,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -2216,6 +2219,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
+			    $this->error=$this->line->error;
 				$this->db->rollback();
 				return -1;
 			}
@@ -2286,7 +2290,7 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
+			$this->error=$line->error;
 			return -1;
 		}
 	}
@@ -3570,8 +3574,12 @@ class FactureLigne  extends CommonInvoiceLine
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+				if ($result < 0) 
+				{
+					$error++;
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -2;
 				}
 				// Fin appel triggers
 			}
@@ -3683,8 +3691,12 @@ class FactureLigne  extends CommonInvoiceLine
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_UPDATE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+				if ($result < 0)
+				{
+					$error++;
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -2;
 				}
 				// Fin appel triggers
 			}
@@ -3721,8 +3733,12 @@ class FactureLigne  extends CommonInvoiceLine
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
+			if ($result < 0)
+			{
+					$error++;
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -1;
 			}
 			// Fin appel triggers
 

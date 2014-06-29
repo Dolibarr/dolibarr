@@ -131,7 +131,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     }
 
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
@@ -181,6 +181,8 @@ elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->
 	else
 	{
 		$mesg='<div class="error">'.$object->error.'</div>';
+		/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+		$action='';
 	}
 }
 
@@ -188,6 +190,10 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 {
     $object->fetch($id);
     $result=$object->set_paid($user);
+    if ($result<0)
+    {
+        setEventMessage($object->error,'errors');
+    }
 }
 
 // Set supplier ref
@@ -515,6 +521,10 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
         if ($result >= 0)
         {
             unset($_POST['label']);
+        }
+        else
+        {
+            setEventMessage($object->error,'errors');
         }
     }
 }
@@ -1105,6 +1115,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_mesg($mesg);
+    dol_htmloutput_events();
 
     $societe='';
     if ($_GET['socid'])
@@ -1508,7 +1519,17 @@ else
             }*/
             $formquestion=array();
 
-            if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+            $qualified_for_stock_change=0;
+		    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+		    }
+		    else
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+		    }
+
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
             {
                 $langs->load("stocks");
                 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';

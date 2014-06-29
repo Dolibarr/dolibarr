@@ -2,6 +2,17 @@
 CashDesks=Caixa
 CashDeskBank=Conta Bancaria
 CashDeskStock=Estoque
+CashDeskOn=Ligado
 CashDeskThirdParty=Fornecedor
+CashdeskDashboard=Ponto de acesso venda
+NewSell=Nova venda
+AddThisArticle=Adicione este artigo
+RestartSelling=Volte para vendas
+SellFinished=Venda acabada
+PrintTicket=Cupom impresso
+TotalTicket=Ticket total
 Change=Recebido em Excesso
+CashDeskSetupStock=Você pede para diminuir do estoque com a criação de faturas, mas não foi definido  armazém para isso <br> Alterar configuração do módulo de estoque, ou escolha um armazém
+BankToPay=Carregue Conta
 ShowCompany=Mostar Empresa
+FilterRefOrLabelOrBC=Busca (Ref/Etiqueta)
