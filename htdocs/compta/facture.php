@@ -1156,7 +1156,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 
 					$prodcustprice = new Productcustomerprice($db);
 
-					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->client->id);
+					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 					if ($result >= 0) {
