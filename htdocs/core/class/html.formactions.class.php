@@ -120,7 +120,7 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled="disabled" ').'name="status" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled="disabled" ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
             if ($showempty) print '<option value=""'.($selected == ''?' selected="selected"':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
@@ -230,9 +230,10 @@ class FormActions
      *  @param  string		$htmlname       Nom champ formulaire
      *  @param	string		$excludetype	Type to exclude
      *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
+     *  @param	int			$hideinfohelp	1=Do not show info help
      * 	@return	void
      */
-    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0)
+    function select_type_actions($selected='',$htmlname='actioncode',$excludetype='',$onlyautoornot=0, $hideinfohelp=0)
     {
         global $langs,$user,$form;
 
@@ -251,7 +252,7 @@ class FormActions
        	if ($selected == 'auto')   $selected='AC_OTH_AUTO';
 
         print $form->selectarray($htmlname, $arraylist, $selected);
-        if ($user->admin && empty($onlyautoornot)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+        if ($user->admin && empty($onlyautoornot) && empty($hideinfohelp)) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 }
