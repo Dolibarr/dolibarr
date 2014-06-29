@@ -17,13 +17,13 @@
 
 /**
  *  \file       	htdocs/admin/fiscalyear_card.php
- *  \brief      	Page to show a fiscal yeartrip
+ *  \brief      	Page to show a fiscal year
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 
 $langs->load("admin");
@@ -50,11 +50,12 @@ $mesg = '';
 
 $object = new Fiscalyear($db);
 
+$date_start=dol_mktime(0,0,0,GETPOST('fiscalyearmonth','int'),GETPOST('fiscalyearday','int'),GETPOST('fiscalyearyear','int'));
+$date_end=dol_mktime(0,0,0,GETPOST('fiscalyearendmonth','int'),GETPOST('fiscalyearendday','int'),GETPOST('fiscalyearendyear','int'));
+
 /*
  * Actions
  */
-
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 if ($action == 'confirm_delete' && $confirm == "yes")
 {
@@ -76,18 +77,18 @@ else if ($action == 'add')
     {
         $error=0;
 		
-		$object->datestart		= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-        $object->dateend		= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
-        $object->label			= GETPOST('label','alpha');
+		$db->begin();
+		
+		$object->datestart		= $date_start;
+	    $object->dateend		= $date_end;
+		$object->label			= GETPOST('label','alpha');
         $object->statut     	= GETPOST('statut','int');;
 
-		/*
         if (empty($object->datestart) && empty($object->dateend))
         {
-            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+            $mesg.=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
             $error++;
         }
-		*/
         if (empty($object->label))
         {
             $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
@@ -116,7 +117,7 @@ else if ($action == 'add')
     }
     else
     {
-        header("Location: fiscalyear.php");
+        header("Location: ./fiscalyear.php");
         exit;
     }
 }
@@ -169,10 +170,7 @@ if ($action == 'create')
 
     dol_htmloutput_errors($mesg);
 
-    $datestart = dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-	$dateend = dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
-
-    print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';
 
@@ -182,15 +180,13 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
 	
 	// Date start
-    print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date($datestart?$datestart:-1,'','','','','add',1,1);
+    print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+    print $form->select_date(($date_start?$date_start:''),'fiscalyear');
     print '</td></tr>';
-	
-	// Date end
-	print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date($dateend?$dateend:-1,'','','','','add',1,1);
+
+    // Date end
+    print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+    print $form->select_date(($date_end?$date_end:-1),'fiscalyearend');
     print '</td></tr>';
 	
 	// Statut
@@ -212,6 +208,10 @@ else if ($id)
     {
         dol_htmloutput_mesg($mesg);
 
+        $head = fiscalyear_prepare_head($object);
+
+        dol_fiche_head($head, 'card', $langs->trans("FiscalYearCard"), 0, 'cron');
+
         if ($action == 'edit')
         {
 			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
@@ -224,7 +224,7 @@ else if ($id)
             // Ref
             print "<tr>";
             print '<td width="20%">'.$langs->trans("Ref").'</td><td>';
-            print $object->rowid;
+            print $object->ref;
             print '</td></tr>';
 			
             // Label
@@ -262,14 +262,14 @@ else if ($id)
                 print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteFiscalYear"),$langs->trans("ConfirmDeleteFiscalYear"),"confirm_delete");
 
             }
-
-            print '<table class="border" width="100%">';
+			
+			print '<table class="border" width="100%">';
 
             $linkback = '<a href="'.DOL_URL_ROOT.'/admin/fiscalyear.php">'.$langs->trans("BackToList").'</a>';
-
+			
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td width="50%">';
-            print $object->rowid;
+            print $object->ref;
 			print '</td><td width="25%">';
 			print $linkback;
             print '</td></tr>';
