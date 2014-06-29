@@ -9,6 +9,7 @@ For users:
 - New: Can create proposal from an intervention.
 - New: Can filter events on a group of users.
 - New: Add thirdparty to filter on events. 
+- Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 
 For translators:
 - Update language files.

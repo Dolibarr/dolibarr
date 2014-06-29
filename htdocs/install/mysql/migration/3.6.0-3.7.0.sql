@@ -19,3 +19,9 @@
 
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
+
+ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
+ALTER TABLE llx_accountingaccount add column tms timestamp DEFAULT NULL AFTER datec;
+ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
+ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;

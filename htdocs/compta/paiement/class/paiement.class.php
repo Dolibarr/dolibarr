@@ -248,10 +248,8 @@ class Paiement extends CommonObject
 			if (! $error)
 			{
 				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PAYMENT_CUSTOMER_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				$result=$this->call_trigger('PAYMENT_CUSTOMER_CREATE', $user);
+				if ($result < 0) { $error++; }
 				// Fin appel triggers
 			}
 		}
@@ -363,11 +361,13 @@ class Paiement extends CommonObject
 			if (! $notrigger)
 			{
 				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PAYMENT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+				$result=$this->call_trigger('PAYMENT_DELETE', $user);
+				if ($result < 0) 
+				{ 
+				    $this->db->rollback();
+				    return -1;
+				 }
+			    // Fin appel triggers
 			}
 
 			$this->db->commit();
@@ -516,11 +516,9 @@ class Paiement extends CommonObject
 	            if (! $error && ! $notrigger)
 				{
 					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PAYMENT_ADD_TO_BANK',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+					$result=$this->call_trigger('PAYMENT_ADD_TO_BANK', $user);
+				    if ($result < 0) { $error++; }
+				    // Fin appel triggers
 				}
             }
             else
