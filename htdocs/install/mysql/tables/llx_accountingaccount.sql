@@ -20,11 +20,16 @@
 create table llx_accountingaccount
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer DEFAULT 1 NOT NULL,
+  datec           datetime,
+  tms             timestamp DEFAULT NULL,
   fk_pcg_version  varchar(12)  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
   account_number  varchar(20)  NOT NULL,
   account_parent  varchar(20),
   label           varchar(255) NOT NULL,
+  fk_user_author  integer DEFAULT NULL,
+  fk_user_modif   integer DEFAULT NULL,
   active     	  tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
