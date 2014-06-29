@@ -128,7 +128,7 @@ else
 }
 
 /*
- * Last 5 commands in wait
+ * Last 5 orders on hold
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.date_purchased, t.value, o.payment_method";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";
@@ -200,7 +200,7 @@ else
 
 print '</td></tr><tr>';
 /*
- * Last customers who commanded
+ * Last customers who ordered
  */
 $sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
 $sql .= " FROM ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders_total as t JOIN ".$conf->global->OSC_DB_NAME.".".$conf->global->OSC_DB_TABLE_PREFIX."orders as o on o.orders_id = t.orders_id ";

@@ -30,7 +30,7 @@ create table llx_c_tva
   recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL,
-  accountancy_code_sell	varchar(15) DEFAULT NULL,
-  accountancy_code_buy	varchar(15) DEFAULT NULL
+  accountancy_code_sell	varchar(32) DEFAULT NULL,
+  accountancy_code_buy	varchar(32) DEFAULT NULL
 )ENGINE=innodb;
 
