@@ -590,6 +590,8 @@ class Expedition extends CommonObject
 			    $cpt = $this->db->num_rows($resql);
                 for ($i = 0; $i < $cpt; $i++)
 				{
+					if($obj->qty <= 0) continue;
+					
 					dol_syslog(get_class($this)."::valid movement index ".$i);
 					$obj = $this->db->fetch_object($resql);
 

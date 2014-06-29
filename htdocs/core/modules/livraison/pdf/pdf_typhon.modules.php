@@ -97,10 +97,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxcomm=112;
+		$this->posxcomm=900;
 		//$this->posxtva=112;
 		//$this->posxup=126;
-		$this->posxqty=174;
+		$this->posxqty=140;
+		$this->posxremainingqty=165;
 		//$this->posxdiscount=162;
 		//$this->postotalht=174;
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -207,6 +208,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$commande->fetch($expedition->origin_id);
 				}
 				$object->commande=$commande;	// We set order of shipment onto delivery.
+				$object->commande->loadExpeditions();
 
 
 				$pdf->Open();
@@ -355,7 +357,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Quantity
 					//$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					
+					// Remaining to ship
+					$pdf->SetXY($this->posxremainingqty, $curY);
+					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite - $this->posxremainingqty, 3, $qtyRemaining, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY($this->posxdiscount, $curY);
@@ -606,7 +613,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell($this->posxcomm - $this->posxdesc,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
-
+	
 		// Modif SEB pour avoir une col en plus pour les commentaires clients
 		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
 		if (empty($hidetop)) {
@@ -615,12 +622,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 
 		// Qty
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		$pdf->line($this->posxqty, $tab_top, $this->posxqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+			$pdf->SetXY($this->posxqty, $tab_top+1);
+			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','C');
 		}
 
+		// Remain to ship
+		$pdf->line($this->posxremainingqty, $tab_top, $this->posxremainingqty, $tab_top + $tab_height);
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->posxremainingqty, $tab_top+1);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShip"),'','C');
+		}
 	}
 
 	/**
