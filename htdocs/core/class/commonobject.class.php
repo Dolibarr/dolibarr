@@ -593,7 +593,7 @@ abstract class CommonObject
     }
 
     /**
-     *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdpary
+     *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
      *
      *		@return		int					<0 if KO, >0 if OK
      */

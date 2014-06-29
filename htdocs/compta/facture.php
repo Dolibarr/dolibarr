@@ -124,7 +124,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->c
 				header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
 				exit();
 			} else {
-				$mesgs [] = $object->error;
+				setEventMessage($object->error, 'errors');
 				$action = '';
 			}
 		}
@@ -140,7 +140,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		} else {
-			$mesgs [] = '<div class="error">' . $object->error . '</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -164,7 +164,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 		header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
 		exit();
 	} else {
-		$mesgs [] = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
+		$action='';
 	}
 }
 
@@ -195,7 +196,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			exit();
 		}
 	} else {
-		$mesgs [] = '<div clas="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 		$action = '';
 	}
 }
@@ -460,7 +461,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 
 		// On verifie si aucun paiement n'a ete effectue
 		if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
-			$object->set_draft($user, $idwarehouse);
+			$result=$object->set_draft($user, $idwarehouse);
+			if ($result<0) setEventMessage($object->error,'errors');
 
 			// Define output language
 			$outputlangs = $langs;
@@ -485,6 +487,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 else if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement) {
 	$object->fetch($id);
 	$result = $object->set_paid($user);
+	if ($result<0) setEventMessage($object->error,'errors');
 } // Classif "paid partialy"
 else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement) {
 	$object->fetch($id);
@@ -492,6 +495,7 @@ else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->righ
 	$close_note = $_POST["close_note"];
 	if ($close_code) {
 		$result = $object->set_paid($user, $close_code, $close_note);
+		if ($result<0) setEventMessage($object->error,'errors');
 	} else {
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), 'errors');
 	}
@@ -502,6 +506,7 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes') {
 	$close_note = $_POST["close_note"];
 	if ($close_code) {
 		$result = $object->set_canceled($user, $close_code, $close_note);
+		if ($result<0) setEventMessage($object->error,'errors');
 	} else {
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), 'errors');
 	}
@@ -807,11 +812,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fetch_thirdparty();
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
-			if ($_POST['origin'] && $_POST['originid'])
+			if ($origin && $originid)
 			{
 				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $_POST['origin'];
-				if (preg_match('/^([^_]+)_([^_]+)/i', $_POST['origin'], $regs)) {
+				$element = $subelement = $origin;
+				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 					$element = $regs [1];
 					$subelement = $regs [2];
 				}
@@ -834,8 +839,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					$element = $subelement = 'expedition';
 				}
 
-				$object->origin = $_POST['origin'];
-				$object->origin_id = $_POST['originid'];
+				$object->origin = $origin;
+				$object->origin_id = $originid;
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects [$object->origin] = $object->origin_id;
@@ -894,19 +899,19 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$langs->trans('Deposit'),
 								$amountdeposit,		 	// subprice
 								1, 						// quantity
-								$lines [$i]->tva_tx, 0, // localtax1_tx
+								$lines[$i]->tva_tx, 0, // localtax1_tx
 								0, 						// localtax2_tx
 								0, 						// fk_product
 								0, 						// remise_percent
 								0, 						// date_start
 								0, 						// date_end
-								0, $lines [$i]->info_bits, // info_bits
+								0, $lines[$i]->info_bits, // info_bits
 								0, 						// info_bits
 								'HT',
 								0,
 								0, 						// product_type
 								1,
-								$lines [$i]->special_code,
+								$lines[$i]->special_code,
 								$object->origin,
 								0,
 								0,
@@ -937,15 +942,15 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
-								if ($lines [$i]->subprice < 0)
+								if ($lines[$i]->subprice < 0)
 								{
 									// Negative line, we create a discount line
 									$discount = new DiscountAbsolute($db);
 									$discount->fk_soc = $object->socid;
-									$discount->amount_ht = abs($lines [$i]->total_ht);
-									$discount->amount_tva = abs($lines [$i]->total_tva);
-									$discount->amount_ttc = abs($lines [$i]->total_ttc);
-									$discount->tva_tx = $lines [$i]->tva_tx;
+									$discount->amount_ht = abs($lines[$i]->total_ht);
+									$discount->amount_tva = abs($lines[$i]->total_tva);
+									$discount->amount_ttc = abs($lines[$i]->total_ttc);
+									$discount->tva_tx = $lines[$i]->tva_tx;
 									$discount->fk_user = $user->id;
 									$discount->description = $desc;
 									$discountid = $discount->create($user);
@@ -958,38 +963,38 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									}
 								} else {
 									// Positive line
-									$product_type = ($lines [$i]->product_type ? $lines [$i]->product_type : 0);
+									$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 									// Date start
 									$date_start = false;
-									if ($lines [$i]->date_debut_prevue)
-										$date_start = $lines [$i]->date_debut_prevue;
-									if ($lines [$i]->date_debut_reel)
-										$date_start = $lines [$i]->date_debut_reel;
-									if ($lines [$i]->date_start)
-										$date_start = $lines [$i]->date_start;
+									if ($lines[$i]->date_debut_prevue)
+										$date_start = $lines[$i]->date_debut_prevue;
+									if ($lines[$i]->date_debut_reel)
+										$date_start = $lines[$i]->date_debut_reel;
+									if ($lines[$i]->date_start)
+										$date_start = $lines[$i]->date_start;
 
 										// Date end
 									$date_end = false;
-									if ($lines [$i]->date_fin_prevue)
-										$date_end = $lines [$i]->date_fin_prevue;
-									if ($lines [$i]->date_fin_reel)
-										$date_end = $lines [$i]->date_fin_reel;
-									if ($lines [$i]->date_end)
-										$date_end = $lines [$i]->date_end;
+									if ($lines[$i]->date_fin_prevue)
+										$date_end = $lines[$i]->date_fin_prevue;
+									if ($lines[$i]->date_fin_reel)
+										$date_end = $lines[$i]->date_fin_reel;
+									if ($lines[$i]->date_end)
+										$date_end = $lines[$i]->date_end;
 
 										// Reset fk_parent_line for no child products and special product
-									if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+									if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 										$fk_parent_line = 0;
 									}
 
 									// Extrafields
-									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) {
-										$lines [$i]->fetch_optionals($lines [$i]->rowid);
-										$array_option = $lines [$i]->array_options;
+									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$array_option = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines [$i]->subprice, $lines [$i]->qty, $lines [$i]->tva_tx, $lines [$i]->localtax1_tx, $lines [$i]->localtax2_tx, $lines [$i]->fk_product, $lines [$i]->remise_percent, $date_start, $date_end, 0, $lines [$i]->info_bits, $lines [$i]->fk_remise_except, 'HT', 0, $product_type, $lines [$i]->rang, $lines [$i]->special_code, $object->origin, $lines [$i]->rowid, $fk_parent_line, $lines [$i]->fk_fournprice, $lines [$i]->pa_ht, $label, $array_option);
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -1000,7 +1005,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									}
 
 									// Defined the new fk_parent_line
-									if ($result > 0 && $lines [$i]->product_type == 9) {
+									if ($result > 0 && $lines[$i]->product_type == 9) {
 										$fk_parent_line = $result;
 									}
 								}
@@ -1846,6 +1851,7 @@ if ($action == 'create')
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
+	// Load objectsrc
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -2264,10 +2270,9 @@ if ($action == 'create')
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 	print $doleditor->Create(1);
 
-	// print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea></td></tr>';
-
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->societe_id))
+	{
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
@@ -2278,10 +2283,13 @@ if ($action == 'create')
 		}
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 		print $doleditor->Create(1);
-		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea></td></tr>';
+		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
+		print '</td></tr>';
 	}
 
-	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+	// Lines from source
+	if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
+	{
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
@@ -2305,6 +2313,8 @@ if ($action == 'create')
 			$newclassname = 'Order';
 		elseif ($newclassname == 'Expedition')
 			$newclassname = 'Sending';
+		elseif ($newclassname == 'Fichinter')
+			$newclassname = 'Intervention';
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
@@ -2374,7 +2384,10 @@ if ($action == 'create')
 	print "</table>\n";
 
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '"></center>';
+	print '<br><center>';
+	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
+	print '&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</center>';
 
 	print "</form>\n";
 
@@ -3653,7 +3666,7 @@ if ($action == 'create')
 		include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/'));
 		$file = $fileparams ['fullname'];
-		
+
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
@@ -3664,7 +3677,7 @@ if ($action == 'create')
 
 		// Build document if it not exists
 		if (! $file || ! is_readable($file)) {
-			
+
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);

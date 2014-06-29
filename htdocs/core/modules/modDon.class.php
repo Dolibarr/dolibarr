@@ -68,36 +68,36 @@ class modDon  extends DolibarrModules
 
 		// Constants
 		$this->const = array ();
-		
-		$this->const[1] = array (
+
+		$this->const[0] = array (
 				"DON_ADDON_MODEL",
 				"chaine",
 				"html_cerfafr",
 				"Nom du gestionnaire de generation de recu de dons",
 				"0"
 		);
-		$this->const[2] = array (
+		$this->const[1] = array (
 				"DONATION_ART200",
 				"yesno",
 				"0",
 				"Option Française - Eligibilité Art200 du CGI",
-				"0"				
+				"0"
 		);
-		$this->const[3] = array (
+		$this->const[2] = array (
 				"DONATION_ART238",
 				"yesno",
 				"0",
 				"Option Française - Eligibilité Art238 bis du CGI",
-				"0"				
+				"0"
 		);
-		$this->const[4] = array (
+		$this->const[3] = array (
 				"DONATION_ART885",
 				"yesno",
 				"0",
 				"Option Française - Eligibilité Art885-0 V bis du CGI",
-				"0"				
+				"0"
 		);
-		$this->const[5] = array (
+		$this->const[4] = array (
 				"DONATION_MESSAGE",
 				"chaine",
 				"Thank you",

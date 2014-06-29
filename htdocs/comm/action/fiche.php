@@ -532,7 +532,7 @@ if ($action == 'create')
 
 	// Busy
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
-	print '<input id="transparency" type="checkbox" name="transparency"'.($actioncomm->transparency?' checked="checked"':'').'>';
+	print '<input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'>';
 	print '</td></tr>';
 
 	// Realised by
@@ -1049,7 +1049,7 @@ if ($id > 0)
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";
 			}
-			print '</table><br><br>';
+			print '</table>';
 		}
 
 		dol_fiche_end();

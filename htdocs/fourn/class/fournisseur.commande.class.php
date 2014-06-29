@@ -393,7 +393,13 @@ class CommandeFournisseur extends CommonOrder
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                if ($result < 0)
+                {
+                    $error++;
+                    $this->errors=$interface->errors;
+                    $this->db->rollback();
+                    return -1;
+                }
                 // Fin appel triggers
             }
 
@@ -404,9 +410,9 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
+                $this->error=$this->db->lasterror();
                 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
                 $this->db->rollback();
-                $this->error=$this->db->lasterror();
                 return -1;
             }
         }
@@ -666,7 +672,6 @@ class CommandeFournisseur extends CommonOrder
                 else
                 {
                     $this->db->rollback();
-                    $this->error=$this->db->lasterror();
                     return -1;
                 }
             }
@@ -701,6 +706,8 @@ class CommandeFournisseur extends CommonOrder
         $result = 0;
         if ($user->rights->fournisseur->commande->approuver)
         {
+            $this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
             $sql .= " WHERE rowid = ".$this->id;
 
@@ -715,12 +722,19 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('ORDER_SUPPLIER_REFUSE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                    }
                     // Fin appel triggers
                 }
             }
             else
             {
+                $this->db->rollback();
+                $this->error=$this->db->lasterror();
                 dol_syslog(get_class($this)."::refuse Error -1");
                 $result = -1;
             }
@@ -777,7 +791,6 @@ class CommandeFournisseur extends CommonOrder
                 else
                 {
                     $this->db->rollback();
-                    $this->error=$this->db->lasterror();
                     return -1;
                 }
             }
@@ -961,7 +974,13 @@ class CommandeFournisseur extends CommonOrder
 	                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	                    $interface=new Interfaces($this->db);
 	                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-	                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	                    if ($result < 0)
+	                    {
+	                        $error++;
+	                        $this->errors=$interface->errors;
+	                        $this->db->rollback();
+	                        return -1;
+	                    }
 	                    // Fin appel triggers
 	                }
 
@@ -1212,7 +1231,13 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 
@@ -1280,7 +1305,13 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEORDER_SUPPLIER_DISPATCH',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 
@@ -1310,6 +1341,7 @@ class CommandeFournisseur extends CommonOrder
                 }
             }
 
+            //TODO: Check if there is a current transaction in DB but seems not.
             if ($error == 0)
             {
                 $this->db->commit();
@@ -1333,18 +1365,15 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	int		$idline		Id of line to delete
      *	@param	int		$notrigger	1=Disable call to triggers
-     *	@return						0 if Ok, <0 ik Ko
+     *	@return						>=0 if OK, <0 if KO
      */
     function deleteline($idline, $notrigger=0)
     {
         if ($this->statut == 0)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
-            $resql=$this->db->query($sql);
+        	$this->db->begin();
 
-			dol_syslog(get_class($this)."::deleteline sql=".$sql);
-
-			if (!$notrigger && $resql)
+			if (! $notrigger)
 			{
 				// Appel des triggers
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -1357,14 +1386,29 @@ class CommandeFournisseur extends CommonOrder
 				// Fin appel triggers
 			}
 
-            if ($resql)
+			if (! $error)
+			{
+	            $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
+	            $resql=$this->db->query($sql);
+
+				dol_syslog(get_class($this)."::deleteline sql=".$sql);
+				if (! $resql)
+				{
+                	$this->error=$this->db->lasterror();
+                	$error++;
+				}
+			}
+
+			if (! $error)
             {
                 $result=$this->update_price();
+
+                $this->db->commit();
                 return 0;
             }
             else
-            {
-                $this->error=$this->db->error();
+			{
+				$this->db->rollback();
                 return -1;
             }
         }
@@ -1402,11 +1446,13 @@ class CommandeFournisseur extends CommonOrder
         {
             if ($this->db->affected_rows($resql) < 1)
             {
+                $this->error=$this->db->lasterror();
                 $error++;
             }
         }
         else
         {
+            $this->error=$this->db->lasterror();
             $error++;
         }
 
@@ -1469,7 +1515,6 @@ class CommandeFournisseur extends CommonOrder
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -$error;
@@ -1670,7 +1715,7 @@ class CommandeFournisseur extends CommonOrder
         $resql = $this->db->query($sql);
         if ($resql)
         {
-
+            //TODO: Add trigger for status modification
         }
         else
         {
@@ -1794,7 +1839,13 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEORDER_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 
