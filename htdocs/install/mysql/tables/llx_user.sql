@@ -67,7 +67,7 @@ create table llx_user
   color				varchar(6),
   barcode			varchar(255) DEFAULT NULL,
   fk_barcode_type	integer      DEFAULT 0,
-  accountancy_code  varchar(24) NULL,
+  accountancy_code  varchar(32) NULL,
   nb_holiday		integer DEFAULT 0,
   salary			double(24,8)
 )ENGINE=innodb;

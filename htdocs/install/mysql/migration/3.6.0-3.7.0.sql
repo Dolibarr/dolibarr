@@ -19,3 +19,22 @@
 
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
+
+-- Drop old table
+DROP TABLE llx_compta;
+DROP TABLE llx_compta_account;
+DROP TABLE llx_compta_compte_generaux;
+
+-- Align size for accounting account
+ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
+ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
