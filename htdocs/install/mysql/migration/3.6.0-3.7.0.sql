@@ -20,11 +20,13 @@
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
+
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
 ALTER TABLE llx_accountingaccount add column tms timestamp DEFAULT NULL AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
+
 
 -- Drop old table
 DROP TABLE llx_compta;
@@ -44,3 +46,6 @@ ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_sell varchar(32);
 ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
