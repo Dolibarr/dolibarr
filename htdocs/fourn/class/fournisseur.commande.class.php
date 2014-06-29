@@ -702,21 +702,23 @@ class CommandeFournisseur extends CommonOrder
 
 		$error=0;
 
-        dol_syslog(get_class($this)."::refuse");
         $result = 0;
         if ($user->rights->fournisseur->commande->approuver)
         {
             $this->db->begin();
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
-            $sql .= " WHERE rowid = ".$this->id;
+            $sql.= " WHERE rowid = ".$this->id;
 
-            if ($this->db->query($sql))
+            dol_syslog(get_class($this)."::refuse sql=".$sql);
+            $resql=$this->db->query($sql);
+
+            if ($resql)
             {
                 $result = 0;
                 $this->log($user, 9, time());
 
-                if ($error == 0)
+                if (! $error)
                 {
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -726,9 +728,17 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $error++;
                         $this->errors=$interface->errors;
-                        $this->db->rollback();
                     }
                     // Fin appel triggers
+                }
+
+                if (! $error)
+                {
+                	$this->db->commit();
+                }
+                else
+              {
+	                $this->db->rollback();
                 }
             }
             else
@@ -743,7 +753,7 @@ class CommandeFournisseur extends CommonOrder
         {
             dol_syslog(get_class($this)."::refuse Not Authorized");
         }
-        return $result ;
+        return $result;
     }
 
     /**
