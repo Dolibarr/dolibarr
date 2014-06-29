@@ -671,7 +671,7 @@ class Form
      *  Return HTML code to select a company.
      *
      *  @param		int			$selected				Preselected products
-     *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
      *  @param		int			$filter					Filter on thirdparty
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter

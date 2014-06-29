@@ -5,15 +5,16 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
-New: [ task #867 ] Remove ESAEB external module code from core.
-New: Can create proposal from an intervention.
-New: Can filter events on a group of users.
+- New: [ task #867 ] Remove ESAEB external module code from core.
+- New: Can create proposal from an intervention.
+- New: Can filter events on a group of users.
+- New: Add thirdparty to filter on events. 
 
 For translators:
 - Update language files.
 
 For developers:
--
+- New: Add hook "searchAgendaFrom".
 
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****

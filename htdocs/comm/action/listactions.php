@@ -78,6 +78,7 @@ if (! $sortfield)
 $socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($socid < 0) $socid='';
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
@@ -89,6 +90,8 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 	$filterd=$user->id;
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('agendalist'));
 
 
 /*
@@ -192,7 +195,7 @@ if ($resql)
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
-	if ($socid)
+	/*if ($socid)
 	{
 		$societe = new Societe($db);
 		$societe->fetch($socid);
@@ -201,8 +204,8 @@ if ($resql)
 	else
 	{
 		$newtitle=$langs->trans($title);
-	}
-
+	}*/
+	$newtitle=$langs->trans($title);
 
 	$tabactive='';
 	if ($action == 'show_month') $tabactive='cardmonth';
@@ -210,10 +213,10 @@ if ($resql)
 	if ($action == 'show_day') $tabactive='cardday';
 	if ($action == 'show_list') $tabactive='cardlist';
 
-	$head = calendars_prepare_head('');
+	$head = calendars_prepare_head($param);
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1,'');
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1,'',0);
     dol_fiche_end();
 
     // Add link to show birthdays

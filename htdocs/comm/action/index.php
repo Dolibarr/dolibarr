@@ -56,9 +56,10 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="a.datec";
 
 // Security check
-$socid = GETPOST("socid","int",1);
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($socid < 0) $socid='';
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
@@ -102,6 +103,8 @@ $langs->load("agenda");
 $langs->load("other");
 $langs->load("commercial");
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('agenda'));
 
 
 /*
@@ -993,7 +996,7 @@ else    // View by day
 
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
     $arraytimestamp=dol_getdate($timestamp);
-    echo '<table width="100%" class="nocellnopadd">';
+    echo '<table width="100%" class="nocellnopadd cal_month">';
     echo ' <tr class="liste_titre">';
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </tr>\n";

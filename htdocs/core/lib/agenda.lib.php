@@ -46,7 +46,7 @@
  */
 function print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, $filtera, $filtert, $filterd, $pid, $socid, $showextcals=array(), $actioncode='', $usergroupid='')
 {
-	global $conf, $user, $langs, $db;
+	global $conf, $user, $langs, $db, $hookmanager;
 
 	// Filters
 	print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -59,10 +59,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 
 	print '<div class="fichecenter">';
 
-	print '<div class="fichehalfleft">';
-
-	//print '<table class="nobordernopadding" width="100%">';
-	//print '<tr><td class="nowrap">';
+	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
+	else print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 
 	print '<table class="nobordernopadding">';
 
@@ -110,6 +108,16 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
+	if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+	{
+		print '<tr>';
+		print '<td class="nowrap">';
+		print $langs->trans("Thirdpary").' &nbsp; ';
+		print '</td><td class="nowrap maxwidthonsmartphone">';
+		print $form->select_thirdparty($socid, 'socid');
+		print '</td></tr>';
+	}
+
 	if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
@@ -123,37 +131,29 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
+	// Hooks
+	$parameters = array('canedit'=>$canedit, 'pid'=>$pid, 'socid'=>$socid);
+	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
+
 	print '</table>';
 
-	//print '</td>';
-	print '</div>';
+	if (! empty($conf->browser->phone)) print '</div>';
+	else print '</td>';
 
-
-	// Buttons
-	/*print '<td align="center" valign="middle" class="nowrap">';
-	print img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewcal" value="' . $langs->trans("ViewCal") . '">';
-	print '<br>';
-	print img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewweek" value="' . $langs->trans("ViewWeek") . '">';
-	print '<br>';
-	print img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewday" value="' . $langs->trans("ViewDay") . '">';
-	print '<br>';
-	print img_picto($langs->trans("ViewList"), 'object_list', 'class="hideonsmartphone"') . ' <input type="submit" class="button" style="min-width:120px" name="viewlist" value="' . $langs->trans("ViewList") . '">';
-	print '</td>';*/
-
-	//print '<td align="center" valign="middle" class="nowrap">';
-	print '<div class="fichehalfright" valign="middle">';
+	if (! empty($conf->browser->phone)) print '<div class="fichehalfright" valign="middle">';
+	else print '<td align="center" valign="middle" class="nowrap">';
 
 	print '<table><tr><td align="center">';
 	print '<div class="formleftzone">';
 	print '<input type="submit" class="button" style="min-width:120px" name="refresh" value="' . $langs->trans("Refresh") . '">';
 	print '</div>';
 	print '</td></tr>';
-
 	print '</table>';
 
-	print '</div>';
+	if (! empty($conf->browser->phone)) print '</div>';
+	else print '</td></tr></table>';
 
-	print '</div>';
+	print '</div>';	// Close fichecenter
 	print '<div style="clear:both"></div>';
 
 	print '</form>';
@@ -471,6 +471,10 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardlist';
     $h++;
 
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewPerUser");
+    $head[$h][2] = 'cardperuser';
+    $h++;
 
 	$object=new stdClass();
 

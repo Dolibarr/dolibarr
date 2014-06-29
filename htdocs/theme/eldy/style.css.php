@@ -2271,7 +2271,7 @@ li.cal_event       { border: none; list-style-type: none; }
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
-.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff; }
+.ui-widget-content { border: solid 1px rgba(0,0,0,.3); background: #fff !important; }
 
 .ui-autocomplete-loading { background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif',1) ?>) right center no-repeat; }
 .ui-autocomplete {
