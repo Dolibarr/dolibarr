@@ -20,6 +20,7 @@
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
+
 ALTER TABLE llx_propal ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
 ALTER TABLE llx_commande ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
 ALTER TABLE llx_facture ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
@@ -31,4 +32,34 @@ ALTER TABLE llx_commande_fournisseur ADD COLUMN currency_rate double(24,8) DEFAU
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
 ALTER TABLE llx_facture_fourn ADD COLUMN fk_currency varchar(3) AFTER fk_account;
 ALTER TABLE llx_facture_fourn ADD COLUMN currency_rate double(24,8) DEFAULT 1 AFTER fk_currency;
+
+
+ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
+ALTER TABLE llx_accountingaccount add column tms timestamp DEFAULT NULL AFTER datec;
+ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
+ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
+
+
+-- Drop old table
+DROP TABLE llx_compta;
+DROP TABLE llx_compta_account;
+DROP TABLE llx_compta_compte_generaux;
+
+-- Align size for accounting account
+ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
+ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
 

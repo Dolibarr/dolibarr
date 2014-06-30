@@ -44,11 +44,9 @@ $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
 $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 
-if (empty($action))
-{
-	if (empty($conf->global->AGENDA_DEFAULT_VIEW)) $action='show_list';
-	else $action=$conf->global->AGENDA_DEFAULT_VIEW;
-}
+if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+if ($status == '')     $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if (empty($action))   $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_list':$conf->global->AGENDA_DEFAULT_VIEW);
 
 $filter=GETPOST("filter",'',3);
 $filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
@@ -214,6 +212,7 @@ if ($resql)
 	if ($action == 'show_week') $tabactive='cardweek';
 	if ($action == 'show_day') $tabactive='cardday';
 	if ($action == 'show_list') $tabactive='cardlist';
+	if ($action == 'show_peruser') $tabactive='cardperuser';
 
 	$head = calendars_prepare_head($param);
 

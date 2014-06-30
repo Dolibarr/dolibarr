@@ -163,7 +163,7 @@ if ($action == 'add')
         {
             $qty = "qtyl".$i;
 			if (! isset($batch_line[$i])) {
-				if (GETPOST($qty,'int') > 0)
+				if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 				{
 					$ent = "entl".$i;
 					$idl = "idl".$i;

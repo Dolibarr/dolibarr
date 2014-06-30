@@ -81,7 +81,11 @@ $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
-$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':'');
+
+if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+if ($status == '')     $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if (empty($action))   $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
 
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
     $action='show_month'; $day='';
@@ -93,11 +97,6 @@ if (GETPOST('viewday') || $action == 'show_day')  {
     $action='show_day'; $day=($day?$day:date("d"));
 }                                  // View by day
 
-if (empty($action))
-{
-	if (empty($conf->global->AGENDA_DEFAULT_VIEW)) $action='show_month';
-	else $action=$conf->global->AGENDA_DEFAULT_VIEW;
-}
 
 $langs->load("agenda");
 $langs->load("other");
@@ -110,7 +109,8 @@ $hookmanager->initHooks(array('agenda'));
 /*
  * Actions
  */
-if (GETPOST("viewlist"))
+
+if (GETPOST("viewlist") || $action == 'show_list')
 {
     $param='';
     foreach($_POST as $key => $val)
@@ -120,6 +120,19 @@ if (GETPOST("viewlist"))
     }
     //print $param;
     header("Location: ".DOL_URL_ROOT.'/comm/action/listactions.php?'.$param);
+    exit;
+}
+
+if (GETPOST("viewperuser") || $action == 'show_peruser')
+{
+    $param='';
+    foreach($_POST as $key => $val)
+    {
+        if ($key=='token') continue;
+        $param.='&'.$key.'='.urlencode($val);
+    }
+    //print $param;
+    header("Location: ".DOL_URL_ROOT.'/comm/action/peruser.php?'.$param);
     exit;
 }
 
