@@ -130,9 +130,8 @@ class PropalTest extends PHPUnit_Framework_TestCase
 		$localobject=new Propal($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user);
-        var_dump($result);
 
-        $this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0);
     	print __METHOD__." result=".$result."\n";
     	return $result;
     }
