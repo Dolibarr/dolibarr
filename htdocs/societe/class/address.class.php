@@ -114,10 +114,7 @@ class Address
 
 					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
 				}
-				else
-				{
-					dol_syslog(get_class($this)."::create echec insert sql=$sql");
-				}
+
 				$this->db->rollback();
 				return -2;
 			}

@@ -569,7 +569,7 @@ class Account extends CommonObject
         $sql.= " WHERE rowid = ".$this->id;
         $sql.= " AND entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::update_bban sql=$sql");
+        dol_syslog(get_class($this)."::update_bban", LOG_DEBUG);
 
         $result = $this->db->query($sql);
         if ($result)

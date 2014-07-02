@@ -145,7 +145,7 @@ class CommandeFournisseur extends CommonOrder
             $obj = $this->db->fetch_object($resql);
             if (! $obj)
             {
-                $this->error='Bill with id '.$id.' not found sql='.$sql;
+                $this->error='Bill with id '.$id.' not found';
                 dol_syslog(get_class($this).'::fetch '.$this->error);
                 return 0;
             }
@@ -2140,7 +2140,7 @@ class CommandeFournisseurLigne
         $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("CommandeFournisseurLigne.class.php::update_total sql=$sql");
+        dol_syslog("CommandeFournisseurLigne.class.php::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)

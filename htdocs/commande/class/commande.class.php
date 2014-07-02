@@ -1888,7 +1888,7 @@ class Commande extends CommonOrder
             $sql.= ' SET remise_absolue = '.$remise;
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
 
-            dol_syslog(get_class($this)."::set_remise_absolue sql=$sql");
+            dol_syslog(get_class($this)."::set_remise_absolue", LOG_DEBUG);
 
             if ($this->db->query($sql))
             {
@@ -1920,7 +1920,7 @@ class Commande extends CommonOrder
             $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this)."::set_date sql=$sql",LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date",LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -3485,7 +3485,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("OrderLine::update_total sql=$sql");
+        dol_syslog("OrderLine::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)

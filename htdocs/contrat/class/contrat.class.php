@@ -1075,7 +1075,6 @@ class Contrat extends CommonObject
 				}
 				else
 				{
-					dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}

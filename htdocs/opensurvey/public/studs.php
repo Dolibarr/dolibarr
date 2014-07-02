@@ -392,7 +392,6 @@ $compteur = 0;
 $sql ="SELECT id_users, nom, id_sondage, reponses";
 $sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
-dol_syslog('sql='.$sql);
 $resql=$db->query($sql);
 if (! $resql)
 {

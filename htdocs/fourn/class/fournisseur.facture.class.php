@@ -420,7 +420,7 @@ class FactureFournisseur extends CommonInvoice
             }
             else
             {
-                $this->error='Bill with id '.$id.' not found sql='.$sql;
+                $this->error='Bill with id '.$id.' not found';
                 dol_syslog(get_class($this).'::fetch '.$this->error);
                 return 0;
             }

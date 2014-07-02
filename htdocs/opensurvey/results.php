@@ -286,7 +286,6 @@ for ($i = 0; $i < $nblignes; $i++)
 		$sql ="SELECT id_users, nom, id_sondage, reponses";
 		$sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 		$sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
-		dol_syslog('sql='.$sql);
 		$resql=$db->query($sql);
 		if (! $resql) dol_print_error($db);
 		$num=$db->num_rows($resql);

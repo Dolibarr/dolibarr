@@ -704,7 +704,7 @@ class RemiseCheque extends CommonObject
             $sql.= " SET date_bordereau = ".($date ? $this->db->idate($date) : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog("RemiseCheque::set_date sql=$sql",LOG_DEBUG);
+            dol_syslog("RemiseCheque::set_date", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -738,7 +738,7 @@ class RemiseCheque extends CommonObject
 			$sql.= " SET number = '".$number."'" ;
 			$sql.= " WHERE rowid = ".$this->id;
 			
-			dol_syslog("RemiseCheque::set_number sql=$sql",LOG_DEBUG);
+			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
