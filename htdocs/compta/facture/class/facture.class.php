@@ -1404,75 +1404,6 @@ class Facture extends CommonInvoice
 		}
 	}
 
-
-	/**
-	 *	Renvoi une date limite de reglement de facture en fonction des
-	 *	conditions de reglements de la facture et date de facturation
-	 *
-	 *	@param      string	$cond_reglement   	Condition of payment (code or id) to use. If 0, we use current condition.
-	 *	@return     date     			       	Date limite de reglement si ok, <0 si ko
-	 */
-	function calculate_date_lim_reglement($cond_reglement=0)
-	{
-		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_code;
-		if (! $cond_reglement) $cond_reglement=$this->cond_reglement_id;
-
-		$cdr_nbjour=0; $cdr_fdm=0; $cdr_decalage=0;
-
-		$sqltemp = 'SELECT c.fdm,c.nbjour,c.decalage';
-		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
-		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
-		else $sqltemp.= " WHERE c.code='".$this->db->escape($cond_reglement)."'";
-
-		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
-		$resqltemp=$this->db->query($sqltemp);
-		if ($resqltemp)
-		{
-			if ($this->db->num_rows($resqltemp))
-			{
-				$obj = $this->db->fetch_object($resqltemp);
-				$cdr_nbjour = $obj->nbjour;
-				$cdr_fdm = $obj->fdm;
-				$cdr_decalage = $obj->decalage;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-		$this->db->free($resqltemp);
-
-		/* Definition de la date limite */
-
-		// 1 : ajout du nombre de jours
-		$datelim = $this->date + ($cdr_nbjour * 3600 * 24);
-
-		// 2 : application de la regle "fin de mois"
-		if ($cdr_fdm)
-		{
-			$mois=date('m', $datelim);
-			$annee=date('Y', $datelim);
-			if ($mois == 12)
-			{
-				$mois = 1;
-				$annee += 1;
-			}
-			else
-			{
-				$mois += 1;
-			}
-			// On se deplace au debut du mois suivant, et on retire un jour
-			$datelim=dol_mktime(12,0,0,$mois,1,$annee);
-			$datelim -= (3600 * 24);
-		}
-
-		// 3 : application du decalage
-		$datelim += ($cdr_decalage * 3600 * 24);
-
-		return $datelim;
-	}
-
 	/**
 	 *  Tag la facture comme paye completement (si close_code non renseigne) => this->fk_statut=2, this->paye=1
 	 *  ou partiellement (si close_code renseigne) + appel trigger BILL_PAYED => this->fk_statut=2, this->paye stay 0
@@ -1631,7 +1562,11 @@ class Facture extends CommonInvoice
 				$interface=new Interfaces($this->db);
 				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+					$error++; 
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -1;
+					
 				}
 				// Fin appel triggers
 
@@ -1874,7 +1809,6 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -2281,6 +2215,7 @@ class Facture extends CommonInvoice
 			}
 			else
 			{
+			    $this->error=$this->line->error;
 				$this->db->rollback();
 				return -1;
 			}
@@ -2350,7 +2285,7 @@ class Facture extends CommonInvoice
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
+			$this->error=$line->error;
 			return -1;
 		}
 	}
@@ -3631,8 +3566,12 @@ class FactureLigne  extends CommonInvoiceLine
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+				if ($result < 0) 
+				{
+					$error++;
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -2;
 				}
 				// Fin appel triggers
 			}
@@ -3743,8 +3682,12 @@ class FactureLigne  extends CommonInvoiceLine
 				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 				$interface=new Interfaces($this->db);
 				$result = $interface->run_triggers('LINEBILL_UPDATE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+				if ($result < 0)
+				{
+					$error++;
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -2;
 				}
 				// Fin appel triggers
 			}
@@ -3780,8 +3723,12 @@ class FactureLigne  extends CommonInvoiceLine
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($this->db);
 			$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
+			if ($result < 0)
+			{
+					$error++;
+					$this->errors=$interface->errors;
+					$this->db->rollback();
+					return -1;
 			}
 			// Fin appel triggers
 

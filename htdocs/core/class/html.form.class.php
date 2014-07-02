@@ -671,7 +671,7 @@ class Form
      *  Return HTML code to select a company.
      *
      *  @param		int			$selected				Preselected products
-     *  @param		string		$htmlname				Name of HTML seletc field (must be unique in page)
+     *  @param		string		$htmlname				Name of HTML select field (must be unique in page)
      *  @param		int			$filter					Filter on thirdparty
      *  @param		int			$limit					Limit on number of returned lines
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
@@ -1115,6 +1115,7 @@ class Form
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
      * 	@return	string					HTML select string
+     *  @see select_dolgroups
      */
     function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0)
     {
@@ -2668,7 +2669,7 @@ class Form
             $autoOpen=true;
             $dialogconfirm='dialog-confirm';
             $button='';
-            if (! is_int($useajax))
+            if (! is_numeric($useajax))
             {
                 $button=$useajax;
                 $useajax=1;
@@ -3733,13 +3734,14 @@ class Form
     /**
      *	Function to show a form to select a duration on a page
      *
-     *	@param	string	$prefix   	prefix
-     *	@param  int		$iSecond  	Default preselected duration (number of seconds)
-     * 	@param	int		$disabled	Disable the combo box
-     * 	@param	string	$typehour	if 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     *	@param	string	$prefix   		Prefix
+     *	@param  int		$iSecond  		Default preselected duration (number of seconds)
+     * 	@param	int		$disabled		Disable the combo box
+     * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
+     *  @param	string	$minunderhours	If 1, show minutes selection under the hours
      *  @return	void
      */
-    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select')
+    function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0)
     {
     	global $langs;
 
@@ -3770,7 +3772,11 @@ class Form
         {
         	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.((int) $hourSelected).'">';
         }
-        print $langs->trans('Hours'). "&nbsp;";
+        print $langs->trans('Hours');
+
+        if ($minunderhours) print '<br>';
+        else print "&nbsp;";
+
         print '<select class="flat" name="'.$prefix.'min"'.($disabled?' disabled="disabled"':'').'>';
         for ($min = 0; $min <= 55; $min=$min+5)
         {
@@ -4191,6 +4197,7 @@ class Form
      * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
      * 	@param	int		$force_entity	0 or Id of environment to force
      *  @return	void
+     *  @see select_dolusers
      */
     function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0)
     {
@@ -4232,7 +4239,7 @@ class Form
             $i = 0;
             if ($num)
             {
-                $out.= '<select class="flat" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
+                $out.= '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled="disabled"':'').'>';
                 if ($show_empty) $out.= '<option value="-1"'.($selected==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
 
                 while ($i < $num)

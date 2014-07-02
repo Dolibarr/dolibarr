@@ -1343,10 +1343,10 @@ class Propal extends CommonObject
 					{
 						// Rename of propal directory ($this->ref = old ref, $num = new ref)
 						// to  not lose the linked files
-						$facref = dol_sanitizeFileName($this->ref);
-						$snumfa = dol_sanitizeFileName($num);
-						$dirsource = $conf->propal->dir_output.'/'.$facref;
-						$dirdest = $conf->propal->dir_output.'/'.$snumfa;
+						$oldref = dol_sanitizeFileName($this->ref);
+						$newref = dol_sanitizeFileName($num);
+						$dirsource = $conf->propal->dir_output.'/'.$oldref;
+						$dirdest = $conf->propal->dir_output.'/'.$newref;
 						if (file_exists($dirsource))
 						{
 							dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
@@ -1356,15 +1356,17 @@ class Propal extends CommonObject
 
 								dol_syslog("Rename ok");
 								// Deleting old PDF in new rep
-								dol_delete_file($conf->propal->dir_output.'/'.$snumfa.'/'.$facref.'*.*');
+								dol_delete_file($conf->propal->dir_output.'/'.$newref.'/'.$oldref.'*.*');
 							}
 						}
 					}
 
+					$this->ref=$num;
                     $this->brouillon=0;
                     $this->statut = 1;
                     $this->user_valid_id=$user->id;
                     $this->datev=$now;
+
                     $this->db->commit();
                     return 1;
                 }
@@ -2523,16 +2525,21 @@ class Propal extends CommonObject
         {
         	$mybool=false;
 
-            $file = $conf->global->PROPALE_ADDON.".php";
-            $classname = $conf->global->PROPALE_ADDON;
+		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir)
+		{
+	            $file = $conf->global->PROPALE_ADDON.".php";
+	            $classname = $conf->global->PROPALE_ADDON;
+	
+	            // Include file with class
+	            foreach ($conf->file->dol_document_root as $dirroot)
+	            {
+	            	$dir = $dirroot.$reldir."/core/modules/propale/";
+	            	// Load file with numbering class (if found)
+	            	$mybool|=@include_once $dir.$file;
+	            }
+		}
 
-            // Include file with class
-            foreach ($conf->file->dol_document_root as $dirroot)
-            {
-            	$dir = $dirroot."/core/modules/propale/";
-            	// Load file with numbering class (if found)
-            	$mybool|=@include_once $dir.$file;
-            }
 
             if (! $mybool)
             {

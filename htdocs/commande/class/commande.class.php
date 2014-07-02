@@ -131,18 +131,21 @@ class Commande extends CommonOrder
 
         if (! empty($conf->global->COMMANDE_ADDON))
         {
-        	$mybool=false;
-
-            $file = $conf->global->COMMANDE_ADDON.".php";
-            $classname = $conf->global->COMMANDE_ADDON;
-
-            // Include file with class
-            foreach ($conf->file->dol_document_root as $dirroot)
-            {
-            	$dir = $dirroot."/core/modules/commande/";
-            	// Load file with numbering class (if found)
-            	$mybool|=@include_once $dir.$file;
-            }
+		$mybool=false;
+		$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+		foreach ($dirmodels as $reldir)
+		{
+	            $file = $conf->global->COMMANDE_ADDON.".php";
+	            $classname = $conf->global->COMMANDE_ADDON;
+	
+	            // Include file with class
+	            foreach ($conf->file->dol_document_root as $dirroot)
+	            {
+	            	$dir = $dirroot.$reldir."/core/modules/commande/";
+	            	// Load file with numbering class (if found)
+	            	$mybool|=@include_once $dir.$file;
+	            }
+		}
 
             if (! $mybool)
             {
@@ -290,13 +293,6 @@ class Commande extends CommonOrder
             }
         }
 
-        // Set new ref and current status
-        if (! $error)
-        {
-            $this->ref = $num;
-            $this->statut = 1;
-        }
-
         if (! $error)
         {
             // Appel des triggers
@@ -305,6 +301,13 @@ class Commande extends CommonOrder
             $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
+        }
+
+        // Set new ref and current status
+        if (! $error)
+        {
+            $this->ref = $num;
+            $this->statut = 1;
         }
 
         if (! $error)
@@ -451,8 +454,13 @@ class Commande extends CommonOrder
         }
         else
         {
-            $this->db->rollback();
-            return -1;
+	        foreach($this->errors as $errmsg)
+	        {
+		        dol_syslog(get_class($this)."::set_reopen ".$errmsg, LOG_ERR);
+		        $this->error.=($this->error?', '.$errmsg:$errmsg);
+	        }
+	        $this->db->rollback();
+	        return -1*$error;
         }
     }
 
@@ -477,7 +485,7 @@ class Commande extends CommonOrder
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET fk_statut = 3,';
             $sql.= ' fk_user_cloture = '.$user->id.',';
-            $sql.= ' date_cloture = '.$this->db->idate($now);
+            $sql.= " date_cloture = '".$this->db->idate($now)."'";
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
             if ($this->db->query($sql))
@@ -577,8 +585,14 @@ class Commande extends CommonOrder
 			else
 			{
 				$this->error=$mouvP->error;
+
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
 				$this->db->rollback();
-				return -1;
+				return -1*$error;
 			}
 		}
 		else
@@ -804,8 +818,19 @@ class Commande extends CommonOrder
                         // Fin appel triggers
                     }
 
-                    $this->db->commit();
-                    return $this->id;
+	                if (!$error) {
+		                $this->db->commit();
+		                return $this->id;
+	                }
+
+	                foreach($this->errors as $errmsg)
+	                {
+		                dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+		                $this->error.=($this->error?', '.$errmsg:$errmsg);
+	                }
+	                $this->db->rollback();
+	                return -1*$error;
+
                 }
                 else
                 {
@@ -1787,7 +1812,7 @@ class Commande extends CommonOrder
                     else
                     {
                         $this->db->rollback();
-                        $this->error=$this->db->lasterror();
+                        $this->error=$line->error;
                         return -1;
                     }
                 }
@@ -2218,8 +2243,14 @@ class Commande extends CommonOrder
 			else
 			{
 				$this->error=$this->db->error();
+
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(get_class($this)."::classifyBilled ".$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
 				$this->db->rollback();
-				return -2;
+				return -1*$error;
 			}
 		}
 		else
@@ -2384,10 +2415,10 @@ class Commande extends CommonOrder
             }
             else
             {
-                $this->error=$this->db->lasterror();
-        		$this->errors=array($this->db->lasterror());
-                $this->db->rollback();
-                return -1;
+	            $this->error=$this->line->error;
+
+	            $this->db->rollback();
+	            return -1;
             }
         }
         else
@@ -2503,8 +2534,13 @@ class Commande extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            $this->db->rollback();
-            return -1;
+	        foreach($this->errors as $errmsg)
+	        {
+		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+		        $this->error.=($this->error?', '.$errmsg:$errmsg);
+	        }
+	        $this->db->rollback();
+	        return -1*$error;
         }
     }
 
@@ -2543,8 +2579,8 @@ class Commande extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-				
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date; 
+
+				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
                 if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->client->warning_delay)) $this->nbtodolate++;
             }
             return 1;
@@ -3136,6 +3172,8 @@ class OrderLine extends CommonOrderLine
 
 		$error=0;
 
+	    $this->db->begin();
+
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->rowid."';";
 
         dol_syslog("OrderLine::delete", LOG_DEBUG);
@@ -3161,7 +3199,18 @@ class OrderLine extends CommonOrderLine
             if ($result < 0) { $error++; $this->errors=$interface->errors; }
             // Fin appel triggers
 
-            return 1;
+	        if (!$error) {
+		        $this->db->commit();
+		        return 1;
+	        }
+
+	        foreach($this->errors as $errmsg)
+	        {
+		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+		        $this->error.=($this->error?', '.$errmsg:$errmsg);
+	        }
+	        $this->db->rollback();
+	        return -1*$error;
         }
         else
         {
@@ -3276,8 +3325,18 @@ class OrderLine extends CommonOrderLine
                 // Fin appel triggers
             }
 
-            $this->db->commit();
-            return 1;
+	        if (!$error) {
+		        $this->db->commit();
+		        return 1;
+	        }
+
+	        foreach($this->errors as $errmsg)
+	        {
+		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+		        $this->error.=($this->error?', '.$errmsg:$errmsg);
+	        }
+	        $this->db->rollback();
+	        return -1*$error;
         }
         else
         {
@@ -3383,8 +3442,18 @@ class OrderLine extends CommonOrderLine
 				// Fin appel triggers
 			}
 
-			$this->db->commit();
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			}
+
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
 		}
 		else
 		{

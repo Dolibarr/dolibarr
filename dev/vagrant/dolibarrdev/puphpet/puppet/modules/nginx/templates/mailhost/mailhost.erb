@@ -1,0 +1,23 @@
+
+server {
+  listen                <%= @listen_ip %>:<%= @listen_port %><% if @listen_options %> <%= @listen_options %><% end %>;
+  <% # check to see if ipv6 support exists in the kernel before applying %>
+  <% if @ipv6_enable && (defined? @ipaddress6) %>
+  listen [<%= @ipv6_listen_ip %>]:<%= @ipv6_listen_port %><% if @ipv6_listen_options %> <%= @ipv6_listen_options %><% end %>;
+  <% end %>
+  server_name           <%= @server_name.join(" ") %>;
+  protocol              <%= @protocol %>;
+  xclient               <%= @xclient %>;
+  auth_http             <%= @auth_http %>;
+  starttls              <%= @starttls %>;
+  <% if @starttls == 'on' || @starttls == 'only' %>
+  ssl_certificate      <%= @ssl_cert %>;
+  ssl_certificate_key  <%= @ssl_key %>;
+
+  ssl_session_timeout  5m;
+
+  ssl_protocols  SSLv3 TLSv1;
+  ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP;
+  ssl_prefer_server_ciphers   on;
+  <%- end -%>
+}

@@ -1,0 +1,5 @@
+<%- @environment_variables.keys.sort.each do |key| -%>
+<%- if @environment_variables[key] != 'UNSET' -%>
+<%= key %>=<%= @environment_variables[key] %>
+<%- end -%>
+<%- end -%>

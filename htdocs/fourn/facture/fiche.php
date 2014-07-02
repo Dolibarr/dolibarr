@@ -131,7 +131,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
     }
 
     // Check parameters
-    if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
+    if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
     {
         $langs->load("stocks");
         if (! $idwarehouse || $idwarehouse == -1)
@@ -181,6 +181,8 @@ elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->
 	else
 	{
 		$mesg='<div class="error">'.$object->error.'</div>';
+		/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+		$action='';
 	}
 }
 
@@ -188,6 +190,10 @@ elseif ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->fournis
 {
     $object->fetch($id);
     $result=$object->set_paid($user);
+    if ($result<0)
+    {
+        setEventMessage($object->error,'errors');
+    }
 }
 
 // Set supplier ref
@@ -300,6 +306,9 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
+		
+		// Auto calculation of date due if not filled by user
+		if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
 
         // If creation from another object of another module
         if ($_POST['origin'] && $_POST['originid'])
@@ -512,6 +521,10 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
         if ($result >= 0)
         {
             unset($_POST['label']);
+        }
+        else
+        {
+            setEventMessage($object->error,'errors');
         }
     }
 }
@@ -911,7 +924,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -1102,6 +1115,7 @@ if ($action == 'create')
     print_fiche_titre($langs->trans('NewBill'));
 
     dol_htmloutput_mesg($mesg);
+    dol_htmloutput_events();
 
     $societe='';
     if ($_GET['socid'])
@@ -1194,10 +1208,10 @@ if ($action == 'create')
     {
         print $form->select_company((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1',1);
     }
-    print '</td>';
+    print '</td></tr>';
 
     // Ref supplier
-    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:$fac_ori->ref).'" type="text"></td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('RefSupplier').'</td><td><input name="ref_supplier" value="'.(isset($_POST['ref_supplier'])?$_POST['ref_supplier']:'').'" type="text"></td>';
     print '</tr>';
 
     print '<tr><td valign="top" class="fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
@@ -1284,7 +1298,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:$fac_ori->libelle).'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
@@ -1505,7 +1519,17 @@ else
             }*/
             $formquestion=array();
 
-            if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $object->hasProductsOrServices(1))
+            $qualified_for_stock_change=0;
+		    if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+		    }
+		    else
+		    {
+		    	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+		    }
+
+            if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL) && $qualified_for_stock_change)
             {
                 $langs->load("stocks");
                 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -2224,15 +2248,18 @@ else
             include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             $fileparams = dol_most_recent_file($conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2).$ref, preg_quote($ref,'/'));
             $file=$fileparams['fullname'];
+            
+            // Define output language
+            $outputlangs = $langs;
+            $newlang = '';
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+            	$newlang = $_REQUEST['lang_id'];
+            if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+            	$newlang = $object->client->default_lang;
 
             // Build document if it not exists
             if (! $file || ! is_readable($file))
             {
-                // Define output language
-                $outputlangs = $langs;
-                $newlang='';
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
                 if (! empty($newlang))
                 {
                     $outputlangs = new Translate("",$conf);
@@ -2255,6 +2282,7 @@ else
             // Cree l'objet formulaire mail
             include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
             $formmail = new FormMail($db);
+            $formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
             $formmail->fromtype = 'user';
             $formmail->fromid   = $user->id;
             $formmail->fromname = $user->getFullName($langs);

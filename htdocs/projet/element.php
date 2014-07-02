@@ -128,6 +128,16 @@ print '</td></tr>';
 // Statut
 print '<tr><td>'.$langs->trans("Status").'</td><td>'.$project->getLibStatut(4).'</td></tr>';
 
+// Date start
+print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+print dol_print_date($object->date_start,'day');
+print '</td></tr>';
+
+// Date end
+print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+print dol_print_date($object->date_end,'day');
+print '</td></tr>';
+
 print '</table>';
 
 print '</div>';
@@ -212,13 +222,18 @@ foreach ($listofreferent as $key => $value)
 	$classname=$value['class'];
 	$tablename=$value['table'];
 	$qualified=$value['test'];
+	
 	if ($qualified)
 	{
 		print '<br>';
 
 		print_titre($langs->trans($title));
-
+		
 		$selectList=$formproject->select_element($tablename);
+		if ($selectList<0) {
+			setEventMessage($formproject->error,'errors');
+		}
+		
 		if ($selectList)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
@@ -231,7 +246,7 @@ foreach ($listofreferent as $key => $value)
 			print '</form>';
 		}
 		print '<table class="noborder" width="100%">';
-
+		
 		print '<tr class="liste_titre">';
 		print '<td width="100">'.$langs->trans("Ref").'</td>';
 		print '<td width="100" align="center">'.$langs->trans("Date").'</td>';
@@ -254,6 +269,12 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch_thirdparty();
 				//print $classname;
 
+				$qualifiedfortotal=true;
+				if ($key == 'invoice')
+				{
+					if ($element->close_code == 'replaced') $qualifiedfortotal=false;	// Replacement invoice
+				}
+				
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
 
@@ -275,18 +296,35 @@ foreach ($listofreferent as $key => $value)
 				print '</td>';
 
                 // Amount
-				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ht)?price($element->total_ht):'&nbsp;').'</td>';
+				if (empty($value['disableamount'])) 
+				{
+					print '<td align="right">';
+					if (! $qualifiedfortotal) print '<strike>';
+					print (isset($element->total_ht)?price($element->total_ht):'&nbsp;');
+					if (! $qualifiedfortotal) print '</strike>';
+					print '</td>';
+				}
 
                 // Amount
-				if (empty($value['disableamount'])) print '<td align="right">'.(isset($element->total_ttc)?price($element->total_ttc):'&nbsp;').'</td>';
+				if (empty($value['disableamount'])) 
+				{
+					print '<td align="right">';
+					if (! $qualifiedfortotal) print '<strike>';
+					print (isset($element->total_ttc)?price($element->total_ttc):'&nbsp;');
+					if (! $qualifiedfortotal) print '</strike>';
+					print '</td>';
+				}
 
 				// Status
 				print '<td align="right">'.$element->getLibStatut(5).'</td>';
 
 				print '</tr>';
 
-				$total_ht = $total_ht + $element->total_ht;
-				$total_ttc = $total_ttc + $element->total_ttc;
+				if ($qualifiedfortotal)
+				{
+					$total_ht = $total_ht + $element->total_ht;
+					$total_ttc = $total_ttc + $element->total_ttc;
+				}
 			}
 
 			print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Number").': '.$i.'</td>';
@@ -370,9 +408,11 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($elementarray[$i]);
 				$element->fetch_thirdparty();
 				//print $classname;
-
-				$total_ht = $total_ht + $element->total_ht;
-				$total_ttc = $total_ttc + $element->total_ttc;
+				if ($qualified)
+				{
+					$total_ht = $total_ht + $element->total_ht;
+					$total_ttc = $total_ttc + $element->total_ttc;
+				}
 			}
 
 			print '<tr >';

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Entrepot extends CommonObject
 {
-	public $element='label';
+	public $element='stock';
 	public $table_element='entrepot';
 
 	var $id;

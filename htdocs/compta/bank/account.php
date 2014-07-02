@@ -784,8 +784,8 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_total"><td align="left" colspan="8">';
 			if ($sep > 0) print '&nbsp;';	// If we had at least one line in future
 			else print $langs->trans("CurrentBalance");
-			print '</td>';
-			print '<td align="right" nowrap><b>'.price($total).'</b></td>';
+			print ' '.$object->currency_code.'</td>';
+			print '<td align="right" nowrap><b>'.price($total, 0, $langs, 0, 0, -1, $object->currency_code).'</b></td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}

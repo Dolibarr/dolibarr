@@ -329,14 +329,14 @@ class FileUpload
 			$file->error = 'minFileSize';
 			return false;
 		}
-		if (is_int($this->options['max_number_of_files']) && (
+		if (is_numeric($this->options['max_number_of_files']) && (
 				count($this->getFileObjects()) >= $this->options['max_number_of_files'])
 		) {
 			$file->error = 'maxNumberOfFiles';
 			return false;
 		}
 		list($img_width, $img_height) = @getimagesize($uploaded_file);
-		if (is_int($img_width)) {
+		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {
 				$file->error = 'maxResolution';

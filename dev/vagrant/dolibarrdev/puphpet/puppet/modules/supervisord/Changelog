@@ -1,0 +1,50 @@
+2013-10-31 - v0.2.3
+
+Fixes:
+
+- Fixed large bug on debian wheezy where /var/run is changed from a symlink to a 
+  directory causing all pids to be inaccessible breaking lots of services
+
+
+2013-10-30 - v0.2.2
+
+Fixes:
+
+- Fixed syntax error in README examples and tests
+
+2013-10-16 - v0.2.1
+
+Fixes:
+
+- Fixed user params in templates
+- Added missing environment support in main supervisord.conf
+
+
+2013-10-15 - v0.2.0
+
+Feature complete release
+
+- Added Eventlistener template and function
+- Added FGCI-Program template and function
+- More consistent log naming and fixed missing new lines
+
+
+2013-10-15 - v0.1.1
+
+Fixes:
+
+- Missing '=' in template tags when using certain parameters
+- Added log file default to program define to avoid /tmp being used when not specified
+- Fixed logic when not using environment variables in program
+
+
+2013-10-15 - v0.1.0
+
+Summary:
+
+Completed basic module functionality for
+
+- Install with pip
+- Configure programs
+- Configure groups
+- Install init scripts for RedHat and Debian families 

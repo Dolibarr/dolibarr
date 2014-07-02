@@ -1,0 +1,12 @@
+<% if @php_admin_values and not @php_admin_values.empty? -%>
+<% @php_admin_values.each do |key,value| -%>
+  php_admin_value <%= key %> <%= value %>
+<% end -%>
+<% end -%>
+<% if @php_admin_flags and not @php_admin_flags.empty? -%>
+<% @php_admin_flags.each do |key,flag| -%>
+<%# normalize flag -%>
+<% if flag =~ /true|yes|on|1/i then flag = 'on' else flag = 'off' end -%>
+  php_admin_flag <%= key %> <%= flag %>
+<% end -%>
+<% end -%>

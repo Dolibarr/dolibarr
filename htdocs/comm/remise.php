@@ -130,7 +130,7 @@ if ($socid > 0)
 
 	// Nouvelle valeur
 	print '<tr><td colspan="2">';
-	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:$objsoc->remise_percent).'">%</td></tr>';
+	print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.($_POST["remise"]?$_POST["remise"]:'').'">%</td></tr>';
 
 	// Motif/Note
 	print '<tr><td colspan="2" width="25%">';
@@ -155,9 +155,9 @@ if ($socid > 0)
 
 
 	/*
-	 * Liste de l'historique des avoirs
+	 * List log of all percent discounts
 	 */
-	$sql  = "SELECT rc.rowid,rc.remise_client,rc.note, rc.datec as dc,";
+	$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
 	$sql.= " u.login, u.rowid as user_id";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
 	$sql.= " WHERE rc.fk_soc =". $objsoc->id;

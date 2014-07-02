@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,7 +270,7 @@ class Product extends CommonObject
 
         // Barcode value
         $this->barcode=trim($this->barcode);
-		
+
         // Check parameters
 		if (empty($this->libelle))
 		{
@@ -309,11 +310,11 @@ class Product extends CommonObject
 
         // For automatic creation during create action (not used by Dolibarr GUI, can be used by scripts)
 		if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
-		
+
 		// Check more parameters
         // If error, this->errors[] is filled
         $result = $this->verify();
-        
+
         if ($result >= 0)
         {
 			$sql = "SELECT count(*) as nb";
@@ -520,7 +521,7 @@ class Product extends CommonObject
             }
 
             $mod = new $module();
-            
+
             dol_syslog(get_class($this)."::check_barcode value=".$valuetotest." type=".$typefortest." module=".$module);
             $result = $mod->verif($this->db, $valuetotest, $this, 0, $typefortest);
             return $result;
@@ -586,7 +587,7 @@ class Product extends CommonObject
         {
         	$result = $this->verify();	// We don't check when update called during a create because verify was already done
         }
-        
+
         if ($result >= 0)
         {
 	        // For automatic creation
@@ -600,7 +601,7 @@ class Product extends CommonObject
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
 			$sql.= ", localtax2_tx = " . $this->localtax2_tx;
-				
+
 			$sql.= ", barcode = ". (empty($this->barcode)?"null":"'".$this->db->escape($this->barcode)."'");
 			$sql.= ", fk_barcode_type = ". (empty($this->barcode_type)?"null":$this->db->escape($this->barcode_type));
 
@@ -627,8 +628,9 @@ class Product extends CommonObject
 			$sql.= ", accountancy_code_sell= '" . $this->accountancy_code_sell."'";
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= " WHERE rowid = " . $id;
-				
+
 			dol_syslog(get_class($this)."update", LOG_DEBUG);
+
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -681,7 +683,7 @@ class Product extends CommonObject
 						if (file_exists($olddir))
 						{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=@dol_move($olddir, $newdir);
+							$res=dol_move($olddir, $newdir);
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
@@ -857,7 +859,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *	Update ou cree les traductions des infos produits
+	 *	Update or add a translation for a product
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
@@ -932,6 +934,30 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 *	Delete a language for this product
+	 *
+	 *  @param		string	$langtodelete		Language code to delete
+	 *	@return		int							<0 if KO, >0 if OK
+	 */
+	function delMultiLangs($langtodelete)
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
+		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
+
+		dol_syslog(get_class($this).'::delMultiLangs sql='.$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 *	Load array this->multilangs
@@ -969,7 +995,7 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+			$this->error="Error: ".$this->db->error()." - ".$sql;
 			return -1;
 		}
 	}

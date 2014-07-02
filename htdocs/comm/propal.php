@@ -178,7 +178,8 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->pr
 		}
 	} else {
 		$langs->load("errors");
-		setEventMessage($langs->trans($object->error), 'errors');
+		if (count($object->errors) > 0) setEventMessage($object->errors, 'errors');
+		else setEventMessage($langs->trans($object->error), 'errors');
 	}
 }
 
@@ -236,11 +237,13 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 		$error ++;
 	}
 
-	if (! $error) {
+	if (! $error)
+	{
 		$db->begin();
 
 		// Si on a selectionne une propal a copier, on realise la copie
-		if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal')) {
+		if (GETPOST('createmode') == 'copy' && GETPOST('copie_propal'))
+		{
 			if ($object->fetch(GETPOST('copie_propal')) > 0) {
 				$object->ref = GETPOST('ref');
 				$object->datep = $datep;
@@ -286,7 +289,8 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->origin = GETPOST('origin');
 			$object->origin_id = GETPOST('originid');
 
-			for($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i ++) {
+			for($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i ++)
+			{
 				if ($_POST ['idprod' . $i]) {
 					$xid = 'idprod' . $i;
 					$xqty = 'qty' . $i;
@@ -303,8 +307,137 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			}
 		}
 
-		if (! $error) {
-			$id = $object->create($user);
+		if (! $error)
+		{
+			if ($origin && $originid)
+			{
+				// Parse element/subelement (ex: project_task)
+				$element = $subelement = $origin;
+				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+					$element = $regs [1];
+					$subelement = $regs [2];
+				}
+
+				// For compatibility
+				if ($element == 'order') {
+					$element = $subelement = 'commande';
+				}
+				if ($element == 'propal') {
+					$element = 'comm/propal';
+					$subelement = 'propal';
+				}
+				if ($element == 'contract') {
+					$element = $subelement = 'contrat';
+				}
+				if ($element == 'inter') {
+					$element = $subelement = 'ficheinter';
+				}
+				if ($element == 'shipping') {
+					$element = $subelement = 'expedition';
+				}
+
+				$object->origin = $origin;
+				$object->origin_id = $originid;
+
+				// Possibility to add external linked objects with hooks
+				$object->linked_objects [$object->origin] = $object->origin_id;
+				if (is_array($_POST['other_linked_objects']) && ! empty($_POST['other_linked_objects'])) {
+					$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
+				}
+
+				$id = $object->create($user);
+
+				if ($id > 0)
+				{
+						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+
+						$classname = ucfirst($subelement);
+						$srcobject = new $classname($db);
+
+						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
+						$result = $srcobject->fetch($object->origin_id);
+
+						if ($result > 0)
+						{
+							$lines = $srcobject->lines;
+							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) $lines = $srcobject->fetch_lines();
+
+							$fk_parent_line=0;
+							$num=count($lines);
+							for ($i=0;$i<$num;$i++)
+							{
+								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
+								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
+
+									// Positive line
+									$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+
+									// Date start
+									$date_start = false;
+									if ($lines[$i]->date_debut_prevue)
+										$date_start = $lines[$i]->date_debut_prevue;
+									if ($lines[$i]->date_debut_reel)
+										$date_start = $lines[$i]->date_debut_reel;
+									if ($lines[$i]->date_start)
+										$date_start = $lines[$i]->date_start;
+
+										// Date end
+									$date_end = false;
+									if ($lines[$i]->date_fin_prevue)
+										$date_end = $lines[$i]->date_fin_prevue;
+									if ($lines[$i]->date_fin_reel)
+										$date_end = $lines[$i]->date_fin_reel;
+									if ($lines[$i]->date_end)
+										$date_end = $lines[$i]->date_end;
+
+										// Reset fk_parent_line for no child products and special product
+									if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
+										$fk_parent_line = 0;
+									}
+
+									// Extrafields
+									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$array_option = $lines[$i]->array_options;
+									}
+
+									$tva_tx=get_default_tva($mysoc, $object->thirdparty);
+
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $date_start, $date_end, $array_option);
+
+									if ($result > 0) {
+										$lineid = $result;
+									} else {
+										$lineid = 0;
+										$error ++;
+										break;
+									}
+
+									// Defined the new fk_parent_line
+									if ($result > 0 && $lines[$i]->product_type == 9) {
+										$fk_parent_line = $result;
+									}
+							}
+
+							// Hooks
+							$parameters = array('objFrom' => $srcobject);
+							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+							                                                                               // modified by hook
+							if ($reshook < 0)
+								$error ++;
+						} else {
+							$mesgs [] = $srcobject->error;
+							$error ++;
+						}
+				} else {
+					$mesgs [] = $object->error;
+					$error ++;
+				}
+			} 			// Standard creation
+			else
+			{
+				$id = $object->create($user);
+			}
 
 			if ($id > 0) {
 				// Insertion contact par defaut si defini
@@ -472,8 +605,8 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					$interface = new Interfaces($db);
 					$result = $interface->run_triggers('PROPAL_SENTBYMAIL', $object, $user, $langs, $conf);
 					if ($result < 0) {
-						$error ++;
-						$this->errors = $interface->errors;
+						$error++;
+						$object->errors = $interface->errors;
 					}
 					// Fin appel triggers
 
@@ -609,12 +742,17 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
 				// On defini prix unitaire
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level) {
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && $object->client->price_level)
+				{
 					$pu_ht = $prod->multiprices [$object->client->price_level];
 					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
 					$price_min = $prod->multiprices_min [$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-				} elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 					$prodcustprice = new Productcustomerprice($db);
@@ -631,7 +769,9 @@ else if ($action == 'addline' && $user->rights->propal->creer) {
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1097,6 +1237,61 @@ if ($action == 'create') {
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
+	// Load objectsrc
+	if (! empty($origin) && ! empty($originid))
+	{
+		// Parse element/subelement (ex: project_task)
+		$element = $subelement = $origin;
+		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+			$element = $regs [1];
+			$subelement = $regs [2];
+		}
+
+		if ($element == 'project') {
+			$projectid = $originid;
+		} else {
+			// For compatibility
+			if ($element == 'order' || $element == 'commande') {
+				$element = $subelement = 'commande';
+			}
+			if ($element == 'propal') {
+				$element = 'comm/propal';
+				$subelement = 'propal';
+			}
+			if ($element == 'contract') {
+				$element = $subelement = 'contrat';
+			}
+			if ($element == 'shipping') {
+				$element = $subelement = 'expedition';
+			}
+
+			dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+
+			$classname = ucfirst($subelement);
+			$objectsrc = new $classname($db);
+			$objectsrc->fetch($originid);
+			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+				$objectsrc->fetch_lines();
+			$objectsrc->fetch_thirdparty();
+
+			$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
+			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
+
+			$soc = $objectsrc->thirdparty;
+
+			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
+			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
+			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
+
+			// Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options = $objectsrc->array_options;
+		}
+	}
+
 	$object = new Propal($db);
 
 	print '<form name="addprop" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -1235,16 +1430,62 @@ if ($action == 'create') {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
-	print "</table>";
+
+	// Lines from source
+	if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
+	{
+		// TODO for compatibility
+		if ($origin == 'contrat') {
+			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
+			$objectsrc->remise_absolue = $remise_absolue;
+			$objectsrc->remise_percent = $remise_percent;
+			$objectsrc->update_price(1, - 1, 1);
+		}
+
+		print "\n<!-- " . $classname . " info -->";
+		print "\n";
+		print '<input type="hidden" name="amount"         value="' . $objectsrc->total_ht . '">' . "\n";
+		print '<input type="hidden" name="total"          value="' . $objectsrc->total_ttc . '">' . "\n";
+		print '<input type="hidden" name="tva"            value="' . $objectsrc->total_tva . '">' . "\n";
+		print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
+		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
+
+		$newclassname = $classname;
+		if ($newclassname == 'Propal')
+			$newclassname = 'CommercialProposal';
+		elseif ($newclassname == 'Commande')
+			$newclassname = 'Order';
+		elseif ($newclassname == 'Expedition')
+			$newclassname = 'Sending';
+		elseif ($newclassname == 'Fichinter')
+			$newclassname = 'Intervention';
+
+		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
+		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
+		}
+
+		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		{
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
+		}
+		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
+	}
+
+	print "</table>\n";
+
+
 	print '<br>';
+
 
 	/*
 	 * Combobox pour la fonction de copie
  	 */
 
-	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) {
-		print '<input type="hidden" name="createmode" value="empty">';
-	}
+	if (empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
 
 	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<table>';
 	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE))
@@ -1288,7 +1529,8 @@ if ($action == 'create') {
 		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyPropal") . '</td></tr>';
 	}
 
-	if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) {
+	if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
+	{
 		print '<tr><td colspan="3">';
 		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
 			$lib = $langs->trans("ProductsAndServices");
@@ -1317,6 +1559,7 @@ if ($action == 'create') {
 	}
 	if (! empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table><br>';
 
+
 	$langs->load("bills");
 	print '<center>';
 	print '<input type="submit" class="button" value="' . $langs->trans("CreateDraft") . '">';
@@ -1324,6 +1567,22 @@ if ($action == 'create') {
 	print '</center>';
 
 	print "</form>";
+
+
+	// Show origin lines
+	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+		print '<br>';
+
+		$title = $langs->trans('ProductsAndServices');
+		print_titre($title);
+
+		print '<table class="noborder" width="100%">';
+
+		$objectsrc->printOriginLinesList();
+
+		print '</table>';
+	}
+
 } else {
 	/*
 	 * Show object in view mode
@@ -1975,15 +2234,18 @@ if ($action == 'create') {
 		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref, '/'));
 		$file = $fileparams ['fullname'];
 
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file)) {
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -2004,6 +2266,7 @@ if ($action == 'create') {
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid = $user->id;
 		$formmail->fromname = $user->getFullName($langs);

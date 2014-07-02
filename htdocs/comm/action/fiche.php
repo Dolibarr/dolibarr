@@ -395,7 +395,7 @@ $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form = new Form($db);
-$htmlactions = new FormActions($db);
+$formactions = new FormActions($db);
 
 if ($action == 'create')
 {
@@ -467,7 +467,7 @@ if ($action == 'create')
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$htmlactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 		print '</td></tr>';
 	}
 	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
@@ -512,7 +512,7 @@ if ($action == 'create')
 		if (GETPOST("afaire") == 1) $percent=0;
 		else if (GETPOST("afaire") == 2) $percent=100;
 	}
-	$htmlactions->form_select_status_action('formaction',$percent,1,'complete');
+	$formactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';
 
     // Location
@@ -532,7 +532,7 @@ if ($action == 'create')
 
 	// Busy
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
-	print '<input id="transparency" type="checkbox" name="transparency"'.($actioncomm->transparency?' checked="checked"':'').'>';
+	print '<input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'>';
 	print '</td></tr>';
 
 	// Realised by
@@ -740,7 +740,7 @@ if ($id > 0)
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
-			$htmlactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+			$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 			print '</td></tr>';
 		}
 
@@ -766,7 +766,7 @@ if ($id > 0)
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=GETPOST("percentage")?GETPOST("percentage"):$object->percentage;
-		$htmlactions->form_select_status_action('formaction',$percent,1);
+		$formactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 
         // Location
@@ -1049,7 +1049,7 @@ if ($id > 0)
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";
 			}
-			print '</table><br><br>';
+			print '</table>';
 		}
 
 		dol_fiche_end();

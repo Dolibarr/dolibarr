@@ -1,0 +1,53 @@
+% This file managed by Puppet
+% Template Path: <%= @module_name %>/templates/rabbitmq.config
+[
+  {rabbit, [
+<% if @ldap_auth -%>
+    {auth_backends, [rabbit_auth_backend_internal, rabbit_auth_backend_ldap]},
+<% end -%>
+<% if @config_cluster -%>
+    {cluster_nodes, {[<%= @r_cluster_nodes.map { |n| "\'rabbit@#{n}\'" }.join(', ') %>], <%= @cluster_node_type %>}},
+    {cluster_partition_handling, <%= @cluster_partition_handling %>},
+<% end -%>
+<%- if @ssl %>
+    {ssl_listeners, [<%= @ssl_management_port %>]},
+    {ssl_options, [{cacertfile,"<%= @ssl_cacert %>"},
+                    {certfile,"<%= @ssl_cert %>"},
+                    {keyfile,"<%= @ssl_key %>"},
+                    {verify,<%= @ssl_verify %>},
+                    {fail_if_no_peer_cert,<%= @ssl_fail_if_no_peer_cert %>}]},
+<%- end -%>
+<% if @config_variables -%>
+<%- @config_variables.keys.sort.each do |key| -%>
+    {<%= key %>, <%= @config_variables[key] %>},
+<%- end -%>
+<%- end -%>
+    {default_user, <<"<%= @default_user %>">>},
+    {default_pass, <<"<%= @default_pass %>">>}
+  ]}<% if @config_kernel_variables -%>,
+  {kernel, [
+    <%= @config_kernel_variables.sort.map{|k,v| "{#{k}, #{v}}"}.join(",\n    ") %>
+  ]}
+<%- end -%>
+<% if @config_stomp -%>,
+% Configure the Stomp Plugin listening port
+  {rabbitmq_stomp, [
+    {tcp_listeners, [<%= @stomp_port %>]}
+  <%- if @ssl_stomp_port -%>,
+    {ssl_listeners, [<%= @ssl_stomp_port %>]}
+  <%- end -%>
+  ]}
+<%- if @ldap_auth -%>,
+% Configure the LDAP authentication plugin
+  {rabbitmq_auth_backend_ldap, [
+    {other_bind, anon},
+    {servers, ["<%= @ldap_server %>"]},
+    {user_dn_pattern, "<%= @ldap_user_dn_pattern %>"},
+    {use_ssl, <%= @ldap_use_ssl %>},
+    {port, <%= @ldap_port %>},
+    {log, <%= @ldap_log %>}
+  ]}
+<% end -%>
+<%- end -%>
+].
+% EOF

@@ -83,6 +83,8 @@ class Project extends CommonObject
         $error = 0;
         $ret = 0;
 
+        $now=dol_now();
+
         // Check parameters
         if (!trim($this->ref))
         {
@@ -113,9 +115,9 @@ class Project extends CommonObject
         $sql.= ", " . $user->id;
         $sql.= ", 0";
         $sql.= ", " . ($this->public ? 1 : 0);
-        $sql.= ", " . $this->db->idate(dol_now());
-        $sql.= ", " . ($this->date_start != '' ? $this->db->idate($this->date_start) : 'null');
-        $sql.= ", " . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
+        $sql.= ", '".$this->db->idate($now)."'";
+        $sql.= ", " . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
+        $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -246,8 +248,9 @@ class Project extends CommonObject
                 		$newdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($this->ref);
                 		if (file_exists($olddir))
                 		{
-                			$res=@dol_move($olddir, $newdir);
-                			if (! $res)
+							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+							$res=dol_move($olddir, $newdir);
+							if (! $res)
                 			{
                 				$this->error='ErrorFailToMoveDir';
                 				$error++;

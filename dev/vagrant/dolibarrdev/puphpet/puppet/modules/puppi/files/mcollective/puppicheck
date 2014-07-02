@@ -1,0 +1,22 @@
+#!/bin/bash
+# File Managed by Puppet
+PATH=$PATH:/usr/local/bin
+
+if [ ! $1 ] ; then
+    echo "Provide at least a match pattern. For example:"
+    echo "role=fep-pgol"
+    exit 1
+fi
+
+filtered=$(echo $* | sed "s/[^a-Z0-9= _.\-]//Ig")
+
+randfile="$(mktemp)"
+
+trap "rm -f $randfile" SIGINT SIGTERM EXIT
+
+myarg=$(echo $filtered | sed -e "s/ / -F /g")
+
+mc-puppi check -F $myarg | tee $randfile
+grep FAILED $randfile && exit 1
+exit 0
+

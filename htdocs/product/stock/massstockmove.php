@@ -252,7 +252,6 @@ print '<table class="liste" width="100%">';
 
 print '<tr class="liste_titre">';
 print getTitleFieldOfList($langs->trans('ProductRef'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
-print getTitleFieldOfList($langs->trans('ProductLabel'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('WarehouseSource'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('WarehouseTarget'),0,$_SERVER["PHP_SELF"],'',$param,'','class="tagtd"',$sortfield,$sortorder);
 print getTitleFieldOfList($langs->trans('Qty'),0,$_SERVER["PHP_SELF"],'',$param,'','align="center" class="tagtd"',$sortfield,$sortorder);
@@ -262,7 +261,7 @@ print '</tr>';
 
 print '<tr '.$bc[$var].'>';
 // Product
-print '<td colspan="2">';
+print '<td>';
 $filtertype=0;
 if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype='';
 if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
@@ -272,7 +271,7 @@ if ($conf->global->PRODUIT_LIMIT_SIZE <= 0)
 else
 {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
-}	
+}
 print $form->select_produits($id_product,'productid',$filtertype,$limit);
 print '</td>';
 // In warehouse

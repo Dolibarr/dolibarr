@@ -701,7 +701,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 		$filename = $attachedfiles['names'];
 		$mimetype = $attachedfiles['mimes'];
 
-		// Envoi de la propal
+		// Send by email
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 		if ($mailfile->error)
@@ -730,7 +730,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 				$interface=new Interfaces($db);
 				$result=$interface->run_triggers('FICHINTER_SENTBYMAIL',$object,$user,$langs,$conf);
 				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
+					$error++; $object->errors=$interface->errors;
 				}
 				// Fin appel triggers
 
@@ -1301,7 +1301,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	print "</table><br>";
+	print "</table>";
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1318,7 +1318,6 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 
-
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -1332,9 +1331,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<input type="hidden" name="action" value="addline">';
 	}
 
-	/*
-	 * Lignes d'intervention
-	 */
+	// Intervention lines
 	$sql = 'SELECT ft.rowid, ft.description, ft.fk_fichinter, ft.duree, ft.rang,';
 	$sql.= ' ft.date as date_intervention';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet as ft';
@@ -1349,6 +1346,7 @@ else if ($id > 0 || ! empty($ref))
 
 		if ($num)
 		{
+			print '<br>';
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -1419,7 +1417,7 @@ else if ($id > 0 || ! empty($ref))
 				print '</tr>';
 			}
 
-			// Ligne en mode update
+			// Line in update mode
 			if ($object->statut == 0 && $action == 'editline' && $user->rights->ficheinter->creer && GETPOST('line_id','int') == $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
@@ -1452,10 +1450,8 @@ else if ($id > 0 || ! empty($ref))
 
 		$db->free($resql);
 
-		/*
-		 * Add line
-		*/
-		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
+		// Add new line
+		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
 			if (! $num) print '<br><table class="noborder" width="100%">';
 
@@ -1483,14 +1479,16 @@ else if ($id > 0 || ! empty($ref))
 			print '<td align="center" class="nowrap">';
 			$now=dol_now();
 			$timearray=dol_getdate($now);
-			if (!GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
+			if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 			else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
 			$form->select_date($timewithnohour,'di',1,1,0,"addinter");
 			print '</td>';
 
 			// Duration
 			print '<td align="right">';
-			$form->select_duration('duration',(!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')));
+			$selectmode='select';
+			if (! empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION)) $selectmode='text';
+			$form->select_duration('duration', (!GETPOST('durationhour','int') && !GETPOST('durationmin','int'))?3600:(60*60*GETPOST('durationhour','int')+60*GETPOST('durationmin','int')), 0, $selectmode, 1);
 			print '</td>';
 
 			print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
@@ -1513,8 +1511,8 @@ else if ($id > 0 || ! empty($ref))
 
 
 	/*
-	 * Barre d'actions
-	*/
+	 * Actions buttons
+	 */
 	print '<div class="tabsAction">';
 
 	if ($user->societe_id == 0)
@@ -1522,7 +1520,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($action != 'editdescription' && ($action != 'presend'))
 		{
 			// Validate
-			if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
+			if ($object->statut == 0 && $user->rights->ficheinter->creer && (count($object->lines) > 0 || ! empty($conf->global->FICHINTER_DISABLE_DETAILS)))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
 				print '>'.$langs->trans("Valid").'</a></div>';
@@ -1543,6 +1541,17 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
 				}
 				else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
+			}
+
+			// Proposal
+			if (! empty($conf->propal->enabled) && $object->statut > 0)
+			{
+				$langs->load("propal");
+				if ($object->statut < 2)
+				{
+					if ($user->rights->propal->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
+				}
 			}
 
 			// Invoicing
@@ -1584,7 +1593,7 @@ else if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Built documents
-		*/
+		 */
 		$filename=dol_sanitizeFileName($object->ref);
 		$filedir=$conf->ficheinter->dir_output . "/".$object->ref;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -1618,7 +1627,7 @@ else if ($id > 0 || ! empty($ref))
 
 	/*
 	 * Action presend
-	*/
+	 */
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1626,14 +1635,17 @@ else if ($id > 0 || ! empty($ref))
 		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
 
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
@@ -1656,6 +1668,7 @@ else if ($id > 0 || ! empty($ref))
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);

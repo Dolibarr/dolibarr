@@ -104,18 +104,30 @@ $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action
 include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
 // Action clone object
-if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer) {
-	if (1 == 0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers')) {
-		$mesg = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
-	} else {
-		if ($object->id > 0) {
-			$result = $object->createFromClone($socid);
-			if ($result > 0) {
-				header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
-				exit();
-			} else {
-				$mesg = '<div class="error">' . $object->error . '</div>';
-				$action = '';
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->creer)
+{
+	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
+		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+	}
+	else
+	{
+		if ($object->id > 0)
+		{
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = dol_clone($object);
+
+			$result=$object->createFromClone($socid);
+			if ($result > 0)
+			{
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+				exit;
+			}
+			else
+			{
+				setEventMessage($object->error, 'errors');
+				$object = $orig;
+				$action='';
 			}
 		}
 	}
@@ -125,11 +137,14 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 else if ($action == 'reopen' && $user->rights->commande->creer) {
 	if ($object->statut == 3) {
 		$result = $object->set_reopen($user);
-		if ($result > 0) {
-			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-			exit();
-		} else {
-			$mesg = '<div class="error">' . $object->error . '</div>';
+		if ($result > 0)
+		{
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		}
+		else
+		{
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -139,9 +154,10 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 	$result = $object->delete($user);
 	if ($result > 0) {
 		header('Location: index.php');
-		exit();
-	} else {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		exit;
+	}
+	else {
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -165,10 +181,12 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
-		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
-		exit();
-	} else {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+		exit;
+	}
+	else
+	{
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -382,8 +400,13 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 	}
 }
 
-else if ($action == 'classifybilled' && $user->rights->commande->creer) {
-	$ret = $object->classifyBilled();
+else if ($action == 'classifybilled' && $user->rights->commande->creer)
+{
+	$ret=$object->classifyBilled();
+
+	if ($ret < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 // Positionne ref commande client
@@ -552,12 +575,17 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
 
 				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level)) {
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
+				{
 					$pu_ht = $prod->multiprices [$object->client->price_level];
 					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
 					$price_min = $prod->multiprices_min [$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-				} elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+				}
+				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				{
 					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 					$prodcustprice = new Productcustomerprice($db);
@@ -574,7 +602,9 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 							$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
 						}
 					}
-				} else {
+				}
+				else
+				{
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -832,12 +862,24 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->commande->valider) {
 	$idwarehouse = GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1)) {
-		if (! $idwarehouse || $idwarehouse == - 1) {
-			$error ++;
-			$mesgs [] = '<div class="error">' . $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")) . '</div>';
-			$action = '';
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
+	{
+		if (! $idwarehouse || $idwarehouse == -1)
+		{
+			$error++;
+			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			$action='';
 		}
 	}
 
@@ -865,12 +907,24 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 	$idwarehouse = GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1)) {
-		if (! $idwarehouse || $idwarehouse == - 1) {
-			$error ++;
-			$mesgs [] = '<div class="error">' . $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")) . '</div>';
-			$action = '';
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
+	{
+		if (! $idwarehouse || $idwarehouse == -1)
+		{
+			$error++;
+			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			$action='';
 		}
 	}
 
@@ -898,24 +952,41 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 
 else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer) {
 	$result = $object->cloture($user);
-	if ($result < 0)
-		$mesgs = $object->errors;
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider) {
 	$idwarehouse = GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1)) {
-		if (! $idwarehouse || $idwarehouse == - 1) {
-			$error ++;
-			$mesgs [] = '<div class="error">' . $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")) . '</div>';
-			$action = '';
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
+	{
+		if (! $idwarehouse || $idwarehouse == -1)
+		{
+			$error++;
+			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			$action='';
 		}
 	}
 
 	if (! $error) {
 		$result = $object->cancel($idwarehouse);
+
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
 	}
 }
 
@@ -1628,8 +1699,20 @@ if ($action == 'create' && $user->rights->commande->creer) {
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('ORDER_VALIDATE', $object->socid);
 			}
-			$formquestion = array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1)) {
+
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
+			$formquestion=array();
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
+			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -1646,10 +1729,22 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		}
 
 		// Confirm back to draft status
-		if ($action == 'modif') {
-			$text = $langs->trans('ConfirmUnvalidateOrder', $object->ref);
-			$formquestion = array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1)) {
+		if ($action == 'modif')
+		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
+			$text=$langs->trans('ConfirmUnvalidateOrder',$object->ref);
+			$formquestion=array();
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
+			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -1674,11 +1769,23 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 		/*
 		 * Confirmation de l'annulation
-		*/
-		if ($action == 'cancel') {
-			$text = $langs->trans('ConfirmCancelOrder', $object->ref);
-			$formquestion = array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1)) {
+		 */
+		if ($action == 'cancel')
+		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
+			$text=$langs->trans('ConfirmCancelOrder',$object->ref);
+			$formquestion=array();
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
+			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
@@ -1696,9 +1803,10 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
 		/*
 		 * Confirmation de la suppression d'une ligne produit
-		*/
-		if ($action == 'ask_deleteline') {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		 */
+		if ($action == 'ask_deleteline')
+		{
+			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
 		// Clone confirmation
@@ -2270,16 +2378,18 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/'));
 			$file = $fileparams ['fullname'];
+			
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+				$newlang = $_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+				$newlang = $object->client->default_lang;
 
 			// Build document if it not exists
 			if (! $file || ! is_readable($file)) {
-				// Define output language
-				$outputlangs = $langs;
-				$newlang = '';
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-					$newlang = $_REQUEST['lang_id'];
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-					$newlang = $object->client->default_lang;
+				
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -2300,6 +2410,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			// Cree l'objet formulaire mail
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
+			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 			$formmail->fromtype = 'user';
 			$formmail->fromid = $user->id;
 			$formmail->fromname = $user->getFullName($langs);

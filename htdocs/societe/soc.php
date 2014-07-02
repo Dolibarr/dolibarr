@@ -432,11 +432,11 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-                	if (! $this->db->query($sql))
+                	dol_syslog(get_class($object)."::delete", LOG_DEBUG);
+                	if (! $object->db->query($sql))
                 	{
                 		$error++;
-                		$this->error .= $this->db->lasterror();
+                		$object->error .= $object->db->lasterror();
                 	}
                 }
 
@@ -1894,10 +1894,19 @@ else
 
 			print '<br>';
 			print_titre($langs->trans($titreform));
+			
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+				$newlang = $_REQUEST['lang_id'];
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+				$newlang = $object->client->default_lang;
 
 			// Cree l'objet formulaire mail
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
+			$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 			$formmail->fromtype = 'user';
 			$formmail->fromid   = $user->id;
 			$formmail->fromname = $user->getFullName($langs);

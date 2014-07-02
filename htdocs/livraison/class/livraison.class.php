@@ -672,7 +672,7 @@ class Livraison extends CommonObject
 	{
 		$this->lines = array();
 
-		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped,";
+		$sql = "SELECT ld.rowid, ld.fk_product, ld.description, ld.subprice, ld.total_ht, ld.qty as qty_shipped, ld.fk_origin_line, ";
 		$sql.= " cd.qty as qty_asked, cd.label as custom_label,";
 		$sql.= " p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."livraisondet as ld";
@@ -704,6 +704,7 @@ class Livraison extends CommonObject
 				$line->product_ref		= $obj->product_ref;		// Product ref
 				$line->product_desc		= $obj->product_desc;		// Product description
 				$line->product_type		= $obj->fk_product_type;
+				$line->fk_origin_line 	= $obj->fk_origin_line;
 
 				$line->price			= $obj->price;
 				$line->total_ht			= $obj->total_ht;
