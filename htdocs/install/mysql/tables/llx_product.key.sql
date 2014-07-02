@@ -28,3 +28,7 @@ ALTER TABLE llx_product ADD INDEX idx_product_seuil_stock_alerte (seuil_stock_al
 
 ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode_type, entity);
 
+ALTER TABLE llx_product ADD INDEX (  fk_country );
+ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_country ) REFERENCES  llx_c_pays (
+  rowid
+) ON DELETE RESTRICT ON UPDATE RESTRICT ;
