@@ -238,8 +238,8 @@ if ($action == 'add' && $canadduser)
         {
             $langs->load("errors");
             $db->rollback();
-            if (is_array($object->errors) && count($object->errors)) $message='<div class="error">'.join('<br>',$langs->trans($object->errors)).'</div>';
-            else $message='<div class="error">'.$langs->trans($object->error).'</div>';
+            if (is_array($object->errors) && count($object->errors)) setEventMessage($object->errors,'errors');
+            else setEventMessage($object->error);
             $action="create";       // Go back to create page
         }
 
