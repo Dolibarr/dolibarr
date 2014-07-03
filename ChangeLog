@@ -11,6 +11,7 @@ For users:
 - New: Add thirdparty to filter on events. 
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
+- Fix: [ bug #1489, #1491 ] Intervention trigger problem
 
 For translators:
 - Update language files.
