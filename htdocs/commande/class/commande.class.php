@@ -61,6 +61,7 @@ class Commande extends CommonOrder
     var $cond_reglement_id;
     var $cond_reglement_code;
     var $currency_code;
+    var $currency_rate;
     var $fk_account;
     var $mode_reglement_id;
     var $mode_reglement_code;
@@ -664,7 +665,7 @@ class Commande extends CommonOrder
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (";
         $sql.= " ref, fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_private, note_public, ref_client, ref_int";
-        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_currency, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
+        $sql.= ", model_pdf, fk_cond_reglement, fk_mode_reglement, fk_currency, currency_rate, fk_account, fk_availability, fk_input_reason, date_livraison, fk_delivery_address";
         $sql.= ", remise_absolue, remise_percent";
         $sql.= ", entity";
         $sql.= ")";
@@ -680,6 +681,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->cond_reglement_id>0?"'".$this->cond_reglement_id."'":"null");
         $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"null");
         $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
+        $sql.= ", ".(! empty($this->currency_rate) ? $this->currency_rate:1);
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->availability_id>0?"'".$this->availability_id."'":"null");
         $sql.= ", ".($this->demand_reason_id>0?"'".$this->demand_reason_id."'":"null");
@@ -995,6 +997,8 @@ class Commande extends CommonOrder
             $this->cond_reglement_id    = $object->cond_reglement_id;
             $this->mode_reglement_id    = $object->mode_reglement_id;
             $this->currency_code        = $object->currency_code;
+            $this->currency_rate        = $object->currency_rate;
+            $this->fk_account           = $object->fk_account;
             $this->availability_id      = $object->availability_id;
             $this->demand_reason_id     = $object->demand_reason_id;
             $this->date_livraison       = $object->date_livraison;
@@ -1100,13 +1104,10 @@ class Commande extends CommonOrder
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
-        if (! empty($conf->multicurrency->enabled) && $this->currency_code!=MAIN_MONNAIE)
+        if ($this->currency_code!=MAIN_MONNAIE && empty($this->origin))
         {
-            require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
-            $multi= new Multicurrency($db);
-            $rate = $multi->converter(MAIN_MONNAIE, $this->currency_code);
-            $pu_ht  = price2num($pu_ht * $rate);
-            $pu_ttc = price2num($pu_ttc * $rate);
+            $pu_ht  = price2num($pu_ht * $this->currency_rate);
+            $pu_ttc = price2num($pu_ttc * $this->currency_rate);
         }
     	$pa_ht=price2num($pa_ht);
         $txtva = price2num($txtva);
@@ -1354,6 +1355,7 @@ class Commande extends CommonOrder
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
         $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', c.fk_currency as currency_code';
+        $sql.= ', c.currency_rate';
         $sql.= ', ca.code as availability_code';
         $sql.= ', dr.code as demand_reason_code';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
@@ -1408,6 +1410,7 @@ class Commande extends CommonOrder
                 $this->cond_reglement		= $obj->cond_reglement_libelle;
                 $this->cond_reglement_doc	= $obj->cond_reglement_libelle_doc;
                 $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
+                $this->currency_rate        = (empty($obj->currency_rate))?1:$obj->currency_rate;             // currency rate
                 $this->fk_account           = $obj->fk_account;
                 $this->availability_id		= $obj->fk_availability;
                 $this->availability_code	= $obj->availability_code;

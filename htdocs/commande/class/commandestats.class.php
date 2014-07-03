@@ -61,6 +61,7 @@ class CommandeStats extends Stats
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode; 
+        $this->currency_rate='currency_rate';
         
 		if ($mode == 'customer')
 		{
@@ -142,7 +143,7 @@ class CommandeStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field."/c.".$this->currency_rate.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -164,7 +165,7 @@ class CommandeStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field."/c.".$this->currency_rate.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -184,7 +185,7 @@ class CommandeStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
+		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field."/c.".$this->currency_rate.") as total, AVG(".$this->field."/c.".$this->currency_rate.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;

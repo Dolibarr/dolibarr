@@ -228,6 +228,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
 		$object->mode_reglement_id = GETPOST('mode_reglement_id');
 		$object->currency_code = GETPOST('currency_code');
+        $object->currency_rate = GETPOST('currency_rate');
         $object->fk_account = GETPOST('fk_account', 'int');
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
@@ -1406,6 +1407,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$currency_code      = (!empty($objectsrc->currency_code)?$objectsrc->currency_code:(!empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE));
+			$currency_rate      = (!empty($objectsrc->currency_rate)?$objectsrc->currency_rate:(!empty($soc->currency_rate)?$soc->currency_rate:1));
 			$fk_account         = (!empty($objectsrc->fk_account)?$objectsrc->fk_account:(!empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
@@ -1427,6 +1429,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
 		$currency_code      = (! empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE);
+		$currency_rate      = (! empty($soc->currency_rate)?$soc->currency_rate:1);
 		$fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
 		$demand_reason_id   = $soc->demand_reason_id;
@@ -1446,7 +1449,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
-
+	print '<input type="hidden" name="currency_rate" value="' . $currency_rate . '">';
+	
 	print '<table class="border" width="100%">';
 
 	// Reference
@@ -2166,6 +2170,14 @@ if ($action == 'create' && $user->rights->commande->creer) {
         }
         print "</td>";
         print '</tr>';
+
+        // Currency rate
+        if ($object->currency_rate!=1)
+        {
+            print '<tr><td height="10" width="25%">' . $langs->trans('CurrencyRate') . '</td>';
+            print '<td align="right" class="nowrap">' . $object->currency_rate . '</td>';
+            print '<td></td>';
+        }
 
         // Bank Account
         print '<tr><td class="nowrap">';
