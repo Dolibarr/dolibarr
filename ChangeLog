@@ -12,6 +12,7 @@ For users:
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
+- Fix: [ bug #1492, #1493 ] Member trigger problem
 
 For translators:
 - Update language files.
