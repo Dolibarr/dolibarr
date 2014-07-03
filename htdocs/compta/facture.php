@@ -124,7 +124,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->c
 				header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $result);
 				exit();
 			} else {
-				$mesgs [] = $object->error;
+				setEventMessage($object->error, 'errors');
 				$action = '';
 			}
 		}
@@ -140,7 +140,7 @@ else if ($action == 'reopen' && $user->rights->facture->creer) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 			exit();
 		} else {
-			$mesgs [] = '<div class="error">' . $object->error . '</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -164,7 +164,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fact
 		header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
 		exit();
 	} else {
-		$mesgs [] = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
+		$action='';
 	}
 }
 
@@ -195,7 +196,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 			exit();
 		}
 	} else {
-		$mesgs [] = '<div clas="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 		$action = '';
 	}
 }
@@ -453,7 +454,8 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 
 		// On verifie si aucun paiement n'a ete effectue
 		if ($resteapayer == $object->total_ttc && $object->paye == 0 && $ventilExportCompta == 0) {
-			$object->set_draft($user, $idwarehouse);
+			$result=$object->set_draft($user, $idwarehouse);
+			if ($result<0) setEventMessage($object->error,'errors');
 
 			// Define output language
 			$outputlangs = $langs;
@@ -478,6 +480,7 @@ else if ($action == 'confirm_modif' && ((empty($conf->global->MAIN_USE_ADVANCED_
 else if ($action == 'confirm_paid' && $confirm == 'yes' && $user->rights->facture->paiement) {
 	$object->fetch($id);
 	$result = $object->set_paid($user);
+	if ($result<0) setEventMessage($object->error,'errors');
 } // Classif "paid partialy"
 else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->rights->facture->paiement) {
 	$object->fetch($id);
@@ -485,6 +488,7 @@ else if ($action == 'confirm_paid_partially' && $confirm == 'yes' && $user->righ
 	$close_note = $_POST["close_note"];
 	if ($close_code) {
 		$result = $object->set_paid($user, $close_code, $close_note);
+		if ($result<0) setEventMessage($object->error,'errors');
 	} else {
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), 'errors');
 	}
@@ -495,6 +499,7 @@ else if ($action == 'confirm_canceled' && $confirm == 'yes') {
 	$close_note = $_POST["close_note"];
 	if ($close_code) {
 		$result = $object->set_canceled($user, $close_code, $close_note);
+		if ($result<0) setEventMessage($object->error,'errors');
 	} else {
 		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), 'errors');
 	}
@@ -597,10 +602,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 		// Replacement invoice
 	if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
 	{
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		}
 
 		if (! ($_POST['fac_replacement'] > 0)) {
@@ -613,17 +619,17 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$result = $object->fetch($_POST['fac_replacement']);
 			$object->fetch_thirdparty();
 
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note = trim($_POST['note']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
-			$object->fk_project = $_POST['projectid'];
-			$object->cond_reglement_id = $_POST['cond_reglement_id'];
-			$object->mode_reglement_id = $_POST['mode_reglement_id'];
-			$object->remise_absolue = $_POST['remise_absolue'];
-			$object->remise_percent = $_POST['remise_percent'];
+			$object->date				= $dateinvoice;
+			$object->note_public		= trim($_POST['note_public']);
+			$object->note				= trim($_POST['note']);
+			$object->ref_client			= $_POST['ref_client'];
+			$object->ref_int			= $_POST['ref_int'];
+			$object->modelpdf			= $_POST['model'];
+			$object->fk_project			= $_POST['projectid'];
+			$object->cond_reglement_id	= $_POST['cond_reglement_id'];
+			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$object->remise_absolue		= $_POST['remise_absolue'];
+			$object->remise_percent		= $_POST['remise_percent'];
 
 			// Proprietes particulieres a facture de remplacement
 			$object->fk_facture_source = $_POST['fac_replacement'];
@@ -644,8 +650,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CorrectInvoice")), 'errors');
 		}
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture))
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
 		{
 			$error ++;
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->trans("Date")), 'errors');
@@ -653,24 +659,19 @@ else if ($action == 'add' && $user->rights->facture->creer)
 
 		if (! $error)
 		{
-			// Si facture avoir
-			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-
-			// $result=$object->fetch($_POST['fac_avoir']);
-
-			$object->socid = GETPOST('socid', 'int');
-			$object->number = $_POST['facnumber'];
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note = trim($_POST['note']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
-			$object->fk_project = $_POST['projectid'];
-			$object->cond_reglement_id = 0;
-			$object->mode_reglement_id = $_POST['mode_reglement_id'];
-			$object->remise_absolue = $_POST['remise_absolue'];
-			$object->remise_percent = $_POST['remise_percent'];
+			$object->socid				= GETPOST('socid','int');
+			$object->number				= $_POST['facnumber'];
+			$object->date				= $dateinvoice;
+			$object->note_public		= trim($_POST['note_public']);
+			$object->note				= trim($_POST['note']);
+			$object->ref_client			= $_POST['ref_client'];
+			$object->ref_int			= $_POST['ref_int'];
+			$object->modelpdf			= $_POST['model'];
+			$object->fk_project			= $_POST['projectid'];
+			$object->cond_reglement_id	= 0;
+			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$object->remise_absolue		= $_POST['remise_absolue'];
+			$object->remise_percent		= $_POST['remise_percent'];
 
 			// Proprietes particulieres a facture avoir
 			$object->fk_facture_source = $_POST['fac_avoir'];
@@ -737,23 +738,24 @@ else if ($action == 'add' && $user->rights->facture->creer)
 	// Standard invoice or Deposit invoice created from a Predefined invoice
 	if (($_POST['type'] == 0 || $_POST['type'] == 3) && $_POST['fac_rec'] > 0)
 	{
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		}
 
 		if (! $error)
 		{
-			$object->socid = GETPOST('socid', 'int');
-			$object->type = $_POST['type'];
-			$object->number = $_POST['facnumber'];
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note_private = trim($_POST['note_private']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
+			$object->socid			= GETPOST('socid','int');
+			$object->type           = $_POST['type'];
+			$object->number         = $_POST['facnumber'];
+			$object->date           = $dateinvoice;
+			$object->note_public	= trim($_POST['note_public']);
+			$object->note_private   = trim($_POST['note_private']);
+			$object->ref_client     = $_POST['ref_client'];
+			$object->ref_int     	= $_POST['ref_int'];
+			$object->modelpdf       = $_POST['model'];
 
 			// Source facture
 			$object->fac_rec = $_POST['fac_rec'];
@@ -771,38 +773,40 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), 'errors');
 		}
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		if (empty($datefacture)) {
-			$error ++;
-			setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), 'errors');
+		$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		if (empty($dateinvoice))
+		{
+			$error++;
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		}
 
 		if (! $error)
 		{
 			// Si facture standard
-			$object->socid = GETPOST('socid', 'int');
-			$object->type = GETPOST('type');
-			$object->number = $_POST['facnumber'];
-			$object->date = $datefacture;
-			$object->note_public = trim($_POST['note_public']);
-			$object->note_private = trim($_POST['note_private']);
-			$object->ref_client = $_POST['ref_client'];
-			$object->ref_int = $_POST['ref_int'];
-			$object->modelpdf = $_POST['model'];
-			$object->fk_project = $_POST['projectid'];
-			$object->cond_reglement_id = ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
-			$object->mode_reglement_id = $_POST['mode_reglement_id'];
-			$object->amount = $_POST['amount'];
-			$object->remise_absolue = $_POST['remise_absolue'];
-			$object->remise_percent = $_POST['remise_percent'];
+			$object->socid				= GETPOST('socid','int');
+			$object->type				= GETPOST('type');
+			$object->number				= $_POST['facnumber'];
+			$object->date				= $dateinvoice;
+			$object->note_public		= trim($_POST['note_public']);
+			$object->note_private		= trim($_POST['note_private']);
+			$object->ref_client			= $_POST['ref_client'];
+			$object->ref_int			= $_POST['ref_int'];
+			$object->modelpdf			= $_POST['model'];
+			$object->fk_project			= $_POST['projectid'];
+			$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
+			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+			$object->amount				= $_POST['amount'];
+			$object->remise_absolue		= $_POST['remise_absolue'];
+			$object->remise_percent		= $_POST['remise_percent'];
+
 			$object->fetch_thirdparty();
 
 			// If creation from another object of another module (Example: origin=propal, originid=1)
-			if ($_POST['origin'] && $_POST['originid'])
+			if ($origin && $originid)
 			{
 				// Parse element/subelement (ex: project_task)
-				$element = $subelement = $_POST['origin'];
-				if (preg_match('/^([^_]+)_([^_]+)/i', $_POST['origin'], $regs)) {
+				$element = $subelement = $origin;
+				if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 					$element = $regs [1];
 					$subelement = $regs [2];
 				}
@@ -825,8 +829,8 @@ else if ($action == 'add' && $user->rights->facture->creer)
 					$element = $subelement = 'expedition';
 				}
 
-				$object->origin = $_POST['origin'];
-				$object->origin_id = $_POST['originid'];
+				$object->origin = $origin;
+				$object->origin_id = $originid;
 
 				// Possibility to add external linked objects with hooks
 				$object->linked_objects [$object->origin] = $object->origin_id;
@@ -885,19 +889,19 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$langs->trans('Deposit'),
 								$amountdeposit,		 	// subprice
 								1, 						// quantity
-								$lines [$i]->tva_tx, 0, // localtax1_tx
+								$lines[$i]->tva_tx, 0, // localtax1_tx
 								0, 						// localtax2_tx
 								0, 						// fk_product
 								0, 						// remise_percent
 								0, 						// date_start
 								0, 						// date_end
-								0, $lines [$i]->info_bits, // info_bits
+								0, $lines[$i]->info_bits, // info_bits
 								0, 						// info_bits
 								'HT',
 								0,
 								0, 						// product_type
 								1,
-								$lines [$i]->special_code,
+								$lines[$i]->special_code,
 								$object->origin,
 								0,
 								0,
@@ -928,15 +932,15 @@ else if ($action == 'add' && $user->rights->facture->creer)
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
-								if ($lines [$i]->subprice < 0)
+								if ($lines[$i]->subprice < 0)
 								{
 									// Negative line, we create a discount line
 									$discount = new DiscountAbsolute($db);
 									$discount->fk_soc = $object->socid;
-									$discount->amount_ht = abs($lines [$i]->total_ht);
-									$discount->amount_tva = abs($lines [$i]->total_tva);
-									$discount->amount_ttc = abs($lines [$i]->total_ttc);
-									$discount->tva_tx = $lines [$i]->tva_tx;
+									$discount->amount_ht = abs($lines[$i]->total_ht);
+									$discount->amount_tva = abs($lines[$i]->total_tva);
+									$discount->amount_ttc = abs($lines[$i]->total_ttc);
+									$discount->tva_tx = $lines[$i]->tva_tx;
 									$discount->fk_user = $user->id;
 									$discount->description = $desc;
 									$discountid = $discount->create($user);
@@ -949,38 +953,38 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									}
 								} else {
 									// Positive line
-									$product_type = ($lines [$i]->product_type ? $lines [$i]->product_type : 0);
+									$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 									// Date start
 									$date_start = false;
-									if ($lines [$i]->date_debut_prevue)
-										$date_start = $lines [$i]->date_debut_prevue;
-									if ($lines [$i]->date_debut_reel)
-										$date_start = $lines [$i]->date_debut_reel;
-									if ($lines [$i]->date_start)
-										$date_start = $lines [$i]->date_start;
+									if ($lines[$i]->date_debut_prevue)
+										$date_start = $lines[$i]->date_debut_prevue;
+									if ($lines[$i]->date_debut_reel)
+										$date_start = $lines[$i]->date_debut_reel;
+									if ($lines[$i]->date_start)
+										$date_start = $lines[$i]->date_start;
 
 										// Date end
 									$date_end = false;
-									if ($lines [$i]->date_fin_prevue)
-										$date_end = $lines [$i]->date_fin_prevue;
-									if ($lines [$i]->date_fin_reel)
-										$date_end = $lines [$i]->date_fin_reel;
-									if ($lines [$i]->date_end)
-										$date_end = $lines [$i]->date_end;
+									if ($lines[$i]->date_fin_prevue)
+										$date_end = $lines[$i]->date_fin_prevue;
+									if ($lines[$i]->date_fin_reel)
+										$date_end = $lines[$i]->date_fin_reel;
+									if ($lines[$i]->date_end)
+										$date_end = $lines[$i]->date_end;
 
 										// Reset fk_parent_line for no child products and special product
-									if (($lines [$i]->product_type != 9 && empty($lines [$i]->fk_parent_line)) || $lines [$i]->product_type == 9) {
+									if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 										$fk_parent_line = 0;
 									}
 
 									// Extrafields
-									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines [$i], 'fetch_optionals')) {
-										$lines [$i]->fetch_optionals($lines [$i]->rowid);
-										$array_option = $lines [$i]->array_options;
+									if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+										$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										$array_option = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines [$i]->subprice, $lines [$i]->qty, $lines [$i]->tva_tx, $lines [$i]->localtax1_tx, $lines [$i]->localtax2_tx, $lines [$i]->fk_product, $lines [$i]->remise_percent, $date_start, $date_end, 0, $lines [$i]->info_bits, $lines [$i]->fk_remise_except, 'HT', 0, $product_type, $lines [$i]->rang, $lines [$i]->special_code, $object->origin, $lines [$i]->rowid, $fk_parent_line, $lines [$i]->fk_fournprice, $lines [$i]->pa_ht, $label, $array_option);
+									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_option);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -991,7 +995,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									}
 
 									// Defined the new fk_parent_line
-									if ($result > 0 && $lines [$i]->product_type == 9) {
+									if ($result > 0 && $lines[$i]->product_type == 9) {
 										$fk_parent_line = $result;
 									}
 								}
@@ -1837,6 +1841,7 @@ if ($action == 'create')
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
+	// Load objectsrc
 	if (! empty($origin) && ! empty($originid))
 	{
 		// Parse element/subelement (ex: project_task)
@@ -1883,7 +1888,7 @@ if ($action == 'create')
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
+			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
 
 			// Replicate extrafields
 			$objectsrc->fetch_optionals($originid);
@@ -1897,7 +1902,7 @@ if ($action == 'create')
 		$mode_reglement_id 	= $soc->mode_reglement_id;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
-		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';		// Do not set 0 here (0 for a date is 1970)
+		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
 	}
 	$absolute_discount = $soc->getAvailableDiscounts();
 
@@ -2248,10 +2253,9 @@ if ($action == 'create')
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 	print $doleditor->Create(1);
 
-	// print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea></td></tr>';
-
 	// Private note
-	if (empty($user->societe_id)) {
+	if (empty($user->societe_id))
+	{
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
 		print '<td valign="top" colspan="2">';
@@ -2262,10 +2266,13 @@ if ($action == 'create')
 		}
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
 		print $doleditor->Create(1);
-		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea></td></tr>';
+		// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
+		print '</td></tr>';
 	}
 
-	if (! empty($origin) && ! empty($originid) && is_object($objectsrc)) {
+	// Lines from source
+	if (! empty($origin) && ! empty($originid) && is_object($objectsrc))
+	{
 		// TODO for compatibility
 		if ($origin == 'contrat') {
 			// Calcul contrat->price (HT), contrat->total (TTC), contrat->tva
@@ -2289,6 +2296,8 @@ if ($action == 'create')
 			$newclassname = 'Order';
 		elseif ($newclassname == 'Expedition')
 			$newclassname = 'Sending';
+		elseif ($newclassname == 'Fichinter')
+			$newclassname = 'Intervention';
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
@@ -2358,7 +2367,10 @@ if ($action == 'create')
 	print "</table>\n";
 
 	// Button "Create Draft"
-	print '<br><center><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '"></center>';
+	print '<br><center>';
+	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
+	print '&nbsp;<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</center>';
 
 	print "</form>\n";
 
@@ -3617,15 +3629,17 @@ if ($action == 'create')
 		$fileparams = dol_most_recent_file($conf->facture->dir_output . '/' . $ref, preg_quote($ref, '/'));
 		$file = $fileparams ['fullname'];
 
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file)) {
-			// Define output language
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-				$newlang = $_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -3646,6 +3660,7 @@ if ($action == 'create')
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid = $user->id;
 		$formmail->fromname = $user->getFullName($langs);

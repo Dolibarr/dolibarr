@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,11 +42,17 @@ $actioncode=GETPOST("actioncode","alpha",3);
 $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
+$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+
+if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+if ($status == '')     $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if (empty($action))   $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_list':$conf->global->AGENDA_DEFAULT_VIEW);
 
 $filter=GETPOST("filter",'',3);
 $filtera = GETPOST("userasked","int",3)?GETPOST("userasked","int",3):GETPOST("filtera","int",3);
 $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filtert","int",3);
 $filterd = GETPOST("userdone","int",3)?GETPOST("userdone","int",3):GETPOST("filterd","int",3);
+$usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -72,6 +78,7 @@ if (! $sortfield)
 $socid = GETPOST("socid",'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+if ($socid < 0) $socid='';
 
 $canedit=1;
 if (! $user->rights->agenda->myactions->read) accessforbidden();
@@ -83,6 +90,8 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 	$filterd=$user->id;
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('agendalist'));
 
 
 /*
@@ -115,22 +124,6 @@ $form=new Form($db);
 
 // Define list of all external calendars
 $listofextcals=array();
-/*if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
-{
-    $i=0;
-    while($i < $conf->global->AGENDA_EXT_NB)
-    {
-        $i++;
-        $paramkey='AGENDA_EXT_SRC'.$i;
-        $url=$conf->global->$paramkey;
-        $paramkey='AGENDA_EXT_NAME'.$i;
-        $namecal = $conf->global->$paramkey;
-        $paramkey='AGENDA_EXT_COLOR'.$i;
-        $colorcal = $conf->global->$paramkey;
-        if ($url && $namecal) $listofextcals[]=array('src'=>$url,'name'=>$namecal,'color'=>$colorcal);
-    }
-}
-*/
 
 $param='';
 if ($status) $param="&status=".$status;
@@ -161,23 +154,29 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid"
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ua ON a.fk_user_author = ua.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ut ON a.fk_user_action = ut.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as ud ON a.fk_user_done = ud.rowid";
+if ($usergroup > 0) $sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ugu";
 $sql.= " WHERE c.id = a.fk_action";
 $sql.= ' AND a.fk_user_author = u.rowid';
-$sql.= ' AND a.entity IN ('.getEntity().')';    // To limit to entity
+$sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';    // To limit to entity
 if ($actioncode) $sql.=" AND c.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-if ($socid) $sql.= " AND s.rowid = ".$socid;
+if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
+if ($usergroup > 0) $sql.= " AND ugu.fk_user = a.fk_user_action";
 if ($type) $sql.= " AND c.id = ".$type;
-if ($status == 'done') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
+if ($status == '0') { $sql.= " AND a.percent = 0"; }
+if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
+if ($status == '50') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }	// Running
+if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
-if ($filtera > 0 || $filtert > 0 || $filterd > 0)
+if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 {
-	$sql.= " AND (";
-	if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
-	if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
-	if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
-	$sql.= ")";
+    $sql.= " AND (";
+    if ($filtera > 0) $sql.= " a.fk_user_author = ".$filtera;
+    if ($filtert > 0) $sql.= ($filtera>0?" OR ":"")." a.fk_user_action = ".$filtert;
+    if ($filterd > 0) $sql.= ($filtera>0||$filtert>0?" OR ":"")." a.fk_user_done = ".$filterd;
+	if ($usergroup > 0) $sql.= ($filtera>0||$filtert>0||$filterd>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
+    $sql.= ")";
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
@@ -196,7 +195,7 @@ if ($resql)
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
-	if ($socid)
+	/*if ($socid)
 	{
 		$societe = new Societe($db);
 		$societe->fetch($socid);
@@ -205,13 +204,20 @@ if ($resql)
 	else
 	{
 		$newtitle=$langs->trans($title);
-	}
+	}*/
+	$newtitle=$langs->trans($title);
 
+	$tabactive='';
+	if ($action == 'show_month') $tabactive='cardmonth';
+	if ($action == 'show_week') $tabactive='cardweek';
+	if ($action == 'show_day') $tabactive='cardday';
+	if ($action == 'show_list') $tabactive='cardlist';
+	if ($action == 'show_peruser') $tabactive='cardperuser';
 
-    $head = calendars_prepare_head('');
+	$head = calendars_prepare_head($param);
 
-    dol_fiche_head($head, 'card', $langs->trans('Events'), 0, 'list');
-    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1);
+    dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+    print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,$filtera,$filtert,$filterd,$pid,$socid,-1,$actioncode,$usergroup);
     dol_fiche_end();
 
     // Add link to show birthdays
@@ -245,7 +251,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ActionUserAsk"),$_SERVER["PHP_SELF"],"ua.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
+	//print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -270,11 +276,7 @@ if ($resql)
 		print $actionstatic->getNomUrl(1,28);
 		print '</td>';
 
-		// Titre
-		//print '<td>';
-		//print dol_trunc($obj->label,12);
-		//print '</td>';
-
+		// Start date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp),"day");
 		$late=0;
@@ -285,6 +287,7 @@ if ($resql)
 		if ($late) print img_warning($langs->trans("Late")).' ';
 		print '</td>';
 
+		// End date
 		print '<td align="center" class="nowrap">';
 		print dol_print_date($db->jdate($obj->dp2),"day");
 		print '</td>';
@@ -341,6 +344,7 @@ if ($resql)
 		print '</td>';
 
 		// User did
+		/*
 		print '<td align="left">';
 		if ($obj->useriddone)
 		{
@@ -351,6 +355,7 @@ if ($resql)
 		}
 		else print '&nbsp;';
 		print '</td>';
+		*/
 
 		// Status/Percent
 		print '<td align="right" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';

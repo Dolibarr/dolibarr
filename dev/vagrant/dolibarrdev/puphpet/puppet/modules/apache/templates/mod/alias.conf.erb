@@ -1,0 +1,13 @@
+<IfModule alias_module>
+Alias /icons/ "<%= @icons_path %>/"
+<Directory "<%= @icons_path %>">
+    Options Indexes MultiViews
+    AllowOverride None
+<%- if scope.function_versioncmp([@apache_version, '2.4']) >= 0 -%>
+    Require all granted
+<%- else -%>
+     Order allow,deny
+     Allow from all
+<%- end -%>
+</Directory>
+</IfModule>

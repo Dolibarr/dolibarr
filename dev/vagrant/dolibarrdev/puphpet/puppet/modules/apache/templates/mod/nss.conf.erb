@@ -1,0 +1,228 @@
+#
+# This is the Apache server configuration file providing SSL support using.
+# the mod_nss plugin.  It contains the configuration directives to instruct
+# the server how to serve pages over an https connection.
+#
+# Do NOT simply read the instructions in here without understanding
+# what they do.  They're here only as hints or reminders.  If you are unsure
+# consult the online docs. You have been warned.
+#
+
+#LoadModule nss_module modules/libmodnss.so
+
+#
+# When we also provide SSL we have to listen to the
+# standard HTTP port (see above) and to the HTTPS port
+#
+# Note: Configurations that use IPv6 but not IPv4-mapped addresses need two
+#       Listen directives: "Listen [::]:8443" and "Listen 0.0.0.0:443"
+#
+Listen 8443
+
+##
+##  SSL Global Context
+##
+##  All SSL configuration in this context applies both to
+##  the main server and all SSL-enabled virtual hosts.
+##
+
+#
+#   Some MIME-types for downloading Certificates and CRLs
+#
+AddType application/x-x509-ca-cert .crt
+AddType application/x-pkcs7-crl    .crl
+
+#   Pass Phrase Dialog:
+#   Configure the pass phrase gathering process.
+#   The filtering dialog program (`builtin' is a internal
+#   terminal dialog) has to provide the pass phrase on stdout.
+<% if @passwd_file -%>
+NSSPassPhraseDialog  "file:<%= @passwd_file %>"
+<% else -%>
+NSSPassPhraseDialog  builtin
+<% end -%>
+
+#   Pass Phrase Helper:
+#   This helper program stores the token password pins between
+#   restarts of Apache.
+NSSPassPhraseHelper /usr/sbin/nss_pcache
+
+#   Configure the SSL Session Cache.
+#   NSSSessionCacheSize is the number of entries in the cache.
+#   NSSSessionCacheTimeout is the SSL2 session timeout (in seconds).
+#   NSSSession3CacheTimeout is the SSL3/TLS session timeout (in seconds).
+NSSSessionCacheSize 10000
+NSSSessionCacheTimeout 100
+NSSSession3CacheTimeout 86400
+
+#
+# Pseudo Random Number Generator (PRNG):
+# Configure one or more sources to seed the PRNG of the SSL library.
+# The seed data should be of good random quality.
+# WARNING! On some platforms /dev/random blocks if not enough entropy
+# is available. Those platforms usually also provide a non-blocking
+# device, /dev/urandom, which may be used instead.
+#
+# This does not support seeding the RNG with each connection.
+
+NSSRandomSeed startup builtin
+#NSSRandomSeed startup file:/dev/random  512
+#NSSRandomSeed startup file:/dev/urandom 512
+
+#
+# TLS Negotiation configuration under RFC 5746
+#
+# Only renegotiate if the peer's hello bears the TLS renegotiation_info
+# extension. Default off.
+NSSRenegotiation off
+
+# Peer must send Signaling Cipher Suite Value (SCSV) or
+# Renegotiation Info (RI) extension in ALL handshakes.  Default: off
+NSSRequireSafeNegotiation off
+
+##
+## SSL Virtual Host Context
+##
+
+<VirtualHost _default_:8443>
+
+#   General setup for the virtual host
+#DocumentRoot "/etc/httpd/htdocs"
+#ServerName www.example.com:8443
+#ServerAdmin you@example.com
+
+# mod_nss can log to separate log files, you can choose to do that if you'd like
+# LogLevel is not inherited from httpd.conf.
+ErrorLog "<%= @error_log %>"
+TransferLog "<%= @transfer_log %>"
+LogLevel warn
+
+#   SSL Engine Switch:
+#   Enable/Disable SSL for this virtual host.
+NSSEngine on
+
+#   SSL Cipher Suite:
+#   List the ciphers that the client is permitted to negotiate.
+#   See the mod_nss documentation for a complete list.
+
+# SSL 3 ciphers. SSL 2 is disabled by default.
+NSSCipherSuite +rsa_rc4_128_md5,+rsa_rc4_128_sha,+rsa_3des_sha,-rsa_des_sha,-rsa_rc4_40_md5,-rsa_rc2_40_md5,-rsa_null_md5,-rsa_null_sha,+fips_3des_sha,-fips_des_sha,-fortezza,-fortezza_rc4_128_sha,-fortezza_null,-rsa_des_56_sha,-rsa_rc4_56_sha,+rsa_aes_128_sha,+rsa_aes_256_sha
+
+# SSL 3 ciphers + ECC ciphers. SSL 2 is disabled by default.
+#
+# Comment out the NSSCipherSuite line above and use the one below if you have
+# ECC enabled NSS and mod_nss and want to use Elliptical Curve Cryptography
+#NSSCipherSuite +rsa_rc4_128_md5,+rsa_rc4_128_sha,+rsa_3des_sha,-rsa_des_sha,-rsa_rc4_40_md5,-rsa_rc2_40_md5,-rsa_null_md5,-rsa_null_sha,+fips_3des_sha,-fips_des_sha,-fortezza,-fortezza_rc4_128_sha,-fortezza_null,-rsa_des_56_sha,-rsa_rc4_56_sha,+rsa_aes_128_sha,+rsa_aes_256_sha,-ecdh_ecdsa_null_sha,+ecdh_ecdsa_rc4_128_sha,+ecdh_ecdsa_3des_sha,+ecdh_ecdsa_aes_128_sha,+ecdh_ecdsa_aes_256_sha,-ecdhe_ecdsa_null_sha,+ecdhe_ecdsa_rc4_128_sha,+ecdhe_ecdsa_3des_sha,+ecdhe_ecdsa_aes_128_sha,+ecdhe_ecdsa_aes_256_sha,-ecdh_rsa_null_sha,+ecdh_rsa_128_sha,+ecdh_rsa_3des_sha,+ecdh_rsa_aes_128_sha,+ecdh_rsa_aes_256_sha,-echde_rsa_null,+ecdhe_rsa_rc4_128_sha,+ecdhe_rsa_3des_sha,+ecdhe_rsa_aes_128_sha,+ecdhe_rsa_aes_256_sha
+
+#   SSL Protocol:
+#   Cryptographic protocols that provide communication security.
+#   NSS handles the specified protocols as "ranges", and automatically
+#   negotiates the use of the strongest protocol for a connection starting
+#   with the maximum specified protocol and downgrading as necessary to the
+#   minimum specified protocol that can be used between two processes.
+#   Since all protocol ranges are completely inclusive, and no protocol in the
+#   middle of a range may be excluded, the entry "NSSProtocol SSLv3,TLSv1.1"
+#   is identical to the entry "NSSProtocol SSLv3,TLSv1.0,TLSv1.1".
+NSSProtocol SSLv3,TLSv1.0,TLSv1.1
+
+#   SSL Certificate Nickname:
+#   The nickname of the RSA server certificate you are going to use.
+NSSNickname Server-Cert
+
+#   SSL Certificate Nickname:
+#   The nickname of the ECC server certificate you are going to use, if you
+#   have an ECC-enabled version of NSS and mod_nss
+#NSSECCNickname Server-Cert-ecc
+
+#   Server Certificate Database:
+#   The NSS security database directory that holds the certificates and
+#   keys. The database consists of 3 files: cert8.db, key3.db and secmod.db.
+#   Provide the directory that these files exist.
+NSSCertificateDatabase "<%= @httpd_dir -%>/alias"
+
+#   Database Prefix:
+#   In order to be able to store multiple NSS databases in one directory
+#   they need unique names. This option sets the database prefix used for
+#   cert8.db and key3.db.
+#NSSDBPrefix my-prefix-
+
+#   Client Authentication (Type):
+#   Client certificate verification type.  Types are none, optional and
+#   require.
+#NSSVerifyClient none
+
+#
+#   Online Certificate Status Protocol (OCSP).
+#   Verify that certificates have not been revoked before accepting them.
+#NSSOCSP off
+
+#
+#   Use a default OCSP responder. If enabled this will be used regardless
+#   of whether one is included in a client certificate. Note that the
+#   server certificate is verified during startup.
+#
+#   NSSOCSPDefaultURL defines the service URL of the OCSP responder
+#   NSSOCSPDefaultName is the nickname of the certificate to trust to
+#       sign the OCSP responses.
+#NSSOCSPDefaultResponder on
+#NSSOCSPDefaultURL http://example.com/ocsp/status
+#NSSOCSPDefaultName ocsp-nickname
+
+#   Access Control:
+#   With SSLRequire you can do per-directory access control based
+#   on arbitrary complex boolean expressions containing server
+#   variable checks and other lookup directives.  The syntax is a
+#   mixture between C and Perl.  See the mod_nss documentation
+#   for more details.
+#<Location />
+#NSSRequire (    %{SSL_CIPHER} !~ m/^(EXP|NULL)/ \
+#            and %{SSL_CLIENT_S_DN_O} eq "Snake Oil, Ltd." \
+#            and %{SSL_CLIENT_S_DN_OU} in {"Staff", "CA", "Dev"} \
+#            and %{TIME_WDAY} >= 1 and %{TIME_WDAY} <= 5 \
+#            and %{TIME_HOUR} >= 8 and %{TIME_HOUR} <= 20       ) \
+#           or %{REMOTE_ADDR} =~ m/^192\.76\.162\.[0-9]+$/
+#</Location>
+
+#   SSL Engine Options:
+#   Set various options for the SSL engine.
+#   o FakeBasicAuth:
+#     Translate the client X.509 into a Basic Authorisation.  This means that
+#     the standard Auth/DBMAuth methods can be used for access control.  The
+#     user name is the `one line' version of the client's X.509 certificate.
+#     Note that no password is obtained from the user. Every entry in the user
+#     file needs this password: `xxj31ZMTZzkVA'.
+#   o ExportCertData:
+#     This exports two additional environment variables: SSL_CLIENT_CERT and
+#     SSL_SERVER_CERT. These contain the PEM-encoded certificates of the
+#     server (always existing) and the client (only existing when client
+#     authentication is used). This can be used to import the certificates
+#     into CGI scripts.
+#   o StdEnvVars:
+#     This exports the standard SSL/TLS related `SSL_*' environment variables.
+#     Per default this exportation is switched off for performance reasons,
+#     because the extraction step is an expensive operation and is usually
+#     useless for serving static content. So one usually enables the
+#     exportation for CGI and SSI requests only.
+#   o StrictRequire:
+#     This denies access when "NSSRequireSSL" or "NSSRequire" applied even
+#     under a "Satisfy any" situation, i.e. when it applies access is denied
+#     and no other module can change it.
+#   o OptRenegotiate:
+#     This enables optimized SSL connection renegotiation handling when SSL
+#     directives are used in per-directory context.
+#NSSOptions +FakeBasicAuth +ExportCertData +CompatEnvVars +StrictRequire
+<FilesMatch "\.(cgi|shtml|phtml|php3?)$">
+    NSSOptions +StdEnvVars
+</FilesMatch>
+<Directory "/var/www/cgi-bin">
+    NSSOptions +StdEnvVars
+</Directory>
+
+#   Per-Server Logging:
+#   The home of a custom SSL log file. Use this when you want a
+#   compact non-error SSL logfile on a virtual host basis.
+#CustomLog /home/rcrit/redhat/apache/logs/ssl_request_log \
+#          "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+</VirtualHost>
+

@@ -701,7 +701,7 @@ if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MA
 		$filename = $attachedfiles['names'];
 		$mimetype = $attachedfiles['mimes'];
 
-		// Envoi de la propal
+		// Send by email
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
 		if ($mailfile->error)
@@ -1301,7 +1301,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	print "</table><br>";
+	print "</table>";
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1316,7 +1316,6 @@ else if ($id > 0 || ! empty($ref))
 		$title = $langs->trans('Notes');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 	}
-
 
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="addinter" method="post">';
@@ -1347,6 +1346,7 @@ else if ($id > 0 || ! empty($ref))
 
 		if ($num)
 		{
+			print '<br>';
 			print '<table class="noborder" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -1451,7 +1451,7 @@ else if ($id > 0 || ! empty($ref))
 		$db->free($resql);
 
 		// Add new line
-		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline')
+		if ($object->statut == 0 && $user->rights->ficheinter->creer && $action <> 'editline' && empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
 			if (! $num) print '<br><table class="noborder" width="100%">';
 
@@ -1520,7 +1520,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($action != 'editdescription' && ($action != 'presend'))
 		{
 			// Validate
-			if ($object->statut == 0 && $user->rights->ficheinter->creer && count($object->lines) > 0)
+			if ($object->statut == 0 && $user->rights->ficheinter->creer && (count($object->lines) > 0 || ! empty($conf->global->FICHINTER_DISABLE_DETAILS)))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=validate"';
 				print '>'.$langs->trans("Valid").'</a></div>';
@@ -1541,6 +1541,17 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a></div>';
 				}
 				else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a></div>';
+			}
+
+			// Proposal
+			if (! empty($conf->propal->enabled) && $object->statut > 0)
+			{
+				$langs->load("propal");
+				if ($object->statut < 2)
+				{
+					if ($user->rights->propal->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("AddProp").'</a></div>';
+				}
 			}
 
 			// Invoicing
@@ -1582,7 +1593,7 @@ else if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Built documents
-		*/
+		 */
 		$filename=dol_sanitizeFileName($object->ref);
 		$filedir=$conf->ficheinter->dir_output . "/".$object->ref;
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
@@ -1616,7 +1627,7 @@ else if ($id > 0 || ! empty($ref))
 
 	/*
 	 * Action presend
-	*/
+	 */
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1624,14 +1635,17 @@ else if ($id > 0 || ! empty($ref))
 		$fileparams = dol_most_recent_file($conf->ficheinter->dir_output . '/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
 
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
@@ -1654,6 +1668,7 @@ else if ($id > 0 || ! empty($ref))
 		// Create form object
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);

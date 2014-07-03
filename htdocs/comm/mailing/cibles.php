@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@uers.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -54,6 +56,7 @@ $action=GETPOST("action");
 $search_lastname=GETPOST("search_lastname");
 $search_firstname=GETPOST("search_firstname");
 $search_email=GETPOST("search_email");
+$search_dest_status=GETPOST('search_dest_status');
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs('/mailings');
@@ -170,6 +173,7 @@ if ($_POST["button_removefilter"])
 llxHeader('',$langs->trans("Mailing"),'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
 
 $form = new Form($db);
+$formmailing = new FormMailing($db);
 
 if ($object->fetch($id) >= 0)
 {
@@ -222,7 +226,7 @@ if ($object->fetch($id) >= 0)
 
 	$var=!$var;
 
-	$allowaddtarget=($object->statut == 0 || $object->statut == 1);
+	$allowaddtarget=($object->statut == 0);
 
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
@@ -359,6 +363,7 @@ if ($object->fetch($id) >= 0)
 	if ($search_lastname)    $sql.= " AND mc.lastname    LIKE '%".$db->escape($search_lastname)."%'";
 	if ($search_firstname) $sql.= " AND mc.firstname LIKE '%".$db->escape($search_firstname)."%'";
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
+	if (!empty($search_dest_status)) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
 	$sql .= $db->plimit($conf->liste_limit+1, $offset);
 
@@ -378,7 +383,9 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
+		if ($allowaddtarget) {
+			$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
+		}
 
 		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$object->nbemail,'');
 
@@ -401,7 +408,7 @@ if ($object->fetch($id) >= 0)
 		print_liste_field_titre($langs->trans("OtherInformations"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"],"",$param,"",'align="center"',$sortfield,$sortorder);
 
-		// Date sendinf
+		// Date sending
 		if ($object->statut < 2)
 		{
 			print '<td class="liste_titre">&nbsp;</td>';
@@ -414,6 +421,11 @@ if ($object->fetch($id) >= 0)
 		// Statut
 		print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"mc.statut",$param,'','align="right"',$sortfield,$sortorder);
 
+		//Search Icon
+		print '<td class="liste_titre">';
+		print '&nbsp';
+		print '</td>';
+		
 		print '</tr>';
 
 		// Ligne des champs de filtres
@@ -435,7 +447,20 @@ if ($object->fetch($id) >= 0)
 		print '&nbsp';
 		print '</td>';
 		// Source
-		print '<td class="liste_titre" align="right" colspan="3">';
+		print '<td class="liste_titre">';
+		print '&nbsp';
+		print '</td>';
+		
+		// Date sending
+		print '<td class="liste_titre">';
+		print '&nbsp';
+		print '</td>';
+		//Statut
+		print '<td class="liste_titre" align="right">';
+		print $formmailing->selectDestinariesStatus($search_dest_status,'search_dest_status',1);
+		print '</td>';
+		//Search Icon
+		print '<td class="liste_titre" align="right">';
 		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '&nbsp; ';
 		print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -497,7 +522,7 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">&nbsp;</td>';
 					print '<td align="right" class="nowrap">'.$langs->trans("MailingStatusNotSent");
-					if ($user->rights->mailing->creer) {
+					if ($user->rights->mailing->creer && $allowaddtarget) {
 						print '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$obj->rowid.$param.'">'.img_delete($langs->trans("RemoveRecipient"));
 					}
 					print '</td>';
@@ -506,12 +531,12 @@ if ($object->fetch($id) >= 0)
 				{
 					print '<td align="center">'.$obj->date_envoi.'</td>';
 					print '<td align="right" class="nowrap">';
-					if ($obj->statut==-1) print $langs->trans("MailingStatusError").' '.img_error();
-					if ($obj->statut==1) print $langs->trans("MailingStatusSent").' '.img_picto($langs->trans("MailingStatusSent"),'statut4');
-					if ($obj->statut==2) print $langs->trans("MailingStatusRead").' '.img_picto($langs->trans("MailingStatusRead"),'statut6');
-					if ($obj->statut==3) print $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut5');
+					print $object::libStatutDest($obj->statut,2);
 					print '</td>';
 				}
+				
+				//Sreach Icon
+				print '<td></td>';
 				print '</tr>';
 
 				$i++;

@@ -1,0 +1,24 @@
+---
+branches:
+  only:
+  - master
+language: ruby
+script: "bundle exec rake --rakefile $PWD/.travis/Rakefile spec SPEC_OPTS='--format documentation'"
+rvm:
+  - 1.9.3
+  - 2.0.0
+gemfile: .travis/Gemfile
+env:
+  matrix:
+    - PUPPET_GEM_VERSION="~> 2.7.0"
+    - PUPPET_GEM_VERSION="~> 3.0"
+matrix:
+  exclude:
+    - rvm: 1.9.3
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
+      gemfile: .travis/Gemfile
+    - rvm: 2.0.0
+      env: PUPPET_GEM_VERSION="~> 2.7.0"
+      gemfile: .travis/Gemfile
+notifications:
+  email: false  

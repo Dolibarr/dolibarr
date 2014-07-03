@@ -164,7 +164,6 @@ abstract class CommonObject
     {
         global $user,$conf,$langs;
 
-		$error=0;
 
         dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
 
@@ -205,6 +204,8 @@ abstract class CommonObject
 
         $datecreate = dol_now();
 
+        $this->db->begin();
+
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
@@ -219,20 +220,16 @@ abstract class CommonObject
         {
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers(strtoupper($this->element).'_ADD_CONTACT',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // End call triggers
+            	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
+	            if ($result < 0) { $this->db->rollback(); return -1; }
             }
 
+            $this->db->commit();
             return 1;
         }
         else
         {
+            $this->db->rollback();
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 $this->error=$this->db->errno();
@@ -311,7 +308,8 @@ abstract class CommonObject
     {
         global $user,$langs,$conf;
 
-		$error=0;
+
+        $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE rowid =".$rowid;
@@ -321,21 +319,17 @@ abstract class CommonObject
         {
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers(strtoupper($this->element).'_DELETE_CONTACT',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // End call triggers
+            	$result=$this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
+	            if ($result < 0) { $this->db->rollback(); return -1; }
             }
 
+            $this->db->commit();
             return 1;
         }
         else
         {
             $this->error=$this->db->lasterror();
+            $this->db->rollback();
             dol_syslog(get_class($this)."::delete_contact error=".$this->error, LOG_ERR);
             return -1;
         }
@@ -599,7 +593,7 @@ abstract class CommonObject
     }
 
     /**
-     *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdpary
+     *    	Load the third party of object, from id $this->socid or $this->fk_soc, into this->thirdparty
      *
      *		@return		int					<0 if KO, >0 if OK
      */
@@ -3232,12 +3226,17 @@ abstract class CommonObject
 
     	if (! $user->rights->margins->liretous) return;
 
-        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+        $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT, $conf->global->MAIN_MAX_DECIMALS_TOT);
 
 		$marginInfo = $this->getMarginInfos($force_price);
 
-		print '<table class="nobordernopadding" width="100%">';
+		if (! empty($conf->global->MARGININFO_HIDE_SHOW))
+		{
+			print "<img onclick=\"$('.margininfos').toggle();\" src='".img_picto($langs->trans("Hide")."/".$langs->trans("Show"),'object_margin.png','','',1)."'>";
+			if ($conf->global->MARGININFO_HIDE_SHOW == 2) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';	// hide by default
+		}
 
+		print '<table class="nobordernopadding margintable" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="30%">'.$langs->trans('Margins').'</td>';
 		print '<td width="20%" align="right">'.$langs->trans('SellingPrice').'</td>';
@@ -3354,7 +3353,8 @@ abstract class CommonObject
 	{
 	    global $user,$langs,$conf;
 
-	    $error=0;
+
+	    $this->db->begin();
 
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid =".$rowid;
@@ -3364,14 +3364,8 @@ abstract class CommonObject
 	    {
 	        if (! $notrigger)
 	        {
-	            // Call triggers
-	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers(strtoupper($element).'_DELETE_RESOURCE',$this,$user,$langs,$conf);
-	            if ($result < 0) {
-	                $error++; $this->errors=$interface->errors;
-	            }
-	            // End call triggers
+	            $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
+	            if ($result < 0) { $this->db->rollback(); return -1; }
 	        }
 
 	        return 1;
@@ -3379,6 +3373,7 @@ abstract class CommonObject
 	    else
 	    {
 	        $this->error=$this->db->lasterror();
+	        $this->db->rollback();
 	        dol_syslog(get_class($this)."::delete_resource error=".$this->error, LOG_ERR);
 	        return -1;
 	    }
@@ -3401,6 +3396,37 @@ abstract class CommonObject
             	$this->lines[$i] = dol_clone($this->lines[$i]);
         	}
         }
+    }
+
+    /**
+     * Call trigger based on this instance
+     *
+     *  NB: Error from trigger are stacked in errors
+     *  NB2: if trigger fail, action should be canceled.
+     *
+     * @param   string    $trigger_name   trigger's name to execute
+     * @param   User      $user           Object user
+     * @return  int                       Result of run_triggers
+     */
+    function call_trigger($trigger_name, $user)
+    {
+        global $langs,$conf;
+
+        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+        $interface=new Interfaces($this->db);
+        $result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+        if ($result < 0) {
+            if (!empty($this->errors))
+            {
+                $this->errors=array_merge($this->errors,$interface->errors);
+            }
+            else
+            {
+                $this->errors=$interface->errors;
+            }
+        }
+        return $result;
+
     }
 
 }

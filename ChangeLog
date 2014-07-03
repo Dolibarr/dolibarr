@@ -2,6 +2,22 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.7 compared to 3.6.* *****
+For users:
+- New: [ task #867 ] Remove ESAEB external module code from core.
+- New: Can create proposal from an intervention.
+- New: Can filter events on a group of users.
+- New: Add thirdparty to filter on events. 
+- Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+
+For translators:
+- Update language files.
+
+For developers:
+- New: Add hook "searchAgendaFrom".
+
+
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Update ckeditor to version 4.
@@ -65,9 +81,12 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
-
-TODO
-- New: Predefined product and free product use same form.
+- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
+- New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
+- Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
+- Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
+- Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
+- Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
 
 For translators:
 - Update language files.
@@ -89,6 +108,8 @@ For developers:
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
 - New: Add hooks on project card page.
+- New: Add call_trigger method on CommonObject class. So new trigger call within object is just : 
+$result = $this->call_trigger($trigger_name, $user) 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -96,17 +117,23 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascript function ac_delay() that is not used anymore by core code.
-- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Properties "dictionnaries" into module descriptor files have been renamed into "dictionaries".
 - Method form->select_currency() has been removed. Use instead print form->selectCurrency().
 - Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
 - The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
-  So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
+  So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
 
 
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
+Fix: Question about warehouse must not be done when module stock is disabled.
+Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
+     (missing test at some places).
+Fix: Renaming a project with uplaoded files failed.
+Fix: [ bug #1476 ] Invoice creation form loses invoice date when there is a validation error.
 Fix: [ bug #1431 ] Reception and Send supplier order box has a weird top margin.
 Fix: [ bug #1428 ] "Nothing" is shown in the middle of the screen in a supplier order.
 Fix: The object deliverycompany was not used anymore and output of
@@ -135,7 +162,12 @@ Fix: If multiprice level is used the VAT on addline is not correct
 Fix: [ bug #1254 ] Error when using "Enter" on qty input box of a product (on supplier order part)
 Fix: [ bug #1462, 1468, 1480, 1483, 1490, 1497] $this instead of $object
 Fix: [ bug #1455 ] outstanding amount
-Fix: [ bug #1425 ]
+Fix: [ bug #1425 ] LINEBILL_SUPPLIER_DELETE failure trigger leads to an endless loop
+Fix: [ bug #1460 ] Several supplier order triggers do not show error messages
+Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order line insertion
+Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
+Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
+Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.

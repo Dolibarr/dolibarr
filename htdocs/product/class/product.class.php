@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -681,7 +682,7 @@ class Product extends CommonObject
 						if (file_exists($olddir))
 						{
 							include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-							$res=@dol_move($olddir, $newdir);
+							$res=dol_move($olddir, $newdir);
 							if (! $res)
 							{
 								$this->error='ErrorFailToMoveDir';
@@ -939,7 +940,7 @@ class Product extends CommonObject
 	/**
 	 *	Delete a language for this product
 	 *
-	 *  @param		string	$langtodelete		Language to delete
+	 *  @param		string	$langtodelete		Language code to delete
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
 	function delMultiLangs($langtodelete)
@@ -947,7 +948,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
 
-		dol_syslog("Delete translation sql=".$sql);
+		dol_syslog(get_class($this).'::delMultiLangs sql='.$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -955,7 +956,8 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error="Error: ".$this->db->error()." - ".$sql;
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
