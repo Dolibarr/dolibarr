@@ -257,15 +257,16 @@ if ($usevirtualstock)
 	$sqlCommandesCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
 	$sqlCommandesCli.= " WHERE c.entity = ".$conf->entity;
 	$sqlCommandesCli.= " AND cd.fk_product = p.rowid";
-	$sqlCommandesCli.= " AND c.fk_statut in (1,2))";
+	$sqlCommandesCli.= " AND c.fk_statut IN (1,2))";
 	
 	$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed.qty) IS NULL", "0", "SUM(ed.qty)")." as qty";
 	$sqlExpeditionsCli.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet as ed ON (ed.fk_expedition = e.rowid)";
 	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commandedet as cd ON (cd.rowid = ed.fk_origin_line)";
+	$sqlExpeditionsCli.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON (c.rowid = cd.fk_commande)";
 	$sqlExpeditionsCli.= " WHERE e.entity = ".$conf->entity;
 	$sqlExpeditionsCli.= " AND cd.fk_product = p.rowid";
-	$sqlExpeditionsCli.= " AND e.fk_statut > 0)";
+	$sqlExpeditionsCli.= " AND c.fk_statut IN (1,2))";
 		
 	$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd.qty) IS NULL", "0", "SUM(cd.qty)")." as qty";
 	$sqlCommandesFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd";
@@ -273,18 +274,18 @@ if ($usevirtualstock)
 	$sqlCommandesFourn.= " WHERE c.rowid = cd.fk_commande";
 	$sqlCommandesFourn.= " AND c.entity = ".$conf->entity;
 	$sqlCommandesFourn.= " AND cd.fk_product = p.rowid";
-	$sqlCommandesFourn.= " AND c.fk_statut in (2,3))";
+	$sqlCommandesFourn.= " AND c.fk_statut IN (3,4))";
 	
 	$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd.qty) IS NULL", "0", "SUM(fd.qty)")." as qty";
 	$sqlReceptionFourn.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseurdet as cfd ON (cfd.fk_commande = cf.rowid)";
 	$sqlReceptionFourn.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd ON (fd.fk_commande = cf.rowid)";
 	$sqlReceptionFourn.= " WHERE cf.entity = ".$conf->entity;
-	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid)";
+	$sqlReceptionFourn.= " AND fd.fk_product = p.rowid";
+	$sqlReceptionFourn.= " AND cf.fk_statut IN (3,4))";
 	
-	$sql.= ' HAVING ((p.desiredstock > 0 AND (p.desiredstock > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql.= ' HAVING ((('.$db->ifsql("p.desiredstock IS NULL", "0", "p.desiredstock").' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')))';
-	$sql.= ' OR (p.seuil_stock_alerte > 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
+	$sql.= ' OR (p.seuil_stock_alerte >= 0 AND (p.seuil_stock_alerte > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql.= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.'))))';
 	
 	if ($salert == 'on')	// Option to see when stock is lower than alert
