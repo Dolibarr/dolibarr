@@ -446,6 +446,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 	if (! empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
+		$prod->fetch($objp->rowid);
+		$prod->load_stock();
+		
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
@@ -462,27 +465,21 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
+		$form = new Form($db);
 		$var =! $var;
-		$prod->ref = $objp->ref;
-		$prod->id = $objp->rowid;
-		$prod->type = $objp->fk_product_type;
 
-		// Get number already ordered.
-		$ordered = ordered($prod->id);
-
-		// Defined current stock number and warning if required
 		if ($usevirtualstock)
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
-			$prod->fetch($prod->id);
-			$prod->load_stock();
-
 			$stock = $prod->stock_theorique;
 		}
 		else
 		{
-			$stock = $objp->stock_physique;
+			$stock = $prod->stock_reel;
 		}
+		
+		$ordered = $prod->stats_commande_fournisseur['qty']-$prod->stats_reception['qty'];
+		
 		$warning='';
 		if ($objp->alertstock && ($stock < $objp->alertstock))
 		{
