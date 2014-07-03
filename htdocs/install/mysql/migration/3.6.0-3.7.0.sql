@@ -62,3 +62,12 @@ ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
+
+ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
+
+-- Localtaxes by thirds
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
+ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint(4) after entity;
+ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
+ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;

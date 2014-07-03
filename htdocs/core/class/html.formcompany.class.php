@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -774,6 +775,43 @@ class FormCompany
         $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
+    }
+    
+    /**
+     * Return a select with localtax values for thirds
+     * 
+     * @param int 		$local			LocalTax
+     * @param int 		$selected		Preselected value
+     * @param varchar 	$htmlname		HTML select name
+     */
+    function select_localtax($local, $selected, $htmlname)
+    {
+    	$tax=get_localtax_by_third($local);
+    	 
+    	$num = $this->db->num_rows($tax);
+    	$i = 0;
+    	if ($num)
+    	{
+    		$valors=explode(":", $tax);
+    
+    		if(sizeof($valors)>1)
+    		{
+    			//montar select
+    			print '<select class="flat" name="'.$htmlname.'">';
+    			while($i <= (sizeof($valors))-1){
+    				if ($selected == $valors[$i]){
+    					print '<option value="'.$valors[$i].'" selected="selected">';
+    				}else{
+    					print '<option value="'.$valors[$i].'">';
+    				}
+    				print $valors[$i];
+    				print '</option>';
+    				$i++;
+    			}
+    			print'</select>';
+    			
+    		}
+    	}
     }
 
 }
