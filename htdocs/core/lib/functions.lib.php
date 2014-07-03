@@ -7,7 +7,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic)       <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
@@ -2886,7 +2886,11 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
-
+	
+	if($thirdparty_buyer->country_code!=$thirdparty_seller->country_code)
+	{
+		return 0;
+	}
 	// Some test to guess with no need to make database access
 	if ($mysoc->country_code == 'ES') // For spain localtaxes 1 and 2, tax is qualified if buyer use local taxe
 	{
@@ -2898,14 +2902,14 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 			else
 			{
-				if (! $thirdparty_seller->localtax1_assuj) return 0;
+				if (! $thirdparty_seller->localtax1_assuj) return 0; 
 			}
 		}
 
 		if ($local == 2)
 		{
-
-			if ($thirdparty_seller->id==$mysoc->id)
+		
+			if ($thirdparty_seller->id==$mysoc->id )
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
 			}
@@ -2931,6 +2935,43 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	}*/
 
 	// Search local taxes
+	if ($local==1)
+	{
+		if($thirdparty_seller!=$mysoc )
+		{
+			if(!isOnlyOneLocalTax($local))
+			{
+				return $thirdparty_seller->localtax1_value;
+			}
+		}
+		else
+		{
+			if(!isOnlyOneLocalTax($local))
+			{
+				return $conf->global->MAIN_INFO_VALUE_LOCALTAX1;
+			}
+		}
+	}
+	if ($local==2)
+	{
+		if($thirdparty_seller!=$mysoc)
+		{
+			if(!isOnlyOneLocalTax($local))
+			{
+				return $thirdparty_seller->localtax2_value;
+			}
+		}
+		else
+		{
+			if(!isOnlyOneLocalTax($local))
+			{
+				return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
+			}
+		}
+	}
+	
+	
+	
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
@@ -2948,6 +2989,57 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	return 0;
 }
 
+
+/**
+ * Return true if LocalTax is unique
+ * 
+ * @param int 	$local	Local taxt to test
+ * @return boolean 		True if LocalTax have multiple values, False if not
+ */
+function isOnlyOneLocalTax($local)
+{
+	$tax=get_localtax_by_third($local);
+
+	$valors=explode(":", $tax);
+	
+	if(sizeof($valors)>1)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+/**
+ * Get values of localtaxes
+ * 
+ * @param	int		$local 	LocalTax to get
+ * @return	number			Values of localtax
+ */
+function get_localtax_by_third($local)
+{
+	global $db, $mysoc;
+	$sql="SELECT t.localtax1, t.localtax2 ";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_pays as p ON p.rowid=t.fk_pays";
+	$sql.=" WHERE p.code = '".$mysoc->country_code."' AND t.taux=(SELECT max(tt.taux)";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_pays as p ON p.rowid=tt.fk_pays";
+	$sql.= " WHERE p.code = '".$mysoc->country_code."')";
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$obj = $db->fetch_object($resql);
+		if ($local==1) return $obj->localtax1;
+		elseif ($local==2) return $obj->localtax2;
+	}
+	
+	return 0;
+
+}
+
+
 /**
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
@@ -2960,7 +3052,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
  *  @param		int		$thirdparty         Company object
  *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
-function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
+function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 {
 	global $db;
 
@@ -2969,16 +3061,84 @@ function getLocalTaxesFromRate($vatrate, $local, $thirdparty)
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty->country_code."'";
+	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$buyer->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		if ($local == 1) return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-		elseif ($local == 2) return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
-		else return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+		if ($local == 1)
+		{ 
+			if (! isOnlyOneLocalTax(1))
+			{
+				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
+			}
+			else
+			{ 	
+				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+			}
+		}
+		elseif ($local == 2)
+		{
+			if (! isOnlyOneLocalTax(2))
+			{
+				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+			}
+			else
+			{ 
+				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+			}
+		}
+		else
+		{
+			if(! isOnlyOneLocalTax(1))
+			{
+				if(! isOnlyOneLocalTax(2))
+				{
+					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+				else
+				{
+					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+			}
+			else
+			{
+				if(! isOnlyOneLocalTax(2))
+				{
+					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type,get_localtax($vatrate, 2, $buyer, $seller) ,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+				else
+				{
+					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+			}	
+			
+			if(! isOnlyOneLocalTax(2))
+			{
+				if(! isOnlyOneLocalTax(1))
+				{
+					return array($obj->localtax2_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+				else
+				{
+					return array($obj->localtax2_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+			}
+			else
+			{
+				if(! isOnlyOneLocalTax(1))
+				{
+					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type,get_localtax($vatrate, 1, $buyer, $seller) ,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+				else
+				{
+					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
+				}
+			}
+			
+		}
 	}
 
 	return 0;
