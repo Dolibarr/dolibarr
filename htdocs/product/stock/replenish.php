@@ -478,21 +478,21 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			$stock = $prod->stock_reel;
 		}
 		
-		$ordered = $prod->stats_commande_fournisseur['qty']-$prod->stats_reception['qty'];
+		$ordered = $prod->stats_commande_fournisseur['qty'];
 		
 		$warning='';
-		if ($objp->alertstock && ($stock < $objp->alertstock))
+
+		if ($objp->seuil_stock_alerte && ($stock < $objp->seuil_stock_alerte))
 		{
 			$warning = img_warning($langs->trans('StockTooLow')) . ' ';
 		}
-
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
-		$stocktobuy = max(max($objp->desiredstock, $objp->alertstock) - $stock - $ordered, 0);
+		//echo $objp->desiredstock." * ".$stock." * ".$ordered."<br>";
+		$stocktobuy = max($objp->desiredstock - $stock - $ordered, 0);
 		$disabled = '';
 		if($ordered > 0) {
-			$compare = $usevirtualstock ? $stock : $stock + $ordered;
-			if($compare >= $objp->desiredstock) {
+			if($stock + $ordered >= $objp->desiredstock) {
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled="disabled"';
 			}
