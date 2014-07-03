@@ -2896,6 +2896,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	{
 		if ($local == 1)
 		{
+			if(! $mysoc->localtax1_assuj) return 0;
 			if ($thirdparty_seller->id==$mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax1_assuj) return 0;
@@ -2908,7 +2909,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 		if ($local == 2)
 		{
-		
+			if(! $mysoc->localtax2_assuj) return 0;
 			if ($thirdparty_seller->id==$mysoc->id )
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
@@ -3002,7 +3003,7 @@ function isOnlyOneLocalTax($local)
 
 	$valors=explode(":", $tax);
 	
-	if(sizeof($valors)>1)
+	if(count($valors)>1)
 	{
 		return false;
 	}
