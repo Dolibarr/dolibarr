@@ -489,6 +489,19 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//depending on conf, use either physical stock or
 		//virtual stock to compute the stock to buy value
 		$stocktobuy = max(max($objp->desiredstock, $objp->alertstock) - $stock - $ordered, 0);
+		$disabled = '';
+		if($ordered > 0) {
+			$compare = $usevirtualstock ? $stock : $stock + $ordered;
+			if($compare >= $objp->desiredstock) {
+				$picto = img_picto('', './img/yes', '', 1);
+				$disabled = 'disabled="disabled"';
+			}
+			else {
+				$picto = img_picto('', './img/no', '', 1);
+			}
+		} else {
+			$picto = img_picto('', './img/no', '', 1);
+		}
 
 		print '<tr '.$bc[$var].'>';
 
