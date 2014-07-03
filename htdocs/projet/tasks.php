@@ -130,6 +130,11 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			if ($taskid > 0)
 			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
+			} 
+			else 
+			{
+			    setEventMessage($task->error,'errors');
+			    setEventMessage($task->errors,'errors');
 			}
 		}
 
@@ -193,6 +198,8 @@ if ($id > 0 || ! empty($ref))
 
 	$head=project_prepare_head($object);
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
+	
+	dol_htmloutput_mesg();
 
 	$param=($mode=='mine'?'&mode=mine':'');
 
