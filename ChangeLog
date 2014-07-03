@@ -10,6 +10,7 @@ For users:
 - New: Can filter events on a group of users.
 - New: Add thirdparty to filter on events. 
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+- Fix: [ bug #1470, #1472, #1473] User trigger problem
 
 For translators:
 - Update language files.
