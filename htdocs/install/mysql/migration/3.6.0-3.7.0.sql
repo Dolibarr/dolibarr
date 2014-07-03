@@ -49,3 +49,5 @@ ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
 
 ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
+
+ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
