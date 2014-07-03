@@ -16,6 +16,7 @@ For users:
 - Fix: [ bug #1474, #1475 ] Contract trigger problem
 - Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
 - Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
+- Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
 
 
 For translators:
@@ -23,6 +24,7 @@ For translators:
 
 For developers:
 - New: Add hook "searchAgendaFrom".
+- New: Add trigger DON_UPDATE, DON_DELETE
 
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
