@@ -105,10 +105,8 @@ class Skeleton_Class extends CommonObject
 	            // want this action calls a trigger.
 
 	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}            
 	            //// End call triggers
 			}
         }
@@ -216,12 +214,10 @@ class Skeleton_Class extends CommonObject
 	            // want this action calls a trigger.
 
 	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}            
 	            //// End call triggers
-	    	}
+			 }
 		}
 
         // Commit or rollback
@@ -264,12 +260,10 @@ class Skeleton_Class extends CommonObject
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action calls a trigger.
 
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+	            //// Call triggers
+	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}            
+	            //// End call triggers
 			}
 		}
 
