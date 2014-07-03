@@ -34,12 +34,12 @@ ALTER TABLE llx_product ADD UNIQUE INDEX uk_product_barcode (barcode, fk_barcode
 
 ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_country ) REFERENCES  llx_c_pays (
 rowid
-) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+);
 
 ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_user_author ) REFERENCES  llx_user (
 rowid
-) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+);
 
 ALTER TABLE  llx_product ADD FOREIGN KEY (  fk_barcode_type ) REFERENCES  llx_c_barcode_type (
 rowid
-) ON DELETE RESTRICT ON UPDATE RESTRICT ;
+);
