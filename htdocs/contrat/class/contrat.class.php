@@ -158,12 +158,10 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTRACT_SERVICE_ACTIVATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -206,12 +204,10 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTRACT_SERVICE_CLOSE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -322,6 +318,7 @@ class Contrat extends CommonObject
 				dol_syslog(get_class($this)."::validate Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
+				$this->error=$this->db->lasterror();
 			}
 
 			if (! $error)
@@ -365,12 +362,10 @@ class Contrat extends CommonObject
 			// Trigger calls
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CONTRACT_VALIDATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 		}
 		else
@@ -386,7 +381,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 
@@ -756,12 +750,10 @@ class Contrat extends CommonObject
 
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CONTRACT_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 
 				if (! $error)
 				{
@@ -776,7 +768,6 @@ class Contrat extends CommonObject
 				}
 				else
 				{
-					$this->error=$interface->error;
 					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
@@ -903,14 +894,10 @@ class Contrat extends CommonObject
 
 		if (! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTRACT_DELETE',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 		}
 
 		if (! $error)
@@ -938,8 +925,7 @@ class Contrat extends CommonObject
 			return 1;
 		}
 		else
-		{
-			$this->error=$this->db->error();
+		{		
 			dol_syslog(get_class($this)."::delete ERROR ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
@@ -1255,6 +1241,9 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
+		    
+		    $this->db->begin();
+		    
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE rowid=".$idline;
 
@@ -1264,16 +1253,16 @@ class Contrat extends CommonObject
 			{
 				$this->error="Error ".$this->db->lasterror();
 				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+				$this->db->rollback();
 				return -1;
 			}
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('LINECONTRACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINECONTRACT_DELETE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
+            $this->db->commit();
 			return 1;
 		}
 		else
@@ -2064,6 +2053,8 @@ class ContratLigne
 				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		}
 
+		$this->db->begin();
+		
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat='".$this->fk_contrat."',";
@@ -2111,19 +2102,19 @@ class ContratLigne
 		{
 			$this->error="Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 
 		if (! $notrigger)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('LINECONTRACT_UPDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 		}
-
+		
+        $this->db->commit();
 		return 1;
 	}
 
