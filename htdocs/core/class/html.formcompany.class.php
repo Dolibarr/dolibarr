@@ -794,11 +794,11 @@ class FormCompany
     	{
     		$valors=explode(":", $tax);
     
-    		if(sizeof($valors)>1)
+    		if(count($valors)>1)
     		{
     			//montar select
     			print '<select class="flat" name="'.$htmlname.'">';
-    			while($i <= (sizeof($valors))-1){
+    			while($i <= (count($valors))-1){
     				if ($selected == $valors[$i]){
     					print '<option value="'.$valors[$i].'" selected="selected">';
     				}else{

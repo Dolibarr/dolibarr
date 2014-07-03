@@ -6,7 +6,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro 	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
@@ -196,7 +196,9 @@ class Societe extends CommonObject
 
     // Local taxes
     var $localtax1_assuj;
+    var $localtax1_value;
     var $localtax2_assuj;
+    var $localtax2_value;
 
     var $managers;
     var $capital;
@@ -600,6 +602,24 @@ class Societe extends CommonObject
     }
 
     /**
+     * Update localtax value of third party
+     * @param	int		$id         id societe
+     * @param	int		$local		Localtax to update
+     * @param 	double	$value		value of localtax
+     */
+    function update_localtax($id, $local, $value)
+    {
+    	global $db;
+    	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
+    	if($local==1) $sql .= "localtax1_value = '" .$value."'";
+    	else $sql.="localtax2_value='".$value."'";
+    	$sql.="WHERE rowid=".$id;
+    	 
+    	$resql=$this->db->query($sql);
+    	 
+    }
+    
+    /**
      *      Update parameters of third party
      *
      *      @param	int		$id              			id societe
@@ -656,6 +676,9 @@ class Societe extends CommonObject
         // Local taxes
         $this->localtax1_assuj=trim($this->localtax1_assuj);
         $this->localtax2_assuj=trim($this->localtax2_assuj);
+        
+        $this->localtax1_value=trim($this->localtax1_value);
+        $this->localtax2_value=trim($this->localtax2_value);
 
         $this->capital=price2num(trim($this->capital),'MT');
         if (empty($this->capital)) $this->capital = 0;
@@ -755,6 +778,27 @@ class Societe extends CommonObject
             // Local taxes
             $sql .= ",localtax1_assuj = ".($this->localtax1_assuj!=''?"'".$this->localtax1_assuj."'":"null");
             $sql .= ",localtax2_assuj = ".($this->localtax2_assuj!=''?"'".$this->localtax2_assuj."'":"null");
+            if($this->localtax1_assuj==1)
+            {
+            	if($this->localtax1_value!='')
+            	{
+            		$sql .=",localtax1_value =".$this->localtax1_value;
+            	}
+            	else $sql .=",localtax1_value =0.000";
+            	 
+            }
+            else $sql .=",localtax1_value =0.000";
+            
+            if($this->localtax2_assuj==1)
+            {
+            	if($this->localtax2_value!='')
+            	{
+            		$sql .=",localtax2_value =".$this->localtax2_value;
+            	}
+            	else $sql .=",localtax2_value =0.000";
+            
+            }
+            else $sql .=",localtax2_value =0.000";
 
             $sql .= ",capital = ".$this->capital;
 
@@ -935,7 +979,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj, s.fk_currency as currency_code';
-        $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax2_assuj, s.fk_prospectlevel, s.default_lang, s.logo';
+        $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
@@ -1036,7 +1080,9 @@ class Societe extends CommonObject
                 // Local Taxes
                 $this->localtax1_assuj      = $obj->localtax1_assuj;
                 $this->localtax2_assuj      = $obj->localtax2_assuj;
-
+                
+                $this->localtax1_value		= $obj->localtax1_value;
+                $this->localtax2_value		= $obj->localtax2_value;
 
                 $this->typent_id      = $obj->typent_id;
                 $this->typent_code    = $obj->typent_code;
