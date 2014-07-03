@@ -14,6 +14,8 @@ For users:
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
 - Fix: [ bug #1492, #1493 ] Member trigger problem
 - Fix: [ bug #1474, #1475 ] Contract trigger problem
+- Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
+
 
 For translators:
 - Update language files.

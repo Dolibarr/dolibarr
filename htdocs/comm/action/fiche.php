@@ -283,8 +283,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 		}
 		else
 		{
-			$mesg=$object->error;
-			setEventMessage($mesg,'errors');
+			setEventMessage($object->error,'errors');
 		}
 	}
 }
