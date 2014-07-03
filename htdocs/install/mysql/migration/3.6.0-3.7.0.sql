@@ -43,8 +43,8 @@ ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_sell varchar(32);
 ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_sell varchar(32);
 ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_buy varchar(32);
-ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_sell varchar(32);
-ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_product MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_product MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
 
