@@ -18,6 +18,7 @@ For users:
 - Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
 - Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
 - Fix: [ bug #1505, #1504] Project trigger problem
+- Fix: [ bug #1463, #1464 ] Proposal triggers problem
 
 
 For translators:
