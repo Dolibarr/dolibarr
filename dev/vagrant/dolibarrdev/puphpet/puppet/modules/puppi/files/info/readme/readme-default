@@ -1,4 +1,0 @@
-No extra node or role related info available.
-To have node or role specific extar info, create 
-modules/puppi/files/info/readme/readme--$hostname or
-modules/puppi/files/info/readme/readme-$role 
