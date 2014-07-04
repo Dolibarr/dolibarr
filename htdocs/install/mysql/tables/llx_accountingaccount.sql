@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2014	   Juanjo Menent	   <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@ create table llx_accountingaccount
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,
   datec           datetime,
-  tms             timestamp DEFAULT NULL,
+  tms             timestamp,
   fk_pcg_version  varchar(12)  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,
