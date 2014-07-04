@@ -138,19 +138,30 @@ if (empty($reshook))
     if ($action == 'disable')
     {
     	$object->fetch($id);
-    	$object->setstatus(0);
-    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-    	exit;
+    	if ($object->setstatus(0)<0)
+    	{
+    	    setEventMessage($object->error,'errors');
+    	}
+    	else 
+    	{
+        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+        	exit;    	    
+    	}
     }
 
     // Confirmation activation
     if ($action == 'enable')
     {
     	$object->fetch($id);
-    	$object->setstatus(1);
-    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-    	exit;
-
+        	if ($object->setstatus(1)<0)
+    	{
+    	    setEventMessage($object->error,'errors');
+    	}
+    	else 
+    	{
+        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+        	exit;    	    
+    	}    	
     }
 
     // Add contact
@@ -235,7 +246,8 @@ if (empty($reshook))
         }
         else
         {
-            $error=$object->error; $errors=$object->errors;
+            setEventMessage($object->error,'errors');
+            setEventMessage($object->errors,'errors');
         }
     }
 
@@ -295,7 +307,8 @@ if (empty($reshook))
             }
             else
             {
-                $error=$object->error; $errors=$object->errors;
+                setEventMessage($object->error,'errors');
+                setEventMessage($object->errors,'errors');
                 $action = 'edit';
             }
         }
@@ -367,6 +380,8 @@ else
 
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
         dol_fiche_head($head, 'card', $title, 0, 'contact');
+        
+        dol_htmloutput_events();
     }
 
     if ($user->rights->societe->contact->creer)
