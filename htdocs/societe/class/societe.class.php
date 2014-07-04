@@ -599,24 +599,6 @@ class Societe extends CommonObject
     }
 
     /**
-     * Update localtax value of third party
-     * @param	int		$id         id societe
-     * @param	int		$local		Localtax to update
-     * @param 	double	$value		value of localtax
-     */
-    function update_localtax($id, $local, $value)
-    {
-    	global $db;
-    	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-    	if($local==1) $sql .= "localtax1_value = '" .$value."'";
-    	else $sql.="localtax2_value='".$value."'";
-    	$sql.="WHERE rowid=".$id;
-    	 
-    	$resql=$this->db->query($sql);
-    	 
-    }
-    
-    /**
      *      Update parameters of third party
      *
      *      @param	int		$id              			id societe
@@ -673,7 +655,7 @@ class Societe extends CommonObject
         // Local taxes
         $this->localtax1_assuj=trim($this->localtax1_assuj);
         $this->localtax2_assuj=trim($this->localtax2_assuj);
-        
+
         $this->localtax1_value=trim($this->localtax1_value);
         $this->localtax2_value=trim($this->localtax2_value);
 
@@ -782,10 +764,10 @@ class Societe extends CommonObject
             		$sql .=",localtax1_value =".$this->localtax1_value;
             	}
             	else $sql .=",localtax1_value =0.000";
-            	 
+
             }
             else $sql .=",localtax1_value =0.000";
-            
+
             if($this->localtax2_assuj==1)
             {
             	if($this->localtax2_value!='')
@@ -793,7 +775,7 @@ class Societe extends CommonObject
             		$sql .=",localtax2_value =".$this->localtax2_value;
             	}
             	else $sql .=",localtax2_value =0.000";
-            
+
             }
             else $sql .=",localtax2_value =0.000";
 
@@ -1074,7 +1056,7 @@ class Societe extends CommonObject
                 // Local Taxes
                 $this->localtax1_assuj      = $obj->localtax1_assuj;
                 $this->localtax2_assuj      = $obj->localtax2_assuj;
-                
+
                 $this->localtax1_value		= $obj->localtax1_value;
                 $this->localtax2_value		= $obj->localtax2_value;
 
