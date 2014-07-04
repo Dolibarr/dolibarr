@@ -126,7 +126,7 @@ if ($action == 'initbarcodeproducts')
 			$sql.=$db->order("datec","ASC");
 			$sql.=$db->plimit($maxperinit);
 
-			dol_syslog("codeinit sql=".$sql, LOG_DEBUG);
+			dol_syslog("codeinit", LOG_DEBUG);
 			$resql=$db->query($sql);
 			if ($resql)
 			{

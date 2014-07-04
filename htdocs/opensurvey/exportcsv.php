@@ -86,7 +86,6 @@ $sql ='SELECT nom, reponses';
 $sql.=' FROM '.MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage='" . $db->escape($numsondage) . "'";
 $sql.=" ORDER BY id_users";
-dol_syslog("sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {

@@ -202,7 +202,7 @@ class ActionComm extends CommonObject
         $sql.= $conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add sql=".$sql);
+        dol_syslog(get_class($this)."::add", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -248,7 +248,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::add ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -288,7 +287,7 @@ class ActionComm extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
         $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -365,7 +364,7 @@ class ActionComm extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $res=$this->db->query($sql);
         if ($res < 0) {
         	$this->error=$this->db->lasterror();
@@ -407,7 +406,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -469,7 +467,7 @@ class ActionComm extends CommonObject
         $sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog(get_class($this)."::update sql=".$sql);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         if ($this->db->query($sql))
         {
 
@@ -514,7 +512,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -546,7 +543,7 @@ class ActionComm extends CommonObject
         }
         if (! empty($filter)) $sql.= $filter;
 
-        dol_syslog(get_class()."::getActions sql=".$sql);
+        dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -632,7 +629,7 @@ class ActionComm extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
         $sql.= ' WHERE a.id = '.$id;
 
-        dol_syslog(get_class($this)."::info sql=".$sql);
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -918,7 +915,7 @@ class ActionComm extends CommonObject
             $sql.= " ORDER by datep";
             //print $sql;exit;
 
-            dol_syslog(get_class($this)."::build_exportfile select events sql=".$sql);
+            dol_syslog(get_class($this)."::build_exportfile select events", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -964,7 +961,6 @@ class ActionComm extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::build_exportfile ".$this->db->lasterror(), LOG_ERR);
                 return -1;
             }
 

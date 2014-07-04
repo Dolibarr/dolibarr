@@ -390,7 +390,7 @@ else
 			$sql.= " AND ps.fk_entrepot = ".$object->id;
 			$sql.= $db->order($sortfield,$sortorder);
 
-			dol_syslog('List products sql='.$sql);
+			dol_syslog('List products', LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{

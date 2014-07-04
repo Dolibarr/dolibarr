@@ -86,7 +86,7 @@ class UserGroup extends CommonObject
 			$sql.= " WHERE g.rowid = ".$id;
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -114,7 +114,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -147,7 +146,7 @@ class UserGroup extends CommonObject
 		}
 		$sql.= " ORDER BY g.nom";
 
-		dol_syslog(get_class($this)."::listGroupsForUser sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -170,7 +169,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -205,7 +203,7 @@ class UserGroup extends CommonObject
 		}
 		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
 
-		dol_syslog(get_class($this)."::listUsersForGroup sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -234,7 +232,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -472,7 +469,7 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -593,7 +590,7 @@ class UserGroup extends CommonObject
 		$sql.= ",".$this->db->escape($entity);
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -616,7 +613,6 @@ class UserGroup extends CommonObject
 		{
 		    $this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -647,7 +643,7 @@ class UserGroup extends CommonObject
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

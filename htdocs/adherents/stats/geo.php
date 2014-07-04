@@ -138,7 +138,7 @@ if ($mode)
     //print $langsen->trans("Country"."FI");exit;
 
     // Define $data array
-    dol_syslog("Count member sql=".$sql);
+    dol_syslog("Count member", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {

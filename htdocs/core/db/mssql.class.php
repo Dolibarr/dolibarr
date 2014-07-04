@@ -359,6 +359,8 @@ class DoliDBMssql extends DoliDB
 			$ret = mssql_query($query, $this->db);
 		}
 
+		dol_syslog('sql='.$query, LOG_DEBUG);
+
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{
 			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
@@ -370,7 +372,9 @@ class DoliDBMssql extends DoliDB
                 $this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
-                dol_syslog(get_class($this)."::query SQL error: ".$query, LOG_WARNING);
+
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;

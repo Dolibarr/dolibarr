@@ -130,7 +130,6 @@ if ($action == 'order' && isset($_POST['valid']))
 				{
                     $error=$db->lasterror();
                     dol_print_error($db);
-                    dol_syslog('replenish.php: '.$error, LOG_ERR);
                 }
                 $db->free($resql);
                 unset($_POST['fourn' . $i]);
@@ -279,7 +278,7 @@ if ($salert == 'on')	// Option to see when stock is lower than alert
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 
-dol_syslog('Execute request sql='.$sql);
+dol_syslog('Execute request', LOG_DEBUG);
 $resql = $db->query($sql);
 if (empty($resql))
 {

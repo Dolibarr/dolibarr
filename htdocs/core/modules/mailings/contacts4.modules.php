@@ -89,7 +89,7 @@ class mailing_contacts4 extends MailingTargets
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
 
-    	dol_syslog(get_class($this).':: add_to_target sql='.$sql,LOG_DEBUG);
+    	dol_syslog(get_class($this).':: add_to_target',LOG_DEBUG);
     	$resql = $this->db->query($sql);
     	if ($resql)
     	{
@@ -115,7 +115,6 @@ class mailing_contacts4 extends MailingTargets
 			}
 		}else {
 			$this->error=$this->db->lasterrno();
-			dol_syslog(get_class($this)."Error sql=".$sql." ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -215,7 +214,7 @@ class mailing_contacts4 extends MailingTargets
 
         $resql = $this->db->query($sql);
 
-        dol_syslog(get_class($this).':: formFilter sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).':: formFilter',LOG_DEBUG);
 		if ($resql) {
 	        $s='';
 	        $s.='<select name="filter" class="flat">';
@@ -236,7 +235,6 @@ class mailing_contacts4 extends MailingTargets
 		}
 		else {
 			$this->error=$this->db->lasterrno();
-			dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 			return -1;
 		}
 

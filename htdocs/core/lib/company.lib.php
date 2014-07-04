@@ -267,7 +267,7 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
     else $sql.= " WHERE libelle='".$db->escape($searchlabel)."'";
 
-    dol_syslog("Company.lib::getCountry sql=".$sql);
+    dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
     if ($resql)
     {
@@ -317,7 +317,7 @@ function getState($id,$withcode='',$dbtouse=0)
     $sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
     $sql.= " WHERE rowid=".$id;
 
-    dol_syslog("Company.lib::getState sql=".$sql);
+    dol_syslog("Company.lib::getState", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
     if ($resql)
     {
@@ -394,7 +394,7 @@ function getFormeJuridiqueLabel($code)
     $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_forme_juridique";
     $sql.= " WHERE code='$code'";
 
-    dol_syslog("Company.lib::getFormeJuridiqueLabel sql=".$sql);
+    dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -655,7 +655,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_name)       $sql .= " AND (p.lastname LIKE '%".$db->escape($search_name)."%' OR p.firstname LIKE '%".$db->escape($search_name)."%')";
     $sql.= " ORDER BY $sortfield $sortorder";
 
-    dol_syslog('core/lib/company.lib.php :: show_contacts sql='.$sql,LOG_DEBUG);
+    dol_syslog('core/lib/company.lib.php :: show_contacts', LOG_DEBUG);
     $result = $db->query($sql);
     $num = $db->num_rows($result);
 
@@ -953,7 +953,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-        dol_syslog("company.lib::show_actions_todo sql=".$sql);
+        dol_syslog("company.lib::show_actions_todo", LOG_DEBUG);
         $result=$db->query($sql);
         if ($result)
         {
@@ -1089,7 +1089,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
-        dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+        dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -1141,7 +1141,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         $sql.= " AND mc.fk_mailing=m.rowid";
         $sql.= " ORDER BY mc.date_envoi DESC, m.rowid DESC";
 
-        dol_syslog("company.lib::show_actions_done sql=".$sql, LOG_DEBUG);
+        dol_syslog("company.lib::show_actions_done", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {

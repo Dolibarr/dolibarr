@@ -121,7 +121,7 @@ if ($fourn_id > 0)
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("fourn/product/liste.php: sql=".$sql);
+dol_syslog("fourn/product/liste.php:", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {

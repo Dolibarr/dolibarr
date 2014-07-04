@@ -227,7 +227,7 @@ class CompanyBankAccount extends Account
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
         $sql.= " WHERE rowid  = ".$this->id;
 
-        dol_syslog(get_class($this)."::delete sql=".$sql);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
             return 1;
@@ -323,7 +323,7 @@ class CompanyBankAccount extends Account
     	$sql1 = "SELECT rowid as id, fk_soc  FROM ".MAIN_DB_PREFIX."societe_rib";
     	$sql1.= " WHERE rowid = ".($rib?$rib:$this->id);
 
-    	dol_syslog(get_class($this).'::setAsDefault sql='.$sql1);
+    	dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
     	$result1 = $this->db->query($sql1);
     	if ($result1)
     	{
@@ -339,12 +339,12 @@ class CompanyBankAccount extends Account
 
     			$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 ";
     			$sql2.= "WHERE fk_soc = ".$obj->fk_soc;
-    			dol_syslog(get_class($this).'::setAsDefault sql='.$sql2);
+    			dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
     			$result2 = $this->db->query($sql2);
 
     			$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1 ";
     			$sql3.= "WHERE rowid = ".$obj->id;
-    			dol_syslog(get_class($this).'::setAsDefault sql='.$sql3);
+    			dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
     			$result3 = $this->db->query($sql3);
 
     			if (!$result2 || !$result3)

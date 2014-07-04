@@ -121,7 +121,6 @@ $sql.= " ORDER BY f.rowid";
 // TODO Find a better trick to avoid problem with some mysql installations
 if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
 
-dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {

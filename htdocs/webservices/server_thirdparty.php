@@ -660,7 +660,7 @@ function getListOfThirdParties($authentication,$filterthirdparty)
             if ($key == 'supplier' && $val != '')  $sql.=" AND s.fournisseur = ".$db->escape($val);
             if ($key == 'category'   && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
-        dol_syslog("Function: getListOfThirdParties sql=".$sql);
+        dol_syslog("Function: getListOfThirdParties", LOG_DEBUG);
 
         $extrafields=new ExtraFields($db);
         $extralabels=$extrafields->fetch_name_optionals_label('societe',true);

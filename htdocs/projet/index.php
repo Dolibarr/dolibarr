@@ -155,7 +155,7 @@ $sql.= " ORDER BY u.rowid, t.dateo, t.datee";
 
 $userstatic=new User($db);
 
-dol_syslog('projet:index.php: affectationpercent sql='.$sql,LOG_DEBUG);
+dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
 $resql = $db->query($sql);
 if ( $resql )
 {

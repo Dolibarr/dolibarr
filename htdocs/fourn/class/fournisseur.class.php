@@ -157,7 +157,7 @@ class Fournisseur extends Societe
 		$sql.= " VALUES ";
 		$sql.= " ('".$this->db->escape($name)."',1,1)";
 
-		dol_syslog("Fournisseur::CreateCategory sql=".$sql);
+		dol_syslog("Fournisseur::CreateCategory", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
