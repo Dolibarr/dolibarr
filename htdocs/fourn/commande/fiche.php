@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -1288,17 +1288,9 @@ elseif (! empty($object->id))
 	if (! empty($conf->projet->enabled))	$nbrow++;
 
 	//Local taxes
-	//TODO: Place into a function to control showing by country or study better option
-	if ($mysoc->country_code=='ES')
-	{
-		if($mysoc->localtax1_assuj=="1") $nbrow++;
-		if($object->thirdparty->localtax2_assuj=="1") $nbrow++;
-	}
-	else
-	{
-		if($mysoc->localtax1_assuj=="1") $nbrow++;
-		if($mysoc->localtax2_assuj=="1") $nbrow++;
-	}
+	if($mysoc->localtax1_assuj=="1") $nbrow++;
+	if($mysoc->localtax2_assuj=="1") $nbrow++;
+	
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1514,37 +1506,19 @@ elseif (! empty($object->id))
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	//TODO: Place into a function to control showing by country or study better option
-	if ($mysoc->country_code=='ES')
+	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($object->thirdparty->localtax2_assuj=="1") //Localtax2 IRPF
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
+		print '<td align="right">'.price($object->total_localtax1).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
-	else
+	if ($mysoc->localtax2_assuj=="1") //Localtax2
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($mysoc->localtax2_assuj=="1") //Localtax2
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
+		print '<td align="right">'.price($object->total_localtax2).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
+	
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
@@ -1753,15 +1727,12 @@ elseif (! empty($object->id))
 	}
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'edit_line')
+	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action != 'edit_line')
 	{
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector;
 		$forceall=1; $senderissupplier=1; $dateSelector=0;
-		if ($object->statut == 0 && $user->rights->propal->creer)
-		{
-			if ($action != 'editline')
-			{
+		
 				$var = true;
 
 				// Add free products/services
@@ -1769,8 +1740,7 @@ elseif (! empty($object->id))
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			}
-		}
+			
 	}
 	print '</table>';
 
