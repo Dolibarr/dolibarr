@@ -19,7 +19,7 @@ For users:
 - Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
 - Fix: [ bug #1505, #1504] Project trigger problem
 - Fix: [ bug #1463, #1464 ] Proposal triggers problem
-
+- Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
 
 For translators:
 - Update language files.

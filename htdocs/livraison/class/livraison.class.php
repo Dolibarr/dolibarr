@@ -446,15 +446,12 @@ class Livraison extends CommonObject
 			return -1;
 		}
 
-		// Appel des triggers
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers('DELIVERY_VALIDATE', $this, $user, $langs, $conf);
-		// Fin appel triggers
+        // Call trigger
+        $result=$this->call_trigger('DELIVERY_VALIDATE',$user);
+        // End call triggers
 		if ($result < 0)
 		{
 			$this->db->rollback();
-			$this->error = $interface->errors;
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
@@ -604,14 +601,14 @@ class Livraison extends CommonObject
 						}
 					}
 
-					// Call triggers
-					include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('DELIVERY_DELETE',$this,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// End call triggers
+                    // Call trigger
+                    $result=$this->call_trigger('DELIVERY_DELETE',$user);
+                    if ($result < 0)
+                    {
+                        $this->db->rollback();
+                        return -4; 
+                    }            
+                    // End call triggers
 
 					return 1;
 				}
