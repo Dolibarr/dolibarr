@@ -116,7 +116,7 @@ class FormOrder
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::selectInputMethod sql=".$sql);
+		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

@@ -178,7 +178,6 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		else
 		{
 			$this->error=$db->error()." sql=".$sql;
-			dol_syslog("mod_codecompta_aquarium::verif error".$this->error, LOG_ERR);
 			return -1;		// Erreur
 		}
 	}

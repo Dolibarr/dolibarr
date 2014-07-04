@@ -886,7 +886,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))
 	{
-		// This part of code should not be used.
+		// This part of code should not be used. TODO Remove this.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
@@ -904,7 +904,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
-			$ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);
+			$ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);	// TODO Remove this
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
@@ -912,7 +912,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);
+		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);					// TODO Remove this
 		if ($encodetooutput)
 		{
 			$monthtext=$outputlangs->transnoentities('Month'.$month);
@@ -931,7 +931,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (preg_match('/__a__/i',$format))
 	{
-		$w=adodb_strftime('%w',$time+$offsettz+$offsetdst);
+		$w=adodb_strftime('%w',$time+$offsettz+$offsetdst);						// TODO Remove this
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret=str_replace('__A__',$dayweek,$ret);
 		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);
@@ -1037,8 +1037,16 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 		}
 		else if ($gm === 'user')
 		{
-			$default_timezone=(empty($_SESSION["dol_tz_string"])?'UTC':$_SESSION["dol_tz_string"]);
-			$localtz = new DateTimeZone($default_timezone);
+			// We use dol_tz_string first because it contains dst.
+			$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);
+			try {
+				$localtz = new DateTimeZone($default_timezone);
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
+				$default_timezone=@date_default_timezone_get();
+			}
 		}
 		else $localtz = new DateTimeZone('UTC');
 		$dt = new DateTime(null,$localtz);
@@ -2886,7 +2894,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
-	
+
 	if($thirdparty_buyer->country_code!=$thirdparty_seller->country_code)
 	{
 		return 0;
@@ -2903,7 +2911,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 			else
 			{
-				if (! $thirdparty_seller->localtax1_assuj) return 0; 
+				if (! $thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
 
@@ -2970,15 +2978,15 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
-	dol_syslog("get_localtax sql=".$sql);
+	dol_syslog("get_localtax", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -2993,7 +3001,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 /**
  * Return true if LocalTax is unique
- * 
+ *
  * @param int 	$local	Local taxt to test
  * @return boolean 		True if LocalTax have multiple values, False if not
  */
@@ -3002,7 +3010,7 @@ function isOnlyOneLocalTax($local)
 	$tax=get_localtax_by_third($local);
 
 	$valors=explode(":", $tax);
-	
+
 	if(count($valors)>1)
 	{
 		return false;
@@ -3015,7 +3023,7 @@ function isOnlyOneLocalTax($local)
 
 /**
  * Get values of localtaxes
- * 
+ *
  * @param	int		$local 	LocalTax to get
  * @return	number			Values of localtax
  */
@@ -3035,7 +3043,7 @@ function get_localtax_by_third($local)
 		if ($local==1) return $obj->localtax1;
 		elseif ($local==2) return $obj->localtax2;
 	}
-	
+
 	return 0;
 
 }
@@ -3050,7 +3058,8 @@ function get_localtax_by_third($local)
  *
  *  @param		float	$vatrate			VAT Rate
  *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param		int		$thirdparty         Company object
+ *  @param		int		$buyer         		Company object
+ *  @param		int		$seller        		Company object
  *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
@@ -3070,13 +3079,13 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 	{
 		$obj = $db->fetch_object($resql);
 		if ($local == 1)
-		{ 
+		{
 			if (! isOnlyOneLocalTax(1))
 			{
 				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 			else
-			{ 	
+			{
 				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 		}
@@ -3087,7 +3096,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 			else
-			{ 
+			{
 				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 		}
@@ -3114,8 +3123,8 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 				{
 					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
-			}	
-			
+			}
+
 			if(! isOnlyOneLocalTax(2))
 			{
 				if(! isOnlyOneLocalTax(1))
@@ -3138,7 +3147,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
 			}
-			
+
 		}
 	}
 
@@ -4362,7 +4371,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	$sql = "SELECT ".$fieldid." as id";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$key."'";
-	dol_syslog('dol_getIdFromCode sql='.$sql, LOG_DEBUG);
+	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -4374,7 +4383,6 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	}
 	else
 	{
-		dol_syslog("dol_getIdFromCode error=".$db->lasterror(), LOG_ERR);
 		return -1;
 	}
 }

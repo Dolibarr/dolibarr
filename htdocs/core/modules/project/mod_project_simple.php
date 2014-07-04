@@ -122,7 +122,7 @@ class mod_project_simple extends ModeleNumRefProjects
 		}
 		else
 		{
-			dol_syslog("mod_project_simple::getNextValue sql=".$sql);
+			dol_syslog("mod_project_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 

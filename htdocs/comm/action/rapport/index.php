@@ -89,7 +89,7 @@ $sql.= " ORDER BY year DESC, month DESC, df DESC";
 $sql.= $db->plimit($limit+1,$offset);
 
 //print $sql;
-dol_syslog("select sql=".$sql);
+dol_syslog("select", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

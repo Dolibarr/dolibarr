@@ -312,7 +312,7 @@ $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.tms, c.statut, s.nom, s.rowid";
 $sql.= " ORDER BY c.tms DESC";
 $sql.= " LIMIT ".$max;
 
-dol_syslog("contrat/index.php sql=".$sql, LOG_DEBUG);
+dol_syslog("contrat/index.php", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {

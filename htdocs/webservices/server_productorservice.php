@@ -919,7 +919,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 				$sql .= " ORDER BY fk_".$field." ASC" ;
 
 
-				dol_syslog("getProductsForCategory get id of product into category sql=".$sql);
+				dol_syslog("getProductsForCategory get id of product into category", LOG_DEBUG);
 				$res  = $db->query($sql);
 				if ($res)
 				{

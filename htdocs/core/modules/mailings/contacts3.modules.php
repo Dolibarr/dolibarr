@@ -92,7 +92,6 @@ class mailing_contacts3 extends MailingTargets
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
 
-    	dol_syslog("sql=".$sql);
     	$resql = $this->db->query($sql);
     	if ($resql)
     	{

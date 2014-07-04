@@ -420,7 +420,7 @@ class Societe extends CommonObject
             $sql.= ", 0";
             $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null").")";
 
-            dol_syslog(get_class($this)."::create sql=".$sql);
+            dol_syslog(get_class($this)."::create", LOG_DEBUG);
             $result=$this->db->query($sql);
             if ($result)
             {
@@ -474,7 +474,6 @@ class Societe extends CommonObject
                 else
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::Create fails insert sql=".$sql, LOG_ERR);
                     $result=-2;
                 }
                 $this->db->rollback();
@@ -600,24 +599,6 @@ class Societe extends CommonObject
     }
 
     /**
-     * Update localtax value of third party
-     * @param	int		$id         id societe
-     * @param	int		$local		Localtax to update
-     * @param 	double	$value		value of localtax
-     */
-    function update_localtax($id, $local, $value)
-    {
-    	global $db;
-    	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-    	if($local==1) $sql .= "localtax1_value = '" .$value."'";
-    	else $sql.="localtax2_value='".$value."'";
-    	$sql.="WHERE rowid=".$id;
-    	 
-    	$resql=$this->db->query($sql);
-    	 
-    }
-    
-    /**
      *      Update parameters of third party
      *
      *      @param	int		$id              			id societe
@@ -674,7 +655,7 @@ class Societe extends CommonObject
         // Local taxes
         $this->localtax1_assuj=trim($this->localtax1_assuj);
         $this->localtax2_assuj=trim($this->localtax2_assuj);
-        
+
         $this->localtax1_value=trim($this->localtax1_value);
         $this->localtax2_value=trim($this->localtax2_value);
 
@@ -783,10 +764,10 @@ class Societe extends CommonObject
             		$sql .=",localtax1_value =".$this->localtax1_value;
             	}
             	else $sql .=",localtax1_value =0.000";
-            	 
+
             }
             else $sql .=",localtax1_value =0.000";
-            
+
             if($this->localtax2_assuj==1)
             {
             	if($this->localtax2_value!='')
@@ -794,7 +775,7 @@ class Societe extends CommonObject
             		$sql .=",localtax2_value =".$this->localtax2_value;
             	}
             	else $sql .=",localtax2_value =0.000";
-            
+
             }
             else $sql .=",localtax2_value =0.000";
 
@@ -829,7 +810,7 @@ class Societe extends CommonObject
             $sql .= " WHERE rowid = '" . $id ."'";
 
 
-            dol_syslog(get_class($this)."::Update sql=".$sql);
+            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -928,9 +909,6 @@ class Societe extends CommonObject
                 }
                 else
                 {
-
-                    $this->error = $langs->trans("Error sql=".$sql);
-                    dol_syslog(get_class($this)."::Update fails update sql=".$sql, LOG_ERR);
                     $result =  -2;
                 }
                 $this->db->rollback();
@@ -1078,7 +1056,7 @@ class Societe extends CommonObject
                 // Local Taxes
                 $this->localtax1_assuj      = $obj->localtax1_assuj;
                 $this->localtax2_assuj      = $obj->localtax2_assuj;
-                
+
                 $this->localtax1_value		= $obj->localtax1_value;
                 $this->localtax2_value		= $obj->localtax2_value;
 
@@ -1137,7 +1115,6 @@ class Societe extends CommonObject
         }
         else
         {
-            dol_syslog($this->db->error(), LOG_ERR);
             $this->error=$this->db->error();
             $result = -3;
         }
@@ -1243,7 +1220,6 @@ class Societe extends CommonObject
     	else
     	{
     		$this->error=$this->db->error().' sql='.$sql;
-    		dol_syslog(get_class($this)."::searchByName ".$this->error, LOG_ERR);
     		return -1;
     	}
     }
@@ -1312,12 +1288,11 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error .= $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -1326,7 +1301,7 @@ class Societe extends CommonObject
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 $sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
@@ -1340,12 +1315,11 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib";
                 $sql.= " WHERE fk_soc = " . $id;
-                dol_syslog(get_class($this)."::Delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::Delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete erreur -2 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -1365,12 +1339,11 @@ class Societe extends CommonObject
             {
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."societe";
                 $sql.= " WHERE rowid = " . $id;
-                dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+                dol_syslog(get_class($this)."::delete", LOG_DEBUG);
                 if (! $this->db->query($sql))
                 {
                     $error++;
                     $this->error = $this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
                 }
             }
 
@@ -2322,7 +2295,7 @@ class Societe extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
             $sql.= " SET parent = ".($id > 0 ? $id : "null");
             $sql.= " WHERE rowid = " . $this->id;
-			dol_syslog(get_class($this).'::set_parent sql='.$sql);
+			dol_syslog(get_class($this).'::set_parent', LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -2735,7 +2708,7 @@ class Societe extends CommonObject
             $sql.= " SET fk_soc=".$this->id;
             $sql.= " WHERE rowid=".$member->id;
 
-            dol_syslog(get_class($this)."::create_from_member sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::create_from_member", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -2745,7 +2718,6 @@ class Societe extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::create_from_member - 1 - ".$this->error, LOG_ERR);
 
                 $this->db->rollback();
                 return -1;
@@ -2909,7 +2881,7 @@ class Societe extends CommonObject
     	elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
     	elseif ($localTaxNum == 2) $sql .= " AND t.localtax2_type <> '0'";
 
-    	dol_syslog("useLocalTax sql=".$sql);
+    	dol_syslog("useLocalTax", LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -2929,7 +2901,7 @@ class Societe extends CommonObject
 		$sql .= " WHERE r.fk_pays = p.rowid AND p.code = '".$this->country_code."'";
 		$sql .= " AND r.active = 1";
 
-		dol_syslog("useRevenueStamp sql=".$sql);
+		dol_syslog("useRevenueStamp", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2990,7 +2962,7 @@ class Societe extends CommonObject
 			$sql.= " fk_prospectlevel='".$this->fk_prospectlevel."'";
 			$sql.= ",fk_user_modif='".$user->id."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this)."::set_prospect_level sql=".$sql);
+			dol_syslog(get_class($this)."::set_prospect_level", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -3073,7 +3045,7 @@ class Societe extends CommonObject
 			$sql.= ",fk_user_modif='".$user->id."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_commnucation_level sql=".$sql);
+			dol_syslog(get_class($this)."::set_commnucation_level", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -3107,7 +3079,7 @@ class Societe extends CommonObject
 			$sql.= " outstanding_limit= '".($outstanding!=''?$outstanding:'null')."'";
 			$sql.= " WHERE rowid = ".$this->id;
 
-			dol_syslog(get_class($this)."::set_outstanding sql=".$sql);
+			dol_syslog(get_class($this)."::set_outstanding", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -3144,7 +3116,7 @@ class Societe extends CommonObject
 		//$sql .= " AND (fk_statut <> 3 OR close_code <> 'abandon')";		// Not abandonned for undefined reason
 		$sql .= " AND fk_statut <> 3";		// Not abandonned
 
-		dol_syslog("get_OutstandingBill sql=".$sql);
+		dol_syslog("get_OutstandingBill", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

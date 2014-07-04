@@ -79,7 +79,7 @@ class FormSocialContrib
             $sql.= " ORDER BY c.libelle ASC";
         }
 
-        dol_syslog("Form::select_type_socialcontrib sql=".$sql, LOG_DEBUG);
+        dol_syslog("Form::select_type_socialcontrib", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {

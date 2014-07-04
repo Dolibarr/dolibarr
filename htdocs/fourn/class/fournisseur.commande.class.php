@@ -138,14 +138,14 @@ class CommandeFournisseur extends CommonOrder
         if ($ref) $sql.= " AND c.ref='".$ref."'";
         else $sql.= " AND c.rowid=".$id;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
             if (! $obj)
             {
-                $this->error='Bill with id '.$id.' not found sql='.$sql;
+                $this->error='Bill with id '.$id.' not found';
                 dol_syslog(get_class($this).'::fetch '.$this->error);
                 return 0;
             }
@@ -207,7 +207,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " ORDER BY l.rowid";
             //print $sql;
 
-            dol_syslog(get_class($this)."::fetch get lines sql=".$sql,LOG_DEBUG);
+            dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result)
             {
@@ -259,14 +259,12 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->db->error()." sql=".$sql;
-                dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
                 return -1;
             }
         }
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -288,7 +286,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ($comment?"'".$this->db->escape($comment)."'":'null');
         $sql.= ")";
 
-        dol_syslog("FournisseurCommande::log sql=".$sql, LOG_DEBUG);
+        dol_syslog("FournisseurCommande::log", LOG_DEBUG);
         if ( $this->db->query($sql) )
         {
             return 1;
@@ -296,7 +294,6 @@ class CommandeFournisseur extends CommonOrder
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::log ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -346,7 +343,6 @@ class CommandeFournisseur extends CommonOrder
             $resql=$this->db->query($sql);
             if (! $resql)
             {
-                dol_syslog(get_class($this)."::valid Echec update - 10 - sql=".$sql, LOG_ERR);
                 dol_print_error($this->db);
                 $error++;
             }
@@ -410,8 +406,6 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
-                $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -679,7 +673,6 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->db->rollback();
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::approve Error ",$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -770,7 +763,7 @@ class CommandeFournisseur extends CommonOrder
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = ".$statut;
             $sql .= " WHERE rowid = ".$this->id;
-            dol_syslog(get_class($this)."::cancel sql=".$sql);
+            dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 $result = 0;
@@ -828,7 +821,7 @@ class CommandeFournisseur extends CommonOrder
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.",date_commande=".$this->db->idate("$date");
             $sql .= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::commande sql=".$sql, LOG_DEBUG);
+            dol_syslog(get_class($this)."::commande", LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 $result = 1;
@@ -836,7 +829,6 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
-                dol_syslog(get_class($this)."::cCommande Error -1", LOG_ERR);
                 $result = -1;
             }
         }
@@ -902,7 +894,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         if ($this->db->query($sql))
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
@@ -941,7 +933,7 @@ class CommandeFournisseur extends CommonOrder
 	            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 	            $sql.= " SET ref='(PROV".$this->id.")'";
 	            $sql.= " WHERE rowid=".$this->id;
-	            dol_syslog(get_class($this)."::create sql=".$sql);
+	            dol_syslog(get_class($this)."::create", LOG_DEBUG);
 	            if ($this->db->query($sql))
 	            {
 	                // On logue creation pour historique
@@ -990,7 +982,6 @@ class CommandeFournisseur extends CommonOrder
 	            else
 	            {
 	                $this->error=$this->db->error();
-	                dol_syslog(get_class($this)."::create: Failed -2 - ".$this->error, LOG_ERR);
 	                $this->db->rollback();
 	                return -2;
 	            }
@@ -999,7 +990,6 @@ class CommandeFournisseur extends CommonOrder
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::create: Failed -1 - ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -1217,7 +1207,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= "'".price2num($total_ttc)."'";
             $sql.= ")";
 
-            dol_syslog(get_class($this)."::addline sql=".$sql);
+            dol_syslog(get_class($this)."::addline", LOG_DEBUG);
             $resql=$this->db->query($sql);
             //print $sql;
             if ($resql)
@@ -1250,7 +1240,6 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::addline ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1294,7 +1283,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " (fk_commande,fk_product, qty, fk_entrepot, fk_user, datec) VALUES ";
             $sql.= " ('".$this->id."','".$product."','".$qty."',".($entrepot>0?"'".$entrepot."'":"null").",'".$user->id."','".$this->db->idate($now)."')";
 
-            dol_syslog(get_class($this)."::DispatchProduct sql=".$sql);
+            dol_syslog(get_class($this)."::DispatchProduct", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
@@ -1434,14 +1423,14 @@ class CommandeFournisseur extends CommonOrder
         $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =". $this->id ;
-        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql) )
         {
             $error++;
         }
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
-        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if ($resql = $this->db->query($sql) )
         {
             if ($this->db->affected_rows($resql) < 1)
@@ -1585,7 +1574,7 @@ class CommandeFournisseur extends CommonOrder
                 $sql.= " WHERE rowid = ".$this->id;
                 $sql.= " AND fk_statut IN (3,4)";	// Process running or Partially received
 
-                dol_syslog(get_class($this)."::Livraison sql=".$sql);
+                dol_syslog(get_class($this)."::Livraison", LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if ($resql)
                 {
@@ -1598,7 +1587,6 @@ class CommandeFournisseur extends CommonOrder
                 {
                     $this->db->rollback();
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::Livraison Error ".$this->error, LOG_ERR);
                     $result = -1;
                 }
             }
@@ -1631,7 +1619,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::set_date_livraison sql=".$sql,LOG_DEBUG);
+            dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1641,7 +1629,6 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_date_livraison ".$this->error,LOG_ERR);
                 return -1;
             }
         }
@@ -1711,7 +1698,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ' SET fk_statut='.$status;
         $sql.= ' WHERE rowid = '.$this->id;
 
-        dol_syslog(get_class($this)."::setStatus sql=".$sql);
+        dol_syslog(get_class($this)."::setStatus", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -1827,7 +1814,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= ",product_type=".$type;
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog(get_class($this)."::updateline sql=".$sql);
+            dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
             $result = $this->db->query($sql);
             if ($result > 0)
             {
@@ -1859,7 +1846,6 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::updateline ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -2155,7 +2141,7 @@ class CommandeFournisseurLigne
         $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("CommandeFournisseurLigne.class.php::update_total sql=$sql");
+        dol_syslog("CommandeFournisseurLigne.class.php::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2166,7 +2152,6 @@ class CommandeFournisseurLigne
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("CommandeFournisseurLigne.class.php::update_total Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }

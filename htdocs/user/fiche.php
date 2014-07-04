@@ -238,8 +238,8 @@ if ($action == 'add' && $canadduser)
         {
             $langs->load("errors");
             $db->rollback();
-            if (is_array($object->errors) && count($object->errors)) $message='<div class="error">'.join('<br>',$langs->trans($object->errors)).'</div>';
-            else $message='<div class="error">'.$langs->trans($object->error).'</div>';
+            if (is_array($object->errors) && count($object->errors)) setEventMessage($object->errors,'errors');
+            else setEventMessage($object->error);
             $action="create";       // Go back to create page
         }
 
@@ -396,7 +396,7 @@ if ($action == 'update' && ! $_POST["cancel"])
             		$sql.= " WHERE rowid=".$object->id;
             	}
             	$resql=$db->query($sql);
-            	dol_syslog("fiche::update sql=".$sql, LOG_DEBUG);
+            	dol_syslog("fiche::update", LOG_DEBUG);
             	if (! $resql)
             	{
             		$error++;
@@ -909,7 +909,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Multicompany
     if (! empty($conf->multicompany->enabled))
     {
-        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+        if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity && is_object($mc))
         {
             print "<tr>".'<td valign="top">'.$langs->trans("Entity").'</td>';
             print "<td>".$mc->select_entities($conf->entity);

@@ -9,6 +9,10 @@ For users:
 - New: Can create proposal from an intervention.
 - New: Can filter events on a group of users.
 - New: Add thirdparty to filter on events. 
+- New: Form to add a photo is immediatly available on photo page if
+       permissions are ok (save one click per photo to add).
+- New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
+       shown on main product card.       
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -97,6 +101,8 @@ For users:
 - Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
 - Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
+- Fix: [ bug #1471 ] Several PHP warnings when intercepting USER_CREATE trigger.
+- Fix: [ bug #1517 ] Packages sizes.
 
 For translators:
 - Update language files.
@@ -138,6 +144,7 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Hide title of event when agenda module disabled.
 Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
 Fix: Question about warehouse must not be done when module stock is disabled.
 Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented

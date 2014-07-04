@@ -356,7 +356,7 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
-        dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
+        dol_syslog("Don::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -416,7 +416,7 @@ class Don extends CommonObject
         $sql .= ",fk_statut=".$this->statut;
         $sql .= " WHERE rowid = $this->id";
 
-        dol_syslog("Don::update sql=".$sql);
+        dol_syslog("Don::update", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -496,7 +496,7 @@ class Don extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_paiement";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -553,7 +553,6 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -589,7 +588,6 @@ class Don extends CommonObject
         }
         $sql .=  " WHERE rowid = $rowid AND fk_statut = 1";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -621,7 +619,6 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -651,7 +648,6 @@ class Don extends CommonObject
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$rowid;
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {

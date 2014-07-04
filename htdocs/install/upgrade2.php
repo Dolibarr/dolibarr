@@ -413,7 +413,7 @@ function migrate_paiements($db,$langs,$conf)
 
         $resql = $db->query($sql);
 
-        dolibarr_install_syslog("upgrade2::migrate_paiements sql=".$sql);
+        dolibarr_install_syslog("upgrade2::migrate_paiements", LOG_DEBUG);
         if ($resql)
         {
             $i = 0;
@@ -513,7 +513,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 
         $resql = $db->query($sql);
 
-        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1 sql=".$sql);
+        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_1", LOG_DEBUG);
         $row = array();
         if ($resql)
         {
@@ -639,7 +639,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 
         $resql = $db->query($sql);
 
-        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_2 sql=".$sql);
+        dolibarr_install_syslog("upgrade2::migrate_paiements_orphelins_2", LOG_DEBUG);
         $row = array();
         if ($resql)
         {
@@ -779,7 +779,7 @@ function migrate_contracts_det($db,$langs,$conf)
     $sql.= " WHERE cd.rowid IS NULL AND p.rowid IS NOT NULL";
     $resql = $db->query($sql);
 
-    dolibarr_install_syslog("upgrade2::migrate_contracts_det sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_det", LOG_DEBUG);
     if ($resql)
     {
         $i = 0;
@@ -875,7 +875,7 @@ function migrate_links_transfert($db,$langs,$conf)
     $sql.= " AND bu.fk_bank IS NULL";
     $resql = $db->query($sql);
 
-    dolibarr_install_syslog("upgrade2::migrate_links_transfert sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_links_transfert", LOG_DEBUG);
     if ($resql)
     {
         $i = 0;
@@ -899,7 +899,7 @@ function migrate_links_transfert($db,$langs,$conf)
                 $sql.= ")";
 
                 print $sql.'<br>';
-                dolibarr_install_syslog("migrate_links_transfert sql=".$sql);
+                dolibarr_install_syslog("migrate_links_transfert", LOG_DEBUG);
 
                 if (! $db->query($sql))
                 {
@@ -950,7 +950,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationContractsEmptyDatesUpdate')."</b><br>\n";
 
     $sql="update llx_contrat set date_contrat=tms where date_contrat is null";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date1 sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date1", LOG_DEBUG);
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
@@ -959,7 +959,7 @@ function migrate_contracts_date1($db,$langs,$conf)
     print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
     $sql="update llx_contrat set datec=tms where datec is null";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date1 sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date1", LOG_DEBUG);
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
@@ -989,7 +989,7 @@ function migrate_contracts_date2($db,$langs,$conf)
     $sql.= " GROUP BY c.rowid, c.date_contrat";
     $resql = $db->query($sql);
 
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date2 sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date2", LOG_DEBUG);
     if ($resql)
     {
         $i = 0;
@@ -1050,7 +1050,7 @@ function migrate_contracts_date3($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationContractsIncoherentCreationDateUpdate')."</b><br>\n";
 
     $sql="update llx_contrat set datec=date_contrat where datec is null or datec > date_contrat";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_date3 sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_date3", LOG_DEBUG);
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
@@ -1078,7 +1078,7 @@ function migrate_contracts_open($db,$langs,$conf)
 
     $sql = "SELECT c.rowid as cref FROM llx_contrat as c, llx_contratdet as cd";
     $sql.= " WHERE cd.statut = 4 AND c.statut=2 AND c.rowid=cd.fk_contrat";
-    dolibarr_install_syslog("upgrade2::migrate_contracts_open sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_contracts_open", LOG_DEBUG);
     $resql = $db->query($sql);
     if (! $resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0) {
@@ -1148,7 +1148,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
         $select_sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn';
         $select_sql.= ' WHERE fk_facture_fourn IS NOT NULL';
 
-        dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn sql=".$select_sql);
+        dolibarr_install_syslog("upgrade2::migrate_paiementfourn_facturefourn", LOG_DEBUG);
         $select_resql = $db->query($select_sql);
         if ($select_resql)
         {
@@ -1264,7 +1264,7 @@ function migrate_price_facture($db,$langs,$conf)
     $sql.= " AND (((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL) or f.total_ttc IS NULL)";
     //print $sql;
 
-    dolibarr_install_syslog("upgrade2::migrate_price_facture sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_price_facture", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1377,7 +1377,7 @@ function migrate_price_propal($db,$langs,$conf)
     $sql.= " WHERE pd.fk_propal = p.rowid";
     $sql.= " AND ((pd.total_ttc = 0 AND pd.remise_percent != 100) or pd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_propal sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_price_propal", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1486,7 +1486,7 @@ function migrate_price_contrat($db,$langs,$conf)
     $sql.= " WHERE cd.fk_contrat = c.rowid";
     $sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100 AND cd.subprice > 0) or cd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_contrat sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_price_contrat", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1571,7 +1571,7 @@ function migrate_price_commande($db,$langs,$conf)
     $sql.= " WHERE cd.fk_commande = c.rowid";
     $sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_commande sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_price_commande", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -1685,7 +1685,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
     $sql.= " WHERE cd.fk_commande = c.rowid";
     $sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
 
-    dolibarr_install_syslog("upgrade2::migrate_price_commande_fournisseur sql=".$sql);
+    dolibarr_install_syslog("upgrade2::migrate_price_commande_fournisseur", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -2406,7 +2406,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
     $sql.= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
     $sql.= " WHERE t1.rowid = t2.".$field2.")";
 
-    dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 1 sql=".$sql);
+    dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 1", LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -2472,7 +2472,7 @@ function migrate_restore_missing_links($db,$langs,$conf)
     $sql.= " (SELECT t2.rowid FROM ".MAIN_DB_PREFIX.$table2." as t2";
     $sql.= " WHERE t1.rowid = t2.".$field2.")";
 
-    dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 2 sql=".$sql);
+    dolibarr_install_syslog("upgrade2:migrate_restore_missing_links DIRECTION 2", LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {

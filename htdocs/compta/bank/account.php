@@ -241,7 +241,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= " AND ba.entity = ".$conf->entity;
 	$sql.= $sql_rech;
 
-	dol_syslog("account.php count transactions - sql=".$sql, LOG_DEBUG);
+	dol_syslog("account.php count transactions -", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result)
 	{
@@ -485,7 +485,7 @@ if ($id > 0 || ! empty($ref))
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 	$sql.= $db->plimit($limitsql, 0);
 
-	dol_syslog("account.php get transactions - sql=".$sql, LOG_DEBUG);
+	dol_syslog("account.php get transactions -", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result)
 	{

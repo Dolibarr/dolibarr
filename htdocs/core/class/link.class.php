@@ -93,7 +93,7 @@ class Link extends CommonObject
         $sql .= ", '" . $this->objecttype . "'";
         $sql .= ", " . $this->objectid . ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "links");
@@ -136,7 +136,6 @@ class Link extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::Create fails insert sql=".$sql, LOG_ERR);
                 $result=-2;
             }
             $this->db->rollback();
@@ -223,7 +222,6 @@ class Link extends CommonObject
             else
             {
                 $this->error = $langs->trans("Error sql = " . $sql);
-                dol_syslog(get_class($this) . "::Update fails update = " . $this->error, LOG_ERR);
                 $result =  -2;
             }
             $this->db->rollback();
@@ -256,7 +254,7 @@ class Link extends CommonObject
             $sql .= " ORDER BY " . $sortfield . " " . $sortorder;
         }
 
-        dol_syslog(get_class($this)."::fetchAll sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -281,7 +279,6 @@ class Link extends CommonObject
                 return 0;
             }
         } else {
-            dol_syslog(get_class($this) . "::FetchAll fails sql=" . $sql, LOG_ERR);
             return -1;
         }
     }
@@ -305,7 +302,7 @@ class Link extends CommonObject
         $sql .= " WHERE rowid = " . $rowid;
         if($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -326,7 +323,6 @@ class Link extends CommonObject
             }
         } else {
             $this->error=$this->db->lasterror();
-            dol_syslog($this->error, LOG_ERR);
             return -1;
         }
     }
@@ -349,12 +345,11 @@ class Link extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "links";
         $sql.= " WHERE rowid = " . $this->id;
 
-        dol_syslog(get_class($this)."::delete sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (! $this->db->query($sql))
         {
             $error++;
             $this->error = $this->db->lasterror();
-            dol_syslog(get_class($this)."::delete error -4 " . $this->error, LOG_ERR);
         }
 
 

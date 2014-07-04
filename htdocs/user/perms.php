@@ -191,7 +191,7 @@ else
 }
 $sql.= " AND ur.fk_user = ".$fuser->id;
 
-dol_syslog("get user perms sql=".$sql);
+dol_syslog("get user perms", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -227,7 +227,7 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transv
 $sql.= " AND gr.fk_usergroup = gu.fk_usergroup";
 $sql.= " AND gu.fk_user = ".$fuser->id;
 
-dol_syslog("get user perms sql=".$sql);
+dol_syslog("get user perms", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -306,7 +306,6 @@ $sql.= " AND r.entity = ".((! empty($conf->multicompany->enabled) && ! empty($fu
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql.= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is disable
 $sql.= " ORDER BY r.module, r.id";
 
-dol_syslog("sql=".$sql);
 $result=$db->query($sql);
 if ($result)
 {

@@ -147,7 +147,7 @@ if ($socid > 0)
 		// TODO: calculate total to display then restore pagination
 		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-		dol_syslog('margin:tabs:thirdpartyMargins.php sql='.$sql,LOG_DEBUG);
+		dol_syslog('margin:tabs:thirdpartyMargins.php', LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result)
 		{

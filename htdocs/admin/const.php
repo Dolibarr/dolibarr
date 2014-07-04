@@ -233,7 +233,7 @@ if (empty($user->entity) && $debug) {} // to force for superadmin
 elseif ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY entity, name ASC";
 
-dol_syslog("Const::listConstant sql=".$sql);
+dol_syslog("Const::listConstant", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
