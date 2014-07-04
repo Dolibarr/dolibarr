@@ -122,7 +122,7 @@ class mod_task_simple extends ModeleNumRefTask
 		}
 		else
 		{
-			dol_syslog("mod_task_simple::getNextValue sql=".$sql);
+			dol_syslog("mod_task_simple::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 

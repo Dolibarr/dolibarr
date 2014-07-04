@@ -609,7 +609,6 @@ else
 	$sql.= " AND b.fk_bordereau = ".$object->id;
 	$sql.= " ORDER BY $sortfield $sortorder";
 
-	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if ($resql)
 	{

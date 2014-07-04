@@ -149,7 +149,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-dol_syslog('comm/list.php: sql='.$sql,LOG_DEBUG);
+dol_syslog('comm/list.php:', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

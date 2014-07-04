@@ -453,12 +453,11 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($object)."::delete sql=".$sql, LOG_DEBUG);
+                	dol_syslog(get_class($object)."::delete", LOG_DEBUG);
                 	if (! $object->db->query($sql))
                 	{
                 		$error++;
                 		$object->error .= $object->db->lasterror();
-                		dol_syslog(get_class($object)."::delete erreur -1 ".$object->error, LOG_ERR);
                 	}
                 }
 

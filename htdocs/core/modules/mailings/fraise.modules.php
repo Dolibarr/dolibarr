@@ -180,7 +180,7 @@ class mailing_fraise extends MailingTargets
         //print $sql;
 
         // Add targets into table
-        dol_syslog(get_class($this)."::add_to_target sql=".$sql);
+        dol_syslog(get_class($this)."::add_to_target", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {

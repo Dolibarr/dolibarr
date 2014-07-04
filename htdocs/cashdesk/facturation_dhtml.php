@@ -62,7 +62,7 @@ if (dol_strlen($_GET["code"]) >= 0)	// If search criteria is on char length at l
 	}
 	$sql.= " ORDER BY label";
 
-	dol_syslog("facturation_dhtml.php sql=".$sql);
+	dol_syslog("facturation_dhtml.php", LOG_DEBUG);
 	$result = $db->query($sql);
 
 	if ($result)

@@ -194,7 +194,7 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
     if ($sql == 'TODO') return -2;
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib:thirdparty sql=".$sql);
+        dol_syslog("Tax.lib:thirdparty", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -366,7 +366,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     if ($sql == 'TODO') return -2;
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
+        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
 
         $resql = $db->query($sql);
         if ($resql)
@@ -531,7 +531,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
     if ($sql == 'TODO') return -2; // -2 = Feature not yet available
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib.php::vat_by_date sql=".$sql);
+        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {

@@ -470,7 +470,6 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 }
                 else
                 {
-                    dol_syslog("security.lib:restrictedArea sql=".$sql, LOG_ERR);
                     accessforbidden();
                 }
             }

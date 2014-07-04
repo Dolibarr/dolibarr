@@ -238,7 +238,7 @@ class InterfaceNotification
         $sql = "SELECT rowid, code, label, description, elementtype";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger";
         $sql.= $this->db->order("elementtype, code");
-        dol_syslog("Get list of notifications sql=".$sql);
+        dol_syslog("Get list of notifications", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

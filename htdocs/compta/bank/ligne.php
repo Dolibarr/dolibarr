@@ -175,7 +175,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         else $sql.=", rappro = ".$rappro;
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog("ligne.php sql=".$sql, LOG_DEBUG);
+        dol_syslog("ligne.php", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {

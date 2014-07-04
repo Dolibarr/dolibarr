@@ -233,7 +233,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= " ORDER BY $sortfield $sortorder, s.nom ASC";
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-dol_syslog('comm/prospect/list.php sql='.$sql,LOG_DEBUG);
+dol_syslog('comm/prospect/list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {

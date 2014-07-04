@@ -239,7 +239,7 @@ else
 }
 
 //print $sql;
-dol_syslog("contact/list.php sql=".$sql);
+dol_syslog("contact/list.php", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

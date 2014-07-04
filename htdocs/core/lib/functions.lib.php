@@ -2978,7 +2978,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
-	dol_syslog("get_localtax sql=".$sql);
+	dol_syslog("get_localtax", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -4362,7 +4362,7 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	$sql = "SELECT ".$fieldid." as id";
 	$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
 	$sql.= " WHERE ".$fieldkey." = '".$key."'";
-	dol_syslog('dol_getIdFromCode sql='.$sql, LOG_DEBUG);
+	dol_syslog('dol_getIdFromCode', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -4374,7 +4374,6 @@ function dol_getIdFromCode($db,$key,$tablename,$fieldkey='code',$fieldid='id')
 	}
 	else
 	{
-		dol_syslog("dol_getIdFromCode error=".$db->lasterror(), LOG_ERR);
 		return -1;
 	}
 }

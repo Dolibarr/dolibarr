@@ -87,7 +87,7 @@ class Categorie extends CommonObject
 			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity=".$conf->entity;;
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -158,7 +158,7 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this).'::create sql='.$sql);
+		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql.= "fk_parent,";
 		$sql.= " label,";
@@ -185,7 +185,7 @@ class Categorie extends CommonObject
 		$sql.= $conf->entity;
 		$sql.= ")";
 
-		dol_syslog(get_class($this).'::create sql='.$sql);
+		dol_syslog(get_class($this).'::create', LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -238,7 +238,6 @@ class Categorie extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-            dol_syslog(get_class($this)."::create error ".$this->error." sql=".$sql, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -284,7 +283,7 @@ class Categorie extends CommonObject
 		$sql .= ", fk_parent = ".$this->fk_parent;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 
@@ -350,7 +349,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -361,7 +359,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -372,7 +369,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -383,7 +379,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -394,7 +389,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -405,7 +399,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 		}
@@ -418,7 +411,6 @@ class Categorie extends CommonObject
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
 				$error++;
 			}
 			else
@@ -484,7 +476,7 @@ class Categorie extends CommonObject
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
-		dol_syslog(get_class($this).'::add_type sql='.$sql);
+		dol_syslog(get_class($this).'::add_type', LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			if (! empty($conf->global->CATEGORIE_RECURSIV_ADD))
@@ -492,7 +484,7 @@ class Categorie extends CommonObject
 				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
 				$sql.= " WHERE rowid = ".$this->id;
 
-				dol_syslog(get_class($this)."::add_type sql=".$sql);
+				dol_syslog(get_class($this)."::add_type", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -590,7 +582,7 @@ class Categorie extends CommonObject
 		$sql .= " WHERE fk_categorie = ".$this->id;
 		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
 
-		dol_syslog(get_class($this).'::del_type sql='.$sql);
+		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
 			// Save object we want to unlink category off into category instance to provide information to trigger
@@ -648,7 +640,7 @@ class Categorie extends CommonObject
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql.= " AND c.fk_".$field." = o.rowid";
 
-		dol_syslog(get_class($this)."::getObjectsInCateg sql=".$sql);
+		dol_syslog(get_class($this)."::getObjectsInCateg", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -663,7 +655,6 @@ class Categorie extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::getObjectsInCateg ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -701,13 +692,12 @@ class Categorie extends CommonObject
 		}
 		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
 		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
-		dol_syslog(get_class($this)."::containsObject sql=".$sql);
+		dol_syslog(get_class($this)."::containsObject", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			return $this->db->fetch_object($resql)->nb;
 		} else {
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::containsObject ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -759,7 +749,7 @@ class Categorie extends CommonObject
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity IN (".getEntity('category',1).")";
 
-		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
+		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -810,7 +800,7 @@ class Categorie extends CommonObject
 		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
 		$sql.= " AND c.type = ".$type;
 
-		dol_syslog(get_class($this)."::get_full_arbo get category list sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1004,7 +994,7 @@ class Categorie extends CommonObject
 		$sql.= " AND c.fk_parent = ".$this->fk_parent;
 		$sql.= " AND c.label = '".$this->db->escape($this->label)."'";
 
-		dol_syslog(get_class($this)."::already_exists sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::already_exists", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1028,7 +1018,6 @@ class Categorie extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-            dol_syslog(get_class($this)."::already_exists error ".$this->error." sql=".$sql, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1167,7 +1156,7 @@ class Categorie extends CommonObject
 		$sql.= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
-		dol_syslog(get_class($this).'::containing sql='.$sql);
+		dol_syslog(get_class($this).'::containing', LOG_DEBUG);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -1249,7 +1238,6 @@ class Categorie extends CommonObject
 		else
 		{
 			$this->error=$this->db->error().' sql='.$sql;
-			dol_syslog(get_class($this)."::rechercher ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1469,11 +1457,10 @@ class Categorie extends CommonObject
 	                $sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 	                $sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
 	            }
-	            dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+	            dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
-	                dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 	                return -1;
 	            }
 	        }
@@ -1495,11 +1482,10 @@ class Categorie extends CommonObject
 
 	            // on ne sauvegarde pas des champs vides
 	            if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-	                dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+	                dol_syslog(get_class($this).'::setMultiLangs', LOG_DEBUG);
 	            if (! $this->db->query($sql2))
 	            {
 	                $this->error=$this->db->lasterror();
-	                dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 	                return -1;
 	            }
 	        }

@@ -218,7 +218,7 @@ else
 	$sql.=" WHERE name like 'FTP_SERVER_%'";
 	$sql.=" ORDER BY name";
 
-	dol_syslog("ftpclient select ftp setup sql=".$sql,LOG_DEBUG);
+	dol_syslog("ftpclient select ftp setup", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{

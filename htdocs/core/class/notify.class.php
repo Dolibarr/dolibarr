@@ -99,7 +99,7 @@ class Notify
         $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND s.rowid = ".$socid;
 
-		dol_syslog("Notify.class::countDefinedNotifications ".$action.", ".$socid." sql=".$sql);
+		dol_syslog("Notify.class::countDefinedNotifications ".$action.", ".$socid."", LOG_DEBUG);
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -147,7 +147,7 @@ class Notify
         else $sql.= " AND a.code = '".$action."'";	// New usage
         $sql .= " AND s.rowid = ".$socid;
 
-		dol_syslog("Notify::send sql=".$sql);
+		dol_syslog("Notify::send", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -226,7 +226,7 @@ class Notify
 
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
                         $sql.= " VALUES ('".$this->db->idate($now)."', ".$actiondefid.", ".$obj->cid.", '".$objet_type."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
-                        dol_syslog("Notify::send sql=".$sql);
+                        dol_syslog("Notify::send", LOG_DEBUG);
                         if (! $this->db->query($sql) )
                         {
                             dol_print_error($this->db);

@@ -169,7 +169,7 @@ class FormOther
         $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
         $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
 
-    	dol_syslog(get_class($this).'::select_ecotaxes sql='.$sql);
+    	dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -227,7 +227,7 @@ class FormOther
     	$sql.= " WHERE r.active = 1 AND r.fk_pays = p.rowid";
     	$sql.= " AND p.code = '".$country_code."'";
 
-    	dol_syslog(get_class($this).'::select_revenue_stamp sql='.$sql);
+    	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
     	$resql=$this->db->query($sql);
     	if ($resql)
     	{
@@ -1122,7 +1122,7 @@ class FormOther
         $sql.= " FROM ".MAIN_DB_PREFIX.$dictionarytable;
         $sql.= " ORDER BY ".$labelfield;
 
-        dol_syslog(get_class($this)."::select_dictionary sql=".$sql);
+        dol_syslog(get_class($this)."::select_dictionary", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {

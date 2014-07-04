@@ -686,7 +686,6 @@ if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES))
 $sql .= " ORDER BY p.date_price DESC, p.price_level ASC";
 // $sql .= $db->plimit();
 
-dol_syslog("sql=" . $sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
