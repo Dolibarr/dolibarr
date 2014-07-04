@@ -23,6 +23,8 @@ For users:
 - Fix: [ bug #1465, #1466 ] Product triggers problem
 - Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
+- Fix: [ bug #1506, #1507 ] ECM trigger error problem
+
 
 
 For translators:
