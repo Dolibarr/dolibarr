@@ -1749,7 +1749,7 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  Charge tableau des stats contrat pour le produit/service
 	 *
@@ -2930,7 +2930,7 @@ class Product extends CommonObject
 	function load_virtual_stock()
 	{
 		global $conf;
-		
+
 		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
@@ -2953,7 +2953,7 @@ class Product extends CommonObject
 				$result=$this->load_stats_commande_fournisseur(0,'3');
 				if ($result < 0) dol_print_error($db,$this->error);
 				$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
-				
+
 				$result=$this->load_stats_reception(0,'3');
 				if ($result < 0) dol_print_error($db,$this->error);
 				$stock_reception_fournisseur=$this->stats_reception['qty'];
@@ -3055,7 +3055,7 @@ class Product extends CommonObject
 	 *  @param      string	$sdir        	Directory to scan
 	 *  @param      int		$size        	0=original size, 1 use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
-	 *  @param      int		$nbbyrow     	Nombre vignettes par ligne (si mode vignette)
+	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div. Used only if size=1.
 	 * 	@param		int		$showfilename	1=Show filename
 	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
 	 * 	@param		int		$maxHeight		Max height of image when size=1
@@ -3106,10 +3106,14 @@ class Product extends CommonObject
     						// Get filesize of original file
     						$imgarray=dol_getImageSize($dir.$photo);
 
-    						if ($nbbyrow && $nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+    						if ($nbbyrow > 0)
+    						{
+    							if ($nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
-    						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) $return.= '<tr align=center valign=middle border=1>';
-    						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    							if ($nbphoto % $nbbyrow == 1) $return.= '<tr align=center valign=middle border=1>';
+    							$return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    						}
+    						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
     						$return.= "\n";
     						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
@@ -3150,9 +3154,12 @@ class Product extends CommonObject
     						}
     						$return.= "\n";
 
-    						if ($nbbyrow) $return.= '</td>';
-    						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) $return.= '</tr>';
-
+    						if ($nbbyrow > 0)
+    						{
+    							$return.= '</td>';
+    							if (($nbphoto % $nbbyrow) == 0) $return.= '</tr>';
+    						}
+    						else if ($nbbyrow < 0) $return.='</div>';
     					}
 
     					if ($size == 0) {     // Format origine
@@ -3179,16 +3186,19 @@ class Product extends CommonObject
     			}
             }
 
-			if ($nbbyrow && $size==1)
+			if ($size==1)
 			{
-				// Ferme tableau
-				while ($nbphoto % $nbbyrow)
+				if ($nbbyrow > 0)
 				{
-					$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
-					$nbphoto++;
-				}
+					// Ferme tableau
+					while ($nbphoto % $nbbyrow)
+					{
+						$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$nbphoto++;
+					}
 
-				if ($nbphoto) $return.= '</table>';
+					if ($nbphoto) $return.= '</table>';
+				}
 			}
 
 			closedir($handle);

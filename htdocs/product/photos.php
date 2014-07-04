@@ -130,13 +130,17 @@ if ($object->id)
 	print "</div>\n";
 
 
+	$permtoedit=0;
+	if ($user->rights->produit->creer && $object->type == 0) $permtoedit=1;
+	if ($user->rights->service->creer && $object->type == 1) $permtoedit=1;
+	if (empty($conf->global->MAIN_UPLOAD_DOC)) $permtoedit=0;
 
 	/* ************************************************************************** */
 	/*                                                                            */
 	/* Barre d'action                                                             */
 	/*                                                                            */
 	/* ************************************************************************** */
-
+/*
 	print "\n<div class=\"tabsAction\">\n";
 
 	if ($action != 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer))
@@ -154,16 +158,17 @@ if ($object->id)
 	}
 
 	print "\n</div>\n";
-
+*/
 	/*
 	 * Add a photo
 	 */
-	if ($action == 'ajout_photo' && ($user->rights->produit->creer || $user->rights->service->creer) && ! empty($conf->global->MAIN_UPLOAD_DOC))
+	if ($permtoedit)
 	{
-		// Affiche formulaire upload
+		// Show upload form
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("AddPhoto"), 1, 0, ($user->rights->produit->creer || $user->rights->service->creer), 50, $object, '', false, '', 0); // ajax=false for the moment. true may not work.
+		$formfile->form_attach_new_file($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("AddPhoto"), 1, 0, $permtoedit, 50, $object, '', false, '', 0); // ajax=false for the moment. true may not work.
 	}
+	//else print $langs->trans("NoPermissionToAddOrEditPhoto").'<br><br>';	// TODO Add this
 
 	// Affiche photos
 	if ($action != 'ajout_photo')
@@ -174,11 +179,10 @@ if ($object->id)
 		$maxWidth = 160;
 		$maxHeight = 120;
 
-		print $object->show_photos($dir,1,1000,$nbbyrow,1,1);
+		print $object->show_photos($dir,1,1000,$nbbyrow,1,($permtoedit?1:0));
 
 		if ($object->nbphoto < 1)
 		{
-			print '<br>';
 			print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 			print '<tr align=center valign=middle border=1><td class="photo">';
 			print "<br>".$langs->trans("NoPhotoYet")."<br><br>";
