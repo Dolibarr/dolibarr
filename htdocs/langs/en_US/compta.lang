@@ -12,6 +12,7 @@ OptionModeTrueDesc=In this context, the turnover is calculated over payments (da
 OptionModeVirtualDesc=In this context, the turnover is calculated over invoices (date of validation). When these invoices are due, whether they have been paid or not, they are listed in the turnover output. 
 FeatureIsSupportedInInOutModeOnly=Feature only available in CREDITS-DEBTS accountancy mode (See Accountancy module configuration)
 VATReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Tax module setup.
+LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
 Param=Setup
 RemainingAmountPayment=Amount payment remaining :
 AmountToBeCharged=Total amount to pay :

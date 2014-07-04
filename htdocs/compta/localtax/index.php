@@ -121,8 +121,8 @@ $textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($ye
 
 print_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
-print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
-print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
+print $langs->trans("LTReportBuildWithOptionDefinedInModule").'<br>';
+print '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
 print '<br>';
 
 print '<table width="100%" class="nobordernopadding">';
