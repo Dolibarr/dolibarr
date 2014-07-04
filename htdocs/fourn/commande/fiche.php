@@ -1753,24 +1753,20 @@ elseif (! empty($object->id))
 	}
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'edit_line')
+	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action != 'edit_line')
 	{
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector;
 		$forceall=1; $senderissupplier=1; $dateSelector=0;
-		if ($object->statut == 0 && $user->rights->propal->creer)
-		{
-			if ($action != 'editline')
-			{
-				$var = true;
+		
+		$var = true;
 
-				// Add free products/services
-				$object->formAddObjectLine(1, $societe, $mysoc);
+		// Add free products/services
+		$object->formAddObjectLine(1, $societe, $mysoc);
 
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			}
-		}
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	
 	}
 	print '</table>';
 
