@@ -227,14 +227,10 @@ class ActionComm extends CommonObject
 
             if (! $error && ! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ACTION_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('ACTION_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
 
             if (! $error)
@@ -390,14 +386,10 @@ class ActionComm extends CommonObject
         {
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ACTION_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('ACTION_DELETE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
 
             if (! $error)
@@ -500,14 +492,10 @@ class ActionComm extends CommonObject
 
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ACTION_MODIFY',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('ACTION_MODIFY',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
 
             if (! $error)

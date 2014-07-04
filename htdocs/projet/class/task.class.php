@@ -133,11 +133,9 @@ class Task extends CommonObject
 
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('TASK_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('TASK_CREATE',$user);
+                if ($result < 0) { $error++; }            
                 // End call triggers
             }
         }
@@ -303,11 +301,9 @@ class Task extends CommonObject
         {
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('TASK_MODIFY',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('TASK_MODIFY',$user);
+                if ($result < 0) { $error++; }            
                 // End call triggers
             }
         }
@@ -394,11 +390,9 @@ class Task extends CommonObject
         {
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('TASK_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('TASK_DELETE',$user);
+                if ($result < 0) { $error++; }            
                 // End call triggers
             }
         }
@@ -744,11 +738,12 @@ class Task extends CommonObject
     {
         global $conf,$langs;
 
-		$error=0;
         $ret = 0;
 
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
+        
+        $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_time (";
         $sql.= "fk_task";
@@ -772,11 +767,9 @@ class Task extends CommonObject
 
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('TASK_TIMESPENT_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('TASK_TIMESPENT_CREATE',$user);
+                if ($result < 0) { $this->db->rollback(); $ret=-1; }            
                 // End call triggers
             }
         }
@@ -784,6 +777,7 @@ class Task extends CommonObject
         {
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::addTimeSpent error -1 ".$this->error,LOG_ERR);
+            $this->db->rollback();
             $ret = -1;
         }
 
@@ -798,6 +792,7 @@ class Task extends CommonObject
             {
                 $this->error=$this->db->lasterror();
                 dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
+                $this->db->rollback();
                 $ret = -2;
             }
         }
@@ -813,10 +808,12 @@ class Task extends CommonObject
             {
                 $this->error=$this->db->lasterror();
                 dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
+                $this->db->rollback();
                 $ret = -2;
             }
         }
 
+        if ($ret >=0) $this->db->commit();
         return $ret;
     }
 
@@ -879,11 +876,12 @@ class Task extends CommonObject
     {
     	global $conf,$langs;
 
-    	$error=0;
         $ret = 0;
 
         // Clean parameters
         if (isset($this->timespent_note)) $this->timespent_note = trim($this->timespent_note);
+        
+        $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_time SET";
         $sql.= " task_date = '".$this->db->idate($this->timespent_date)."',";
@@ -897,19 +895,23 @@ class Task extends CommonObject
         {
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('TASK_TIMESPENT_MODIFY',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('TASK_TIMESPENT_MODIFY',$user);
+                if ($result < 0) 
+                { 
+                    $this->db->rollback(); 
+                    $ret = -1; 
+                }
+                else $ret = 1;            
                 // End call triggers
             }
-            $ret = 1;
+            else $ret = 1;
         }
         else
         {
             $this->error=$this->db->lasterror();
             dol_syslog(get_class($this)."::updateTimeSpent error -1 ".$this->error,LOG_ERR);
+            $this->db->rollback();
             $ret = -1;
         }
 
@@ -925,11 +927,13 @@ class Task extends CommonObject
             if (! $this->db->query($sql) )
             {
                 $this->error=$this->db->lasterror();
+                $this->db->rollback();
                 dol_syslog(get_class($this)."::addTimeSpent error -2 ".$this->error, LOG_ERR);
                 $ret = -2;
             }
         }
 
+        if ($ret >= 0) $this->db->commit();
         return $ret;
     }
 
@@ -959,11 +963,9 @@ class Task extends CommonObject
         {
             if (! $notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('TASK_TIMESPENT_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('TASK_TIMESPENT_DELETE',$user);
+                if ($result < 0) { $error++; }            
                 // End call triggers
             }
         }

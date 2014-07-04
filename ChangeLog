@@ -10,12 +10,22 @@ For users:
 - New: Can filter events on a group of users.
 - New: Add thirdparty to filter on events. 
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+- Fix: [ bug #1470, #1472, #1473] User trigger problem
+- Fix: [ bug #1489, #1491 ] Intervention trigger problem
+- Fix: [ bug #1492, #1493 ] Member trigger problem
+- Fix: [ bug #1474, #1475 ] Contract trigger problem
+- Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
+- Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
+- Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
+- Fix: [ bug #1505, #1504] Project trigger problem
+
 
 For translators:
 - Update language files.
 
 For developers:
 - New: Add hook "searchAgendaFrom".
+- New: Add trigger DON_UPDATE, DON_DELETE
 
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****

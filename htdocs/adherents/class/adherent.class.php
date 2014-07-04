@@ -347,12 +347,10 @@ class Adherent extends CommonObject
 
                 if (! $notrigger)
                 {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('MEMBER_CREATE',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
                 }
 
                 if (count($this->errors))
@@ -599,12 +597,10 @@ class Adherent extends CommonObject
 
                 if (! $error && ! $notrigger)
                 {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('MEMBER_MODIFY',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
                 }
             }
 
@@ -782,12 +778,10 @@ class Adherent extends CommonObject
 
         if (! $error)
         {
-        	// Appel des triggers
-       		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        	$interface=new Interfaces($this->db);
-        	$result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
-        	if ($result < 0) {$error++; $this->errors=$interface->errors;}
-        	// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('MEMBER_DELETE',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
         }
 
 
@@ -841,6 +835,8 @@ class Adherent extends CommonObject
             $password_indatabase = $password;
         }
 
+        $this->db->begin();
+        
         // Mise a jour
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".$this->db->escape($password_indatabase)."'";
         $sql.= " WHERE rowid = ".$this->id;
@@ -885,23 +881,24 @@ class Adherent extends CommonObject
 
                 if (! $error && ! $notrigger)
                 {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('MEMBER_NEW_PASSWORD',$user);
+                    if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                    // End call triggers
                 }
 
+                $this->db->commit();
                 return $this->pass;
             }
             else
             {
+                $this->db->rollback();
                 return 0;
             }
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -1301,12 +1298,10 @@ class Adherent extends CommonObject
                 $this->last_subscription_date_start=$date;
                 $this->last_subscription_date_end=$datefin;
 
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('MEMBER_SUBSCRIPTION',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
 
             if (! $error)
@@ -1362,12 +1357,10 @@ class Adherent extends CommonObject
         {
             $this->statut=1;
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('MEMBER_VALIDATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
             $this->db->commit();
             return 1;
@@ -1412,12 +1405,10 @@ class Adherent extends CommonObject
         {
             $this->statut=0;
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('MEMBER_RESILIATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
             $this->db->commit();
             return 1;

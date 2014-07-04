@@ -307,6 +307,8 @@ class Don extends CommonObject
         $this->country=($this->country?$this->country:$this->country);
 
         $now=dol_now();
+        
+        $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (";
         $sql.= "datec";
@@ -360,19 +362,17 @@ class Don extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('DON_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-            }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('DON_CREATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
+            $this->db->commit();
             return $this->id;
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -393,6 +393,8 @@ class Don extends CommonObject
         $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
         $this->country=($this->country?$this->country:$this->country);
 
+        $this->db->begin();
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
         $sql .= ",fk_paiement = ".($this->modepaiementid?$this->modepaiementid:"null");
@@ -418,10 +420,17 @@ class Don extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
+            // Call trigger
+            $result=$this->call_trigger('DON_UPDATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
+            
+            $this->db->commit();
             return 1;
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -435,6 +444,8 @@ class Don extends CommonObject
      */
     function delete($rowid)
     {
+        
+        $this->db-begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
@@ -443,10 +454,17 @@ class Don extends CommonObject
         {
             if ( $this->db->affected_rows($resql) )
             {
+                // Call trigger
+                $result=$this->call_trigger('DON_DELETE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                // End call triggers
+                
+                $this->db->commit();
                 return 1;
             }
             else
             {
+                $this->db->rollback();
                 return -1;
             }
         }

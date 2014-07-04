@@ -130,15 +130,9 @@ class Project extends CommonObject
 
             if (!$notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_CREATE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_CREATE',$user);
+                if ($result < 0) { $error++; }            
                 // End call triggers
             }
         }
@@ -199,6 +193,8 @@ class Project extends CommonObject
 
         if (dol_strlen(trim($this->ref)) > 0)
         {
+            $this->db->begin();
+            
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet SET";
             $sql.= " ref='" . $this->db->escape($this->ref) . "'";
             $sql.= ", title = '" . $this->db->escape($this->title) . "'";
@@ -216,15 +212,9 @@ class Project extends CommonObject
             {
                 if (!$notrigger)
                 {
-                    // Call triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface = new Interfaces($this->db);
-                    $result = $interface->run_triggers('PROJECT_MODIFY', $this, $user, $langs, $conf);
-                    if ($result < 0)
-                    {
-                        $error++;
-                        $this->errors = $interface->errors;
-                    }
+                    // Call trigger
+                    $result=$this->call_trigger('PROJECT_MODIFY',$user);
+                    if ($result < 0) { $error++; }            
                     // End call triggers
                 }
 
@@ -259,13 +249,24 @@ class Project extends CommonObject
                 		}
                 	}
                 }
+                if (! $error )
+                {
+                    $this->db->commit();
+                    $result = 1;
+                }
+                else
+                {
+                    $this->db->rollback();
+                    $result = -1;
+                }
 
-                $result = 1;
+                
             }
             else
             {
                 $this->error = $this->db->lasterror();
                 dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
+                $this->db->rollback();
                 $result = -2;
             }
         }
@@ -528,17 +529,18 @@ class Project extends CommonObject
 
             if (!$notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_DELETE', $this, $user, $langs, $conf);
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_DELETE',$user);
                 if ($result < 0)
                 {
                     $error++;
-            		foreach ($interface->errors as $errmsg ) {
-            			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-            			$this->errors[] =$errmsg;
-            		}
+                    if (! empty($interface->errors)) 
+                    {
+                		foreach ($interface->errors as $errmsg ) {
+                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+                			$this->errors[] =$errmsg;
+                		}
+                    }
                 }
                 // End call triggers
             }
@@ -587,16 +589,10 @@ class Project extends CommonObject
             $resql = $this->db->query($sql);
             if ($resql)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_VALIDATE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_VALIDATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 
                 if (!$error)
                 {
@@ -648,16 +644,10 @@ class Project extends CommonObject
             $resql = $this->db->query($sql);
             if ($resql)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_CLOSE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_CLOSE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 
                 if (!$error)
                 {

@@ -340,7 +340,8 @@ if (empty($reshook))
 	    else
 	    {
 	        dol_syslog($object->error,LOG_DEBUG);
-	        $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
+	        setEventMessage($object->error,'errors');
+	        setEventMessage($object->errors,'errors');
 	    }
 	}
 

@@ -547,12 +547,10 @@ class UserGroup extends CommonObject
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('GROUP_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('GROUP_DELETE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -583,6 +581,8 @@ class UserGroup extends CommonObject
 		$entity=$this->entity;
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1) $entity=$this->entity;
 
+		$this->db->begin();
+		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
 		$sql.= "datec";
 		$sql.= ", nom";
@@ -603,18 +603,18 @@ class UserGroup extends CommonObject
 
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('GROUP_CREATE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                // End call triggers
 			}
 
+			$this->db->commit();
 			return $this->id;
 		}
 		else
 		{
+		    $this->db->rollback();
 			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 			return -1;
@@ -639,6 +639,8 @@ class UserGroup extends CommonObject
 			$entity=$this->entity;
 		}
 
+		$this->db->begin();
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
 		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
 		$sql.= ", entity = " . $this->db->escape($entity);
@@ -651,19 +653,26 @@ class UserGroup extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('GROUP_MODIFY',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
-			if (! $error) return 1;
-			else return -$error;
+			if (! $error) 
+			{
+			    $this->db->commit();
+			    return 1;
+			}
+			else
+			{
+			    $this->db->rollback();
+			    return -$error;
+			}
 		}
 		else
 		{
+		    $this->db->rollback();
 			dol_print_error($this->db);
 			return -1;
 		}

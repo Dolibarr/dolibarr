@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011	Juanjo Menent	<jmenent@2byte.es>
+/* Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ class Localtax extends CommonObject
 {
     var $id;
     var $ref;
+    var $ltt;
 	var $tms;
 	var $datep;
 	var $datev;
@@ -74,6 +75,7 @@ class Localtax extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax(";
+		$sql.= "localtaxtype,";
 		$sql.= "tms,";
 		$sql.= "datep,";
 		$sql.= "datev,";
@@ -84,6 +86,7 @@ class Localtax extends CommonObject
 		$sql.= "fk_user_creat,";
 		$sql.= "fk_user_modif";
         $sql.= ") VALUES (";
+        $sql.= " ".$this->ltt.",";
 		$sql.= " '".$this->db->idate($this->tms)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
@@ -141,6 +144,7 @@ class Localtax extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."localtax SET";
+        $sql.= " localtaxtype=".$this->ltt.",";
 		$sql.= " tms=".$this->db->idate($this->tms).",";
 		$sql.= " datep=".$this->db->idate($this->datep).",";
 		$sql.= " datev=".$this->db->idate($this->datev).",";
@@ -186,6 +190,7 @@ class Localtax extends CommonObject
     	global $langs;
         $sql = "SELECT";
 		$sql.= " t.rowid,";
+		$sql.= " t.localtaxtype,";
 		$sql.= " t.tms,";
 		$sql.= " t.datep,";
 		$sql.= " t.datev,";
@@ -212,6 +217,7 @@ class Localtax extends CommonObject
 
                 $this->id    = $obj->rowid;
                 $this->ref   = $obj->rowid;
+                $this->ltt   = $obj->localtaxtype;
 				$this->tms   = $this->db->jdate($obj->tms);
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->datev = $this->db->jdate($obj->datev);
@@ -285,6 +291,7 @@ class Localtax extends CommonObject
 		$this->id=0;
 
 		$this->tms='';
+		$this->ltt=0;
 		$this->datep='';
 		$this->datev='';
 		$this->amount='';
@@ -476,12 +483,12 @@ class Localtax extends CommonObject
         }
 
         // Insertion dans table des paiement localtax
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax (datep, datev, amount";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."localtax (localtaxtype, datep, datev, amount";
         if ($this->note)  $sql.=", note";
         if ($this->label) $sql.=", label";
         $sql.= ", fk_user_creat, fk_bank";
 		$sql.= ") ";
-        $sql.= " VALUES ('".$this->db->idate($this->datep)."',";
+        $sql.= " VALUES (".$this->ltt.", '".$this->db->idate($this->datep)."',";
         $sql.= "'".$this->db->idate($this->datev)."'," . $this->amount;
         if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";

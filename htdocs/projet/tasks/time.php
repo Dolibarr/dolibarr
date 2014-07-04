@@ -140,7 +140,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	$object->fetchTimeSpent($_GET['lineid']);
 	$result = $object->delTimeSpent($user);
 
-	if (!$result)
+	if ($result < 0)
 	{
 		$langs->load("errors");
 		setEventMessage($langs->trans($object->error),'errors');
