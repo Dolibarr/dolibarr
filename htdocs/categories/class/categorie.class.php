@@ -212,16 +212,22 @@ class Categorie extends CommonObject
 					}
 				}
 				else if ($reshook < 0) $error++;
+				
+                // Call trigger
+                $result=$this->call_trigger('CATEGORY_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CATEGORY_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
-
-				$this->db->commit();
-				return $id;
+                if ( ! $error )
+                {
+                    $this->db->rollback(); 
+                    return -3;
+                }
+                else
+                {
+    				$this->db->commit();
+    				return $id;
+                }
 			}
 			else
 			{
@@ -303,12 +309,10 @@ class Categorie extends CommonObject
 			$this->db->commit();
 
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CATEGORY_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CATEGORY_MODIFY',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
 			return 1;
 		}
@@ -432,12 +436,10 @@ class Categorie extends CommonObject
 						}
 					}
 				}
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CATEGORY_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=join(',',$this->errors); }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CATEGORY_DELETE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 		}
 
@@ -477,6 +479,8 @@ class Categorie extends CommonObject
         if ($type=='contact') $column_name='socpeople';
         if ($type=='fournisseur') $column_name='societe';
 
+        $this->db->begin();
+        
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
@@ -517,6 +521,7 @@ class Categorie extends CommonObject
 
 				if ($error)
 				{
+				    $this->db->rollback();
 					return -1;
 				}
 			}
@@ -524,18 +529,26 @@ class Categorie extends CommonObject
 			// Save object we want to link category to into category instance to provide information to trigger
 			$this->linkto=$obj;
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CATEGORY_LINK',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=$interface->error; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CATEGORY_LINK',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 
-			if (! $error) return 1;
-			else return -2;
+			if (! $error)
+			{
+			    $this->db->commit();
+			    return 1;
+			}
+			else
+			{ 
+			    $this->db->rollback();
+			    return -2;
+			}
+			    
 		}
 		else
 		{
+		    $this->db->rollback();
 			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$this->error=$this->db->lasterrno();
@@ -570,6 +583,8 @@ class Categorie extends CommonObject
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
         if ($type=='fournisseur') $column_name='societe';
+        
+        $this->db->begin();
 
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
@@ -581,18 +596,25 @@ class Categorie extends CommonObject
 			// Save object we want to unlink category off into category instance to provide information to trigger
 			$this->unlinkoff=$obj;
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CATEGORY_UNLINK',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CATEGORY_UNLINK',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 
-			if (! $error) return 1;
-			else return -2;
+			if (! $error)
+			{
+			    $this->db->commit();
+			    return 1;
+			}
+			else
+			{
+			    $this->db->rollback();
+                return -2;   
+			}
 		}
 		else
 		{
+		    $this->db->rollback();
 			$this->error=$this->db->lasterror();
 			return -1;
 		}

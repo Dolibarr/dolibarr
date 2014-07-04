@@ -176,13 +176,10 @@ class Fichinter extends CommonObject
 
             if (! $notrigger)
             {
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('FICHINTER_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
+                // Call trigger
+                $result=$this->call_trigger('FICHINTER_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
 
 			if (! $error)
@@ -240,14 +237,10 @@ class Fichinter extends CommonObject
 
 			if (! $notrigger)
 			{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('FICHINTER_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('FICHINTER_MODIFY',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                // End call triggers
 			}
 
 			$this->db->commit();
@@ -454,14 +447,10 @@ class Fichinter extends CommonObject
 
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('FICHINTER_VALIDATE',$this,$user,$langs,$conf);
-	 			if ($result < 0) {
-	 				$error++; $this->errors=$interface->errors;
-	 			}
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('FICHINTER_VALIDATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
 			if (! $error)
@@ -762,14 +751,10 @@ class Fichinter extends CommonObject
 
 				if (! $notrigger)
 				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('FICHINTER_DELETE',$this,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('FICHINTER_DELETE',$user);
+                    if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                    // End call triggers
 				}
 
 				$this->db->commit();
@@ -1137,14 +1122,10 @@ class FichinterLigne
 
 				if (! $notrigger)
 				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$resulttrigger=$interface->run_triggers('LINEFICHINTER_CREATE',$this,$user,$langs,$conf);
-					if ($resulttrigger < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('LINEFICHINTER_CREATE',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
 				}
 			}
 
@@ -1199,14 +1180,10 @@ class FichinterLigne
 
 				if (! $notrigger)
 				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$resulttrigger=$interface->run_triggers('LINEFICHINTER_UPDATE',$this,$user,$langs,$conf);
-					if ($resulttrigger < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('LINEFICHINTER_UPDATE',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
 				}
 			}
 
@@ -1217,7 +1194,6 @@ class FichinterLigne
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
 				dol_syslog("FichinterLigne::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
@@ -1309,21 +1285,16 @@ class FichinterLigne
 				$result = $this->update_total();
 				if ($result > 0)
 				{
-					$this->db->commit();
-
 					if (! $notrigger)
 					{
-						// Appel des triggers
-						include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-						$interface=new Interfaces($this->db);
-						$resulttrigger=$interface->run_triggers('LINEFICHINTER_DELETE',$this,$user,$langs,$conf);
-						if ($resulttrigger < 0) {
-							$error++; $this->errors=$interface->errors;
-						}
-						// Fin appel triggers
+                        // Call trigger
+                        $result=$this->call_trigger('LINEFICHINTER_DELETE',$user);
+                        if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                        // End call triggers
 					}
-
-					return $result;
+					
+                    $this->db->commit();					
+                    return $result;
 				}
 				else
 				{
