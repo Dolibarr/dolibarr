@@ -1290,7 +1290,7 @@ elseif (! empty($object->id))
 	//Local taxes
 	if($mysoc->localtax1_assuj=="1") $nbrow++;
 	if($mysoc->localtax2_assuj=="1") $nbrow++;
-	
+
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1518,7 +1518,7 @@ elseif (! empty($object->id))
 		print '<td align="right">'.price($object->total_localtax2).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
-	
+
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
@@ -1732,15 +1732,14 @@ elseif (! empty($object->id))
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector;
 		$forceall=1; $senderissupplier=1; $dateSelector=0;
-		
-				$var = true;
 
-				// Add free products/services
-				$object->formAddObjectLine(1, $societe, $mysoc);
+		$var = true;
 
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			
+		// Add free products/services
+		$object->formAddObjectLine(1, $societe, $mysoc);
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	}
 	print '</table>';
 
@@ -1966,7 +1965,7 @@ elseif (! empty($object->id))
 			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 			$newlang = $object->client->default_lang;
-		
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
