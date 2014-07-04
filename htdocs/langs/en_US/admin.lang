@@ -807,6 +807,13 @@ LocalTax2IsUsedDescES= The RE rate by default when creating prospects, invoices,
 LocalTax2IsNotUsedDescES= By default the proposed IRPF is 0. End of rule.
 LocalTax2IsUsedExampleES= In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
 LocalTax2IsNotUsedExampleES= In Spain they are bussines not subject to tax system of modules.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Label on documents
 NbOfDays=Nb of days
@@ -1453,6 +1460,9 @@ AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
 PastDelayVCalExport=Do not export event older than
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to add an icon after phone numbers. A click on this icon will call a server with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ##### Point Of Sales (CashDesk) #####

@@ -399,44 +399,52 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 
-	$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
-	<script type="text/javascript">
-		$(document).ready(function() {
-			var input = '.json_encode($input).';
-			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
-			var code = \''.$code.'\';
-			var entity = \''.$entity.'\';
-			var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
-			var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
+	if (empty($conf->use_javascript_ajax))
+	{
+		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+	else
+	{
+		$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var input = '.json_encode($input).';
+				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
+				var code = \''.$code.'\';
+				var entity = \''.$entity.'\';
+				var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
+				var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
 
-			// Set constant
-			$("#set_" + code).click(function() {
-				if (input.alert && input.alert.set) {
-					if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
-					if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-					confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
-				} else {
-					setConstant(url, code, input, entity);
-				}
+				// Set constant
+				$("#set_" + code).click(function() {
+					if (input.alert && input.alert.set) {
+						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
+						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
+						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton);
+					} else {
+						setConstant(url, code, input, entity);
+					}
+				});
+
+				// Del constant
+				$("#del_" + code).click(function() {
+					if (input.alert && input.alert.del) {
+						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
+						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
+						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
+					} else {
+						delConstant(url, code, input, entity);
+					}
+				});
 			});
+		</script>'."\n";
 
-			// Del constant
-			$("#del_" + code).click(function() {
-				if (input.alert && input.alert.del) {
-					if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
-					if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-					confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton);
-				} else {
-					delConstant(url, code, input, entity);
-				}
-			});
-		});
-	</script>'."\n";
-
-	$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-	$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
-	$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
-	$out.="\n";
+		$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
+		$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
+		$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
+		$out.="\n";
+	}
 
 	return $out;
 }

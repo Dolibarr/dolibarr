@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -158,6 +158,31 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
     // Local taxes
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION",$_POST["optionlocaltax1"],'chaine',0,'',$conf->entity);
     dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION",$_POST["optionlocaltax2"],'chaine',0,'',$conf->entity);
+    
+    if($_POST["optionlocaltax1"]=="localtax1on")
+    {
+    	if(!isset($_REQUEST['lt1']))
+    	{
+    		dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", 0,'chaine',0,'',$conf->entity);
+    	}
+    	else
+    	{
+    		dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1'),'chaine',0,'',$conf->entity);
+    	}
+    	dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1", $_POST["clt1"],'chaine',0,'',$conf->entity);
+    }
+    if($_POST["optionlocaltax2"]=="localtax2on")
+    {
+    	if(!isset($_REQUEST['lt2']))
+    	{
+    		dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", 0,'chaine',0,'',$conf->entity);
+    	}
+    	else
+    	{
+    		dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2'),'chaine',0,'',$conf->entity);
+    	}
+    	dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2", $_POST["clt2"],'chaine',0,'',$conf->entity);
+    }
 
     if ($action != 'updateedit' && ! $error)
     {
@@ -570,6 +595,17 @@ if ($action == 'edit' || $action == 'updateedit')
         print "<tr><td>".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</td></tr>";
         $example=$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code);
         print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        if(! isOnlyOneLocalTax(1))
+        {
+	        print '<tr><td align="left">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).': ';
+    	    $formcompany->select_localtax(1,$conf->global->MAIN_INFO_VALUE_LOCALTAX1, "lt1");
+        }
+        print '</td></tr>';
+        
+        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+        $opcions=array($langs->transcountry("CalcLocaltax1",$mysoc->country_code),$langs->transcountry("CalcLocaltax2",$mysoc->country_code),$langs->transcountry("CalcLocaltax3",$mysoc->country_code));
+        print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
+        print '</td></tr>';
         print "</table>";
         print "</td></tr>\n";
 
@@ -603,6 +639,16 @@ if ($action == 'edit' || $action == 'updateedit')
         print "<tr><td>".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</td></tr>";
         $example=$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code);
         print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        print '<tr><td align="left">'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).': ';
+        if(! isOnlyOneLocalTax(2))
+        {
+	        $formcompany->select_localtax(2,$conf->global->MAIN_INFO_VALUE_LOCALTAX2, "lt2");
+	        print '</td></tr>';
+        }
+        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+        $opcions=array($langs->transcountry("CalcLocaltax1",$mysoc->country_code),$langs->transcountry("CalcLocaltax2",$mysoc->country_code),$langs->transcountry("CalcLocaltax3",$mysoc->country_code));
+        print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
+        print '</td></tr>';
         print "</table>";
         print "</td></tr>\n";
 
@@ -954,6 +1000,19 @@ else
         print "<tr><td>".$langs->transcountry("LocalTax1IsUsedDesc",$mysoc->country_code)."</td></tr>";
         $example=$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code);
         print ($example!="LocalTax1IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax1IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        if($conf->global->MAIN_INFO_VALUE_LOCALTAX1!=0){
+	        print '<tr><td>'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX1 .'</td></tr>';
+	    }    
+        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+        if($conf->global->MAIN_INFO_LOCALTAX_CALC1==0){
+        	print $langs->transcountry("CalcLocaltax1",$mysoc->country_code);
+        }else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==1){
+        	print $langs->transcountry("CalcLocaltax2",$mysoc->country_code);
+        }else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
+        	print $langs->transcountry("CalcLocaltax3",$mysoc->country_code);
+        }
+        
+        print '</td></tr>';
         print "</table>";
         print "</td></tr>\n";
 
@@ -987,6 +1046,19 @@ else
         print "<tr><td>".$langs->transcountry("LocalTax2IsUsedDesc",$mysoc->country_code)."</td></tr>";
         $example=$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code);
         print ($example!="LocalTax2IsUsedExample"?"<tr><td><i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample",$mysoc->country_code)."</i></td></tr>\n":"");
+        if($conf->global->MAIN_INFO_VALUE_LOCALTAX2!=0){
+	        print '<tr><td>'.$langs->transcountry("LocalTax2Management",$mysoc->country_code).': '. $conf->global->MAIN_INFO_VALUE_LOCALTAX2 .'</td></tr>';
+	    }    
+        print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
+        if($conf->global->MAIN_INFO_LOCALTAX_CALC2==0){
+        	print $langs->transcountry("CalcLocaltax1",$mysoc->country_code);
+        }else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==1){
+        	print $langs->transcountry("CalcLocaltax2",$mysoc->country_code);
+        }else if($conf->global->MAIN_INFO_LOCALTAX_CALC2==2){
+        	print $langs->transcountry("CalcLocaltax3",$mysoc->country_code);
+        }
+        
+        print '</td></tr>';
         print "</table>";
         print "</td></tr>\n";
 

@@ -1,7 +1,8 @@
 -- =============================================================================
--- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2000-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2014	Laurent Destailleur 	<eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2012	Regis Houssin       	<regis.houssin@capnetworks.com>
+-- Copyright (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,39 +19,39 @@
 --
 -- =============================================================================
 
--- courant : type de compte: 0 epargne, 1 courant, 2 caisse
--- clos : le compte est-il clos ou encore ouvert
+-- courant : type of account: 0 epargne, 1 curent/card/cheque, 2 cash
+-- clos : is account opened or closed
 
 create table llx_bank_account
 (
-  rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  datec				datetime,
-  tms				timestamp,
-  ref				varchar(12) NOT NULL,
-  label				varchar(30) NOT NULL,
-  entity			integer DEFAULT 1 NOT NULL,	-- multi company id
-  bank				varchar(60),
-  code_banque		varchar(8),
-  code_guichet		varchar(6),
-  number			varchar(255),
-  cle_rib			varchar(5),
-  bic				varchar(11),
-  iban_prefix		varchar(34),				-- 34 according to ISO 13616
-  country_iban		varchar(2),					-- deprecated
-  cle_iban			varchar(2),
-  domiciliation		varchar(255),
-  state_id			integer        DEFAULT NULL,
-  fk_pays			integer        NOT NULL,
-  proprio			varchar(60),
-  owner_address     varchar(255),
-  courant			smallint DEFAULT 0 NOT NULL,
-  clos				smallint DEFAULT 0 NOT NULL,
-  rappro			smallint DEFAULT 1,
-  url				varchar(128),
-  account_number	varchar(24),				-- bank accountancy number
-  currency_code		varchar(3) NOT NULL,
-  min_allowed		integer DEFAULT 0,
-  min_desired		integer DEFAULT 0,
-  comment			text
-  
+  rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  datec					datetime,
+  tms					timestamp,
+  ref					varchar(12) NOT NULL,
+  label					varchar(30) NOT NULL,
+  entity				integer DEFAULT 1 NOT NULL,	-- multi company id
+  bank					varchar(60),
+  code_banque			varchar(8),
+  code_guichet			varchar(6),
+  number				varchar(255),
+  cle_rib				varchar(5),
+  bic					varchar(11),
+  iban_prefix			varchar(34),				-- 34 according to ISO 13616
+  country_iban			varchar(2),					-- deprecated
+  cle_iban				varchar(2),
+  domiciliation			varchar(255),
+  state_id				integer        DEFAULT NULL,
+  fk_pays				integer        NOT NULL,
+  proprio				varchar(60),
+  owner_address     	varchar(255),
+  courant				smallint DEFAULT 0 NOT NULL,
+  clos					smallint DEFAULT 0 NOT NULL,
+  rappro				smallint DEFAULT 1,
+  url					varchar(128),
+  account_number		varchar(32),				-- bank accountancy number
+  accountancy_journal	varchar(3) DEFAULT NULL,	-- bank accountancy journal
+  currency_code			varchar(3) NOT NULL,
+  min_allowed			integer DEFAULT 0,
+  min_desired			integer DEFAULT 0,
+  comment				text
 )ENGINE=innodb;

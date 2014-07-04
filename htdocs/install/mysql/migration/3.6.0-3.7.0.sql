@@ -19,3 +19,42 @@
 
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
+
+
+ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
+ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
+ALTER TABLE llx_accountingaccount add column tms timestamp DEFAULT NULL AFTER datec;
+ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
+ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
+
+
+-- Drop old table
+DROP TABLE llx_compta;
+DROP TABLE llx_compta_account;
+DROP TABLE llx_compta_compte_generaux;
+
+-- Align size for accounting account
+ALTER TABLE llx_accountingaccount MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_accountingaccount MODIFY COLUMN account_parent varchar(32);
+ALTER TABLE llx_accountingdebcred MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_bank_account MODIFY COLUMN account_number varchar(32);
+ALTER TABLE llx_c_chargesociales MODIFY COLUMN accountancy_code varchar(32);
+ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
+
+
+ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
+
+ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
+
+-- Localtaxes by thirds
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
+ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
+ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint(4) after entity;
+ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
+ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;

@@ -57,8 +57,8 @@ create table llx_product
   url						varchar(255),
   barcode					varchar(255) DEFAULT NULL,
   fk_barcode_type			integer      DEFAULT 0,
-  accountancy_code_sell		varchar(15),                    -- Selling accountancy code
-  accountancy_code_buy		varchar(15),                    -- Buying accountancy code
+  accountancy_code_sell		varchar(32),                    -- Selling accountancy code
+  accountancy_code_buy		varchar(32),                    -- Buying accountancy code
   partnumber				varchar(32),                    -- Not used. Used by external modules.
   weight					float        DEFAULT NULL,
   weight_units				tinyint      DEFAULT NULL,
