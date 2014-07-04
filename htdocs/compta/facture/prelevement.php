@@ -3,7 +3,7 @@
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,21 +384,19 @@ if ($object->id > 0)
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->country_code=='ES')
+	if ($mysoc->localtax1_assuj=="1") //Localtax1
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
+		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax1).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
+	if ($mysoc->localtax2_assuj=="1") //Localtax2
+	{
+		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
+		print '<td align="right" colspan="2" nowrap>'.price($object->total_localtax2).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+	}
+	
 
 	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
