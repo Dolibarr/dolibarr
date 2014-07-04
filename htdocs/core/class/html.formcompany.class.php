@@ -776,32 +776,37 @@ class FormCompany
 
         return $out;
     }
-    
+
     /**
-     * Return a select with localtax values for thirds
-     * 
-     * @param int 		$local			LocalTax
-     * @param int 		$selected		Preselected value
-     * @param varchar 	$htmlname		HTML select name
+     * Return a HTML select with localtax values for thirdparties
+     *
+     * @param 	int 		$local			LocalTax
+     * @param 	int 		$selected		Preselected value
+     * @param 	varchar 	$htmlname		HTML select name
+     * @return	void
      */
     function select_localtax($local, $selected, $htmlname)
     {
     	$tax=get_localtax_by_third($local);
-    	 
+
     	$num = $this->db->num_rows($tax);
     	$i = 0;
     	if ($num)
     	{
     		$valors=explode(":", $tax);
-    
-    		if(count($valors)>1)
+
+    		if (count($valors) > 1)
     		{
     			//montar select
     			print '<select class="flat" name="'.$htmlname.'">';
-    			while($i <= (count($valors))-1){
-    				if ($selected == $valors[$i]){
+    			while ($i <= (count($valors))-1)
+    			{
+    				if ($selected == $valors[$i])
+    				{
     					print '<option value="'.$valors[$i].'" selected="selected">';
-    				}else{
+    				}
+    				else
+    				{
     					print '<option value="'.$valors[$i].'">';
     				}
     				print $valors[$i];
@@ -809,7 +814,6 @@ class FormCompany
     				$i++;
     			}
     			print'</select>';
-    			
     		}
     	}
     }

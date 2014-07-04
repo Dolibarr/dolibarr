@@ -2894,7 +2894,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 	if (empty($thirdparty_seller) || ! is_object($thirdparty_seller)) $thirdparty_seller=$mysoc;
 
 	dol_syslog("get_localtax tva=".$tva." local=".$local." thirdparty_buyer id=".(is_object($thirdparty_buyer)?$thirdparty_buyer->id:'')."/country_code=".(is_object($thirdparty_buyer)?$thirdparty_buyer->country_code:'')." thirdparty_seller id=".$thirdparty_seller->id."/country_code=".$thirdparty_seller->country_code." thirdparty_seller localtax1_assuj=".$thirdparty_seller->localtax1_assuj."  thirdparty_seller localtax2_assuj=".$thirdparty_seller->localtax2_assuj);
-	
+
 	if($thirdparty_buyer->country_code!=$thirdparty_seller->country_code)
 	{
 		return 0;
@@ -2911,7 +2911,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 			else
 			{
-				if (! $thirdparty_seller->localtax1_assuj) return 0; 
+				if (! $thirdparty_seller->localtax1_assuj) return 0;
 			}
 		}
 
@@ -2978,9 +2978,9 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 			}
 		}
 	}
-	
-	
-	
+
+
+
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
 	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
@@ -3001,7 +3001,7 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 /**
  * Return true if LocalTax is unique
- * 
+ *
  * @param int 	$local	Local taxt to test
  * @return boolean 		True if LocalTax have multiple values, False if not
  */
@@ -3010,7 +3010,7 @@ function isOnlyOneLocalTax($local)
 	$tax=get_localtax_by_third($local);
 
 	$valors=explode(":", $tax);
-	
+
 	if(count($valors)>1)
 	{
 		return false;
@@ -3023,7 +3023,7 @@ function isOnlyOneLocalTax($local)
 
 /**
  * Get values of localtaxes
- * 
+ *
  * @param	int		$local 	LocalTax to get
  * @return	number			Values of localtax
  */
@@ -3043,7 +3043,7 @@ function get_localtax_by_third($local)
 		if ($local==1) return $obj->localtax1;
 		elseif ($local==2) return $obj->localtax2;
 	}
-	
+
 	return 0;
 
 }
@@ -3058,7 +3058,8 @@ function get_localtax_by_third($local)
  *
  *  @param		float	$vatrate			VAT Rate
  *  @param		int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
- *  @param		int		$thirdparty         Company object
+ *  @param		int		$buyer         		Company object
+ *  @param		int		$seller        		Company object
  *  @return		array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
@@ -3078,13 +3079,13 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 	{
 		$obj = $db->fetch_object($resql);
 		if ($local == 1)
-		{ 
+		{
 			if (! isOnlyOneLocalTax(1))
 			{
 				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 			else
-			{ 	
+			{
 				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 		}
@@ -3095,7 +3096,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 			else
-			{ 
+			{
 				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 			}
 		}
@@ -3122,8 +3123,8 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 				{
 					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
-			}	
-			
+			}
+
 			if(! isOnlyOneLocalTax(2))
 			{
 				if(! isOnlyOneLocalTax(1))
@@ -3146,7 +3147,7 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 					return array($obj->localtax2_type, $obj->localtax2, $obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell,$obj->accountancy_code_buy);
 				}
 			}
-			
+
 		}
 	}
 
