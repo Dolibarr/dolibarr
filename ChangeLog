@@ -11,6 +11,8 @@ For users:
 - New: Add thirdparty to filter on events. 
 - New: Form to add a photo is immediatly available on photo page if
        permissions are ok (save one click per photo to add).
+- New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
+       shown on main product card.       
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
