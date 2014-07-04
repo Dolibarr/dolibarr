@@ -851,7 +851,7 @@ else
 	        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        print '</td></tr>';
         }
-        
+
         // Other attributes
         $parameters=array('colspan' => 0);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1057,7 +1057,7 @@ else
 	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	            print '</td></tr>';
         	}
-        	
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="2"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1118,7 +1118,9 @@ else
             if ($showphoto || $showbarcode)
             {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
+				$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
+				if ($conf->browser->phone) $maxvisiblephotos=1;
+                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,$maxvisiblephotos,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
                 if ($showbarcode) print $form->showbarcode($object);
                 print '</td>';
@@ -1281,11 +1283,11 @@ else
         	if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td colspan="2">'.$object->customcode.'</td>';
-			
+
             	// Origin country code
             	print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td colspan="2">'.getCountry($object->country_id,0,$db).'</td>';
         	}
-        	
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'"');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
