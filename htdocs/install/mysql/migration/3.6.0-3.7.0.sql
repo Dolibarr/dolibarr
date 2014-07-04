@@ -64,15 +64,15 @@ ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_a
 
 -- Added missing relations of llx_product
 -- fk_country
-ALTER TABLE llx_product CHANGE  fk_country  fk_country INTEGER NULL DEFAULT NULL;
+ALTER TABLE llx_product CHANGE COLUMN fk_country fk_country INTEGER NULL DEFAULT NULL;
 UPDATE llx_product SET fk_country = NULL WHERE fk_country = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_pays (rowid);
 -- fk_user_author
-ALTER TABLE llx_product CHANGE  fk_user_author  fk_user_author INTEGER NULL DEFAULT NULL;
+ALTER TABLE llx_product CHANGE COLUMN fk_user_author fk_user_author INTEGER NULL DEFAULT NULL;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_user_author (fk_user_author);
 -- fk_barcode_type
-ALTER TABLE llx_product CHANGE  fk_barcode_type  fk_barcode_type INTEGER NULL DEFAULT NULL;
+ALTER TABLE llx_product CHANGE COLUMN fk_barcode_type fk_barcode_type INTEGER NULL DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
