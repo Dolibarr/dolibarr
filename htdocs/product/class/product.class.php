@@ -2867,7 +2867,7 @@ class Product extends CommonObject
 			}
 			else
 			{
-				dol_print_error($this->db);
+			    $this->error=$movementstock->error;
 				$this->db->rollback();
 				return -1;
 			}
@@ -3454,7 +3454,7 @@ class Product extends CommonObject
 			}
 			else
 			{
-				dol_print_error($this->db);
+			    $this->error=$movementstock->error;
 				$this->db->rollback();
 				return -1;
 			}

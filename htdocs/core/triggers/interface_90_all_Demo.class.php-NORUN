@@ -229,6 +229,12 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+        
+        //Stock mouvement
+        elseif ($action == 'STOCK_MOVEMENT')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
 
 		// Customer orders
         elseif ($action == 'ORDER_CREATE')

@@ -21,6 +21,8 @@ For users:
 - Fix: [ bug #1463, #1464 ] Proposal triggers problem
 - Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
 - Fix: [ bug #1465, #1466 ] Product triggers problem
+- Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
+
 
 For translators:
 - Update language files.
