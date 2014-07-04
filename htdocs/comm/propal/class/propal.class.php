@@ -79,6 +79,9 @@ class Propal extends CommonObject
 
     var $cond_reglement_id;
     var $cond_reglement_code;
+    var $currency_code;
+    var $currency_rate;             // currency rate of propal
+    var $fk_account;				// Id of bank account
     var $mode_reglement_id;
     var $mode_reglement_code;
     var $remise;
@@ -314,7 +317,7 @@ class Propal extends CommonObject
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$date_start='', $date_end='',$array_option=0)
     {
-    	global $mysoc;
+    	global $conf, $mysoc;
 
         dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -330,6 +333,13 @@ class Propal extends CommonObject
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
         $pu_ttc=price2num($pu_ttc);
+
+        if ($this->currency_code!=MAIN_MONNAIE)
+        {
+            $pu_ht  = price2num($pu_ht * $this->currency_rate);
+            $pu_ttc = price2num($pu_ttc * $this->currency_rate);
+        }
+
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
@@ -694,6 +704,7 @@ class Propal extends CommonObject
             return -4;
         }
 
+        $this->currency_rate = ($this->currency_rate>0?$this->currency_rate:1);
 
         $this->db->begin();
 
@@ -716,6 +727,9 @@ class Propal extends CommonObject
         $sql.= ", fin_validite";
         $sql.= ", fk_cond_reglement";
         $sql.= ", fk_mode_reglement";
+        $sql.= ", fk_currency";
+        $sql.= ", currency_rate";
+        $sql.= ", fk_account";
         $sql.= ", ref_client";
         $sql.= ", date_livraison";
         $sql.= ", fk_availability";
@@ -741,6 +755,9 @@ class Propal extends CommonObject
         $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
         $sql.= ", ".$this->cond_reglement_id;
         $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".(! empty($this->currency_code) ? "'".$this->currency_code."'":"'".MAIN_MONNAIE."'");
+        $sql.= ", ".$this->currency_rate;
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$this->availability_id;
@@ -1060,6 +1077,9 @@ class Propal extends CommonObject
         $sql.= ", p.fk_input_reason";
         $sql.= ", p.fk_cond_reglement";
         $sql.= ", p.fk_mode_reglement";
+        $sql.= ', p.fk_account';
+        $sql.= ', p.fk_currency as currency_code';
+        $sql.= ', p.currency_rate';
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
         $sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
@@ -1124,6 +1144,9 @@ class Propal extends CommonObject
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
                 $this->mode_reglement_code  = $obj->mode_reglement_code;
                 $this->mode_reglement       = $obj->mode_reglement;
+                $this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
+                $this->currency_code        = (empty($obj->currency_code))?MAIN_MONNAIE:$obj->currency_code;  // currency to use
+                $this->currency_rate        = (empty($obj->currency_rate))?1:$obj->currency_rate;             // currency rate
                 $this->cond_reglement_id    = $obj->fk_cond_reglement;
                 $this->cond_reglement_code  = $obj->cond_reglement_code;
                 $this->cond_reglement       = $obj->cond_reglement;
@@ -2431,6 +2454,8 @@ class Propal extends CommonObject
         $this->cond_reglement_code = 'RECEP';
         $this->mode_reglement_id   = 7;
         $this->mode_reglement_code = 'CHQ';
+        $this->currency_code       = 'EUR';
+        $this->currency_rate       = 1;
         $this->availability_id     = 1;
         $this->availability_code   = 'AV_NOW';
         $this->demand_reason_id    = 1;

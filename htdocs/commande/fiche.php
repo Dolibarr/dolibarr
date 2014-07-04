@@ -227,6 +227,9 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->modelpdf = GETPOST('model');
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
 		$object->mode_reglement_id = GETPOST('mode_reglement_id');
+		$object->currency_code = GETPOST('currency_code');
+        $object->currency_rate = GETPOST('currency_rate');
+        $object->fk_account = GETPOST('fk_account', 'int');
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
 		$object->date_livraison = $datelivraison;
@@ -488,6 +491,17 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 	}
 }
 
+// currency
+else if ($action == 'setcurrency' && $user->rights->commande->creer)
+{
+    $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
+}
+
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+}
+
 else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
 	$result = $object->set_remise($user, GETPOST('remise_percent'));
 }
@@ -688,7 +702,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 			$info_bits |= 0x01;
 
 		if (! empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min))) {
-			$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $object->currency_code));
 			setEventMessage($mesg, 'errors');
 		} else {
 			// Insert line
@@ -801,7 +815,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 		if ($price_min && (price2num($pu_ht) * (1 - price2num(GETPOST('remise_percent')) / 100) < price2num($price_min))) {
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency)), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $object->currency_code)), 'errors');
 			$error ++;
 		}
 	} else {
@@ -1392,6 +1406,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$soc = $objectsrc->client;
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+			$currency_code      = (!empty($objectsrc->currency_code)?$objectsrc->currency_code:(!empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE));
+			$currency_rate      = (!empty($objectsrc->currency_rate)?$objectsrc->currency_rate:(!empty($soc->currency_rate)?$soc->currency_rate:1));
+			$fk_account         = (!empty($objectsrc->fk_account)?$objectsrc->fk_account:(!empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
@@ -1411,6 +1428,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	{
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
+		$currency_code      = (! empty($soc->currency_code)?$soc->currency_code:MAIN_MONNAIE);
+		$currency_rate      = (! empty($soc->currency_rate)?$soc->currency_rate:1);
+		$fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
@@ -1429,7 +1449,8 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
-
+	print '<input type="hidden" name="currency_rate" value="' . $currency_rate . '">';
+	
 	print '<table class="border" width="100%">';
 
 	// Reference
@@ -1475,7 +1496,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '. ';
 		$absolute_discount = $soc->getAvailableDiscounts();
 		if ($absolute_discount)
-			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $conf->currency));
+			print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->trans("Currency" . $object->currency_code));
 		else
 			print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
@@ -1505,6 +1526,16 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
 	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
+
+	// Currency
+	print '<tr><td>' . $langs->trans('Currency') . '</td><td colspan="2">';
+	$form->select_currency($currency_code, 'currency_code');
+	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
 
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
@@ -1909,7 +1940,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 		if ($absolute_discount) {
 			if ($object->statut > 0) {
-				print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
+				print $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $object->currency_code));
 			} else {
 				// Remise dispo de type remise fixe (not credit note)
 				print '<br>';
@@ -1917,7 +1948,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			}
 		}
 		if ($absolute_creditnote) {
-			print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '. ';
+			print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $object->currency_code)) . '. ';
 		}
 		if (! $absolute_discount && ! $absolute_creditnote)
 			print $langs->trans("CompanyHasNoAbsoluteDiscount") . '.';
@@ -2064,7 +2095,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			print $langs->trans('OutstandingBill');
 			print '</td><td align=right colspan=3>';
 			print price($soc->get_OutstandingBill()) . ' / ';
-			print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
+			print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $object->currency_code);
 			print '</td>';
 			print '</tr>';
 		}
@@ -2120,9 +2151,57 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		if ($mysoc->localtax2_assuj == "1")
 			$rowspan ++;
 
-			// Total HT
+        // Currency accepted
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('Currency');
+        print '<td>';
+        if (($action != 'editcurrency') && $user->rights->commande->creer && ! empty($object->brouillon) && ! empty($conf->multicurrency->enabled)  && empty($object->lines))
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcurrency&amp;id='.$object->id.'">'.img_edit($langs->trans('SetCurrency'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editcurrency')
+        {
+            $form->form_select_currency($_SERVER['PHP_SELF'].'?id='.$object->id, $object->currency_code, 'currency_code');
+        }
+        else
+        {
+            $form->form_select_currency($_SERVER['PHP_SELF'].'?id='.$object->id, $object->currency_code, 'none');
+        }
+        print "</td>";
+        print '</tr>';
+
+        // Currency rate
+        if ($object->currency_rate!=1)
+        {
+            print '<tr><td height="10" width="25%">' . $langs->trans('CurrencyRate') . '</td>';
+            print '<td align="right" class="nowrap">' . $object->currency_rate . '</td>';
+            print '<td></td>';
+        }
+
+        // Bank Account
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('BankAccount');
+        print '<td>';
+        if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editbankaccount')
+        {
+            $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+        }
+        else
+        {
+            $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+        }
+        print "</td>";
+        print '</tr>';
+
+        // Total HT
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-		print '<td align="right">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
+		print '<td align="right">' . price($object->total_ht, 1, '', 1, - 1, - 1, $object->currency_code) . '</td>';
 
 		// Margin Infos
 		if (! empty($conf->margin->enabled)) {
@@ -2135,22 +2214,22 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '</tr>';
 
 		// Total TVA
-		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right">' . price($object->total_tva, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 
 		// Amount Local Taxes
 		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td align="right">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+			print '<td align="right">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 		}
 		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td align="right">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+			print '<td align="right">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 		}
 
 		// Total TTC
-		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td align="right">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
+		print '<tr><td>' . $langs->trans('AmountTTC') . '</td><td align="right">' . price($object->total_ttc, 1, '', 1, - 1, - 1, $object->currency_code) . '</td></tr>';
 
 		// Statut
 		print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';

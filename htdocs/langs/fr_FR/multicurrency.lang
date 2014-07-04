@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+Currencies=Devises
+CurrenciesRates=Taux des Devises
+Currencyfrom=Devise de départ
+Currencyto=Devise d'arrivée
+Rates=Taux
+Validity=Validité

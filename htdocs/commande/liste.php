@@ -111,7 +111,7 @@ $companystatic = new Societe($db);
 $help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 llxHeader('',$langs->trans("Orders"),$help_url);
 
-$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom, s.rowid as socid, s.client, c.rowid, c.ref, c.total_ht, c.fk_currency as currency_code, c.ref_client,';
 $sql.= ' c.date_valid, c.date_commande, c.note_private, c.date_livraison, c.fk_statut, c.facture as facturee';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'commande as c';
@@ -320,7 +320,7 @@ if ($resql)
 	print '</td></tr>';
 
 	$var=true;
-	$total=0;
+	$total=array(); $found=0;
 	$subtotal=0;
 
 	$generic_commande = new Commande($db);
@@ -395,28 +395,31 @@ if ($resql)
 		print '</td>';
 
 		// Amount HT
-		print '<td align="right" class="nowrap">'.price($objp->total_ht).'</td>';
+		print '<td align="right" class="nowrap">'.price($objp->total_ht, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $objp->currency_code).'</td>';
 
 		// Statut
 		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 
 		print '</tr>';
 
-		$total+=$objp->total_ht;
+		$total[$objp->currency_code]+=$objp->total_ht;
 		$subtotal+=$objp->total_ht;
+		$found++;
 		$i++;
 	}
 
 	if (! empty($conf->global->MAIN_SHOW_TOTAL_FOR_LIMITED_LIST))
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
-		// Total HT
-		print '<td align="right" class="nowrap">'.price($total).'</td>';
-		print '<td class="nowrap">&nbsp;</td>';
-		print '</tr>';
-	}
+        foreach ($total as $key=>$solde)
+        {
+            print '<tr class="liste_total">';
+            print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').' ('.$key.')</td>';
+            // Total HT
+            print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td>';
+            print '<td class="nowrap">&nbsp;</td>';
+            print '</tr>';
+        }
+    }
 
 	print '</table>';
 

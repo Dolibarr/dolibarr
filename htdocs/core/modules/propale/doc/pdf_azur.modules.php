@@ -188,6 +188,8 @@ class pdf_azur extends ModelePDFPropales
 
 			// $deja_regle = 0;
 
+			$this->currency_code = $object->currency_code;
+
 			// Definition of $dir and $file
 			if ($object->specimen)
 			{
@@ -1075,7 +1077,7 @@ class pdf_azur extends ModelePDFPropales
 
 		if (empty($hidetop))
 		{
-			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$conf->currency));
+			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$this->currency_code));
 			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 

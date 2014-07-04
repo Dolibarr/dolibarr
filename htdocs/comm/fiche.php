@@ -106,6 +106,13 @@ if ($action == 'setmode' && $user->rights->societe->creer)
 	$result=$object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 	if ($result < 0) dol_print_error($db,$object->error);
 }
+// currency
+if ($action == 'setcurrency' && $user->rights->societe->creer)
+{
+    $object->fetch($id);
+    $result=$object->setCurrency(GETPOST('currency_code', 'alpha'));
+    if ($result < 0) dol_print_error($db,$object->error);
+}
 // assujetissement a la TVA
 if ($action == 'setassujtva' && $user->rights->societe->creer)
 {
@@ -357,6 +364,25 @@ if ($id > 0)
 	print "</td>";
 	print '</tr>';
 
+    // Currency accepted
+    print '<tr><td class="nowrap">';
+    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print $langs->trans('Currency');
+    print '<td>';
+    if (($action != 'editcurrency') && $user->rights->societe->creer && ! empty($conf->multicurrency->enabled)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editcurrency&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetCurrency'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editcurrency')
+    {
+        $form->form_select_currency($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->currency_code, 'currency_code');
+    }
+    else
+    {
+        $form->form_select_currency($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->currency_code, 'none');
+    }
+    print "</td>";
+    print '</tr>';
+
 	// Relative discounts (Discounts-Drawbacks-Rebates)
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -502,7 +528,7 @@ if ($id > 0)
 	{
 		$propal_static = new Propal($db);
 
-		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
+		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.fk_currency as currency_code, p.ref, p.remise, ";
 		$sql.= " p.datep as dp, p.fin_validite as datelimite";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
 		$sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
@@ -538,7 +564,7 @@ if ($id > 0)
 					print " ".img_warning();
 				}
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
+				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $objp->currency_code).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
 				$var=!$var;
 				$i++;
@@ -561,7 +587,7 @@ if ($id > 0)
 		$commande_static=new Commande($db);
 
 		$sql = "SELECT s.nom, s.rowid,";
-		$sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
+		$sql.= " c.rowid as cid, c.total_ht, c.fk_currency as currency_code, c.ref, c.fk_statut, c.facture,";
 		$sql.= " c.date_commande as dc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
@@ -610,7 +636,7 @@ if ($id > 0)
 				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->cid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
 				print '</td><td align="right" width="80">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
-				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht).'</td>';
+				print '<td align="right" style="min-width: 60px">'.price($objp->total_ht, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $objp->currency_code).'</td>';
 				print '<td align="right" style="min-width: 60px" class="nowrap">'.$commande_static->LibStatut($objp->fk_statut,$objp->facture,5).'</td></tr>';
 				$i++;
 			}
@@ -746,7 +772,7 @@ if ($id > 0)
 	{
 		$facturestatic = new Facture($db);
 
-		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
+		$sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc, f.fk_currency as currency_code,';
 		$sql.= ' f.datef as df, f.datec as dc, f.paye as paye, f.fk_statut as statut,';
 		$sql.= ' s.nom, s.rowid as socid,';
 		$sql.= ' SUM(pf.amount) as am';
@@ -796,7 +822,7 @@ if ($id > 0)
 				{
 					print '<td align="right"><b>!!!</b></td>';
 				}
-				print '<td align="right" width="120">'.price($objp->total_ttc).'</td>';
+				print '<td align="right" width="120">'.price($objp->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $objp->currency_code).'</td>';
 
 				print '<td align="right" class="nowrap" width="100" >'.($facturestatic->LibStatut($objp->paye,$objp->statut,5,$objp->am)).'</td>';
 				print "</tr>\n";

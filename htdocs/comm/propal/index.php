@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
+if (! empty($conf->multicurrency->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
 
 $langs->load("propal");
 $langs->load("companies");
@@ -291,7 +292,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 	$now=dol_now();
 
-	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
+	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.fk_currency as currency_code, p.ref, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -305,7 +306,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 	$result=$db->query($sql);
 	if ($result)
 	{
-		$total = 0;
+		$total = array(); $found=0;
 		$num = $db->num_rows($result);
 		$i = 0;
 		if ($num > 0)
@@ -352,21 +353,35 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
-				$total += $obj->total_ttc;
+				$total[$obj->currency_code] += $obj->total_ttc;
+				$found++;
 			}
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
 			}
-			else if ($total>0)
-			{
-				print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
-			}
-			print "</table><br>";
+			else if ($found>0)
+            {
+                foreach ($total as $key=>$solde)
+                {
+                    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").' ('.$key.')</td><td align="right">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td><td>&nbsp;</td></tr>';
+                }
+                if (! empty($conf->multicurrency->enabled) && $found>0)
+                {
+                    $estimated=0;
+                    $multi= new Multicurrency($db);
+                    foreach ($total as $key=>$solde)
+                    {
+                        $estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+                    }
+                    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td align="right">'.price($estimated, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, MAIN_MONNAIE).'</td><td>&nbsp;</td></tr>';
+                }
+            }
+            print "</table><br>";
 		}
 	}
 	else

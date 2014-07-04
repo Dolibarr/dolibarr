@@ -93,7 +93,7 @@ script:
  - php upgrade2.php 3.5.0 3.6.0 >> upgrade2.log
  - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
  - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
-# - cat upgrade.log
+ - cat upgrade.log
 # - cat upgrade2.log
  - cd ../..
 # - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php

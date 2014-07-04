@@ -88,7 +88,7 @@ if ($socid > 0)
 
 		print '<table class="noborder" width="100%">';
 
-		$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, f.datef as df,";
+		$sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, f.fk_currency as currency_code, f.datef as df,";
 		$sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
 		$sql.= " u.login, u.rowid as userid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
@@ -141,7 +141,7 @@ if ($socid > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id.'">'.img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
 
 				print '<td aling="left">'.$fac->getLibStatut(2,$totalpaye).'</td>';
-				print '<td align="right">'.price($fac->total_ttc)."</td>\n";
+				print '<td align="right">'.price($fac->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $fac->currency_code)."</td>\n";
 				if (($fac->statut == 3 ) || ($fac->statut == 2 && ! $fact->close_code) )  $solde = $solde = $solde + $totalpaye;
 				else $solde = $solde + $fac->total_ttc;
 

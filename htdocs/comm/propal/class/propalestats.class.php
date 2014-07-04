@@ -66,6 +66,7 @@ class PropaleStats extends Stats
 
 		$this->field='total_ht';
 		$this->field_line='total_ht';
+        $this->currency_rate='currency_rate';
 		
 		$this->where.= " p.fk_statut > 0";
 		//$this->where.= " AND p.fk_soc = s.rowid AND p.entity = ".$conf->entity;
@@ -131,7 +132,7 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(p.datep,'%m') as dm, SUM(p.".$this->field.")";
+		$sql = "SELECT date_format(p.datep,'%m') as dm, SUM(p.".$this->field."/p.".$this->currency_rate.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -153,7 +154,7 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(p.datep,'%m') as dm, AVG(p.".$this->field.")";
+		$sql = "SELECT date_format(p.datep,'%m') as dm, AVG(p.".$this->field."/p.".$this->currency_rate.")";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
@@ -173,7 +174,7 @@ class PropaleStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(p.datep,'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
+		$sql = "SELECT date_format(p.datep,'%Y') as year, COUNT(*) as nb, SUM(".$this->field."/p.".$this->currency_rate.") as total, AVG(".$this->field."/p.".$this->currency_rate.") as avg";
 		$sql.= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;

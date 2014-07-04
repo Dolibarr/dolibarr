@@ -312,6 +312,7 @@ PriceQtyMinTTC=Price quantity min. (inc. of tax)
 Percentage=Percentage
 Total=Total
 SubTotal=Subtotal
+EstimatedTotal=Estimated Total
 TotalHTShort=Total (net)
 TotalTTCShort=Total (inc. tax)
 TotalHT=Total (net of tax)

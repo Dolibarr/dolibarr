@@ -33,6 +33,8 @@ if (! empty($conf->commande->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->tax->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+if (! empty($conf->multicurrency->enabled))
+    require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
 
 // L'espace compta/treso doit toujours etre actif car c'est un espace partage
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
@@ -144,7 +146,7 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
  */
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
-	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
+	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.fk_currency as currency_code, f.type,";
 	$sql.= " s.nom, s.rowid as socid";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
@@ -173,7 +175,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 			$companystatic=new Societe($db);
 
 			$i = 0;
-			$tot_ttc = 0;
+			$tot_ttc = array(); $found=0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
@@ -189,16 +191,30 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$companystatic->client=1;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
+				print '<td align="right" class="nowrap">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '</tr>';
-				$tot_ttc+=$obj->total_ttc;
+				$tot_ttc[$obj->currency_code]+=$obj->total_ttc;
 				$i++;
+				$found++;
 				$var=!$var;
 			}
 
-			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
-			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
-			print '</tr>';
+            foreach ($tot_ttc as $key=>$solde)
+            {
+                print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").' ('.$key.')</td>';
+                print '<td colspan="2" align="right">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td>';
+                print '</tr>';
+            }
+            if (! empty($conf->multicurrency->enabled) && $found)
+            {
+                $estimated=0;
+                $multi= new Multicurrency($db);
+                foreach ($tot_ttc as $key=>$solde)
+                {
+                    $estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+                }
+                print '<tr class="liste_total"><td align="left">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td colspan="2" align="right">'.price($estimated, 0, $langs, 0, MAIN_MAX_DECIMALS_TOT, -1, MAIN_MONNAIE).'</td></tr>';
+            }
 		}
 		else
 		{
@@ -292,7 +308,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$langs->load("boxes");
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.paye, f.tms,";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, f.fk_currency as currency_code, f.paye, f.tms,";
 	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
@@ -356,7 +372,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print $thirdpartystatic->getNomUrl(1,'customer',44);
 				print '</td>';
 				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
 				print '</tr>';
@@ -715,7 +731,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$facstatic=new Facture($db);
 
-	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.total_ttc, f.paye, f.tms,";
+	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.total_ttc, f.fk_currency as currency_code, f.paye, f.tms,";
 	$sql.= " f.date_lim_reglement as datelimite,";
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " sum(pf.amount) as am";
@@ -778,8 +794,8 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
                 $societestatic->client=1;
 				print $societestatic->getNomUrl(1,'customer',44);
 				print '</a></td>';
-				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total).'</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<td align="right">'.price($obj->total, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
+				print '<td align="right">'.price($obj->total_ttc, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $obj->currency_code).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
 				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
 				print '</tr>';

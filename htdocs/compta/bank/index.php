@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->multicurrency->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/multicurrency.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -119,7 +120,7 @@ foreach ($accounts as $key=>$type)
 		print '</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $acc->currency_code).'</a>';
 		print '</td>';
 		print '</tr>';
 
@@ -130,7 +131,17 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' ('.$key.')</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td></tr>';
+}
+if (! empty($conf->multicurrency->enabled) && $found)
+{
+	$estimated=0;
+	$multi= new Multicurrency($db);
+	foreach ($total as $key=>$solde)
+	{
+		$estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+	}
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td align="right" class="liste_total">'.price($estimated, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, MAIN_MONNAIE).'</td></tr>';
 }
 
 print '</table>';
@@ -168,7 +179,7 @@ foreach ($accounts as $key=>$type)
 		print '<td>&nbsp;</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
-		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, 0, -1, $acc->currency_code).'</a>';
+		print '<a href="account.php?account='.$acc->id.'">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $acc->currency_code).'</a>';
 		print '</td>';
 		print '</tr>';
 
@@ -179,7 +190,17 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' ('.$key.')</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td></tr>';
+}
+if (! empty($conf->multicurrency->enabled) && $found)
+{
+	$estimated=0;
+	$multi= new Multicurrency($db);
+	foreach ($total as $key=>$solde)
+	{
+		$estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+	}
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td align="right" class="liste_total">'.price($estimated, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, MAIN_MONNAIE).'</td></tr>';
 }
 
 print '</table>';
@@ -238,7 +259,17 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 // Total
 foreach ($total as $key=>$solde)
 {
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total ").$key.'</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, 0, -1, $key).'</td></tr>';
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").' ('.$key.')</td><td align="right" class="liste_total">'.price($solde, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, $key).'</td></tr>';
+}
+if (! empty($conf->multicurrency->enabled) && $found)
+{
+	$estimated=0;
+	$multi= new Multicurrency($db);
+	foreach ($total as $key=>$solde)
+	{
+		$estimated += $multi->converter(MAIN_MONNAIE, $key) * $solde;
+	}
+	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("EstimatedTotal").' ('.MAIN_MONNAIE.')</td><td align="right" class="liste_total">'.price($estimated, 0, $langs, 0, -1, MAIN_MAX_DECIMALS_TOT, MAIN_MONNAIE).'</td></tr>';
 }
 
 print "</table>";

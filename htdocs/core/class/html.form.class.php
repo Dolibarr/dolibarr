@@ -2431,7 +2431,7 @@ class Form
 
         $langs->load("admin");
 
-        $sql = "SELECT rowid, label, bank, clos as status";
+        $sql = "SELECT rowid, label, bank, currency_code, clos as status";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
         if ($statut != 2) $sql.= " AND clos = '".$statut."'";
@@ -2463,7 +2463,7 @@ class Form
                     {
                         print '<option value="'.$obj->rowid.'">';
                     }
-                    print $obj->label;
+                    print $obj->label.' ('.$obj->currency_code.')';
                     if ($statut == 2 && $obj->status == 1) print ' ('.$langs->trans("Closed").')';
                     print '</option>';
                     $i++;
@@ -2477,6 +2477,44 @@ class Form
         }
         else {
             dol_print_error($this->db);
+        }
+    }
+
+    /**
+     *    Display form to select bank account
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id of bank account
+     *    @param    string	$htmlname    Name of select html field
+     *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @return	void
+     */
+    function form_select_comptes($page, $selected='', $htmlname='fk_account', $addempty=0)
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setbankaccount">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_comptes($selected, $htmlname, 0, '', $addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+                $bankstatic=new Account($this->db);
+                $bankstatic->fetch($selected);
+                print $bankstatic->label.' ('.$bankstatic->currency_code.')';
+            } else {
+                print "&nbsp;";
+            }
         }
     }
 
@@ -3290,6 +3328,41 @@ class Form
         $out.= '</select>';
         if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         return $out;
+    }
+
+
+    /**
+     *    Display form to select currency
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id currency
+     *    @param    string	$htmlname    Name of select html field
+     *    @return	void
+     */
+    function form_select_currency($page, $selected='', $htmlname='currency_code')
+    {
+        global $langs;
+        if ($htmlname != "none")
+        {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setcurrency">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_currency($selected,$htmlname);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        }
+        else
+        {
+            if ($selected)
+            {
+                print $selected;
+            } else {
+                print "&nbsp;";
+            }
+        }
     }
 
 
