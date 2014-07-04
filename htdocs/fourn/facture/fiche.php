@@ -1368,12 +1368,12 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->country_code=='ES')
         {
-            if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+            if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
             }
 
-            if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+            if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
             }
