@@ -427,12 +427,10 @@ class Product extends CommonObject
 
 			if (! $error && ! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PRODUCT_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
 			if (! $error)
@@ -665,12 +663,10 @@ class Product extends CommonObject
 
 				if (! $error && ! $notrigger)
 				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('PRODUCT_MODIFY',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
 				}
 
 				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
@@ -763,34 +759,33 @@ class Product extends CommonObject
 
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PRODUCT_DELETE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
-			// Delete all child tables
-			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
-			foreach($elements as $table)
+   			// Delete all child tables
+			if (! $error)
 			{
-				if (! $error)
-				{
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql.= " WHERE fk_product = ".$id;
-					dol_syslog(get_class($this).'::delete', LOG_DEBUG);
-					$result = $this->db->query($sql);
-					if (! $result)
-					{
-						$error++;
-						$this->errors[] = $this->db->lasterror();
-					}
-				}
+    			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
+    			foreach($elements as $table)
+    			{
+    				if (! $error)
+    				{
+    					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+    					$sql.= " WHERE fk_product = ".$id;
+    					dol_syslog(get_class($this).'::delete', LOG_DEBUG);
+    					$result = $this->db->query($sql);
+    					if (! $result)
+    					{
+    						$error++;
+    						$this->errors[] = $this->db->lasterror();
+    					}
+    				}
+    			}
 			}
-
+            
 			// Delete product
 			if (! $error)
 			{
@@ -1227,6 +1222,8 @@ class Product extends CommonObject
 			$localtax2=get_localtax($newvat,2);
 			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
+			
+			$this->db->begin();
 
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
@@ -1264,19 +1261,21 @@ class Product extends CommonObject
 
 				$this->level = $level;				// Store level of price edited for trigger
 
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_PRICE_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0)
-				{
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PRODUCT_PRICE_MODIFY',$user);
+                if ($result < 0) 
+                { 
+                	$this->db->rollback();
+                	return -1;
+                }            
+                // End call triggers
+                
+                $this->db->commit();
 			}
 			else
 			{
-				dol_print_error($this->db);
+				$this->db->rollback();
+			    dol_print_error($this->db);
 			}
 		}
 
