@@ -3383,9 +3383,8 @@ abstract class CommonObject
 
     /**
      * Call trigger based on this instance
-     *
-     *  NB: Error from trigger are stacked in errors
-     *  NB2: if trigger fail, action should be canceled.
+     * NB: Error from trigger are stacked in interface->errors
+     * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
      *
      * @param   string    $trigger_name   trigger's name to execute
      * @param   User      $user           Object user
@@ -3393,23 +3392,23 @@ abstract class CommonObject
      */
     function call_trigger($trigger_name, $user)
     {
-        global $langs,$conf;
+    	global $langs,$conf;
 
-        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
-        if ($result < 0) {
-            if (!empty($this->errors))
-            {
-                $this->errors=array_merge($this->errors,$interface->errors);
-            }
-            else
-            {
-                $this->errors=$interface->errors;
-            }
-        }
-        return $result;
-
+    	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    	$interface=new Interfaces($this->db);
+    	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+    	if ($result < 0)
+    	{
+    		if (!empty($this->errors))
+    		{
+    			$this->errors=array_merge($this->errors,$interface->errors);
+    		}
+    		else
+    		{
+    			$this->errors=$interface->errors;
+    		}
+    	}
+    	return $result;
     }
 
 }

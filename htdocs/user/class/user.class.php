@@ -667,7 +667,7 @@ class User extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('USER_ENABLEDISABLE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 		}
 
@@ -756,14 +756,14 @@ class User extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('USER_DELETE',$user);
-	        if ($result < 0) 
-	        { 
+	        if ($result < 0)
+	        {
 	            $error++;
 	            $this->db->rollback();
-			    return -1;            
-	        }            
+			    return -1;
+	        }
             // End call triggers
-		    
+
 			$this->db->commit();
 			return 1;
 		}
@@ -866,7 +866,7 @@ class User extends CommonObject
 					{
                         // Call trigger
                         $result=$this->call_trigger('USER_CREATE',$user);
-            	        if ($result < 0) { $error++; }            
+            	        if ($result < 0) { $error++; }
                         // End call triggers
 					}
 
@@ -949,9 +949,9 @@ class User extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('USER_CREATE_FROM_CONTACT',$user);
-                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                 // End call triggers
-			    
+
 				$this->db->commit();
 				return $this->id;
 			}
@@ -1261,7 +1261,7 @@ class User extends CommonObject
 			{
                 // Call trigger
                 $result=$this->call_trigger('USER_MODIFY',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -1352,7 +1352,7 @@ class User extends CommonObject
 		    if (! is_object($this->oldcopy)) $this->oldcopy=dol_clone($this);
 
 		    $this->db->begin();
-		    
+
 		    $sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
 			$sql.= " pass_temp = null";
@@ -1408,10 +1408,10 @@ class User extends CommonObject
 					{
                         // Call trigger
                         $result=$this->call_trigger('USER_NEW_PASSWORD',$user);
-                        if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                        if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                         // End call triggers
 					}
-                    
+
 					$this->db->commit();
 					return $this->pass;
 				}
@@ -1666,7 +1666,7 @@ class User extends CommonObject
 
 			    // Call trigger
                 $result=$this->call_trigger('USER_SETINGROUP',$user);
-	            if ($result < 0) { $error++; }            
+	            if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -1720,7 +1720,7 @@ class User extends CommonObject
 
 			    // Call trigger
                 $result=$this->call_trigger('USER_REMOVEFROMGROUP',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 
@@ -2281,7 +2281,7 @@ class User extends CommonObject
 		dol_syslog(get_class($this)."::get_full_tree dol_sort_array", LOG_DEBUG);
 		$this->users=dol_sort_array($this->users, 'fullname', 'asc', true, false);
 
-		//$this->debug_users();
+		//var_dump($this->users);
 
 		return $this->users;
 	}
@@ -2320,25 +2320,6 @@ class User extends CommonObject
 		$this->users[$id_user]['level']=dol_strlen(preg_replace('/[^_]/i','',$this->users[$id_user]['fullpath']));
 
 		return;
-	}
-
-	/**
-	 *	Affiche contenu de $this->users
-	 *
-	 *	@return	void
-	 */
-	function debug_users()
-	{
-		// Affiche $this->users
-		foreach($this->users as $key => $val)
-		{
-			print 'id: '.$this->users[$key]['id'];
-			print ' name: '.$this->users[$key]['name'];
-			print ' parent: '.$this->users[$key]['fk_user'];
-			print ' fullpath: '.$this->users[$key]['fullpath'];
-			print ' fullname: '.$this->users[$key]['fullname'];
-			print "<br>\n";
-		}
 	}
 
 }
