@@ -38,8 +38,8 @@ class Fiscalyear
 	var $rowid;
 
 	var $label;
-	var $datestart;
-	var $dateend;
+	var $date_start;
+	var $date_end;
 	var $statut;		// 0=open, 1=closed
 	var $entity;
 
@@ -71,24 +71,30 @@ class Fiscalyear
 		global $conf;
 		
 		$error = 0;
+		
+		$now=dol_now();
 
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_fiscalyear (";
 		$sql.= "label";
-		$sql.= ", datestart";
-		$sql.= ", dateend";
+		$sql.= ", date_start";
+		$sql.= ", date_end";
 		$sql.= ", statut";
 		$sql.= ", entity";
+		$sql.= ", datec";
+		$sql.= ", fk_user_author";
 		$sql.= ") VALUES (";
-		$sql.= " '".$this->label;
-		$sql.= "', ".$this->db->idate($this->datestart);
-		$sql.= ", ".$this->db->idate($this->dateend);
+		$sql.= " '".$this->label."'";
+		$sql.= ", '".$this->db->idate($this->date_start)."'";
+		$sql.= ", '".$this->db->idate($this->date_end)."'";
 		$sql.= ", ".$this->statut;
 		$sql.= ", ".$conf->entity;
+		$sql.= ", '".$this->db->idate($now)."'";
+		$sql.= ", ". $user->id;
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -117,7 +123,7 @@ class Fiscalyear
 			return $this->rowid;
 		}
 		
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create=", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -155,7 +161,7 @@ class Fiscalyear
 		global $langs;
 
 		// Check parameters
-		if (empty($this->datestart) && empty($this->dateend))
+		if (empty($this->date_start) && empty($this->date_end))
         {
             $this->error='ErrorBadParameter';
             return -1;
@@ -164,13 +170,15 @@ class Fiscalyear
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-		$sql .= " SET label = ".$this->label;
-		$sql .= " , datestart = '".$this->db->idate($this->datestart)."'";
-		$sql .= " , dateend = '".$this->db->idate($this->dateend)."'";
-		$sql .= " , statut = '".$this->statut."'";
+		$sql .= " SET label = '".$this->label."'";
+		$sql .= ", date_start = '".$this->db->idate($this->date_start)."'";
+		$sql .= ", date_end = '".$this->db->idate($this->date_end)."'";
+		$sql .= ", statut = '".$this->statut."'";
+		$sql .= ", datec = " . ($this->datec != '' ? $this->db->idate($this->datec) : 'null');
+		$sql .= ", fk_user_modif = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -193,11 +201,11 @@ class Fiscalyear
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, label, datestart, dateend, statut";
+		$sql = "SELECT rowid, label, date_start, date_end, statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
 		$sql.= " WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ( $result )
 		{
@@ -205,8 +213,8 @@ class Fiscalyear
 
 			$this->id			= $obj->rowid;
 			$this->ref			= $obj->rowid;
-			$this->datestart	= $this->db->jdate($obj->datestart);
-			$this->dateend		= $this->db->jdate($obj->dateend);
+			$this->date_start	= $this->db->jdate($obj->date_start);
+			$this->date_end		= $this->db->jdate($obj->date_end);
 			$this->label		= $obj->label;
 			$this->statut	    = $obj->statut;
 
@@ -231,7 +239,7 @@ class Fiscalyear
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."accounting_fiscalyear WHERE rowid = ".$id;
 
-		dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -295,6 +303,51 @@ class Fiscalyear
 		{
 			if ($statut==0 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
 			if ($statut==1 && ! empty($this->statuts_short[$statut])) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut8');
+		}
+	}
+	
+	/**
+	 * Information on record
+	 *
+	 * @param	int		$id      Id of record
+	 * @return	void
+	 */
+	function info($id)
+	{
+		$sql = 'SELECT fy.rowid, fy.datec, fy.fk_user_author, fy.fk_user_modif,';
+		$sql.= ' fy.tms';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'accounting_fiscalyear as fy';
+		$sql.= ' WHERE fy.rowid = '.$id;
+
+		dol_syslog(get_class($this)."::fetch info", LOG_DEBUG);
+		$result = $this->db->query($sql);
+
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_author);
+					$this->user_creation = $cuser;
+				}
+				if ($obj->fk_user_modif)
+				{
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dol_print_error($this->db);
 		}
 	}
 

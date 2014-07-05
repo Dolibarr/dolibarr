@@ -58,3 +58,19 @@ ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
 ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint(4) after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
+
+-- Fiscal years
+create table llx_accounting_fiscalyear
+(
+	rowid			integer AUTO_INCREMENT PRIMARY KEY,
+	label			varchar(128) NOT NULL,
+	date_start		date,
+	date_end		date,
+	statut			tinyint DEFAULT 0 NOT NULL,
+	entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
+	datec			datetime NOT NULL,
+	tms				timestamp NULL,
+	fk_user_author	integer NULL,
+	fk_user_modif	integer NULL
+)ENGINE=innodb;
+

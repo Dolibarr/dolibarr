@@ -66,7 +66,7 @@ print_fiche_titre($langs->trans('FiscalYears'));
 
 dol_htmloutput_errors($mesg);
 
-$sql = "SELECT f.rowid, f.label, f.datestart, f.dateend, f.statut, f.entity";
+$sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 
@@ -103,8 +103,8 @@ if ($result)
             print '<tr '.$bc[$var].'>';
 			print '<td><a href="fiscalyear_card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowFiscalYear"),"technic").' '.$obj->rowid.'</a></td>';
             print '<td align="left">'.$obj->label.'</td>';
-            print '<td align="left">'.dol_print_date($db->jdate($obj->datestart),'day').'</td>';
-			print '<td align="left">'.dol_print_date($db->jdate($obj->dateend),'day').'</td>';
+            print '<td align="left">'.dol_print_date($db->jdate($obj->date_start),'day').'</td>';
+			print '<td align="left">'.dol_print_date($db->jdate($obj->date_end),'day').'</td>';
             print '<td>'.$fiscalyearstatic->LibStatut($obj->statut,5).'</td>';
             print '</tr>';
             $var=!$var;

@@ -1514,9 +1514,15 @@ TaskModelModule=Tasks reports document model
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
 ##### Fiscal Year #####
-Fiscalyear=Fiscal years
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
 OpenFiscalYear=Open fiscal year
 CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
 Opened=Opened
 Closed=Closed
 

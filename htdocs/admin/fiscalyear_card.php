@@ -79,12 +79,13 @@ else if ($action == 'add')
 		
 		$db->begin();
 		
-		$object->datestart		= $date_start;
-	    $object->dateend		= $date_end;
+		$object->date_start		= $date_start;
+	    $object->date_end		= $date_end;
 		$object->label			= GETPOST('label','alpha');
-        $object->statut     	= GETPOST('statut','int');;
+        $object->statut     	= GETPOST('statut','int');
+		$object->datec			= dol_now();
 
-        if (empty($object->datestart) && empty($object->dateend))
+        if (empty($object->date_start) && empty($object->date_end))
         {
             $mesg.=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
             $error++;
@@ -129,10 +130,10 @@ else if ($action == 'update')
     {
         $result = $object->fetch($id);
 		
-		$object->datestart		= dol_mktime(12, 0, 0, GETPOST('startmonth','int'), GETPOST('startday','int'), GETPOST('startyear','int'));
-        $object->dateend		= dol_mktime(12, 0, 0, GETPOST('endmonth','int'), GETPOST('endday','int'), GETPOST('endyear','int'));
-        $object->label			= GETPOST('label','alpha');
-		$object->statut     	= GETPOST('statut','int');
+		$object->date_start	= empty($_POST["fiscalyear"])?'':$date_start;
+		$object->date_end	= empty($_POST["fiscalyearend"])?'':$date_end;
+		$object->label		= GETPOST('label','alpha');
+		$object->statut     = GETPOST('statut','int');
 
         $result = $object->update($user);
 
@@ -180,19 +181,21 @@ if ($action == 'create')
     print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="32" value="' . GETPOST("label") . '"></td></tr>';
 	
 	// Date start
-    print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
     print $form->select_date(($date_start?$date_start:''),'fiscalyear');
     print '</td></tr>';
 
     // Date end
-    print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
     print $form->select_date(($date_end?$date_end:-1),'fiscalyearend');
     print '</td></tr>';
 	
 	// Statut
     print '<tr>';
-    print '<td class="fieldrequired">'.$langs->trans("Statut").'</td><td class="valeur">'.$form->selectarray('statut',$statut2label,GETPOST('statut')).'</td>';
-    print '</tr>';
+    print '<td class="fieldrequired">'.$langs->trans("Statut").'</td>';
+	print '<td class="valeur">';
+	print $form->selectarray('statut',$statut2label,GETPOST('statut'));
+    print '</td></tr>';
 
     print '</table>';
 
@@ -234,13 +237,18 @@ else if ($id)
 			
 			// Date start
             print '<tr><td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-            print $form->select_date($object->datestart,'','','','','update');
+            print $form->select_date($object->date_start?$object->date_start:-1,'fiscalyear');
             print '</td></tr>';
 
             // Date end
             print '<tr><td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-            print $form->select_date($object->dateend,'','','','','update');
+            print $form->select_date($object->date_end?$object->date_end:-1,'fiscalyearend');
             print '</td></tr>';
+			
+			// Statut
+			print '<tr><td>'.$langs->trans("Statut").'</td><td>';
+			print $form->selectarray('statut',$statut2label,$object->statut);
+			print '</td></tr>';
 
             print '</table>';
 
@@ -283,16 +291,16 @@ else if ($id)
 
             // Date start
             print '<tr><td>';
-            print $form->editfieldkey("Date",'datestart',$object->datestart,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print $form->editfieldkey("Date",'date_start',$object->date_start,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
             print '</td><td colspan="2">';
-            print $form->editfieldval("Date",'datestart',$object->datestart,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print $form->editfieldval("Date",'date_start',$object->date_start,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
             print '</td></tr>';
 			
 			// Date end
             print '<tr><td>';
-            print $form->editfieldkey("Date",'dateend',$object->dateend,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print $form->editfieldkey("Date",'date_end',$object->date_end,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
             print '</td><td colspan="2">';
-            print $form->editfieldval("Date",'dateend',$object->dateend,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
+            print $form->editfieldval("Date",'date_end',$object->date_end,$object,$conf->global->MAIN_EDIT_ALSO_INLINE,'datepicker');
             print '</td></tr>';
 
             // Statut
