@@ -1506,13 +1506,13 @@ elseif (! empty($object->id))
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->localtax1_assuj=="1") //Localtax1
+	if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
 		print '<td align="right">'.price($object->total_localtax1).'</td>';
 		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
-	if ($mysoc->localtax2_assuj=="1") //Localtax2
+	if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
 		print '<td align="right">'.price($object->total_localtax2).'</td>';
