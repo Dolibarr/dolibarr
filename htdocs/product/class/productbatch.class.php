@@ -97,7 +97,7 @@ class Productbatch extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		if (! $error)
@@ -161,7 +161,7 @@ class Productbatch extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.self::$_table_element." as t";
         $sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -185,7 +185,6 @@ class Productbatch extends CommonObject
 		else
 		{
 			$this->error = "Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -217,7 +216,7 @@ class Productbatch extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		if (! $error)
@@ -289,7 +288,7 @@ class Productbatch extends CommonObject
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX.self::$_table_element."";
     		$sql.= " WHERE rowid=".$this->id;
 
-    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -431,7 +430,7 @@ class Productbatch extends CommonObject
 
 		if (! empty($where)) $sql.= " AND (".implode(" OR ",$where).")";
 		
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -456,7 +455,6 @@ class Productbatch extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -487,7 +485,7 @@ class Productbatch extends CommonObject
 		$sql.= " WHERE fk_product_stock=".$fk_product_stock;
 		
 		if ($with_qty) $sql.= " AND qty<>0";
-		dol_syslog("productbatch::findAll sql=".$sql, LOG_DEBUG);
+		dol_syslog("productbatch::findAll", LOG_DEBUG);
 		$resql=$db->query($sql);
 		if ($resql)
         {
@@ -517,7 +515,6 @@ class Productbatch extends CommonObject
         else
         {
       	    $error="Error ".$db->lasterror();
-            dol_syslog("productbatch::find_all ".$error, LOG_ERR);
             return -1;
         }
     }

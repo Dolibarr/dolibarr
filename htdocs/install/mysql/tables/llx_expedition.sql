@@ -41,13 +41,13 @@ create table llx_expedition
   fk_shipping_method    integer,
   tracking_number       varchar(50),
   fk_statut             smallint	DEFAULT 0,
-  
-  height                integer,						-- height
-  width                 integer,						-- with
+
+  height                float,							-- height
+  width                 float,							-- with
   size_units            integer,						-- unit of all sizes (height, width, depth)
-  size                  integer,						-- depth
+  size                  float,							-- depth
   weight_units          integer,						-- unit of weight
-  weight                integer,						-- weight
+  weight                float,							-- weight
   note_private          text,
   note_public           text,
   model_pdf             varchar(255)

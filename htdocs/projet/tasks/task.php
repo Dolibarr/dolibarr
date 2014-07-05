@@ -91,6 +91,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		$result=$object->update($user);
+		
+		if ($result < 0)
+		{
+		    setEventMessage($object->error,'errors');
+		    setEventMessage($object->errors,'errors');
+		}
 	}
 	else
 	{

@@ -203,7 +203,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			    $filles=array();
 			    $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
 			    $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
-			    dolibarr_install_syslog("upgrade: search duplicate sql=".$sql);
+			    dolibarr_install_syslog("upgrade: search duplicate", LOG_DEBUG);
 			    $resql = $db->query($sql);
 			    if ($resql)
 			    {
@@ -231,7 +231,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
 			            // We delete all
 			            $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
-			            dolibarr_install_syslog("upgrade: delete association sql=".$sql);
+			            dolibarr_install_syslog("upgrade: delete association", LOG_DEBUG);
 			            $resqld=$db->query($sql);
 			            if ($resqld)
 			            {
@@ -240,7 +240,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 			                {
 			                    $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
 			                    $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
-			                    dolibarr_install_syslog("upgrade: insert association sql=".$sql);
+			                    dolibarr_install_syslog("upgrade: insert association", LOG_DEBUG);
 			                    $resqli=$db->query($sql);
 			                    if (! $resqli) $error++;
 			                }

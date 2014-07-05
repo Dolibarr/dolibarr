@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -404,7 +404,7 @@ class pdf_crabe extends ModelePDFFactures
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
-						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0, $object->thirdparty, $mysoc);
 						$localtax1_type = $localtaxtmp_array[0];
 						$localtax2_type = $localtaxtmp_array[2];
 					}
@@ -624,7 +624,6 @@ class pdf_crabe extends ModelePDFFactures
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -663,7 +662,6 @@ class pdf_crabe extends ModelePDFFactures
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog($this->db,$this->error, LOG_ERR);
 			return -1;
 		}
 

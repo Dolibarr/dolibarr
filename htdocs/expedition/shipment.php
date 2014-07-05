@@ -363,7 +363,7 @@ if ($id > 0 || ! empty($ref))
 		$sql.= " ORDER BY cd.rang, cd.rowid";
 
 		//print $sql;
-		dol_syslog("shipment.php sql=".$sql, LOG_DEBUG);
+		dol_syslog("shipment.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

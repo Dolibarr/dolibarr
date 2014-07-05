@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011      Juanjo Menent <jmenent@2byte.es>
+/* Copyright (C) 2011-2014      Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ $langs->load("banks");
 $langs->load("bills");
 
 $id=$_REQUEST["id"];
-
+$lttype=GETPOST('localTaxType', 'int');
 $mesg = '';
 
 // Security check
@@ -44,6 +44,11 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  */
 
 //add payment of localtax
+if($_POST["cancel"] == $langs->trans("Cancel")){
+	header("Location: reglement.php?localTaxType=".$lttype);
+	exit;
+}
+
 if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
     $localtax = new Localtax($db);
@@ -59,12 +64,13 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $localtax->datep=$datep;
     $localtax->amount=$_POST["amount"];
 	$localtax->label=$_POST["label"];
+	$localtax->ltt=$lttype;
 
     $ret=$localtax->addPayment($user);
     if ($ret > 0)
     {
         $db->commit();
-        header("Location: reglement.php");
+        header("Location: reglement.php?localTaxType=".$lttype);
         exit;
     }
     else
@@ -145,10 +151,11 @@ if ($_GET["action"] == 'create')
 {
     print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->transcountry("newLT2Payment",$mysoc->country_code));
-
+    print_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
+    
     if ($mesg) print $mesg;
 
     print '<table class="border" width="100%">';
@@ -163,7 +170,7 @@ if ($_GET["action"] == 'create')
     print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry("LT2Payment",$mysoc->country_code)).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry(($lttype==2?"LT2Payment":"LT1Payment"),$mysoc->country_code)).'"></td></tr>';
 
 	// Amount
 	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';

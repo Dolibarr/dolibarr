@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014 Florian Henry		 <florian.henry@open-concept.pro>
@@ -1463,12 +1463,12 @@ if ($action == 'create') {
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
-		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0 ) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
 		}
 
-		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
@@ -1985,13 +1985,13 @@ if ($action == 'create') {
 	print '<td></td></tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->localtax1_assuj == "1") 	// Localtax1
+	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 	// Localtax1
 	{
 		print '<tr><td height="10">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 		print '<td align="right" class="nowrap">' . price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 		print '<td></td></tr>';
 	}
-	if ($mysoc->localtax2_assuj == "1") 	// Localtax2
+	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 	// Localtax2
 	{
 		print '<tr><td height="10">' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 		print '<td align="right" class="nowrap">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';

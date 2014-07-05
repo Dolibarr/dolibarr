@@ -334,7 +334,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -364,7 +364,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -400,7 +400,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -451,7 +451,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -499,7 +499,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -548,7 +548,7 @@ abstract class Stats
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__."", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

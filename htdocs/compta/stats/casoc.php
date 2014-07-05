@@ -250,7 +250,7 @@ $sql.= " GROUP BY s.rowid, s.nom";
 $sql.= " ORDER BY s.rowid";
 //echo $sql;
 
-dol_syslog("casoc sql=".$sql);
+dol_syslog("casoc", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);

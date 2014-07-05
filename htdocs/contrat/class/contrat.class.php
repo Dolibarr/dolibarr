@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -154,16 +154,14 @@ class Contrat extends CommonObject
 		$sql.= " commentaire = '".$this->db->escape($comment)."'";
 		$sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
 
-		dol_syslog(get_class($this)."::active_line sql=".$sql);
+		dol_syslog(get_class($this)."::active_line", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTRACT_SERVICE_ACTIVATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -171,7 +169,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::active_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -206,12 +203,10 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_SERVICE_CLOSE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTRACT_SERVICE_CLOSE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -219,7 +214,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::close_line error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -315,13 +309,13 @@ class Contrat extends CommonObject
 			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
-			dol_syslog(get_class($this)."::validate sql=".$sql);
+			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
-				dol_syslog(get_class($this)."::validate Echec update - 10 - sql=".$sql, LOG_ERR);
 				dol_print_error($this->db);
 				$error++;
+				$this->error=$this->db->lasterror();
 			}
 
 			if (! $error)
@@ -365,12 +359,10 @@ class Contrat extends CommonObject
 			// Trigger calls
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CONTRACT_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CONTRACT_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 			}
 		}
 		else
@@ -386,7 +378,6 @@ class Contrat extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			$this->error=$this->db->lasterror();
 			return -1;
 		}
 
@@ -416,7 +407,7 @@ class Contrat extends CommonObject
 		}
 		else $sql.= " WHERE rowid=".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -505,7 +496,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
 		$sql.= " ORDER by d.rowid ASC";
 
-		dol_syslog(get_class($this)."::fetch_lines sql=".$sql);
+		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -756,12 +747,10 @@ class Contrat extends CommonObject
 
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CONTRACT_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CONTRACT_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 
 				if (! $error)
 				{
@@ -776,7 +765,6 @@ class Contrat extends CommonObject
 				}
 				else
 				{
-					$this->error=$interface->error;
 					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
 
 					$this->db->rollback();
@@ -794,8 +782,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			$this->error=$langs->trans("UnknownError: ".$this->db->error()." - sql=".$sql);
-			dol_syslog(get_class($this)."::create - 10 - ".$this->error, LOG_ERR);
+			$this->error=$langs->trans("UnknownError: ".$this->db->error()." -", LOG_DEBUG);
 
 			$this->db->rollback();
 			return -1;
@@ -840,7 +827,7 @@ class Contrat extends CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX."contratdet_log as cdl, ".MAIN_DB_PREFIX."contratdet as cd";
 			$sql.= " WHERE cdl.fk_contratdet=cd.rowid AND cd.fk_contrat=".$this->id;
 
-			dol_syslog(get_class($this)."::delete contratdet_log sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -861,7 +848,7 @@ class Contrat extends CommonObject
 				$sql= "DELETE FROM ".MAIN_DB_PREFIX."contratdet_log ";
 				$sql.= " WHERE ".MAIN_DB_PREFIX."contratdet_log.rowid IN (".implode(",",$tab_resql).")";
 
-				dol_syslog(get_class($this)."::delete contratdet_log sql=".$sql, LOG_DEBUG);
+				dol_syslog(get_class($this)."::delete contratdet_log", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
@@ -877,7 +864,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE fk_contrat=".$this->id;
 
-			dol_syslog(get_class($this)."::delete contratdet sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete contratdet", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -892,7 +879,7 @@ class Contrat extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
 			$sql.= " WHERE rowid=".$this->id;
 
-			dol_syslog(get_class($this)."::delete contrat sql=".$sql);
+			dol_syslog(get_class($this)."::delete contrat", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -903,14 +890,10 @@ class Contrat extends CommonObject
 
 		if (! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTRACT_DELETE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
 		}
 
 		if (! $error)
@@ -939,8 +922,7 @@ class Contrat extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::delete ERROR ".$this->error, LOG_ERR);
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -1008,7 +990,7 @@ class Contrat extends CommonObject
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+			$localtaxes_type=getLocalTaxesFromRate($txtva, 0, $this->societe, $mysoc);
 
 			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, 1,'', $localtaxes_type);
 			$total_ht  = $tabprice[0];
@@ -1067,7 +1049,7 @@ class Contrat extends CommonObject
 			if ($date_end > 0) { $sql.= ",'".$this->db->idate($date_end)."'"; }
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::addline sql=".$sql);
+			dol_syslog(get_class($this)."::addline", LOG_DEBUG);
 
 			$resql=$this->db->query($sql);
 			if ($resql)
@@ -1080,7 +1062,6 @@ class Contrat extends CommonObject
 				}
 				else
 				{
-					dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
 					$this->db->rollback();
 					return -1;
 				}
@@ -1089,7 +1070,6 @@ class Contrat extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->error()." sql=".$sql;
-				dol_syslog(get_class($this)."::addline ".$this->error,LOG_ERR);
 				return -1;
 			}
 		}
@@ -1156,7 +1136,7 @@ class Contrat extends CommonObject
 		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-		$localtaxes_type=getLocalTaxesFromRate($tvatx,0,$mysoc);
+		$localtaxes_type=getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 
 		$tabprice=calcul_price_total($qty, $pu, $remise_percent, $tvatx, $localtaxtx1, $txlocaltaxtx2, 0, $price_base_type, $info_bits, 1, '', $localtaxes_type);
 		$total_ht  = $tabprice[0];
@@ -1214,7 +1194,7 @@ class Contrat extends CommonObject
 		else { $sql.=",date_cloture=null"; }
 		$sql .= " WHERE rowid = ".$rowid;
 
-		dol_syslog(get_class($this)."::updateline sql=".$sql);
+		dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1255,25 +1235,27 @@ class Contrat extends CommonObject
 
 		if ($this->statut >= 0)
 		{
+
+		    $this->db->begin();
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
 			$sql.= " WHERE rowid=".$idline;
 
-			dol_syslog(get_class($this)."::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql)
 			{
 				$this->error="Error ".$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+				$this->db->rollback();
 				return -1;
 			}
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('LINECONTRACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINECONTRACT_DELETE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
 
+            $this->db->commit();
 			return 1;
 		}
 		else
@@ -1468,7 +1450,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_contrat =".$this->id;
 		if ($statut >= 0) $sql.= " AND statut = '$statut'";
 
-		dol_syslog(get_class($this)."::array_detail() sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::array_detail()", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1504,7 +1486,7 @@ class Contrat extends CommonObject
 		$sql.= " WHERE fk_soc =".$this->socid;
 		if ($option == 'others') $sql.= " AND c.rowid != ".$this->id;
 
-		dol_syslog(get_class($this)."::getOtherContracts() sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::getOtherContracts()", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1944,7 +1926,7 @@ class ContratLigne
 		if ($id)  $sql.= " WHERE t.rowid = ".$id;
 		if ($ref) $sql.= " WHERE t.rowid = '".$ref."'";
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1997,7 +1979,6 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -2064,6 +2045,8 @@ class ContratLigne
 				$this->pa_ht = $this->subprice * (1 - $this->remise_percent / 100);
 		}
 
+		$this->db->begin();
+
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
 		$sql.= " fk_contrat='".$this->fk_contrat."',";
@@ -2099,7 +2082,7 @@ class ContratLigne
 		$sql.= " commentaire='".$this->db->escape($this->commentaire)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2110,20 +2093,19 @@ class ContratLigne
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
+			$this->db->rollback();
 			return -1;
 		}
 
 		if (! $notrigger)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('LINECONTRACT_UPDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            // End call triggers
 		}
 
+        $this->db->commit();
 		return 1;
 	}
 
@@ -2147,7 +2129,7 @@ class ContratLigne
 		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-		dol_syslog(get_class($this)."::update_total sql=".$sql);
+		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -2158,7 +2140,6 @@ class ContratLigne
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update_total Error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -2;
 		}
@@ -2180,7 +2161,7 @@ class ContratLigne
 		if (! $sql) return -1;
 
 		//print $sql;
-		dol_syslog(get_class($this)."::get_element_list sql=" . $sql);
+		dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

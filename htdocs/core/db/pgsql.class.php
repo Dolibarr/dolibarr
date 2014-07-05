@@ -492,6 +492,9 @@ class DoliDBPgsql extends DoliDB
 		}
 
 		$ret = @pg_query($this->db, $query);
+
+		dol_syslog('sql='.$query, LOG_DEBUG);
+
 		//print $query;
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query)) // Si requete utilisateur, on la sauvegarde ainsi que son resultset
 		{
@@ -503,9 +506,10 @@ class DoliDBPgsql extends DoliDB
     				$this->lasterror = $this->error();
     				$this->lasterrno = $this->errno();
 			    }
-				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint." - ".$query." - ".pg_last_error($this->db)." => ".$this->errno(), LOG_WARNING);
-				//print "\n>> ".$query."<br>\n";
-				//print '>> '.$this->lasterrno.' - '.$this->lasterror.' - '.$this->lastqueryerror."<br>\n";
+
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL error usesavepoint = ".$usesavepoint, LOG_ERR);
 
 				if ($usesavepoint && $this->transaction_opened)	// Warning, after that errno will be erased
 				{

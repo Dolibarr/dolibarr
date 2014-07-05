@@ -182,7 +182,7 @@ class Productcustomerprice extends CommonObject
 		
 		$this->db->begin();
 		
-		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
@@ -258,7 +258,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . "product_customer_price as t";
 		$sql .= " WHERE t.rowid = " . $id;
 		
-		dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -288,7 +288,6 @@ class Productcustomerprice extends CommonObject
 			return 1;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -355,7 +354,7 @@ class Productcustomerprice extends CommonObject
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
 		
-		dol_syslog(get_class($this) . "::fetch_all sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch_all", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			
@@ -394,7 +393,6 @@ class Productcustomerprice extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_all " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -460,7 +458,7 @@ class Productcustomerprice extends CommonObject
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
 		}
 		
-		dol_syslog(get_class($this) . "::fetch_all_log sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch_all_log", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			
@@ -499,7 +497,6 @@ class Productcustomerprice extends CommonObject
 			return $num;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_all_log " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -625,7 +622,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " WHERE t.rowid = " . $this->id;
 		
 		$this->db->begin();
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
@@ -654,7 +651,7 @@ class Productcustomerprice extends CommonObject
 		
 		$sql .= " WHERE rowid=" . $this->id;
 		
-		dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error ++;
@@ -713,7 +710,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " WHERE s.parent = " . $this->fk_soc;
 		$sql .= " AND s.entity IN (" . getEntity('societe', 1) . ")";
 		
-		dol_syslog(get_class($this) . "::setPriceOnAffiliateThirdparty sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::setPriceOnAffiliateThirdparty", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		
 		if ($resql) {
@@ -784,7 +781,6 @@ class Productcustomerprice extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::setPriceOnAffiliateThirdparty " . $this->error, LOG_ERR);
 			return - 1;
 		}
 	}
@@ -821,7 +817,7 @@ class Productcustomerprice extends CommonObject
 			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "product_customer_price";
 			$sql .= " WHERE rowid=" . $this->id;
 			
-			dol_syslog(get_class($this) . "::delete sql=" . $sql);
+			dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) {
 				$error ++;

@@ -52,7 +52,6 @@ if (GETPOST('add'))
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
-		dol_syslog("sql=".$sql);
 		$result = $db->query($sql);
 		if (!$result)
 		{
@@ -73,7 +72,6 @@ if (GETPOST('update'))
 		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("sql=".$sql);
 		$result = $db->query($sql);
 		if (!$result)
 		{
@@ -92,7 +90,6 @@ if ($action == 'delete')
 		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("sql=".$sql);
 		$result = $db->query($sql);
 		if (!$result)
 		{

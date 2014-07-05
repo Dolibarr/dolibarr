@@ -265,6 +265,8 @@ class DoliDBMysqli extends DoliDB
             $ret = mysqli_query($this->db,$query);
         }
 
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
@@ -273,7 +275,9 @@ class DoliDBMysqli extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+
+	            dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+	            dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -831,13 +835,7 @@ class DoliDBMysqli extends DoliDB
         {
             if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') 
             {
-            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             	return -1;
-            }
-            else 
-            {
-            	// If user already exists, we continue to set permissions
-            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }
         }
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
@@ -845,17 +843,15 @@ class DoliDBMysqli extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
         $sql="FLUSH Privileges";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 

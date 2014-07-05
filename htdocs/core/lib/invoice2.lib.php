@@ -128,7 +128,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	if ($sqlorder) $sql.=$sqlorder;
 
 	//print $sql; exit;
-	dol_syslog("scripts/invoices/rebuild_merge.php: sql=".$sql);
+	dol_syslog("scripts/invoices/rebuild_merge.php:", LOG_DEBUG);
 
 	if ($usestdout) print '--- start'."\n";
 
@@ -139,7 +139,7 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 	$result = 0;
 	$files = array() ;		// liste les fichiers
 
-	dol_syslog("scripts/invoices/rebuild_merge.php sql=".$sql);
+	dol_syslog("scripts/invoices/rebuild_merge.php", LOG_DEBUG);
 	if ( $resql=$db->query($sql) )
 	{
 	    $num = $db->num_rows($resql);

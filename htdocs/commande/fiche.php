@@ -1589,12 +1589,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
-		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
 		}
 
-		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
@@ -1840,9 +1840,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$nbrow ++;
 
 			// Local taxes
-		if ($mysoc->localtax1_assuj == "1")
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 			$nbrow ++;
-		if ($mysoc->localtax2_assuj == "1")
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0 )
 			$nbrow ++;
 
 		print '<table class="border" width="100%">';
@@ -2115,9 +2115,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		}
 
 		$rowspan = 4;
-		if ($mysoc->localtax1_assuj == "1")
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 			$rowspan ++;
-		if ($mysoc->localtax2_assuj == "1")
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)
 			$rowspan ++;
 
 			// Total HT
@@ -2138,12 +2138,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 
 		// Amount Local Taxes
-		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 			print '<td align="right">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 		}
-		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 		// Localtax2 IRPF
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 			print '<td align="right">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';

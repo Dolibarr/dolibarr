@@ -119,7 +119,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."skeleton";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 
-dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
+dol_syslog($script_file, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

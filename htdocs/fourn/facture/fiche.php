@@ -658,7 +658,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $price_base_type = 'HT';
 
             //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+            $result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
         }
         else
 		{
@@ -666,7 +666,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             $ht = $ttc / (1 + ($tva_tx / 100));
             $price_base_type = 'HT';
             //print $product_desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0
-            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1tx, $localtax2tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
+            $result=$object->addline($product_desc, $ht, $tva_tx,$localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $datestart, $dateend, 0, $npr, $price_base_type, $type);
         }
     }
 
@@ -1368,12 +1368,12 @@ if ($action == 'create')
         print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($objectsrc->total_tva)."</td></tr>";
         if ($mysoc->country_code=='ES')
         {
-            if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
+            if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax1)."</td></tr>";
             }
 
-            if ($mysoc->localtax2_assuj=="1") //Localtax2 IRPF
+            if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
             {
                 print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td><td colspan="2">'.price($objectsrc->total_localtax2)."</td></tr>";
             }
@@ -1634,16 +1634,9 @@ else
         if (! empty($conf->banque->enabled)) $nbcols++;
 
         // Local taxes
-        if ($mysoc->country_code=='ES')
-        {
-        	if($mysoc->localtax1_assuj=="1") $nbrows++;
-        	if($societe->localtax2_assuj=="1") $nbrows++;
-        }
-        else
-       {
-        	if ($societe->localtax1_assuj=="1") $nbrows++;
-        	if ($societe->localtax2_assuj=="1") $nbrows++;
-        }
+        if ($societe->localtax1_assuj=="1") $nbrows++;
+        if ($societe->localtax2_assuj=="1") $nbrows++;
+        
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
         $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
@@ -1802,35 +1795,17 @@ else
 
         // Amount Local Taxes
         //TODO: Place into a function to control showing by country or study better option
-        if ($mysoc->country_code=='ES')
+        if ($societe->localtax1_assuj=="1") //Localtax1
         {
-        	if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-	        {
-	            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
-	            print '<td colspan="2">&nbsp;</td></tr>';
-	        }
-	        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
-	        {
-	            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
-	            print '<td colspan="2">&nbsp;</td></tr>';
-	        }
+            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
+            print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '<td colspan="2">&nbsp;</td></tr>';
         }
-        else
-       {
-	        if ($societe->localtax1_assuj=="1") //Localtax1 RE
-	        {
-	            print '<tr><td>'.$langs->transcountry("AmountLT1",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax1,1,$langs,0,-1,-1,$conf->currency).'</td>';
-	            print '<td colspan="2">&nbsp;</td></tr>';
-	        }
-	        if ($societe->localtax2_assuj=="1") //Localtax2 IRPF
-	        {
-	            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
-	            print '<td align="right">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
-	            print '<td colspan="2">&nbsp;</td></tr>';
-	        }
+        if ($societe->localtax2_assuj=="1") //Localtax2
+        {
+            print '<tr><td>'.$langs->transcountry("AmountLT2",$societe->country_code).'</td>';
+            print '<td align="right">'.price($object->total_localtax2,1,$langs,0,-1,-1,$conf->currency).'</td>';
+            print '<td colspan="2">&nbsp;</td></tr>';
         }
         print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right">'.price($object->total_ttc,1,$langs,0,-1,-1,$conf->currency).'</td><td colspan="2" align="left">&nbsp;</td></tr>';
 

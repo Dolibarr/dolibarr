@@ -84,7 +84,7 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
 	$sql.= " ORDER BY nom ASC";
 
-	//dol_syslog("ajaxcompanies sql=".$sql);
+	//dol_syslog("ajaxcompanies", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{

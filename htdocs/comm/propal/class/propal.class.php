@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2013 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-214  Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -355,7 +355,7 @@ class Propal extends CommonObject
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
 
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, '', $localtaxes_type);
             $total_ht  = $tabprice[0];
@@ -443,7 +443,6 @@ class Propal extends CommonObject
                 else
                 {
                     $this->error=$this->db->error();
-                    dol_syslog("Error sql=$sql, error=".$this->error,LOG_ERR);
                     $this->db->rollback();
                     return -1;
                 }
@@ -510,7 +509,7 @@ class Propal extends CommonObject
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc);
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
 
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type,'', $localtaxes_type);
             $total_ht  = $tabprice[0];
@@ -597,7 +596,6 @@ class Propal extends CommonObject
             {
                 $this->error=$this->db->error();
                 $this->db->rollback();
-                dol_syslog(get_class($this)."::updateline Error=".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -749,7 +747,7 @@ class Propal extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -760,7 +758,7 @@ class Propal extends CommonObject
                 $this->ref='(PROV'.$this->id.')';
                 $sql = 'UPDATE '.MAIN_DB_PREFIX."propal SET ref='".$this->ref."' WHERE rowid=".$this->id;
 
-                dol_syslog(get_class($this)."::create sql=".$sql);
+                dol_syslog(get_class($this)."::create", LOG_DEBUG);
                 $resql=$this->db->query($sql);
                 if (! $resql) $error++;
 
@@ -888,7 +886,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::create -2 ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
@@ -896,7 +893,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::create -1 ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -1075,7 +1071,7 @@ class Propal extends CommonObject
         if ($ref) $sql.= " AND p.ref='".$ref."'";
         else $sql.= " AND p.rowid=".$rowid;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1226,7 +1222,6 @@ class Propal extends CommonObject
                 else
                 {
                     $this->error=$this->db->error();
-                    dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
                     return -1;
                 }
 
@@ -1246,7 +1241,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -1327,7 +1321,7 @@ class Propal extends CommonObject
             $sql.= " fk_statut = 1, date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this).'::valid sql='.$sql);
+            dol_syslog(get_class($this).'::valid', LOG_DEBUG);
             if ($this->db->query($sql))
             {
                 if (! $notrigger)
@@ -1412,7 +1406,7 @@ class Propal extends CommonObject
             $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET datep = '".$this->db->idate($date)."'";
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 
-            dol_syslog(get_class($this)."::set_date sql=".$sql);
+            dol_syslog(get_class($this)."::set_date", LOG_DEBUG);
             if ($this->db->query($sql) )
             {
                 $this->date = $date;
@@ -1422,7 +1416,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::set_date ".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1449,7 +1442,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_echeance Erreur SQL".$this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1602,7 +1594,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_remise_percent Error sql=$sql");
                 return -1;
             }
         }
@@ -1637,7 +1628,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_remise_absolue Error sql=$sql");
                 return -1;
             }
         }
@@ -1669,7 +1659,7 @@ class Propal extends CommonObject
 
     	$this->db->begin();
 
-		dol_syslog(get_class($this)."::reopen sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::reopen", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
@@ -1995,7 +1985,7 @@ class Propal extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE rowid IN (".implode(',',$linkedInvoices).")";
 
-            dol_syslog(get_class($this)."::InvoiceArrayList sql=".$sql);
+            dol_syslog(get_class($this)."::InvoiceArrayList", LOG_DEBUG);
             $resql=$this->db->query($sql);
 
             if ($resql)
@@ -2135,7 +2125,6 @@ class Propal extends CommonObject
                     else
                     {
                         $this->error=$this->db->lasterror();
-                        dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                         $this->db->rollback();
                         return 0;
                     }
@@ -2143,7 +2132,6 @@ class Propal extends CommonObject
                 else
                 {
                     $this->error=$this->db->lasterror();
-                    dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                     $this->db->rollback();
                     return -3;
                 }
@@ -2151,7 +2139,6 @@ class Propal extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
@@ -2159,7 +2146,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -2640,7 +2626,7 @@ class Propal extends CommonObject
         $sql.= ' WHERE pt.fk_propal = '.$this->id;
         $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
 
-        dol_syslog(get_class($this).'::getLinesArray sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).'::getLinesArray', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2691,7 +2677,6 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::getLinesArray Error sql=$sql, error=".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -2928,7 +2913,7 @@ class PropaleLigne  extends CommonObject
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= ')';
 
-        dol_syslog(get_class($this).'::insert sql='.$sql, LOG_DEBUG);
+        dol_syslog(get_class($this).'::insert', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2962,7 +2947,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog(get_class($this).'::insert Error '.$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -2981,7 +2965,7 @@ class PropaleLigne  extends CommonObject
         $this->db->begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = ".$this->rowid;
-        dol_syslog("PropaleLigne::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog("PropaleLigne::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
 
@@ -3013,7 +2997,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog("PropaleLigne::delete Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -1;
         }
@@ -3092,7 +3075,7 @@ class PropaleLigne  extends CommonObject
         $sql.= " , date_end=".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null");
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -3124,7 +3107,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }
@@ -3147,7 +3129,7 @@ class PropaleLigne  extends CommonObject
         $sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("PropaleLigne::update_total sql=$sql");
+        dol_syslog("PropaleLigne::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -3158,7 +3140,6 @@ class PropaleLigne  extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dol_syslog("PropaleLigne::update_total Error ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -2;
         }

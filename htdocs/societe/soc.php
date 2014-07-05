@@ -101,22 +101,22 @@ if (empty($reshook))
         // We defined value code_fournisseur
         $_POST["code_fournisseur"]="Acompleter";
     }
-    
+
     if($action=='set_localtax1')
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt1');
     	$object = new Societe($db);
-    	$res=$object->update_localtax($socid, 1, $value);
-    
+    	$object->fetch($socid);
+    	$res=$object->setValueFrom('localtax1_value', $value);
     }
     if($action=='set_localtax2')
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt2');
     	$object = new Societe($db);
-    	$res=$object->update_localtax($socid, 2, $value);
-    
+    	$object->fetch($socid);
+    	$res=$object->setValueFrom('localtax2_value', $value);
     }
 
     // Add new third party
@@ -175,7 +175,7 @@ if (empty($reshook))
         // Local Taxes
         $object->localtax1_assuj       = GETPOST('localtax1assuj_value');
         $object->localtax2_assuj       = GETPOST('localtax2assuj_value');
-        
+
         $object->localtax1_value	   = GETPOST('lt1');
         $object->localtax2_value	   = GETPOST('lt2');
 
@@ -453,12 +453,11 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($object)."::delete sql=".$sql, LOG_DEBUG);
+                	dol_syslog(get_class($object)."::delete", LOG_DEBUG);
                 	if (! $object->db->query($sql))
                 	{
                 		$error++;
                 		$object->error .= $object->db->lasterror();
-                		dol_syslog(get_class($object)."::delete erreur -1 ".$object->error, LOG_ERR);
                 	}
                 }
 
@@ -680,7 +679,7 @@ else
         //Local Taxes
         $object->localtax1_assuj	= GETPOST('localtax1assuj_value');
         $object->localtax2_assuj	= GETPOST('localtax2assuj_value');
-        
+
         $object->localtax1_value	=GETPOST('lt1');
         $object->localtax2_value	=GETPOST('lt2');
 
@@ -1175,7 +1174,7 @@ else
                 //Local Taxes
                 $object->localtax1_assuj		= GETPOST('localtax1assuj_value');
                 $object->localtax2_assuj		= GETPOST('localtax2assuj_value');
-                
+
                 $object->localtax1_value		=GETPOST('lt1');
                 $object->localtax2_value		=GETPOST('lt2');
 
@@ -1196,8 +1195,8 @@ else
             if($object->localtax2_assuj==0){
             	$sub2=0;
             }else{$sub2=1;}
-            
-            
+
+
             print "\n".'<script type="text/javascript">';
             print '$(document).ready(function () {
     			var val='.$sub.';
@@ -1232,11 +1231,11 @@ else
     					$(".cblt2").hide();
     				}
     			});
-            
+
                });';
             print '</script>'."\n";
-            
-            
+
+
             if ($conf->use_javascript_ajax)
             {
                 print "\n".'<script type="text/javascript" language="javascript">';
@@ -1466,11 +1465,11 @@ else
                 	$formcompany->select_localtax(1,$object->localtax1_value, "lt1");
                 	print '</span>';
                 }
-	                	
+
                 print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
                 print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
 	            if  (! isOnlyOneLocalTax(2))
-	            { 
+	            {
 	            		print '<span class="cblt2">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
 	                	$formcompany->select_localtax(2,$object->localtax2_value, "lt2");
                 		print '</span>';
@@ -1861,7 +1860,7 @@ else
             		print '<td>'.$object->localtax1_value.'</td>';
             	}
             	print '</tr></form>';
-            
+
             }
         }
         elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
@@ -1871,7 +1870,7 @@ else
             print '</td><tr>';
             if($object->localtax2_assuj=="1" && (! isOnlyOneLocalTax(2)))
             {
-            
+
             	print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'">';
             	print '<input type="hidden" name="action" value="set_localtax2">';
             	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1884,7 +1883,7 @@ else
             		print '<td>'.$object->localtax2_value.'</td>';
             	}
             	print '</tr></form>';
-            	 
+
             }
         }
 /*
@@ -2054,7 +2053,7 @@ else
 
 			print '<br>';
 			print_titre($langs->trans($titreform));
-			
+
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';

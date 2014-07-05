@@ -1,6 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
--- Copyright (C) 2014	   Juanjo Menent	   <jmenent@2byte.es>
+-- Copyright (C) 2014 Marcos García <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,22 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table of "accounts" for accountancy expert module
 -- ============================================================================
 
-create table llx_accountingaccount
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer DEFAULT 1 NOT NULL,
-  datec           datetime,
-  tms             timestamp,
-  fk_pcg_version  varchar(12)  NOT NULL,
-  pcg_type        varchar(20)  NOT NULL,
-  pcg_subtype     varchar(20)  NOT NULL,
-  account_number  varchar(32)  NOT NULL,
-  account_parent  varchar(32),
-  label           varchar(255) NOT NULL,
-  fk_user_author  integer DEFAULT NULL,
-  fk_user_modif   integer DEFAULT NULL,
-  active     	  tinyint DEFAULT 1  NOT NULL
-)ENGINE=innodb;
+ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_user_author (fk_user_author);
+ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
+
+ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
+ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_user_author) REFERENCES  llx_user (rowid);

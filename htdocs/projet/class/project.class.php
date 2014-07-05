@@ -121,7 +121,7 @@ class Project extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -130,15 +130,9 @@ class Project extends CommonObject
 
             if (!$notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_CREATE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_CREATE',$user);
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
         }
@@ -146,7 +140,6 @@ class Project extends CommonObject
         {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
-            dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
 
@@ -199,6 +192,8 @@ class Project extends CommonObject
 
         if (dol_strlen(trim($this->ref)) > 0)
         {
+            $this->db->begin();
+
             $sql = "UPDATE " . MAIN_DB_PREFIX . "projet SET";
             $sql.= " ref='" . $this->db->escape($this->ref) . "'";
             $sql.= ", title = '" . $this->db->escape($this->title) . "'";
@@ -211,20 +206,15 @@ class Project extends CommonObject
             $sql.= ", datee=" . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
             $sql.= " WHERE rowid = " . $this->id;
 
-            dol_syslog(get_class($this)."::Update sql=" . $sql, LOG_DEBUG);
-            if ($this->db->query($sql))
+            dol_syslog(get_class($this)."::Update", LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 if (!$notrigger)
                 {
-                    // Call triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface = new Interfaces($this->db);
-                    $result = $interface->run_triggers('PROJECT_MODIFY', $this, $user, $langs, $conf);
-                    if ($result < 0)
-                    {
-                        $error++;
-                        $this->errors = $interface->errors;
-                    }
+                    // Call trigger
+                    $result=$this->call_trigger('PROJECT_MODIFY',$user);
+                    if ($result < 0) { $error++; }
                     // End call triggers
                 }
 
@@ -259,13 +249,21 @@ class Project extends CommonObject
                 		}
                 	}
                 }
-
-                $result = 1;
+                if (! $error )
+                {
+                    $this->db->commit();
+                    $result = 1;
+                }
+                else
+                {
+                    $this->db->rollback();
+                    $result = -1;
+                }
             }
             else
-            {
+			{
                 $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
+                $this->db->rollback();
                 $result = -2;
             }
         }
@@ -302,7 +300,7 @@ class Project extends CommonObject
         	$sql.= " AND entity IN (".getEntity('project').")";
         }
 
-        dol_syslog(get_class($this)."::fetch sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -342,7 +340,6 @@ class Project extends CommonObject
         else
         {
             $this->error = $this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch " . $this->error, LOG_ERR);
             return -1;
         }
     }
@@ -406,7 +403,7 @@ class Project extends CommonObject
         if (! $sql) return -1;
 
         //print $sql;
-        dol_syslog(get_class($this)."::get_element_list sql=" . $sql);
+        dol_syslog(get_class($this)."::get_element_list", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -466,7 +463,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
         $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
 
-        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -477,7 +474,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
-        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -488,7 +485,7 @@ class Project extends CommonObject
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet";
         $sql.= " WHERE rowid=" . $this->id;
 
-        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -500,7 +497,7 @@ class Project extends CommonObject
         $sql.= " WHERE fk_object=" . $this->id;
 
 
-        dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
+        dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql)
         {
@@ -528,17 +525,18 @@ class Project extends CommonObject
 
             if (!$notrigger)
             {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_DELETE', $this, $user, $langs, $conf);
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_DELETE',$user);
                 if ($result < 0)
                 {
                     $error++;
-            		foreach ($interface->errors as $errmsg ) {
-            			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-            			$this->errors[] =$errmsg;
-            		}
+                    if (! empty($interface->errors))
+                    {
+                		foreach ($interface->errors as $errmsg ) {
+                			dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
+                			$this->errors[] =$errmsg;
+                		}
+                    }
                 }
                 // End call triggers
             }
@@ -583,20 +581,14 @@ class Project extends CommonObject
             $sql.= " WHERE rowid = " . $this->id;
             $sql.= " AND entity = " . $conf->entity;
 
-            dol_syslog(get_class($this)."::setValid sql=" . $sql);
+            dol_syslog(get_class($this)."::setValid", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_VALIDATE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_VALIDATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 
                 if (!$error)
                 {
@@ -616,7 +608,6 @@ class Project extends CommonObject
             {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this)."::setValid " . $this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -644,20 +635,14 @@ class Project extends CommonObject
             $sql.= " AND entity = " . $conf->entity;
             $sql.= " AND fk_statut = 1";
 
-            dol_syslog(get_class($this)."::setClose sql=" . $sql);
+            dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('PROJECT_CLOSE', $this, $user, $langs, $conf);
-                if ($result < 0)
-                {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROJECT_CLOSE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
 
                 if (!$error)
                 {
@@ -677,7 +662,6 @@ class Project extends CommonObject
             {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this)."::setClose " . $this->error, LOG_ERR);
                 return -1;
             }
         }
@@ -1309,11 +1293,10 @@ class Project extends CommonObject
 			$sql.= " WHERE rowid=".$ElementSelectId;
 		}
 
-		dol_syslog(get_class($this)."::update_element sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update_element", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql) {
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::update_element error : " . $this->error, LOG_ERR);
 			return -1;
 		}else {
 			return 1;

@@ -23,7 +23,7 @@ ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL 
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
-ALTER TABLE llx_accountingaccount add column tms timestamp DEFAULT NULL AFTER datec;
+ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
 
@@ -43,8 +43,8 @@ ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_sell varchar(32);
 ALTER TABLE llx_c_revenuestamp MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_sell varchar(32);
 ALTER TABLE llx_c_tva MODIFY COLUMN accountancy_code_buy varchar(32);
-ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_sell varchar(32);
-ALTER TABLE llx_c_product MODIFY COLUMN accountancy_code_buy varchar(32);
+ALTER TABLE llx_product MODIFY COLUMN accountancy_code_sell varchar(32);
+ALTER TABLE llx_product MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
 
@@ -52,12 +52,41 @@ ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT N
 
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
 
+
 -- Localtaxes by thirds
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
 ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint(4) after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
+
+
+
+-- Added missing relations of llx_product
+-- fk_country
+ALTER TABLE llx_product CHANGE COLUMN fk_country fk_country INTEGER NULL DEFAULT NULL;
+UPDATE llx_product SET fk_country = NULL WHERE fk_country = 0;
+ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_pays (rowid);
+-- fk_user_author
+ALTER TABLE llx_product CHANGE COLUMN fk_user_author fk_user_author INTEGER NULL DEFAULT NULL;
+ALTER TABLE llx_product ADD INDEX idx_product_fk_user_author (fk_user_author);
+-- fk_barcode_type
+ALTER TABLE llx_product CHANGE COLUMN fk_barcode_type fk_barcode_type INTEGER NULL DEFAULT NULL;
+UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
+ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
+
+
+-- Added missing relations of llx_product_price
+-- fk_user_author
+ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_user_author (fk_user_author);
+update llx_product_price set fk_user_author = null where fk_user_author = 0;
+ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREIGN KEY (fk_user_author) REFERENCES  llx_user (rowid);
+-- fk_user_author
+ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
+ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
+
 
 -- Fiscal years
 create table llx_accounting_fiscalyear
