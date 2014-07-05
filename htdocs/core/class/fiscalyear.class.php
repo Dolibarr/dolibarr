@@ -62,11 +62,12 @@ class Fiscalyear
 	}
 
 	/**
-	 * Create object in database
+	 *	Create object in database
 	 *
-	 * @return 	int				<0 if KO, >0 if OK
+	 *	@param		User	$user   User making creation
+	 *	@return 	int				<0 if KO, >0 if OK
 	 */
-	function create()
+	function create($user)
 	{
 		global $conf;
 		
@@ -98,42 +99,13 @@ class Fiscalyear
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$error++; $this->errors[]="Error ".$this->db->lasterror();
-		}
-
-		if (! $error)
-		{
-			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_fiscalyear");
-		}
-
-		// Commit or rollback
-		if ($error)
-		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
-            $this->db->rollback();
-            return -1*$error;
-		}
-		else
-		{
-			$this->db->commit();
-			return $this->rowid;
-		}
-		
-		dol_syslog(get_class($this)."::create=", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_fiscalyear");
 
 			$result=$this->update($user);
 			if ($result > 0)
 			{
 				$this->db->commit();
-				return $this->rowid;
+				return $this->id;
 			}
 			else
 			{
