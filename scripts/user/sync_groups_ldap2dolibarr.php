@@ -101,8 +101,7 @@ print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
-print "Press a key to confirm...";
-$input = trim(fgets(STDIN));
+
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 

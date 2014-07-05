@@ -136,8 +136,6 @@ if ($typeid <= 0)
 }
 
 
-print "Press a key to confirm...";
-$input = trim(fgets(STDIN));
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
