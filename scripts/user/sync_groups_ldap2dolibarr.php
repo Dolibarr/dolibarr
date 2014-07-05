@@ -72,8 +72,6 @@ $required_fields=array_unique(array_values(array_filter($required_fields, "dolVa
 
 if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 
-print "***** $script_file ($version) *****\n";
-
 if (! isset($argv[1])) {
 	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
