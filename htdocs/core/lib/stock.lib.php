@@ -79,3 +79,62 @@ function stock_prepare_head($object)
     return $head;
 }
 
+///**
+// *	Return list of entrepot (for the stock
+//  *
+// *	@param  string	$selected       Preselected type
+// *	@param  string	$htmlname       Name of field in html form
+// * 	@param	int	$showempty	Add an empty field
+// * 	@param	int	$hidetext	Do not show label before combo box
+// * 	@param	int	$size		Width of the select list
+// *  @return	void
+// */
+function select_entrepot($selected='', $htmlname='entrepotid', $showempty=0, $hidetext=0, $size=0)
+{
+	
+    global $db, $langs, $user, $conf;
+
+	if (empty($hidetext)) print $langs->trans("EntrepotStock").': ';
+	
+	// select the warehouse
+	$sql = "SELECT rowid, label, zip";
+	$sql.= " FROM ".MAIN_DB_PREFIX."entrepot";
+	//$sql.= " WHERE statut = 1";
+	$sql.= " ORDER BY zip ASC";
+	
+	dol_syslog("stock.Lib::select_entrepot sql=".$sql);
+
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
+		{
+			if ($size == 0)
+				print '<select class="flat" name="'.$htmlname.'">';
+			else
+				print '<select class="flat" size='.$size.' name="'.$htmlname.'">';
+			if ($showempty)
+			{
+				print '<option value="-1"';
+				if ($selected == -1) print ' selected="selected"';
+				print '>&nbsp;</option>';
+			}
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				print '<option value="'.$obj->rowid.'"';
+				if ($obj->rowid == $selected) print ' selected="selected"';
+				print ">".$obj->label."(".$obj->zip.")</option>";
+				$i++;
+			}
+			print '</select>';
+		}
+		else
+		{
+			// if not warehouse, we display an empty hidden field
+			print '<input type="hidden" name="'.$htmlname.'" value=-1>';
+		}
+	}
+}
