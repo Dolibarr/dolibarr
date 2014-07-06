@@ -60,7 +60,7 @@ class DolEditor
 	 *		@param	int		$uselocalbrowser		Enabled to add links to local object with local browser. If false, only external images can be added in content.
 	 *      @param  int		$okforextendededitor    True=Allow usage of extended editor tool (like fckeditor)
      *      @param  int		$rows                   Size of rows for textarea tool
-	 *      @param  int		$cols                   Size of cols for textarea tool
+	 *      @param  int		$cols                   Size of cols for textarea tool (textarea number of cols or %)
 	 *      @param	int		$readonly				0=Read/Edit, 1=Read only
 	 */
     function __construct($htmlname,$content,$width='',$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true,$okforextendededitor=true,$rows=0,$cols=0,$readonly=0)
@@ -129,7 +129,7 @@ class DolEditor
     	    $this->toolbarname			= $shorttoolbarname;
     	    $this->toolbarstartexpanded = $toolbarstartexpanded;
             $this->rows					= max(ROWS_3,$rows);
-            $this->cols					= max(40,$cols);
+            $this->cols					= (preg_match('/%/',$cols)?$cols:max(40,$cols));	// If $cols is a percent, we keep it, otherwise, we take max
             $this->height				= $height;
             $this->width				= $width;
     	}
