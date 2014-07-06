@@ -116,8 +116,8 @@ class InterfaceActionsAuto
 		$key='MAIN_AGENDA_ACTIONAUTO_'.$action;
         //dol_syslog("xxxxxxxxxxx".$key);
 
-        if (empty($conf->agenda->enabled)) return 0;     // Module not active, we do nothing
-		if (empty($conf->global->$key)) return 0;	// Log events not enabled for this action
+        if (empty($conf->agenda->enabled)) return 0;  // Module not active, we do nothing
+		if (empty($conf->global->$key)) return 0;		// Do not log events not enabled for this action
 
 		$ok=0;
 
@@ -370,11 +370,26 @@ class InterfaceActionsAuto
             $object->actionmsg=$langs->transnoentities("InterventionSentByEMail",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
-            // Parameters $object->sendotid defined by caller
+            // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
             $ok=1;
         }
-    	elseif ($action == 'SHIPPING_VALIDATE')
+        elseif ($action == 'FICHINTER_CLASSIFY_BILLED')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("interventions");
+            $langs->load("agenda");
+
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("InterventionClassifiedBilled",$object->ref);
+            $object->actionmsg=$langs->transnoentities("InterventionClassifiedBilled",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+            $ok=1;
+        }
+        elseif ($action == 'SHIPPING_VALIDATE')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	$langs->load("other");
@@ -470,7 +485,7 @@ class InterfaceActionsAuto
                 $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
             }
 
-            // Parameters $object->sendotid defined by caller
+            // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
             $ok=1;
         }
@@ -629,6 +644,7 @@ class InterfaceActionsAuto
         	$object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
         	$object->actionmsg.="\n".$langs->transnoentities("Project").': '.$object->ref;
         	$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
         	$object->sendtoid=0;
         	$ok=1;
         }
@@ -647,6 +663,7 @@ class InterfaceActionsAuto
 			$object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
 			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
+			$object->sendtoid=0;
 			$ok=1;
 		}
 
@@ -662,6 +679,7 @@ class InterfaceActionsAuto
 			$object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
 			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
+			$object->sendtoid=0;
 			$ok=1;
 		}
 
@@ -677,6 +695,7 @@ class InterfaceActionsAuto
 			$object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
 			$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
 
+			$object->sendtoid=0;
 			$ok=1;
 		}
 
@@ -723,8 +742,8 @@ class InterfaceActionsAuto
 			$actioncomm->contact     = $contactforaction;
 			$actioncomm->societe     = $societeforaction;
 			$actioncomm->author      = $user;   // User saving action
-			//$actioncomm->usertodo  = $user;	// User affected to action
-			$actioncomm->userdone    = $user;	// User doing action
+			$actioncomm->usertodo    = $user;	// User owner of action
+			//$actioncomm->userdone    = $user;	// User doing action
 
 			$actioncomm->fk_element  = $object->id;
 			$actioncomm->elementtype = $object->element;
