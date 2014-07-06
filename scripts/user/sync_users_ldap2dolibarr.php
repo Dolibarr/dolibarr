@@ -47,6 +47,7 @@ $langs->load("errors");
 $version=DOL_VERSION;
 $error=0;
 $forcecommit=0;
+$excludeuser=array();
 
 
 /*
@@ -83,18 +84,17 @@ $required_fields = array(
 // Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
-
-print "***** $script_file ($version) *****\n";
-
 if (! isset($argv[1])) {
-	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
-	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
+	print "Usage:  $script_file (nocommitiferror|commitiferror) [--server=ldapserverhost] [--excludeuser=user1,user2...]\n";
     exit(-1);
 }
-$groupid=$argv[3];
-if ($argv[1] == 'commitiferror') $forcecommit=1;
 
+foreach($argv as $key => $val)
+{
+	if ($val == 'commitiferror') $forcecommit=1;
+	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+	if (preg_match('/--excludeuser=([^\s]+)$/',$val,$reg)) $excludeuser=explode(',',$reg[1]);
+}
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
@@ -114,10 +114,10 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
+print "excludeuser=".join(',',$excludeuser)."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
-print "Press a key to confirm...";
-$input = trim(fgets(STDIN));
+
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
@@ -182,6 +182,13 @@ if ($result >= 0)
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
+			// If login into exclude list, we discard record
+			if (in_array($ldapuser[$conf->global->LDAP_FIELD_LOGIN],$excludeuser))
+			{
+				print $langs->transnoentities("UserDiscarded").' # '.$key.': login='.$ldapuser[$conf->global->LDAP_FIELD_LOGIN].' --> Discarded'."\n";
+				continue;
+			}
+
 			$fuser = new User($db);
 
 			if($conf->global->LDAP_KEY_USERS == $conf->global->LDAP_FIELD_SID) {
