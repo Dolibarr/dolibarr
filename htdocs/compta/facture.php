@@ -302,6 +302,11 @@ else if ($action == 'setrevenuestamp' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->facture->creer) {
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+}
+
 else if ($action == 'setremisepercent' && $user->rights->facture->creer) {
 	$object->fetch($id);
 	$result = $object->set_remise($user, $_POST['remise_percent']);
@@ -628,6 +633,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project			= $_POST['projectid'];
 			$object->cond_reglement_id	= $_POST['cond_reglement_id'];
 			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->fk_account         = GETPOST('fk_account', 'int');
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
 
@@ -670,6 +676,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project			= $_POST['projectid'];
 			$object->cond_reglement_id	= 0;
 			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->fk_account         = GETPOST('fk_account', 'int');
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
 
@@ -795,6 +802,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project			= $_POST['projectid'];
 			$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
 			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->fk_account         = GETPOST('fk_account', 'int');
 			$object->amount				= $_POST['amount'];
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
@@ -1886,6 +1894,7 @@ if ($action == 'create')
 
 			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
@@ -1900,6 +1909,7 @@ if ($action == 'create')
 	{
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
+        $fk_account         = $soc->fk_account;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
 		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
@@ -2214,6 +2224,11 @@ if ($action == 'create')
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
 	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
 
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0) {
@@ -3165,6 +3180,26 @@ if ($action == 'create')
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
+
+	// Bank Account
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('BankAccount');
+	print '<td>';
+	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editbankaccount')
+	{
+	    $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+	}
+	else
+	{
+	    $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+	}
+	print "</td>";
+	print '</tr>';
 
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';

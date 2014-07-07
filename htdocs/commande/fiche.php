@@ -490,7 +490,7 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 }
 
 // bank account
-else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
+else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
 
@@ -1398,7 +1398,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$soc = $objectsrc->client;
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
-            $fk_account         = (!empty($objectsrc->fk_account)?$objectsrc->fk_account:(!empty($soc->fk_account)?$soc->fk_account:0));
+            $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
