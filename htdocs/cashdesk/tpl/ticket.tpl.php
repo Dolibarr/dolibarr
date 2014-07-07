@@ -154,3 +154,4 @@ echo '<tr><th class="nowrap">'.$langs->trans("TotalTTC").'</th><td class="nowrap
 	onclick="javascript: window.close(); return(false);"><?php echo $langs->trans("Close"); ?></a>
 
 </body>
+</html>

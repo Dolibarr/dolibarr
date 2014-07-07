@@ -1014,8 +1014,6 @@ else
 
     else if ($object->id > 0)
     {
-        $res=$object->fetch_optionals($object->id,$extralabels);
-
         // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {

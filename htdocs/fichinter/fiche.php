@@ -1301,7 +1301,8 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	print "</table>";
+	print "</table><br>";
+
 	print '</form>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
