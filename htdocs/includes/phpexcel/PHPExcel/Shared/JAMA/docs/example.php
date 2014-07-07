@@ -163,4 +163,3 @@ You can also learn more by carefully examining the <code>MagicSquareExample.php<
 <?php
 highlight_file("../examples/MagicSquareExample.php");
 include_once "includes/footer.php";	
-?>

@@ -196,4 +196,3 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
         return $retAr;
     }
 }
-?>

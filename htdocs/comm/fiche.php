@@ -931,4 +931,3 @@ dol_htmloutput_mesg('',$mesgs);
 // End of page
 llxFooter();
 $db->close();
-?>

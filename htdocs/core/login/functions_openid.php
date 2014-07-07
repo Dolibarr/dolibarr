@@ -113,4 +113,3 @@ function check_user_password_openid($usertotest,$passwordtotest,$entitytotest)
     return $login;
 }
 
-?>

@@ -250,4 +250,3 @@ function ajouter_sondage()
 	exit();
 }
 
-?>

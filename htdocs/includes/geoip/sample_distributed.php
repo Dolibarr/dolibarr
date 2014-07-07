@@ -28,4 +28,3 @@ print "area code: " . $r->areacode . "\n";
 print "dma code: " . $r->dmacode . "\n";
 print "isp: " . $r->isp . "\n";
 print "org: " . $r->org . "\n";
-?>

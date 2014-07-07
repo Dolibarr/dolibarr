@@ -124,4 +124,3 @@ else
 }
 
 llxFooter();
-?>

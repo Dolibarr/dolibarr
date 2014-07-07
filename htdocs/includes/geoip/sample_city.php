@@ -29,4 +29,3 @@ print $record->area_code . "\n";
 
 geoip_close($gi);
 
-?>

@@ -612,4 +612,3 @@ class http_class
  * c-basic-offset: 2
  * End:
  */
-?>

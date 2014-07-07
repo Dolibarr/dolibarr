@@ -60,4 +60,3 @@ function trip_prepare_head($object)
 	return $head;
 }
 
-?>

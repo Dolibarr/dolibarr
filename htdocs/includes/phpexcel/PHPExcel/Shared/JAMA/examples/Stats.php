@@ -1601,4 +1601,3 @@ class Base {/*{{{*/
 // vim: ts=4:sw=4:et:
 // vim6: fdl=1: fdm=marker:
 
-?>

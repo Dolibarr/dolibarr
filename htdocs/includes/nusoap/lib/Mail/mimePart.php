@@ -347,4 +347,3 @@ class Mail_mimePart {
         return $output;
     }
 } // End of class
-?>

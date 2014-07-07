@@ -70,4 +70,3 @@ $Y = array(mt_rand(0, 10), mt_rand(40, 80), mt_rand(240, 400), mt_rand(1800, 221
 $points = new Matrix(array($X, $Y));
 $points->toHTML();
 printpoly(polyfit($X, $Y, 3));
-?>

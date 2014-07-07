@@ -153,4 +153,3 @@ class box_project extends ModeleBoxes
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
 }
-?>

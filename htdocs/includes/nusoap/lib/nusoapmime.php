@@ -494,4 +494,3 @@ class nusoap_server_mime extends nusoap_server {
 class nusoapservermime extends nusoap_server_mime {
 }
 
-?>

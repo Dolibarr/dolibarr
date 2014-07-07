@@ -201,4 +201,3 @@ class dolprintIPP
         return $ipp->printer_attributes;
     }
 }
-?>
