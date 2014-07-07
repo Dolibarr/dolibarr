@@ -2142,15 +2142,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
             print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="3">';
-        if ($action == 'editbankaccount')
-        {
+        if ($action == 'editbankaccount') {
             $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-        }
-        else
-        {
+        } else {
             $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
         }
-        print "</td>";
+        print '</td>';
         print '</tr>';
 
 		// Total HT

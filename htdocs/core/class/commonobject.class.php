@@ -1087,8 +1087,7 @@ abstract class CommonObject
      */
     function setBankAccount($fk_account)
     {
-        if (! $this->table_element)
-        {
+        if (! $this->table_element) {
             dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
@@ -1099,13 +1098,10 @@ abstract class CommonObject
         $sql.= " SET fk_account = ".$fk_account;
         $sql.= " WHERE rowid=".$this->id;
 
-        if ($this->db->query($sql))
-        {
+        if ($this->db->query($sql)) {
             $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
             return 1;
-        }
-        else
-        {
+        } else {
             dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
             $this->error=$this->db->error();
             return 0;

@@ -1976,25 +1976,23 @@ if ($action == 'create') {
 			}
 		}
 	}
-	// Bank Account
-	print '<tr><td class="nowrap">';
-	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-	print $langs->trans('BankAccount');
-	print '<td>';
+
+    // Bank Account
+    print '<tr><td class="nowrap">';
+    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print $langs->trans('BankAccount');
+    print '<td>';
     if (($action != 'editbankaccount') && $user->rights->propal->creer && ! empty($object->brouillon))
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($action == 'editbankaccount')
-	{
-		$form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-	}
-	else
-	{
-		$form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
-	}
-	print "</td>";
-	print '</tr>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editbankaccount') {
+        $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+    } else {
+        $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+    }
+    print '</td>';
+    print '</tr>';
 
 	// Amount HT
 	print '<tr><td height="10" width="25%">' . $langs->trans('AmountHT') . '</td>';
