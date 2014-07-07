@@ -2489,11 +2489,10 @@ class Form
      *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return	void
      */
-    function form_select_comptes($page, $selected='', $htmlname='fk_account', $addempty=0)
+    function formSelectAccount($page, $selected='', $htmlname='fk_account', $addempty=0)
     {
         global $langs;
-        if ($htmlname != "none")
-        {
+        if ($htmlname != "none") {
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setbankaccount">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -2503,11 +2502,8 @@ class Form
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
-        }
-        else
-        {
-            if ($selected)
-            {
+        } else {
+            if ($selected) {
                 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
                 $bankstatic=new Account($this->db);
                 $bankstatic->fetch($selected);

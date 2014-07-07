@@ -3192,11 +3192,11 @@ if ($action == 'create')
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount')
 	{
-	    $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 	}
 	else
 	{
-	    $form->form_select_comptes($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
 	print "</td>";
 	print '</tr>';
