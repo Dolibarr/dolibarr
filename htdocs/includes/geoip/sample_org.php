@@ -19,5 +19,3 @@ print "80.24.24.24 has isp " . $isp . "\n";
 geoip_close($giorg);
 geoip_close($giisp);
 
-?>
-

@@ -25,4 +25,3 @@ programming with Jama.
 <?php
 highlight_file("../test/TestMatrix.php");
 include_once "includes/footer.php";	
-?>

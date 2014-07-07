@@ -668,4 +668,3 @@ class CupsPrintIPP extends ExtendedPrintIPP {
  * c-basic-offset: 4
  * End:
  */
-?>

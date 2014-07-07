@@ -1078,4 +1078,3 @@ print '<a name="bas"></a>'."\n";
 llxFooterSurvey();
 
 $db->close();
-?>

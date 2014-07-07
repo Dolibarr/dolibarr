@@ -111,4 +111,3 @@ else
     echo json_encode(array('nom'=>'ErrorBadParameter','label'=>'ErrorBadParameter','key'=>'ErrorBadParameter','value'=>'ErrorBadParameter'));
 }
 
-?>

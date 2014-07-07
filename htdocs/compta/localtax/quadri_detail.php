@@ -666,4 +666,3 @@ else
 $db->close();
 
 llxFooter();
-?>

@@ -27,4 +27,3 @@ this site to learn more about this project and it's current development status.
 <?php
 include_once "includes/credits.php";
 include_once "includes/footer.php";	
-?>

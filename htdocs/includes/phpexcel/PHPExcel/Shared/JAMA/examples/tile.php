@@ -75,4 +75,3 @@ $tiled_matrix = tile(new Matrix($X), $nRow, $nCol);
 echo "<pre>";
 print_r($tiled_matrix);
 echo "</pre>";
-?>

@@ -230,4 +230,3 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 }
 
-?>

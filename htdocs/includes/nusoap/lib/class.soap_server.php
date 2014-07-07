@@ -1123,4 +1123,3 @@ class soap_server extends nusoap_server {
 }
 
 
-?>

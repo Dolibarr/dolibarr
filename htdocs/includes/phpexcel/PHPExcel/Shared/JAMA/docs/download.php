@@ -62,4 +62,3 @@ Download current version:
 </ul>
 <?php
 include_once "includes/footer.php";
-?>

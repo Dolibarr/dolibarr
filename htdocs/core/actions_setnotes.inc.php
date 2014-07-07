@@ -44,4 +44,3 @@ else if ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
-?>

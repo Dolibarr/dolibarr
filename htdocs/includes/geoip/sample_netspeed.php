@@ -20,4 +20,3 @@ if ($netspeed == GEOIP_UNKNOWN_SPEED){
 
 geoip_close($gi);
 
-?>
