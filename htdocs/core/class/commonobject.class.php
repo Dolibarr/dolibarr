@@ -229,15 +229,16 @@ abstract class CommonObject
         }
         else
         {
-            $this->db->rollback();
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 $this->error=$this->db->errno();
+            	$this->db->rollback();
                 return -2;
             }
             else
             {
                 $this->error=$this->db->error();
+                $this->db->rollback();
                 return -1;
             }
         }
