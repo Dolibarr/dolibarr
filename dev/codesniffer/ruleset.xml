@@ -123,7 +123,11 @@
     </rule>
 
     <!-- PHP code MUST NOT contain any character before the opening tag -->
-    <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
+    <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag">
+        <exclude-pattern>*.tpl.php</exclude-pattern>
+        <exclude-pattern>*.inc.php</exclude-pattern>
+        <exclude-pattern>*.js.php</exclude-pattern>
+    </rule>
 
     <!-- PHP code MUST NOT contain any short opening tag -->	
     <rule ref="Generic.PHP.DisallowShortOpenTag" />
