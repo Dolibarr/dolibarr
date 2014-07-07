@@ -50,4 +50,3 @@ function genkeypad($keypadname, $formname)
 	$sz.='</div>';
 	return $sz;
 }
-?>

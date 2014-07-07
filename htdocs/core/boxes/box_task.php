@@ -51,7 +51,7 @@ class box_task extends ModeleBoxes
 		$langs->load("projects");
 		$this->boxlabel="Tasks";
 	}
-	
+
 	/**
 	 *  Load data for box to show them later
 	 *
@@ -61,23 +61,23 @@ class box_task extends ModeleBoxes
 	function loadBox($max=5)
 	{
 		global $conf, $user, $langs, $db;
-		
+
 		$this->max=$max;
-		
+
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalDuree=0;
 		include_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
 		$taskstatic=new Task($db);
-		
-		
+
+
 		$textHead = $langs->trans("Tasks")."&nbsp;".date("Y");
 		$this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
 		// list the summary of the orders
 		if ($user->rights->projet->lire)
 		{
-			
+
 			$sql = "SELECT pt.fk_statut, count(pt.rowid) as nb, sum(ptt.task_duration) as durationtot, sum(pt.planned_workload) as plannedtot";
 			$sql.= " FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet_task_time as ptt";
 			$sql.= " WHERE DATE_FORMAT(pt.datec,'%Y') = ".date("Y")." ";
@@ -110,7 +110,7 @@ class box_task extends ModeleBoxes
 					$totalplannedtot += $objp->plannedtot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right"', 'text' => ConvertSecondToTime($objp->durationtot,'all',25200,5));
 					$totaldurationtot += $objp->durationtot;
-					
+
 					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"', 'text' => $taskstatic->LibStatut($objp->fk_statut,3));
 
 					$i++;
@@ -124,8 +124,8 @@ class box_task extends ModeleBoxes
 		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totalplannedtot,'all',25200,5));
 		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => ConvertSecondToTime($totaldurationtot,'all',25200,5));
-		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");	
-		
+		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");
+
 	}
 
 	/**
@@ -140,4 +140,3 @@ class box_task extends ModeleBoxes
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
 }
-?>

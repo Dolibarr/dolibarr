@@ -431,4 +431,3 @@ function dol_auguria_showmenu($type_user, &$menuentry, &$listofmodulesforexterna
 	return 1;
 }
 
-?>

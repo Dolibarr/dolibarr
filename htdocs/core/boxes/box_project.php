@@ -57,16 +57,16 @@ class box_project extends ModeleBoxes
 	function loadBox($max=5)
 	{
 		global $conf, $user, $langs, $db;
-		
+
 		$this->max=$max;
-		
+
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalnbTask=0;
 		include_once(DOL_DOCUMENT_ROOT."/projet/class/project.class.php");
 		require_once(DOL_DOCUMENT_ROOT."/core/lib/project.lib.php");
 		$projectstatic=new Project($db);
-		
+
 
 
 		$textHead = $langs->trans("Projet");
@@ -75,7 +75,7 @@ class box_project extends ModeleBoxes
 		// list the summary of the orders
 		if ($user->rights->projet->lire)
 		{
-			
+
 			$sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut ";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."projet as p";
 			$sql.= ")";
@@ -97,7 +97,7 @@ class box_project extends ModeleBoxes
 
 					$objp = $db->fetch_object($result);
 					$projectstatic->fetch($objp->rowid);
-					
+
 					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
 					'text' =>$projectstatic->getNomUrl(1)
 					);
@@ -105,7 +105,7 @@ class box_project extends ModeleBoxes
 					$this->info_box_contents[$i][2] = array('td' => 'align="left"',
 					'text' => $objp->title
 					);
-					
+
 					$sql ="SELECT count(*) as nb, sum(progress) as totprogress";
 					$sql.=" FROM ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."projet as p";
 					$sql.=" WHERE pt.fk_projet = p.rowid";
@@ -137,8 +137,8 @@ class box_project extends ModeleBoxes
 		$this->info_box_contents[$i][0] = array('tr' => 'class="liste_total"', 'td' => 'colspan=2 align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
 		$this->info_box_contents[$i][1] = array('td' => 'align="right" ', 'text' => number_format($num, 0, ',', ' ')."&nbsp;".$langs->trans("Projects"));
 		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnbTask, 0, ',', ' ')."&nbsp;".$langs->trans("Tasks"));
-		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");	
-		
+		$this->info_box_contents[$i][4] = array('td' => 'colspan=2', 'text' => "");
+
 	}
 
 	/**
@@ -153,4 +153,4 @@ class box_project extends ModeleBoxes
 		parent::showBox($this->info_box_head, $this->info_box_contents);
 	}
 }
-?>
+

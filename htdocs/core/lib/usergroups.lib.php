@@ -342,4 +342,3 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     print '</table>';
 }
 
-?>

@@ -173,5 +173,5 @@ if (! empty($result['return']))
 }
 
 llxFooter();
+
 $db->close();
-?>

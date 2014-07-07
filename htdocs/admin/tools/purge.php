@@ -165,5 +165,5 @@ if (preg_match('/^confirm/i',$choice))
 
 
 llxFooter();
+
 $db->close();
-?>

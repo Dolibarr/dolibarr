@@ -69,4 +69,3 @@ print $langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_b
 llxFooter();
 
 $db->close();
-?>

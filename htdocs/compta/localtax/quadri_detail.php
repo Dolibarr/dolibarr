@@ -315,7 +315,7 @@ else
 	if ($modetax == 0) $span+=2;
 
 	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
-	
+
 	if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 		// Customers invoices
 		print '<tr class="liste_titre">';
@@ -329,20 +329,20 @@ else
 		print '<td align="right">'.$langs->trans("BI").'</td>';
 		print '<td align="right">'.$vatcust.'</td>';
 		print '</tr>';
-	
-	
+
+
 		$LT=0;
 		$sameLT=false;
 		foreach(array_keys($x_coll) as $rate)
 		{
 			$subtot_coll_total_ht = 0;
 			$subtot_coll_vat = 0;
-	
+
 			if (is_array($x_both[$rate]['coll']['detail']))
 			{
 				// VAT Rate
 				$var=true;
-				
+
 				if($rate!=0){
 					print "<tr>";
 					//print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
@@ -359,13 +359,13 @@ else
 					// was not saved.
 					if (! empty($fields['ddate_start'])) $type=1;
 					if (! empty($fields['ddate_end'])) $type=1;
-	
+
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-	
+
 					// Ref
 					print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
-	
+
 					// Description
 					print '<td align="left">';
 					if ($fields['pid'])
@@ -387,12 +387,12 @@ else
 			                else $fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
 			            }
 						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
-	
+
 						// Show range
 						print_date_range($fields['ddate_start'],$fields['ddate_end']);
 					}
 					print '</td>';
-	
+
 					// Total HT
 					if ($modetax == 0)
 					{
@@ -406,7 +406,7 @@ else
 						}
 						print '</td>';
 					}
-	
+
 					// Payment
 					$ratiopaymentinvoice=1;
 					if ($modetax == 0)
@@ -429,14 +429,14 @@ else
 						}
 						print '</td>';
 					}
-	
+
 					// Total collected
 					print '<td class="nowrap" align="right">';
 					$temp_ht=$fields['totalht'];
 					if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 					print price(price2num($temp_ht,'MT'));
 					print '</td>';
-	
+
 					// Localtax
 					print '<td class="nowrap" align="right">';
 					$temp_vat= $local==1?$fields['localtax1']:$fields['localtax2'];
@@ -444,7 +444,7 @@ else
 					//print price($fields['vat']);
 					print '</td>';
 					print '</tr>';
-	
+
 					$subtot_coll_total_ht += $temp_ht;
 					$subtot_coll_vat      += $temp_vat;
 					$x_coll_sum           += $temp_vat;
@@ -466,7 +466,7 @@ else
 		        print '</tr>';
 			}
 		}
-	
+
 	    if (count($x_coll) == 0)   // Show a total ine if nothing shown
 	    {
 	        print '<tr class="liste_total">';
@@ -481,13 +481,13 @@ else
 	        print '<td class="nowrap" align="right">'.price(price2num(0,'MT')).'</td>';
 	        print '</tr>';
 	    }
-	
+
 	    // Blank line
 		print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
 		print '</table>';
 		$diff=$x_coll_sum;
 	}
-	
+
 	if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 		echo '<table class="noborder" width="100%">';
 		//print table headers for this quadri - expenses now
@@ -503,12 +503,12 @@ else
 		print '<td align="right">'.$langs->trans("BI").'</td>';
 		print '<td align="right">'.$vatsup.'</td>';
 		print '</tr>'."\n";
-	
+
 		foreach(array_keys($x_paye) as $rate)
 		{
 			$subtot_paye_total_ht = 0;
 			$subtot_paye_vat = 0;
-	
+
 			if(is_array($x_both[$rate]['paye']['detail']))
 			{
 				$var=true;
@@ -526,13 +526,13 @@ else
 					// was not saved.
 					if (! empty($fields['ddate_start'])) $type=1;
 					if (! empty($fields['ddate_end'])) $type=1;
-	
+
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-	
+
 					// Ref
 					print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
-	
+
 					// Description
 					print '<td align="left">';
 					if ($fields['pid'])
@@ -548,12 +548,12 @@ else
 						if ($type) $text = img_object($langs->trans('Service'),'service');
 						else $text = img_object($langs->trans('Product'),'product');
 						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
-	
+
 						// Show range
 						print_date_range($fields['ddate_start'],$fields['ddate_end']);
 					}
 					print '</td>';
-	
+
 					// Total HT
 					if ($modetax == 0)
 					{
@@ -567,7 +567,7 @@ else
 						}
 						print '</td>';
 					}
-	
+
 					// Payment
 					$ratiopaymentinvoice=1;
 					if ($modetax == 0)
@@ -590,22 +590,22 @@ else
 						}
 						print '</td>';
 					}
-	
+
 					// VAT paid
 					print '<td class="nowrap" align="right">';
 					$temp_ht=$fields['totalht'];
 					if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 					print price(price2num($temp_ht,'MT'));
 					print '</td>';
-	
+
 					// Localtax
 					print '<td class="nowrap" align="right">';
 					$temp_vat= $local==1?$fields['localtax1']:$fields['localtax2'];
-					print price(price2num($temp_vat,'MT')); 
+					print price(price2num($temp_vat,'MT'));
 					//print price($fields['vat']);
 					print '</td>';
 					print '</tr>';
-	
+
 					$subtot_paye_total_ht += $temp_ht;
 					$subtot_paye_vat      += $temp_vat;
 					$x_paye_sum           += $temp_vat;
@@ -627,7 +627,7 @@ else
 		        print '</tr>';
 			}
 		}
-	
+
 		if (count($x_paye) == 0)   // Show a total ine if nothing shown
 		{
 	        print '<tr class="liste_total">';
@@ -642,11 +642,11 @@ else
 	        print '<td class="nowrap" align="right">'.price(price2num(0,'MT')).'</td>';
 	        print '</tr>';
 		}
-	
+
 	    print '</table>';
 	    $diff=$x_paye_sum;
 	}
-	
+
 	if($conf->global->$calc ==0){$diff=$x_coll_sum - $x_paye_sum;}
 		echo '<table class="noborder" width="100%">';
 		// Total to pay
@@ -659,11 +659,10 @@ else
 		print "</tr>\n";
 
 		echo '</table>';
-	
+
 	$i++;
 }
 
 $db->close();
 
 llxFooter();
-?>
