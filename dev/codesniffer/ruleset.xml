@@ -19,7 +19,7 @@
 	</rule>
 
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
-    <rule ref="Zend.Files.ClosingTag"/>
+    <!-- <rule ref="Zend.Files.ClosingTag"/> -->
 
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
 
