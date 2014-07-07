@@ -115,8 +115,12 @@
     <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
         <severity>0</severity>
     </rule>
-	
-	<rule ref="Generic.PHP.DisallowShortOpenTag" />
+
+    <!-- PHP code MUST NOT contain any character before the opening tag -->
+    <rule ref="Generic.PHP.CharacterBeforePHPOpeningTag"/>
+
+    <!-- PHP code MUST NOT contain any short opening tag -->	
+    <rule ref="Generic.PHP.DisallowShortOpenTag" />
 
     <rule ref="Generic.PHP.ForbiddenFunctions" />
 
