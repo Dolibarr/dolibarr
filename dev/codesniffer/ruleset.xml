@@ -127,6 +127,7 @@
         <exclude-pattern>*.tpl.php</exclude-pattern>
         <exclude-pattern>*.inc.php</exclude-pattern>
         <exclude-pattern>*.js.php</exclude-pattern>
+        <exclude-pattern>*.css.php</exclude-pattern>
     </rule>
 
     <!-- PHP code MUST NOT contain any short opening tag -->	
