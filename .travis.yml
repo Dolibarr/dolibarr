@@ -88,10 +88,6 @@ script:
  - date
  - php upgrade.php 3.4.0 3.5.0 > upgrade.log
  - php upgrade2.php 3.4.0 3.5.0 > upgrade2.log
- - php upgrade.php 3.5.0 3.6.0 >> upgrade.log
- - php upgrade2.php 3.5.0 3.6.0 >> upgrade2.log
- - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
- - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
 # - cat upgrade.log
 # - cat upgrade2.log
  - cd ../..
