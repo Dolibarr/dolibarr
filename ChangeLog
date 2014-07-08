@@ -12,7 +12,11 @@ For users:
 - New: Form to add a photo is immediatly available on photo page if
        permissions are ok (save one click per photo to add).
 - New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
-       shown on main product card.       
+       shown on main product card.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by
+       default)       
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -29,6 +33,7 @@ For translators:
 For developers:
 - New: Add hook "searchAgendaFrom".
 - New: Add trigger DON_UPDATE, DON_DELETE
+- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.     
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:

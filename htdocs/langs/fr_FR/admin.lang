@@ -1503,6 +1503,17 @@ TaskModelModule=Modèles de document de rapport tâches
 ##### ECM (GED) #####
 ECMSetup = Configuration du module GED
 ECMAutoTree = L'arborescence automatique est disponible
-
+##### Fiscal Year #####
+FiscalYears=Exercices fiscaux
+FiscalYear=Exercice fiscal
+FiscalYearCard=Fiche exercice fiscal
+NewFiscalYear=Nouvel exercice fiscal
+EditFiscalYear=Editer exercice fiscal
+OpenFiscalYear=Exercice fiscal ouvert
+CloseFiscalYear=Exercice fiscal fermé
+DeleteFiscalYear=Supprimer exercice fiscal
+ConfirmDeleteFiscalYear=Êtes-vous sûr de vouloir supprimer cet exercice fiscal ?
+Opened=Ouvert
+Closed=Fermé 
 
 Format=Format

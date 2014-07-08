@@ -229,7 +229,7 @@ class ActionComm extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('ACTION_CREATE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
 
@@ -387,7 +387,7 @@ class ActionComm extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('ACTION_DELETE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
 
@@ -492,7 +492,7 @@ class ActionComm extends CommonObject
             {
                 // Call trigger
                 $result=$this->call_trigger('ACTION_MODIFY',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
 
@@ -1054,4 +1054,3 @@ class ActionComm extends CommonObject
 
 }
 
-?>

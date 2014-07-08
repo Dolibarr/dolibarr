@@ -58,6 +58,7 @@ SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
 ShippingSentByEMail=Shipping %s sent by EMail
 ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s sent by EMail
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Third party created
 DateActionPlannedStart= Planned start date
 DateActionPlannedEnd= Planned end date

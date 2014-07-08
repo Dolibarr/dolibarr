@@ -212,21 +212,21 @@ class Categorie extends CommonObject
 					}
 				}
 				else if ($reshook < 0) $error++;
-				
+
                 // Call trigger
                 $result=$this->call_trigger('CATEGORY_CREATE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 
                 if ( ! $error )
                 {
-                    $this->db->rollback(); 
-                    return -3;
-                }
-                else
-                {
     				$this->db->commit();
     				return $id;
+                }
+                else
+              	{
+                	$this->db->rollback();
+                    return -3;
                 }
 			}
 			else
@@ -310,7 +310,7 @@ class Categorie extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('CATEGORY_MODIFY',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
 			return 1;
@@ -430,7 +430,7 @@ class Categorie extends CommonObject
 				}
                 // Call trigger
                 $result=$this->call_trigger('CATEGORY_DELETE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 			}
 		}
@@ -472,7 +472,7 @@ class Categorie extends CommonObject
         if ($type=='fournisseur') $column_name='societe';
 
         $this->db->begin();
-        
+
 		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
@@ -523,7 +523,7 @@ class Categorie extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('CATEGORY_LINK',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 
 			if (! $error)
@@ -532,11 +532,11 @@ class Categorie extends CommonObject
 			    return 1;
 			}
 			else
-			{ 
+			{
 			    $this->db->rollback();
 			    return -2;
 			}
-			    
+
 		}
 		else
 		{
@@ -575,7 +575,7 @@ class Categorie extends CommonObject
 		$column_name=$type;
         if ($type=='contact') $column_name='socpeople';
         if ($type=='fournisseur') $column_name='societe';
-        
+
         $this->db->begin();
 
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
@@ -590,7 +590,7 @@ class Categorie extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('CATEGORY_UNLINK',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 
 			if (! $error)
@@ -601,7 +601,7 @@ class Categorie extends CommonObject
 			else
 			{
 			    $this->db->rollback();
-                return -2;   
+                return -2;
 			}
 		}
 		else

@@ -21,7 +21,7 @@ create table llx_localtax
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,
-  localtaxtype    tinyint(4),
+  localtaxtype    tinyint,
   tms             timestamp,
   datep           date,								-- date of payment
   datev           date,								-- date of value
@@ -31,5 +31,4 @@ create table llx_localtax
   fk_bank         integer,  
   fk_user_creat   integer,                 
   fk_user_modif   integer 
-                      
 )ENGINE=innodb;

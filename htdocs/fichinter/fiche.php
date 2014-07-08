@@ -50,6 +50,7 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+$langs->load("bills");
 $langs->load("companies");
 $langs->load("interventions");
 
@@ -1143,6 +1144,13 @@ else if ($id > 0 || ! empty($ref))
 
 	}
 
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" name="formfichinter">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+	if ($action == 'edit_extras') print '<input type="hidden" name="action" value="update_extras">';
+	if ($action == 'contrat')     print '<input type="hidden" name="action" value="setcontrat">';
+
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1218,9 +1226,6 @@ else if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($action == 'contrat')
 		{
-			print '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			print '<input type="hidden" name="action" value="setcontrat">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 			print '<tr><td>';
 			$htmlcontract= new Formcontract($db);
@@ -1229,7 +1234,7 @@ else if ($id > 0 || ! empty($ref))
 
 			print '</td>';
 			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table></form>';
+			print '</tr></table>';
 		}
 		else
 		{
@@ -1280,16 +1285,11 @@ else if ($id > 0 || ! empty($ref))
 				}
 				if ($action == 'edit_extras' && $user->rights->ficheinter->creer && GETPOST('attribute') == $key)
 				{
-					print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formfichinter">';
-					print '<input type="hidden" name="action" value="update_extras">';
 					print '<input type="hidden" name="attribute" value="'.$key.'">';
-					print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-					print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 					print $extrafields->showInputField($key,$value);
 
 					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
 				}
 				else
 				{
@@ -1301,7 +1301,9 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
-	print "</table>";
+	print "</table><br>";
+
+	print '</form>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{

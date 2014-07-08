@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010	Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2014	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
  *
@@ -36,11 +36,11 @@ $langs->load("other");
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
 
+
 // Get list of triggers available
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a";
 $sql.= " ORDER BY a.rang ASC";
-
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -67,6 +67,7 @@ else
 /*
  *	Actions
  */
+
 if ($action == "save" && empty($cancel))
 {
     $i=0;
@@ -153,6 +154,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
 print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=selectall">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone">'.$langs->trans("None").'</a>';
 print '</tr>'."\n";
+// Show each trigger
 if (! empty($triggers))
 {
 	foreach ($triggers as $trigger)
@@ -165,6 +167,9 @@ if (! empty($triggers))
 		//print 'module='.$module.'<br>';
 		if (! empty($conf->$module->enabled))
 		{
+			// Discard special case.
+			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
+
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.$trigger['code'].'</td>';

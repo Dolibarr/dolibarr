@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
+-- Copyright (C) 2014		Alexandre Spangaro	<alexandre.spangaro@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,5 +15,17 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 -- ============================================================================
-ALTER TABLE llx_product_batch ADD INDEX ix_fk_product_stock (fk_product_stock);
-ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
+
+create table llx_accounting_fiscalyear
+(
+	rowid			integer AUTO_INCREMENT PRIMARY KEY,
+	label			varchar(128) NOT NULL,
+	date_start		date,
+	date_end		date,
+	statut			tinyint DEFAULT 0 NOT NULL,
+	entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
+	datec			datetime NOT NULL,
+	tms				timestamp,
+	fk_user_author	integer DEFAULT NULL,
+	fk_user_modif	integer DEFAULT NULL
+)ENGINE=innodb;
