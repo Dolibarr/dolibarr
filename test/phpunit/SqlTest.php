@@ -152,7 +152,7 @@ class SqlTest extends PHPUnit_Framework_TestCase
 			$this->assertTrue($result===false);
 
 			$result=strpos($filecontent,'int(');
-			print __METHOD__." Result for checking we don't have back 'int(' instead of integer = ".$result."\n";
+			print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
 			$this->assertTrue($result===false);
 		}
 
