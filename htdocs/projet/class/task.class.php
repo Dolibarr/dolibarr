@@ -1231,10 +1231,11 @@ class Task extends CommonObject
 	}
 
 
-		/**
-	 *	\brief	  Return status label of object
-	 *	\param	  mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * 	  \return	 string	  Label
+	/**
+	 *	Return status label of object
+	 *
+	 *	@param	string	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	@return	string	  			Label
 	 */
 	function getLibStatut($mode=0)
 	{
@@ -1242,10 +1243,11 @@ class Task extends CommonObject
 	}
 
 	/**
-	 *	\brief	  Renvoi status label for a status
-	 *	\param	  statut	  id statut
-	 *	\param	  mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * 	  \return	 string	  Label
+	 *	Return status label for an object
+	 *
+	 *	@param	int			$statut	  	Id statut
+	 *	@param	string		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * 	@return	string	  				Label
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -1258,9 +1260,9 @@ class Task extends CommonObject
 		$this->statuts_short[0]='Draft';
 		$this->statuts_short[1]='Validated';
 		$this->statuts_short[2]='Running';
-		$this->statuts_short[3]='Finish';		
+		$this->statuts_short[3]='Finish';
 		$this->statuts_short[4]='Transfered';
-		
+
 		global $langs;
 
 		if ($mode == 0)
