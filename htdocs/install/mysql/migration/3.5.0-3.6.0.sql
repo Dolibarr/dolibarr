@@ -155,7 +155,7 @@ CREATE TABLE llx_product_batch (
   sellby datetime DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL,
+  import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE llx_expeditiondet_batch (
@@ -165,7 +165,7 @@ CREATE TABLE llx_expeditiondet_batch (
   sellby date DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
-  fk_origin_stock integer NOT NULL,
+  fk_origin_stock integer NOT NULL
 ) ENGINE=InnoDB;
 
 -- Salary payment in tax module
