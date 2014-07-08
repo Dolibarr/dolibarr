@@ -11,9 +11,10 @@
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To restrict request to Mysql version x.y use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y use -- VPGSQLx.y
--- To make pk to be auto increment (mysql):   VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- To make pk to be auto increment (postgres) VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
-
+-- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
+-- To set a field as defailt NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
@@ -68,14 +69,20 @@ ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_a
 -- Added missing relations of llx_product
 -- fk_country
 ALTER TABLE llx_product MODIFY COLUMN fk_country INTEGER NULL DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_country DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_country SET DEFAULT NULL;
 UPDATE llx_product SET fk_country = NULL WHERE fk_country = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_pays (rowid);
 -- fk_user_author
 ALTER TABLE llx_product MODIFY COLUMN fk_user_author INTEGER NULL DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_user_author DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_user_author SET DEFAULT NULL;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_user_author (fk_user_author);
 -- fk_barcode_type
 ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_barcode_type DROP NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_barcode_type SET DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
