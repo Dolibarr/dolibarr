@@ -100,6 +100,8 @@ script:
 # - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
 # - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
 # - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php
+ - df
+ - free
  - phpcs -p --extensions=php --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ . 2>&1
  - phpcs -p --extensions=css --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ . 2>&1
  - phpcs -p --extensions=js --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ . 2>&1
