@@ -101,7 +101,7 @@ create table llx_accounting_fiscalyear
 	statut			tinyint DEFAULT 0 NOT NULL,
 	entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
 	datec			datetime NOT NULL,
-	tms				timestamp NULL,
+	tms				timestamp,
 	fk_user_author	integer NULL,
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
