@@ -161,8 +161,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
-    $sql.= " AND f.fk_account IN (NULL, 0, ".$acct->id.")"; // Id bank account od invoice
-	$sql.= " ORDER BY dlr ASC";
+    $sql.= " AND (f.fk_account IN (0, ".$acct->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+    $sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
 	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref_supplier as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
