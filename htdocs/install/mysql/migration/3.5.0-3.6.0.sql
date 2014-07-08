@@ -156,7 +156,6 @@ CREATE TABLE llx_product_batch (
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL,
-  KEY ix_fk_product_stock (fk_product_stock)
 ) ENGINE=InnoDB;
 
 CREATE TABLE llx_expeditiondet_batch (
@@ -167,7 +166,6 @@ CREATE TABLE llx_expeditiondet_batch (
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
   fk_origin_stock integer NOT NULL,
-  KEY ix_fk_expeditiondet (fk_expeditiondet)
 ) ENGINE=InnoDB;
 
 -- Salary payment in tax module
@@ -190,6 +188,10 @@ CREATE TABLE llx_payment_salary (
   fk_user_creat integer,
   fk_user_modif integer
 )ENGINE=innodb;
+
+ALTER TABLE llx_product_batch ADD INDEX idx_fk_product_stock (fk_product_stock);
+ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
+
 
 -- New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin integer;

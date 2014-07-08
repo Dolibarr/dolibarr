@@ -149,11 +149,15 @@ class SqlTest extends PHPUnit_Framework_TestCase
 
 			$result=strpos($filecontent,'`');
 			print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-			$this->assertTrue($result===false);
+			$this->assertTrue($result===false, 'Found ON back quote. Bad.');
 
 			$result=strpos($filecontent,'int(');
-			print __METHOD__." Result for checking we don't have back 'int(' instead of integer = ".$result."\n";
-			$this->assertTrue($result===false);
+			print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
+			$this->assertTrue($result===false, 'Found int(x) instead of integer. Bad.');
+
+			$result=strpos($filecontent,'ON DELETE CASCADE');
+			print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+			$this->assertTrue($result===false, 'Found ON DELETE CASCADE. Bad.');
 		}
 
         return;
