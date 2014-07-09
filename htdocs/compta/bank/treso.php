@@ -171,7 +171,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql2.= " WHERE ff.entity = ".$conf->entity;
 	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
-	$sql2.= " ORDER BY dlr ASC";
+    $sql2.= " AND (ff.fk_account IN (0, ".$acct->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+    $sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
 	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";

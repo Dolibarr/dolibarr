@@ -215,6 +215,10 @@ else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->fournisseur->facture->creer) {
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+}
 
 // Set label
 elseif ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
@@ -305,6 +309,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         $object->note_private  = GETPOST('note_private');
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
+        $object->fk_account        = GETPOST('fk_account', 'int');
         $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
 		
 		// Auto calculation of date due if not filled by user
@@ -1164,6 +1169,7 @@ if ($action == 'create')
             $soc = $objectsrc->thirdparty;
             $cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_supplier_id)?$soc->cond_reglement_supplier_id:1));
             $mode_reglement_id 	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_supplier_id)?$soc->mode_reglement_supplier_id:0));
+            $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
             $remise_percent 	= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
             $remise_absolue 	= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
             $dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
@@ -1178,6 +1184,7 @@ if ($action == 'create')
     {
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
+        $fk_account         = $societe->fk_account;
         $datetmp=dol_mktime(12,0,0,$_POST['remonth'],$_POST['reday'],$_POST['reyear']);
         $dateinvoice=($datetmp==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datetmp);
         $datetmp=dol_mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']);
@@ -1319,6 +1326,11 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
 
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -1776,6 +1788,23 @@ else
 		}
 		print '</td></tr>';
 
+        // Bank Account
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('BankAccount');
+        print '<td>';
+        if ($action != 'editbankaccount' && $user->rights->fournisseur->facture->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editbankaccount') {
+            $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+        } else {
+             $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+        }
+        print "</td>";
+        print '</tr>';
+
         // Status
         $alreadypaid=$object->getSommePaiement();
         print '<tr><td>'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4,$alreadypaid).'</td></tr>';
@@ -2131,7 +2160,7 @@ else
             // Make payments
             if ($action != 'edit' && $object->statut == 1 && $object->paye == 0  && $user->societe_id == 0)
             {
-                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
+                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create &amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
             }
 
             // Classify paid
