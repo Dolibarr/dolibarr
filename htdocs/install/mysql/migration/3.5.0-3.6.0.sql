@@ -155,7 +155,7 @@ CREATE TABLE llx_product_batch (
   sellby datetime DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL,
+  import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE llx_expeditiondet_batch (
@@ -165,7 +165,7 @@ CREATE TABLE llx_expeditiondet_batch (
   sellby date DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
-  fk_origin_stock integer NOT NULL,
+  fk_origin_stock integer NOT NULL
 ) ENGINE=InnoDB;
 
 -- Salary payment in tax module
@@ -188,6 +188,13 @@ CREATE TABLE llx_payment_salary (
   fk_user_creat integer,
   fk_user_modif integer
 )ENGINE=innodb;
+
+ALTER TABLE llx_product_batch ADD INDEX idx_fk_product_stock (fk_product_stock);
+ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
+
+ALTER TABLE llx_expeditiondet_batch ADD INDEX idx_fk_expeditiondet (fk_expeditiondet);
+ALTER TABLE llx_expeditiondet_batch ADD CONSTRAINT fk_expeditiondet_batch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet(rowid);
+
 
 ALTER TABLE llx_product_batch ADD INDEX ix_fk_product_stock (fk_product_stock);
 ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
