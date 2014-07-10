@@ -66,17 +66,17 @@ print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr ".$bc[false]."><td>";
-print $langs->trans("Name").':</td><td><input class="flat" type="text" size="14" name="search_nom_only"></td>';
+print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_nom_only" id="search_nom_only"></td>';
 print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 if (! empty($conf->barcode->enabled))
 {
 	print "<tr ".$bc[false]."><td>";
-	print $langs->trans("BarCode").':</td><td><input class="flat" type="text" size="14" name="sbarcode"></td>';
+	print '<label for="sbarcode">'.$langs->trans("BarCode").'</label>:</td><td><input class="flat" type="text" size="14" name="sbarcode" id="sbarcode"></td>';
 	//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 	print '</tr>';
 }
 print "<tr ".$bc[false]."><td>";
-print $langs->trans("Other").':</td><td><input class="flat" type="text" size="14" name="search_all"></td>';
+print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td><input class="flat" type="text" size="14" name="search_all" id="search_all"></td>';
 //print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 print '</tr>';
 
