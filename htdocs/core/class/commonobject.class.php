@@ -2714,21 +2714,21 @@ abstract class CommonObject
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
 
 		// VAT
-		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
 
 		// Price HT
-		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
 
 		if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<td align="right" width="80">&nbsp;</td>';
 
 		// Qty
-		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
 
 		// Reduction short
-		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
 
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{
