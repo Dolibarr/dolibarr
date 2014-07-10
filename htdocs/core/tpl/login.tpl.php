@@ -96,9 +96,12 @@ if (! empty($hookmanager->resArray['options'])) {
 	}
 }
 ?>
-<?php if ($captcha) { ?>
+<?php
+	if ($captcha) {
+		// TODO: provide accessible captha variants
+?>
 	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><b><?php echo $langs->trans('SecurityCode'); ?></b></td>
+	<tr><td valign="middle" class="loginfield nowrap"><label for="securitycode"><b><?php echo $langs->trans('SecurityCode'); ?></b></label></td>
 	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>
