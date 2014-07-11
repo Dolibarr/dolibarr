@@ -74,6 +74,7 @@ class CommandeFournisseur extends CommonOrder
     var $fk_project;
     var $cond_reglement_id;
     var $cond_reglement_code;
+    var $fk_account;
     var $mode_reglement_id;
     var $mode_reglement_code;
     var $user_author_id;
@@ -126,6 +127,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " c.date_creation, c.date_valid, c.date_approve,";
         $sql.= " c.fk_user_author, c.fk_user_valid, c.fk_user_approve,";
         $sql.= " c.date_commande as date_commande, c.date_livraison as date_livraison, c.fk_cond_reglement, c.fk_mode_reglement, c.fk_projet as fk_project, c.remise_percent, c.source, c.fk_input_method,";
+        $sql.= " c.fk_account,";
         $sql.= " c.note_private, c.note_public, c.model_pdf, c.extraparams,";
         $sql.= " cm.libelle as methode_commande,";
         $sql.= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle,";
@@ -180,6 +182,7 @@ class CommandeFournisseur extends CommonOrder
             $this->cond_reglement_code	= $obj->cond_reglement_code;
             $this->cond_reglement		= $obj->cond_reglement_libelle;
             $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+            $this->fk_account           = $obj->fk_account;
             $this->mode_reglement_id	= $obj->fk_mode_reglement;
             $this->mode_reglement_code	= $obj->mode_reglement_code;
             $this->mode_reglement		= $obj->mode_reglement_libelle;
@@ -876,6 +879,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", model_pdf";
         $sql.= ", fk_mode_reglement";
 		$sql.= ", fk_cond_reglement";
+        $sql.= ", fk_account";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
@@ -892,6 +896,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
         $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
         $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);

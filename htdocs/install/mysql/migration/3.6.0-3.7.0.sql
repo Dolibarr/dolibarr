@@ -97,6 +97,8 @@ ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREI
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
 
 -- Fiscal years
 create table llx_accounting_fiscalyear

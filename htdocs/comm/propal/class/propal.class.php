@@ -79,6 +79,7 @@ class Propal extends CommonObject
 
     var $cond_reglement_id;
     var $cond_reglement_code;
+    var $fk_account;				// Id of bank account
     var $mode_reglement_id;
     var $mode_reglement_code;
     var $remise;
@@ -714,6 +715,7 @@ class Propal extends CommonObject
         $sql.= ", fin_validite";
         $sql.= ", fk_cond_reglement";
         $sql.= ", fk_mode_reglement";
+        $sql.= ", fk_account";
         $sql.= ", ref_client";
         $sql.= ", date_livraison";
         $sql.= ", fk_availability";
@@ -739,6 +741,7 @@ class Propal extends CommonObject
         $sql.= ", ".($this->fin_validite!=''?"'".$this->db->idate($this->fin_validite)."'":"null");
         $sql.= ", ".$this->cond_reglement_id;
         $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$this->availability_id;
@@ -1049,6 +1052,7 @@ class Propal extends CommonObject
         $sql.= ", p.fk_input_reason";
         $sql.= ", p.fk_cond_reglement";
         $sql.= ", p.fk_mode_reglement";
+        $sql.= ', p.fk_account';
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
         $sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
@@ -1113,6 +1117,7 @@ class Propal extends CommonObject
                 $this->mode_reglement_id    = $obj->fk_mode_reglement;
                 $this->mode_reglement_code  = $obj->mode_reglement_code;
                 $this->mode_reglement       = $obj->mode_reglement;
+                $this->fk_account           = ($obj->fk_account>0)?$obj->fk_account:null;
                 $this->cond_reglement_id    = $obj->fk_cond_reglement;
                 $this->cond_reglement_code  = $obj->cond_reglement_code;
                 $this->cond_reglement       = $obj->cond_reglement;
