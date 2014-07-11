@@ -1670,12 +1670,12 @@ class Holiday extends CommonObject
 
         // Filtrage de séléction
         if(!empty($filter)) {
-            $sql.= $filter;
+            $sql.= " ".$filter;
         }
 
         // Ordre d'affichage
         if(!empty($order)) {
-            $sql.= $order;
+            $sql.= " ".$order;
         }
 
         dol_syslog(get_class($this)."::fetchLog", LOG_DEBUG);
