@@ -3,6 +3,7 @@
  * Copyright (C) 2012-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,7 @@ if ($action == 'create')
 
 	    // Si aucun jours ouvrés dans la demande
 	    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
-	    if($nbopenedday < 1)
+	    if($nbopenedday < 0.5)
 	    {
 	        header('Location: fiche.php?action=request&error=DureeHoliday');
 	        exit;
@@ -208,7 +209,7 @@ if ($action == 'update')
 
             // Si pas de jours ouvrés dans la demande
             $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
-            if ($nbopenedday < 1)
+            if ($nbopenedday < 0.5)
             {
                 header('Location: fiche.php?id='.$_POST['holiday_id'].'&action=edit&error=DureeHoliday');
                 exit;
@@ -398,7 +399,7 @@ if($action == 'confirm_valid')
         if ($verif > 0)
         {
             // Calculcate number of days consummed
-            $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1);
+            $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
             $soldeActuel = $cp->getCpforUser($cp->fk_user);
             $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));

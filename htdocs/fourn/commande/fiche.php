@@ -125,6 +125,11 @@ else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
 
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer) {
+     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+    }
+
 // date de livraison
 if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
 {
@@ -776,6 +781,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         $object->socid         	= $socid;
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
+        $object->fk_account        = GETPOST('fk_account', 'int');
         $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
 
@@ -1116,6 +1122,11 @@ if ($action=="create")
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
+
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
 	$doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -1380,6 +1391,23 @@ elseif (! empty($object->id))
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td class="nowrap">';
+    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print $langs->trans('BankAccount');
+    print '<td>';
+    if ($action != 'editbankaccount' && $user->rights->fournisseur->commande->creer)
+        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editbankaccount') {
+        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+    } else {
+        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+    }
+    print '</td>';
+    print '</tr>';
 
 	// Delivery date planed
 	print '<tr><td height="10">';

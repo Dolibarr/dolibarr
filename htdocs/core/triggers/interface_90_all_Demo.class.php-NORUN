@@ -211,6 +211,10 @@ class InterfaceDemo
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+        elseif ($action == 'CONTACT_ENABLEDISABLE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
 
         // Products
         elseif ($action == 'PRODUCT_CREATE')
@@ -222,6 +226,30 @@ class InterfaceDemo
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'PRODUCT_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'PRODUCT_PRICE_MODIFY')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        
+        //Stock mouvement
+        elseif ($action == 'STOCK_MOVEMENT')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        
+		//MYECMDIR
+		elseif ($action == 'MYECMDIR_DELETE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+		elseif ($action == 'MYECMDIR_CREATE')
+        {
+            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'MYECMDIR_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }

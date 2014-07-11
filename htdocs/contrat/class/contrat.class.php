@@ -44,7 +44,7 @@ class Contrat extends CommonObject
 
 	var $id;
 	var $ref;
-	var $ref_int;
+	var $ref_ext;
 	var $socid;
 	var $societe;		// Objet societe
 	var $statut=0;		// 0=Draft,
@@ -400,7 +400,7 @@ class Contrat extends CommonObject
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, extraparams";
-		$sql.= " ,ref_int";
+		$sql.= " ,ref_ext";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if ($ref)
 		{
@@ -419,7 +419,7 @@ class Contrat extends CommonObject
 			{
 				$this->id						= $result["rowid"];
 				$this->ref						= (!isset($result["ref"]) || !$result["ref"]) ? $result["rowid"] : $result["ref"];
-				$this->ref_int					= $result["ref_int"];
+				$this->ref_ext					= $result["ref_ext"];
 				$this->statut					= $result["statut"];
 				$this->mise_en_service			= $this->db->jdate($result["datemise"]);
 				$this->date_contrat				= $this->db->jdate($result["datecontrat"]);
@@ -720,7 +720,7 @@ class Contrat extends CommonObject
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi, fk_projet,";
-		$sql.= " ref, entity, note_private, note_public, ref_int)";
+		$sql.= " ref, entity, note_private, note_public, ref_ext)";
 		$sql.= " VALUES ('".$this->db->idate($now)."',".$this->socid.",".$user->id;
 		$sql.= ",".$this->db->idate($this->date_contrat);
 		$sql.= ",".($this->commercial_signature_id>0?$this->commercial_signature_id:"NULL");
@@ -730,7 +730,7 @@ class Contrat extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ", ".(!empty($this->note_private)?("'".$this->db->escape($this->note_private)."'"):"NULL");
 		$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
-		$sql.= ", ".(!empty($this->ref_int)?("'".$this->db->escape($this->ref_int)."'"):"NULL");
+		$sql.= ", ".(!empty($this->ref_ext)?("'".$this->db->escape($this->ref_ext)."'"):"NULL");
 		$sql.= ")";
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -968,7 +968,7 @@ class Contrat extends CommonObject
 		// Clean parameters
 	
 		if (isset($this->ref)) $this->ref=trim($this->ref);
-		if (isset($this->ref_int)) $this->ref_int=trim($this->ref_int);
+		if (isset($this->ref_ext)) $this->ref_ext=trim($this->ref_ext);
 		if (isset($this->entity)) $this->entity=trim($this->entity);
 		if (isset($this->statut)) $this->statut=trim($this->statut);
 		if (isset($this->fk_soc)) $this->fk_soc=trim($this->fk_soc);
@@ -991,7 +991,7 @@ class Contrat extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
 	
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
-		$sql.= " ref_int=".(isset($this->ref_int)?"'".$this->db->escape($this->ref_int)."'":"null").",";
+		$sql.= " ref_ext=".(isset($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null").",";
 		$sql.= " entity=".$conf->entity.",";
 		$sql.= " date_contrat=".(dol_strlen($this->date_contrat)!=0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
 		$sql.= " statut=".(isset($this->statut)?$this->statut:"null").",";

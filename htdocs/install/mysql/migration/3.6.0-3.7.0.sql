@@ -21,9 +21,14 @@
 
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
-insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_CLASSIFY_BILLED','Classify intervention as billed','Executed when a intervention is classified as billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
+-- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
+ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
 
-insert into llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
+INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_CLASSIFY_BILLED','Classify intervention as billed','Executed when a intervention is classified as billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
+
+INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
+
+
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
@@ -97,6 +102,8 @@ ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_user_author FOREI
 ALTER TABLE  llx_product_price ADD INDEX idx_product_price_fk_product (fk_product);
 ALTER TABLE  llx_product_price ADD CONSTRAINT fk_product_price_product FOREIGN KEY (fk_product) REFERENCES  llx_product (rowid);
 
+ALTER TABLE llx_commande_fournisseur ADD COLUMN fk_account integer AFTER date_livraison;
+ALTER TABLE llx_facture_fourn ADD COLUMN fk_account integer AFTER fk_projet;
 
 -- Fiscal years
 create table llx_accounting_fiscalyear
@@ -113,4 +120,4 @@ create table llx_accounting_fiscalyear
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_contrat ADD COLUMN ref_int varchar(30) after ref;
+ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;

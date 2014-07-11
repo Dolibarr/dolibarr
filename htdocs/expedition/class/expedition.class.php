@@ -275,12 +275,10 @@ class Expedition extends CommonObject
 
 				if (! $error)
 				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('SHIPPING_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('SHIPPING_CREATE',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
 
 					if (! $error)
 					{
@@ -656,12 +654,10 @@ class Expedition extends CommonObject
 
 		if (! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('SHIPPING_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 		}
 
 		if (! $error)
@@ -867,12 +863,10 @@ class Expedition extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Call triggers
-	            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('SHIPPING_MODIFY',$this,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            // End call triggers
+                // Call trigger
+                $result=$this->call_trigger('SHIPPING_MODIFY',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 	    	}
 		}
 
@@ -982,12 +976,10 @@ class Expedition extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-						// Call triggers
-			            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-			            $interface=new Interfaces($this->db);
-			            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
-			            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			            // End call triggers
+                        // Call trigger
+                        $result=$this->call_trigger('SHIPPING_DELETE',$user);
+                        if ($result < 0) { $error++; }            
+                        // End call triggers
 
 			            if (! $error)
 			            {

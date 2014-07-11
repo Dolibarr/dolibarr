@@ -1081,6 +1081,36 @@ abstract class CommonObject
 
 
     /**
+     *  Change the bank account
+     *
+     *  @param		int		$fk_account		Id of bank account
+     *  @return		int				1 if OK, 0 if KO
+     */
+    function setBankAccount($fk_account)
+    {
+        if (! $this->table_element) {
+            dol_syslog(get_class($this)."::setBankAccount was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        if ($fk_account<0) $fk_account='NULL';
+        dol_syslog(get_class($this).'::setBankAccount('.$fk_account.')');
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET fk_account = ".$fk_account;
+        $sql.= " WHERE rowid=".$this->id;
+
+        if ($this->db->query($sql)) {
+            $this->fk_account = ($fk_account=='NULL')?null:$fk_account;
+            return 1;
+        } else {
+            dol_syslog(get_class($this).'::setBankAccount Error '.$sql.' - '.$this->db->error());
+            $this->error=$this->db->error();
+            return 0;
+        }
+    }
+
+
+    /**
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
      *
@@ -2714,21 +2744,21 @@ abstract class CommonObject
 		if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td align="center" width="5">&nbsp;</td>';
 
 		// Description
-		print '<td>'.$langs->trans('Description').'</td>';
+		print '<td><label for="">'.$langs->trans('Description').'</label></td>';
 
 		// VAT
-		print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		print '<td align="right" width="50"><label for="tva_tx">'.$langs->trans('VAT').'</label></td>';
 
 		// Price HT
-		print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
 
 		if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<td align="right" width="80">&nbsp;</td>';
 
 		// Qty
-		print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
 
 		// Reduction short
-		print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td align="right" width="50"><label for="remise_percent">'.$langs->trans('ReductionShort').'</label></td>';
 
 		if (! empty($conf->margin->enabled) && empty($user->societe_id))
 		{

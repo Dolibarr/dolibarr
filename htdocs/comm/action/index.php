@@ -1023,8 +1023,6 @@ else    // View by day
 }
 
 
-$db->close();
-
 /* TODO Export
  print '
 <a href="" id="actionagenda_ical_link"><img src="'.DOL_URL_ROOT.'/theme/common/ical.gif" border="0"/></a>
@@ -1040,6 +1038,8 @@ $("#actionagenda_vcal_link").attr("href","/public/agenda/agendaexport.php?format
 */
 
 llxFooter();
+
+$db->close();
 
 
 /**

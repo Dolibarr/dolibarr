@@ -154,6 +154,11 @@ if ($action == "correct_stock" && ! $cancel)
 	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
 				exit;
 			}
+			else 
+			{
+			    setEventMessage($product->error,'errors');
+			    $action='correction';
+			}
 		}
 	}
 }
@@ -253,6 +258,8 @@ if ($id > 0 || $ref)
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
+		
+		dol_htmloutput_events();
 
 		$form = new Form($db);
 

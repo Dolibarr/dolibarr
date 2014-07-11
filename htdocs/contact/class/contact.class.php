@@ -183,12 +183,10 @@ class Contact extends CommonObject
 
             if (! $error)
             {
-    			// Appel des triggers
-    			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-    			$interface=new Interfaces($this->db);
-    			$result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
-    			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-    			// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CONTACT_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
 
             if (! $error)
@@ -304,12 +302,10 @@ class Contact extends CommonObject
 
 			if (! $error && ! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('CONTACT_MODIFY',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
 			if (! $error)
@@ -319,7 +315,6 @@ class Contact extends CommonObject
 			}
 			else
 			{
-				$this->error=join(',',$this->errors);
 				dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
 				$this->db->rollback();
 				return -$error;
@@ -777,14 +772,10 @@ class Contact extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
-
-			if ($error) $this->error=join(',',$this->errors);
+            // Call trigger
+            $result=$this->call_trigger('CONTACT_DELETE',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 		}
 
 		if (! $error)
@@ -1067,12 +1058,10 @@ class Contact extends CommonObject
 		dol_syslog(get_class($this)."::setstatus", LOG_DEBUG);
 		if ($result)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('CONTACT_ENABLEDISABLE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('CONTACT_ENABLEDISABLE',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 		}
 
 		if ($error)
