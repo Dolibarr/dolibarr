@@ -254,12 +254,10 @@ class FactureFournisseur extends CommonInvoice
             $result=$this->update_price();
             if ($result > 0)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('BILL_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('BILL_SUPPLIER_CREATE',$user);
+                if ($result < 0) $error++;            
+                // End call triggers
 
                 if (! $error)
                 {
@@ -601,11 +599,9 @@ class FactureFournisseur extends CommonInvoice
         {
             if (! $notrigger)
             {
-                // Call triggers
-                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                //$interface=new Interfaces($this->db);
-                //$result=$interface->run_triggers('BILL_SUPPLIER_MODIFY',$this,$user,$langs,$conf);
-                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                //$result=$this->call_trigger('BILL_SUPPLIER_MODIFY',$user);
+                //if ($result < 0) $error++;            
                 // End call triggers
             }
         }
@@ -673,13 +669,10 @@ class FactureFournisseur extends CommonInvoice
 
         if (! $error)
         {
-        	// Appel des triggers
-        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        	$interface=new Interfaces($this->db);
-        	$result=$interface->run_triggers('BILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
-        	if ($result < 0) {
-        		$error++;
-        		$this->errors=$interface->errors;
+            // Call trigger
+            $result=$this->call_trigger('BILL_SUPPLIER_DELETE',$user);
+            if ($result < 0)
+            { 
         		$this->db->rollback();
         	    return -1;      		
         	}
@@ -771,12 +764,10 @@ class FactureFournisseur extends CommonInvoice
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('BILL_SUPPLIER_PAYED',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('BILL_SUPPLIER_PAYED',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
         }
         else
         {
@@ -821,12 +812,10 @@ class FactureFournisseur extends CommonInvoice
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('BILL_SUPPLIER_UNPAYED',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('BILL_SUPPLIER_UNPAYED',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
         }
         else
         {
@@ -962,12 +951,10 @@ class FactureFournisseur extends CommonInvoice
             // Triggers call
             if (! $error)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('BILL_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('BILL_SUPPLIER_VALIDATE',$user);
+                if ($result < 0) $error++;            
+                // End call triggers
             }
 
             if (! $error)
@@ -1129,18 +1116,14 @@ class FactureFournisseur extends CommonInvoice
                 if (! $notrigger)
                 {
                     global $conf, $langs, $user;
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('LINEBILL_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) 
+                    // Call trigger
+                    $result=$this->call_trigger('LINEBILL_SUPPLIER_CREATE',$user);
+                    if ($result < 0)            
                     { 
-                        $error++;
-                        $this->errors=$interface->errors;
                         $this->db->rollback();
                         return -1;
                     }
-                    // Fin appel triggers
+                    // End call triggers
                 }
 
                 $this->db->commit();
@@ -1263,18 +1246,14 @@ class FactureFournisseur extends CommonInvoice
             if (! $notrigger)
             {
                 global $conf, $langs, $user;
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('LINEBILL_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
-                if ($result < 0) 
-                {
-                    $error++;
-                    $this->errors=$interface->errors;
+                // Call trigger
+                $result=$this->call_trigger('LINEBILL_SUPPLIER_UPDATE',$user);
+                if ($result < 0)            
+                { 
                     $this->db->rollback();
                     return -1;
                 }
-                // Fin appel triggers
+                // End call triggers
             }
 
             // Update total price into invoice record
@@ -1312,14 +1291,10 @@ class FactureFournisseur extends CommonInvoice
 
 		if (! $error && ! $notrigger)
         {
-	    	// Appel des triggers
-	    	include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-	    	$interface=new Interfaces($this->db);
-	    	$result=$interface->run_triggers('LINEBILL_SUPPLIER_DELETE',$this,$user,$langs,$conf);
-	    	if ($result < 0) {
-	    		$error++; $this->errors=$interface->errors;
-	    	}
-        	// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINEBILL_SUPPLIER_DELETE',$user);
+            if ($result < 0) $error++;           
+            // End call triggers
         }
 
     	if (! $error)
