@@ -1231,16 +1231,6 @@ class Task extends CommonObject
 		}
 	}
 	
-			/**
-	 *	\brief	  Return status label of object
-	 *	\param	  mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * 	  \return	 string	  Label
-	 */
-	function getLibStatut($mode=0)
-	{
-		return $this->LibStatut($this->fk_statut, $mode);
-	}
-
 	/**
 	 *	\brief	  Renvoi status label for a status
 	 *	\param	  statut	  id statut
