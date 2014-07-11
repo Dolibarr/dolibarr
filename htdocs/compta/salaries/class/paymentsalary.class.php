@@ -124,14 +124,12 @@ class PaymentSalary extends CommonObject
 
 		if (! $notrigger)
 		{
-			// Start triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('PAYMENT_SALARY_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// End triggers
+            // Call trigger
+            $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
+
+			//FIXME: Add rollback if trigger fail
 		}
 
 		return 1;
@@ -224,6 +222,12 @@ class PaymentSalary extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
+		
+		// Call trigger
+		$result=$this->call_trigger('PAYMENT_SALARY_DELETE',$user);
+		if ($result < 0) return -1;
+		// End call triggers
+		
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
 		$sql.= " WHERE rowid=".$this->id;
@@ -235,15 +239,6 @@ class PaymentSalary extends CommonObject
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
-
-		// Start triggers
-		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		$interface=new Interfaces($this->db);
-		$result=$interface->run_triggers('PAYMENT_SALARY_DELETE',$this,$user,$langs,$conf);
-		if ($result < 0) {
-			$error++; $this->errors=$interface->errors;
-		}
-		// End triggers
 
 		return 1;
 	}
@@ -428,34 +423,21 @@ class PaymentSalary extends CommonObject
 					}
 				}
 
-				// Start triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PAYMENT_SALARY_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// End triggers
-
+	            // Call trigger
+	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
+	            if ($result < 0) $ok=0;            
+	            // End call triggers
+	
 			}
 			else $ok=0;
 
 			if ($ok)
 			{
-				if ($ok)
-				{
-					$this->db->commit();
-					return $this->id;
-				}
-				else
-				{
-					$this->db->rollback();
-					return -3;
-				}
+				$this->db->commit();
+				return $this->id;
 			}
 			else
 			{
-				$this->error=$this->db->error();
 				$this->db->rollback();
 				return -2;
 			}
