@@ -142,12 +142,10 @@ class Opensurveysondage extends CommonObject
 			{
 				global $langs, $conf;
 
-	            //// Call triggers
-	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('OPENSURVEY_CREATE',$this,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+                // Call trigger
+                $result=$this->call_trigger('OPENSURVEY_CREATE',$user);
+                if ($result < 0) $error++;          
+                // End call triggers
 			}
         }
 
@@ -338,12 +336,10 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-		        //// Call triggers
-		        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        $interface=new Interfaces($this->db);
-		        $result=$interface->run_triggers('OPENSURVEY_DELETE',$this,$user,$langs,$conf);
-		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+                // Call trigger
+                $result=$this->call_trigger('OPENSURVEY_DELETE',$user);
+                if ($result < 0) $error++;          
+                // End call triggers
 			}
 		}
 
