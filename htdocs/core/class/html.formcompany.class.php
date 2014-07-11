@@ -453,7 +453,7 @@ class FormCompany
 		if ($resql)
 		{
 			$out.= '<div id="particulier2" class="visible">';
-			$out.= '<select class="flat" name="forme_juridique_code">';
+			$out.= '<select class="flat" name="forme_juridique_code" id="legal_form">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 
 			$num = $this->db->num_rows($resql);
