@@ -126,15 +126,15 @@ class Deplacement extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
 
-                        // Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('DEPLACEMENT_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
-
+            // Call trigger
+            $result=$this->call_trigger('DEPLACEMENT_CREATE',$user);
+            if ($result < 0)
+            {
+            	$this->db->rollback();
+            	return -2;
+            }            
+            // End call triggers
+			
 			$result=$this->update($user);
 			if ($result > 0)
 			{

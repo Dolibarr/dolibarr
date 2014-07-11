@@ -856,24 +856,22 @@ class Propal extends CommonObject
 
                         if (! $notrigger)
                         {
-                            // Appel des triggers
-                            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                            $interface=new Interfaces($this->db);
-                            $result=$interface->run_triggers('PROPAL_CREATE',$this,$user,$langs,$conf);
-                            if ($result < 0) {
-                                $error++; $this->errors=$interface->errors;
-                            }
-                            // Fin appel triggers
+                            // Call trigger
+                            $result=$this->call_trigger('PROPAL_CREATE',$user);
+                            if ($result < 0) { $error++; }            
+                            // End call triggers
                         }
                     }
                     else
                     {
+                        $this->error=$this->db->error();
                         $error++;
                     }
                 }
             }
             else
             {
+                $this->error=$this->db->error();
                 $error++;
             }
 
@@ -885,7 +883,6 @@ class Propal extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
             }
@@ -1006,14 +1003,10 @@ class Propal extends CommonObject
                 if ($reshook < 0) $error++;
             }
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('PROPAL_CLONE',$this,$user,$langs,$conf);
-            if ($result < 0) {
-                $error++; $this->errors=$interface->errors;
-            }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('PROPAL_CLONE',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
         }
 
         // End
@@ -1326,14 +1319,10 @@ class Propal extends CommonObject
             {
                 if (! $notrigger)
                 {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('PROPAL_VALIDATE',$this,$user,$langs,$conf);
-                    if ($result < 0) {
-                        $error++; $this->errors=$interface->errors;
-                    }
-                    // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('PROPAL_VALIDATE',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
                 }
 
             	if (! $error)
@@ -1668,25 +1657,24 @@ class Propal extends CommonObject
 		{
 			if (! $notrigger)
 			{
-				// Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('PROPAL_REOPEN',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROPAL_REOPEN',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 		}
 
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
-			{
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
-			}
+		    if (!empty($this->errors)) 
+		    { 
+    			foreach($this->errors as $errmsg)
+    			{
+    				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+    				$this->error.=($this->error?', '.$errmsg:$errmsg);
+    			}
+		    }
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -1751,14 +1739,10 @@ class Propal extends CommonObject
                 	propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_TOBILL?$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 }
 
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('PROPAL_CLOSE_SIGNED',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROPAL_CLOSE_SIGNED',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
             else
             {
@@ -1777,18 +1761,21 @@ class Propal extends CommonObject
             		propale_pdf_create($this->db, $this, $conf->global->PROPALE_ADDON_PDF_ODT_CLOSED?$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED:$this->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
             	}
 
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('PROPAL_CLOSE_REFUSED',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PROPAL_CLOSE_REFUSED',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
             }
-
-            $this->db->commit();
-            return 1;
+            if ( ! $error )
+            {
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -1;
+            }
         }
         else
         {
@@ -2039,15 +2026,11 @@ class Propal extends CommonObject
 
         $this->db->begin();
 
-        if (! $error && ! $notrigger)
+        if (! $notrigger)
         {
-            // Call triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('PROPAL_DELETE',$this,$user,$langs,$conf);
-            if ($result < 0) {
-                $error++; $this->errors=$interface->errors;
-            }
+            // Call trigger
+            $result=$this->call_trigger('PROPAL_DELETE',$user);
+            if ($result < 0) { $error++; }            
             // End call triggers
         }
 
@@ -2145,7 +2128,6 @@ class Propal extends CommonObject
         }
         else
         {
-            $this->error=$this->db->lasterror();
             $this->db->rollback();
             return -1;
         }
@@ -2931,14 +2913,14 @@ class PropaleLigne  extends CommonObject
 
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result = $interface->run_triggers('LINEPROPAL_INSERT',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('LINEPROPAL_INSERT',$user);
+                if ($result < 0)
+                { 
+                    $this->db->rollback();
+                    return -1; 
+                }            
+                // End call triggers
             }
 
             $this->db->commit();
@@ -2981,14 +2963,14 @@ class PropaleLigne  extends CommonObject
         		}
         	}
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result = $interface->run_triggers('LINEPROPAL_DELETE',$this,$user,$langs,$conf);
-            if ($result < 0) {
-                $error++; $this->errors=$interface->errors;
-            }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINEPROPAL_DELETE',$user);
+            if ($result < 0)
+            { 
+                $this->db->rollback();
+                return -1;
+            }            
+            // End call triggers
 
             $this->db->commit();
 
@@ -3091,14 +3073,14 @@ class PropaleLigne  extends CommonObject
 
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result = $interface->run_triggers('LINEPROPAL_UPDATE',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('LINEPROPAL_UPDATE',$user);
+                if ($result < 0)            
+                { 
+                    $this->db->rollback();
+                    return -1;
+                }            
+                // End call triggers
             }
 
             $this->db->commit();

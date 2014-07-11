@@ -26,6 +26,14 @@ For users:
 - Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
 - Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
 - Fix: [ bug #1505, #1504] Project trigger problem
+- Fix: [ bug #1463, #1464 ] Proposal triggers problem
+- Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
+- Fix: [ bug #1465, #1466 ] Product triggers problem
+- Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
+- Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
+- Fix: [ bug #1506, #1507 ] ECM trigger error problem
+- Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+
 
 For translators:
 - Update language files.

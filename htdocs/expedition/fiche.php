@@ -241,26 +241,34 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     $object->fetch_thirdparty();
 
     $result = $object->valid($user);
-
-    // Define output language
-    $outputlangs = $langs;
-    $newlang='';
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-    {
-        $ret=$object->fetch($id);    // Reload to get new records
-        $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
-    }
+    
     if ($result < 0)
     {
-        dol_print_error($db,$result);
-        exit;
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
+    }
+    else
+    {
+        // Define output language
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+        }
+        if ($result < 0)
+        {
+            dol_print_error($db,$result);
+            exit;
+        }
     }
 }
 
