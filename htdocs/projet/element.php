@@ -216,7 +216,7 @@ foreach ($listofreferent as $key => $value)
 
 		print_titre($langs->trans($title));
 		
-		$selectList=$formproject->select_element($tablename);
+		$selectList=$formproject->select_element($tablename,$project->societe->id);
 		if ($selectList<0) {
 			setEventMessage($formproject->error,'errors');
 		}
