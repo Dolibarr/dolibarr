@@ -137,15 +137,15 @@ print "</tr>\n";
 $var=false;
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="16">';
+print '<label for="search_ref">'.$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="16">';
 print '</td><td rowspan="3"><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Name").':</td><td><input type="text" name="search_lastname" class="flat" size="16">';
+print '<label for="search_lastname">'.$langs->trans("Name").'</label>:</td><td><input type="text" name="search_lastname" id="search_lastname" class="flat" size="16">';
 print '</td></tr>';
 print "<tr ".$bc[$var].">";
 print '<td>';
-print $langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="16">';
+print '<label for="sall">'.$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="16">';
 print '</td></tr>';
 print "</table></form>";
 
