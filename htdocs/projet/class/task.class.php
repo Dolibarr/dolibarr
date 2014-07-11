@@ -179,7 +179,7 @@ class Task extends CommonObject
      *  @param	int		$ref		ref object
      *  @return int 		        <0 if KO, >0 if OK
      */
-    function fetch($id,$ref='')
+    function fetch($id, $ref='')
     {
         global $langs;
 
@@ -479,7 +479,7 @@ class Task extends CommonObject
      *	@param	int		$option			Sur quoi pointe le lien
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='')
+    function getNomUrl($withpicto=0, $option='')
     {
         global $langs;
 
@@ -636,7 +636,7 @@ class Task extends CommonObject
      * @param 	int		$taskid			Task id to filter on a task
      * @return 	array					Array (projectid => 'list of roles for project' or taskid => 'list of roles for task')
      */
-    function getUserRolesForProjectsOrTasks($userp,$usert,$projectid='',$taskid=0)
+    function getUserRolesForProjectsOrTasks($userp, $usert, $projectid='', $taskid=0)
     {
         $arrayroles = array();
 
@@ -1238,7 +1238,7 @@ class Task extends CommonObject
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->fk_statut,$mode);
+		return $this->LibStatut($this->fk_statut, $mode);
 	}
 
 	/**
@@ -1247,7 +1247,7 @@ class Task extends CommonObject
 	 *	\param	  mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	  \return	 string	  Label
 	 */
-	function LibStatut($statut,$mode=0)
+	function LibStatut($statut, $mode=0)
 	{
 		// list of Statut of the task
 		$this->statuts[0]='Draft';
