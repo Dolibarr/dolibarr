@@ -601,11 +601,9 @@ class FactureFournisseur extends CommonInvoice
         {
             if (! $notrigger)
             {
-                // Call triggers
-                //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                //$interface=new Interfaces($this->db);
-                //$result=$interface->run_triggers('BILL_SUPPLIER_MODIFY',$this,$user,$langs,$conf);
-                //if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                // Call trigger
+                $result=$this->call_trigger('BILL_SUPPLIER_MODIFY',$user);
+                if ($result < 0) $error++;            
                 // End call triggers
             }
         }
