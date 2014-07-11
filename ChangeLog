@@ -162,6 +162,7 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
   So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
+- Remove add_photo_web() that is ot used anymore by core code.
 
 
 
