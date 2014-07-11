@@ -152,6 +152,7 @@ if ($memmaxorig != '')
 	preg_match('/([0-9]+)([a-zA-Z]*)/i',$memmax,$reg);
 	if ($reg[2])
 	{
+		if (strtoupper($reg[2]) == 'G') $memmax=$reg[1]*1024*1024*1024;
 		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
 		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
 	}

@@ -152,12 +152,10 @@ class EcmDirectory // extends CommonObject
 				$result=dol_mkdir($dir);
 				if ($result < 0) { $error++; $this->error="ErrorFailedToCreateDir"; }
 
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('MYECMDIR_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('MYECMDIR_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 
 				if (! $error)
 				{
@@ -219,12 +217,10 @@ class EcmDirectory // extends CommonObject
 
 		if (! $error && ! $notrigger)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('MYECMDIR_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('MYECMDIR_MODIFY',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 		}
 
 		if (! $error)
@@ -352,7 +348,18 @@ class EcmDirectory // extends CommonObject
 			$this->error="Error ".$this->db->lasterror();
 			return -2;
 		}
-
+		else
+		{
+            // Call trigger
+            $result=$this->call_trigger('MYECMDIR_DELETE',$user);
+            if ($result < 0)
+            {
+            	$this->db->rollback();
+            	return -2;
+            }            
+            // End call triggers
+		}
+		
 		if ($mode != 'databaseonly')
 		{
 			$file = $conf->ecm->dir_output . "/" . $relativepath;
@@ -369,16 +376,6 @@ class EcmDirectory // extends CommonObject
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			$error++;
-		}
-
-		if (! $error)
-		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('MYECMDIR_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
 		}
 
 		if (! $error) return 1;
@@ -696,5 +693,38 @@ class EcmDirectory // extends CommonObject
 			return -1;
 		}
 	}
+	
+	/**
+     * Call trigger based on this instance
+     *
+     *  NB: Error from trigger are stacked in errors
+     *  NB2: if trigger fail, action should be canceled.
+     *  NB3: Should be deleted if EcmDirectory extend CommonObject
+     *
+     * @param   string    $trigger_name   trigger's name to execute
+     * @param   User      $user           Object user
+     * @return  int                       Result of run_triggers
+     */
+    function call_trigger($trigger_name, $user)
+    {
+        global $langs,$conf;
+
+        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+        $interface=new Interfaces($this->db);
+        $result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+        if ($result < 0) {
+            if (!empty($this->errors))
+            {
+                $this->errors=array_merge($this->errors,$interface->errors);
+            }
+            else
+            {
+                $this->errors=$interface->errors;
+            }
+        }
+        return $result;
+
+    }
+	
 
 }

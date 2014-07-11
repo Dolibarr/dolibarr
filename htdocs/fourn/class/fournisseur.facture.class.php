@@ -79,6 +79,7 @@ class FactureFournisseur extends CommonInvoice
     var $propalid;
     var $cond_reglement_id;
     var $cond_reglement_code;
+    var $fk_account;
     var $mode_reglement_id;
     var $mode_reglement_code;
 
@@ -174,6 +175,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= ", fk_projet";
 		$sql.= ", fk_cond_reglement";
 		$sql.= ", fk_mode_reglement";
+        $sql.= ", fk_account";
         $sql.= ", note_private";
         $sql.= ", note_public";
         $sql.= ", fk_user_author";
@@ -190,6 +192,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= ", ".(isset($this->fk_project)?$this->fk_project:"null");
 		$sql.= ", ".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null");
 		$sql.= ", ".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null");
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$user->id.",";
@@ -333,7 +336,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.fk_facture_source,";
         $sql.= " t.fk_projet,";
         $sql.= " t.fk_cond_reglement,";
-		$sql.= " t.fk_mode_reglement,";
+        $sql.= " t.fk_account,";
+        $sql.= " t.fk_mode_reglement,";
         $sql.= " t.date_lim_reglement,";
         $sql.= " t.note_private,";
         $sql.= " t.note_public,";
@@ -394,6 +398,7 @@ class FactureFournisseur extends CommonInvoice
 	            $this->cond_reglement_code	= $obj->cond_reglement_code;
 	            $this->cond_reglement		= $obj->cond_reglement_libelle;
 	            $this->cond_reglement_doc	= $obj->cond_reglement_libelle;
+                $this->fk_account           = $obj->fk_account;
 	            $this->mode_reglement_id	= $obj->fk_mode_reglement;
 	            $this->mode_reglement_code	= $obj->mode_reglement_code;
 	            $this->mode_reglement		= $obj->mode_reglement_libelle;
