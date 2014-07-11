@@ -1834,7 +1834,7 @@ class Contrat extends CommonObject
 /**
  *	Classe permettant la gestion des lignes de contrats
  */
-class ContratLigne
+class ContratLigne extends CommonObject
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
