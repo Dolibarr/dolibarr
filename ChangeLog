@@ -43,7 +43,7 @@ For developers:
 - New: Add trigger DON_UPDATE, DON_DELETE
 - New: Add country iso code on 3 chars into table of countries.
 - Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
-- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE trigger called before SQL delete
+- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
