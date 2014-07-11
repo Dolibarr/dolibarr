@@ -47,6 +47,7 @@ $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
+$langs->load('compta');
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -876,7 +877,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 	
 	// Ref Int
-	print '<tr><td class="fieldrequired">'.$langs->trans('ExternalRef').'</td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('RefExt').'</td>';
 	print '<td colspan="2"><input type="text" siez="5" name="ref_ext" id="ref_ext" value="'.GETPOST('ref_ext','alpha').'"></td></tr>';
 
     // Customer
@@ -1068,9 +1069,9 @@ else
 
         print '<tr>';
 		print '<td  width="20%">';
-		print $form->editfieldkey("ExternalRef",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefExt",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print $form->editfieldval("ExternalRef",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefExt",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 

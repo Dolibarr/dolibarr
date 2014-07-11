@@ -30,6 +30,7 @@ require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 $langs->load("contracts");
 $langs->load("products");
 $langs->load("companies");
+$langs->load("compta");
 
 $sortfield=GETPOST('sortfield','alpha');
 $sortorder=GETPOST('sortorder','alpha');
@@ -114,7 +115,7 @@ if ($resql)
     $param.='&amp;search_nom='.$search_nom;
     $param.='&amp;search_ref_ext='.$search_ref_ext;
     print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("ExternalRef"), $_SERVER["PHP_SELF"], "c.ref_ext","","$param",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("RefExt"), $_SERVER["PHP_SELF"], "c.ref_ext","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateContract"), $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
