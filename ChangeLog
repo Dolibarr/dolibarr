@@ -8,15 +8,19 @@ For users:
 - New: [ task #867 ] Remove ESAEB external module code from core.
 - New: Can create proposal from an intervention.
 - New: Can filter events on a group of users.
-- New: Add thirdparty to filter on events. 
+- New: Can filter events of a thirdparty.
+- New: Split Agenda view (month, week, day) into different tabs.
 - New: Form to add a photo is immediatly available on photo page if
        permissions are ok (save one click per photo to add).
 - New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
        shown on main product card.
 - New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
        create an automatic event into agenda.
-- New: Add new type of event (when type of events are used, not by
-       default)
+- New: Add new type of event (when type of events are used, not by default)
+- New: Add country into table of thirdparties type. This will allow to provide
+       a list of thirdparty types specific to a country (like argentina that
+       need type A or B).
+- New: Can force a specific bank account onto an invoice/order...      
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
