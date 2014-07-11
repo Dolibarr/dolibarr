@@ -113,3 +113,4 @@ create table llx_accounting_fiscalyear
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_contrat ADD COLUMN ref_int varchar(30) after ref;
