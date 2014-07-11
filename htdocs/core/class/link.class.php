@@ -99,15 +99,10 @@ class Link extends CommonObject
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "links");
 
             if ($this->id > 0) {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('LINK_CREATE', $this, $user, $langs, $conf);
-                if ($result < 0) {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('LINK_CREATE',$user);
+                if ($result < 0) $error++;            
+                // End call triggers
             } else {
                 $error++;
             }
@@ -190,15 +185,10 @@ class Link extends CommonObject
         {
             if ($call_trigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('LINK_MODIFY', $this, $user, $langs, $conf);
-                if ($result < 0) {
-                    $error++;
-                    $this->errors = $interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('LINK_MODIFY',$user);
+                if ($result < 0) $error++;            
+                // End call triggers
             }
 
             if (! $error)
@@ -339,6 +329,11 @@ class Link extends CommonObject
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $error = 0;
 
+        // Call trigger
+        $result=$this->call_trigger('LINK_DELETE',$user);
+        if ($result < 0) return -1;            
+        // End call triggers         
+        
         $this->db->begin();
 
         // Remove link
@@ -352,18 +347,6 @@ class Link extends CommonObject
             $this->error = $this->db->lasterror();
         }
 
-
-        if (! $error) {
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result = $interface->run_triggers('LINK_DELETE', $this, $user, $langs, $conf);
-            if ($result < 0) {
-                $error++;
-                $this->errors = $interface->errors;
-            }
-            // Fin appel triggers
-        }
 
         if (! $error) {
             $this->db->commit();
