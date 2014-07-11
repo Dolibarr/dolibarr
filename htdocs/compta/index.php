@@ -97,9 +97,9 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	print '<table class="noborder nohover" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("SearchACustomerInvoice").'</td></tr>';
-	print "<tr ".$bc[0]."><td>".$langs->trans("Ref").':</td><td><input type="text" name="sf_ref" class="flat" size="18"></td>';
+	print "<tr ".$bc[0]."><td><label for=\"sf_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="sf_ref" id="sf_ref" class="flat" size="18"></td>';
 	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+	print "<tr ".$bc[0]."><td><label for=\"sall\">".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
 	print '</tr>';
 	print "</table></form><br>";
 }
@@ -114,9 +114,9 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
 	print "<tr ".$bc[0].">";
-	print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+	print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
 	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print "<tr ".$bc[0]."><td>".$langs->trans("RefSupplier").':</td><td><input type="text" name="search_ref_supplier" class="flat" size="18"></td>';
+	print "<tr ".$bc[0]."><td><label for=\"search_ref_supplier\">".$langs->trans("RefSupplier").'</label>:</td><td><input type="text" name="search_ref_supplier" id="search_ref_supplier" class="flat" size="18"></td>';
 	print '</tr>';
 	print "</table></form><br>";
 }
@@ -132,9 +132,9 @@ if (! empty($conf->don->enabled) && $user->rights->don->lire)
     print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchADonation").'</td></tr>';
     print "<tr ".$bc[0].">";
-    print "<td>".$langs->trans("Ref").':</td><td><input type="text" name="search_ref" class="flat" size="18"></td>';
+    print "<td><label for=\"search_ref\">".$langs->trans("Ref").'</label>:</td><td><input type="text" name="search_ref" id="search_ref" class="flat" size="18"></td>';
     print '<td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-    //print "<tr ".$bc[0]."><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
+    //print "<tr ".$bc[0]."><td><label for=\"sall\"".$langs->trans("Other").'</label>:</td><td><input type="text" name="sall" id="sall" class="flat" size="18"></td>';
     print '</tr>';
     print "</table></form><br>";
 }
