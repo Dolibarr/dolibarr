@@ -824,6 +824,11 @@ class Contrat extends CommonObject
 		$error=0;
 
 		$this->db->begin();
+		
+	    // Call trigger
+	    $result=$this->call_trigger('CONTRACT_DELETE',$user);
+	    if ($result < 0) { $error++; }
+	    // End call triggers
 
 		if (! $error)
 		{
@@ -907,14 +912,6 @@ class Contrat extends CommonObject
 				$this->error=$this->db->error();
 				$error++;
 			}
-		}
-
-		if (! $error)
-		{
-            // Call trigger
-            $result=$this->call_trigger('CONTRACT_DELETE',$user);
-            if ($result < 0) { $error++; }
-            // End call triggers
 		}
 
 		if (! $error)
@@ -1078,6 +1075,15 @@ class Contrat extends CommonObject
 				$result=$this->update_statut($user);
 				if ($result > 0)
 				{
+				    // Call trigger
+				    $result=$this->call_trigger('LINECONTRACT_CREATE',$user);
+				    if ($result < 0)
+				    { 
+				        $this->db->rollback();
+				        return -1;
+				    }
+				    // End call triggers
+				    
 					$this->db->commit();
 					return 1;
 				}
@@ -1222,6 +1228,15 @@ class Contrat extends CommonObject
 			$result=$this->update_statut($user);
 			if ($result >= 0)
 			{
+		        // Call trigger
+		        $result=$this->call_trigger('LINECONTRACT_UPDATE',$user);
+		        if ($result < 0) 
+		        { 
+		            $this->db->rollback(); 
+		            return -3; 
+		        }
+		        // End call triggers
+	     			    
 				$this->db->commit();
 				return 1;
 			}
@@ -1257,6 +1272,11 @@ class Contrat extends CommonObject
 		if ($this->statut >= 0)
 		{
 
+		    // Call trigger
+		    $result=$this->call_trigger('LINECONTRACT_DELETE',$user);
+		    if ($result < 0) return -1;
+		    // End call triggers
+		    
 		    $this->db->begin();
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
@@ -1270,11 +1290,6 @@ class Contrat extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-
-            // Call trigger
-            $result=$this->call_trigger('LINECONTRACT_DELETE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
 
             $this->db->commit();
 			return 1;
@@ -1734,13 +1749,8 @@ class Contrat extends CommonObject
 /**
  *	Classe permettant la gestion des lignes de contrats
  */
-class ContratLigne
+class ContratLigne extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
-	//var $element='contratdet';			//!< Id that identify managed objects
-	//var $table_element='contratdet';	//!< Name of table without prefix where object is stored
 
 	var $id;
 	var $ref;
