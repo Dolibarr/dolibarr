@@ -812,7 +812,7 @@ else
 			print '<label for="name"><span span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></label>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
-	    print '<input type="text" size="30" maxlength="60" name="nom" id="nom" value="'.$object->name.'"></td>';
+	    print '<input type="text" size="30" maxlength="60" name="nom" id="nom" value="'.$object->name.'" autofocus="autofocus"></td>';
 	    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 	    {
 		    print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" maxlength="5" name="prefix_comm" value="'.$object->prefix_comm.'"></td>';
