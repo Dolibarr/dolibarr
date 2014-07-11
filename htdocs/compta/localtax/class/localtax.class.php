@@ -104,13 +104,13 @@ class Localtax extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."localtax");
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('LOCALTAX_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LOCALTAX_CREATE',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
 
+			//FIXME: Add rollback if trigger fail
+            
             return $this->id;
         }
         else
@@ -165,12 +165,12 @@ class Localtax extends CommonObject
 
 		if (! $notrigger)
 		{
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('LOCALTAX_MODIFY',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LOCALTAX_MODIFY',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
+            
+            //FIXME: Add rollback if trigger fail
     	}
 
         return 1;
@@ -253,6 +253,12 @@ class Localtax extends CommonObject
 
 		$error=0;
 
+		// Call trigger
+		$result=$this->call_trigger('LOCALTAX_DELETE',$user);
+		if ($result < 0) return -1;
+		// End call triggers
+		
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -264,12 +270,6 @@ class Localtax extends CommonObject
 			return -1;
 		}
 
-        // Appel des triggers
-        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('LOCALTAX_DELETE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // Fin appel triggers
 
 		return 1;
 	}
