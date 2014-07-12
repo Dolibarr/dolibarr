@@ -782,7 +782,7 @@ class FormCompany
      *
      * @param 	int 		$local			LocalTax
      * @param 	int 		$selected		Preselected value
-     * @param 	varchar 	$htmlname		HTML select name
+     * @param 	string      $htmlname		HTML select name
      * @return	void
      */
     function select_localtax($local, $selected, $htmlname)
@@ -798,7 +798,7 @@ class FormCompany
     		if (count($valors) > 1)
     		{
     			//montar select
-    			print '<select class="flat" name="'.$htmlname.'">';
+    			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
     			while ($i <= (count($valors))-1)
     			{
     				if ($selected == $valors[$i])
