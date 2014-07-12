@@ -37,7 +37,7 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
-
+- New: [ task #1204 ] add a External reference to contract
 
 For translators:
 - Update language files.

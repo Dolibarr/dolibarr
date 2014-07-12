@@ -23,13 +23,13 @@ ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL 
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
-  
+
 INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_CLASSIFY_BILLED','Classify intervention as billed','Executed when a intervention is classified as billed (when option FICHINTER_DISABLE_DETAILS is set)','ficheinter',19);
 
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 
 
-  
+
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
 ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
@@ -120,3 +120,4 @@ create table llx_accounting_fiscalyear
 	fk_user_modif	integer NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
