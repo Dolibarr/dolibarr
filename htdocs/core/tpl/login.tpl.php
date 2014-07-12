@@ -77,7 +77,7 @@ $(document).ready(function () {
 <tr>
 <td valign="middle" class="loginfield"><strong><label for="username"><?php echo $langs->trans('Login'); ?></label></strong></td>
 <td valign="middle" class="nowrap">
-<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" />
+<input type="text" id="username" name="username" class="flat" size="15" maxlength="40" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" />
 </td>
 </tr>
 <!-- Password -->
@@ -96,9 +96,12 @@ if (! empty($hookmanager->resArray['options'])) {
 	}
 }
 ?>
-<?php if ($captcha) { ?>
+<?php
+	if ($captcha) {
+		// TODO: provide accessible captha variants
+?>
 	<!-- Captcha -->
-	<tr><td valign="middle" class="loginfield nowrap"><b><?php echo $langs->trans('SecurityCode'); ?></b></td>
+	<tr><td valign="middle" class="loginfield nowrap"><label for="securitycode"><b><?php echo $langs->trans('SecurityCode'); ?></b></label></td>
 	<td valign="top" class="nowrap none" align="left">
 
 	<table class="login_table_securitycode" style="width: 100px;"><tr>

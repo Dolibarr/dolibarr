@@ -156,7 +156,8 @@ class Ctypent // extends CommonObject
         $sql = "SELECT";
 		$sql.= " t.id,";
 		$sql.= " t.code,";
-		$sql.= " t.libelle,";
+		$sql.= " t.libelle as label,";
+		$sql.= " t.fk_country as country_id,";
 		$sql.= " t.active,";
 		$sql.= " t.module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_typent as t";
@@ -173,7 +174,8 @@ class Ctypent // extends CommonObject
 
                 $this->id    = $obj->id;
 				$this->code = $obj->code;
-				$this->libelle = $obj->libelle;
+				$this->libelle = $obj->label;
+				$this->country_id = $obj->country_id;
 				$this->active = $obj->active;
 				$this->module = $obj->module;
             }

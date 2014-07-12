@@ -57,13 +57,13 @@ class FormCompany
 	 */
 	function typent_array($mode=0, $filter='')
 	{
-		global $langs;
+		global $langs,$mysoc;
 
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
-		$sql.= " WHERE active = 1";
+		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
 		$sql.= " ORDER by id";
 		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
