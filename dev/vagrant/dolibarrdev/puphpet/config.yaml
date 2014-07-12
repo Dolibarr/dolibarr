@@ -31,7 +31,7 @@ vagrantfile-local:
         synced_folder:
             jopH6005bn96:
                 source: ../../../
-                target: /var/www
+                target: /var/www/dolibarr
                 sync_type: default
                 rsync:
                     auto: 'false'
@@ -83,7 +83,7 @@ apache:
     vhosts:
         b2tOrs1TMtoF:
             servername: dev.dolibarr.org
-            docroot: /var/www/htdocs
+            docroot: /var/www/dolibarr/htdocs
             port: '80'
             setenv:
                 - 'APP_ENV dev'
@@ -168,7 +168,7 @@ mysql:
             host: localhost
             user: user
             password: user
-            sql_file: /var/www/dev/initdata/mysqldump_dolibarr_3.5.0.sql
+            sql_file: /var/www/dolibarr/dev/initdata/mysqldump_dolibarr_3.5.0.sql
 postgresql:
     install: '1'
     settings:
