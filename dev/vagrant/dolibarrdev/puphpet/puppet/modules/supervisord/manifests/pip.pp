@@ -1,8 +1,10 @@
+# Class: supervisord::pip
+#
+# Optional class to install setuptool and pip
+#
 class supervisord::pip inherits supervisord {
 
-  Exec {
-    path => '/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin'
-  }
+  Exec { path => [ '/usr/bin/', '/usr/local/bin', '/bin', '/usr/local/sbin', '/usr/sbin', '/sbin' ] }
 
   exec { 'install_setuptools':
     command => "curl ${supervisord::setuptools_url} | python",

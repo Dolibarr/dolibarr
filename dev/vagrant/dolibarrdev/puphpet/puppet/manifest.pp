@@ -279,8 +279,14 @@ if hash_key_equals($mailcatcher_values, 'install', 1) {
   }
 
   if ! defined(Class['supervisord']) {
+    class{ 'puphpet::python::pip': }
+
     class { 'supervisord':
-      install_pip => true,
+      install_pip => false,
+      require     => [
+        Class['my_fw::post'],
+        Class['Puphpet::Python::Pip'],
+      ],
     }
   }
 
@@ -467,15 +473,16 @@ if hash_key_equals($apache_values, 'install', 1) {
     $apache_vhosts = merge($apache_values['vhosts'], {
       'default_vhost_80'  => {
         'servername'    => 'default',
-        'serveraliases' => ['*'],
         'docroot'       => '/var/www/default',
         'port'          => 80,
+        'default_vhost' => true,
       },
       'default_vhost_443' => {
         'servername'    => 'default',
-        'serveraliases' => ['*'],
         'docroot'       => '/var/www/default',
         'port'          => 443,
+        'default_vhost' => true,
+        'ssl'           => 1,
       },
     })
   } else {
@@ -515,11 +522,11 @@ if hash_key_equals($apache_values, 'install', 1) {
 
       create_resources(apache::vhost, { "${key}" => merge($vhost, {
           'custom_fragment' => template('puphpet/apache/custom_fragment.erb'),
-          'ssl'             => 'ssl'           in $vhost and str2bool($vhost['ssl']) ? { true => true, default => false },
-          'ssl_cert'        => 'ssl_cert'      in $vhost and $vhost['ssl_cert']      ? { undef => undef, '' => undef, default => $vhost['ssl_cert'] },
-          'ssl_key'         => 'ssl_key'       in $vhost and $vhost['ssl_key']       ? { undef => undef, '' => undef, default => $vhost['ssl_key'] },
-          'ssl_chain'       => 'ssl_chain'     in $vhost and $vhost['ssl_chain']     ? { undef => undef, '' => undef, default => $vhost['ssl_chain'] },
-          'ssl_certs_dir'   => 'ssl_certs_dir' in $vhost and $vhost['ssl_certs_dir'] ? { undef => undef, '' => undef, default => $vhost['ssl_certs_dir'] }
+          'ssl'             => 'ssl' in $vhost and str2bool($vhost['ssl']) ? { true => true, default => false },
+          'ssl_cert'        => hash_key_true($vhost, 'ssl_cert') ? { true => $vhost['ssl_cert'],      default => undef },
+          'ssl_key'         => hash_key_true($vhost, 'ssl_cert') ? { true => $vhost['ssl_key'],       default => undef },
+          'ssl_chain'       => hash_key_true($vhost, 'ssl_cert') ? { true => $vhost['ssl_chain'],     default => undef },
+          'ssl_certs_dir'   => hash_key_true($vhost, 'ssl_cert') ? { true => $vhost['ssl_certs_dir'], default => undef }
         })
       })
 
@@ -662,10 +669,6 @@ if hash_key_equals($nginx_values, 'install', 1) {
     }
   } elsif hash_key_equals($hhvm_values, 'install', 1) {
     $fastcgi_pass        = '127.0.0.1:9000'
-
-    set_php5_fpm_sock_group_and_user { 'hhvm':
-      require => Package['nginx'],
-    }
   } else {
     $fastcgi_pass        = ''
   }
@@ -1096,7 +1099,7 @@ if hash_key_equals($xhprof_values, 'install', 1)
   }
 
   if hash_key_equals($apache_values, 'install', 1) {
-    $xhprof_webroot_location = $puphpet::params::apache_webroot_location
+    $xhprof_webroot_location = '/var/www/default'
     $xhprof_webserver_service = 'httpd'
   } elsif hash_key_equals($nginx_values, 'install', 1) {
     $xhprof_webroot_location = $puphpet::params::nginx_webroot_location
@@ -1216,11 +1219,11 @@ if hash_key_equals($mysql_values, 'install', 1) {
 
   if hash_key_equals($mysql_values, 'adminer', 1) and $mysql_php_installed {
     if hash_key_equals($apache_values, 'install', 1) {
-      $mysql_adminer_webroot_location = $puphpet::params::apache_webroot_location
+      $mysql_adminer_webroot_location = '/var/www/default'
     } elsif hash_key_equals($nginx_values, 'install', 1) {
       $mysql_adminer_webroot_location = $puphpet::params::nginx_webroot_location
     } else {
-      $mysql_adminer_webroot_location = $puphpet::params::apache_webroot_location
+      $mysql_adminer_webroot_location = '/var/www/default'
     }
 
     class { 'puphpet::adminer':
@@ -1329,11 +1332,11 @@ if hash_key_equals($postgresql_values, 'install', 1) {
 
   if hash_key_equals($postgresql_values, 'adminer', 1) and $postgresql_php_installed {
     if hash_key_equals($apache_values, 'install', 1) {
-      $postgresql_adminer_webroot_location = $puphpet::params::apache_webroot_location
+      $postgresql_adminer_webroot_location = '/var/www/default'
     } elsif hash_key_equals($nginx_values, 'install', 1) {
       $postgresql_adminer_webroot_location = $puphpet::params::nginx_webroot_location
     } else {
-      $postgresql_adminer_webroot_location = $puphpet::params::apache_webroot_location
+      $postgresql_adminer_webroot_location = '/var/www/default'
     }
 
     class { 'puphpet::adminer':
@@ -1364,7 +1367,7 @@ define postgresql_db (
     $table = "${name}.*"
 
     exec{ "${name}-import":
-      command     => "psql ${name} < ${sql_file}",
+      command     => "sudo -u postgres psql ${name} < ${sql_file}",
       logoutput   => true,
       refreshonly => $refresh,
       require     => Postgresql::Server::Db[$name],
@@ -1491,11 +1494,11 @@ if hash_key_equals($mariadb_values, 'install', 1) {
 
   if hash_key_equals($mariadb_values, 'adminer', 1) and $mariadb_php_installed {
     if hash_key_equals($apache_values, 'install', 1) {
-      $mariadb_adminer_webroot_location = $puphpet::params::apache_webroot_location
+      $mariadb_adminer_webroot_location = '/var/www/default'
     } elsif hash_key_equals($nginx_values, 'install', 1) {
       $mariadb_adminer_webroot_location = $puphpet::params::nginx_webroot_location
     } else {
-      $mariadb_adminer_webroot_location = $puphpet::params::apache_webroot_location
+      $mariadb_adminer_webroot_location = '/var/www/default'
     }
 
     class { 'puphpet::adminer':
@@ -1662,7 +1665,7 @@ if $beanstalkd_values == undef {
 }
 
 if hash_key_equals($apache_values, 'install', 1) {
-  $beanstalk_console_webroot_location = "${puphpet::params::apache_webroot_location}/beanstalk_console"
+  $beanstalk_console_webroot_location = '/var/www/default/beanstalk_console'
 } elsif hash_key_equals($nginx_values, 'install', 1) {
   $beanstalk_console_webroot_location = "${puphpet::params::nginx_webroot_location}/beanstalk_console"
 } else {
