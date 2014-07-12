@@ -203,14 +203,10 @@ class ProductFournisseur extends Product
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('SUPPLIER_PRODUCT_BUYPRICE_UPDATE',$this,$user,$langs,$conf);
-				if ($result < 0)
-				{
-					$error++; $this->error=$interface->errors;
-				}
+                // Call trigger
+                $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_UPDATE',$user);
+                if ($result < 0) $error++;          
+                // End call triggers
 
 				if (empty($error))
 				{
@@ -289,14 +285,10 @@ class ProductFournisseur extends Product
 
 		            if (! $error)
 		            {
-        				// Appel des triggers
-        				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-        				$interface=new Interfaces($this->db);
-        				$result=$interface->run_triggers('SUPPLIER_PRODUCT_BUYPRICE_CREATE',$this,$user,$langs,$conf);
-        				if ($result < 0)
-        				{
-        					$error++; $this->error=$interface->errors;
-        				}
+                        // Call trigger
+                        $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_CREATE',$user);
+                        if ($result < 0) $error++;          
+                        // End call triggers
 
         				if (empty($error))
         				{

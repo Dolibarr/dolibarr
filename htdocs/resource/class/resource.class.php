@@ -331,7 +331,15 @@ class Resource extends CommonObject
         global $user,$langs,$conf;
     
         $error=0;
-    
+
+        if (! $notrigger)
+        {
+            // Call trigger
+            $result=$this->call_trigger('RESOURCE_DELETE',$user);
+            if ($result < 0) return -1;
+            // End call triggers
+        }
+        
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."resource";
         $sql.= " WHERE rowid =".$rowid;
     
@@ -343,18 +351,6 @@ class Resource extends CommonObject
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             if ($this->db->query($sql))
             {
-                if (! $notrigger)
-                {
-                    // Call triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('RESOURCE_DELETE',$this,$user,$langs,$conf);
-                    if ($result < 0) {
-                        $error++; $this->errors=$interface->errors;
-                    }
-                    // End call triggers
-                }
-    
                 return 1;
             }
             else {
@@ -734,15 +730,10 @@ class Resource extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            // Call triggers
-	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('RESOURCE_MODIFY',$this,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            // End call triggers
+                // Call trigger
+                $result=$this->call_trigger('RESOURCE_MODIFY',$user);
+                if ($result < 0) $error++;          
+                // End call triggers
 	    	}
 		}
 

@@ -245,17 +245,17 @@ class MouvementStock
 
 		if ($movestock && ! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
 
 			$this->product_id = $fk_product;
 			$this->entrepot_id = $entrepot_id;
 			$this->qty = $qty;
 
-			$result=$interface->run_triggers('STOCK_MOVEMENT',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('STOCK_MOVEMENT',$user);
+            if ($result < 0) $error++;          
+            // End call triggers
+            
+            //FIXME: Restore previous value of product_id,  entrepot_id, qty if trigger fail
 		}
 
 		if (! $error)
