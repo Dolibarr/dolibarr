@@ -46,7 +46,10 @@ For developers:
 - New: Add hook "searchAgendaFrom".
 - New: Add trigger DON_UPDATE, DON_DELETE
 - New: Add country iso code on 3 chars into table of countries.
-- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.     
+- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
+- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
+- New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
+- New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -162,6 +165,7 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
   So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
+- Remove add_photo_web() that is ot used anymore by core code.
 
 
 

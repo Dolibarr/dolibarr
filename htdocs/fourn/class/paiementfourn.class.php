@@ -201,12 +201,10 @@ class PaiementFourn extends Paiement
 
 				if (! $error)
 				{
-		            // Appel des triggers
-		            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('PAYMENT_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		            // Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
+                    if ($result < 0) $error++;          
+                    // End call triggers
 				}
 			}
 			else

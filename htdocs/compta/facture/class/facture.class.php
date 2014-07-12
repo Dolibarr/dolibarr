@@ -482,14 +482,10 @@ class Facture extends CommonInvoice
 					}
 					else if ($reshook < 0) $error++;
 
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('BILL_CREATE',$this,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $this->errors=$interface->errors;
-					}
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('BILL_CREATE',$user);
+                    if ($result < 0) $error++;             
+                    // End call triggers
 
 					if (! $error)
 					{
@@ -655,14 +651,10 @@ class Facture extends CommonInvoice
 				if ($reshook < 0) $error++;
 			}
 
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('BILL_CLONE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('BILL_CLONE',$user);
+            if ($result < 0) $error++;             
+            // End call triggers
 		}
 
 		// End
@@ -1100,14 +1092,10 @@ class Facture extends CommonInvoice
 		{
 			if (! $notrigger)
 			{
-				// Call triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('BILL_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// End call triggers
+	            // Call trigger
+	            $result=$this->call_trigger('BILL_MODIFY',$user);
+	            if ($result < 0) $error++;             
+	            // End call triggers
 			}
 		}
 
@@ -1262,14 +1250,10 @@ class Facture extends CommonInvoice
 
 		if (! $error && ! $notrigger)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('BILL_DELETE',$user);
+            if ($result < 0) $error++;             
+            // End call triggers
 		}
 
 		// Removed extrafields
@@ -1403,7 +1387,6 @@ class Facture extends CommonInvoice
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -2;
 		}
@@ -1439,14 +1422,10 @@ class Facture extends CommonInvoice
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+	            // Call trigger
+	            $result=$this->call_trigger('BILL_PAYED',$user);
+	            if ($result < 0) $error++;             
+	            // End call triggers
 			}
 			else
 			{
@@ -1495,14 +1474,10 @@ class Facture extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('BILL_UNPAYED',$user);
+            if ($result < 0) $error++;             
+            // End call triggers
 		}
 		else
 		{
@@ -1562,18 +1537,14 @@ class Facture extends CommonInvoice
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; 
-					$this->errors=$interface->errors;
+	            // Call trigger
+	            $result=$this->call_trigger('BILL_CANCEL',$user);
+	            if ($result < 0)
+	            {             
 					$this->db->rollback();
 					return -1;
-					
 				}
-				// Fin appel triggers
+	            // End call triggers
 
 				$this->db->commit();
 				return 1;
@@ -1791,14 +1762,11 @@ class Facture extends CommonInvoice
 			// Trigger calls
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+	            // Call trigger
+	            $result=$this->call_trigger('BILL_VALIDATE',$user);
+	            if ($result < 0) $error++;    
+	            //TODO: Restoring ref, facnumber, statut, brouillon to previous value if trigger fail           
+	            // End call triggers
 			}
 		}
 		else
@@ -1872,17 +1840,15 @@ class Facture extends CommonInvoice
 				$old_statut=$this->statut;
 				$this->brouillon = 1;
 				$this->statut = 0;
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('BILL_UNVALIDATE',$this,$user,$langs,$conf);
-				if ($result < 0) {
+	            // Call trigger
+	            $result=$this->call_trigger('BILL_UNVALIDATE',$user);
+	            if ($result < 0)              
+				{
 					$error++;
-					$this->errors=$interface->errors;
 					$this->statut=$old_statut;
 					$this->brouillon=0;
 				}
-				// Fin appel triggers
+	            // End call triggers
 			} else {
 				$this->db->rollback();
 				return -1;
@@ -3567,18 +3533,14 @@ class FactureLigne  extends CommonInvoiceLine
 
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
-				if ($result < 0) 
-				{
-					$error++;
-					$this->errors=$interface->errors;
+                // Call trigger
+                $result=$this->call_trigger('LINEBILL_INSERT',$user);
+                if ($result < 0)
+                {            
 					$this->db->rollback();
 					return -2;
 				}
-				// Fin appel triggers
+                // End call triggers
 			}
 
 			$this->db->commit();
@@ -3683,18 +3645,14 @@ class FactureLigne  extends CommonInvoiceLine
 
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result = $interface->run_triggers('LINEBILL_UPDATE',$this,$user,$langs,$conf);
-				if ($result < 0)
-				{
-					$error++;
-					$this->errors=$interface->errors;
+                // Call trigger
+                $result=$this->call_trigger('LINEBILL_UPDATE',$user);
+                if ($result < 0)            
+ 				{
 					$this->db->rollback();
 					return -2;
 				}
-				// Fin appel triggers
+                // End call triggers
 			}
 			$this->db->commit();
 			return 1;
@@ -3719,26 +3677,22 @@ class FactureLigne  extends CommonInvoiceLine
 		$error=0;
 
 		$this->db->begin();
+		
+		// Call trigger
+		$result=$this->call_trigger('LINEBILL_DELETE',$user);
+		if ($result < 0)
+		{
+			$this->db->rollback();
+			return -1;
+		}
+		// End call triggers
+		
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		if ($this->db->query($sql) )
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0)
-			{
-					$error++;
-					$this->errors=$interface->errors;
-					$this->db->rollback();
-					return -1;
-			}
-			// Fin appel triggers
-
 			$this->db->commit();
-
 			return 1;
 		}
 		else
