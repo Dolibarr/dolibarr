@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -877,7 +877,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
 	
 	// Ref Int
-	print '<tr><td class="fieldrequired">'.$langs->trans('RefExt').'</td>';
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
 	print '<td colspan="2"><input type="text" siez="5" name="ref_ext" id="ref_ext" value="'.GETPOST('ref_ext','alpha').'"></td></tr>';
 
     // Customer
@@ -1069,9 +1069,9 @@ else
 
         print '<tr>';
 		print '<td  width="20%">';
-		print $form->editfieldkey("RefExt",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print $form->editfieldval("RefExt",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 
