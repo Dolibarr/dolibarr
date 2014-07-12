@@ -39,6 +39,7 @@ $action=GETPOST('action');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
+$id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
@@ -109,7 +110,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 	$object = new Entrepot($db);
-	if ($object->fetch($_POST["id"]))
+	if ($object->fetch($id))
 	{
 		$object->libelle     = $_POST["libelle"];
 		$object->description = $_POST["desc"];
@@ -120,23 +121,20 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		$object->town        = $_POST["town"];
 		$object->country_id  = $_POST["country_id"];
 
-		if ( $object->update($_POST["id"], $user) > 0)
+		if ( $object->update($id, $user) > 0)
 		{
 			$action = '';
-			$_GET["id"] = $_POST["id"];
 			//$mesg = '<div class="ok">Fiche mise a jour</div>';
 		}
 		else
 		{
 			$action = 'edit';
-			$_GET["id"] = $_POST["id"];
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
 	else
 	{
 		$action = 'edit';
-		$_GET["id"] = $_POST["id"];
 		$mesg = '<div class="error">'.$object->error.'</div>';
 	}
 }
@@ -144,7 +142,6 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
 	$action = '';
-	$_GET["id"] = $_POST["id"];
 }
 
 
@@ -219,12 +216,13 @@ if ($action == 'create')
 }
 else
 {
-	if ($_GET["id"])
+    $id=GETPOST("id",'int');
+	if ($id)
 	{
 		dol_htmloutput_mesg($mesg);
 
 		$object = new Entrepot($db);
-		$result = $object->fetch($_GET["id"]);
+		$result = $object->fetch($id);
 		if ($result < 0)
 		{
 			dol_print_error($db);
@@ -368,13 +366,13 @@ else
 
 			print '<table class="noborder" width="100%">';
 			print "<tr class=\"liste_titre\">";
-			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"","",$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$_GET['id'],"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Product"),"", "p.ref","&amp;id=".$id,"","",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$id,"","",$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AverageUnitPricePMPShort"),"", "ps.pmp","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("EstimatedStockValueShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellPriceMin"),"", "p.price","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("EstimatedStockValueSellShort"),"", "","&amp;id=".$id,"",'align="right"',$sortfield,$sortorder);
 			if ($user->rights->stock->mouvement->creer) print '<td>&nbsp;</td>';
 			if ($user->rights->stock->creer)            print '<td>&nbsp;</td>';
 			print "</tr>";
