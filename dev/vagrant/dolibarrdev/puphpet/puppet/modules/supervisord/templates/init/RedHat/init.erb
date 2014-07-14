@@ -13,18 +13,19 @@
 #               xmlrpc interface as well as a few other nifty features.
 # processname:  supervisord
 # config: <%= @config_file %>
-# pidfile: <%= @pid_file %>
+# pidfile: <%= @run_path %>/<%= @pid_file %>
 #
 
 # source function library
 . /etc/rc.d/init.d/functions
 
 # source system settings
-[ -e <%= @init_extras %> ] && . <%= @init_extras %>
+[ -e <%= @init_defaults %> ] && . <%= @init_defaults %>
 
 RETVAL=0
 DAEMON=/usr/bin/supervisord
 DESC=supervisord
+PIDFILE=<%= @run_path %>/<%= @pid_file %>
 
 running_pid()
 {

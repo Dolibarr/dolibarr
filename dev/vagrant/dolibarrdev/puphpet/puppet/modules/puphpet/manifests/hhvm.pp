@@ -69,17 +69,39 @@ class puphpet::hhvm(
       }
     }
     'centos': {
+      $jemalloc_url = 'http://files.puphpet.com/centos6/jemalloc-3.6.0-1.el6.x86_64.rpm'
+      $jemalloc_download_location = '/.puphpet-stuff/jemalloc-3.6.0-1.el6.x86_64.rpm'
+
+      $require = defined(Class['my_fw::post']) ? {
+        true    => Class['my_fw::post'],
+        default => [],
+      }
+
+      exec { "download jemalloc to ${download_location}":
+        creates => $download_location,
+        command => "wget --quiet --tries=5 --connect-timeout=10 -O '${jemalloc_download_location}' '${jemalloc_url}'",
+        timeout => 30,
+        path    => '/usr/bin',
+        require => $require
+      }
+
+      package { 'jemalloc':
+        ensure   => latest,
+        provider => yum,
+        source   => $download_location,
+        require  => Exec["download jemalloc to ${download_location}"],
+      }
+
       yum::managed_yumrepo { 'hop5':
         descr    => 'hop5 repository',
         baseurl  => 'http://www.hop5.in/yum/el6/',
         gpgkey   => 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-HOP5',
         enabled  => 1,
         gpgcheck => 0,
-        priority => 1
+        priority => 1,
       }
     }
   }
-
   if $real_webserver == 'apache2' {
     if ! defined(Class['apache::mod::mime']) {
       class { 'apache::mod::mime': }

@@ -19,15 +19,15 @@ DESC=supervisor
 test -x $DAEMON || exit 0
 
 LOGDIR=<%= @log_path %>
-PIDFILE=<%= @pid_file %>
+PIDFILE=<%= @run_path %>/<%= @pid_file %>
 DODTIME=5                   # Time to wait for the server to die, in seconds
                             # If this value is set too low you might not
                             # let some servers to die gracefully and
                             # 'restart' will not work
 
 # Include supervisor defaults if available
-if [ -f /etc/default/supervisor ] ; then
-        . /etc/default/supervisor
+if [ -f <%= @init_defaults %> ] ; then
+        . <%= @init_defaults %>
 fi
 
 set -e
