@@ -260,7 +260,7 @@ if ($result)
 			}
 			else {
 				$product_static->type=$objp->fk_product_type;
-				$product_static->id=$objp->fk_product;
+				$product_static->id=$objp->rowid;
 				$product_static->ref=$objp->ref;
 				$product_static->libelle=$objp->label;
 				$text=$product_static->getNomUrl(1);
