@@ -155,6 +155,7 @@ Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure
 Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
 Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
 Fix: [ bug #1522 ] Element list into associate object into project are no more filterd by project thirdparty
+Fix: [ bug #1526 ] Thumbs of files uploaded with dots in their names do not load correctly
 Fix: Import ProfId1 to siren and ProfId2 to siret
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
