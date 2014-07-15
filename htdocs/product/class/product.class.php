@@ -591,7 +591,7 @@ class Product extends CommonObject
         {
             if (empty($this->oldcopy))
             {
-                $org=new self($db);
+                $org=new self($this->db);
                 $org->fetch($this->id);
                 $this->oldcopy=$org;
             }
