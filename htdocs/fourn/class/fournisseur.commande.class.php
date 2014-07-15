@@ -388,18 +388,14 @@ class CommandeFournisseur extends CommonOrder
 
             if (! $error)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-                if ($result < 0)
+				// Call trigger
+				$result=$this->call_trigger('ORDER_SUPPLIER_VALIDATE',$user);
+				if ($result < 0)
                 {
-                    $error++;
-                    $this->errors=$interface->errors;
                     $this->db->rollback();
                     return -1;
                 }
-                // Fin appel triggers
+				// End call triggers
             }
 
             if (! $error)
@@ -653,12 +649,10 @@ class CommandeFournisseur extends CommonOrder
 
                 if (! $error)
                 {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('ORDER_SUPPLIER_APPROVE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                    // Fin appel triggers
+					// Call trigger
+					$result=$this->call_trigger('ORDER_SUPPLIER_APPROVE',$user);
+					if ($result < 0) $error++;            
+					// End call triggers
                 }
 
                 if (! $error)
@@ -714,17 +708,16 @@ class CommandeFournisseur extends CommonOrder
 
                 if ($error == 0)
                 {
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('ORDER_SUPPLIER_REFUSE',$this,$user,$langs,$conf);
-                    if ($result < 0)
+					// Call trigger
+					$result=$this->call_trigger('ORDER_SUPPLIER_REFUSE',$user);
+					if ($result < 0)
                     {
                         $error++;
-                        $this->errors=$interface->errors;
                         $this->db->rollback();
                     }
-                    // Fin appel triggers
+                    else 
+                    	$this->db->commit();
+					// End call triggers
                 }
             }
             else
@@ -772,12 +765,10 @@ class CommandeFournisseur extends CommonOrder
                 $result = 0;
                 $this->log($user, $statut, time());
 
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ORDER_SUPPLIER_CANCEL',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+				// Call trigger
+				$result=$this->call_trigger('ORDER_SUPPLIER_CANCEL',$user);
+				if ($result < 0) $error++;            
+				// End call triggers
 
                 if ($error == 0)
                 {
@@ -967,18 +958,14 @@ class CommandeFournisseur extends CommonOrder
 
 					if (! $notrigger)
 	                {
-	                    // Appel des triggers
-	                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	                    $interface=new Interfaces($this->db);
-	                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-	                    if ($result < 0)
+						// Call trigger
+						$result=$this->call_trigger('ORDER_SUPPLIER_CREATE',$user);
+						if ($result < 0)            
 	                    {
-	                        $error++;
-	                        $this->errors=$interface->errors;
 	                        $this->db->rollback();
 	                        return -1;
 	                    }
-	                    // Fin appel triggers
+						// End call triggers
 	                }
 
 	                $this->db->commit();
@@ -1041,12 +1028,10 @@ class CommandeFournisseur extends CommonOrder
                 if ($reshook < 0) $error++;
             }
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_SUPPLIER_CLONE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+			// Call trigger
+			$result=$this->call_trigger('ORDER_SUPPLIER_CLONE',$user);
+			if ($result < 0) $error++;            
+			// End call triggers
         }
 
         // End
@@ -1222,18 +1207,14 @@ class CommandeFournisseur extends CommonOrder
                 if (! $notrigger)
                 {
                     global $conf, $langs, $user;
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('LINEORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0)
+					// Call trigger
+					$result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
+					if ($result < 0)        
                     {
-                        $error++;
-                        $this->errors=$interface->errors;
                         $this->db->rollback();
                         return -1;
                     }
-                    // Fin appel triggers
+					// End call triggers
                 }
 
                 $this->update_price('','auto');
@@ -1295,18 +1276,14 @@ class CommandeFournisseur extends CommonOrder
                 if (! $notrigger)
                 {
                     global $conf, $langs, $user;
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('LINEORDER_SUPPLIER_DISPATCH',$this,$user,$langs,$conf);
-                    if ($result < 0)
+					// Call trigger
+					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH',$user);
+					if ($result < 0)        
                     {
-                        $error++;
-                        $this->errors=$interface->errors;
                         $this->db->rollback();
                         return -1;
                     }
-                    // Fin appel triggers
+					// End call triggers
                 }
 
                 $this->db->commit();
@@ -1369,15 +1346,10 @@ class CommandeFournisseur extends CommonOrder
 
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$result = 0;
-				$interface=new Interfaces($this->db);
-				$result = $interface->run_triggers('LINEORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+				// Call trigger
+				$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
+				if ($result < 0) $error++;            
+				// End call triggers
 			}
 
 			if (! $error)
@@ -1424,6 +1396,16 @@ class CommandeFournisseur extends CommonOrder
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
+        
+        // Call trigger
+        $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
+        if ($result < 0)
+        {
+        	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+        	return -1;
+        }
+        // End call triggers
+        
 
         $this->db->begin();
 
@@ -1459,18 +1441,6 @@ class CommandeFournisseur extends CommonOrder
         		$error++;
         		dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
         	}
-        }
-
-        if (! $error)
-        {
-        	// Appel des triggers
-        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        	$interface=new Interfaces($this->db);
-        	$result=$interface->run_triggers('ORDER_SUPPLIER_DELETE',$this,$user,$langs,$conf);
-        	if ($result < 0) {
-        		$error++; $this->errors=$interface->errors;
-        	}
-        	// Fin appel triggers
         }
 
         if (! $error)
@@ -1828,18 +1798,14 @@ class CommandeFournisseur extends CommonOrder
                 if (! $notrigger)
                 {
                     global $conf, $langs, $user;
-                    // Appel des triggers
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('LINEORDER_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
-                    if ($result < 0)
+					// Call trigger
+					$result=$this->call_trigger('LINEORDER_SUPPLIER_UPDATE',$user);
+					if ($result < 0)        
                     {
-                        $error++;
-                        $this->errors=$interface->errors;
                         $this->db->rollback();
                         return -1;
                     }
-                    // Fin appel triggers
+					// End call triggers
                 }
 
                 // Mise a jour info denormalisees au niveau facture

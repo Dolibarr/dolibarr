@@ -121,13 +121,12 @@ class Tva extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");
 
-            // Start triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('TVA_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // End triggers
+            // Call trigger
+            $result=$this->call_trigger('TVA_CREATE',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
 
+            //FIXME: Add rollback if trigger fail
             return $this->id;
         }
         else
@@ -187,12 +186,12 @@ class Tva extends CommonObject
 
 		if (! $notrigger)
 		{
-            // Start triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('TVA_MODIFY',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // End triggers
+            // Call trigger
+            $result=$this->call_trigger('TVA_MODIFY',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
+            
+            //FIXME: Add rollback if trigger fail
     	}
 
         return 1;
@@ -279,7 +278,12 @@ class Tva extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
-
+		
+		// Call trigger
+		$result=$this->call_trigger('TVA_DELETE',$user);
+		if ($result < 0) return -1;
+		// End call triggers
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -291,12 +295,6 @@ class Tva extends CommonObject
 			return -1;
 		}
 
-        // Start triggers
-        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('TVA_DELETE',$this,$user,$langs,$conf);
-        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-        // End triggers
 
 		return 1;
 	}
@@ -541,13 +539,16 @@ class Tva extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."tva");    // TODO should be called paiementtva
 
-            // Start triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('TVA_ADDPAYMENT',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // End triggers
-
+            // Call trigger
+            //XXX: Should be done just befor commit no ?
+            $result=$this->call_trigger('TVA_ADDPAYMENT',$user);
+            if ($result < 0) 
+            {
+            	$this->id = 0;
+            	$ok = 0;
+            }
+            // End call triggers
+            
             if ($this->id > 0)
             {
                 $ok=1;
@@ -595,7 +596,6 @@ class Tva extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error();
                 $this->db->rollback();
                 return -2;
             }

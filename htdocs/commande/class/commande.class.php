@@ -238,6 +238,7 @@ class Commande extends CommonOrder
         if (! $resql)
         {
             dol_print_error($this->db);
+            $this->error=$this->db->lasterror();
             $error++;
         }
 
@@ -259,8 +260,13 @@ class Commande extends CommonOrder
 						$mouvP->origin = &$this;
                         // We decrement stock of product (and sub-products)
                         $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));
-                        if ($result < 0) { $error++; }
+                        if ($result < 0)
+                        { 
+                        	$error++;
+                        	$this->error=$mouvP->error;
+                        }
                     }
+                    if ($error) break;
                 }
             }
         }
@@ -296,12 +302,10 @@ class Commande extends CommonOrder
 
         if (! $error)
         {
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('ORDER_VALIDATE',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
         }
 
         // Set new ref and current status
@@ -319,7 +323,6 @@ class Commande extends CommonOrder
         else
         {
             $this->db->rollback();
-            $this->error=$this->db->lasterror();
             return -1;
         }
     }
@@ -430,12 +433,10 @@ class Commande extends CommonOrder
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_REOPEN',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('ORDER_REOPEN',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
         }
         else
         {
@@ -491,13 +492,11 @@ class Commande extends CommonOrder
 
             if ($this->db->query($sql))
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ORDER_CLOSE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
-
+	            // Call trigger
+	            $result=$this->call_trigger('ORDER_CLOSE',$user);
+	            if ($result < 0) $error++;            
+	            // End call triggers
+ 
                 if (! $error)
                 {
                 	$this->statut=3;
@@ -558,8 +557,11 @@ class Commande extends CommonOrder
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
 						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
-						if ($result < 0) {
+						if ($result < 0) 
+						{
 							$error++;
+							$this->error=$mouvP->error;
+							break;
 						}
 					}
 				}
@@ -567,14 +569,10 @@ class Commande extends CommonOrder
 
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('ORDER_CANCEL',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+	            // Call trigger
+	            $result=$this->call_trigger('ORDER_CANCEL',$user);
+	            if ($result < 0) $error++;            
+	            // End call triggers
 			}
 
 			if (! $error)
@@ -585,8 +583,6 @@ class Commande extends CommonOrder
 			}
 			else
 			{
-				$this->error=$mouvP->error;
-
 				foreach($this->errors as $errmsg)
 				{
 					dol_syslog(get_class($this)."::cancel ".$errmsg, LOG_ERR);
@@ -812,12 +808,10 @@ class Commande extends CommonOrder
 
                     if (! $notrigger)
                     {
-                        // Appel des triggers
-                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                        $interface=new Interfaces($this->db);
-                        $result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
-                        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                        // Fin appel triggers
+			            // Call trigger
+			            $result=$this->call_trigger('ORDER_CREATE',$user);
+			            if ($result < 0) $error++;            
+			            // End call triggers
                     }
 
 	                if (!$error) {
@@ -909,12 +903,10 @@ class Commande extends CommonOrder
                 if ($reshook < 0) $error++;
             }
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ORDER_CLONE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('ORDER_CLONE',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
         }
 
         // End
@@ -2228,14 +2220,10 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('ORDER_CLASSIFY_BILLED',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
 
 			if (! $error)
 			{
@@ -2247,8 +2235,6 @@ class Commande extends CommonOrder
 			}
 			else
 			{
-				$this->error=$this->db->error();
-
 				foreach($this->errors as $errmsg)
 				{
 					dol_syslog(get_class($this)."::classifyBilled ".$errmsg, LOG_ERR);
@@ -2453,16 +2439,13 @@ class Commande extends CommonOrder
 
         if (! $error && ! $notrigger)
         {
-        	// Appel des triggers
-        	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-        	$interface=new Interfaces($this->db);
-        	$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
-        	if ($result < 0) {
-        		$error++; $this->errors=$interface->errors;
-        	}
-        	// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('ORDER_DELETE',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
         }
 
+        //TODO: Check for error after each action. If one failed we rollback, don't waste time to do action if previous fail
         if (! $error)
         {
         	// Delete order details
@@ -2471,6 +2454,7 @@ class Commande extends CommonOrder
         	if (! $this->db->query($sql) )
         	{
         		$error++;
+        		$this->errors[]=$this->db->lasterror();
         	}
 
         	// Delete order
@@ -2479,6 +2463,7 @@ class Commande extends CommonOrder
         	if (! $this->db->query($sql) )
         	{
         		$error++;
+        		$this->errors[]=$this->db->lasterror();
         	}
 
         	// Delete linked object
@@ -2538,7 +2523,6 @@ class Commande extends CommonOrder
         }
         else
         {
-            $this->error=$this->db->lasterror();
 	        foreach($this->errors as $errmsg)
 	        {
 		        dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -3197,12 +3181,10 @@ class OrderLine extends CommonOrderLine
 				}
 			}
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
-            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('LINEORDER_DELETE',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
 
 	        if (!$error) {
 		        $this->db->commit();
@@ -3322,12 +3304,10 @@ class OrderLine extends CommonOrderLine
 
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
-                // Fin appel triggers
+	            // Call trigger
+	            $result=$this->call_trigger('LINEORDER_INSERT',$user);
+	            if ($result < 0) $error++;            
+	            // End call triggers
             }
 
 	        if (!$error) {
@@ -3439,12 +3419,10 @@ class OrderLine extends CommonOrderLine
 
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result = $interface->run_triggers('LINEORDER_UPDATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+	            // Call trigger
+	            $result=$this->call_trigger('LINEORDER_UPDATE',$user);
+	            if ($result < 0) $error++;            
+	            // End call triggers
 			}
 
 			if (!$error) {

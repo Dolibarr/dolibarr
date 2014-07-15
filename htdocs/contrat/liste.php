@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 $langs->load("contracts");
 $langs->load("products");
 $langs->load("companies");
+$langs->load("compta");
 
 $sortfield=GETPOST('sortfield','alpha');
 $sortorder=GETPOST('sortorder','alpha');
@@ -40,6 +42,7 @@ $offset = $limit * $page ;
 
 $search_nom=GETPOST('search_nom');
 $search_contract=GETPOST('search_contract');
+$search_ref_ext=GETPOST('search_ref_ext','alpha');
 $sall=GETPOST('sall');
 $statut=GETPOST('statut')?GETPOST('statut'):1;
 $socid=GETPOST('socid');
@@ -72,6 +75,7 @@ $sql.= ' SUM('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NOT NULL AND
 $sql.= ' SUM('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
 $sql.= " c.rowid as cid, c.ref, c.datec, c.date_contrat, c.statut,";
 $sql.= " s.nom, s.rowid as socid";
+$sql.= " ,c.ref_ext";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."contrat as c";
@@ -85,6 +89,9 @@ if ($search_nom) {
 }
 if ($search_contract) {
     $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
+}
+if (!empty($search_ref_ext)) {
+	$sql .= natural_search(array('c.ref_ext'), $search_ref_ext);
 }
 if ($sall) {
     $sql .= natural_search(array('s.nom', 'cd.label', 'cd.description'), $sall);
@@ -107,7 +114,9 @@ if ($resql)
     print '<tr class="liste_titre">';
     $param='&amp;search_contract='.$search_contract;
     $param.='&amp;search_nom='.$search_nom;
+    $param.='&amp;search_ref_ext='.$search_ref_ext;
     print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("RefCustomer"), $_SERVER["PHP_SELF"], "c.ref_ext","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateContract"), $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
@@ -123,6 +132,9 @@ if ($resql)
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.$search_contract.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
+    print '<input type="text" class="flat" size="7" name="search_ref_ext" value="'.$search_ref_ext.'">';
     print '</td>';
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="24" name="search_nom" value="'.$search_nom.'">';
@@ -144,6 +156,7 @@ if ($resql)
         print img_object($langs->trans("ShowContract"),"contract").' '.(isset($obj->ref) ? $obj->ref : $obj->cid) .'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
+        print '<td>'.$obj->ref_ext.'</td>';
         print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         //print '<td align="center">'.dol_print_date($obj->datec).'</td>';
         print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat)).'</td>';

@@ -1,7 +1,6 @@
 #
 # Converts the hash to a csv string
 #
-#
 # $hash = {
 #   HOME   => '/home/user',
 #   ENV1   => 'env1',
@@ -12,7 +11,6 @@
 #
 # $string = "HOME='/home/user',ENV1='env1',SECRET='secret'"
 #
-
 module Puppet::Parser::Functions
   newfunction(:hash2csv, :type => :rvalue, :doc => <<-'EOS'
     Returns a csv formatted string from an hash in the form

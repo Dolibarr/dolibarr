@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  *
@@ -47,6 +47,7 @@ $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
+$langs->load('compta');
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -205,6 +206,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
     	$object->fk_project					= GETPOST('projectid','int');
     	$object->remise_percent				= GETPOST('remise_percent','alpha');
     	$object->ref						= GETPOST('ref','alpha');
+    	$object->ref_ext					= GETPOST('ref_ext','alpha');
 
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
 	    if ($_POST['origin'] && $_POST['originid'])
@@ -711,6 +713,21 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		$action = 'edit_extras';
 		setEventMessage($object->error,'errors');
 	}
+} elseif ($action=='setref_ext') {
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+	}
+	$object->ref_ext=GETPOST('ref_ext','alpha');
+	
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+		$action='editref_ext';
+	} else {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit;
+	}
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer)
@@ -858,6 +875,10 @@ if ($action == 'create')
 
     // Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
+	
+	// Ref Int
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+	print '<td colspan="2"><input type="text" siez="5" name="ref_ext" id="ref_ext" value="'.GETPOST('ref_ext','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';
@@ -1045,6 +1066,14 @@ else
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
         print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
         print "</td></tr>";
+
+        print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print '</td>';
+		print '</tr>';
 
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";

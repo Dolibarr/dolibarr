@@ -20,11 +20,12 @@
 
 create table llx_contrat
 (
-  rowid						integer AUTO_INCREMENT PRIMARY KEY,  
-  ref						varchar(30),		            -- reference de contrat
+  rowid						integer AUTO_INCREMENT PRIMARY KEY,
+  ref						varchar(30),		            -- contrat reference
+  ref_ext					varchar(30),		            -- external contract ref
   entity					integer DEFAULT 1 NOT NULL,	-- multi company id
   tms						timestamp,
-  datec						datetime,                   -- date de creation de l enregistrement
+  datec						datetime,                   -- creation date
   date_contrat				datetime,
   statut					smallint DEFAULT 0,
   mise_en_service			datetime,
@@ -40,7 +41,7 @@ create table llx_contrat
   note_private				text,
   note_public				text,
   import_key				varchar(14),
-  extraparams				varchar(255)					-- for stock other parameters with json format
-  
+  extraparams				varchar(255)
+
 )ENGINE=innodb;
 
