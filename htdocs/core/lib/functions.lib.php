@@ -3631,20 +3631,19 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 
 
 /**
- *	Replace CRLF in string with a HTML BR tag
+ * Replace CRLF in string with a HTML BR tag
  *
- *	@param	string	$stringtoencode		String to encode
- *	@param	string	$nl2brmode			0=Adding br before \n, 1=Replacing \n by br
- *  @param  string	$forxml             false=Use <br>, true=Use <br />
- *	@return	string						String encoded
+ * @param	string	$stringtoencode		String to encode
+ * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+ * @param   bool	$forxml             false=Use <br>, true=Use <br />
+ * @return	string						String encoded
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
 	if (! $nl2brmode)
 	{
-		// We use @ to avoid warning on PHP4 that does not support entity encoding from UTF8;
-		if (version_compare(PHP_VERSION, '5.3.0') < 0) return @nl2br($stringtoencode);
-		else return @nl2br($stringtoencode,$forxml);
+		if (version_compare(PHP_VERSION, '5.3.0') < 0) return nl2br($stringtoencode);
+		else return nl2br($stringtoencode,$forxml);
 	}
 	else
 	{
@@ -3744,12 +3743,11 @@ function dol_html_entity_decode($a,$b,$c='UTF-8')
  * @param   string  $encoding       Encoding
  * @param   bool    $double_encode  When double_encode is turned off PHP will not encode existing html entities
  * @return  string  $ret            Encoded string
+ * @deprecated Since PHP4 support is no longer available, this function does not make sense
  */
 function dol_htmlentities($string, $flags=null, $encoding='UTF-8', $double_encode=false)
 {
-	// We use @ to avoid warning on PHP4 that does not support entity decoding to UTF8;
-	$ret=@htmlentities($string, $flags, $encoding, $double_encode);
-	return $ret;
+	return htmlentities($string, $flags, $encoding, $double_encode);
 }
 
 
@@ -3780,7 +3778,7 @@ function dol_string_is_good_iso($s)
  *	Return nb of lines of a clear text
  *
  *	@param	string	$s			String to check
- * 	@param	string	$maxchar	Not yet used
+ * 	@param	int     $maxchar	Not yet used
  *	@return	int					Number of lines
  */
 function dol_nboflines($s,$maxchar=0)
@@ -3835,12 +3833,12 @@ function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 /**
  *	 Same function than microtime in PHP 5 but compatible with PHP4
  *
- *	 @return		float		Time (millisecondes) with microsecondes in decimal part
+ * @return		float		Time (millisecondes) with microsecondes in decimal part
+ * @deprecated Dolibarr does not support PHP4, you should use native function
  */
 function dol_microtime_float()
 {
-	list($usec, $sec) = explode(" ", microtime());
-	return ((float) $usec + (float) $sec);
+	return microtime();
 }
 
 /**
