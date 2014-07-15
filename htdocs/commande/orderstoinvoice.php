@@ -285,7 +285,7 @@ if (($action == 'create' || $action == 'add') && empty($mesgs))
 												'HT',
 												0,
 												$product_type,
-												$lines[$i]->rang,
+												$ii,
 												$lines[$i]->special_code,
 												$object->origin,
 												$lines[$i]->rowid,
