@@ -68,6 +68,8 @@ For users:
 - Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
 - Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
+- Fix: [ bug #1471 ] Several PHP warnings when intercepting USER_CREATE trigger.
+- Fix: [ bug #1517 ] Packages sizes.
 
 TODO
 - New: Predefined product and free product use same form.
@@ -106,10 +108,12 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
   So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
+- Remove add_photo_web() that is ot used anymore by core code.
 
 
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Hide title of event when agenda module disabled.
 Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
 Fix: Question about warehouse must not be done when module stock is disabled.
 Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
@@ -150,6 +154,9 @@ Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order l
 Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
 Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
 Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
+Fix: [ bug #1522 ] Element list into associate object into project are no more filterd by project thirdparty
+Fix: [ bug #1526 ] Thumbs of files uploaded with dots in their names do not load correctly
+Fix: Import ProfId1 to siren and ProfId2 to siret
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.

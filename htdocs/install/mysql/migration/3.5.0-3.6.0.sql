@@ -18,6 +18,15 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
+
+
+ALTER TABLE llx_expedition MODIFY COLUMN height float;
+ALTER TABLE llx_expedition MODIFY COLUMN width float;
+ALTER TABLE llx_expedition MODIFY COLUMN size float;
+ALTER TABLE llx_expedition MODIFY COLUMN weight float;
+
+ 
 ALTER TABLE llx_societe DROP COLUMN datea;
 
 ALTER TABLE llx_holiday ADD COLUMN fk_user_create integer;
@@ -146,8 +155,7 @@ CREATE TABLE llx_product_batch (
   sellby datetime DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL,
-  KEY ix_fk_product_stock (fk_product_stock)
+  import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE llx_expeditiondet_batch (
@@ -157,8 +165,7 @@ CREATE TABLE llx_expeditiondet_batch (
   sellby date DEFAULT NULL,
   batch varchar(30) DEFAULT NULL,
   qty double NOT NULL DEFAULT 0,
-  fk_origin_stock integer NOT NULL,
-  KEY ix_fk_expeditiondet (fk_expeditiondet)
+  fk_origin_stock integer NOT NULL
 ) ENGINE=InnoDB;
 
 -- Salary payment in tax module
@@ -181,6 +188,13 @@ CREATE TABLE llx_payment_salary (
   fk_user_creat integer,
   fk_user_modif integer
 )ENGINE=innodb;
+
+ALTER TABLE llx_product_batch ADD INDEX idx_fk_product_stock (fk_product_stock);
+ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
+
+ALTER TABLE llx_expeditiondet_batch ADD INDEX idx_fk_expeditiondet (fk_expeditiondet);
+ALTER TABLE llx_expeditiondet_batch ADD CONSTRAINT fk_expeditiondet_batch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet(rowid);
+
 
 -- New 1074 : Stock mouvement link to origin
 ALTER TABLE llx_stock_mouvement ADD fk_origin integer;
@@ -1663,4 +1677,4 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 -- Fix: Missing instruction not correctly done into 3.5
 -- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_mode_reglement DROP NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_cond_reglement DROP NOT NULL;
-
+ 

@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
 
 		$sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
 		$sql.= " f.facnumber, f.total as total_ht,";
-		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
+		$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
@@ -152,6 +152,7 @@ if ($id > 0 || ! empty($ref))
 			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$product->id,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$product->id,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total_ht","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$product->id,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
@@ -174,6 +175,7 @@ if ($id > 0 || ! empty($ref))
 					print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->datef),'day')."</td>";
+					print "<td align=\"center\">".$objp->qty."</td>\n";
 					print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
 					print "</tr>\n";

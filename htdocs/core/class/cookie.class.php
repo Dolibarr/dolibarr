@@ -91,7 +91,9 @@ class DolCookie
 			$num = (count($this->cookiearray) - 2);
 			for ($f = 0; $f <= $num; $f++)
 			{
-				$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
+				if (!empty($this->myKey)) {
+					$this->myValue .= strval(chr($this->cookiearray[$f]/$this->myKey));
+				}
 			}
 
 			return(base64_decode($this->myValue));
