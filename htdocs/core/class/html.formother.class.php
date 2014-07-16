@@ -760,7 +760,7 @@ class FormOther
 
         $montharray = monthArray($langs);	// Get array
 
-        $select_month = '<select class="flat" name="'.$htmlname.'">';
+        $select_month = '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         if ($useempty)
         {
             $select_month .= '<option value="0">&nbsp;</option>';
