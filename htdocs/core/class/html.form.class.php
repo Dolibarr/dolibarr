@@ -3306,7 +3306,7 @@ class Form
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $out.= '<select class="flat" name="'.$htmlname.'">';
+        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         foreach ($langs->cache_currencies as $code_iso => $currency)
         {
         	if ($selected && $selected == $code_iso)

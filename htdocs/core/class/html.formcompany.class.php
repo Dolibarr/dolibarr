@@ -374,7 +374,7 @@ class FormCompany
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<select class="flat" name="'.$htmlname.'">';
+			$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			$out.= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -453,7 +453,7 @@ class FormCompany
 		if ($resql)
 		{
 			$out.= '<div id="particulier2" class="visible">';
-			$out.= '<select class="flat" name="forme_juridique_code">';
+			$out.= '<select class="flat" name="forme_juridique_code" id="legal_form">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 
 			$num = $this->db->num_rows($resql);
@@ -772,7 +772,7 @@ class FormCompany
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
 
-        $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $out = '<input type="text" name="'.$htmlname.'" id="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
     }
@@ -782,7 +782,7 @@ class FormCompany
      *
      * @param 	int 		$local			LocalTax
      * @param 	int 		$selected		Preselected value
-     * @param 	varchar 	$htmlname		HTML select name
+     * @param 	string      $htmlname		HTML select name
      * @return	void
      */
     function select_localtax($local, $selected, $htmlname)
@@ -798,7 +798,7 @@ class FormCompany
     		if (count($valors) > 1)
     		{
     			//montar select
-    			print '<select class="flat" name="'.$htmlname.'">';
+    			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
     			while ($i <= (count($valors))-1)
     			{
     				if ($selected == $valors[$i])
