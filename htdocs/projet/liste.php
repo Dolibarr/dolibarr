@@ -61,6 +61,7 @@ $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 $search_ref=GETPOST("search_ref");
 $search_label=GETPOST("search_label");
 $search_societe=GETPOST("search_societe");
+$search_all=GETPOST("search_all");
 
 
 /*
@@ -96,6 +97,10 @@ if ($search_label)
 if ($search_societe)
 {
 	$sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_all)
+{
+	$sql .= natural_search(array('p.ref','p.title','s.nom'), $search_all);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);

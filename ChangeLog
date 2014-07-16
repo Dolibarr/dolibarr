@@ -20,7 +20,10 @@ For users:
 - New: Add country into table of thirdparties type. This will allow to provide
        a list of thirdparty types specific to a country (like argentina that
        need type A or B).
-- New: Can force a specific bank account onto an invoice/order...      
+- New: Can force a specific bank account onto an invoice/order.
+- New: First changes for accessibility.
+- New: Home page of project area shows list of draft project (like other main page).
+- New: Can search on project ref or string from project main page (like other main page).
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
