@@ -240,16 +240,17 @@ function dol_getprefix()
  */
 function dol_include_once($relpath, $classname='')
 {
+	$fullpath = dol_buildpath($relpath);
 
-	if (!file_exists($relpath)) {
+	if (!file_exists($fullpath)) {
 		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_ERR);
 		return false;
 	}
 
 	if (! empty($classname) && ! class_exists($classname)) {
-		return include dol_buildpath($relpath);
+		return include $fullpath;
 	} else {
-		return include_once dol_buildpath($relpath);
+		return include_once $fullpath;
 	}
 }
 
