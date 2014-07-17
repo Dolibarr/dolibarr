@@ -154,4 +154,23 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals(0,$result);
     }
 
+	/**
+	 * is_ip
+	 *
+	 * @return void
+	 */
+	public function testIsIp() {
+
+		//Test not valid IP
+		$result = is_ip('192.168.1.267');
+		$this->assertEquals(0, $result);
+
+		//Test private range IP
+		$result = is_ip('192.168.1.1');
+		$this->assertEquals(2, $result);
+
+		//Test public range IP
+		$result = is_ip('91.121.33.228');
+		$this->assertEquals(1, $result);
+	}
 }

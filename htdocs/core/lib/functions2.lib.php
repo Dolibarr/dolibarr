@@ -1364,10 +1364,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 /**
  * This function evaluates a string that should be a valid IPv4
  *
- * @param	string		$ip			IP Address
- * @return	It returns 0 if $ip is not a valid IPv4
- * 			It returns 1 if $ip is a valid IPv4 and is a public IP
- * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
+ * @param	string $ip IP Address
+ * @return	int 0 if not valid, 1 if valid and public IP, 2 if valid and private range IP
  */
 function is_ip($ip)
 {
