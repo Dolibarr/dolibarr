@@ -363,7 +363,7 @@ if ($resql)
 
             print "</td>\n";
 
-            // Customer ref
+            // Customer reference
             print '<td class="nowrap">';
             print $objp->ref_client;
             print '</td>';
