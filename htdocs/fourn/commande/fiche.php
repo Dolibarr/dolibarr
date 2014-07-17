@@ -105,6 +105,9 @@ $permissionnote=$user->rights->fournisseur->commande->creer;	// Used by the incl
  * Actions
  */
 
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
