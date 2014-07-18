@@ -23,73 +23,16 @@
  * 		\ingroup	core
  */
 
-if (! function_exists('json_encode'))
-{
-	/**
-	 * Implement json_encode for PHP that does not support it
-	 *
-	 * @param	mixed	$elements		PHP Object to json encode
-	 * @return 	string					Json encoded string
-	 */
-	function json_encode($elements)
-	{
-		return dol_json_encode($elements);
-	}
-}
-
 /**
  * Implement json_encode for PHP that does not support it
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
+ * @deprecated Use json_encode.
  */
 function dol_json_encode($elements)
 {
-	$num=count($elements);
-	if (is_object($elements))	// Count number of properties for an object
-	{
-		$num=0;
-		foreach($elements as $key => $value) $num++;
-	}
-	//var_dump($num);
-
-	// determine type
-	if (is_numeric(key($elements)) && key($elements) == 0)
-	{
-		// indexed (list)
-		$keysofelements=array_keys($elements);	// Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
-		$output = '[';
-		for ($i = 0, $last = ($num - 1); $i < $num; $i++)
-		{
-			if (! isset($elements[$keysofelements[$i]])) continue;
-			if (is_array($elements[$keysofelements[$i]]) || is_object($elements[$keysofelements[$i]])) $output.= json_encode($elements[$keysofelements[$i]]);
-			else $output .= _val($elements[$keysofelements[$i]]);
-			if ($i !== $last) $output.= ',';
-		}
-		$output.= ']';
-	}
-	else
-	{
-		// associative (object)
-		$output = '{';
-		$last = $num - 1;
-		$i = 0;
-		$tmpelements=array();
-		if (is_array($elements)) $tmpelements=$elements;
-		if (is_object($elements)) $tmpelements=get_object_vars($elements);
-		foreach($tmpelements as $key => $value)
-		{
-			$output .= '"'.$key.'":';
-			if (is_array($value)) $output.= json_encode($value);
-			else $output .= _val($value);
-			if ($i !== $last) $output.= ',';
-			++$i;
-		}
-		$output.= '}';
-	}
-
-	// return
-	return $output;
+	return json_encode($elements);
 }
 
 /**
@@ -196,21 +139,6 @@ function _val($val)
 	elseif (is_float($val)) return sprintf('%F', $val);
 	elseif (is_bool($val)) return ($val ? 'true' : 'false');
 	else  return 'null';
-}
-
-if (! function_exists('json_decode'))
-{
-	/**
-	 * Implement json_decode for PHP that does not support it
-	 *
-	 * @param	string	$json		Json encoded to PHP Object or Array
-	 * @param	bool	$assoc		False return an object, true return an array
-	 * @return 	mixed				Object or Array
-	 */
-	function json_decode($json, $assoc=false)
-	{
-		return dol_json_decode($json, $assoc);
-	}
 }
 
 /**
