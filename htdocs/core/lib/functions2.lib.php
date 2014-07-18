@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
