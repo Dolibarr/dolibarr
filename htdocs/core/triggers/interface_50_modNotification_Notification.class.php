@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013-2014 Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,13 @@
 /**
  *  Class of triggers for notification module
  */
-class InterfaceNotification
+class InterfaceNotification extends DolibarrTriggers
 {
-    var $db;
+	public $family = 'notification';
+	public $description = "Triggers of this module send email notifications according to Notification module setup.";
+	public $version = self::VERSION_DOLIBARR;
+	public $picto = 'email';
+
     var $listofmanagedevents=array(
     	'BILL_VALIDATE',
     	'ORDER_VALIDATE',
@@ -40,71 +44,19 @@ class InterfaceNotification
         'SHIPPING_VALIDATE'
    	);
 
-    /**
-     *   Constructor
-     *
-     *   @param		DoliDB		$db      Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
-
-        $this->name = preg_replace('/^Interface/i','',get_class($this));
-        $this->family = "notification";
-        $this->description = "Triggers of this module send email notifications according to Notification module setup.";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-        $this->picto = 'email';
-    }
-
-    /**
-     *   Return name of trigger file
-     *
-     *   @return     string      Name of trigger file
-     */
-    function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     *   Return description of trigger file
-     *
-     *   @return     string      Description of trigger file
-     */
-    function getDesc()
-    {
-        return $this->description;
-    }
-
-    /**
-     *   Return version of trigger file
-     *
-     *   @return     string      Version of trigger file
-     */
-    function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($this->version == 'experimental') return $langs->trans("Experimental");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("Unknown");
-    }
-
-    /**
-     *      Function called when a Dolibarrr business event is done.
-     *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
-     *
-     *      @param	string		$action		Event action code
-     *      @param  Object		$object     Object
-     *      @param  User		$user       Object user
-     *      @param  Translate	$langs      Object langs
-     *      @param  conf		$conf       Object conf
-     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
-     */
-	function run_trigger($action,$object,$user,$langs,$conf)
-    {
+	/**
+	 * Function called when a Dolibarrr business event is done.
+	 * All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+	 *
+	 * @param string		$action		Event action code
+	 * @param Object		$object     Object
+	 * @param User		    $user       Object user
+	 * @param Translate 	$langs      Object langs
+	 * @param conf		    $conf       Object conf
+	 * @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
+	 */
+	public function run_trigger($action, $object, User $user, Translate $langs, Conf $conf)
+	{
 		if (empty($conf->notification->enabled)) return 0;     // Module not active, we do nothing
 
 		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';

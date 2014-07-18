@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,81 +27,31 @@
 /**
  *  Class of triggers for security events
  */
-class InterfaceLogevents
+class InterfaceLogevents extends DolibarrTriggers
 {
-    var $db;
-    var $error;
+	public $picto = 'technic';
+	public $family = 'core';
+	public $description = "Triggers of this module allows to add security event records inside Dolibarr.";
+	public $version = self::VERSION_DOLIBARR;
 
     var $date;
     var $duree;
     var $texte;
     var $desc;
 
-    /**
-     *   Constructor
-     *
-     *   @param		DoliDB		$db      Database handler
-     */
-    function __construct($db)
-    {
-        $this->db = $db;
 
-        $this->name = preg_replace('/^Interface/i','',get_class($this));
-        $this->family = "core";
-        $this->description = "Triggers of this module allows to add security event records inside Dolibarr.";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
-        $this->picto = 'technic';
-    }
-
-    /**
-     *   Return name of trigger file
-     *
-     *   @return     string      Name of trigger file
-     */
-    function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     *   Return description of trigger file
-     *
-     *   @return     string      Description of trigger file
-     */
-    function getDesc()
-    {
-        return $this->description;
-    }
-
-    /**
-     *   Return version of trigger file
-     *
-     *   @return     string      Version of trigger file
-     */
-    function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($this->version == 'experimental') return $langs->trans("Experimental");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("Unknown");
-    }
-
-    /**
-     *      Function called when a Dolibarrr business event is done.
-     *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
-     *
-     *      @param	string		$action		Event action code
-     *      @param  Object		$object     Object
-     *      @param  User		$user       Object user
-     *      @param  Translate	$langs      Object langs
-     *      @param  conf		$conf       Object conf
-     *      @param  string		$entity     Value for instance of data (Always 1 except if module MultiCompany is installed)
-     *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
-     */
-    function run_trigger($action,$object,$user,$langs,$conf,$entity=1)
+	/**
+	 * Function called when a Dolibarrr business event is done.
+	 * All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+	 *
+	 * @param string		$action		Event action code
+	 * @param Object		$object     Object
+	 * @param User		$user       Object user
+	 * @param Translate	$langs      Object langs
+	 * @param conf		$conf       Object conf
+	 * @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
+	 */
+	public function run_trigger($action, $object, User $user, Translate $langs, Conf $conf)
     {
     	if (! empty($conf->global->MAIN_LOGEVENTS_DISABLE_ALL)) return 0;	// Log events is disabled (hidden features)
 
