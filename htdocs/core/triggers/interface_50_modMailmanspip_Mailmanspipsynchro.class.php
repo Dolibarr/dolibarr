@@ -146,6 +146,8 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			{
 				$return=1;
 			}
+
+	        return $return;
         }
 
 		return 0;
