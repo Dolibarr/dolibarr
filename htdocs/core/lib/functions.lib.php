@@ -10,6 +10,7 @@
  * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +33,7 @@
  *					This file contains all frequently used functions.
  */
 
-
-if (! function_exists('json_encode'))
-{
-	include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
-}
+include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
 
 /**
  * Function to return value of a static property when class
@@ -1478,19 +1475,11 @@ function dol_print_address($address, $htmlid, $mode, $id)
  */
 function isValidEmail($address)
 {
-	if (preg_match("/.*<(.+)>/i", $address, $regs)) {
-		$address = $regs[1];
-	}
-	// 2 letters domains extensions are for countries
-	// 3 letters domains extensions: biz|com|edu|gov|int|mil|net|org|pro|...
-	if (preg_match("/^[^@\s\t]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2,3}|asso|aero|coop|info|name)\$/i",$address))
-	{
+	if (filter_var($address, FILTER_VALIDATE_EMAIL)) {
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+
+	return false;
 }
 
 /**
