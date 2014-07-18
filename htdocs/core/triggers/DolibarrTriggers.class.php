@@ -55,6 +55,19 @@ abstract class DolibarrTriggers {
 	 */
 	public $family = '';
 
+	/**
+	 * Error reported by the trigger
+	 * @var string
+	 * @deprecated Use $this->errors
+	 */
+	public $error = '';
+
+	/**
+	 * Errors reported by the trigger
+	 * @var array
+	 */
+	public $errors = array();
+
 	const VERSION_DEVELOPMENT = 'development';
 	const VERSION_EXPERIMENTAL = 'experimental';
 	const VERSION_DOLIBARR = 'dolibarr';
