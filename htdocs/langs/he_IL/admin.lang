@@ -65,6 +65,8 @@ ShowPreview=הצג תצוגה מקדימה
 PreviewNotAvailable=לא זמין תצוגה מקדימה
 ThemeCurrentlyActive=פעיל כרגע הנושא
 CurrentTimeZone=אזור PHP (שרת)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=מרחב
 Table=Table
 Fields=שדות
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr הגרסה הנוכחית
 CallUpdatePage=עבור לעמוד שהעדכונים מבנה מסד הנתונים datas: %s.
 LastStableVersion=הגרסה היציבה האחרונה
 GenericMaskCodes=אתה רשאי להיכנס לכל מסכת מספור. במסכת זו, התגים הבאים יכול לשמש: <br> <b>{000000}</b> המתאים למספר אשר יהיה מוגדל על %s כל אחד. הזן כמו אפסים רבים ככל האורך הרצוי של הדלפק. נגד יושלם עד אפסים משמאל כדי שיהיה כמו אפסים רבים ככל המסכה. <br> <b>{000} 000000</b> זהה לקודם, אך קוזז המתאים למספר בצד ימין של סימן + מיושם החל מיום %s הראשונים. <br> <b>{000000 @ x}</b> זהה לקודם אבל הדלפק מתאפס לאפס כאשר x חודש הוא הגיע (x בין 1 ל 12 או 0 כדי להשתמש בחודשים הראשונים של שנת הכספים מוגדרת בהגדרות שלך). אם אפשרות זו בשימוש, x הוא 2 או יותר, אז רצף {yy} {מ&quot;מ} או {yyyy} {מ&quot;מ} נדרש גם. <br> <b>Dd {}</b> היום (01 עד 31). <br> <b>{מ&quot;מ}</b> החודש (01 עד 12). <br> <b>{Yy}, {yyyy}</b> או <b>{y}</b> השנה על 2, 4 או 1 מספרים. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=כל הדמויות האחרות מסכת יישאר ללא שינוי. <br> מקומות אסורים. <br>
 GenericMaskCodes4a=<u>למשל על %s 99 של צד שלישי TheCompany לעשות 2007/01/31:</u> <br>
 GenericMaskCodes4b=<u>למשל על צד שלישי נוצר 2007/03/01:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=כברירת מחדל המע&quot;מ המוצע הוא 0 אשר
 VATIsUsedExampleFR=בצרפת, זה אומר חברות או ארגונים שיש להם מערכת הכספים האמיתי (פשוטה נדל או רגיל). מערכת שבה מע&quot;מ מוכרז.
 VATIsNotUsedExampleFR=בצרפת, זה אומר שהם עמותות מע&quot;מ לא הכריז או חברות, ארגונים או מקצועות חופשיים שבחרו מערכת ארגונית מיקרו הכספים (מע&quot;מ זיכיון) ושילם מע&quot;מ זיכיון ללא כל הצהרה מע&quot;מ. בחירה זו תציג את התייחסות &quot;מע&quot;מ רלוונטי ללא - אמנות-293B של CGI&quot; על חשבוניות.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= שיעור RE כברירת מחדל בעת יצירת ה�
 LocalTax2IsNotUsedDescES= כברירת מחדל IRPF המוצע הוא 0. קץ שלטון.
 LocalTax2IsUsedExampleES= בספרד, פרילנסרים ובעלי מקצוע עצמאיים המספקים שירותים וחברות אשר בחרו במערכת המס של מודולים.
 LocalTax2IsNotUsedExampleES= בספרד הם BUSSINES לא כפוף למערכת המס של מודולים.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=לייבל שימוש כברירת מחדל אם לא התרגום ניתן למצוא את קוד
 LabelOnDocuments=התווית על מסמכים
 NbOfDays=נ.ב. הימים
@@ -1453,6 +1463,9 @@ AgendaSetup=אירועים מודול ההתקנה סדר היום
 PasswordTogetVCalExport=מפתח לאשר הקישור יצוא
 PastDelayVCalExport=לא יצא אירוע מבוגרת
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=מודול זה מאפשר להוסיף סמל אחרי מספרי טלפון. לחץ על סמל זה נקרא שרת עם כתובת ה-URL מסוים אתה מגדיר להלן. זה יכול לשמש כדי להתקשר למוקד הטלפוני המערכת Dolibarr שיכול להתקשר למספר הטלפון על מערכת SIP למשל.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

@@ -65,6 +65,8 @@ ShowPreview=顯示預覽
 PreviewNotAvailable=無法預覽
 ThemeCurrentlyActive=目前活躍的主題
 CurrentTimeZone=PHP服務器的TimeZone
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=空間
 Table=Table
 Fields=菲爾茲
@@ -294,7 +296,7 @@ CurrentVersion=此系統軟體(Dolibarr)目前版本
 CallUpdatePage=請到 %s 網頁更新資料庫結構及其資料。
 LastStableVersion=最新的穩定版本
 GenericMaskCodes=這個編碼模組使用方式如下:<br>1. <b>{000000}</b>表示每個 %s 編碼會依據此參數產生序號字串，且會自動遞增。有多少個0就表示序號字串有多長，滿最大值會自動歸0。<br>2. <b>{000000+000}</b> 同上面第一條，但是多了 offset 功能，也就第一筆 %s 編碼的起始序號會根據 + 號後面的參數而定。<br>3. <b>{000000@x}</b> 同上面第一條，但是每當為新的月份時，會將序號歸0。如果使用兩個x 則必需要有 {yy}{mm} 或 {yyyy}{mm} 參數。<br><b>{dd}</b> 表示天 (01 to 31).<br><b>{mm}</b> 表示月 (01 to 12)<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b>  表示用多少位數顯示年<br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=非遮罩字元的則該字元維持不變，也就是 A 就是 A，Z 就是 Z<br>注意:不允許空白字元<br>
 GenericMaskCodes4a=<u>例如: 第99筆 %s 資訊於 2007-01-31 建立完成：</u> <br>
 GenericMaskCodes4b=<u>例如: 於 2007-01-31 建立的客戶/供應商資訊:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=預設情況下，建議的營業稅為0，可用於像協會�
 VATIsUsedExampleFR=在法國，這意味着公司或機構有真正的財政體制（簡體真實的或正常的真實）。在其中一個營業稅申報制度。
 VATIsNotUsedExampleFR=在法國，這意味着協會，都是非營業稅申報或公司，組織或已選擇了微型企業會計制度（特許增值稅）和申報繳納營業稅沒有任何專利權營業稅自由職業者。這一選擇將顯示“的提法不適用營業稅 - 發票上的藝術的CGI 293B”。
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= 預設情況下，稀土率在創建前景，發票，訂
 LocalTax2IsNotUsedDescES= 預設情況下，建議IRPF為0。結束統治。
 LocalTax2IsUsedExampleES= 在西班牙，自由職業者，誰提供服務，誰選擇了模組稅務系統公司獨立專業人士。
 LocalTax2IsNotUsedExampleES= 在西班牙他們bussines不繳稅的模組系統。
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=預設情況下使用標籤，如果沒有翻譯，可找到的代碼
 LabelOnDocuments=標籤上的文件
 NbOfDays=鈮天
@@ -1453,6 +1463,9 @@ AgendaSetup=模組設置的行動和議程
 PasswordTogetVCalExport=授權出口的關鍵環節
 PastDelayVCalExport=不要以上出口事件
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=這個模組允許添加後Dolibarr聯繫電話號碼的圖標。關於這個圖標，會調用一個特定的URL serveur您定義如下。這可以用來調用一個從Dolibarr呼叫中心繫統，可致電1例如SIP系統的電話號碼。
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

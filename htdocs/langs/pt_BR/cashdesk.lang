@@ -1,18 +1,18 @@
 # Dolibarr language file - Source file is en_US - cashdesk
-CashDesks=Caixa
+CashDesks=Ponto de vendas
 CashDeskBank=Conta Bancaria
 CashDeskStock=Estoque
 CashDeskOn=Ligado
 CashDeskThirdParty=Fornecedor
-CashdeskDashboard=Ponto de acesso venda
+CashdeskDashboard=Ponto de acesso de venda
 NewSell=Nova venda
 AddThisArticle=Adicione este artigo
 RestartSelling=Volte para vendas
-SellFinished=Venda acabada
-PrintTicket=Cupom impresso
-TotalTicket=Ticket total
+SellFinished=Venda finalizada
+PrintTicket=Imprimir cupom
+TotalTicket=Total do cupom
 Change=Recebido em Excesso
-CashDeskSetupStock=Você pede para diminuir do estoque com a criação de faturas, mas não foi definido  armazém para isso <br> Alterar configuração do módulo de estoque, ou escolha um armazém
-BankToPay=Carregue Conta
-ShowCompany=Mostar Empresa
+CashDeskSetupStock=Você tentou retirar do estoque com a emissão da fatura, mas o usuário não tem permissão para usar o armazém <br> Altere a configuração do módulo de estoque, ou escolha outro armazém
+BankToPay=Carregar Conta
+ShowCompany=Exibir empresa
 FilterRefOrLabelOrBC=Busca (Ref/Etiqueta)

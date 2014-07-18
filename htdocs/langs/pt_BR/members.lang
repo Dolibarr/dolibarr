@@ -1,6 +1,16 @@
 # Dolibarr language file - Source file is en_US - members
-UserNotLinkedToMember=Usuário não vinculado a um membro
+MembersArea=Área de associados
+PublicMembersArea=Área de associados públicos
+MemberCard=Ficha de associado
+SubscriptionCard=Ficha de filiação
+Member=Associado
+Members=Associados
+MemberAccount=Login do associado
+ShowMember=Exibir ficha do associado
+UserNotLinkedToMember=Usuário não vinculado a um associado
 ThirdpartyNotLinkedToMember=Fornecedores não ligados a um membro
+MembersTickets=Etiquetas de associado
+FundationMembers=Membros da fundação
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Outro membro  já está vinculado a um terceiro. Remover este link em primeiro lugar porque um terceiro não pode ser ligado a apenas um membro (e vice-versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Por razões de segurança, você deve ter permissões para editar todos os usuários sejam capazes de ligar um membro a um usuário que não é seu.
 ThisIsContentOfYourCard=Este é os detalhes do seu cartão

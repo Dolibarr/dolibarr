@@ -125,3 +125,6 @@ DocumentModelBaleine=доклад полной проекта модели (logo
 PlannedWorkload = Запланированная нагрузка
 WorkloadOccupation= Workload affectation
 ProjectReferers=Refering objects
+SearchAProject=Search a project
+ProjectMustBeValidatedFirst=Project must be validated first
+ProjectDraft=Draft projects
