@@ -17,7 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-abstract class DolibarrTriggers {
+/**
+ * Class that all the triggers must extend
+ */
+abstract class DolibarrTriggers
+{
 
 	/**
 	 * Database handler
