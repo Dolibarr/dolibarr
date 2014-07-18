@@ -174,7 +174,7 @@ llxHeader('',$title);
 $now=dol_now();
 
 $search_ref = GETPOST("search_ref");
-$search_refcustomer=GETPOST('search_refcustomer','alpha');
+$search_refcustomer=GETPOST('search_refcustomer');
 $search_societe = GETPOST("search_societe");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
