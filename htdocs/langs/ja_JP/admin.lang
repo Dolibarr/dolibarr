@@ -65,6 +65,8 @@ ShowPreview=プレビューを表示する
 PreviewNotAvailable=プレビューは利用できません
 ThemeCurrentlyActive=現在アクティブなテーマ
 CurrentTimeZone=TimeZoneはPHP（サーバー）
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=スペース
 Table=Table
 Fields=フィールズ
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr現在のバージョン
 CallUpdatePage=%s：データベース構造と件のデータを更新するページに移動します。
 LastStableVersion=最後の安定版
 GenericMaskCodes=任意の番号マスクを入力することができます。このマスクには、以下のタグを使用することができます。 <br> <b>{00万}</b>各%sにインクリメントされる番号に対応しています。カウンタの希望の長さなどの多くのゼロとして入力します。カウンタは、マスクとして多くのゼロとして持たせるために、左からゼロで完了する予定です。 <br> <b>{00万000}</b>以前のが、最初の%sから始まる適用されている+記号の右にある数字に対応するオフセットと同じです。 <br> <b>{00万@ x}の</b>前のと同じですが、カウンタが月、xは（1〜12、または0の間でXコンフィギュレーションで定義された会計年度の初めに数ヶ月を使用する）に達したときにゼロにリセットされます。このオプションを使用すると、xが2以上ある場合、その列{YY} {ミリメートル}または{yyyyは} {}ミリメートルも要求されます。 <br> <b>{DD}</b>日（01〜31）。 <br> <b>{}ミリメートル</b>月（01〜12）。 <br> 2、4、または1の数値以上<b>{YY}、{探す}</b>または<b>{Y}</b>年。 <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=マスク内の他のすべての文字はそのまま残ります。 <br>スペースは許可されていません。 <br>
 GenericMaskCodes4a=<u>サードパーティTheCompany第99 %s上の例では、2007年1月31日に行わ：</u> <br>
 GenericMaskCodes4b=<u>2007年3月1日で作成されたサードパーティの例：</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=デフォルトでは、提案されたVATが0団体のよう�
 VATIsUsedExampleFR=フランスでは、実際の財政制度（REALまたは通常の本当の簡略化）を有する企業または組織を意味します。 VATのシステムが宣言されています。
 VATIsNotUsedExampleFR=フランスでは、それ以外の付加価値を宣言したりしている会社、組織またはマイクロ企業の財政制度（フランチャイズでVAT）を選択し、任意の付加価値税申告せずにフランチャイズ税を支払っているリベラルな職業されている団体を意味します。請求書に -  &quot;CGIの芸術-293B非適用されるVAT&quot;この選択は、参照が表示されます。
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= 見通し、請求書を作成し、デフォルトでは
 LocalTax2IsNotUsedDescES= デフォルトでは、提案されたIRPFは0です。ルールの終わり。
 LocalTax2IsUsedExampleES= スペインでは、フリーランサーとサービスモジュールの税制を選択した企業に提供する独立した専門家。
 LocalTax2IsNotUsedExampleES= スペインでは彼らは、モジュールの税制の対象になりませんbussinesがあります。
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=ない翻訳がコードに見つからない場合、デフォルトで使用されるラベル
 LabelOnDocuments=ドキュメントのラベル
 NbOfDays=日のNb
@@ -1453,6 +1463,9 @@ AgendaSetup=イベントと議題モジュールのセットアップ
 PasswordTogetVCalExport=エクスポートのリンクを許可するキー
 PastDelayVCalExport=より古いイベントはエクスポートされません
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=このモジュールは、電話番号の後にアイコンを追加することができます。このアイコンをクリックすると、あなたは以下の定義、特定のURLを使用してサーバーを呼び出します。これは、例えばSIPシステム上で電話番号を呼び出すことができますDolibarrからのコール·センター·システムを呼び出すために使用することができます。
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

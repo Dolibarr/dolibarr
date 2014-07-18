@@ -65,6 +65,8 @@ ShowPreview=Rodyti apžiūrą
 PreviewNotAvailable=Apžiūra negalima
 ThemeCurrentlyActive=Tema yra veikli
 CurrentTimeZone=Laiko juostos PHP (serveris)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Erdvė
 Table=Lentelė
 Fields=Laukai
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr dabartinė versija
 CallUpdatePage=Eiti į puslapį, kuriame atnaujinamos duomenų bazės struktūra ir duomenys:%s.
 LastStableVersion=Paskutinė stabili versija
 GenericMaskCodes=Galite įvesti bet kokį užmaskuotą numeravimą. Šiame maskavime naudojamos sekančios žymės:<br><b>{000000}</b> atitinka skaičių, kuris bus padidinamas vienetu kiekvienam%s. Įveskite nulių iki pageidaujamo skaitiklio ilgio. Skaitiklis bus užpildomas nuliais iš kairės iki pilno skaitiklio ilgio. <br><b>{000000+000}</b> toks kaip paskutinis, bet nuokrypis atitinkantis numerį dešinėje už + ženklo taikomas pradedant pirmu %s. <br><b>{000000@x}</b> toks pat kaip ankstesnis, bet skaitiklis apnulinamas, kai pasiekiamas mėnuo x (x tarp 1 ir 12, arba naudojamas 0 pirmaisiais fiskalinių metų mėnesiais kaip aprašyta konfigūracijoje, arba 99 apnulinimui kiekvieną mėnesį). Jei ši opcija yra naudojama ir x yra 2 ar didesnis, tada seka {yy}{mm} arba {yyyy}{mm} taip pat reikalinga. <br><b>{dd}</b> diena (nuo 01 iki 31). <br><b>{mm}</b> mėnuo (nuo 01 iki 12). <br><b>{yy}<b/>, <b>{yyyy}</b> arba <b>{y}</b> metai, 2, 4 arba 1 skaitmenys. <br>
-GenericMaskCodes2=<b>{cccc}</b> kliento kodas iš n simbolių<br><b>{cccc000}</b> kliento kodas iš n simbolių, papildytas klientų skaitikliu. Šis klientų skaitiklis apnulinamas kartu su bendruoju globaliu skaitikliu. <br><b>{tttt}</b> įmonės rūšies kodas iš n simbolių (žr. Žodynas-Įmonių rūšys).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Visi kiti simboliai maskuotėje išliks nepakitę.<br>Tarpai neleidžiami.<br>
 GenericMaskCodes4a=<u>Trečios šalies pavyzdys apie 99-us %s. Įmonė įkurta 2007-01-31:</u><br>
 GenericMaskCodes4b=<u>Trečios šalies pavyzdys sukurtas 2007-03-01:</u><br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Pagal nutylėjimą siūloma PVM yra 0, kuris gali būti naudoja
 VATIsUsedExampleFR=Prancūzijoje, įmonėms ar organizacijoms, turinčioms realią fiskalinę sistemą (normalią arba supaprastintą), kurioje PVM yra deklaruojamas.
 VATIsNotUsedExampleFR=Prancūzijoje, asociacijos, kurios nedeklaruoja PVM, ar įmonės, organizacijos ar laisvųjų profesijų atstovai, kurie pasirinko mikro įmonės fiskalinę sistemą (frančizės PVM) ir mokamas franšizės PVM be PVM deklaravimo. Šis pasirinkimas bus rodomas sąskaitose-faktūrose: "Netaikoma PVM - CGI art-293B".
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Naudokite antrą mokestį
 LocalTax1IsNotUsed=Nenaudokite antro mokesčio
 LocalTax1IsUsedDesc=Naudokite antro tipo mokesčių (išskyrus PVM)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= RE tarifas pagal nutylėjimą, kuriant planus, sąskaitas
 LocalTax2IsNotUsedDescES= Pagal nutylėjimą siūloma IRPF yra 0. Taisyklės pabaiga.
 LocalTax2IsUsedExampleES= Ispanijoje, laisvai samdomi ir nepriklausomi specialistai, kurie teikia paslaugas ir įmonės, kurios pasirinko modulių mokesčių sistemą.
 LocalTax2IsNotUsedExampleES= Ispanijoje jie yra verslas, kuriam netaikoma modulių mokesčių sistema.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Etiketė naudojamas pagal nutylėjimą, jei kodui nerandamas vertimas
 LabelOnDocuments=Dokumentų etiketė
 NbOfDays=Dienų skaičius
@@ -1453,6 +1463,9 @@ AgendaSetup=Įvykių ir operacijų modulio nustatymas
 PasswordTogetVCalExport=Eksporto sąsajos leidimo mygtukas
 PastDelayVCalExport=Neeksportuoti įvykių senesnių nei
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Šis modulis leidžia pridėti ikoną už telefono numerio. Šios ikonos paspaudimas leis kreiptis į serverį su konkrečiu URL adresu Jūsų aprašytu žemiau. Tai gali būti naudojama pvz.: skambinti iš Dolibarr į skambučių centro sistemą, kad paskambinti telefono numeriu per SIP sistemą.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Užduočių ataskaitų dokumento modelis
 ##### ECM (GED) #####
 ECMSetup = GED nustatymas
 ECMAutoTree = Automatinis medžio aplankas ir dokumentas
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

@@ -65,6 +65,8 @@ ShowPreview=آظهر المعاينة
 PreviewNotAvailable=المعاينة غير متاحة
 ThemeCurrentlyActive=الثيم النشط حالياً
 CurrentTimeZone=حسب توقيت خادم البي إتش بي
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=فراغ
 Table=جدول
 Fields=حقول
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr النسخة الحالية
 CallUpdatePage=الذهاب إلى صفحة التحديثات وdatas هيكل قاعدة البيانات : ٪ s.
 LastStableVersion=آخر نسخة مستقرة
 GenericMaskCodes=يمكنك إدخال أي قناع الترقيم. في هذا القناع ، وبعد ويمكن استخدام العلامات : <br> <b>(000000)</b> يطابق عدد الذي سيكون على كل يزداد ٪ s. كما تدخل العديد من أصفار على النحو المنشود طول المضادة. المضاد وسيتم الانتهاء من اصفار من اليسار من أجل الحصول على أكبر عدد اصفار كما القناع. <br> <b>000000 +000) (نفس</b> السابقة ولكن يقابل المقابلة لعدد للحق من علامة + يطبق اعتبارا من أول ٪ s. <br> <b>000000 @ (س)</b> نفس السابقة ولكن المضاد هو إعادة الصفر عندما يتم التوصل إلى الشهر خ خ ما بين 1 و 12). إذا كان هذا الخيار هو المستخدمة وس 2 أو أعلى ، ثم تسلسل (ذ ذ م م)) ((سنة أو ملم)) (مطلوب أيضا. <br> <b>(ب)</b> اليوم (01 الى 31). <br> <b>() ملم</b> في الشهر (01 الى 12). <br> <b>(كذا)</b> ، <b>(سنة))</b> أو <b>(ذ</b> السنة أكثر من 2 أو 4 أو 1 الأرقام. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=جميع الشخصيات الاخرى في قناع سوف تظل سليمة. <br> المساحات غير مسموح بها. <br>
 GenericMaskCodes4a=<u>ومثال على 99th ق ٪ من طرف ثالث TheCompany عمله 2007-01-31 :</u> <br>
 GenericMaskCodes4b=<u>ومثال على طرف ثالث على خلق 2007-03-01 :</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=افتراضي المقترحة 0 ضريبة القيمة ال�
 VATIsUsedExampleFR=في فرنسا ، فإن ذلك يعني وجود منظمات أو شركات حقيقية في النظام المالي (المبسطة حقيقية أو طبيعية حقيقية). نظام ضريبة القيمة المضافة هي التي أعلنت.
 VATIsNotUsedExampleFR=في فرنسا ، فإن ذلك يعني أن الجمعيات غير المعلنة ضريبة القيمة المضافة أو شركات أو مؤسسات المهن الحرة التي اختارت المشاريع الصغيرة النظام الضريبي (ضريبة القيمة المضافة في الانتخاب) ، ودفع ضريبة القيمة المضافة في الانتخاب دون أي إعلان من ضريبة القيمة المضافة. هذا الخيار سيتم عرض المرجعي "غير الضريبة على القيمة المضافة المطبقة -- الفن - 293B من المجموعة الاستشارية لاندونيسيا" على الفواتير.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= معدل الطاقة المتجددة بشكل افتر�
 LocalTax2IsNotUsedDescES= افتراضيا IRPF المقترحة هي 0. نهاية الحكم.
 LocalTax2IsUsedExampleES= في اسبانيا ، لحسابهم الخاص والمهنيين المستقلين الذين يقدمون الخدمات والشركات الذين اختاروا النظام الضريبي من وحدات.
 LocalTax2IsNotUsedExampleES= في اسبانيا هم bussines لا تخضع لنظام ضريبي وحدات.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=العلامة التي يستخدمها التقصير إذا لم يمكن العثور على ترجمة للقانون
 LabelOnDocuments=علامة على وثائق
 NbOfDays=ملاحظة : من الأيام
@@ -1453,6 +1463,9 @@ AgendaSetup=جدول الأعمال وحدة الإعداد
 PasswordTogetVCalExport=مفتاح ربط تصدير تأذن
 PastDelayVCalExport=لا تصدر الحدث الأكبر من
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=هذا النموذج يسمح لإضافة رمز بعد رقم هاتف Dolibarr الاتصالات. وهناك اضغط على هذه الأيقونة ، سوف يطلب من أحد serveur معينة مع تحديد عنوان لكم أدناه. ويمكن استخدام هذه الكلمة لدعوة من مركز نظام Dolibarr التي يمكن الاتصال على رقم الهاتف هذا المسبار النظام على سبيل المثال.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

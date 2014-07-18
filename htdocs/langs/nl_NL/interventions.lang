@@ -38,5 +38,5 @@ ArcticNumRefModelDesc1=Generiek nummermodel
 ArcticNumRefModelError=Activeren mislukt
 PacificNumRefModelDesc1=Geef nummer met het formaat %sjjmm-nnnn terug waarbij jj het jaar is, mm de maand en nnnn een opeenvolgende oplopende reeks waarbij niet naar 0 teruggekeerd wordt
 PacificNumRefModelError=Een interventiedetailkaart beginnend met %s sjjmm bestaat al en is niet verenigbaar met deze reeksinstelling. Verwijder of hernoem het om deze module te activeren.
-# PrintProductsOnFichinter=Print products on intervention card
-# PrintProductsOnFichinterDetails=forinterventions generated from orders
+PrintProductsOnFichinter=Printproducten op interventie fiche
+PrintProductsOnFichinterDetails=Voor interventies gegenereerd uit opdrachten
