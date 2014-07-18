@@ -56,38 +56,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         	return 0;
         }
 
-        // Users
-        if ($action == 'USER_CREATE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-
-        }
-        elseif ($action == 'USER_MODIFY')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-        elseif ($action == 'USER_NEW_PASSWORD')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-        elseif ($action == 'USER_ENABLEDISABLE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-        elseif ($action == 'USER_DELETE')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-        elseif ($action == 'USER_SETINGROUP')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-        elseif ($action == 'USER_REMOVEFROMGROUP')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
-
-        elseif ($action == 'CATEGORY_LINK')
+        if ($action == 'CATEGORY_LINK')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -161,10 +130,6 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 			return $return;
         }
-        elseif ($action == 'MEMBER_NEW_PASSWORD')
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		}
         elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -183,14 +148,6 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 			}
         }
 
-		// If not found
-/*
-        else
-        {
-            dol_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
-			return -1;
-        }
-*/
 		return 0;
     }
 
