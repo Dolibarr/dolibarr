@@ -58,7 +58,7 @@ if ($_GET["action"] == 'delete')
     }
     else
     {
-        $mesg='<div class="error">'.$bookmark->error.'</div>';
+        $setEventMessage($bookmark->error, 'errors');
     }
 }
 
@@ -72,8 +72,6 @@ $userstatic=new User($db);
 llxHeader();
 
 print_fiche_titre($langs->trans("Bookmarks"));
-
-if ($mesg) print $mesg;
 
 $sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";

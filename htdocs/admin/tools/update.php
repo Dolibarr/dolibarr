@@ -30,7 +30,9 @@ $langs->load("other");
 
 if (! $user->admin) accessforbidden();
 
-if (GETPOST('msg','alpha')) $message='<div class="error">'.GETPOST('msg','alpha').'</div>';
+if (GETPOST('msg','alpha')) {
+	setEventMessage(GETPOST('msg','alpha'), 'errors');
+}
 
 
 $urldolibarr='http://www.dolibarr.org/downloads/';
@@ -148,7 +150,7 @@ if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 	else
 	{
 		$message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
-		print '<div class="warning">'.$message.'</div>';
+		setEventMessage($message, 'warnings');
 	}
 }
 else

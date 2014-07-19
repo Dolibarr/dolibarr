@@ -360,7 +360,7 @@ if ($conf->use_javascript_ajax)
 else
 {
 	$langs->load("errors");
-	print '<div class="error">'.$langs->trans("ErrorFeatureNeedJavascript").'</div>';
+	setEventMessage($langs->trans("ErrorFeatureNeedJavascript"), 'errors');
 }
 
 print '<br>';
