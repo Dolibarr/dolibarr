@@ -543,7 +543,7 @@ class Form
      *	@param  string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in html form
      * 	@param	int		$showempty		Add an empty field
-     * 	@param	int		$hidetext		Do not show label before combo box
+     * 	@param	int		$hidetext		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
      * 	@param	string	$forceall		Force to show products and services in combo list, whatever are activated modules
      *  @return	void
      */
@@ -577,10 +577,12 @@ class Form
         }
         if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
+        	print $langs->trans("Service");
             print '<input type="hidden" name="'.$htmlname.'" value="1">';
         }
         if (! $forceall && ! empty($conf->product->enabled) && empty($conf->service->enabled))
         {
+        	print $langs->trans("Product");
             print '<input type="hidden" name="'.$htmlname.'" value="0">';
         }
 

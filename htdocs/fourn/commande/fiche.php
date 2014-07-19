@@ -1725,8 +1725,11 @@ elseif (! empty($object->id))
 			}
 			else
 			{
-				print $form->select_type_of_lines($line->product_type,'type',1);
+                $forceall=1;	// For suppliers, we always show all types
+				print $form->select_type_of_lines($line->product_type,'type',1,0,$forceall);
 				if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) print '<br>';
+                if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+                || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 			}
 
 			if (is_object($hookmanager))

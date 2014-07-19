@@ -118,7 +118,12 @@ else {
 		else if (empty($conf->product->enabled) && ! empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Service");
 		else if (! empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans("FreeLineOfType").' '.$langs->trans("Product");*/
 		echo ' ';
-		echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,1);
+		$forceall=1;	// We always force all type for free lines (module product or service means we use predefined product or service)
+		if ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))
+		{
+			$forceall=0;
+		}
+		echo $form->select_type_of_lines(isset($_POST["type"])?$_POST["type"]:-1,'type',1,1,$forceall);
 //	}
 	echo '</span>';
 
