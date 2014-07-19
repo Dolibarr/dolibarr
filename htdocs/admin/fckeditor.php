@@ -120,7 +120,10 @@ $var=true;
 
 if (empty($conf->use_javascript_ajax))
 {
-    dol_htmloutput_errors('',array($langs->trans("NotAvailable"),$langs->trans("JavascriptDisabled")),1);
+	setEventMessage(array(
+		$langs->trans("NotAvailable"),
+		$langs->trans("JavascriptDisabled")
+	), 'errors');
 }
 else
 {

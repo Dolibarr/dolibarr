@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'update')
         }
         else
         {
-            $mesg = $object->error;
+	        setEventMessage($object->error, 'errors');
             $action='create';
         }
     }
@@ -147,7 +147,7 @@ if ($action == 'add' || $action == 'update')
         else
         {
             $reload = 0;
-            $mesg = $object->error;
+	        setEventMessage($object->error, 'errors');
             $actino= "edit";
         }
     }
@@ -180,9 +180,6 @@ llxHeader();
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
-
-dol_htmloutput_errors($mesg);
-
 
 if ($action == 'create')
 {

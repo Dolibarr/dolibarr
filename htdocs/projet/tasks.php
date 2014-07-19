@@ -90,13 +90,13 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 	{
 		if (empty($label))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 			$action='create';
 			$error++;
 		}
 		else if (empty($_POST['task_parent']))
 		{
-			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask"));
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("ChildOfTask")), 'errors');
 			$action='create';
 			$error++;
 		}
@@ -266,8 +266,6 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->socie
 	if ($id > 0 || ! empty($ref)) print '<br>';
 
 	print_fiche_titre($langs->trans("NewTask"));
-
-	dol_htmloutput_errors($mesg);
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

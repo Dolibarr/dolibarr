@@ -52,8 +52,6 @@ $langs->load('companies');
 $langs->load('products');
 $langs->load('banks');
 
-$mesg='';
-$errors=array();
 $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
@@ -92,12 +90,12 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes')
 {
-    if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
-    {
-        $mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
-    }
-    else
-    {
+//    if (1==0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
+//    {
+//        $mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+//    }
+//    else
+//    {
         $result=$object->createFromClone($id);
         if ($result > 0)
         {
@@ -107,10 +105,10 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
         else
         {
             $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	        setEventMessage($langs->trans($object->error), 'errors');
             $action='';
         }
-    }
+//    }
 }
 
 elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fournisseur->facture->valider)
@@ -137,7 +135,7 @@ elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->fourni
         if (! $idwarehouse || $idwarehouse == -1)
         {
             $error++;
-            $errors[]=$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse"));
+	        setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
             $action='';
         }
     }
@@ -165,7 +163,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fourn
     }
     else
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+	    setEventMessage($object->error, 'errors');
     }
 }
 
@@ -180,7 +178,7 @@ elseif ($action == 'confirm_delete_line' && $confirm == 'yes' && $user->rights->
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
 		$action='';
 	}
@@ -258,7 +256,9 @@ elseif ($action == 'deletepaiement' && $user->rights->fournisseur->facture->cree
     	$paiementfourn = new PaiementFourn($db);
         $result=$paiementfourn->fetch(GETPOST('paiement_id'));
         if ($result > 0) $result=$paiementfourn->delete(); // If fetch ok and found
-        if ($result < 0) $mesg='<div class="error">'.$paiementfourn->error.'</div>';
+        if ($result < 0) {
+	        setEventMessage($paiementfourn->error, 'errors');
+        }
     }
 }
 
@@ -272,21 +272,21 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 
     if (GETPOST('socid','int')<1)
     {
-    	$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')).'</div>';
+	    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), 'errors');
     	$action='create';
     	$error++;
     }
 
     if ($datefacture == '')
     {
-        $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')).'</div>';
+	    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('DateInvoice')), 'errors');
         $action='create';
         $_GET['socid']=$_POST['socid'];
         $error++;
     }
     if (! GETPOST('ref_supplier'))
     {
-        $mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')).'</div>';
+	    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('RefSupplier')), 'errors');
         $action='create';
         $_GET['socid']=$_POST['socid'];
         $error++;
@@ -457,7 +457,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
         {
             $langs->load("errors");
             $db->rollback();
-            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	        setEventMessage($langs->trans($object->error), 'errors');
             $action='create';
             $_GET['socid']=$_POST['socid'];
         }
@@ -631,14 +631,14 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
             // Product not selected
             $error++;
             $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")).'</div>';
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("ProductOrService")), 'errors');
         }
         if ($idprod == -1)
         {
             // Quantity too low
             $error++;
             $langs->load("errors");
-            $mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
+	        setEventMessage($langs->trans("ErrorQtyTooLowForThisSupplier"), 'errors');
         }
     }
     else if( GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='' )
@@ -732,10 +732,7 @@ elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
     else
 	{
     	$db->rollback();
-		if (empty($mesg))
-	    {
-	        $mesg='<div class="error">'.$object->error.'</div>';
-	    }
+	    setEventMessage($object->error, 'errors');
     }
 
     $action = '';
@@ -798,7 +795,7 @@ elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
         }
         else
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+	        setEventMessage($object->error, 'errors');
         }
     }
 }
@@ -948,7 +945,6 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                     else
                     {
                         $langs->load("other");
-                        $mesg='<div class="error">';
                         if ($mailfile->error)
                         {
                             $mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
@@ -958,7 +954,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
                         {
                             $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
                         }
-                        $mesg.='</div>';
+	                    setEventMessage($mesg, 'errors');
                     }
                 }
             }
@@ -966,7 +962,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
             else
             {
                 $langs->load("other");
-                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
+	            setEventMessage($langs->trans('ErrorMailRecipientIsEmpty'), 'errors');
                 dol_syslog('Recipient email is empty');
             }
 /*        }
@@ -980,7 +976,7 @@ if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_P
     else
     {
         $langs->load("other");
-        $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
+	    setEventMessage($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), 'errors');
         dol_syslog('Unable to read data from the invoice. The invoice file has perhaps not been generated.');
     }
 
@@ -1064,11 +1060,11 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 			}
 			else
 			{
-				$mesg = '<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
@@ -1119,7 +1115,6 @@ if ($action == 'create')
 {
     print_fiche_titre($langs->trans('NewBill'));
 
-    dol_htmloutput_mesg($mesg);
     dol_htmloutput_events();
 
     $societe='';
@@ -1146,7 +1141,6 @@ if ($action == 'create')
                 $element = $subelement = 'commande';
             }
             if ($element == 'propal')   {
-                dol_htmloutput_errors('',$errors);
                 $element = 'comm/propal'; $subelement = 'propal';
             }
             if ($element == 'contract') {
@@ -1478,9 +1472,6 @@ else
         $titre=$langs->trans('SupplierInvoice');
 
         dol_fiche_head($head, 'card', $titre, 0, 'bill');
-
-        dol_htmloutput_mesg($mesg);
-        dol_htmloutput_errors('',$errors);
 
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')

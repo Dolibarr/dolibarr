@@ -52,7 +52,6 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 $errmsg='';
-$errmsgs=array();
 
 $defaultdelay=1;
 $defaultdelayunit='y';
@@ -108,7 +107,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		{
 			$langs->load("errors");
 			$errmsg=$langs->trans($company->error);
-			$errmsgs=$company->errors;
+			setEventMessage($company->errors, 'errors');
 		}
 		else
 		{
@@ -282,7 +281,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             $error++;
             $errmsg=$object->error;
-            $errmsgs=$object->errors;
+	        setEventMessage($object->errors, 'errors');
         }
 
         if (! $error)
@@ -444,7 +443,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
-                            $errmsgs=$paiement->errors;
+	                        setEventMessage($paiement->errors, 'errors');
                             $error++;
                         }
                     }
@@ -689,7 +688,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    dol_htmloutput_errors($errmsg,$errmsgs);
+    dol_htmloutput_errors($errmsg);
 
 
     /*

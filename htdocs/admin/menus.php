@@ -49,8 +49,6 @@ foreach($dirmenus as $dirmenu)
 }
 
 $error=0;
-$errmsgs=array();
-
 
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
@@ -105,7 +103,8 @@ if ($action == 'update' && empty($_POST["cancel"]))
 				else
 				{
 					$error++;
-					$errmsgs[]='Failed to initialize menu '.$key.'.';
+					//TODO: Translate
+					setEventMessage('Failed to initialize menu '.$key.'.', 'errors');
 					$db->rollback();
 				}
 			}
@@ -267,10 +266,6 @@ else
 }
 
 print '</div>';
-
-
-dol_htmloutput_errors('',$errmsgs);
-
 
 if ($action != 'edit')
 {
