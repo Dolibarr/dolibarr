@@ -45,7 +45,6 @@ $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
-$message='';
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -110,6 +109,8 @@ if ($action == 'confirm_disable' && $confirm == "yes" && $candisableuser)
 }
 if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
 {
+	$error = 0;
+
     if ($id <> $user->id)
     {
         $object->fetch($id);
@@ -119,11 +120,12 @@ if ($action == 'confirm_enable' && $confirm == "yes" && $candisableuser)
             $nb = $object->getNbOfUsers("active");
             if ($nb >= $conf->file->main_limit_users)
             {
-                $message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
+	            $error++;
+                setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
             }
         }
 
-        if (! $message)
+        if (! $error)
         {
             $object->setstatus(1);
             header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
@@ -142,7 +144,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
         if ($result < 0)
         {
             $langs->load("errors");
-            $message='<div class="error">'.$langs->trans("ErrorUserCannotBeDelete").'</div>';
+            setEventMessage($langs->trans("ErrorUserCannotBeDelete"), 'errors');
         }
         else
         {
@@ -155,14 +157,18 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $candisableuser)
 // Action ajout user
 if ($action == 'add' && $canadduser)
 {
+	$error = 0;
+
     if (! $_POST["lastname"])
     {
-        $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+	    $error++;
+        setEventMessage($langs->trans("NameNotDefined"), 'errors');
         $action="create";       // Go back to create page
     }
     if (! $_POST["login"])
     {
-        $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+	    $error++;
+	    setEventMessage($langs->trans("LoginNotDefined"), 'errors');
         $action="create";       // Go back to create page
     }
 
@@ -171,13 +177,13 @@ if ($action == 'add' && $canadduser)
         $nb = $object->getNbOfUsers("active");
         if ($nb >= $conf->file->main_limit_users)
         {
-            $message='<div class="error">'.$langs->trans("YourQuotaOfUsersIsReached").'</div>';
+	        $error++;
+	        setEventMessage($langs->trans("YourQuotaOfUsersIsReached"), 'errors');
             $action="create";       // Go back to create page
         }
     }
 
-    if (! $message)
-    {
+    if (!$error) {
         $object->lastname		= GETPOST("lastname",'alpha');
         $object->firstname	    = GETPOST("firstname",'alpha');
         $object->login		    = GETPOST("login",'alpha');
@@ -266,7 +272,7 @@ if (($action == 'addgroup' || $action == 'removegroup') && $caneditfield)
         }
         else
         {
-            $message.=$object->error;
+            setEventMessage($object->error, 'errors');
         }
     }
 }
@@ -281,13 +287,13 @@ if ($action == 'update' && ! $_POST["cancel"])
 
     	if (! $_POST["lastname"])
         {
-            $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+	        setEventMessage($langs->trans("NameNotDefined"), 'errors');
             $action="edit";       // Go back to create page
             $error++;
         }
         if (! $_POST["login"])
         {
-            $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+	        setEventMessage($langs->trans("LoginNotDefined"), 'errors');
             $action="edit";       // Go back to create page
             $error++;
         }
@@ -304,7 +310,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 				$result=$tmpuser->fetch(0, GETPOST("login"));
 				if ($result > 0)
 				{
-					$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists").'</div>';
+					setEventMessage($langs->trans("ErrorLoginAlreadyExists"), 'errors');
 					$action="edit";       // Go back to create page
 					$error++;
 				}
@@ -367,11 +373,11 @@ if ($action == 'update' && ! $_POST["cancel"])
                 if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
                     $langs->load("errors");
-                    $message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$object->login).'</div>';
+	                setEventMessage($langs->trans("ErrorLoginAlreadyExists",$object->login), 'errors');
                 }
                 else
               {
-                    $message.='<div class="error">'.$object->error.'</div>';
+	              setEventMessage($object->error, 'errors');
                 }
             }
 
@@ -395,12 +401,12 @@ if ($action == 'update' && ! $_POST["cancel"])
             		$sql.= " SET fk_socpeople=NULL, fk_societe=NULL";
             		$sql.= " WHERE rowid=".$object->id;
             	}
+	            dol_syslog("fiche::update", LOG_DEBUG);
             	$resql=$db->query($sql);
-            	dol_syslog("fiche::update", LOG_DEBUG);
             	if (! $resql)
             	{
             		$error++;
-            		$message.='<div class="error">'.$db->lasterror().'</div>';
+            		setEventMessage($db->lasterror(), 'errors');
             	}
             }
 
@@ -427,7 +433,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
                         if (! $result > 0)
                         {
-                            $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+	                        setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
                         }
                         else
                         {
@@ -445,7 +451,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 
             if (! $error && ! count($object->errors))
             {
-                $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
+	            setEventMessage($langs->trans("UserModified"));
                 $db->commit();
 
                 $login=$_SESSION["dol_login"];
@@ -469,7 +475,7 @@ if ($action == 'update' && ! $_POST["cancel"])
         $ret=$object->setPassword($user,$_POST["password"]);
         if ($ret < 0)
         {
-            $message.='<div class="error">'.$object->error.'</div>';
+	        setEventMessage($object->error, 'errors');
         }
     }
 }
@@ -484,7 +490,7 @@ if ((($action == 'confirm_password' && $confirm == 'yes')
     if ($newpassword < 0)
     {
         // Echec
-        $message = '<div class="error">'.$langs->trans("ErrorFailedToSetNewPassword").'</div>';
+        setEventMessage($langs->trans("ErrorFailedToSetNewPassword"), 'errors');
     }
     else
     {
@@ -493,18 +499,16 @@ if ((($action == 'confirm_password' && $confirm == 'yes')
         {
             if ($object->send_password($user,$newpassword) > 0)
             {
-                $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$object->email).'</div>';
-                //$message.=$newpassword;
+                setEventMessage($langs->trans("PasswordChangedAndSentTo",$object->email));
             }
             else
             {
-                $message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
-                $message.= '<div class="error">'.$object->error.'</div>';
+	            setEventMessage($object->error, 'errors');
             }
         }
         else
         {
-            $message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+	        setEventMessage($langs->trans("PasswordChangedTo",$newpassword), 'errors');
         }
     }
 }
@@ -562,7 +566,7 @@ if ($action == 'adduserldap')
     }
     else
     {
-        $message='<div class="error">'.$ldap->error.'</div>';
+        setEventMessage($ldap->error, 'errors');
     }
 }
 
@@ -589,8 +593,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print $langs->trans("CreateInternalUserDesc");
     print "<br>";
     print "<br>";
-
-    dol_htmloutput_mesg($message);
 
     if (! empty($conf->ldap->enabled) && (isset($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr'))
     {
@@ -648,12 +650,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
             }
             else
             {
-                $message='<div class="error">'.$ldap->error.'</div>';
+                setEventMessage($ldap->error, 'errors');
             }
         }
         else
         {
-            $message='<div class="error">'.$ldap->error.'</div>';
+	        setEventMessage($ldap->error, 'errors');
         }
 
         // Si la liste des users est rempli, on affiche la liste deroulante
@@ -977,7 +979,7 @@ else
                 $entries = $ldap->fetch($object->login,$userSearchFilter);
                 if (! $entries)
                 {
-                    $message .= $ldap->error;
+                    setEventMessage($ldap->error, 'errors');
                 }
 
                 $passDoNotExpire = 0;
@@ -1055,8 +1057,6 @@ else
         {
             print $form->formconfirm("fiche.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
         }
-
-        dol_htmloutput_mesg($message);
 
         /*
          * Fiche en mode visu

@@ -84,10 +84,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     dol_syslog('define_holiday update lastUpdate entry', LOG_DEBUG);
     $result = $db->query($sql);
 
-    $mesg='<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
-
-    dol_htmloutput_mesg($mesg);
-
+	setEventMessage($langs->trans('UpdateConfCPOK'));
 }
 elseif($action == 'add_event')
 {

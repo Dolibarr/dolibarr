@@ -68,11 +68,11 @@ if ($action == 'update' || $action == 'add')
 
 	if (! $error)
 	{
-		$mesg = '<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans("Error").'</div>';
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -116,10 +116,6 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 $head = member_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("Members"), 0, 'user');
-
-
-dol_htmloutput_mesg($mesg);
-
 
 print_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';

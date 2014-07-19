@@ -54,7 +54,7 @@ if (GETPOST('action','alpha')=='install')
 	if (! $original_file)
 	{
 		$langs->load("Error");
-		$mesg = '<div class="warning">'.$langs->trans("ErrorFileRequired").'</div>';
+		setEventMessage($langs->trans("ErrorFileRequired"), 'warnings');
 		$error++;
 	}
 	else
@@ -62,7 +62,7 @@ if (GETPOST('action','alpha')=='install')
 		if (! preg_match('/\.zip/i',$original_file))
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorFileMustBeADolibarrPackage",$original_file).'</div>';
+			setEventMessage($langs->trans("ErrorFileMustBeADolibarrPackage",$original_file), 'errors');
 			$error++;
 		}
 	}
@@ -80,12 +80,11 @@ if (GETPOST('action','alpha')=='install')
 			if (! empty($result['error']))
 			{
 				$langs->load("errors");
-				$mesg = '<div class="error">'.$langs->trans($result['error'],$original_file).'</div>';
-
+				setEventMessage($langs->trans($result['error'],$original_file), 'errors');
 			}
 			else
 			{
-				$mesg = '<div class="ok">'.$langs->trans("SetupIsReadyForUse").'</div>';
+				setEventMessage($langs->trans("SetupIsReadyForUse"));
 			}
 		}
 	}
@@ -106,9 +105,6 @@ print_fiche_titre($langs->trans("Upgrade"),'','setup');
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("FeatureNotYetAvailable").'</b><br>';
 print '<br>';
-
-//dol_htmloutput_errors($mesg);
-dol_htmloutput_mesg($mesg);
 
 print $langs->trans("Upgrade").'<br>';
 print '<hr>';

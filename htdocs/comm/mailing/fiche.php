@@ -107,7 +107,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 {
 	if (empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"]))
 	{
-		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+		setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
 	}
 	else
 	{
@@ -119,7 +119,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes')
 		}
 		else
 		{
-			$mesg=$object->error;
+			setEventMessage($object->error, 'errors');
 		}
 	}
     $action='';
@@ -130,16 +130,17 @@ if ($action == 'sendallconfirmed' && $confirm == 'yes')
 {
 	if (empty($conf->global->MAILING_LIMIT_SENDBYWEB))
 	{
+		//TODO: What is this for?
 		// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 		// on affiche donc juste un message
-		$mesg='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-		$mesg.='<br><textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
-		$mesg.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+		setEventMessage($langs->trans("MailingNeedCommand"), 'warnings');
+		setEventMessage('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', 'warnings');
+		setEventMessage($langs->trans("MailingNeedCommand2"), 'warnings');
 		$action='';
 	}
 	else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 	{
-		$mesg='<div class="warning">'.$langs->trans("NotEnoughPermissions").'</div>';
+		setEventMessage($langs->trans("NotEnoughPermissions"), 'warnings');
 		$action='';
 	}
 	else
@@ -390,7 +391,7 @@ if ($action == 'send' && empty($_POST["cancel"]))
 	$object->sendto = $_POST["sendto"];
 	if (! $object->sendto)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("MailTo")), 'errors');
 		$error++;
 	}
 
@@ -430,11 +431,11 @@ if ($action == 'send' && empty($_POST["cancel"]))
 		$result=$mailfile->sendfile();
 		if ($result)
 		{
-			$mesg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)).'</div>';
+			setEventMessage($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($object->email_from,2),$mailfile->getValidAddress($object->sendto,2)));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
+			setEventMessage($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, 'errors');
 		}
 
 		$action='';
@@ -467,7 +468,7 @@ if ($action == 'add')
 		$mesg=$object->error;
 	}
 
-	$mesg='<div class="error">'.$mesg.'</div>';
+	setEventMessage($mesg, 'errors');
 	$action="create";
 }
 
@@ -494,7 +495,7 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 		$mesg=$object->error;
 	}
 
-	$mesg='<div class="error">'.$mesg.'</div>';
+	setEventMessage($mesg, 'errors');
 	$action="";
 }
 
@@ -552,7 +553,7 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 			$mesg=$object->error;
 		}
 
-		$mesg='<div class="error">'.$mesg.'</div>';
+		setEventMessage($mesg, 'errors');
 		$action="edit";
 	}
 	else
@@ -598,7 +599,7 @@ if ($action == 'confirm_reset' && $confirm == 'yes')
 		}
 		else
 		{
-			$mesg=$object->error;
+			setEventMessage($object->error, 'errors');
 			$db->rollback();
 		}
 	}
@@ -645,8 +646,6 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 
 	print_fiche_titre($langs->trans("NewMailing"));
-
-	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTitle").'</td><td><input class="flat" name="titre" size="40" value="'.$_POST['titre'].'"></td></tr>';
@@ -828,9 +827,6 @@ else
 				// Paiement incomplet. On demande si motif = escompte ou autre
 				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 			}
-
-
-			dol_htmloutput_mesg($mesg);
 
 			/*
 			 * Boutons d'action
@@ -1016,8 +1012,6 @@ else
 			/*
 			 * Mailing en mode edition
 			 */
-
-			dol_htmloutput_mesg($mesg);
 
 			print '<table class="border" width="100%">';
 

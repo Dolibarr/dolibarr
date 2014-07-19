@@ -110,13 +110,9 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		$chargesociales->amount=$_POST["amount"];
 
 		$id=$chargesociales->create($user);
-		if ($id > 0)
+		if ($id <= 0)
 		{
-			//$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
-		}
-		else
-		{
-			$mesg='<div class="error">'.$chargesociales->error.'</div>';
+			setEventMessage($chargesociales->error, 'errors');
 		}
 	}
 }
@@ -146,13 +142,9 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 		$chargesociales->periode=$dateperiod;
 
 		$result=$chargesociales->update($user);
-		if ($result > 0)
+		if ($result <= 0)
 		{
-			//$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
-		}
-		else
-		{
-			$mesg='<div class="error">'.$chargesociales->error.'</div>';
+			setEventMessage($chargesociales->error, 'errors');
 		}
 	}
 }

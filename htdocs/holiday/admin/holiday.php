@@ -142,9 +142,9 @@ if ($action == "add")
 
     if ($error)
     {
-        $message = '<div class="error">'.$langs->trans('ErrorUpdateConfCP').'</div>';
+	    setEventMessage($langs->trans('ErrorUpdateConfCP'), 'errors');
     } else {
-        $message = '<div class="ok">'.$langs->trans('UpdateConfCPOK').'</div>';
+	    setEventMessage($langs->trans('UpdateConfCPOK'));
     }
 
     // Si première mise à jour, prévenir l'utilisateur de mettre à jour le solde des congés payés
