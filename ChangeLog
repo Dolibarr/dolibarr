@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
+       on uploaded file names. 
+- New: No more dependency between contract and service module.
 - New: [ task #867 ] Remove ESAEB external module code from core.
 - New: Can create proposal from an intervention.
 - New: Can filter events on a group of users.
