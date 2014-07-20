@@ -25,11 +25,7 @@
 	</rule>
 
     <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
-<<<<<<< HEAD
     <rule ref="Zend.Files.ClosingTag"/>
-=======
-    <!-- <rule ref="Zend.Files.ClosingTag"/> -->
->>>>>>> refs/remotes/origin/3.6
 
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
 
