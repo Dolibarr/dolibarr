@@ -69,7 +69,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	}
 	else
 	{
-		$mesg='<div class="error">'.$chargesociales->error.'</div>';
+		setEventMessage($chargesociales->error, 'errors');
 	}
 }
 
@@ -81,22 +81,22 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	$dateperiod=@dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
 		$action = 'create';
 	}
 	elseif (! $dateperiod)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
 		$action = 'create';
 	}
 	elseif (! $_POST["actioncode"] > 0)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Type")), 'errors');
 		$action = 'create';
 	}
 	elseif (! $_POST["amount"])
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")), 'errors');
 		$action = 'create';
 	}
 	else
@@ -124,12 +124,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	$dateperiod=dol_mktime($_POST["periodhour"],$_POST["periodmin"],$_POST["periodsec"],$_POST["periodmonth"],$_POST["periodday"],$_POST["periodyear"]);
 	if (! $dateech)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")), 'errors');
 		$action = 'edit';
 	}
 	elseif (! $dateperiod)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")), 'errors');
 		$action = 'edit';
 	}
 	else
@@ -167,8 +167,6 @@ if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("NewSocialContribution"));
 	print "<br>\n";
-
-	dol_htmloutput_mesg($mesg);
 
     $var=false;
 
@@ -238,8 +236,6 @@ if ($id > 0)
 
 	if ($result > 0)
 	{
-		dol_htmloutput_mesg($mesg);
-
 		$head=tax_prepare_head($object);
 
 		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');

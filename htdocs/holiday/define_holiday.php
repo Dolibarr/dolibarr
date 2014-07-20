@@ -102,7 +102,7 @@ elseif($action == 'add_event')
 
     if ($error)
     {
-        $message = '<div class="error">'.$langs->trans('ErrorAddEventToUserCP').'</div>';
+	    setEventMessage($langs->trans('ErrorAddEventToUserCP'), 'errors');
     }
     else
 	{
@@ -115,10 +115,8 @@ elseif($action == 'add_event')
 
         $holiday->updateSoldeCP($userCP,$new_holiday);
 
-        $message = $langs->trans('AddEventToUserOkCP');
+		setEventMessage($langs->trans('AddEventToUserOkCP'));
     }
-
-    dol_htmloutput_mesg($message);
 }
 
 $langs->load('users');

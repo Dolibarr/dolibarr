@@ -91,12 +91,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -178,11 +178,11 @@ if($action)
 
  	if (! $error)
     {
-        $mesg = '<font class="ok">'.$langs->trans("SetupSaved").'</font>';
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = '<font class="error">'.$langs->trans("Error").'</font>';
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -505,13 +505,12 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 	}
 	else
 	{
+		//TODO: Translate
 		print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 	}
 
 	print '</table>';
 }
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

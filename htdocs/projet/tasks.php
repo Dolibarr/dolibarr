@@ -199,8 +199,6 @@ if ($id > 0 || ! empty($ref))
 	$head=project_prepare_head($object);
 	dol_fiche_head($head, $tab, $langs->trans("Project"),0,($object->public?'projectpub':'project'));
 	
-	dol_htmloutput_mesg();
-
 	$param=($mode=='mine'?'&mode=mine':'');
 
 	print '<table class="border" width="100%">';

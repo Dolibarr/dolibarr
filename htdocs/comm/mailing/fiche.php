@@ -445,6 +445,8 @@ if ($action == 'send' && empty($_POST["cancel"]))
 // Action add emailing
 if ($action == 'add')
 {
+	$mesgs = array();
+
 	$object->email_from     = trim($_POST["from"]);
 	$object->email_replyto  = trim($_POST["replyto"]);
 	$object->email_errorsto = trim($_POST["errorsto"]);
@@ -454,21 +456,27 @@ if ($action == 'add')
 	$object->bgcolor        = trim($_POST["bgcolor"]);
 	$object->bgimage        = trim($_POST["bgimage"]);
 
-	if (! $object->titre) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
-	if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
-	if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
+	if (! $object->titre) {
+		$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
+	}
+	if (! $object->sujet) {
+		$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
+	}
+	if (! $object->body)  {
+		$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
+	}
 
-	if (! $mesg)
+	if (!count($mesgs))
 	{
 		if ($object->create($user) >= 0)
 		{
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
-		$mesg=$object->error;
+		$mesgs[] = $object->error;
 	}
 
-	setEventMessage($mesg, 'errors');
+	setEventMessage($mesgs, 'errors');
 	$action="create";
 }
 
@@ -481,9 +489,12 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 	else if ($action == 'setemail_from')		$object->email_from     = trim(GETPOST('email_from','alpha'));
 	else if ($action == 'setemail_replyto')		$object->email_replyto  = trim(GETPOST('email_replyto','alpha'));
 	else if ($action == 'setemail_errorsto')	$object->email_errorsto = trim(GETPOST('email_errorsto','alpha'));
-
-	else if ($action == 'settitre' && empty($object->titre))		$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
-	else if ($action == 'setfrom' && empty($object->email_from))	$mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
+	else if ($action == 'settitre' && empty($object->titre)) {
+		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTitle"));
+	}
+	else if ($action == 'setfrom' && empty($object->email_from)) {
+		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailFrom"));
+	}
 
 	if (! $mesg)
 	{
@@ -492,7 +503,7 @@ if ($action == 'settitre' || $action == 'setemail_from' || $actino == 'setreplyt
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
 		}
-		$mesg=$object->error;
+		$mesg = $object->error;
 	}
 
 	setEventMessage($mesg, 'errors');
@@ -535,25 +546,31 @@ if ($action == 'update' && empty($_POST["removedfile"]) && empty($_POST["cancel"
 
 	if (! $isupload)
 	{
+		$mesgs = array();
+
 		$object->sujet          = trim($_POST["sujet"]);
 		$object->body           = trim($_POST["body"]);
 		$object->bgcolor        = trim($_POST["bgcolor"]);
 		$object->bgimage        = trim($_POST["bgimage"]);
 
-		if (! $object->sujet) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
-		if (! $object->body)  $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
+		if (! $object->sujet) {
+			$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailTopic"));
+		}
+		if (! $object->body) {
+			$mesgs[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("MailMessage"));
+		}
 
-		if (! $mesg)
+		if (!count($mesgs))
 		{
 			if ($object->update($user) >= 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-			$mesg=$object->error;
+			$mesgs[] =$object->error;
 		}
 
-		setEventMessage($mesg, 'errors');
+		setEventMessage($mesgs, 'errors');
 		$action="edit";
 	}
 	else
@@ -730,9 +747,9 @@ else
 				{
 					// Pour des raisons de securite, on ne permet pas cette fonction via l'IHM,
 					// on affiche donc juste un message
-				    $mesgembedded.='<div class="warning">'.$langs->trans("MailingNeedCommand").'</div>';
-					$mesgembedded.='<br><textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>';
-					$mesgembedded.='<br><br><div class="warning">'.$langs->trans("MailingNeedCommand2").'</div>';
+					setEventMessage($langs->trans("MailingNeedCommand"), 'warnings');
+					setEventMessage('<textarea cols="60" rows="'.ROWS_1.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', 'warnings');
+					setEventMessage($langs->trans("MailingNeedCommand2"), 'warnings');
 					$_GET["action"]='';
 				}
 				else
@@ -910,12 +927,6 @@ else
 				}
 
 				print '<br><br></div>';
-			}
-
-			if (! empty($mesgembedded)) 
-			{
-				dol_htmloutput_mesg($mesgembedded,'','warning',1);
-				print '<br>';
 			}
 
 			// Affichage formulaire de TEST
