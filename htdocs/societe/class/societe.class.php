@@ -58,6 +58,7 @@ class Societe extends CommonObject
      * @deprecated Use $name instead
      */
     var $nom;
+
     var $firstname;
     var $lastname;
     var $particulier;
@@ -65,6 +66,7 @@ class Societe extends CommonObject
     var $address;
     var $zip;
     var $town;
+
     /**
      * 0=activity ceased, 1= in activity
      * @var int
@@ -443,7 +445,7 @@ class Societe extends CommonObject
                 {
                     // Call trigger
                     $result=$this->call_trigger('COMPANY_CREATE',$user);
-                    if ($result < 0) $error++;          
+                    if ($result < 0) $error++;
                     // End call triggers
                 }
                 else $error++;
@@ -879,7 +881,7 @@ class Societe extends CommonObject
                 {
                     // Call trigger
                     $result=$this->call_trigger('COMPANY_MODIFY',$user);
-                    if ($result < 0) $error++;          
+                    if ($result < 0) $error++;
                     // End call triggers
                 }
 
@@ -1245,7 +1247,7 @@ class Societe extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('COMPANY_DELETE',$user);
-            if ($result < 0) $error++;          
+            if ($result < 0) $error++;
             // End call triggers
 
 			if (! $error)
