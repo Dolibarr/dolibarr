@@ -1948,7 +1948,7 @@ else
 
                 print '<input type="hidden" name="lineid" value="'.$object->lines[$i]->rowid.'">';
 
-                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product)
+                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product > 0)
                 {
                     print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
                     $product_static=new ProductFournisseur($db);
