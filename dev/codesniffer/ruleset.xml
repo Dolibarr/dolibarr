@@ -11,8 +11,13 @@
     <rule ref="PSR2">
         <!-- Disallow usage of space -->
         <exclude name="Generic.WhiteSpace.DisallowTabIndent" />
+        <exclude name="Generic.WhiteSpace.ScopeIndent" />
+        <!-- Disallow warnings because of line length -->
         <exclude name="Generic.Files.LineLength" />
     </rule>
+
+    <!-- Disallow usage of space indenting -->
+    <rule ref="Generic.WhiteSpace.DisallowSpaceIndent" />
 
     <!-- Code analysis tests -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
