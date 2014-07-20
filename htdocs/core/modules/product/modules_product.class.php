@@ -74,7 +74,7 @@ abstract class ModeleProductCode
     /**
      *  Return next value available
      *
-     *	@param	Product		$objproduct		Object product
+     *	@param	integer		$objproduct		Object product
      *	@param	int			$type		Type
      *  @return string      			Value
      */
@@ -105,7 +105,7 @@ abstract class ModeleProductCode
      *  Renvoi la liste des modeles de numérotation
      *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
     static function liste_modeles($db,$maxfilenamelength=0)

@@ -145,7 +145,7 @@ class DoliDBPgsql extends DoliDB
      *
      *  @param  string	$line   			SQL request line to convert
      *  @param  string	$type				Type of SQL order ('ddl' for insert, update, select, delete or 'dml' for create, alter...)
-     *  @param	string	$unescapeslashquot	Unescape slash quote with quote quote
+     *  @param	integer	$unescapeslashquot	Unescape slash quote with quote quote
      *  @return string   					SQL request line converted
      */
 	static function convertSQLFromMysql($line,$type='auto',$unescapeslashquot=0)
@@ -361,7 +361,7 @@ class DoliDBPgsql extends DoliDB
 	 *	@param	    string		$login		Login
 	 *	@param	    string		$passwd		Password
 	 *	@param		string		$name		Name of database (not used for mysql, used for pgsql)
-	 *	@param		string		$port		Port of database server
+	 *	@param		integer		$port		Port of database server
 	 *	@return		resource				Database access handler
 	 *	@see		close
 	 */
@@ -539,7 +539,7 @@ class DoliDBPgsql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_array($resultset)
@@ -552,7 +552,7 @@ class DoliDBPgsql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_row($resultset)
@@ -596,7 +596,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Libere le dernier resultset utilise sur cette connexion
 	 *
-	 * @param	Resultset	$resultset  Result set of request
+	 * @param	integer	$resultset  Result set of request
 	 * @return	void
 	 */
 	function free($resultset=0)
@@ -664,7 +664,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Renvoie le code erreur generique de l'operation precedente.
 	 *
-	 * @return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+	 * @return    string       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
 	 */
 	function errno()
 	{
@@ -730,7 +730,7 @@ class DoliDBPgsql extends DoliDB
 	/**
 	 * Renvoie le texte de l'erreur pgsql de l'operation precedente
 	 *
-	 * @return		error_text
+	 * @return		string
 	 */
 	function error()
 	{
@@ -742,7 +742,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 * @param   string	$tab    	Table name concerned by insert. Ne sert pas sous MySql mais requis pour compatibilite avec Postgresql
 	 * @param	string	$fieldid	Field name
-	 * @return  int     			Id of row
+	 * @return  null|string     			Id of row
 	 */
 	function last_insert_id($tab,$fieldid='rowid')
 	{
@@ -764,7 +764,7 @@ class DoliDBPgsql extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return return          		XXX(field) or XXX('value') or field or 'value'
+     *  @return string          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -785,7 +785,7 @@ class DoliDBPgsql extends DoliDB
 	 *	Decrypt sensitive data in database
 	 *
 	 *	@param	int		$value			Value to decrypt
-	 * 	@return	string					Decrypted value if used
+	 * 	@return	integer					Decrypted value if used
 	 */
 	function decrypt($value)
 	{
@@ -1002,7 +1002,7 @@ class DoliDBPgsql extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resultset			Resultset x (x->attname)
+	 *	@return	resource			Resultset x (x->attname)
 	 */
 	function DDLDescTable($table,$field="")
 	{

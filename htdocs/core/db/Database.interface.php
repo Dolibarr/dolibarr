@@ -137,8 +137,8 @@ interface Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param    string $sortfield List of sort fields
-	 * @param    string $sortorder Sort order
+	 * @param    integer $sortfield List of sort fields
+	 * @param    integer $sortorder Sort order
 	 * @return    string            String to provide syntax of a sort sql string
 	 */
 	function order($sortfield = 0, $sortorder = 0);
@@ -216,7 +216,7 @@ interface Database
 	 * @param        string $login login
 	 * @param        string $passwd password
 	 * @param        string $name name of database (not used for mysql, used for pgsql)
-	 * @param        string $port Port of database server
+	 * @param        integer $port Port of database server
 	 * @return        resource            Database access handler
 	 * @see        close
 	 */
@@ -421,7 +421,7 @@ interface Database
 	/**
 	 *    Free last resultset used.
 	 *
-	 * @param  resource $resultset Curseur de la requete voulue
+	 * @param  integer $resultset Curseur de la requete voulue
 	 * @return    void
 	 */
 	function free($resultset = 0);

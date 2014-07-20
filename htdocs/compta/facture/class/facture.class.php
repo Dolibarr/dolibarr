@@ -1018,7 +1018,7 @@ class Facture extends CommonInvoice
 	/**
 	 *      Update database
 	 *
-	 *      @param      User	$user        	User that modify
+	 *      @param      integer	$user        	User that modify
 	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *      @return     int      			   	<0 if KO, >0 if OK
 	 */
@@ -1885,17 +1885,17 @@ class Facture extends CommonInvoice
 	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 * 		@param    	double		$qty             	Quantity
 	 * 		@param    	double		$txtva           	Force vat rate, -1 for auto
-	 * 		@param		double		$txlocaltax1		Local tax 1 rate
-	 *  	@param		double		$txlocaltax2		Local tax 2 rate
+	 * 		@param		integer		$txlocaltax1		Local tax 1 rate
+	 *  	@param		integer		$txlocaltax2		Local tax 2 rate
 	 *		@param    	int			$fk_product      	Id of predefined product/service
-	 * 		@param    	double		$remise_percent  	Percent of discount on line
+	 * 		@param    	integer		$remise_percent  	Percent of discount on line
 	 * 		@param    	timestamp	$date_start      	Date start of service
 	 * 		@param    	timestamp	$date_end        	Date end of service
 	 * 		@param    	int			$ventil          	Code of dispatching into accountancy
 	 * 		@param    	int			$info_bits			Bits de type de lignes
 	 *		@param    	int			$fk_remise_except	Id discount used
 	 *		@param		string		$price_base_type	'HT' or 'TTC'
-	 * 		@param    	double		$pu_ttc             Unit price with tax (> 0 even for credit note)
+	 * 		@param    	integer		$pu_ttc             Unit price with tax (> 0 even for credit note)
 	 * 		@param		int			$type				Type of line (0=product, 1=service)
 	 *      @param      int			$rang               Position of line
 	 *      @param		int			$special_code		Special code (also used by externals modules!)
@@ -1905,7 +1905,7 @@ class Facture extends CommonInvoice
 	 * 		@param		int			$fk_fournprice		Supplier price id (to calculate margin) or ''
 	 * 		@param		int			$pa_ht				Buying price of line (to calculate margin) or ''
 	 * 		@param		string		$label				Label of the line (deprecated, do not use)
-	 *		@param		array		$array_option		extrafields array
+	 *		@param		integer		$array_option		extrafields array
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0)
@@ -2068,8 +2068,8 @@ class Facture extends CommonInvoice
 	 *  @param     	date		$date_start      	Date de debut de validite du service
 	 *  @param     	date		$date_end        	Date de fin de validite du service
 	 *  @param     	double		$txtva          	VAT Rate
-	 * 	@param		double		$txlocaltax1		Local tax 1 rate
-	 *  @param		double		$txlocaltax2		Local tax 2 rate
+	 * 	@param		integer		$txlocaltax1		Local tax 1 rate
+	 *  @param		integer		$txlocaltax2		Local tax 2 rate
 	 * 	@param     	string		$price_base_type 	HT or TTC
 	 * 	@param     	int			$info_bits 		    Miscellaneous informations
 	 * 	@param		int			$type				Type of line (0=product, 1=service)
@@ -2079,7 +2079,7 @@ class Facture extends CommonInvoice
 	 * 	@param		int			$pa_ht				Price (without tax) of product when it was bought
 	 * 	@param		string		$label				Label of the line (deprecated, do not use)
 	 * 	@param		int			$special_code		Special code (also used by externals modules!)
-     *  @param		array		$array_option		extrafields array
+     *  @param		integer		$array_option		extrafields array
 	 *  @return    	int             				< 0 if KO, > 0 if OK
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)

@@ -223,8 +223,8 @@ abstract class DoliDB implements Database
 	/**
 	 * Define sort criteria of request
 	 *
-	 * @param	string	$sortfield  List of sort fields
-	 * @param	string	$sortorder  Sort order
+	 * @param	integer	$sortfield  List of sort fields
+	 * @param	integer	$sortorder  Sort order
 	 * @return	string      		String to provide syntax of a sort sql string
 	 */
 	function order($sortfield=0,$sortorder=0)
@@ -266,7 +266,7 @@ abstract class DoliDB implements Database
 	 *
 	 * 	@param	string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
 	 *	@param	int		$gm			1=Input informations are GMT values, otherwise local to server TZ
-	 *	@return	date				Date TMS
+	 *	@return	integer				Date TMS
 	 */
 	function jdate($string, $gm=false)
 	{

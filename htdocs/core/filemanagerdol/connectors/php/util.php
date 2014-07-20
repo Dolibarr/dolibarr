@@ -130,7 +130,7 @@ function IsHtmlExtension( $ext, $formExtensions )
  * Returns true if file contain insecure HTML code at the beginning.
  *
  * @param string $filePath absolute path to file
- * @return boolean
+ * @return string
  */
 function DetectHtml( $filePath )
 {
@@ -200,7 +200,7 @@ function DetectHtml( $filePath )
  *
  * @param 	string 	$filePath 		Absolute path to file
  * @param 	string 	$extension 		File extension
- * @return 	boolean					True or false
+ * @return 	string					True or false
  */
 function IsImageValid( $filePath, $extension )
 {

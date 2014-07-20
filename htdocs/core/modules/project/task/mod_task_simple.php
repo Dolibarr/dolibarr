@@ -142,7 +142,7 @@ class mod_task_simple extends ModeleNumRefTask
     /** 
      * 	Return next reference not yet used as a reference
      * 
-     *  @param	Societe	$objsoc     Object third party
+     *  @param	integer	$objsoc     Object third party
      *  @param  Task	$task		Object task
      *  @return string      		Next not used reference
      */

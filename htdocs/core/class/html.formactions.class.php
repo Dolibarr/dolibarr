@@ -52,8 +52,8 @@ class FormActions
      * 	@param	string	$selected		Preselected value (-1..100)
      * 	@param	int		$canedit		1=can edit, 0=read only
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
-     *  @param	string	$showempty		Show an empty line if select is used
-     *  @param	string	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param	integer	$showempty		Show an empty line if select is used
+     *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
      * 	@return	void
      */
     function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
@@ -229,7 +229,7 @@ class FormActions
      *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx'
      *  @param  string		$htmlname       Nom champ formulaire
      *  @param	string		$excludetype	Type to exclude
-     *  @param	string		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
+     *  @param	integer		$onlyautoornot	Group list by auto events or not: We keep only the 2 generic lines (AC_OTH and AC_OTH_AUTO)
      *  @param	int			$hideinfohelp	1=Do not show info help
      * 	@return	void
      */

@@ -1241,7 +1241,7 @@ class Adherent extends CommonObject
      *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
      *	@param	string		$emetteur_nom		Name of cheque writer
      *	@param	string		$emetteur_banque	Name of bank of cheque
-     *	@param	timestamp	$datesubend			Date end subscription
+     *	@param	integer	$datesubend			Date end subscription
      *	@return int         					rowid of record added, <0 if KO
      */
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)

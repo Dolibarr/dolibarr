@@ -58,7 +58,7 @@ function dispatched($order_id)
 /**
  * dispatchedOrders
  *
- * @return Ambigous <string, multitype:NULL >
+ * @return string <string, multitype:NULL >
  */
 function dispatchedOrders()
 {

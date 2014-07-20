@@ -172,6 +172,7 @@ class BonPrelevement extends CommonObject
      *	@param	string	$code_guichet 	code of bank's office
      *	@param	string	$number 		bank account number
      *	@param  string	$number_key 	number key of account number
+     * @param integer $line_id
      *	@return	int						>0 if OK, <0 if KO
      */
     function addline(&$line_id, $client_id, $client_nom, $amount, $code_banque, $code_guichet, $number, $number_key)
@@ -247,7 +248,7 @@ class BonPrelevement extends CommonObject
      *	Read errors
      *
      *  @param	int		$error 		id of error
-     *	@return	array 				Array of errors
+     *	@return	string 				Array of errors
      */
     function ReadError($error)
     {
@@ -1504,7 +1505,7 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_bic			rib.bic AS bic,
      *	@param	string		$row_datec			soc.datec,
      *	@param	string		$row_drum			soc.rowid AS drum
-     *	@return	void
+     *	@return	string
      */
     function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_facnumber, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum)
     {
@@ -1626,7 +1627,7 @@ class BonPrelevement extends CommonObject
      *	@param	int		$nombre			0 or 1
      *	@param	float	$total			Total
      *	@param	string	$CrLf			End of line character
-     *	@return	SEPA
+     *	@return	string
      */
     function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf='\n')
     {	// SEPA INITIALISATION

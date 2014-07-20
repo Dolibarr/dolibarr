@@ -225,7 +225,7 @@ function pHeader($soutitre,$next,$action='none')
 /**
  * Print HTML footer
  *
- * @param	string	$nonext			No button "Next step"
+ * @param	integer	$nonext			No button "Next step"
  * @param   string	$setuplang		Language code
  * @return	void
  */

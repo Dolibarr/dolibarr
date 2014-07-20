@@ -47,6 +47,9 @@ function SetXmlHeaders()
 	header('Content-Type: text/xml; charset=utf-8');
 }
 
+/**
+ * @param string $currentFolder
+ */
 function CreateXmlHeader( $command, $resourceType, $currentFolder )
 {
 	SetXmlHeaders();
@@ -71,7 +74,7 @@ function CreateXmlFooter()
 /**
  * SendError
  *
- * @param 	unknown_type $number	Number
+ * @param 	integer $number	Number
  * @param 	unknown_type $text		Text
  * @return	void
  */

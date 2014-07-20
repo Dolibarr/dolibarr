@@ -254,7 +254,7 @@ class Livraison extends CommonObject
 	 * 	Load a delivery receipt
 	 *
 	 * 	@param	int		$id			Id of object to load
-	 * 	@return	void
+	 * 	@return	integer
 	 */
 	function fetch($id)
 	{
@@ -467,7 +467,7 @@ class Livraison extends CommonObject
 	 *
 	 *	@param	User	$user            Utilisateur qui cree
 	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
-	 *	@return	void
+	 *	@return	integer
 	 */
 	function create_from_sending($user, $sending_id)
 	{
@@ -526,7 +526,7 @@ class Livraison extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	void
+	 *	@return	integer|null
 	 */
 	function deleteline($lineid)
 	{
@@ -551,7 +551,7 @@ class Livraison extends CommonObject
 	/**
 	 * Delete object
 	 *
-	 * @return	void
+	 * @return	integer
 	 */
 	function delete()
 	{

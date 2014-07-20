@@ -69,7 +69,7 @@ class PaymentSalary extends CommonObject
 	/**
 	 * Update database
 	 *
-	 * @param   User	$user        	User that modify
+	 * @param   integer	$user        	User that modify
 	 * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
 	 * @return  int         			<0 if KO, >0 if OK
 	 */
@@ -141,7 +141,7 @@ class PaymentSalary extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         id object
-	 *  @param  User	$user       User that load
+	 *  @param  integer	$user       User that load
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
 	function fetch($id, $user=0)

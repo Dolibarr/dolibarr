@@ -216,7 +216,7 @@ class PaymentSocialContribution extends CommonObject
 	/**
 	 *  Update database
 	 *
-	 *  @param	User	$user        	User that modify
+	 *  @param	integer	$user        	User that modify
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *  @return int         			<0 if KO, >0 if OK
 	 */

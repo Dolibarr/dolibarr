@@ -98,7 +98,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe		$objsoc     Object thirdparty
+	 *  @param	integer		$objsoc     Object thirdparty
 	 *  @param  Object		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */

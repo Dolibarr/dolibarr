@@ -43,7 +43,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 	 *  Load into memory list of available export format
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  string	$maxfilenamelength  Max length of value to show
+     *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates (same content than array this->driverlabel)
 	 */
 	function liste_modeles($db,$maxfilenamelength=0)

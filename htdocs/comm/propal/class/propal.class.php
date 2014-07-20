@@ -292,12 +292,12 @@ class Propal extends CommonObject
      * 		@param    	double		$pu_ht				Prix unitaire
      * 		@param    	double		$qty             	Quantite
      * 		@param    	double		$txtva           	Taux de tva
-     * 		@param		double		$txlocaltax1		Local tax 1 rate
-     *  	@param		double		$txlocaltax2		Local tax 2 rate
+     * 		@param		integer		$txlocaltax1		Local tax 1 rate
+     *  	@param		integer		$txlocaltax2		Local tax 2 rate
      *		@param    	int			$fk_product      	Id du produit/service predefini
-     * 		@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     * 		@param    	integer		$remise_percent  	Pourcentage de remise de la ligne
      * 		@param    	string		$price_base_type	HT or TTC
-     * 		@param    	double		$pu_ttc             Prix unitaire TTC
+     * 		@param    	integer		$pu_ttc             Prix unitaire TTC
      * 		@param    	int			$info_bits			Bits de type de lignes
      *      @param      int			$type               Type of line (product, service)
      *      @param      int			$rang               Position of line
@@ -308,7 +308,7 @@ class Propal extends CommonObject
      *      @param		string		$label				???
      *		@param      int			$date_start       	Start date of the line
      *		@param      int			$date_end         	End date of the line
-     *      @param		array		$array_option		extrafields array
+     *      @param		integer		$array_option		extrafields array
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
@@ -466,8 +466,8 @@ class Propal extends CommonObject
      *  @param      double		$qty            	Quantity
      *  @param      double		$remise_percent  	Remise effectuee sur le produit
      *  @param      double		$txtva	          	Taux de TVA
-     * 	@param	  	double		$txlocaltax1		Local tax 1 rate
-     *  @param	  	double		$txlocaltax2		Local tax 2 rate
+     * 	@param	  	integer		$txlocaltax1		Local tax 1 rate
+     *  @param	  	integer		$txlocaltax2		Local tax 2 rate
      *  @param      string		$desc            	Description
      *	@param	  	double		$price_base_type	HT ou TTC
      *	@param      int			$info_bits        	Miscellaneous informations
@@ -480,7 +480,7 @@ class Propal extends CommonObject
      *  @param		int			$type				0/1=Product/service
      *	@param      int			$date_start       	Start date of the line
      *	@param      int			$date_end         	End date of the line
-	 *  @param		array		$array_option		extrafields array
+	 *  @param		integer		$array_option		extrafields array
      *  @return     int     		        		0 if OK, <0 if KO
      */
 	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $date_start='', $date_end='', $array_option=0)
