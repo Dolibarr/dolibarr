@@ -49,10 +49,6 @@ $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fie
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
-$mesg='';
-
-
-
 /*
  * View
  */
@@ -114,10 +110,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</table>';
 
 	print '<br>';
-
-
-	if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
 
 	$solde = $acct->solde(0);
 

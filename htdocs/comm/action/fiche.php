@@ -62,7 +62,6 @@ $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
-$mesg='';
 
 $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
@@ -116,14 +115,14 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
 	}
 
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")), 'errors');
 	}
 
 	// Initialisation objet cactioncomm
@@ -131,7 +130,7 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 	}
 	else
 	{
@@ -201,14 +200,14 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
 	}
 
 	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -458,8 +457,6 @@ if ($action == 'create')
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre($langs->trans("AddAnAction"));
 
-	dol_htmloutput_mesg($mesg);
-
 	print '<table class="border" width="100%">';
 
 	// Type d'action actifs
@@ -643,10 +640,6 @@ if ($id > 0)
 	if ($error)
 	{
 		dol_htmloutput_errors($error);
-	}
-	if ($mesg)
-	{
-		dol_htmloutput_mesg($mesg);
 	}
 
 	$result=$object->fetch($id);

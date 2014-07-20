@@ -705,7 +705,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
                     break;
             }
 
-            dol_htmloutput_mesg('',$errors,'error');
+	        setEventMessage($errors, 'errors');
         }
 
 
@@ -890,7 +890,7 @@ else
                         break;
                 }
 
-                dol_htmloutput_mesg('',$errors,'error');
+	            setEventMessage($errors, 'errors');
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande

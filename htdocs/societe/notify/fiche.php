@@ -66,12 +66,12 @@ if ($action == 'add')
 
     if (empty($contactid))
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Contact")), 'errors');
         $error++;
     }
     if ($actionid <= 0)
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
         $error++;
     }
 
@@ -257,8 +257,6 @@ if ($result > 0)
 
     print '</form>';
     print '<br>';
-
-    dol_htmloutput_mesg($mesg);
 
     // List of active notifications
     print_fiche_titre($langs->trans("ListOfActiveNotifications"),'','');

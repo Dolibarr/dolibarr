@@ -43,8 +43,6 @@ $id = GETPOST("id",'int');
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="DESC";
 
-$mesg = '';
-
 // Security check
 $result=restrictedArea($user,'stock');
 
@@ -80,10 +78,10 @@ if ($action == 'add' && $user->rights->stock->creer)
 		}
 
 		$action = 'create';
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 	else {
-		$mesg='<div class="error">'.$langs->trans("ErrorWarehouseRefRequired").'</div>';
+		setEventMessage($langs->trans("ErrorWarehouseRefRequired"), 'errors');
 		$action="create";   // Force retour sur page creation
 	}
 }
@@ -101,7 +99,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		$action='';
 	}
 }
@@ -124,18 +122,17 @@ if ($action == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ( $object->update($id, $user) > 0)
 		{
 			$action = '';
-			//$mesg = '<div class="ok">Fiche mise a jour</div>';
 		}
 		else
 		{
 			$action = 'edit';
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 	else
 	{
 		$action = 'edit';
-		$mesg = '<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -166,8 +163,6 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-
-	dol_htmloutput_mesg($mesg);
 
 	print '<table class="border" width="100%">';
 
@@ -219,8 +214,6 @@ else
     $id=GETPOST("id",'int');
 	if ($id)
 	{
-		dol_htmloutput_mesg($mesg);
-
 		$object = new Entrepot($db);
 		$result = $object->fetch($id);
 		if ($result < 0)
@@ -496,7 +489,7 @@ else
 		 */
 		if (($action == 'edit' || $action == 're-edit') && 1)
 		{
-			print_fiche_titre($langs->trans("WarehouseEdit"), $mesg);
+			$langs->trans("WarehouseEdit");
 
 			print '<form action="fiche.php" method="POST">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

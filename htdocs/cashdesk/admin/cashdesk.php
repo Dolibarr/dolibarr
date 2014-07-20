@@ -67,12 +67,12 @@ if (GETPOST('action','alpha') == 'set')
  	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -151,8 +151,6 @@ print '<br>';
 print '<center><input type="submit" class="button" value="'.$langs->trans("Save").'"></center>';
 
 print "</form>\n";
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

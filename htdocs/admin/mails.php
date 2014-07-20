@@ -653,9 +653,13 @@ else
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
 		else
 		{
-			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-			if ($mail->error) print ' - '.$mail->error;
-			print '</div>';
+			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
+
+			if ($mail->error) {
+				$errormsg .= ' - '.$mail->error;
+			}
+
+			setEventMessage($errormsg, 'errors');
 		}
 		print '<br>';
 	}

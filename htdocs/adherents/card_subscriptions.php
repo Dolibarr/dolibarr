@@ -52,7 +52,6 @@ $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
 $errmsg='';
-$errmsgs=array();
 
 $defaultdelay=1;
 $defaultdelayunit='y';
@@ -108,7 +107,7 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		{
 			$langs->load("errors");
 			$errmsg=$langs->trans($company->error);
-			$errmsgs=$company->errors;
+			setEventMessage($company->errors, 'errors');
 		}
 		else
 		{
@@ -129,7 +128,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
         if ($_POST["userid"] != $user->id && $_POST["userid"] != $object->user_id)
         {
             $error++;
-            $mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+            setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), 'errors');
         }
     }
 
@@ -165,7 +164,7 @@ if ($action == 'setsocid')
                     $thirdparty=new Societe($db);
                     $thirdparty->fetch(GETPOST('socid','int'));
                     $error++;
-                    $mesg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
+	                setEventMessage($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name), 'errors');
                 }
             }
 
@@ -282,7 +281,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             $error++;
             $errmsg=$object->error;
-            $errmsgs=$object->errors;
+	        setEventMessage($object->errors, 'errors');
         }
 
         if (! $error)
@@ -444,7 +443,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                         if (! ($bank_line_id > 0))
                         {
                             $errmsg=$paiement->error;
-                            $errmsgs=$paiement->errors;
+	                        setEventMessage($paiement->errors, 'errors');
                             $error++;
                         }
                     }
@@ -689,7 +688,7 @@ if ($rowid)
     dol_fiche_end();
 
 
-    dol_htmloutput_errors($errmsg,$errmsgs);
+    dol_htmloutput_errors($errmsg);
 
 
     /*

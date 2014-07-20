@@ -56,7 +56,7 @@ if (GETPOST('save','alpha'))
 	if ($i >= 4)
 	{
 		$db->commit();
-		$mesg = "<font class=\"ok\">".$langs->trans("OSCommerceSetupSaved")."</font>";
+		setEventMessage($langs->trans("OSCommerceSetupSaved"));
 	}
 	else
 	{
@@ -88,28 +88,29 @@ elseif (GETPOST('test','alpha'))
 		$sql.=" WHERE configuration_key='STORE_NAME'";
 		$resql=$oscommercedb->query($sql);
 		if ($resql) {
-			$mesg ="<div class=\"ok\">".$langs->trans("OSCommerceTestOk",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbname','alpha'),GETPOST('oscommerce_dbuser','alpha'));
-			$mesg.="</div>";
+			$mesg = $langs->trans("OSCommerceTestOk",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbname','alpha'),GETPOST('oscommerce_dbuser','alpha'));
+			setEventMessage($mesg);
 		}
 		else {
-			$mesg ="<div class=\"error\">".$langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',GETPOST('oscommerce_db_table_prefix','alpha')."configuration");
-			$mesg.="</div>";
+			$mesg = $langs->trans("OSCommerceErrorConnectOkButWrongDatabase",'STORE_NAME',GETPOST('oscommerce_db_table_prefix','alpha')."configuration");
+			setEventMessage($mesg, 'errors');
 		}
 
 		//$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
 	}
 	elseif ($oscommercedb->connected == 1 && $oscommercedb->database_selected != 1)
 	{
-		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo1",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbname','alpha'));
+		$mesg = $langs->trans("OSCommerceTestKo1",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbname','alpha'));
 		$mesg.="<br>".$oscommercedb->error();
-		$mesg.="</div>";
+
+		setEventMessage($mesg, 'errors');
 		//$oscommercedb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
 	}
 	else
 	{
-		$mesg ="<div class=\"error\">".$langs->trans("OSCommerceTestKo2",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbuser','alpha'));
+		$mesg = $langs->trans("OSCommerceTestKo2",GETPOST('oscommerce_dbhost','alpha'),GETPOST('oscommerce_dbuser','alpha'));
 		$mesg.="<br>".$oscommercedb->error();
-		$mesg.="</div>";
+		setEventMessage($mesg, 'errors');
 	}
 
 	//$resql=$db->query("select count(*) from ".MAIN_DB_PREFIX."const");
@@ -197,9 +198,6 @@ print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->t
 print "</center>";
 
 print "</form>\n";
-
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

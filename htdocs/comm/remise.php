@@ -71,7 +71,7 @@ if (GETPOST("action") == 'setremise')
 	}
 	else
 	{
-		$errmesg=$soc->error;
+		setEventMessage($soc->error, 'errors');
 	}
 }
 
@@ -96,8 +96,6 @@ if ($socid > 0)
 	$objsoc = new Societe($db);
 	$objsoc->id=$socid;
 	$objsoc->fetch($socid);
-
-	dol_htmloutput_errors($errmesg);
 
 	$head = societe_prepare_head($objsoc);
 

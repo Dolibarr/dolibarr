@@ -81,8 +81,6 @@ if (! empty($canvas))
 // Security check
 $result=restrictedArea($user,'adherent',$rowid,'','','fk_soc', 'rowid', $objcanvas);
 
-$errmsg=''; $errmsgs=array();
-
 if ($rowid > 0)
 {
 	// Load member
@@ -128,7 +126,7 @@ if ($action == 'setuserid' && ($user->rights->user->self->creer || $user->rights
 		if ($userid != $user->id && $userid != $object->user_id)
 		{
 			$error++;
-			$mesg='<div class="error">'.$langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly").'</div>';
+			setEventMessage($langs->trans("ErrorUserPermissionAllowsToLinksToItselfOnly"), 'errors');
 		}
 	}
 
@@ -164,7 +162,7 @@ if ($action == 'setsocid')
 					$thirdparty=new Societe($db);
 					$thirdparty->fetch($socid);
 					$error++;
-					$errmsg='<div class="error">'.$langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name).'</div>';
+					setEventMessage($langs->trans("ErrorMemberIsAlreadyLinkedToThisThirdParty",$othermember->getFullName($langs),$othermember->login,$thirdparty->name), 'errors');
 				}
 			}
 
@@ -190,12 +188,12 @@ if ($action == 'confirm_create_user' && $confirm == 'yes' && $user->rights->user
 		if ($result < 0)
 		{
 			$langs->load("errors");
-			$errmsg=$langs->trans($nuser->error);
+			setEventMessage($langs->trans($nuser->error), 'errors');
 		}
 	}
 	else
 	{
-		$errmsg=$object->error;
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -211,13 +209,13 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		if ($result < 0)
 		{
 			$langs->load("errors");
-			$errmsg=$langs->trans($company->error);
-			$errmsgs=$company->errors;
+			setEventMessage($langs->trans($company->error), 'errors');
+			setEventMessage($company->errors, 'errors');
 		}
 	}
 	else
 	{
-		$errmsg=$object->error;
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -231,7 +229,7 @@ if ($action == 'confirm_sendinfo' && $confirm == 'yes')
 		$result=$object->send_an_email($langs->transnoentitiesnoconv("ThisIsContentOfYourCard")."\n\n%INFOS%\n\n",$langs->transnoentitiesnoconv("CardContent"));
 
 		$langs->load("mails");
-		$mesg=$langs->trans("MailSuccessfulySent", $from, $object->email);
+		setEventMessage($langs->trans("MailSuccessfulySent", $from, $object->email));
 	}
 }
 
@@ -252,12 +250,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 	if ($morphy != 'mor' && empty($lastname)) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname")), 'errors');
 	}
 	if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname")), 'errors');
 	}
 
 	// Create new object
@@ -343,7 +341,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 						$newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
 						if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']) > 0)
 						{
-							$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+							setEventMessage($langs->trans("ErrorFailedToSaveFile"), 'errors');
 						}
 						else
 						{
@@ -359,7 +357,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 				}
 				else
 				{
-					$errmsgs[] = "ErrorBadImageFormat";
+					setEventMessage("ErrorBadImageFormat", 'errors');
 				}
 			}
 			else
@@ -387,8 +385,11 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		}
 		else
 		{
-			if ($object->error) $errmsg=$object->error;
-			else $errmsgs=$object->errors;
+			if ($object->error) {
+				setEventMessage($object->error, 'errors');
+			} else {
+				setEventMessage($object->errors, 'errors');
+			}
 			$action='';
 		}
 	}
@@ -472,14 +473,14 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	// Check parameters
 	if (empty($morphy) || $morphy == "-1") {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature"))."<br>\n";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Nature")), 'errors');
 	}
 	// Test si le login existe deja
 	if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 	{
 		if (empty($login)) {
 			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Login"))."<br>\n";
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Login")), 'errors');
 		}
 		else {
 			$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape($login)."'";
@@ -490,32 +491,32 @@ if ($action == 'add' && $user->rights->adherent->creer)
 			if ($num) {
 				$error++;
 				$langs->load("errors");
-				$errmsg .= $langs->trans("ErrorLoginAlreadyExists",$login)."<br>\n";
+				setEventMessage($langs->trans("ErrorLoginAlreadyExists",$login), 'errors');
 			}
 		}
 		if (empty($pass)) {
 			$error++;
-			$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Password")), 'errors');
 		}
 	}
 	if ($morphy != 'mor' && empty($lastname)) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname")), 'errors');
 	}
 	if ($morphy != 'mor' && (!isset($firstname) || $firstname=='')) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname")), 'errors');
 	}
 	if (! ($typeid > 0)) {	// Keep () before !
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"))."<br>\n";
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 	}
 	if ($conf->global->ADHERENT_MAIL_REQUIRED && ! isValidEMail($email)) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorBadEMail",$email)."<br>\n";
+		setEventMessage($langs->trans("ErrorBadEMail",$email), 'errors');
 	}
 	$public=0;
 	if (isset($public)) $public=1;
@@ -536,8 +537,11 @@ if ($action == 'add' && $user->rights->adherent->creer)
 		{
 			$db->rollback();
 
-			if ($object->error) $errmsg=$object->error;
-			else $errmsgs=$object->errors;
+			if ($object->error) {
+				setEventMessage($object->error, 'errors');
+			} else {
+				setEventMessage($object->errors, 'errors');
+			}
 
 			$action = 'create';
 		}
@@ -589,15 +593,18 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 			if ($result < 0)
 			{
 				$error++;
-				$errmsg.=$object->error;
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
 	else
 	{
 		$error++;
-		if ($object->error) $errmsg=$object->error;
-		else $errmsgs=$object->errors;
+		if ($object->error) {
+			setEventMessage($object->error, 'errors');
+		} else {
+			setEventMessage($object->errors, 'errors');
+		}
 	}
 
 	if (! $error)
@@ -613,6 +620,8 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 
 if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
 {
+	$error = 0;
+
 	if ($confirm == 'yes')
 	{
 		$adht = new AdherentType($db);
@@ -628,17 +637,23 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
 			}
 			if ($result < 0)
 			{
-				$errmsg.=$object->error;
+				$error++;
+				setEventMessage($object->error, 'errors');
 			}
 		}
 		else
 		{
-			if ($object->error) $errmsg=$object->error;
-			else $errmsgs=$object->errors;
+			$error++;
+
+			if ($object->error) {
+				setEventMessage($object->error, 'errors');
+			} else {
+				setEventMessage($object->errors, 'errors');
+			}
 			$action='';
 		}
 	}
-	if (! empty($backtopage) && ! $errmsg)
+	if (! empty($backtopage) && ! $error)
 	{
 		header("Location: ".$backtopage);
 		exit;
@@ -652,7 +667,7 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_del_spip' && $conf
 	{
 		if (!$mailmanspip->del_to_spip($object))
 		{
-			$errmsg.= $langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error."<BR>\n";
+			setEventMessage($langs->trans('DeleteIntoSpipError').': '.$mailmanspip->error, 'errors');
 		}
 	}
 }
@@ -663,7 +678,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 	{
 		if (!$mailmanspip->add_to_spip($object))
 		{
-			$errmsg.= $langs->trans('AddIntoSpipError').': '.$mailmanspip->error."<BR>\n";
+			setEventMessage($langs->trans('AddIntoSpipError').': '.$mailmanspip->error, 'errors');
 		}
 	}
 }
@@ -724,9 +739,6 @@ else
 		$adht = new AdherentType($db);
 
 		print_fiche_titre($langs->trans("NewMember"));
-
-		dol_htmloutput_mesg($errmsg,$errmsgs,'error');
-		dol_htmloutput_mesg($mesg,$mesgs);
 
 		if ($conf->use_javascript_ajax)
 		{
@@ -952,9 +964,6 @@ else
 
 		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
 
-		dol_htmloutput_errors($errmsg,$errmsgs);
-		dol_htmloutput_mesg($mesg);
-
 		if ($conf->use_javascript_ajax)
 		{
 			print "\n".'<script type="text/javascript" language="javascript">';
@@ -1168,8 +1177,6 @@ else
 
 	if ($rowid && $action != 'edit')
 	{
-		dol_htmloutput_mesg($mesg);
-
 		/* ************************************************************************** */
 		/*                                                                            */
 		/* Mode affichage                                                             */
@@ -1198,8 +1205,6 @@ else
 		$head = member_prepare_head($object);
 
 		dol_fiche_head($head, 'general', $langs->trans("Member"), 0, 'user');
-
-		dol_htmloutput_errors($errmsg,$errmsgs);
 
 		// Confirm create user
 		if ($action == 'create_user')

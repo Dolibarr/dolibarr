@@ -47,8 +47,6 @@ $fieldname = (! empty($ref)?'number':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldname);
 
-$mesg='';
-
 $sortfield=GETPOST('sortfield', 'alpha');
 $sortorder=GETPOST('sortorder', 'alpha');
 $page=GETPOST('page', 'int');
@@ -122,12 +120,12 @@ if ($action == 'setref' && $user->rights->banque->cheque)
 		$result=$object->set_number($user,$number);
 		if ($result < 0)
 		{
-		    $mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 	else
 	{
-	    $mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -336,9 +334,6 @@ else
 		
 	}
 }
-
-
-dol_htmloutput_errors($mesg);
 
 $accounts = array();
 

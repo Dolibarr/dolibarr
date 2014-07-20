@@ -43,7 +43,6 @@ static $tmpstatut2label=array(
 $statut2label=array('');
 foreach ($tmpstatut2label as $key => $val) $statut2label[$key]=$langs->trans($val);
 
-$mesg='';
 $errors=array();
 
 $object = new Fiscalyear($db);
@@ -63,8 +62,6 @@ llxHeader('',$title);
 $title = $langs->trans('FiscalYears');
 
 print_fiche_titre($langs->trans('FiscalYears'));
-
-dol_htmloutput_errors($mesg);
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";

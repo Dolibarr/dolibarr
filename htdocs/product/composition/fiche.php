@@ -49,8 +49,6 @@ $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-$mesg = '';
-
 $product = new Product($db);
 $productid=0;
 if ($id > 0 || ! empty($ref))
@@ -83,8 +81,11 @@ $cancel <> $langs->trans("Cancel") &&
 			{
 				$error++;
 				$action = 're-edit';
-				if ($product->error == "isFatherOfThis") $mesg = $langs->trans("ErrorAssociationIsFatherOfThis");
-				else $mesg=$product->error;
+				if ($product->error == "isFatherOfThis") {
+					setEventMessage($langs->trans("ErrorAssociationIsFatherOfThis"), 'errors');
+				} else {
+					setEventMessage($product->error, 'errors');
+				}
 			}
 		}
 		else
@@ -97,7 +98,7 @@ $cancel <> $langs->trans("Cancel") &&
 			{
 				$error++;
 				$action = 're-edit';
-				$mesg=$product->error;
+				setEventMessage($product->error, 'errors');
 			}
 		}
 	}
@@ -160,10 +161,6 @@ if ($action == 'search')
 
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
-
-
-dol_htmloutput_errors($mesg);
-
 
 $head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);

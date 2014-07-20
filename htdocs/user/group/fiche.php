@@ -48,7 +48,6 @@ $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $userid=GETPOST('user', 'int');
-$message='';
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -76,7 +75,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     else
     {
     	$langs->load("errors");
-        $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+        setEventMessage($langs->trans('ErrorForbidden'), 'errors');
     }
 }
 
@@ -87,14 +86,10 @@ if ($action == 'add')
 {
     if ($caneditperms)
     {
-        if (! $_POST["nom"])
-        {
-            $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+        if (! $_POST["nom"]) {
+            setEventMessage($langs->trans("NameNotDefined"), 'errors');
             $action="create";       // Go back to create page
-        }
-
-		if (! $message)
-		{
+        } else {
 			$object->nom	= trim($_POST["nom"]);
 			$object->note	= trim($_POST["note"]);
 
@@ -117,7 +112,7 @@ if ($action == 'add')
                 $db->rollback();
 
                 $langs->load("errors");
-                $message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$object->nom).'</div>';
+                setEventMessage($langs->trans("ErrorGroupAlreadyExists",$object->nom), 'errors');
                 $action="create";       // Go back to create page
             }
         }
@@ -125,7 +120,7 @@ if ($action == 'add')
     else
     {
     	$langs->load("errors");
-        $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
     }
 }
 
@@ -151,14 +146,14 @@ if ($action == 'adduser' || $action =='removeuser')
             }
             else
             {
-                $message.=$edituser->error;
+                setEventMessage($edituser->error, 'errors');
             }
         }
     }
     else
     {
     	$langs->load("errors");
-        $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+	    setEventMessage($langs->trans('ErrorForbidden'), 'errors');
     }
 }
 
@@ -183,19 +178,19 @@ if ($action == 'update')
 
         if ($ret >= 0 && ! count($object->errors))
         {
-            $message.='<div class="ok">'.$langs->trans("GroupModified").'</div>';
+	        setEventMessage($langs->trans("GroupModified"));
             $db->commit();
         }
         else
         {
-            $message.='<div class="error">'.$object->error.'</div>';
+            setEventMessage($object->error);
             $db->rollback();
         }
     }
     else
     {
     	$langs->load("errors");
-        $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+        setEventMessage($langs->trans('ErrorForbidden'));
     }
 }
 
@@ -213,8 +208,6 @@ $fuserstatic = new User($db);
 if ($action == 'create')
 {
     print_fiche_titre($langs->trans("NewGroup"));
-
-    if ($message) { print $message."<br>"; }
 
     print dol_set_focus('#nom');
 
@@ -339,9 +332,6 @@ else
 
 			print "</div>\n";
 			print "<br>\n";
-
-
-            dol_htmloutput_mesg($message);
 
             /*
              * Liste des utilisateurs dans le groupe

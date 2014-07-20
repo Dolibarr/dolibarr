@@ -641,7 +641,7 @@ else if ($action == 'livraison' && $user->rights->fournisseur->commande->recepti
     }
     else
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")), 'errors');
     }
 }
 
@@ -770,7 +770,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 
     if ($socid <1)
     {
-    	$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')).'</div>';
+	    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), 'errors');
     	$action='create';
     	$error++;
     }
@@ -801,7 +801,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         {
             $langs->load("errors");
             $db->rollback();
-            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	        setEventMessage($langs->trans($object->error), 'errors');
             $action='create';
             $_GET['socid']=$_POST['socid'];
         }
@@ -1073,7 +1073,6 @@ if ($action=="create")
 {
 	print_fiche_titre($langs->trans('NewOrder'));
 
-	dol_htmloutput_mesg($mesg);
 	dol_htmloutput_events();
 
 	$societe='';

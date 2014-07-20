@@ -156,8 +156,6 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 
 if ($id > 0 || ! empty($ref))
 {
-	dol_htmloutput_mesg($mesg,$mesgs);
-
 	if ($object->fetch($id,$ref) > 0)
 	{
 
