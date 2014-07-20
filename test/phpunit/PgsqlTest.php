@@ -144,7 +144,7 @@ class PgsqlTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, "-- ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60); replaced by --\nALTER TABLE llx_table RENAME COLUMN oldname TO newname");
 
-        $sql="ALTER TABLE llx_table DROP COLUMN oldname;";
+        $sql="ALTER TABLE llx_table DROPS COLUMN oldname;";
         $result=DoliDBPgsql::convertSQLFromMysql($sql);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, $sql);
