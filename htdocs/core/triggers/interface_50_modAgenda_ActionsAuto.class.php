@@ -38,7 +38,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 	/**
 	 * Function called when a Dolibarrr business event is done.
-	 * All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
 	 * Following properties must be filled:
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
@@ -55,9 +55,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
 	 * @param conf		    $conf       Object conf
-	 * @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
+	 * @return int         				<0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function run_trigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		// Module not active, we do nothing
         if (empty($conf->agenda->enabled)) {

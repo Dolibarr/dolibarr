@@ -606,8 +606,8 @@ class Livraison extends CommonObject
                     if ($result < 0)
                     {
                         $this->db->rollback();
-                        return -4; 
-                    }            
+                        return -4;
+                    }
                     // End call triggers
 
 					return 1;
@@ -959,5 +959,3 @@ class LivraisonLigne
 	}
 
 }
-
-?>
