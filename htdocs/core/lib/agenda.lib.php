@@ -39,6 +39,7 @@
  * @param 	string	$filterd		Filter of done by user
  * @param 	int		$pid			Product id
  * @param 	int		$socid			Third party id
+ * @param	string	$action			Action string
  * @param	array	$showextcals	Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string	$actioncode		Preselected value of actioncode for filter on type
  * @param	int		$usergroupid	Id of group to filter on users
