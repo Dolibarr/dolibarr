@@ -1634,7 +1634,7 @@ else
          */
         $nbrows=9; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
-        if (! empty($conf->banque->enabled)) $nbcols++;
+        if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
 
         // Local taxes
         if ($societe->localtax1_assuj=="1") $nbrows++;
