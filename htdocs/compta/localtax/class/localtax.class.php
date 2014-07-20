@@ -123,7 +123,7 @@ class Localtax extends CommonObject
     /**
      *	Update database
      *
-     *	@param		User	$user        	User that modify
+     *	@param		integer	$user        	User that modify
      *	@param		int		$notrigger		0=no, 1=yes (no update trigger)
      *	@return		int						<0 if KO, >0 if OK
      */

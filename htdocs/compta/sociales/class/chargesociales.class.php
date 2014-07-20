@@ -63,7 +63,7 @@ class ChargeSociales extends CommonObject
      *  Retrouve et charge une charge sociale
      *
      *  @param	int     $id		1 si trouve, 0 sinon
-     *  @return	void
+     *  @return	integer|null
      */
     function fetch($id)
     {
@@ -320,7 +320,7 @@ class ChargeSociales extends CommonObject
      *  Retourne le libelle du statut d'une charge (impaye, payee)
      *
      *  @param	int		$mode       	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return	string        			Label
      */
     function getLibStatut($mode=0,$alreadypaid=-1)
@@ -333,7 +333,7 @@ class ChargeSociales extends CommonObject
      *
      *  @param	int		$statut        	Id statut
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @param  double	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
+	 *  @param  integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommand to put here amount payed if you have it, 1 otherwise)
      *  @return string        			Label
      */
     function LibStatut($statut,$mode=0,$alreadypaid=-1)

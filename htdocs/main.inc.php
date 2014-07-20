@@ -112,7 +112,7 @@ function test_sql_and_script_inject($val, $type)
  *
  * @param		string		&$var		Variable name
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean					true if there is an injection
+ * @return		null|boolean					true if there is an injection
  */
 function analyse_sql_and_script(&$var, $type)
 {
@@ -1504,7 +1504,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 /**
  *  Show left menu bar
  *
- *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler
+ *  @param  string	$menu_array_before 	       	Table of menu entries to show before entries of menu handler
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url

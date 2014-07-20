@@ -71,7 +71,7 @@ class Menubase
     /**
      *      Create menu entry into database
      *
-     *      @param      User	$user       User that create
+     *      @param      integer	$user       User that create
      *      @return     int      			<0 if KO, Id of record if OK
      */
     function create($user=0)
@@ -181,7 +181,7 @@ class Menubase
     /**
      *  Update menu entry into database.
      *
-     *  @param	User	$user        	User that modify
+     *  @param	integer	$user        	User that modify
      *  @param  int		$notrigger	    0=no, 1=yes (no update trigger)
      *  @return int 		        	<0 if KO, >0 if OK
      */
@@ -247,7 +247,7 @@ class Menubase
      *   Load object in memory from database
      *
      *   @param		int		$id         Id object
-     *   @param		User    $user       User that load
+     *   @param		integer    $user       User that load
      *   @return	int         		<0 if KO, >0 if OK
      */
     function fetch($id, $user=0)

@@ -150,7 +150,7 @@ class SimpleOpenID
     /**
      * GetIdentity
      *
-     * @return	void
+     * @return	string
      */
     function GetIdentity()
     { 	// Get Identity
@@ -187,7 +187,7 @@ class SimpleOpenID
     /**
      * IsError
      *
-     * @return	void
+     * @return	boolean
      */
     function IsError()
     {
@@ -225,7 +225,7 @@ class SimpleOpenID
      * OpenID_Standarize
      *
      * @param	string	$openid_identity		Server
-     * @return	void
+     * @return	string
      */
     function OpenID_Standarize($openid_identity = null)
     {
@@ -283,6 +283,9 @@ class SimpleOpenID
         }
     }
 
+    /**
+     * @param string $url
+     */
     function CURL_Request($url, $method="GET", $params = "")
     { // Remember, SSL MUST BE SUPPORTED
         if (is_array($params)) $params = $this->array2url($params);
@@ -356,7 +359,7 @@ class SimpleOpenID
     /**
      * GetRedirectURL
      *
-     * @return	void
+     * @return	string
      */
     function GetRedirectURL()
     {
@@ -400,7 +403,7 @@ class SimpleOpenID
     /**
      * ValidateWithServer
      *
-     * @return	void
+     * @return	boolean
      */
     function ValidateWithServer()
     {

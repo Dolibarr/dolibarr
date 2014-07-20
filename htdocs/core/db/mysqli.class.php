@@ -185,7 +185,7 @@ class DoliDBMysqli extends DoliDB
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		string	$port		Port of database server
+	 *	@param		integer	$port		Port of database server
 	 *	@return		resource			Database access handler
 	 *	@see		close
      */
@@ -316,7 +316,7 @@ class DoliDBMysqli extends DoliDB
     /**
      *	Return datas as an array
      *
-     *	@param	Resultset	$resultset  Resultset of request
+     *	@param	resource	$resultset  Resultset of request
      *	@return	array					Array
      */
     function fetch_row($resultset)
@@ -369,7 +369,7 @@ class DoliDBMysqli extends DoliDB
     /**
      *	Libere le dernier resultset utilise sur cette connexion
      *
-     *	@param  resultset	$resultset   Curseur de la requete voulue
+     *	@param  integer	$resultset   Curseur de la requete voulue
      *	@return	void
      */
     function free($resultset=0)
@@ -716,7 +716,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string		$table	Name of table
 	 *	@param	string		$field	Optionnel : Name of field if we want description of field
-	 *	@return	resultset			Resultset x (x->Field, x->Type, ...)
+	 *	@return	resource			Resultset x (x->Field, x->Type, ...)
      */
     function DDLDescTable($table,$field="")
     {

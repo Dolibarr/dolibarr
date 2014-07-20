@@ -401,11 +401,11 @@ class FactureRec extends Facture
      *	@param    	double		$qty             	Quantite
      *	@param    	double		$txtva           	Taux de tva force, sinon -1
      *	@param    	int			$fk_product      	Id du produit/service predefini
-     *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	integer		$remise_percent  	Pourcentage de remise de la ligne
      *	@param		string		$price_base_type	HT or TTC
      *	@param    	int			$info_bits			Bits de type de lignes
      *	@param    	int			$fk_remise_except	Id remise
-     *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+     *	@param    	integer		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
      *	@param		int			$type				Type of line (0=product, 1=service)
      *	@param      int			$rang               Position of line
      *	@param		int			$special_code		Special code

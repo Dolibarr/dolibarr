@@ -102,7 +102,7 @@ class FormOrder
 	 *	@param	string	$selected		Id of preselected input method
 	 *  @param  string	$htmlname 		Name of HTML select list
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
-	 *  @return	array					Tableau des sources de commandes
+	 *  @return	integer					Tableau des sources de commandes
 	 */
 	function selectInputMethod($selected='',$htmlname='source_id',$addempty=0)
 	{

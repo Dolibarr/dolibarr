@@ -41,7 +41,7 @@ class pdf_rouget extends ModelePdfExpedition
 	/**
 	 *	Constructor
 	 *
-	 *	@param	DoliDB	$db		Database handler
+	 *	@param	integer	$db		Database handler
 	 */
 	function __construct($db=0)
 	{
@@ -653,7 +653,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	void
+	 *      @return	integer
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{

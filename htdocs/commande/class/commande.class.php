@@ -1037,14 +1037,14 @@ class Commande extends CommonOrder
      *	@param      double			$pu_ht    	        Unit price (without tax)
      *	@param      double			$qty             	Quantite
      *	@param      double			$txtva           	Taux de tva force, sinon -1
-     *	@param      double			$txlocaltax1		Local tax 1 rate
-     *	@param      double			$txlocaltax2		Local tax 2 rate
+     *	@param      integer			$txlocaltax1		Local tax 1 rate
+     *	@param      integer			$txlocaltax2		Local tax 2 rate
      *	@param      int				$fk_product      	Id du produit/service predefini
-     *	@param      double			$remise_percent  	Pourcentage de remise de la ligne
+     *	@param      integer			$remise_percent  	Pourcentage de remise de la ligne
      *	@param      int				$info_bits			Bits de type de lignes
      *	@param      int				$fk_remise_except	Id remise
      *	@param      string			$price_base_type	HT or TTC
-     *	@param      double			$pu_ttc    		    Prix unitaire TTC
+     *	@param      integer			$pu_ttc    		    Prix unitaire TTC
      *	@param      timestamp		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      timestamp		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      *	@param      int				$type				Type of line (0=product, 1=service)
@@ -1054,7 +1054,7 @@ class Commande extends CommonOrder
      *  @param		int				$fk_fournprice		Id supplier price
      *  @param		int				$pa_ht				Buying price (without tax)
      *  @param		string			$label				Label
-	 *  @param		array			$array_option		extrafields array
+	 *  @param		integer			$array_option		extrafields array
      *	@return     int             					>0 if OK, <0 if KO
      *
      *	@see        add_product
@@ -1233,7 +1233,7 @@ class Commande extends CommonOrder
      *
      *	@param		int				$idproduct			Product Id
      *	@param		double			$qty				Quantity
-     *	@param		double			$remise_percent		Product discount relative
+     *	@param		integer			$remise_percent		Product discount relative
      * 	@param    	timestamp		$date_start         Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      * 	@param    	timestamp		$date_end           End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
      * 	@return    	void
@@ -2273,8 +2273,8 @@ class Commande extends CommonOrder
      *  @param    	double			$qty              	Quantity
      *  @param    	double			$remise_percent   	Pourcentage de remise de la ligne
      *  @param    	double			$txtva           	Taux TVA
-     * 	@param		double			$txlocaltax1		Local tax 1 rate
-     *  @param		double			$txlocaltax2		Local tax 2 rate
+     * 	@param		integer			$txlocaltax1		Local tax 1 rate
+     *  @param		integer			$txlocaltax2		Local tax 2 rate
      *  @param    	string			$price_base_type	HT or TTC
      *  @param    	int				$info_bits        	Miscellaneous informations on line
      *  @param    	timestamp		$date_start        	Start date of the line
@@ -2286,7 +2286,7 @@ class Commande extends CommonOrder
      *  @param		int				$pa_ht				Price (without tax) of product when it was bought
      *  @param		string			$label				Label
      *  @param		int				$special_code		Special code (also used by externals modules!)
-	 *  @param		array			$array_option		extrafields array
+	 *  @param		integer			$array_option		extrafields array
      *  @return   	int              					< 0 if KO, > 0 if OK
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0,$txlocaltax2=0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_option=0)
@@ -2932,7 +2932,7 @@ class Commande extends CommonOrder
     /**
      * 	Return an array of order lines
      *
-     * @return	array		Lines of order
+     * @return	integer		Lines of order
      */
     function getLinesArray()
     {

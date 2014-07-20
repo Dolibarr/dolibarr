@@ -161,7 +161,7 @@ class FormProduct
 	 *  @param  string		$measuring_style     Unit to show: weight, size, surface, volume
 	 *  @param  string		$default             Force unit
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
-	 * 	@return	void
+	 * 	@return	string
 	 */
 	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{

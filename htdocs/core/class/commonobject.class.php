@@ -476,8 +476,8 @@ abstract class CommonObject
      *
      *      @param	string	$source     'internal', 'external' or 'all'
      *      @param	string	$order		Sort order by : 'code' or 'rowid'
-     *      @param  string	$option     0=Return array id->label, 1=Return array code->label
-     *      @param  string	$activeonly    0=all type of contact, 1=only the active
+     *      @param  integer	$option     0=Return array id->label, 1=Return array code->label
+     *      @param  integer	$activeonly    0=all type of contact, 1=only the active
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
     function liste_type_contact($source='internal', $order='code', $option=0, $activeonly=0)
@@ -1117,7 +1117,7 @@ abstract class CommonObject
      * 	@param		boolean		$renum				true to renum all already ordered lines, false to renum only not already ordered lines.
      * 	@param		string		$rowidorder			ASC or DESC
      * 	@param		boolean		$fk_parent_line		Table with fk_parent_line field or not
-     * 	@return		void
+     * 	@return		integer|null
      */
     function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
     {
@@ -2293,7 +2293,7 @@ abstract class CommonObject
      *
      * @param	object	$extrafields	Extrafield Object
      * @param	string	$mode			Show output (view) or input (edit) for extrafield
-	 * @param	array	$params			Optionnal parameters
+	 * @param	integer	$params			Optionnal parameters
 	 * @param	string	$keyprefix		Prefix string to add into name and id of field (can be used to avoid duplicate names)
      *
      * @return string
@@ -2525,7 +2525,7 @@ abstract class CommonObject
     /**
      *	Set extra parameters
      *
-     *	@return	void
+     *	@return	integer
      */
     function setExtraParameters()
     {
@@ -2612,7 +2612,7 @@ abstract class CommonObject
      *  TODO Move this into html.class.php
      *  But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
      *
-     *  @return	void
+     *  @return	integer|null
      */
     function showLinkedObjectBlock()
     {
@@ -2731,7 +2731,7 @@ abstract class CommonObject
 	 *	@param	string		$action				Action code
 	 *	@param  string		$seller            	Object of seller third party
 	 *	@param  string  	$buyer             	Object of buyer third party
-	 *	@param	string		$selected		   	Object line selected
+	 *	@param	integer		$selected		   	Object line selected
 	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
 	 *	@return	void
 	 */
@@ -2829,8 +2829,8 @@ abstract class CommonObject
 	 *	@param  int		    $dateSelector      	1=Show also date range input fields
 	 *	@param  string	    $seller            	Object of seller third party
 	 *	@param  string	    $buyer             	Object of buyer third party
-	 *	@param	string		$selected		   	Object line selected
-	 *  @param  object		$extrafieldsline	Object of extrafield line attribute
+	 *	@param	integer		$selected		   	Object line selected
+	 *  @param  integer		$extrafieldsline	Object of extrafield line attribute
 	 *	@return	void
 	 */
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
@@ -3105,7 +3105,7 @@ abstract class CommonObject
 	 *	get Margin info
 	 *
 	 * 	@param 	string 	$force_price	True of not
-	 * 	@return mixed					Array with info
+	 * 	@return integer					Array with info
 	 */
 	function getMarginInfos($force_price=false)
 	{

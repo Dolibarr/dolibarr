@@ -450,7 +450,7 @@ function dol_count_nb_of_line($file)
  * Return size of a file
  *
  * @param 	string		$pathoffile		Path of file
- * @return 	string						File size
+ * @return 	integer						File size
  */
 function dol_filesize($pathoffile)
 {
@@ -527,7 +527,7 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
  *
  * @param	string  $srcfile            Source file (can't be a directory)
  * @param   string	$destfile           Destination file (can't be a directory)
- * @param   string	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
+ * @param   integer	$newmask            Mask for new file (0 by default means $conf->global->MAIN_UMASK)
  * @param   int		$overwriteifexists  Overwrite file if exists (1 by default)
  * @return  boolean 		            True if OK, false if KO
  */
@@ -586,7 +586,7 @@ function dol_unescapefile($filename)
  *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
  * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
  * 	@param	int		$disablevirusscan	1=Disable virus scan
- * 	@param	string	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
+ * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
  *	@return int       			  		>0 if OK, <0 or string if KO

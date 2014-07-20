@@ -1459,7 +1459,7 @@ class Societe extends CommonObject
      *    	@param	float	$remise     Amount of discount
      *    	@param  User	$user       User adding discount
      *    	@param  string	$desc		Reason of discount
-     *      @param  float	$tva_tx     VAT rate
+     *      @param  integer	$tva_tx     VAT rate
      *		@return	int					<0 if KO, id of discount record if OK
      */
     function set_remise_except($remise, User $user, $desc, $tva_tx=0)
@@ -1512,7 +1512,7 @@ class Societe extends CommonObject
      *
      *	@param	User	$user		Filtre sur un user auteur des remises
      * 	@param	string	$filter		Filtre autre
-     * 	@param	string	$maxvalue	Filter on max value for discount
+     * 	@param	integer	$maxvalue	Filter on max value for discount
      *	@return	int					<0 if KO, Credit note amount otherwise
      */
     function getAvailableDiscounts($user='',$filter='',$maxvalue=0)
@@ -2026,7 +2026,7 @@ class Societe extends CommonObject
      *  Attribut un code client a partir du module de controle des codes.
      *  Return value is stored into this->code_client
      *
-     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	integer		$objsoc		Object thirdparty
      *	@param	int			$type		Should be 0 to say customer
      *  @return void
      */
@@ -2056,7 +2056,7 @@ class Societe extends CommonObject
      *  Attribut un code fournisseur a partir du module de controle des codes.
      *  Return value is stored into this->code_fournisseur
      *
-     *	@param	Societe		$objsoc		Object thirdparty
+     *	@param	integer		$objsoc		Object thirdparty
      *	@param	int			$type		Should be 1 to say supplier
      *  @return void
      */
@@ -2596,7 +2596,7 @@ class Societe extends CommonObject
     /**
      *  Return if third party is a company (Business) or an end user (Consumer)
      *
-     *  @return    boolean     true=is a company, false=a and user
+     *  @return    integer     true=is a company, false=a and user
      */
     function isACompany()
     {
@@ -2862,7 +2862,7 @@ class Societe extends CommonObject
      *  Check if thirdparty may using localtax or not
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
-     *  @return		array					array(0=>boolean, 1=>boolean)
+     *  @return		boolean					array(0=>boolean, 1=>boolean)
      */
     function useLocalTax($localTaxNum=0)
     {

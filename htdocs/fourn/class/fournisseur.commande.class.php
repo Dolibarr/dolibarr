@@ -1054,14 +1054,14 @@ class CommandeFournisseur extends CommonOrder
      *	@param      double	$pu_ht              	Unit price
      *	@param      double	$qty             		Quantity
      *	@param      double	$txtva           		Taux tva
-     *	@param      double	$txlocaltax1        	Localtax1 tax
-     *  @param      double	$txlocaltax2        	Localtax2 tax
+     *	@param      integer	$txlocaltax1        	Localtax1 tax
+     *  @param      integer	$txlocaltax2        	Localtax2 tax
      *	@param      int		$fk_product      		Id produit
      *  @param      int		$fk_prod_fourn_price	Id supplier price
      *  @param      string	$fourn_ref				Supplier reference
-     *	@param      double	$remise_percent  		Remise
+     *	@param      integer	$remise_percent  		Remise
      *	@param      string	$price_base_type		HT or TTC
-     *	@param		double	$pu_ttc					Unit price TTC
+     *	@param		integer	$pu_ttc					Unit price TTC
      *	@param		int		$type					Type of line (0=product, 1=service)
      *	@param		int		$info_bits				More information
      *  @param		int		$notrigger				Disable triggers
@@ -1239,7 +1239,7 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$product	Id of product to dispatch
      * @param 	double		$qty		Qty to dispatch
      * @param 	int			$entrepot	Id of warehouse to add product
-     * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
+     * @param 	integer		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment	Comment for stock movement
 	 * @param	date		$eatby		eat-by date
 	 * @param	date		$sellby		sell-by date
@@ -1707,8 +1707,8 @@ class CommandeFournisseur extends CommonOrder
      *	@param     	double	$qty             	Quantity
      *	@param     	double	$remise_percent  	Pourcentage de remise de la ligne
      *	@param     	double	$txtva          	Taux TVA
-     *  @param     	double	$txlocaltax1	    Localtax1 tax
-     *  @param     	double	$txlocaltax2   		Localtax2 tax
+     *  @param     	integer	$txlocaltax1	    Localtax1 tax
+     *  @param     	integer	$txlocaltax2   		Localtax2 tax
      *  @param     	double	$price_base_type 	Type of price base
      *	@param		int		$info_bits			Miscellaneous informations
      *	@param		int		$type				Type of line (0=product, 1=service)

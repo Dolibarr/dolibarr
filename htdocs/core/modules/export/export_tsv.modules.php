@@ -69,7 +69,7 @@ class ExportTsv extends ModeleExports
 	/**
 	 * getDriverId
 	 *
-	 * @return int
+	 * @return string
 	 */
     function getDriverId()
     {

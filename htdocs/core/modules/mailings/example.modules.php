@@ -101,7 +101,7 @@ class mailing_example extends MailingTargets
      *	emails from a text file, this function must return 500.
      *
      *  @param	string	$sql		Requete sql de comptage
-     *	@return		int
+     *	@return		string
      */
     function getNbOfRecipients($sql='')
     {

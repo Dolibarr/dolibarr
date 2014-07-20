@@ -50,7 +50,7 @@ class FormAdmin
 	 *    	@param      string		$selected       Langue pre-selectionnee
 	 *    	@param      string		$htmlname       Nom de la zone select
 	 *    	@param      int			$showauto       Affiche choix auto
-	 * 		@param		array		$filter			Array of keys to exclude in list
+	 * 		@param		integer		$filter			Array of keys to exclude in list
 	 * 		@param		int			$showempty		Add empty value
 	 *      @param      int			$showwarning    Show a warning if language is not complete
 	 *      @return		string						Return HTML select string with list of languages
@@ -114,7 +114,7 @@ class FormAdmin
      *    @param    string		$htmlname        Name of html select
      *    @param    array		$dirmenuarray    Array of directories to scan
      *    @param    string		$moreattrib      More attributes on html select tag
-     *    @return	void
+     *    @return	integer|null
      */
     function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
     {
@@ -324,7 +324,7 @@ class FormAdmin
 	 *
 	 *    	@param      string	$selected       Paper format pre-selected
 	 *    	@param      string	$htmlname       Name of HTML select field
-	 * 		@param		string	$filter			Value to filter on code
+	 * 		@param		integer	$filter			Value to filter on code
 	 * 		@param		int		$showempty		Add empty value
 	 * 		@return		string					Return HTML output
 	 */
