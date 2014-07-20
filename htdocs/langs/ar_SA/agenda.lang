@@ -25,12 +25,15 @@ ListOfEvents= قائمة أحداث دوليبار
 ActionsAskedBy=أحداث تم رعايتها بواسطة
 ActionsToDoBy=أحداث عينت لـ
 ActionsDoneBy=أحداث انهيت بواسطة
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= كل أحداثي/ مهامي
 AllActions= جميع الأحداث / المهام
 ViewList=عرض قائمة
 ViewCal=عرض شهري
 ViewDay=عرض يومي
 ViewWeek=عرض اسبوعي
+ViewPerUser=Per user
 ViewWithPredefinedFilters= قم بالعرض مع الفلاتر المعرفة مسبقاً
 AutoActions= إكمال تلقائي
 AgendaAutoActionDesc= عرف الأحداث التي تريد من دوليبار إنشائها تلقائيا في جدوال الأعمال. إذا لم تقم بإختيار أي شي (الخيار الإفتراضي), سوف يتم فقط إدخال الأنشطلة إلى جدول الأعمال يدوياً
@@ -55,6 +58,7 @@ SupplierInvoiceSentByEMail=تم إرسال فاتروة المزود%s بواس�
 ShippingSentByEMail=تم إرسال الشحنة %s بواسطة البريد الإلكتروني
 ShippingValidated= Shipping %s validated
 InterventionSentByEMail=تم إرسال التدخل %s بواسطة البريد الإلكتروني
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= تم إنشاء طرف ثالث أو خارجي
 DateActionPlannedStart= التاريخ المخطط للبدء
 DateActionPlannedEnd= التاريخ المخطط للإنهاء

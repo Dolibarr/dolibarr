@@ -34,7 +34,6 @@ if (! $user->admin) accessforbidden();
 
 $rowid = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
-$errmesg='';
 
 // Define possible position of boxes
 $pos_name = getStaticMember('InfoBox','listOfPages');
@@ -80,7 +79,7 @@ if ($action == 'add')
 		}
 		else
 		{
-		    $errmesg=$db->lasterror();
+			setEventMessage($db->lasterror(), 'errors');
 		    $error++;
 		}
 	}
@@ -116,7 +115,7 @@ if ($action == 'add')
 	        $resql = $db->query($sql);
 	        if (! $resql)
 	        {
-		        $errmesg=$db->lasterror();
+		        setEventMessage($db->lasterror(), 'errors');
 	            $error++;
 	        }
 	    }
@@ -216,9 +215,6 @@ llxHeader('',$langs->trans("Boxes"));
 print_fiche_titre($langs->trans("Boxes"),'','setup');
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
-
-dol_htmloutput_errors($errmesg);
-
 
 /*
  * Recherche des boites actives par defaut pour chaque position possible

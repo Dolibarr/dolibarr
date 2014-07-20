@@ -79,7 +79,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 		}
 		else
 		{
-			$message='<div class="error">'.$account->error.'</div>';
+			setEventMessage($account->error, 'errors');
 			$action='edit';     // Force chargement page edition
 		}
 	}
@@ -303,8 +303,6 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 
 	print_fiche_titre($langs->trans("EditFinancialAccount"));
 	print "<br>";
-
-	dol_htmloutput_mesg($message);
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

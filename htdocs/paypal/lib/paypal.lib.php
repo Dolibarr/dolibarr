@@ -473,6 +473,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
 	$_SESSION["Payment_Amount"] = $paymentAmount;
     $_SESSION["currencyCodeType"] = $currencyCodeType;
     $_SESSION["PaymentType"] = $paymentType;
+    $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR '];  // Payer ip
 
     //'---------------------------------------------------------------------------------------------------------------
     //' Make the API call to PayPal
@@ -485,7 +486,6 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     {
         $token = urldecode($resArray["TOKEN"]);
         $_SESSION['TOKEN']=$token;
-        $_SESSION['ipaddress']=$_SERVER['REMOTE_ADDR '];  // Payer ip
     }
 
     return $resArray;

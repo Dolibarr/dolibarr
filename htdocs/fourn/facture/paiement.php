@@ -503,9 +503,6 @@ if (empty($action))
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php',$paramlist,$sortfield,$sortorder,'',$num);
 
-        if ($mesg) dol_htmloutput_mesg($mesg);
-        if ($errmsg) dol_htmloutput_errors($errmsg);
-
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';

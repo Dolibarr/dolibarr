@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("categories");
 
-$mesg = '';
 $id=GETPOST('id','int');
 $ref=GETPOST('ref');
 $type=GETPOST('type');
@@ -117,7 +116,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -130,8 +129,6 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 $form = new Form($db);
 
 llxHeader("","",$langs->trans("Categories"));
-
-dol_htmloutput_mesg($mesg);
 
 if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");

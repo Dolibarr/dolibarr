@@ -45,8 +45,6 @@ if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
-$mesg='';
-
 $object = new Paiement($db);
 
 
@@ -67,7 +65,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
     }
     else
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+	    setEventMessage($object->error, 'errors');
         $db->rollback();
     }
 }
@@ -87,7 +85,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	else
 	{
 	    $langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		setEventMessage($langs->trans($object->error), 'errors');
         $db->rollback();
 	}
 }
@@ -123,7 +121,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 	else
 	{
 	    $langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		setEventMessage($langs->trans($object->error), 'errors');
 		$db->rollback();
 	}
 }
@@ -134,11 +132,11 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
     $res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
+		setEventMessage($langs->trans('PaymentNumberUpdateSucceeded'));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
+		setEventMessage($langs->trans('PaymentNumberUpdateFailed'), 'errors');
 	}
 }
 
@@ -149,11 +147,11 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
+		setEventMessage($langs->trans('PaymentDateUpdateSucceeded'));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
+		setEventMessage($langs->trans('PaymentDateUpdateFailed'), 'errors');
 	}
 }
 
@@ -197,10 +195,6 @@ if ($action == 'valide')
 	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
-
-
-dol_htmloutput_mesg($mesg);
-
 
 print '<table class="border" width="100%">';
 

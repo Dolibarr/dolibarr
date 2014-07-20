@@ -65,8 +65,6 @@ $lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
-$mesg = GETPOST('mesg');
-
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
@@ -108,7 +106,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 {
 	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
-		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+		setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
 	}
 	else
 	{
@@ -201,7 +199,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 	$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
 	if ($datecommande == '') {
-		$mesg = '<div class="error">' . $langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')) . '</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), 'errors');
 		$action = 'create';
 		$error ++;
 	}
@@ -340,11 +338,11 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 						if ($reshook < 0)
 							$error ++;
 					} else {
-						$mesg = $srcobject->error;
+						setEventMessage($srcobject->error, 'errors');
 						$error ++;
 					}
 				} else {
-					$mesg = $object->error;
+					setEventMessage($object->error, 'errors');
 					$error ++;
 				}
 			} else {
@@ -378,7 +376,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 			if (GETPOST('contactidp')) {
 				$result = $object->add_contact(GETPOST('contactidp'), 'CUSTOMER', 'external');
 				if ($result < 0) {
-					$mesg = '<div class="error">' . $langs->trans("ErrorFailedToAddContact") . '</div>';
+					setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					$error ++;
 				}
 			}
@@ -395,8 +393,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			if (! $mesg)
-				$mesg = '<div class="error">' . $object->error . '</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -435,7 +432,7 @@ else if ($action == 'setdate' && $user->rights->commande->creer) {
 
 	$result = $object->set_date($user, $date);
 	if ($result < 0) {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -445,7 +442,7 @@ else if ($action == 'setdate_livraison' && $user->rights->commande->creer) {
 
 	$result = $object->set_date_livraison($user, $datelivraison);
 	if ($result < 0) {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -884,7 +881,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
 			$error++;
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 			$action='';
 		}
 	}
@@ -929,7 +926,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
 			$error++;
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 			$action='';
 		}
 	}
@@ -982,7 +979,7 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
 			$error++;
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 			$action='';
 		}
 	}
@@ -1221,12 +1218,13 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, - 1);
 			if ($mailfile->error) {
-				$mesg = '<div class="error">' . $mailfile->error . '</div>';
+				setEventMessage($mailfile->error, 'errors');
 			} else {
 				$result = $mailfile->sendfile();
 				if ($result) {
-					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)); // Must not
-					                                                                                                                      // contains "
+					//Must not contain quotes
+					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
+					setEventMessage($mesg);
 
 					$error = 0;
 
@@ -1253,19 +1251,19 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					} else {
 						// Redirect here
 						// This avoid sending mail twice if going out and then back to page
-						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&mesg=' . urlencode($mesg));
+						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 						exit();
 					}
 				} else {
 					$langs->load("other");
-					$mesg = '<div class="error">';
 					if ($mailfile->error) {
 						$mesg .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$mesg .= '<br>' . $mailfile->error;
 					} else {
 						$mesg .= 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
-					$mesg .= '</div>';
+
+					setEventMessage($mesg, 'errors');
 				}
 			}
 			/*            }
@@ -1278,12 +1276,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			}*/
 		} else {
 			$langs->load("errors");
-			$mesg = '<div class="error">' . $langs->trans('ErrorCantReadFile', $file) . '</div>';
+			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
 			dol_syslog('Failed to read file: ' . $file);
 		}
 	} else {
 		$langs->load("other");
-		$mesg = '<div class="error">' . $langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")) . '</div>';
+		setEventMessage($langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")), 'errors');
 		dol_syslog($langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")));
 	}
 }
@@ -1301,9 +1299,9 @@ if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->righ
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$mesg = '<div class="error">' . $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType") . '</div>';
+				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 			} else {
-				$mesg = '<div class="error">' . $object->error . '</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
@@ -1349,8 +1347,6 @@ $formorder = new FormOrder($db);
  */
 if ($action == 'create' && $user->rights->commande->creer) {
 	print_fiche_titre($langs->trans('CreateOrder'));
-
-	dol_htmloutput_mesg($mesg, $mesgs, 'error');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1671,8 +1667,6 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	$now = dol_now();
 
 	if ($object->id > 0) {
-		dol_htmloutput_mesg($mesg, $mesgs);
-
 		$product_static = new Product($db);
 
 		$soc = new Societe($db);

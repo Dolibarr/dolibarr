@@ -1117,7 +1117,7 @@ else if ($id > 0 || ! empty($ref))
 			if (empty($numref))
 			{
 				$error++;
-				dol_htmloutput_errors($object->error);
+				setEventMessage($object->error, 'errors');
 			}
 		}
 		else

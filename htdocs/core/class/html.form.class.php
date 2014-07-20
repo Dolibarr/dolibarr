@@ -543,8 +543,8 @@ class Form
      *	@param  string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in html form
      * 	@param	int		$showempty		Add an empty field
-     * 	@param	int		$hidetext		Do not show label before combo box
-     * 	@param	string	$forceall		Force to show products and services in combo list, whatever are activated modules
+     * 	@param	int		$hidetext		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
+     * 	@param	string	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
      *  @return	void
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
@@ -552,8 +552,8 @@ class Form
         global $db,$langs,$user,$conf;
 
         // If product & services are enabled or both disabled.
-        if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-        || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+        if ($forceall > 0 || (empty($forceall) && ! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+        || (empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled)) )
         {
             if (empty($hidetext)) print $langs->trans("Type").': ';
             print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
@@ -575,15 +575,20 @@ class Form
             print '</select>';
             //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         }
-        if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
+        if (empty($forceall) && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
+        	print $langs->trans("Service");
             print '<input type="hidden" name="'.$htmlname.'" value="1">';
         }
-        if (! $forceall && ! empty($conf->product->enabled) && empty($conf->service->enabled))
+        if (empty($forceall) && ! empty($conf->product->enabled) && empty($conf->service->enabled))
         {
+        	print $langs->trans("Product");
             print '<input type="hidden" name="'.$htmlname.'" value="0">';
         }
-
+		if ($forceall < 0)	// This should happened only for contracts when both predefined product and service are disabled.
+		{
+            print '<input type="hidden" name="'.$htmlname.'" value="1">';	// By default we set on service for contract. If CONTRACT_SUPPORT_PRODUCTS is set, forceall should be 1 not -1
+		}
     }
 
     /**
@@ -3306,7 +3311,7 @@ class Form
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $out.= '<select class="flat" name="'.$htmlname.'">';
+        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         foreach ($langs->cache_currencies as $code_iso => $currency)
         {
         	if ($selected && $selected == $code_iso)

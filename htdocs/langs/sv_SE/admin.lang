@@ -65,6 +65,8 @@ ShowPreview=Visa förhandsgranskning
 PreviewNotAvailable=Förhandsgranska inte tillgänglig
 ThemeCurrentlyActive=Tema för tillfället
 CurrentTimeZone=PHP server tidszon
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Space
 Table=Tabell
 Fields=Fält
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr nuvarande version
 CallUpdatePage=Gå till sidan som uppdaterar databasen struktur och data: %s.
 LastStableVersion=Senaste stabila version
 GenericMaskCodes=Du kan ange någon numrering mask. I denna mask skulle följande taggar användas: <br> <b>(000000)</b> motsvarar ett antal som kommer att ökas på varje %s. Ange så många nollor som den önskade längden på disken. Räknaren kommer att fyllas ut med nollor från vänster för att få så många nollor som masken. <br> <b>(000000 000)</b> samma som tidigare men en kompensation som motsvarar det antal till höger om tecknet + tillämpas med början den första %s. <br> <b>(000000 @ x)</b> samma som tidigare, men räknaren återställs till noll när månaden x uppnås (x mellan 1 och 12). Om detta alternativ används och x är 2 eller högre, då sekvensen (yy) (mm) eller (ÅÅÅÅ) (mm) krävs också. <br> <b>(Dd)</b> dag (01 till 31). <br> <b>(Mm)</b> månad (01 till 12). <br> <b>(Yy), (ÅÅÅÅ) eller (y)</b> år under 2, 4 eller ett nummer. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Alla andra tecken i masken förblir intakt. <br> Blanksteg är inte tillåtna. <br>
 GenericMaskCodes4a=<u>Exempel på 99. %s den tredje part TheCompany gjort 2007/01/31:</u> <br>
 GenericMaskCodes4b=<u>Exempel på tredje part som har skapats på 2007/03/01:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Som standard föreslås moms 0 som kan användas för de fall s
 VATIsUsedExampleFR=I Frankrike betyder det företag eller organisationer som har en verklig skattesystemet (förenklad verkliga eller normal verklig). Ett system där mervärdesskatt ska deklareras.
 VATIsNotUsedExampleFR=I Frankrike betyder det föreningar som inte är moms deklarerats eller företag, organisationer eller fria yrken som har valt mikroföretag skattesystemet (mervärdesskatt i franchise) och betalade en franchise moms utan momsdeklaration. Detta val kommer att visa referens &quot;Ej tillämpligt mervärdesskatt - konst-293B av CGI&quot; på fakturorna.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= RE räntesats som standard när du skapar framtidsutsikte
 LocalTax2IsNotUsedDescES= Som standard föreslås IRPF är 0. Slut på regeln.
 LocalTax2IsUsedExampleES= I Spanien, frilansare och oberoende yrkesutövare som tillhandahåller tjänster och företag som har valt skattesystemet i moduler.
 LocalTax2IsNotUsedExampleES= I Spanien de bussines inte omfattas av skattesystemet i moduler.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Etikett som används som standard om ingen översättning kan hittas för kod
 LabelOnDocuments=Etikett på dokument
 NbOfDays=Nb dagar
@@ -1453,6 +1463,9 @@ AgendaSetup=Åtgärder och dagordning modul setup
 PasswordTogetVCalExport=Viktiga att tillåta export länk
 PastDelayVCalExport=Inte exporterar fall äldre än
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Denna modul gör det möjligt att lägga till en ikon efter telefonnummer. Ett klick på denna ikon för att kalla en server med en viss webbadress du anger nedan. Detta kan användas för att ringa ett system call center från Dolibarr som kan ringa upp telefonnumret på en SIP-system till exempel.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

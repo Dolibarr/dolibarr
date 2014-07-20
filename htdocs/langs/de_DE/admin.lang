@@ -65,6 +65,8 @@ ShowPreview=Zeige Vorschau
 PreviewNotAvailable=Vorschau nicht verfügbar
 ThemeCurrentlyActive=Derzeit aktivierte Oberfläche
 CurrentTimeZone=Aktuelle Zeitzone des PHP-Servers
+MySQLTimeZone=Aktuelle Zeitzone von MySql (Datenbank)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Raum
 Table=Tabelle
 Fields=Felder
@@ -294,7 +296,7 @@ CurrentVersion=Aktuelle dolibarr-Version
 CallUpdatePage=Zur Aktualisierung der Daten und Datenbankstrukturen gehen Sie zur Seite %s.
 LastStableVersion=Letzte stabile Version
 GenericMaskCodes=Sie können ein beliebiges Numerierungsschema wählen. Dieses Schema könnte z.B. so aussehen:<br><b>{000000}</b> steht für eine 6-stellige Nummer, die sich bei jedem neuen %s automatisch erhöht. Wählen Sie die Anzahl der Nullen je nach gewünschter Nummernlänge. Der Zähler füllt sich automatisch bis zum linken Ende mit Nullen um das gewünschte Format abzubilden. <br><b>{000000+000}</b> führt zu einem ähnlichen Ergebnis, allerdings mit einem Wertsprung in Höhe des Werts rechts des Pluszeichens, der beim ersten %s angewandt wird. <br><b>{000000@x}</b> wie zuvor, jedoch stellt sich der Zähler bei Erreichen des Monats x (zwischen 1 und 12) automatisch auf 0 zurück. Ist diese Option gewählt und x hat den Wert 2 oder höher, ist die Folge {mm}{yy} or {mm}{yyyy} ebenfalls erfoderlich. <br><b>{dd}</b> Tag (01 bis 31).<br><b>{mm}</b> Monat (01 bis 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> Jahreszahl 1-, 2- oder 4-stellig. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Alle anderen Zeichen in der Maske bleiben. <br> Leerzeichen sind nicht zulässig. <br>
 GenericMaskCodes4a=<u>Beispiel auf der 99. %s des Dritten thecompany Geschehen 2007-01-31:</u> <br>
 GenericMaskCodes4b=<u>Beispiel für Dritte erstellt am 2007-03-01:</u> <br>
@@ -371,12 +373,12 @@ ExtrafieldSelectList = Wähle von Tabelle
 ExtrafieldSeparator=Trennzeichen
 ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio button
-ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
+ExtrafieldParamHelpselect=Parameterlisten müssen das Format Schlüssel,Wert haben<br><br> zum Beispiel:<br>1,Wert1<br>2,Wert2<br>3,Wert3<br>...<br><br>Um die Liste in Abhängigkeit zu einer anderen zu haben:<br>1,Wert1|parent_list_code:parent_key<br>2,Wert2|parent_list_code:parent_key
 ExtrafieldParamHelpcheckbox=Parameterlisten müssen das Format Schlüssel,Wert haben<br><br> zum Beispiel:<br>1,Wert1<br>2,Wert2<br>3,Wert3<br>...
 ExtrafieldParamHelpradio=Parameterlisten müssen das Format Schlüssel,Wert haben<br><br> zum Beispiel:<br>1,Wert1<br>2,Wert2<br>3,Wert3<br>...
 ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=Verwendete Bibliothek zur PDF-Erzeugung
-WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
+WarningUsingFPDF=Achtung: Ihre <b>conf.php</b> enthält <b>$dolibarr_pdf_force_fpdf=1</b> Dies bedeutet, dass Sie die FPDF-Bibliothek verwenden, um PDF-Dateien zu erzeugen. Diese Bibliothek ist alt und unterstützt viele Funktionen nicht (Unicode-, Bild-Transparenz, kyrillische, arabische und asiatische Sprachen, ...), so dass es zu Fehlern bei der PDF-Erstellung kommen kann. <br> Um dieses Problem zu beheben und volle Unterstützung der PDF-Erzeugung zu erhalten, laden Sie bitte die <a href="http://www.tcpdf.org/" target="_blank">TCPDF Bibliothek</a> , dann kommentieren Sie die Zeile <b>$dolibarr_pdf_force_fpdf=1</b> aus oder entfernen diese und fügen statt dessen <b>$dolibarr_lib_TCPDF_PATH='Pfad_zum_TCPDF_Verzeichnisr'</b> ein
 LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (vat is not applied on local tax)<br>2 : local tax apply on products and services before vat (vat is calculated on amount + localtax)<br>3 : local tax apply on products without vat (vat is not applied on local tax)<br>4 : local tax apply on products before vat (vat is calculated on amount + localtax)<br>5 : local tax apply on services without vat (vat is not applied on local tax)<br>6 : local tax apply on services before vat (vat is calculated on amount + localtax)
 SMS=SMS
 LinkToTestClickToDial=Geben Sie die anzurufende Telefonnr ein, um einen Link zu zeigen, mit dem die ClickToDial-URL für den Benutzer <strong>%s</strong> getestet werden kann
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Die vorgeschlagene MwSt. ist standardmäßig 0 für alle Fälle
 VATIsUsedExampleFR=-
 VATIsNotUsedExampleFR=-
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Zweite Steuer nutzen
 LocalTax1IsNotUsed=Zweite Steuer nicht nutzen
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= Die RE Rate standardmäßig beim Erstellen Aussichten, Re
 LocalTax2IsNotUsedDescES= Standardmäßig werden die vorgeschlagenen IRPF 0 ist. Ende der Regel.
 LocalTax2IsUsedExampleES= In Spanien, Freiberufler und unabhängigen Fachleuten, die ihre Dienstleistungen und Unternehmen, die das Steuersystem von Modulen gewählt haben.
 LocalTax2IsNotUsedExampleES= In Spanien sind sie bussines nicht der Steuer unterliegen System von Modulen.
+CalcLocaltax=Berichte
+CalcLocaltax1ES=Verkauf - Einkauf
+CalcLocaltax1Desc=Lokale Steuer-Reports werden mit der Differenz von lokalen Verkaufs- und Einkaufs-Steuern berechnet
+CalcLocaltax2ES=Einkäufe
+CalcLocaltax2Desc=Lokale Steuer-Reports sind die Summe der lokalen Steuern auf Einkäufe
+CalcLocaltax3ES=Verkäufe
+CalcLocaltax3Desc=Lokale Steuer-Reports sind die Summe der lokalen Steuern auf Verkäufe
 LabelUsedByDefault=Standardmäßig verwendete Bezeichnung falls keine Übersetzung vorhanden ist
 LabelOnDocuments=Bezeichnung auf Dokumenten
 NbOfDays=Anzahl der Tage
@@ -1453,6 +1463,9 @@ AgendaSetup=Agenda-Moduleinstellungen
 PasswordTogetVCalExport=Passwort für den VCal-Export
 PastDelayVCalExport=Keine Termine exportieren die älter sind als
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Welchen Reiter möchten Sie beim Öffnen der Agenda automatisch anzeigen
 ##### ClickToDial #####
 ClickToDialDesc=Dieses Modul fügt ein Symbols nach Telefonnummern ein, bei dessen der Server unter der unten definierten URL aufgerufen wird. Diese Funktion können Sie dazu verwenden, ein Callcenter-System innerhalb dolibarrs aufzurufen, das eine Telefonnummer z.B. über ein SIP-System, für Sie wählt.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiskalische Jahre
+FiscalYear=Fiskalisches Jahr
+FiscalYearCard=Fiscal year card
+NewFiscalYear=Neues fiskalisches Jahr
+EditFiscalYear=Fiskalisches Jahr bearbeiten
+OpenFiscalYear=Fiskalisches Jahr öffnen
+CloseFiscalYear=Fiskalisches Jahr schließen
+DeleteFiscalYear=Fiskalisches Jahr löschen
+ConfirmDeleteFiscalYear=Möchten Sie dieses fiskalische Jahr wirklich löschen?
+Opened=Geöffnet
+Closed=Geschlossen
 
 Format=Format

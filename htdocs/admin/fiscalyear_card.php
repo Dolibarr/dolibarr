@@ -46,8 +46,6 @@ static $tmpstatut2label=array(
 $statut2label=array('');
 foreach ($tmpstatut2label as $key => $val) $statut2label[$key]=$langs->trans($val);
 
-$mesg = '';
-
 $object = new Fiscalyear($db);
 
 $date_start=dol_mktime(0,0,0,GETPOST('fiscalyearmonth','int'),GETPOST('fiscalyearday','int'),GETPOST('fiscalyearyear','int'));
@@ -67,7 +65,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-        $mesg=$object->error;
+        setEventMessage($object->error, 'errors');
     }
 }
 
@@ -87,12 +85,12 @@ else if ($action == 'add')
 
         if (empty($object->date_start) && empty($object->date_end))
         {
-            $mesg.=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
             $error++;
         }
         if (empty($object->label))
         {
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")), 'errors');
             $error++;
         }
 
@@ -107,7 +105,7 @@ else if ($action == 'add')
             }
             else
             {
-                $mesg=$object->error;
+	            setEventMessage($object->error, 'errors');
                 $action='create';
             }
         }
@@ -144,7 +142,7 @@ else if ($action == 'update')
         }
         else
         {
-            $mesg=$object->error;
+	        setEventMessage($object->error, 'errors');
         }
     }
     else
@@ -168,8 +166,6 @@ $form = new Form($db);
 if ($action == 'create')
 {
     print_fiche_titre($langs->trans("NewFiscalYear"));
-
-    dol_htmloutput_errors($mesg);
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -209,8 +205,6 @@ else if ($id)
     $result = $object->fetch($id);
     if ($result > 0)
     {
-        dol_htmloutput_mesg($mesg);
-
         $head = fiscalyear_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("FiscalYearCard"), 0, 'cron');

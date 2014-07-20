@@ -71,6 +71,7 @@ ActionAC_FAX=Skicka fax
 ActionAC_PROP=Skicka förslag via e-post
 ActionAC_EMAIL=Skicka e-post
 ActionAC_RDV=Möten
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Skicka kundfaktura med post
 ActionAC_REL=Skicka kundfaktura via post (påminnelse)
 ActionAC_CLO=Stäng

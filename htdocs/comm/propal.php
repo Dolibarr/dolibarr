@@ -1645,7 +1645,7 @@ if ($action == 'create') {
 			$numref = $object->getNextNumRef($soc);
 			if (empty($numref)) {
 				$error ++;
-				dol_htmloutput_errors($object->error);
+				setEventMessage($object->error, 'errors');
 			}
 		} else {
 			$numref = $object->ref;

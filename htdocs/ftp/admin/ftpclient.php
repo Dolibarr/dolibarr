@@ -58,18 +58,17 @@ if ($action == 'add' || GETPOST('modify','alpha'))
 	$ftp_server = "FTP_SERVER_" . $entry; //$_POST["numero_entry"];
 
 	$error=0;
-	$mesg='';
 
 	if (! GETPOST("$ftp_name",'alpha'))
 	{
 		$error=1;
-		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Label")), 'errors');
 	}
 
 	if (! GETPOST("$ftp_server",'alpha'))
 	{
 		$error=1;
-		$mesg.='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Server")), 'errors');
 	}
 
     if (! $error)
@@ -91,7 +90,6 @@ if ($action == 'add' || GETPOST('modify','alpha'))
         if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
         {
             $db->commit();
-	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
@@ -119,7 +117,6 @@ if (GETPOST('delete','alpha'))
         if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6)
         {
             $db->commit();
-	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
@@ -300,9 +297,6 @@ else
 	print '</table>';
 
 }
-
-dol_htmloutput_mesg($mesg);
-
 
 llxFooter();
 

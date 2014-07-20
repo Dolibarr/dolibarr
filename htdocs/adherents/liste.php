@@ -95,21 +95,22 @@ $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_member as cm ON d.rowid = cm.fk_member"; // We need this table joined to the select in order to filter by categ
 $sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.fk_adherent_type = t.rowid ";
-if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$catid;
+if ($catid > 0)    $sql.= " AND cm.fk_categorie = ".$db->escape($catid);
 if ($catid == -2)  $sql.= " AND cm.fk_categorie IS NULL";
-if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$search_categ;
+if ($search_categ > 0)   $sql.= " AND cm.fk_categorie = ".$db->escape($search_categ);
 if ($search_categ == -2) $sql.= " AND cm.fk_categorie IS NULL";
 $sql.= " AND d.entity = ".$conf->entity;
 if ($sall)
 {
         // For natural search
         $scrit = explode(' ', $sall);
-        foreach ($scrit as $crit) {
+        foreach ($scrit as $crit)
+        {
             $sql.=" AND (";
             if (is_numeric($sall)) $sql.= "d.rowid = ".$sall." OR ";
-            $sql.=" d.firstname LIKE '%".$sall."%' OR d.lastname LIKE '%".$sall."%' OR d.societe LIKE '%".$sall."%'";
-            $sql.=" OR d.email LIKE '%".$sall."%' OR d.login LIKE '%".$sall."%' OR d.address LIKE '%".$sall."%'";
-            $sql.=" OR d.town LIKE '%".$sall."%' OR d.note LIKE '%".$sall."%')";
+            $sql.=" d.firstname LIKE '%".$db->escape($sall)."%' OR d.lastname LIKE '%".$db->escape($sall)."%' OR d.societe LIKE '%".$db->escape($sall)."%'";
+            $sql.=" OR d.email LIKE '%".$db->escape($sall)."%' OR d.login LIKE '%".$db->escape($sall)."%' OR d.address LIKE '%".$db->escape($sall)."%'";
+            $sql.=" OR d.town LIKE '%".$db->escape($sall)."%' OR d.note LIKE '%".$db->escape($sall)."%')";
         }
 }
 if ($type > 0)
@@ -118,24 +119,24 @@ if ($type > 0)
 }
 if (isset($_GET["statut"]) || isset($_POST["statut"]))
 {
-	$sql.=" AND d.statut in (".$statut.")";     // Peut valoir un nombre ou liste de nombre separes par virgules
+	$sql.=" AND d.statut in (".$db->escape($statut).")";     // Peut valoir un nombre ou liste de nombre separes par virgules
 }
 if ($search_ref)
 {
-	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$search_ref.")";
+	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
 if ($search_lastname)
 {
-	$sql.= " AND (d.firstname LIKE '%".$search_lastname."%' OR d.lastname LIKE '%".$search_lastname."%')";
+	$sql.= " AND (d.firstname LIKE '%".$db->escape($search_lastname)."%' OR d.lastname LIKE '%".$db->escape($search_lastname)."%' OR d.societe LIKE '%".$db->escape($search_lastname)."%')";
 }
 if ($search_login)
 {
-	$sql.= " AND d.login LIKE '%".$search_login."%'";
+	$sql.= " AND d.login LIKE '%".$db->escape($search_login)."%'";
 }
 if ($search_email)
 {
-	$sql.= " AND (d.email LIKE '%".$search_email."%')";
+	$sql.= " AND (d.email LIKE '%".$db->escape($search_email)."%')";
 }
 if ($filter == 'uptodate')
 {
