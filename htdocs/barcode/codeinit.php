@@ -37,8 +37,6 @@ $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $eraseallbarcode=GETPOST('eraseallbarcode');
 
-$mesg='';
-
 $action=GETPOST('action');
 
 $producttmp=new Product($db);
@@ -197,8 +195,6 @@ print '<br>';
 
 print $langs->trans("MassBarcodeInitDesc").'<br>';
 print '<br>';
-
-dol_htmloutput_errors($mesg);
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
 //print '<br>';

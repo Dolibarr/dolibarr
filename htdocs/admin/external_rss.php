@@ -105,7 +105,6 @@ if ($action == 'add' || GETPOST("modify"))
         if ($result1 && $result2)
         {
             $db->commit();
-	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
@@ -171,7 +170,6 @@ if ($_POST["delete"])
         if ($result1 && $result2)
         {
             $db->commit();
-	  		//$mesg='<div class="ok">'.$langs->trans("Success").'</div>';
             header("Location: external_rss.php");
             exit;
         }

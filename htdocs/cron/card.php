@@ -269,7 +269,7 @@ if ($action == 'execute'){
 
 if (empty($object->status) && $action != 'create')
 {
-	dol_htmloutput_mesg($langs->trans("CronTaskInactive"),'','warning',1);
+	setEventMessage($langs->trans("CronTaskInactive"), 'warnings');
 }
 
 if (($action=="create") || ($action=="edit"))

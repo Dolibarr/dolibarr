@@ -59,12 +59,12 @@ if ($action == 'update')
     if ($i >= 2)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg="<div class=\"error\">".$db->lasterror()."</div>";
+	    setEventMessage($db->lasterror(), 'errors');
     }
 }
 
@@ -119,10 +119,6 @@ print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->t
 print "</center>";
 
 print "</form>\n";
-
-
-dol_htmloutput_mesg($mesg);
-
 
 llxFooter();
 

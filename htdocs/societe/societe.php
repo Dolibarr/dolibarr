@@ -284,7 +284,7 @@ if ($resql)
     // Show delete result message
     if (GETPOST('delsoc'))
     {
-        dol_htmloutput_mesg($langs->trans("CompanyDeleted",GETPOST('delsoc')),'','ok');
+	    setEventMessage($langs->trans("CompanyDeleted",GETPOST('delsoc')));
     }
 
 	$langs->load("other");

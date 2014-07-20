@@ -92,7 +92,7 @@ if (empty($reshook))
 		    else
 		    {
 		        dol_syslog($object->error,LOG_DEBUG);
-		        $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
+			    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
 		    }
 		}
 	    header("Location: ".$backtopage);
@@ -111,7 +111,7 @@ if (empty($reshook))
 	    else
 	    {
 	        dol_syslog($object->error,LOG_DEBUG);
-	        $mesg='<div class="error">'.$langs->trans("CantRemoveProject").'</div>';
+		    setEventMessage($langs->trans("CantRemoveProject"), 'errors');
 	    }
 	}
 
@@ -120,12 +120,12 @@ if (empty($reshook))
 	    $error=0;
 	    if (empty($_POST["ref"]))
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
 	        $error++;
 	    }
 	    if (empty($_POST["title"]))
 	    {
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	        $error++;
 	    }
 
@@ -155,14 +155,14 @@ if (empty($reshook))
 	            if ($result < 0)
 	            {
 	                $langs->load("errors");
-	                $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		            setEventMessage($langs->trans($object->error), 'errors');
 	                $error++;
 	            }
 	        }
 	        else
 	        {
 	            $langs->load("errors");
-	            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		        setEventMessage($langs->trans($object->error), 'errors');
 	            $error++;
 	        }
 
@@ -194,13 +194,13 @@ if (empty($reshook))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
 	    }
 	    if (empty($_POST["title"]))
 	    {
 	        $error++;
 	        //$_GET["id"]=$_POST["id"]; // On retourne sur la fiche projet
-	        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	    }
 
 	    $db->begin();
@@ -245,7 +245,7 @@ if (empty($reshook))
 	    		if ($result < 0)
 	    		{
 	    			$error++;
-	    			$mesg='<div class="error">'.$langs->trans("ErrorShiftTaskDate").':'.$object->error.'</div>';
+				    setEventMessage($langs->trans("ErrorShiftTaskDate").':'.$object->error, 'errors');
 	    		}
 	    	}
 	    }
@@ -306,7 +306,7 @@ if (empty($reshook))
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
 	    {
-	        $mesg='<div class="error">'.$object->error.'</div>';
+		    setEventMessage($object->error, 'errors');
 	    }
 	}
 
@@ -315,7 +315,7 @@ if (empty($reshook))
 	    $result = $object->setClose($user);
 	    if ($result <= 0)
 	    {
-	        $mesg='<div class="error">'.$object->error.'</div>';
+		    setEventMessage($object->error, 'errors');
 	    }
 	}
 
@@ -324,7 +324,7 @@ if (empty($reshook))
 	    $result = $object->setValid($user);
 	    if ($result <= 0)
 	    {
-	        $mesg='<div class="error">'.$object->error.'</div>';
+		    setEventMessage($object->error, 'errors');
 	    }
 	}
 
@@ -355,7 +355,7 @@ if (empty($reshook))
 	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes);
 	    if ($result <= 0)
 	    {
-	        $mesg='<div class="error">'.$object->error.'</div>';
+		    setEventMessage($object->error, 'errors');
 	    }
 	    else
 	    {
@@ -390,8 +390,6 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if ($socid > 0) $thirdparty->fetch($socid);
 
     print_fiche_titre($langs->trans("NewProject"));
-
-    dol_htmloutput_mesg($mesg);
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -489,8 +487,6 @@ else
     /*
      * Show or edit
      */
-
-    dol_htmloutput_mesg($mesg);
 
     if ($object->societe->id > 0)  $result=$object->societe->fetch($object->societe->id);
     $res=$object->fetch_optionals($object->id,$extralabels);

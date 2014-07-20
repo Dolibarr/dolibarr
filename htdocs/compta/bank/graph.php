@@ -46,7 +46,6 @@ $result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fie
 $account=$_GET["account"];
 $mode='standard';
 if (isset($_GET["mode"]) && $_GET["mode"] == 'showalltime') $mode='showalltime';
-$mesg = '';
 $error=0;
 
 
@@ -82,7 +81,7 @@ if ($result < 0)
 {
 	$langs->load("errors");
 	$error++;
-	$mesg='<div class="error">'.$langs->trans("ErrorFailedToCreateDir").'</div>';
+	setEventMessage($langs->trans("ErrorFailedToCreateDir"), 'errors');
 }
 else
 {
@@ -755,8 +754,6 @@ else
 // Onglets
 $head=bank_prepare_head($acct);
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
-
-if ($mesg) print $mesg.'<br>';
 
 print '<table class="border" width="100%">';
 

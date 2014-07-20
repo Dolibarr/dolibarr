@@ -87,15 +87,14 @@ if ($action == 'addcontact' && $user->rights->expedition->creer)
 	}
 	else
 	{
-		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+		} else {
+			$mesg = $objectsrc->error;
 		}
-		else
-		{
-			$mesg = '<div class="error">'.$objectsrc->error.'</div>';
-		}
+
+		setEventMessage($mesg, 'errors');
 	}
 }
 
@@ -146,7 +145,6 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {

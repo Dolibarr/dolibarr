@@ -181,7 +181,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         }
         else
         {
-            $message='<div class="error">'.$account->error.'</div>';
+	        setEventMessage($account->error, 'errors');
             $action='edit';     // Force chargement page edition
         }
     }
@@ -219,8 +219,6 @@ if ($action == 'create')
 	$account=new Account($db);
 
 	print_fiche_titre($langs->trans("NewFinancialAccount"));
-
-	dol_htmloutput_mesg($message);
 
     if ($conf->use_javascript_ajax)
     {
@@ -509,8 +507,6 @@ else
 
         print_fiche_titre($langs->trans("EditFinancialAccount"));
         print "<br>";
-
-        if ($message) { print "$message<br>\n"; }
 
         if ($conf->use_javascript_ajax)
         {

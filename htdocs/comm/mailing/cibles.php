@@ -38,8 +38,6 @@ $langs->load("mails");
 if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
-$mesg = '';
-
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -221,8 +219,6 @@ if ($object->fetch($id) >= 0)
 	print '</table>';
 
 	print "</div>";
-
-	dol_htmloutput_mesg($mesg);
 
 	$var=!$var;
 

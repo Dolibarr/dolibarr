@@ -72,8 +72,6 @@ if ($negpage)
     if ($page > GETPOST("nbpage")) $page = GETPOST("nbpage");
 }
 
-$mesg='';
-
 $object = new Account($db);
 
 /*
@@ -83,6 +81,8 @@ $dateop=-1;
 
 if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
+	$error = 0;
+
 	if (price2num($_POST["credit"]) > 0)
 	{
 		$amount = price2num($_POST["credit"]);
@@ -98,11 +98,20 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 	$label=$_POST["label"];
 	$cat1=$_POST["cat1"];
 
-	if (! $dateop)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
-	if (! $operation) $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
-	if (! $amount)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+	if (! $dateop) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
+	}
+	if (! $operation) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Type")), 'errors');
+	}
+	if (! $amount) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
+	}
 
-	if (! $mesg)
+	if (! $error)
 	{
 		$object->fetch($id);
 		$insertid = $object->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
@@ -114,7 +123,7 @@ if ($action == 'add' && $id && ! isset($_POST["cancel"]) && $user->rights->banqu
 		}
 		else
 		{
-			$mesg=$object->error;
+			setEventMessage($object->error, 'errors');
 		}
 	}
 	else
@@ -294,8 +303,6 @@ if ($id > 0 || ! empty($ref))
 	print '</table>';
 
 	print '<br>';
-
-	dol_htmloutput_errors($mesg);
 
 	/**
 	 * Search form

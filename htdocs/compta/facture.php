@@ -115,9 +115,9 @@ include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer) {
-	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
-		$mesgs [] = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
-	} else {
+//	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
+//		$mesgs [] = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
+//	} else {
 		if ($object->fetch($id) > 0) {
 			$result = $object->createFromClone($socid);
 			if ($result > 0) {
@@ -128,7 +128,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->c
 				$action = '';
 			}
 		}
-	}
+//	}
 }
 
 // Change status of invoice
@@ -216,13 +216,13 @@ else if ($action == 'valid' && $user->rights->facture->creer) {
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 		// Si avoir, le signe doit etre negatif
 		if ($object->total_ht >= 0) {
-			$mesgs [] = '<div class="error">' . $langs->trans("ErrorInvoiceAvoirMustBeNegative") . '</div>';
+			setEventMessage($langs->trans("ErrorInvoiceAvoirMustBeNegative"), 'errors');
 			$action = '';
 		}
 	} else {
 		// Si non avoir, le signe doit etre positif
 		if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ht < 0) {
-			$mesgs [] = '<div class="error">' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive") . '</div>';
+			setEventMessage($langs->trans("ErrorInvoiceOfThisTypeMustBePositive"), 'errors');
 			$action = '';
 		}
 	}
@@ -319,7 +319,7 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer) {
 		if ($ret > 0) {
 			$result = $object->insert_discount($_POST["remise_id"]);
 			if ($result < 0) {
-				$mesgs [] = '<div class="error">' . $object->error . '</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		} else {
 			dol_print_error($db, $object->error);
@@ -332,7 +332,7 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer) {
 
 		$result = $discount->link_to_invoice(0, $id);
 		if ($result < 0) {
-			$mesgs [] = '<div class="error">' . $discount->error . '</div>';
+			setEventMessage($discount->error, 'errors');
 		}
 	}
 }
@@ -571,7 +571,6 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			$result = $object->set_paid($user);
 			if ($result >= 0)
 			{
-				//$mesgs[]='OK'.$discount->id;
 				$db->commit();
 			}
 			else
@@ -642,8 +641,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->type = Facture::TYPE_REPLACEMENT;
 
 			$id = $object->createFromCurrent($user);
-			if ($id <= 0)
-				$mesgs [] = $object->error;
+			if ($id <= 0) {
+				setEventMessage($object->error, 'errors');
+			}
 		}
 	}
 
@@ -888,7 +888,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									$amountdeposit = ($totalamount * $valuedeposit) / 100;
 								}
 							} else {
-								$mesgs [] = $srcobject->error;
+								setEventMessage($srcobject->error, 'errors');
 								$error ++;
 							}
 						}
@@ -955,7 +955,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									if ($discountid > 0) {
 										$result = $object->insert_discount($discountid); // This include link_to_invoice
 									} else {
-										$mesgs [] = $discount->error;
+										setEventMessage($discount->error, 'errors');
 										$error ++;
 										break;
 									}
@@ -1016,12 +1016,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							$mesgs [] = $srcobject->error;
+							setEventMessage($srcobject->error, 'errors');
 							$error ++;
 						}
 					}
 				} else {
-					$mesgs [] = $object->error;
+					setEventMessage($object->error, 'errors');
 					$error ++;
 				}
 			} 			// If some invoice's lines already known
@@ -1054,7 +1054,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 		$action = 'create';
 		$_GET ["origin"] = $_POST["origin"];
 		$_GET ["originid"] = $_POST["originid"];
-		$mesgs [] = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -1606,7 +1606,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, - 1);
 			if ($mailfile->error) {
-				$mesgs [] = '<div class="error">' . $mailfile->error . '</div>';
+				setEventMessage($mailfile->error, 'errors');
 			} else {
 				$result = $mailfile->sendfile();
 				if ($result) {
@@ -1642,15 +1642,15 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					}
 				} else {
 					$langs->load("other");
-					$mesg = '<div class="error">';
+
 					if ($mailfile->error) {
 						$mesg .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$mesg .= '<br>' . $mailfile->error;
 					} else {
 						$mesg .= 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
-					$mesg .= '</div>';
-					$mesgs [] = $mesg;
+
+					setEventMessage($mesg, 'errors');
 				}
 			}
 			/*            }
@@ -1662,12 +1662,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}*/
 		} else {
 			$langs->load("errors");
-			$mesgs [] = '<div class="error">' . $langs->trans('ErrorCantReadFile', $file) . '</div>';
+			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
 			dol_syslog('Failed to read file: ' . $file);
 		}
 	} else {
 		$langs->load("other");
-		$mesgs [] = '<div class="error">' . $langs->trans('ErrorFailedToReadEntity', $langs->trans("Invoice")) . '</div>';
+		setEventMessage($langs->trans('ErrorFailedToReadEntity', $langs->trans("Invoice")), 'errors');
 		dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
 	}
 
@@ -1749,9 +1749,9 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$mesgs [] = '<div class="error">' . $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType") . '</div>';
+				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 			} else {
-				$mesgs [] = '<div class="error">' . $object->error . '</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
@@ -3763,8 +3763,6 @@ if ($action == 'create')
 		print '<br>';
 	}
 }
-
-dol_htmloutput_mesg('', $mesgs);
 
 llxFooter();
 $db->close();

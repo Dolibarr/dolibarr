@@ -65,17 +65,17 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 	if (! $res > 0)
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFailedToLoadDiscount").'</div>';
+		setEventMessage($langs->trans("ErrorFailedToLoadDiscount"), 'errors');
 	}
 	if (! $error && price2num($_POST["amount_ttc_1"]+$_POST["amount_ttc_2"]) != $discount->amount_ttc)
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("TotalOfTwoDiscountMustEqualsOriginal").'</div>';
+		setEventMessage($langs->trans("TotalOfTwoDiscountMustEqualsOriginal"), 'errors');
 	}
 	if (! $error && $discount->fk_facture_line)
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorCantSplitAUsedDiscount").'</div>';
+		setEventMessage($langs->trans("ErrorCantSplitAUsedDiscount"), 'errors');
 	}
 	if (! $error)
 	{
@@ -140,7 +140,7 @@ if ($action == 'setremise')
 		$error=0;
 		if (empty($_POST["desc"]))
 		{
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
+			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")), 'errors');
 			$error++;
 		}
 
@@ -166,13 +166,13 @@ if ($action == 'setremise')
 			else
 			{
 				$error++;
-				$mesg='<div class="error">'.$soc->error.'</div>';
+				setEventMessage($soc->error, 'errors');
 			}
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")), 'errors');
 	}
 }
 
@@ -194,7 +194,7 @@ if (GETPOST("action") == 'confirm_remove' && GETPOST("confirm")=='yes')
 	}
 	else
 	{
-		$mesg='<div class="error">'.$discount->error.'</div>';
+		setEventMessage($discount->error, 'errors');
 		$db->rollback();
 	}
 }
@@ -211,8 +211,6 @@ llxHeader('',$langs->trans("GlobalDiscount"));
 
 if ($socid > 0)
 {
-	dol_htmloutput_mesg($mesg);
-
 	// On recupere les donnees societes par l'objet
 	$objsoc = new Societe($db);
 	$objsoc->id=$socid;

@@ -43,9 +43,6 @@ $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
 
-$mesg="";
-$mesgs=array();
-
 $don = new Don($db);
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
 
@@ -72,14 +69,14 @@ if ($action == 'update')
 
     if (empty($donation_date))
     {
-        $mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		$mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+		$setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -125,14 +122,14 @@ if ($action == 'add')
 
     if (empty($donation_date))
     {
-        $mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")), 'errors');
         $action = "create";
         $error++;
     }
 
 	if (empty($amount))
 	{
-		$mesgs[]=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Amount")), 'errors');
 		$action = "create";
 		$error++;
 	}
@@ -182,7 +179,9 @@ if ($action == 'valid_promesse')
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
-    else $mesg=$don->error;
+    else {
+	    setEventMessage($don->error, 'errors');
+    }
 }
 if ($action == 'set_cancel')
 {
@@ -191,7 +190,9 @@ if ($action == 'set_cancel')
         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
     }
-    else $mesg=$don->error;
+    else {
+	    setEventMessage($don->error, 'errors');
+    }
 }
 if ($action == 'set_paid')
 {
@@ -200,7 +201,9 @@ if ($action == 'set_paid')
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
-    else $mesg=$don->error;
+    else {
+	    setEventMessage($don->error, 'errors');
+    }
 }
 if ($action == 'set_encaisse')
 {
@@ -209,7 +212,9 @@ if ($action == 'set_encaisse')
         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
 	}
-    else $mesg=$don->error;
+    else {
+	    setEventMessage($don->error, 'errors');
+    }
 }
 
 /*
@@ -262,8 +267,6 @@ $formcompany = new FormCompany($db);
 if ($action == 'create')
 {
 	print_fiche_titre($langs->trans("AddDonation"));
-
-	dol_htmloutput_errors($mesg,$mesgs);
 
 	print '<form name="add" action="fiche.php" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
