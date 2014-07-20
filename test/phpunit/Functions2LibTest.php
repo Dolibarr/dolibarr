@@ -150,7 +150,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
 	    $result = isValidUrl('http://google.com');
 	    $this->assertEquals($result, 1);
 
-	    $result = isValidUrl('google');
+	    $result = isValidUrl('gooçgle');
 	    $this->assertEquals($result, 0);
 
 	    //With scheme check
