@@ -119,7 +119,7 @@ print '</body></html>'."\n";
  * 	Convert date to timestamp
  *
  * 	@param	string		$mysqldate		Date YYYMMDD
- *  @return	timestamp					Timestamp
+ *  @return	integer					Timestamp
  */
 function xyzToUnixTimestamp($mysqldate)
 {

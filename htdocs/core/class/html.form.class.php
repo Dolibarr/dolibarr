@@ -468,7 +468,7 @@ class Form
      *  @param	string	$selected       Id or Code or Label of preselected country
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
-     *  @param	string	$maxlength		Max length for labels (0=no limit)
+     *  @param	integer	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
     function select_country($selected='',$htmlname='country_id',$htmloption='',$maxlength=0)
@@ -544,7 +544,7 @@ class Form
      *	@param  string	$htmlname       Name of field in html form
      * 	@param	int		$showempty		Add an empty field
      * 	@param	int		$hidetext		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
-     * 	@param	string	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
+     * 	@param	integer	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
      *  @return	void
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
@@ -947,9 +947,9 @@ class Form
      *	@param  int		$showempty      0=no empty value, 1=add an empty value
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
-     *	@param	string	$showfunction   Add function into label
+     *	@param	integer	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
-     *	@param	string	$showsoc	    Add company into label
+     *	@param	integer	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *  @param	bool	$options_only	Return options only (for ajax treatment)
@@ -970,10 +970,10 @@ class Form
      *	@param  int		$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit)
      *	@param  string	$exclude        List of contacts id to exclude
      *	@param	string	$limitto		Disable answers that are not id in this array list
-     *	@param	string	$showfunction   Add function into label
+     *	@param	integer	$showfunction   Add function into label
      *	@param	string	$moreclass		Add more class to class style
      *	@param	bool	$options_only	Return options only (for ajax treatment)
-     *	@param	string	$showsoc	    Add company into label
+     *	@param	integer	$showsoc	    Add company into label
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
      *	@return	 int					<0 if KO, Nb of contact in list if OK
@@ -1907,7 +1907,7 @@ class Form
      *
      *  @param		int		$productid       Id of product
      *  @param      string	$htmlname        Name of HTML field
-     *  @return		void
+     *  @return		string|null
      */
     function select_product_fourn_price($productid,$htmlname='productfournpriceid')
     {
@@ -2001,7 +2001,7 @@ class Form
      *    @param    int		$socid				Id of company
      *    @param    string	$htmlname          	Name of HTML field
      *    @param    int		$showempty         	Add an empty field
-     *    @return	void
+     *    @return	integer|null
      */
     function select_address($selected, $socid, $htmlname='address_id',$showempty=0)
     {
@@ -2286,7 +2286,7 @@ class Form
      *
      *      @param	string	$selected        Id du type de paiement pre-selectionne
      *      @param  string	$htmlname        Nom de la zone select
-     *      @param  string	$filtertype      Pour filtre
+     *      @param  integer	$filtertype      Pour filtre
      *		@param	int		$addempty		Ajoute entree vide
      *		@return	void
      */
@@ -2389,7 +2389,7 @@ class Form
      *
      *      @param	string	$selected        Id pre-selectionne
      *      @param  string	$htmlname        Nom de la zone select
-     * 		@return	void
+     * 		@return	string
      */
     function load_PriceBaseType($selected='',$htmlname='price_base_type')
     {
@@ -2527,7 +2527,7 @@ class Form
      *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
      *    @param    int		$excludeafterid 	Exclude all categories after this leaf in category tree.
-     *    @return	void
+     *    @return	string
      */
     function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0)
     {
@@ -3299,7 +3299,7 @@ class Form
      *
      *  @param	string	$selected    preselected currency code
      *  @param  string	$htmlname    name of HTML select list
-     * 	@return	void
+     * 	@return	string
      */
     function selectCurrency($selected='',$htmlname='currency_id')
     {
@@ -3398,7 +3398,7 @@ class Form
 	 *                                      Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TVA par défaut=0. Fin de règle.
      *                  					Sinon la TVA proposee par defaut=0. Fin de regle.
      *  @param	bool	$options_only		Return options only (for ajax treatment)
-     *  @return	void
+     *  @return	string
      */
     function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
     {
@@ -3550,7 +3550,7 @@ class Form
      * 	@param	int			$nooutput		Do not output html string but return it
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
-     * 	@return	mixed						Nothing or string if nooutput is 1
+     * 	@return	string|null						Nothing or string if nooutput is 1
      *  @see	form_date
      */
     function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowbutton=0, $nooutput=0, $disabled=0, $fullday='')
@@ -3777,7 +3777,7 @@ class Form
      *	@param  int		$iSecond  		Default preselected duration (number of seconds)
      * 	@param	int		$disabled		Disable the combo box
      * 	@param	string	$typehour		If 'select' then input hour and input min is a combo, if 'text' input hour is in text and input min is a combo
-     *  @param	string	$minunderhours	If 1, show minutes selection under the hours
+     *  @param	integer	$minunderhours	If 1, show minutes selection under the hours
      *  @return	void
      */
     function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0)
@@ -3977,7 +3977,7 @@ class Form
      *	@param	string	$value			Pre-selected value
      *	@param	int		$option			0 return yes/no, 1 return 1/0
      *	@param	bool	$disabled		true or false
-     *	@return	mixed					See option
+     *	@return	string					See option
      */
     function selectyesno($htmlname,$value='',$option=0,$disabled=false)
     {
@@ -4072,7 +4072,7 @@ class Form
      *    @param   string	$morehtmlref  	Code html supplementaire a afficher apres ref
      *    @param   string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
-     * 	  @return  tring    				Portion HTML avec ref + boutons nav
+     * 	  @return  string    				Portion HTML avec ref + boutons nav
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0)
     {
@@ -4235,7 +4235,7 @@ class Form
      *  @param  string	$include        Array list of groups id to include
      * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
      * 	@param	int		$force_entity	0 or Id of environment to force
-     *  @return	void
+     *  @return	string
      *  @see select_dolusers
      */
     function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0)

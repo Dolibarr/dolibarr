@@ -362,7 +362,7 @@ class SMTPs
 	/**
 	 * Attempt mail server authentication for a secure connection
 	 *
-	 * @return mixed  $_retVal   Boolean indicating success or failure of authentication
+	 * @return boolean|null  $_retVal   Boolean indicating success or failure of authentication
 	 */
 	function _server_authenticate()
 	{
@@ -399,7 +399,7 @@ class SMTPs
 	 *
 	 * @param  boolean $_bolTestMsg  whether to run this method in 'Test' mode.
 	 * @param  boolean $_bolDebug    whether to log all communication between this Class and the Mail Server.
-	 * @return mixed   void
+	 * @return boolean|null   void
 	 *                 $_strMsg      If this is run in 'Test' mode, the actual message structure will be returned
 	 */
 	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
@@ -499,7 +499,7 @@ class SMTPs
 	 * defined.
 	 *
 	 * @param mixed $_strConfigPath path to config file or VOID
-	 * @return void
+	 * @return boolean
 	 */
 	function setConfig ( $_strConfigPath = null )
 	{
@@ -573,7 +573,7 @@ class SMTPs
 	 * Path to the sendmail execuable
 	 *
 	 * @param string $_path Path to the sendmail execuable
-	 * @return void
+	 * @return boolean
 	 *
 	 */
 	function setMailPath($_path)
@@ -949,8 +949,8 @@ class SMTPs
 	/**
 	 * Returns an array of addresses for a specific type; TO, CC or BCC
 	 *
-	 * @param 		mixed 	$_which 	Which collection of adresses to return
-	 * @return 		array 				Array of emaill address
+	 * @param 		string 	$_which 	Which collection of adresses to return
+	 * @return 		string|false 				Array of emaill address
 	 */
 	function get_email_list($_which = null)
 	{
@@ -1000,7 +1000,7 @@ class SMTPs
 	/**
 	 * TO Address[es] inwhich to send mail to
 	 *
-	 * @param 	mixed 	$_addrTo 	TO Address[es] inwhich to send mail to
+	 * @param 	string 	$_addrTo 	TO Address[es] inwhich to send mail to
 	 * @return 	void
 	 */
 	function setTO($_addrTo)
@@ -1370,7 +1370,7 @@ class SMTPs
 	 *   - [2] Private
 	 *   - [3] Company Confidential
 	 *
-	 * @param 	string	$_value		Message Sensitivity
+	 * @param 	integer	$_value		Message Sensitivity
 	 * @return 	void
 	 */
 	function setSensitivity($_value = 0)
@@ -1405,7 +1405,7 @@ class SMTPs
 	 *  - [4] 'Low'
 	 *  - [5] 'Lowest'
 	 *
-	 * @param 	string 	$_value 	Message Priority
+	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
 	function setPriority ( $_value = 3 )
@@ -1425,7 +1425,7 @@ class SMTPs
 	 *  - [4] 'Low'
 	 *  - [5] 'Lowest'
 	 *
-	 * @return void
+	 * @return string
 	 */
 	function getPriority()
 	{
@@ -1448,7 +1448,7 @@ class SMTPs
 	/**
 	 * Gets flag which determines whether to calculate message MD5 checksum.
 	 *
-	 * @return 	string 				Message Priority
+	 * @return 	boolean 				Message Priority
 	 */
 	function getMD5flag()
 	{
@@ -1472,7 +1472,7 @@ class SMTPs
 	/**
 	 * Retrieves the Message X-Header Content
 	 *
-	 * @return string $_msgContent Message X-Header Content
+	 * @return string[] $_msgContent Message X-Header Content
 	 */
 	function getXheader()
 	{
@@ -1546,7 +1546,7 @@ class SMTPs
 	 * @param	string		$_strSend		String to send
 	 * @param 	string		$_returnCode	Return code
 	 * @param 	string		$CRLF			CRLF
-	 * @return 	boolean						True or false
+	 * @return 	boolean|null						True or false
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{

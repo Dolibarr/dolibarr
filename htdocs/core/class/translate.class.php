@@ -154,7 +154,7 @@ class Translate
  	 *										If $domain is "file@module" instead of "file" then we look for module lang file
 	 *										in htdocs/custom/modules/mymodule/langs/code_CODE/file.lang
 	 *										then in htdocs/module/langs/code_CODE/file.lang instead of htdocs/langs/code_CODE/file.lang
-	 *  @param	string	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
+	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US or fr_FR or es_ES)
 	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	int		$forcelangdir		To force a different lang directory
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
@@ -543,7 +543,7 @@ class Translate
 	 *  Return list of all available languages
 	 *
 	 * 	@param	string	$langdir		Directory to scan
-	 *  @param  string	$maxlength   	Max length for each value in combo box (will be truncated)
+	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
 	 *  @param	int		$usecode		Show code instead of country name for language variant
 	 *  @return array     				List of languages
 	 */
@@ -578,7 +578,7 @@ class Translate
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
 	 *  @param	string	$filename       Language filename to search
-	 *  @param  string	$searchalt      Search also alernate language file
+	 *  @param  integer	$searchalt      Search also alernate language file
 	 *  @return boolean         		true if exists and readable
 	 */
 	function file_exists($filename,$searchalt=0)
@@ -714,7 +714,7 @@ class Translate
 	 *	Return a currency code into its symbol
 	 *
 	 *  @param	string	$currency_code		Currency code
-	 *  @param	string	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
+	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.
 	 *  @return	string						Currency symbol encoded into UTF8
 	 */
 	function getCurrencySymbol($currency_code, $forceloadall=0)

@@ -243,7 +243,7 @@ function societe_admin_prepare_head($object)
  *    										'2'=Return code from id,
  *    										'3'=Return id from code,
  * 	   										'all'=Return array('id'=>,'code'=>,'label'=>)
- *    @param      DoliDB	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param      integer	$dbtouse       	Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @param      Translate	$outputlangs	Langs object for output translation
  *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
@@ -305,7 +305,7 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
  *    										'1'=Return string code + label,
  *    						  				'2'=Return code,
  *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
- *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
+ *    @param	integer		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
  *    @return   string      				String with state code or state name (Return value is always utf8 encoded and without entities)
  */
 function getState($id,$withcode='',$dbtouse=0)
@@ -424,7 +424,7 @@ function getFormeJuridiqueLabel($code)
  * 		@param	DoliDB		$db				Database handler
  * 		@param	Object		$object			Third party object
  *      @param  string		$backtopage		Url to go once contact is created
- *      @return	void
+ *      @return	integer
  */
 function show_projects($conf,$langs,$db,$object,$backtopage='')
 {
@@ -526,7 +526,7 @@ function show_projects($conf,$langs,$db,$object,$backtopage='')
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Object		$object		Third party object
  *      @param  string		$backtopage	Url to go once contact is created
- *      @return	void
+ *      @return	integer
  */
 function show_contacts($conf,$langs,$db,$object,$backtopage='')
 {
@@ -790,7 +790,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Object		$object		Third party object
  *      @param  string		$backtopage	Url to go once address is created
- *      @return	void
+ *      @return	integer|null
  */
 function show_addresses($conf,$langs,$db,$object,$backtopage='')
 {
@@ -883,10 +883,10 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  * 		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Object db
- * 		@param	Object		$object		Object third party or member
+ * 		@param	Societe		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint	Return string but does not output it
- *      @return	mixed					Return html part or void if noprint is 1
+ *      @return	string|null					Return html part or void if noprint is 1
  */
 function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
 {
@@ -1045,10 +1045,10 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  * 		@param	Conf		$conf		Object conf
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Object db
- * 		@param	Object		$object		Object third party or member
+ * 		@param	Societe		$object		Object third party or member
  * 		@param	Contact		$objcon		Object contact
  *      @param  int			$noprint    Return string but does not output it
- *      @return	mixed					Return html part or void if noprint is 1
+ *      @return	string|null					Return html part or void if noprint is 1
  * TODO change function to be able to list event linked to an object.
  */
 function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
@@ -1318,7 +1318,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
  * 		@param	Translate	$langs		Object langs
  * 		@param	DoliDB		$db			Database handler
  * 		@param	Societe		$object		Third party object
- * 		@return	void
+ * 		@return	integer
  */
 function show_subsidiaries($conf,$langs,$db,$object)
 {

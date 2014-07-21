@@ -1142,7 +1142,7 @@ class AccountLine extends CommonObject
     /**
      *      Delete transaction bank line record
      *
-     *		@param	User	$user	User object that delete
+     *		@param	integer	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
     function delete($user=0)
@@ -1191,7 +1191,7 @@ class AccountLine extends CommonObject
     /**
      *      Delete bank line records
      *
-     *		@param	User	$user	User object that delete
+     *		@param	integer	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
     function delete_urls($user=0)

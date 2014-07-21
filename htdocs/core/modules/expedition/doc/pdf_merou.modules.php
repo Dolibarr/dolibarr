@@ -42,7 +42,7 @@ class pdf_merou extends ModelePdfExpedition
 	/**
 	 *	Constructor
 	 *
-	 *  @param		DoliDB		$db      Database handler
+	 *  @param		integer		$db      Database handler
 	 */
 	function __construct($db=0)
 	{

@@ -261,7 +261,7 @@ class FileUpload
 	 *
 	 *  @param	string	$file_name		Filename
 	 *  @param	string	$options 		is array('max_width', 'max_height')
-	 *  @return	void
+	 *  @return	boolean
 	 */
 	protected function createScaledImage($file_name, $options)
 	{
@@ -296,7 +296,7 @@ class FileUpload
 	 * @param 	string	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
-	 * @return unknown|string
+	 * @return boolean
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
@@ -378,10 +378,10 @@ class FileUpload
 	/**
 	 * Enter description here ...
 	 *
-	 * @param 	unknown_type $name		Filename
-	 * @param 	unknown_type $type		???
-	 * @param 	unknown_type $index		???
-	 * @return	void
+	 * @param 	string $name		Filename
+	 * @param 	string $type		???
+	 * @param 	string $index		???
+	 * @return	string
 	 */
 	protected function trimFileName($name, $type, $index)
 	{
@@ -408,7 +408,7 @@ class FileUpload
 	 * Enter description here ...
 	 *
 	 * @param 	unknown_type 	$file_path		???
-	 * @return	int				Success or not
+	 * @return	boolean				Success or not
 	 */
 	protected function orientImage($file_path)
 	{

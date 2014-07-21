@@ -229,7 +229,7 @@ class Address
 	 *  Charge depuis la base toutes les adresses d'une societe
 	 *
 	 *  @param	int		$socid       Id de la societe a charger en memoire
-	 *  @param  User	$user        Objet de l'utilisateur
+	 *  @param  integer	$user        Objet de l'utilisateur
 	 *  @return int 			     >0 si ok, <0 si ko
 	 */
 	function fetch_lines($socid, $user=0)
@@ -322,7 +322,7 @@ class Address
 	 *  Charge depuis la base l'objet adresse
 	 *
 	 *  @param	int		$id       	Id de l'adresse a charger en memoire
-	 *  @param  User	$user       Objet de l'utilisateur
+	 *  @param  integer	$user       Objet de l'utilisateur
 	 *  @return int 				>0 si ok, <0 si ko
 	 */
 	function fetch_address($id, $user=0)

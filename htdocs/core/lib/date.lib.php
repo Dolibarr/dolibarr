@@ -27,7 +27,7 @@
 /**
  *  Return an array with timezone values
  *
- *  @return     array   Array with timezone values
+ *  @return     string[]   Array with timezone values
  */
 function get_tz_array()
 {
@@ -76,7 +76,7 @@ function getServerTimeZoneString()
  * Return server timezone int.
  *
  * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
- * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
+ * @return 	double						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
  */
 function getServerTimeZoneInt($refgmtdate='now')
 {
@@ -168,7 +168,7 @@ function convertTime2Seconds($iHours=0,$iMinutes=0,$iSeconds=0)
  *    	@param      string	$format		    Output format (all: total delay days hour:min like "2 days 12:30"", allhourmin: total delay hours:min like "60:30", allhour: total delay hours without min/sec like "60:30", fullhour: total delay hour decimal like "60.5" for 60:30, hour: only hours part "12", min: only minutes part "30", sec: only seconds part, month: only month part, year: only year part);
  *      @param      int		$lengthOfDay    Length of day (default 86400 seconds for 1 day, 28800 for 8 hour)
  *      @param      int		$lengthOfWeek   Length of week (default 7)
- *    	@return     sTime		 		 	Formated text of duration
+ *    	@return     string		 		 	Formated text of duration
  * 	                                		Example: 0 return 00:00, 3600 return 1:00, 86400 return 1d, 90000 return 1 Day 01:00
  */
 function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengthOfWeek=7)
@@ -439,7 +439,7 @@ function dol_get_next_week($day, $week, $month, $year)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
+ * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
  *  @return		int						Date for first day
@@ -482,7 +482,7 @@ function dol_get_last_day($year,$month=12,$gm=false)
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
  * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
- *	@return		array				year,month, week,first_day,prev_year,prev_month,prev_day
+ *	@return		integer				year,month, week,first_day,prev_year,prev_month,prev_day
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
 {
@@ -798,7 +798,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
  *  This replace old function monthArrayOrSelected.
  *
  *	@param	Translate	$outputlangs	Object langs
- *	@return array						Month string or array if selected < 0
+ *	@return string[]						Month string or array if selected < 0
  */
 function monthArray($outputlangs)
 {

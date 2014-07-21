@@ -274,7 +274,7 @@ class RemiseCheque extends CommonObject
 	 *	Supprime la remise en base
 	 *
 	 *	@param  User	$user 		Utilisateur qui effectue l'operation
-	 *	@return	void
+	 *	@return	integer
 	 */
 	function delete($user='')
 	{

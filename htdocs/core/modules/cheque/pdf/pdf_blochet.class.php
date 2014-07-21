@@ -342,7 +342,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *   	Show footer of page. Need this->emetteur object
      *
 	 *   	@param	PDF			&$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	string		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	void

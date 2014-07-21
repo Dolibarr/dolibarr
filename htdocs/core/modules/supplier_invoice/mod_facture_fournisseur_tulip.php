@@ -106,7 +106,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	 * Return next value
 	 *
 	 * @param	Societe		$objsoc     Object third party
-	 * @param  	Object	    $object		Object
+	 * @param  	string	    $object		Object
      * @param	string		$mode       'next' for next value or 'last' for last value
      * @return 	string      			Value if OK, 0 if KO
 	 */

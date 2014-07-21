@@ -88,7 +88,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * getDriverId
 	 *
-	 * @return int		Id
+	 * @return string		Id
 	 */
 	function getDriverId()
 	{
@@ -313,7 +313,7 @@ class ImportCsv extends ModeleImports
 	/**
 	 * 	Close file handle
 	 *
-	 *  @return	void
+	 *  @return	integer
 	 */
 	function import_close_file()
 	{

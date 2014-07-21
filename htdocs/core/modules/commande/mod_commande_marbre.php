@@ -96,7 +96,7 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 	 * 	Return next free value
 	 *
 	 *  @param	Societe		$objsoc     Object thirdparty
-	 *  @param  Object		$object		Object we need next value for
+	 *  @param  string		$object		Object we need next value for
 	 *  @return string      			Value if KO, <0 if KO
 	 */
 	function getNextValue($objsoc,$object)
