@@ -163,9 +163,6 @@ if (! empty($_SERVER['DOCUMENT_ROOT'])) set_include_path($_SERVER['DOCUMENT_ROOT
 // Include the conf.php and functions.lib.php
 require_once 'filefunc.inc.php';
 
-//Load dependencies
-require DOL_DOCUMENT_ROOT.'/../vendor/autoload.php';
-
 // If there is a POST parameter to tell to save automatically some POST parameters into a cookies, we do it
 if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
