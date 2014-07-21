@@ -29,8 +29,10 @@ before_script:
  - echo Home dir is `echo ~`
  - export PHPV=`phpenv version-name`
  - echo PHP version $PHPV 
-# - echo Update composer
-# - ~/.phpenv/versions/$(phpenv version-name)/bin/composer.phar self-update 
+ - echo Update composer
+ - composer --self-update
+ - echo Install dependencies
+ - composer install
  - echo PHPUnit version
  - phpunit --version
  - echo Install phpcs then show installed rules
