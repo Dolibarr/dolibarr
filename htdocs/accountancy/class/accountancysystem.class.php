@@ -16,40 +16,35 @@
  */
 
 /**
- *    \file       htdocs/accountancy/class/accountancysystem.class.php
- *    \ingroup    accounting
- *    \brief      File of class to manage accountancy systems
+ *	\file       htdocs/accountancy/class/accountancysystem.class.php
+ * 	\ingroup    accounting
+ * 	\brief      File of class to manage accountancy systems
  */
 
 
-/**    \class        AccountancySystem
- *    \brief        Classe to manage accountancy systems
+/**	\class 		AccountancySystem
+ *	\brief 		Classe to manage accountancy systems
  */
 class AccountancySystem
 {
-	/**
-	 * Database handler
-	 * @var DoliDB
-	 */
-	public $db;
-	public $error;
-	public $rowid;
-	public $fk_pcg_version;
-	public $pcg_type;w
-	public $pcg_subtype;
-	public $label;
-	public $account_number;
-	public $account_parent;
-	public $intitule;
-	public $numero;
-	public $id;
+	var $db;
+	var $error;
+
+	var $rowid;
+	var $fk_pcg_version;
+	var $pcg_type;
+	var $pcg_subtype;
+	var $label;
+	var $account_number;
+	var $account_parent;
+
 
 	/**
-	 *    Constructor
+	 *	Constructor
 	 *
-	 * @param        DoliDB $db Database handler
+	 *  @param		DoliDB		$db      Database handler
 	 */
-	public function __construct(DoliDB $db)
+	function __construct($db)
 	{
 		$this->db = $db;
 	}
@@ -58,35 +53,42 @@ class AccountancySystem
 	/**
 	 *  Insert accountancy system name into database
 	 *
-	 * @param    User $user User making insert
-	 * @return        int                <0 if KO, Id of line if OK
+	 *  @param  	User	$user 	User making insert
+	 *  @return		int				<0 if KO, Id of line if OK
 	 */
-	public function create(User $user)
+	function create($user)
 	{
-		$now = dol_now();
+		$now=dol_now();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
-		$sql .= " (date_creation, fk_user_author, numero,intitule)";
-		$sql .= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->numero."','".$this->intitule."')";
+		$sql.= " (date_creation, fk_user_author, numero,intitule)";
+		$sql.= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->numero."','".$this->intitule."')";
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
 
-			if ($id > 0) {
+			if ($id > 0)
+			{
 				$this->id = $id;
 				$result = $this->id;
-			} else {
+			}
+			else
+			{
 				$result = -2;
-				$this->error = "AccountancySystem::Create Erreur $result";
+				$this->error="AccountancySystem::Create Erreur $result";
 				dol_syslog($this->error, LOG_ERR);
 			}
-		} else {
+		}
+		else
+		{
 			$result = -1;
-			$this->error = "AccountancySystem::Create Erreur $result";
+			$this->error="AccountancySystem::Create Erreur $result";
 			dol_syslog($this->error, LOG_ERR);
 		}
 
 		return $result;
 	}
+
 }
