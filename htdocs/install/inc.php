@@ -33,6 +33,9 @@ require_once '../filefunc.inc.php';
 
 // Define DOL_DOCUMENT_ROOT and ADODB_PATH used for install/upgrade process
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
+if (! defined('DOL_VENDOR_ROOT')) {
+	define('DOL_VENDOR_ROOT', DOL_DOCUMENT_ROOT.'/../vendor');
+}
 if (! defined('ADODB_PATH'))
 {
     $foundpath=DOL_VENDOR_ROOT .'/adodb/adodb-php/';
