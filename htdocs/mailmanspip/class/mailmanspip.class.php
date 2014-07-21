@@ -112,7 +112,7 @@ class MailmanSpip
     /**
      * Function used to connect to Mailman
      *
-     * @param	object 	$object 	Object with the data
+     * @param	Adherent 	$object 	Object with the data
      * @param	string 	$url    	Mailman URL to be called with patterns
      * @param	string	$list		Name of mailing-list
      * @return 	mixed				Boolean or string
