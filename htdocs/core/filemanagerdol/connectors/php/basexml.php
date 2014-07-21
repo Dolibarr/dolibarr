@@ -104,6 +104,9 @@ function SendError($number, $text)
 	exit ;
 }
 
+/**
+ * @param integer $number
+ */
 function SendErrorNode($number, $text)
 {
 	if ($text)
