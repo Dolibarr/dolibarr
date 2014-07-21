@@ -35,7 +35,7 @@ require_once '../filefunc.inc.php';
 if (! defined('DOL_DOCUMENT_ROOT'))	    define('DOL_DOCUMENT_ROOT', '..');
 if (! defined('ADODB_PATH'))
 {
-    $foundpath=DOL_DOCUMENT_ROOT .'/includes/adodbtime/';
+    $foundpath=DOL_VENDOR_ROOT .'/adodb/adodb-php/';
     if (! is_dir($foundpath)) $foundpath='/usr/share/php/adodb/';
     define('ADODB_PATH', $foundpath);
 }

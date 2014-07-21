@@ -30,7 +30,6 @@ before_script:
  - export PHPV=`phpenv version-name`
  - echo PHP version $PHPV 
  - echo Update composer
- - composer self-update
  - echo Install dependencies
  - composer install
  - echo PHPUnit version
