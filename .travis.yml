@@ -81,7 +81,7 @@ before_script:
  - echo Show default virtual host
  - sudo cat /etc/apache2/sites-available/default
  - sudo /etc/init.d/apache2 restart
- - curl http://localhost/ > index.html
+ - wget http://localhost/
  - cat index.html
 
 
