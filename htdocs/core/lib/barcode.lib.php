@@ -62,7 +62,7 @@ else $genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
  *
  * @param	string	$code		Code
  * @param	string	$encoding	Encoding
- * @param	integer	$scale		Scale
+ * @param	string	$scale		Scale
  * @param	string	$mode		'png' or 'jpg' ...
  *
  *
@@ -160,7 +160,7 @@ function barcode_encode($code,$encoding)
  * Calculate EAN sum
  *
  * @param	string	$ean	EAN to encode
- * @return	integer			Sum
+ * @return	string			Sum
  */
 function barcode_gen_ean_sum($ean)
 {
@@ -300,7 +300,7 @@ function barcode_encode_genbarcode($code,$encoding)
  * @param	string	$mode   	png,gif,jpg (default='png')
  * @param	int		$total_y	the total height of the image ( default: scale * 60 )
  * @param	array	$space		default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;
- * @return	string|null
+ * @return	void
  */
 function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = '')
 {

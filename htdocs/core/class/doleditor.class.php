@@ -142,7 +142,7 @@ class DolEditor
      *
      *  @param	int		$noprint    1=Return HTML string instead of printing it to output
      *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"
-     *  @return	string|null
+     *  @return	void
      */
     function Create($noprint=0,$morejs='')
     {

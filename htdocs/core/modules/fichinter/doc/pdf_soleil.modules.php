@@ -409,7 +409,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  Show top header of page.
 	 *
 	 *  @param	PDF			&$pdf     		Object PDF
-	 *  @param  CommonObject		$object     	Object to show
+	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -588,10 +588,10 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	PDF			&$pdf     			PDF
-	 * 		@param	CommonObject		$object				Object to show
+	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	integer
+	 *      @return	void
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{

@@ -146,9 +146,9 @@ class ProductFournisseur extends Product
      *    @param  	int			$availability		Product availability
      *    @param	string		$ref_fourn			Supplier ref
      *    @param	float		$tva_tx				VAT rate
-     *    @param  	integer		$charges			costs affering to product
-	 *    @param  	integer		$remise_percent		Discount  regarding qty (percent)
-	 *    @param  	integer		$remise				Discount  regarding qty (amount)
+     *    @param  	string		$charges			costs affering to product
+	 *    @param  	float		$remise_percent		Discount  regarding qty (percent)
+	 *    @param  	float		$remise				Discount  regarding qty (amount)
 	 *    @param  	int			$newnpr				Set NPR or not
      *    @return	int								<0 if KO, >=0 if OK
      */

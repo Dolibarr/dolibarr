@@ -268,7 +268,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
  *	@param	string	$message	Message of dialog box
  *	@param	int		$w			Width of dialog box
  *	@param	int		$h			height of dialog box
- *	@return	string
+ *	@return	void
  */
 function ajax_dialog($title,$message,$w=350,$h=150)
 {
@@ -391,7 +391,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
  * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity			Entity to set
  *  @param	int		$revertonoff	Revert on/off
- * 	@return	string
+ * 	@return	void
  */
 function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 {

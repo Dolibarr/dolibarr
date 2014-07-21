@@ -587,7 +587,6 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
  * @param 	int		$parent				Id of parent task to start
  * @param 	array	&$lines				Array of all tasks
  * @param	string	&$taskrole			Array of task filtered on a particular user
- * @param integer $inc
  * @return	int							1 if there is
  */
 function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)

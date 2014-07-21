@@ -87,7 +87,7 @@ abstract class ModeleNumRefBarCode
     /**
      *  Return next value available
      *
-     *	@param	integer		$objsoc		Object thirdparty
+     *	@param	Societe		$objsoc		Object thirdparty
      *	@param	int			$type		Type
      *  @return string      			Value
      */

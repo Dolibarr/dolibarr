@@ -254,7 +254,7 @@ class Task extends CommonObject
     /**
      *  Update database
      *
-     *  @param	integer	$user        	User that modify
+     *  @param	User	$user        	User that modify
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int			         	<0 if KO, >0 if OK
      */
@@ -522,13 +522,13 @@ class Task extends CommonObject
      * Return list of tasks for all projects or for one particular project
      * Sort order is on project, then on position of task, and last on start date of first level task
      *
-     * @param	integer	$usert				Object user to limit tasks affected to a particular user
-     * @param	integer	$userp				Object user to limit projects of a particular user and public projects
+     * @param	User	$usert				Object user to limit tasks affected to a particular user
+     * @param	User	$userp				Object user to limit projects of a particular user and public projects
      * @param	int		$projectid			Project id
      * @param	int		$socid				Third party id
      * @param	int		$mode				0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      * @param	string	$filteronprojref	Filter on project ref
-     * @param	integer	$filteronprojstatus	Filter on project status
+     * @param	string	$filteronprojstatus	Filter on project status
      * @return 	array						Array of tasks
      */
     function getTasksArray($usert=0, $userp=0, $projectid=0, $socid=0, $mode=0, $filteronprojref='', $filteronprojstatus=-1)
@@ -1234,7 +1234,7 @@ class Task extends CommonObject
 	/**
 	 *	Return status label of object
 	 *
-	 *	@param	integer	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param	string	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  			Label
 	 */
 	function getLibStatut($mode=0)
@@ -1246,7 +1246,7 @@ class Task extends CommonObject
 	 *	Return status label for an object
 	 *
 	 *	@param	int			$statut	  	Id statut
-	 *	@param	integer		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 *	@param	string		$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 * 	@return	string	  				Label
 	 */
 	function LibStatut($statut,$mode=0)

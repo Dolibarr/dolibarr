@@ -42,7 +42,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return integer
+	 * @return boolean
 	 */
 	public function isActive()
 	{
@@ -111,7 +111,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 	 * 	Output log content
 	 *
 	 *	@param	array	$content	Content to log
-	 * 	@return	null|false
+	 * 	@return	void
 	 */
 	public function export($content)
 	{

@@ -963,7 +963,7 @@ class Project extends CommonObject
 	  *	@param	bool	$clone_project_file		clone file of project
 	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
       *	@param	bool	$clone_note		clone note of project
-      *	@param	integer	$notrigger		no trigger flag
+      *	@param	bool	$notrigger		no trigger flag
 	  * @return	int						New id of clone
 	  */
 	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$notrigger=0)

@@ -508,7 +508,7 @@ class FactureFournisseur extends CommonInvoice
     /**
      *  Update database
      *
-     *  @param	integer	$user            User that modify
+     *  @param	User	$user            User that modify
      *  @param  int		$notrigger       0=launch triggers after, 1=disable triggers
      *  @return int 			         <0 if KO, >0 if OK
      */
@@ -1058,10 +1058,10 @@ class FactureFournisseur extends CommonInvoice
      *	@param		double	$txlocaltax2		LocalTax2 Rate
      *	@param    	double	$qty             	Quantite
      *	@param    	int		$fk_product      	Id du produit/service predefini
-     *	@param    	integer	$remise_percent  	Pourcentage de remise de la ligne
+     *	@param    	double	$remise_percent  	Pourcentage de remise de la ligne
      *	@param    	date	$date_start      	Date de debut de validite du service
      * 	@param    	date	$date_end        	Date de fin de validite du service
-     * 	@param    	integer	$ventil          	Code de ventilation comptable
+     * 	@param    	string	$ventil          	Code de ventilation comptable
      *	@param    	int		$info_bits			Bits de type de lines
      *	@param    	string	$price_base_type 	HT ou TTC
      *	@param		int		$type				Type of line (0=product, 1=service)
@@ -1151,14 +1151,14 @@ class FactureFournisseur extends CommonInvoice
      * @param     	string	$desc         		Description of line
      * @param     	double	$pu          		Prix unitaire (HT ou TTC selon price_base_type)
      * @param     	double	$vatrate       		VAT Rate
-     * @param		integer	$txlocaltax1		LocalTax1 Rate
-     * @param		integer	$txlocaltax2		LocalTax2 Rate
-     * @param     	integer	$qty           		Quantity
+     * @param		double	$txlocaltax1		LocalTax1 Rate
+     * @param		double	$txlocaltax2		LocalTax2 Rate
+     * @param     	double	$qty           		Quantity
      * @param     	int		$idproduct			Id produit
      * @param	  	double	$price_base_type	HT or TTC
      * @param	  	int		$info_bits			Miscellaneous informations of line
      * @param		int		$type				Type of line (0=product, 1=service)
-     * @param     	integer	$remise_percent  	Pourcentage de remise de la ligne
+     * @param     	double	$remise_percent  	Pourcentage de remise de la ligne
      *  @param		int		$notrigger			Disable triggers
      * @return    	int           				<0 if KO, >0 if OK
      */
@@ -1276,7 +1276,7 @@ class FactureFournisseur extends CommonInvoice
      *
      * 	@param  int		$rowid      	Id of line to delete
      *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-     * 	@return	integer
+     * 	@return	void
      */
     function deleteline($rowid, $notrigger=0)
     {

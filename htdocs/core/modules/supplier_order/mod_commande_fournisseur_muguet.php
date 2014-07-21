@@ -98,7 +98,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     /**
      * 	Return next value
 	 *
-	 *  @param	integer		$objsoc     Object third party
+	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object		$object		Object
 	 *  @return string      			Value if OK, 0 if KO
      */
@@ -136,7 +136,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
     /**
      * 	Renvoie la reference de commande suivante non utilisee
      *
-	 *  @param	integer		$objsoc     Object third party
+	 *  @param	Societe		$objsoc     Object third party
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */

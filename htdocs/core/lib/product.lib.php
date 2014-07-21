@@ -27,7 +27,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Product	$object		Object related to tabs
+ * @param   Object	$object		Object related to tabs
  * @param	User	$user		Object user
  * @return  array				Array of tabs to shoc
  */
@@ -184,7 +184,7 @@ function product_admin_prepare_head($object=null)
  *
  * @param	Product		$product	Product object
  * @param 	int			$socid		Thirdparty id
- * @return	integer
+ * @return	void
  */
 function show_stats_for_company($product,$socid)
 {

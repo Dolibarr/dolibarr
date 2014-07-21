@@ -74,7 +74,7 @@ class mailing_xinputfile extends MailingTargets
 	 *	emails from a text file, this function must return 500.
 	 *
 	 *  @param      string	$sql        Requete sql de comptage
-	 *	@return		string			'' means NA
+	 *	@return		int			'' means NA
 	 */
 	function getNbOfRecipients($sql='')
 	{

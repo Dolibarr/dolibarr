@@ -953,7 +953,7 @@ class Contrat extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param	integer	$user        User that modifies
+	 *  @param	User	$user        User that modifies
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
@@ -1061,7 +1061,7 @@ class Contrat extends CommonObject
 	 *  @param  timestamp	$date_start      	Date de debut prevue
 	 *  @param  timestamp	$date_end        	Date de fin prevue
 	 *	@param	float		$price_base_type	HT or TTC
-	 * 	@param  integer		$pu_ttc             Prix unitaire TTC
+	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits de type de lignes
 	 * 	@param  int			$fk_fournprice		Fourn price id
 	 *  @param  int			$pa_ht				Buying price HT
@@ -1218,8 +1218,8 @@ class Contrat extends CommonObject
 	 *  @param  timestamp	$date_start       	Date de debut prevue
 	 *  @param  timestamp	$date_end         	Date de fin prevue
 	 *  @param  float		$tvatx            	Taux TVA
-	 *  @param  integer		$localtax1tx      	Local tax 1 rate
-	 *  @param  integer		$localtax2tx      	Local tax 2 rate
+	 *  @param  float		$localtax1tx      	Local tax 1 rate
+	 *  @param  float		$localtax2tx      	Local tax 2 rate
 	 *  @param  timestamp	$date_debut_reel  	Date de debut reelle
 	 *  @param  timestamp	$date_fin_reel    	Date de fin reelle
 	 *	@param	float		$price_base_type	HT or TTC

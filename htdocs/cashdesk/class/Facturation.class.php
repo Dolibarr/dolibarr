@@ -266,7 +266,7 @@ class Facturation
      * Getter for id
      *
      * @param	int		$aId	Id
-     * @return  null|integer
+     * @return  id
      */
     public function id($aId=null)
     {
@@ -390,7 +390,7 @@ class Facturation
      * Getter for montant_remise
      *
      * @param	int		$aMontantRemise		Amount
-     * @return	null|integer						Amount
+     * @return	string						Amount
      */
     public function montantRemise($aMontantRemise=null)
     {
@@ -415,7 +415,7 @@ class Facturation
      * Getter for prix
      *
      * @param	int		$aPrix		Price
-     * @return	null|integer				Stock
+     * @return	string				Stock
      */
     public function prix ( $aPrix=null )
     {

@@ -356,7 +356,7 @@ class CMailFile
 	/**
 	 * Send mail that was prepared by constructor
 	 *
-	 * @return    string|boolean     True if mail sent, false otherwise
+	 * @return    boolean     True if mail sent, false otherwise
 	 */
 	function sendfile()
 	{
@@ -518,10 +518,6 @@ class CMailFile
 
 
 	// Encode subject according to RFC 2822 - http://en.wikipedia.org/wiki/MIME#Encoded-Word
-
-	/**
-	 * @param string $stringtoencode
-	 */
 	function encodetorfc2822($stringtoencode)
 	{
 		global $conf;
@@ -645,7 +641,7 @@ class CMailFile
 	/**
 	 * Create SMTP headers (mode = 'mail')
 	 *
-	 * @return	string headers
+	 * @return	smtp headers
 	 */
 	function write_smtpheaders()
 	{
@@ -696,7 +692,7 @@ class CMailFile
 	 *
 	 * @param	array	$filename_list			Array of filenames
 	 * @param 	array	$mimefilename_list		Array of mime types
-	 * @return	string							mime headers
+	 * @return	array							mime headers
 	 */
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{

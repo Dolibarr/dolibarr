@@ -76,7 +76,7 @@ class ExportExcel extends ModeleExports
 	/**
 	 * getDriverId
 	 *
-	 * @return string
+	 * @return int
 	 */
 	function getDriverId()
 	{

@@ -1753,7 +1753,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
  *
  * @param 	array	&$fieldssource	Array of field source
  * @param	array	&$listofkey		Array of keys
- * @return	integer
+ * @return	void
  */
 function getnewkey(&$fieldssource,&$listofkey)
 {

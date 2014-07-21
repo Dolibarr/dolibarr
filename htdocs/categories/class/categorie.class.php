@@ -327,7 +327,7 @@ class Categorie extends CommonObject
 	 * 	Delete a category from database
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
-	 *	@return	integer
+	 *	@return	void
 	 */
 	function delete($user)
 	{
@@ -980,7 +980,7 @@ class Categorie extends CommonObject
 	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
-	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
+	 * 	@return		boolean		1 if already exist, 0 otherwise, -1 if error
 	 */
 	function already_exists()
 	{

@@ -94,7 +94,7 @@ function bank_prepare_head($object)
  * 		Check account number informations for a bank account
  *
  * 		@param	Account		$account    A bank account
- * 		@return boolean           			True if informations are valid, false otherwise
+ * 		@return int           			True if informations are valid, false otherwise
  */
 function checkBanForAccount($account)
 {

@@ -442,7 +442,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
  *	Clean an url string
  *
  *	@param	string	$url		Url
- *	@param  integer	$http		1 = keep both http:// and https://, 0: remove http:// but not https://
+ *	@param  string	$http		1 = keep both http:// and https://, 0: remove http:// but not https://
  *	@return string				Cleaned url
  */
 function clean_url($url,$http=1)
@@ -1026,7 +1026,7 @@ function hexbin($hexa)
  *	Retourne le numero de la semaine par rapport a une date
  *
  *	@param	string	$time   	Date au format 'timestamp'
- *	@return string					Number of week
+ *	@return int					Number of week
  */
 function numero_semaine($time)
 {
@@ -1142,7 +1142,7 @@ function weight_convert($weight,&$from_unit,$to_unit)
  *
  *	@param	DoliDB	$db         Handler database
  *	@param	Conf	$conf		Object conf
- *	@param	User	User      Object user
+ *	@param	User	&$user      Object user
  *	@param	array	$tab        Tableau (cle=>valeur) des parametres a sauvegarder
  *	@return int         		<0 if KO, >0 if OK
  *
@@ -1364,7 +1364,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
  * This function evaluates a string that should be a valid IPv4
  *
  * @param	string		$ip			IP Address
- * @return	integer returns 0 if $ip is not a valid IPv4
+ * @return	It returns 0 if $ip is not a valid IPv4
  * 			It returns 1 if $ip is a valid IPv4 and is a public IP
  * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
  */

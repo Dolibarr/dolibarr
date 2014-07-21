@@ -466,7 +466,7 @@ class Holiday extends CommonObject
     /**
      *	Update database
      *
-     *  @param	integer	$user        	User that modify
+     *  @param	User	$user        	User that modify
      *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
      *  @return int         			<0 if KO, >0 if OK
      */
@@ -1011,7 +1011,7 @@ class Holiday extends CommonObject
      *  Supprime un utilisateur du module Congés Payés
      *
      *  @param	int		$user_id        ID de l'utilisateur à supprimer
-     *  @return boolean|null      			Vrai si pas d'erreur, faut si Erreur
+     *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
      */
     function deleteCPuser($user_id) {
 
@@ -1027,7 +1027,7 @@ class Holiday extends CommonObject
      *  Retourne le solde de congés payés pour un utilisateur
      *
      *  @param	int		$user_id    ID de l'utilisateur
-     *  @return string        		Retourne le solde de congés payés de l'utilisateur
+     *  @return float        		Retourne le solde de congés payés de l'utilisateur
      */
     function getCPforUser($user_id) {
 
@@ -1257,7 +1257,7 @@ class Holiday extends CommonObject
      *
      *  @param    int	$userDolibarrWithoutCP	Number of active users in Dolibarr without holidays
      *  @param    int	$userCP    				Number of active users into table of holidays
-     *  @return   null|integer
+     *  @return   void
      */
     function verifNbUsers($userDolibarrWithoutCP,$userCP) {
 
@@ -1458,7 +1458,7 @@ class Holiday extends CommonObject
      *	@param	int		$rowid		Row id
      *	@param	string	$name		Name
      *	@param	value	$value		Value
-     *  @return boolean         		-1 si erreur, id si OK
+     *  @return int         		-1 si erreur, id si OK
      */
     function updateEventCP($rowid, $name, $value) {
 
@@ -1478,7 +1478,7 @@ class Holiday extends CommonObject
     /**
      * Select event
      *
-     * @return string|false		Select Html to select type of holiday
+     * @return string|boolean		Select Html to select type of holiday
      */
     function selectEventCP()
     {
@@ -1535,7 +1535,7 @@ class Holiday extends CommonObject
      * getValueEventCp
      *
      * @param 	int		$rowid		Row id
-     * @return string|false
+     * @return string|boolean
      */
     function getValueEventCp($rowid) {
 

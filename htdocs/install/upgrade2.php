@@ -2372,7 +2372,7 @@ function migrate_commande_deliveryaddress($db,$langs,$conf)
  * @param	DoliDB		$db		Database handler
  * @param	Translate	$langs	Object langs
  * @param	Conf		$conf	Object conf
- * @return	integer|null
+ * @return	void
  */
 function migrate_restore_missing_links($db,$langs,$conf)
 {

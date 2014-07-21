@@ -102,7 +102,7 @@ class ExtraFields
 	 *  @param	int		$unique				Is field unique or not
 	 *  @param	int		$required			Is field required or not
 	 *  @param	string	$default_value		Defaulted value
-	 *  @param  integer	$param				Params for field
+	 *  @param  array	$param				Params for field
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0,$default_value='', $param=0)

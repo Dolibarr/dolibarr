@@ -207,7 +207,7 @@ class FormCompany
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
-	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
 	 */
@@ -413,7 +413,7 @@ class FormCompany
 	 *    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays.
 	 *
 	 *    @param	string		$selected        	Code forme juridique a pre-selectionne
-	 *    @param    integer		$country_codeid		0=liste tous pays confondus, sinon code du pays a afficher
+	 *    @param    mixed		$country_codeid		0=liste tous pays confondus, sinon code du pays a afficher
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
@@ -711,7 +711,7 @@ class FormCompany
 	 *    @param    string		$fields					Fields
 	 *    @param    int			$fieldsize				Field size
 	 *    @param    int			$disableautocomplete    1 To disable autocomplete features
-	 *    @return	string
+	 *    @return	void
 	 */
 	function select_ziptown($selected='', $htmlname='zipcode', $fields='', $fieldsize=0, $disableautocomplete=0)
 	{
