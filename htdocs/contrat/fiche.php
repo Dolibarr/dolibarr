@@ -206,7 +206,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
     	$object->fk_project					= GETPOST('projectid','int');
     	$object->remise_percent				= GETPOST('remise_percent','alpha');
     	$object->ref						= GETPOST('ref','alpha');
-    	$object->ref_ext					= GETPOST('ref_ext','alpha');
+    	$object->ref_supplier				= GETPOST('ref_supplier','alpha');
 
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
 	    if ($_POST['origin'] && $_POST['originid'])
@@ -713,17 +713,17 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		$action = 'edit_extras';
 		setEventMessage($object->error,'errors');
 	}
-} elseif ($action=='setref_ext') {
+} elseif ($action=='setref_supplier') {
 	$result = $object->fetch($id);
 	if ($result < 0) {
 		setEventMessage($object->errors,'errors');
 	}
-	$object->ref_ext=GETPOST('ref_ext','alpha');
+	$object->ref_supplier=GETPOST('ref_supplier','alpha');
 	
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessage($object->errors,'errors');
-		$action='editref_ext';
+		$action='editref_supplier';
 	} else {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -878,7 +878,7 @@ if ($action == 'create')
 	
 	// Ref Int
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td colspan="2"><input type="text" siez="5" name="ref_ext" id="ref_ext" value="'.GETPOST('ref_ext','alpha').'"></td></tr>';
+	print '<td colspan="2"><input type="text" siez="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';
@@ -1069,9 +1069,9 @@ else
 
         print '<tr>';
 		print '<td  width="20%">';
-		print $form->editfieldkey("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print $form->editfieldval("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 
