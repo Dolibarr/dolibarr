@@ -155,7 +155,7 @@ class DoliDBMssql extends DoliDB
 	 *	@param	    string	$login		login
 	 *	@param	    string	$passwd		password
 	 *	@param		string	$name		name of database (not used for mysql, used for pgsql)
-	 *	@param		integer	$port		Port of database server
+	 *	@param		string	$port		Port of database server
 	 *	@return		resource			Database access handler
 	 *	@see		close
 	 */
@@ -399,7 +399,7 @@ class DoliDBMssql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	resource	$resultset  Resultset of request
+     *	@param	Resultset	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_array($resultset)
@@ -413,7 +413,7 @@ class DoliDBMssql extends DoliDB
 	/**
      *	Return datas as an array
      *
-     *	@param	resource	$resultset  Resultset of request
+     *	@param	Resultset	$resultset  Resultset of request
      *	@return	array					Array
 	 */
 	function fetch_row($resultset)
@@ -441,7 +441,7 @@ class DoliDBMssql extends DoliDB
 	 *	Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
 	 *
 	 *	@param	resultset	$resultset   Curseur de la requete voulue
-	 *	@return string		    Nombre de lignes
+	 *	@return int		    Nombre de lignes
 	 *	@see    num_rows
 	 */
 	function affected_rows($resultset)
@@ -459,7 +459,7 @@ class DoliDBMssql extends DoliDB
 	/**
 	 *	Free last resultset used.
 	 *
-	 *	@param  integer	$resultset   Curseur de la requete voulue
+	 *	@param  resultset	$resultset   Curseur de la requete voulue
 	 *	@return	void
 	 */
 	function free($resultset=0)
@@ -588,7 +588,7 @@ class DoliDBMssql extends DoliDB
      *
      *  @param  string  $fieldorvalue   Field name or value to encrypt
      *  @param	int		$withQuotes     Return string with quotes
-     *  @return string          		XXX(field) or XXX('value') or field or 'value'
+     *  @return return          		XXX(field) or XXX('value') or field or 'value'
 	 */
 	function encrypt($fieldorvalue, $withQuotes=0)
 	{
@@ -903,7 +903,7 @@ class DoliDBMssql extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		string		List of Charset
+	 *	@return		array		List of Charset
 	 */
 	function getListOfCharacterSet()
 	{
@@ -932,7 +932,7 @@ class DoliDBMssql extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		string		Liste of Collation
+	 *	@return		array		Liste of Collation
 	 */
 	function getListOfCollation()
 	{

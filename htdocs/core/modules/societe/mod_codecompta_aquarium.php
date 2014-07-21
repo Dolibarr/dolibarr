@@ -86,7 +86,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs		Object langs
-	 * @param	integer		$objsoc		Object thirdparty
+	 * @param	societe		$objsoc		Object thirdparty
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */

@@ -42,7 +42,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return integer
+	 * @return boolean
 	 */
 	public function isActive()
 	{
@@ -113,7 +113,7 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 	 * 	Output log content
 	 *
 	 *	@param	array	$content	Content to log
-	 * 	@return	null|false
+	 * 	@return	void
 	 */
 	public function export($content)
 	{

@@ -157,7 +157,7 @@ class FormOther
      *
      *    @param	string	$selected   Preselected ecotaxes
      *    @param    string	$htmlname	Name of combo list
-     *    @return	integer
+     *    @return	void
      */
     function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
     {
@@ -268,7 +268,7 @@ class FormOther
     /**
      *    Return a HTML select list to select a percent
      *
-     *    @param	integer	$selected      	pourcentage pre-selectionne
+     *    @param	string	$selected      	pourcentage pre-selectionne
      *    @param    string	$htmlname      	nom de la liste deroulante
      *    @param	int		$disabled		Disabled or not
      *    @param    int		$increment     	increment value
@@ -303,7 +303,7 @@ class FormOther
      * Return select list for categories (to use in form search selectors)
      *
      * @param	int		$type			Type of categories (0=product, 1=suppliers, 2=customers, 3=members)
-     * @param  integer	$selected     	Preselected value
+     * @param  string	$selected     	Preselected value
      * @param  string	$htmlname      	Name of combo list
      * @param	int		$nocateg		Show also an entry "Not categorized"
      * @return string		        	Html combo list code
@@ -469,7 +469,6 @@ class FormOther
      * @param 	int		$selectedtask			Id selected task
      * @param 	int		$selectedproject		Id selected project
      * @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
-     * @param integer $inc
      * @return	void
      */
     private function _pLineSelect(&$inc, $parent, $lines, $level=0, $selectedtask=0, $selectedproject=0, $disablechildoftaskid=0)
@@ -580,7 +579,7 @@ class FormOther
      * 		@param	int			$showcolorbox	1=Show color code and color box, 0=Show only color code
      * 		@param 	array		$arrayofcolors	Array of colors. Example: array('29527A','5229A3','A32929','7A367A','B1365F','0D7813')
      * 		@param	string		$morecss		Add css style into input field
-     * 		@return	string
+     * 		@return	void
      */
     function selectColor($set_color='', $prefix='f_color', $form_name='objForm', $showcolorbox=1, $arrayofcolors='', $morecss='')
     {
@@ -710,7 +709,7 @@ class FormOther
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	string
+     *    	@return	void
      */
     function select_dayofweek($selected='',$htmlname='weekid',$useempty=0)
     {
@@ -751,7 +750,7 @@ class FormOther
      *    	@param	string		$selected          Preselected value
      *    	@param  string		$htmlname          Nom de la zone select
      *    	@param  int			$useempty          Affiche valeur vide dans liste
-     *    	@return	string
+     *    	@return	void
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
@@ -811,7 +810,7 @@ class FormOther
      *  @param	int		$offset			Offset
      *  @param	int		$invert			Invert
      *  @param	string	$option			Option
-     *  @return	string
+     *  @return	void
      */
     function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='')
     {

@@ -1049,7 +1049,7 @@ class User extends CommonObject
 	/**
 	 *    Affectation des permissions par defaut
 	 *
-	 *    @return     integer erreur <0, si ok renvoi le nbre de droits par defaut positionnes
+	 *    @return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	 */
 	function set_default_rights()
 	{
@@ -1595,7 +1595,7 @@ class User extends CommonObject
 	/**
 	 *  Update clicktodial info
 	 *
-	 *  @return	integer
+	 *  @return	void
 	 */
 	function update_clicktodial()
 	{

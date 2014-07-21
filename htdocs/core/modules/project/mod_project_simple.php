@@ -142,7 +142,7 @@ class mod_project_simple extends ModeleNumRefProjects
     /** 
      * 	Return next reference not yet used as a reference
      * 
-     *  @param	integer	$objsoc     Object third party
+     *  @param	Societe	$objsoc     Object third party
      *  @param  Project	$project	Object project
      *  @return string      		Next not used reference
      */

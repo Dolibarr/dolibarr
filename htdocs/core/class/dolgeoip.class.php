@@ -40,7 +40,7 @@ class DolGeoIP
 	 *
 	 * @param 	string	$type		'country' or 'city'
 	 * @param	string	$datfile	Data file
-	 * @return 	integer|null
+	 * @return 	GeoIP
 	 */
 	function __construct($type,$datfile)
 	{

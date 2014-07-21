@@ -46,8 +46,8 @@ class FormCron extends Form
 	 * Display On Off selector
 	 *
 	 * @param   string 	$htmlname		Html control name
-	 * @param   integer 	$selected		selected value
-	 * @param   integer	$readonly		Select is read only or not
+	 * @param   string 	$selected		selected value
+	 * @param   string	$readonly		Select is read only or not
 	 * @return	string					HTML select field
 	 */
 	function select_typejob($htmlname,$selected=0,$readonly=0)

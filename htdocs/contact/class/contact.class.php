@@ -215,7 +215,7 @@ class Contact extends CommonObject
 	 *      Update informations into database
 	 *
 	 *      @param      int		$id          	Id of contact/address to update
-	 *      @param      integer	$user        	Objet user making change
+	 *      @param      User	$user        	Objet user making change
 	 *      @param      int		$notrigger	    0=no, 1=yes
 	 *      @param		string	$action			Current action for hookmanager
 	 *      @return     int      			   	<0 if KO, >0 if OK
@@ -424,7 +424,7 @@ class Contact extends CommonObject
 	 *  Update field alert birthday
 	 *
 	 *  @param      int			$id         Id of contact
-	 *  @param      integer		$user		User asking to change alert or birthday
+	 *  @param      User		$user		User asking to change alert or birthday
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
 	function update_perso($id, $user=0)
@@ -489,7 +489,7 @@ class Contact extends CommonObject
 	 *  Load object contact
 	 *
 	 *  @param      int		$id          id du contact
-	 *  @param      integer	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
+	 *  @param      User	$user        Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
 	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
 	 */
 	function fetch($id, $user=0)

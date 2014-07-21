@@ -317,7 +317,7 @@ class RejetPrelevement
 	 *    Retrieve withdrawal object
 	 *
 	 *    @param    int		$rowid       id of invoice to retrieve
-	 *    @return	integer
+	 *    @return	void
 	 */
 	function fetch($rowid)
 	{

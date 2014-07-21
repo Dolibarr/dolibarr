@@ -411,10 +411,10 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='')
 /**
  * Print HTML footer of install pages
  *
- * @param 	integer	$nonext				No button "Next step"
+ * @param 	string	$nonext				No button "Next step"
  * @param	string	$setuplang			Language code
  * @param	string	$jscheckfunction	Add a javascript check function
- * @param	integer	$withpleasewait		Add also please wait tags
+ * @param	string	$withpleasewait		Add also please wait tags
  * @return	void
  */
 function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)

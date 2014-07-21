@@ -77,7 +77,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Translate	$langs		Object langs
-	 * @param	integer		$objsoc		Object thirdparty
+	 * @param	societe		$objsoc		Object thirdparty
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return string example
 	 */
@@ -90,7 +90,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 *  Return next value
 	 *
-	 * 	@param	integer		$objsoc     Object third party
+	 * 	@param	Societe		$objsoc     Object third party
 	 *	@param  int			$type       Client ou fournisseur (1:client, 2:fournisseur)
 	 *  @return string      			Value if OK, '' if module not configured, <0 if KO
 	 */

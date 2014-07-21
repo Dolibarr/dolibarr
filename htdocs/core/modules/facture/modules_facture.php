@@ -42,7 +42,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -147,7 +147,7 @@ abstract class ModeleNumRefFactures
  *  Create a document onto disk according to template module.
  *
  *	@param	DoliDB		$db  			Database handler
- *	@param  Facture		$object			Object invoice
+ *	@param  Object		$object			Object invoice
  *	@param	string		$modele			Force template to use ('' to not force)
  *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
  *  @param  int			$hidedetails    Hide details of lines

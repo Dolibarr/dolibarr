@@ -44,7 +44,7 @@ class FormBank
     /**
      *  Retourne la liste des types de comptes financiers
      *
-     *  @param	integer	$selected        Type pre-selectionne
+     *  @param	string	$selected        Type pre-selectionne
      *  @param  string	$htmlname        Nom champ formulaire
      *  @return	void
      */

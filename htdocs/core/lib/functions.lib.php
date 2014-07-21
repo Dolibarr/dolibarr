@@ -45,7 +45,7 @@ if (! function_exists('json_encode'))
  *
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
- * @return 	string|null				Return value of static property
+ * @return 	mixed				Return value of static property
  */
 function getStaticMember($class, $member)
 {
@@ -321,7 +321,7 @@ function dol_buildpath($path, $type=0)
  * 	This function works for both PHP4 and PHP5
  *
  * 	@param	object	$object		Object to clone
- *	@return CommonObject				Object clone
+ *	@return object				Object clone
  *  @deprecated Dolibarr no longer supports PHP4, you can now use native function
  */
 function dol_clone($object)
@@ -355,7 +355,7 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	integer	$unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	string	$unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
  * 	@see        	dol_string_nospecial, dol_string_unaccent
@@ -440,7 +440,7 @@ function dol_string_nospecial($str,$newstr='_',$badchars='')
  *  Returns text escaped for inclusion into javascript code
  *
  *  @param      string		$stringtoescape		String to escape
- *  @param		integer		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
+ *  @param		string		$mode				0=Escape also ' and " into ', 1=Escape ' but not " for usage into 'string', 2=Escape " but not ' for usage into "string", 3=Escape ' and " with \
  *  @return     string     		 				Escaped string. Both ' and " are escaped into ' if they are escaped.
  */
 function dol_escape_js($stringtoescape, $mode=0)
@@ -516,7 +516,7 @@ function dol_strtoupper($utf8_string)
  *											On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident				1=Increase ident of 1, -1=Decrease ident of 1
  *  @param	string		$suffixinfilename	When output is a file, append this suffix into default log filename.
- *  @return	false|null
+ *  @return	void
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='')
 {
@@ -608,7 +608,7 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  *	@param  int		$notab				0=Add tab header, 1=no tab header. If you set this to 1, using dol_fiche_end() to close tab is not required.
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
- * 	@return	string
+ * 	@return	void
  */
 function dol_get_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0)
 {
@@ -690,7 +690,7 @@ function dol_fiche_end($notab=0)
  *	Return tab footer of a card
  *
  *	@param  int		$notab		0=Add tab footer, 1=no tab footer
- *  @return	string
+ *  @return	void
  */
 function dol_get_fiche_end($notab=0)
 {
@@ -954,7 +954,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
  *
  *	@param	int			$timestamp      Timestamp
  *	@param	boolean		$fast           Fast mode
- *	@return	integer						Array of informations
+ *	@return	array						Array of informations
  *										If no fast mode:
  *										'seconds' => $secs,
  *										'minutes' => $min,
@@ -1953,7 +1953,7 @@ function img_edit_remove($alt = 'default')
  *	Show logo editer/modifier fiche
  *
  *	@param  string	$alt        Texte sur le alt de l'image
- *	@param  integer	$float      Si il faut y mettre le style "float: right"
+ *	@param  float	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Retourne tag img
  */
@@ -1970,7 +1970,7 @@ function img_edit($alt = 'default', $float = 0, $other = '')
  *	Show logo view card
  *
  *	@param	string	$alt         Texte sur le alt de l'image
- *	@param  integer	$float       Si il faut y mettre le style "float: right"
+ *	@param  float	$float       Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      Retourne tag img
  */
@@ -2018,8 +2018,8 @@ function img_printer($alt = "default", $other='')
 /**
  *	Show help logo with cursor "?"
  *
- * 	@param	integer	$usehelpcursor		Use help cursor
- * 	@param	integer	$usealttitle		Text to use as alt title
+ * 	@param	string	$usehelpcursor		Use help cursor
+ * 	@param	string	$usealttitle		Text to use as alt title
  * 	@return string      				Retourne tag img
  */
 function img_help($usehelpcursor = 1, $usealttitle = 1)
@@ -2242,7 +2242,7 @@ function img_phone($alt = 'default', $option = 0)
  *	Show information for admin users
  *
  *	@param	string	$text			Text info
- *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
+ *	@param  string	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
  *	@return	string					String with info text
  */
@@ -2422,7 +2422,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param  string	$moreattrib  Add more attributes on th ("" by defaut)
  *	@param  string	$sortfield   Current field used to sort
  *	@param  string	$sortorder   Current sort order
- *	@return	string
+ *	@return	void
  */
 function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $moreparam="", $moreattrib="", $sortfield="", $sortorder="")
 {
@@ -2526,7 +2526,7 @@ function print_fiche_titre($title, $mesg='', $picto='title.png', $pictoisfullpat
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
- * 	@return	string
+ * 	@return	void
  */
 function load_fiche_titre($titre, $mesg='', $picto='title.png', $pictoisfullpath=0, $id='')
 {
@@ -2656,7 +2656,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	int				$page				Number of page
  *	@param	string			$file				Lien
  *	@param	string			$options         	Autres parametres d'url a propager dans les liens ("" par defaut)
- *	@param	integer		$nextpage	    	Do we show a next page button
+ *	@param	boolean|int		$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML Content to show between arrows
  *	@return	void
  */
@@ -2713,7 +2713,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		Function used into PDF and HTML pages
  *
  *		@param	float		$amount			Amount to format
- *		@param	integer		$form			Type of format, HTML or not (not by default)
+ *		@param	string		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
@@ -3315,7 +3315,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@param  Societe		$thirdparty_buyer   	Objet societe acheteuse
  *	@param  int			$idprod					Id product
  *	@param	int			$idprodfournprice		Id product_fournisseur_price (for supplier order/invoice)
- *	@return integer         				      	Taux de tva a appliquer, -1 si ne peut etre determine
+ *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  *  @see get_default_npr, get_default_localtax
  */
 function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
@@ -3435,7 +3435,7 @@ function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *	@param  Societe		$thirdparty_buyer   	Thirdparty buyer
  *  @param	int			$local					Localtax to process (1 or 2)
  *	@param  int			$idprod					Id product
- *	@return integer        				       	localtax, -1 si ne peut etre determine
+ *	@return float        				       	localtax, -1 si ne peut etre determine
  *  @see get_default_tva, get_default_npr
  */
 function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $idprod=0)
@@ -3477,7 +3477,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
  *	Return yes or no in current language
  *
  *	@param	string	$yesno			Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	integer	$case			1=Yes/No, 0=yes/no
+ *	@param	string	$case			1=Yes/No, 0=yes/no
  *	@param	int		$color			0=texte only, 1=Text is formated with a color font style ('ok' or 'error'), 2=Text is formated with 'ok' color.
  *	@return	string					HTML string
  */
@@ -3610,7 +3610,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	integer	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
+ *	@param	string	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -3639,7 +3639,7 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
  *	Replace CRLF in string with a HTML BR tag
  *
  *	@param	string	$stringtoencode		String to encode
- *	@param	integer	$nl2brmode			0=Adding br before \n, 1=Replacing \n by br
+ *	@param	string	$nl2brmode			0=Adding br before \n, 1=Replacing \n by br
  *  @param  string	$forxml             false=Use <br>, true=Use <br />
  *	@return	string						String encoded
  */
@@ -3785,7 +3785,7 @@ function dol_string_is_good_iso($s)
  *	Return nb of lines of a clear text
  *
  *	@param	string	$s			String to check
- * 	@param	integer	$maxchar	Not yet used
+ * 	@param	string	$maxchar	Not yet used
  *	@return	int					Number of lines
  */
 function dol_nboflines($s,$maxchar=0)
@@ -3804,7 +3804,7 @@ function dol_nboflines($s,$maxchar=0)
  *	@param	string	$text      		Text
  *	@param	int		$maxlinesize  	Largeur de ligne en caracteres (ou 0 si pas de limite - defaut)
  * 	@param	string	$charset		Give the charset used to encode the $text variable in memory.
- *	@return double						Number of lines
+ *	@return int						Number of lines
  */
 function dol_nboflines_bis($text,$maxlinesize=0,$charset='UTF-8')
 {

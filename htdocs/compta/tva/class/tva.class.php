@@ -139,7 +139,7 @@ class Tva extends CommonObject
     /**
      * Update database
      * 
-     * @param   integer	$user        	User that modify
+     * @param   User	$user        	User that modify
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
@@ -202,7 +202,7 @@ class Tva extends CommonObject
      *  Load object in memory from database
      *  
      *  @param	int		$id         id object
-     *  @param  integer	$user       User that load
+     *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
      */
     function fetch($id, $user=0)

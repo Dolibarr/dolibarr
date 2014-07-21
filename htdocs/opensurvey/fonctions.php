@@ -184,7 +184,7 @@ function getUrlSondage($id, $admin = false)
  * 	Generate a random id
  *
  *	@param	string	$car	Char to generate key
- * 	@return	string
+ * 	@return	void
  */
 function dol_survey_random($car)
 {

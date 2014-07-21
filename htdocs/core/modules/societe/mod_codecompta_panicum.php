@@ -58,7 +58,7 @@ class mod_codecompta_panicum extends ModeleAccountancyCode
 	 *  Return an example of result returned by getNextValue
 	 *
 	 *  @param	Translate	$langs		Object langs
-	 *  @param	integer		$objsoc		Object thirdparty
+	 *  @param	Societe		$objsoc		Object thirdparty
 	 *  @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 *  @return	string					Example
 	 */

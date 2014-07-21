@@ -504,7 +504,7 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param integer $user that modifies
+	 * @param User $user that modifies
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK

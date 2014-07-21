@@ -142,7 +142,7 @@ class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 	/**
 	 *  Return next free ref
 	 *
-     *  @param	integer		$objsoc      	Object thirdparty
+     *  @param	Societe		$objsoc      	Object thirdparty
      *  @param  Object		$object			Objet livraison
      *  @return string      				Texte descripif
      */

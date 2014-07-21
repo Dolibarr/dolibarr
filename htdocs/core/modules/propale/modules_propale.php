@@ -42,7 +42,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	 *  Return list of active generation modules
 	 *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
 	 */
 	static function liste_modeles($db,$maxfilenamelength=0)
@@ -148,7 +148,7 @@ abstract class ModeleNumRefPropales
  *  Create a document onto disk according to template module.
  *
  * 	@param	    DoliDB		$db  			Database handler
- * 	@param	    Propal		$object			Object proposal
+ * 	@param	    object		$object			Object proposal
  * 	@param	    string		$modele			Force model to use ('' to not force)
  * 	@param		Translate	$outputlangs	Object langs to use for output
  *  @param      int			$hidedetails    Hide details of lines

@@ -151,7 +151,7 @@ class RssParser
     /**
      * getLastFetchDate
      *
-     * @return integer
+     * @return string
      */
     public function getLastFetchDate()
     {

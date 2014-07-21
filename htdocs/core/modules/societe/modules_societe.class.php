@@ -39,7 +39,7 @@ abstract class ModeleThirdPartyDoc extends CommonDocGenerator
      *  Return list of active generation modules
      *
 	 * 	@param	DoliDB		$db					Database handler
-     *  @param	integer		$maxfilenamelength  Max length of value to show
+     *  @param	string		$maxfilenamelength  Max length of value to show
      * 	@return	array							List of templates
      */
     static function liste_modeles($db,$maxfilenamelength=0)
@@ -111,7 +111,7 @@ abstract class ModeleThirdPartyCode
     /**
      *  Return next value available
      *
-     *	@param	integer		$objsoc		Object thirdparty
+     *	@param	Societe		$objsoc		Object thirdparty
      *	@param	int			$type		Type
      *  @return string      			Value
      */
@@ -142,7 +142,7 @@ abstract class ModeleThirdPartyCode
      *  Renvoi la liste des modeles de numéroation
      *
      *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @param  string	$maxfilenamelength  Max length of value to show
      *  @return	array						List of numbers
      */
     static function liste_modeles($db,$maxfilenamelength=0)
@@ -272,7 +272,7 @@ abstract class ModeleAccountancyCode
     /**		Return an example of result returned by getNextValue
      *
      *      @param	Translate	$langs		Object langs
-     *      @param	integer		$objsoc		Object thirdparty
+     *      @param	societe		$objsoc		Object thirdparty
      *      @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
      *      @return	string					Example
      */

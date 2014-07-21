@@ -257,7 +257,7 @@ class ICal
      * Parse RRULE  return array
      *
      * @param 	string 	$value	string
-     * @return 	string
+     * @return 	array
      */
     function ical_rrule($value)
     {

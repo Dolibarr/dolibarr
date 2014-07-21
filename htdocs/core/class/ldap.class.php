@@ -345,7 +345,7 @@ class Ldap
 	/**
 	 * Change ldap protocol version to use.
 	 *
-	 * @return	boolean					version
+	 * @return	string					version
 	 */
 	function setVersion() {
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
@@ -356,7 +356,7 @@ class Ldap
 	/**
 	 * changement du referrals.
 	 *
-	 * @return	boolean					referrals
+	 * @return	string					referrals
 	 */
 	function setReferrals() {
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
@@ -1308,7 +1308,7 @@ class Ldap
 	 *	Convertit le temps ActiveDirectory en Unix timestamp
 	 *
 	 *	@param	string	$value		AD time to convert
-	 *	@return	integer				Unix timestamp
+	 *	@return	string				Unix timestamp
 	 */
 	function convert_time($value)
 	{

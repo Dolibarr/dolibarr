@@ -1099,7 +1099,7 @@ class Product extends CommonObject
 	 *  @param     	int		$prodfournprice     Id du tarif = rowid table product_fournisseur_price
 	 *  @param     	double	$qty                Quantity asked
 	 *	@param		int		$product_id			Filter on a particular product id
-	 * 	@param		integer	$fourn_ref			Filter on a supplier ref
+	 * 	@param		string	$fourn_ref			Filter on a supplier ref
 	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
@@ -1579,7 +1579,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats propale pour le produit/service
 	 *
 	 *  @param    int	$socid      Id societe
-	 *  @return   integer       		Tableau des stats
+	 *  @return   array       		Tableau des stats
 	 */
 	function load_stats_propale($socid=0)
 	{
@@ -1623,7 +1623,7 @@ class Product extends CommonObject
 	 *
 	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
 	 *  @param    int	$filtrestatut   Id statut pour filtrer sur un statut
-	 *  @return   integer       			Tableau des stats
+	 *  @return   array       			Tableau des stats
 	 */
 	function load_stats_commande($socid=0,$filtrestatut='')
 	{
@@ -1665,7 +1665,7 @@ class Product extends CommonObject
 	 *
 	 *  @param    int		$socid       	Id societe pour filtrer sur une societe
 	 *  @param    string	$filtrestatut  	Id des statuts pour filtrer sur des statuts
-	 *  @return   integer       				Tableau des stats
+	 *  @return   array       				Tableau des stats
 	 */
 	function load_stats_commande_fournisseur($socid=0,$filtrestatut='')
 	{
@@ -1707,7 +1707,7 @@ class Product extends CommonObject
 	 *
 	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
 	 *  @param    int	$filtrestatut  	Id statut pour filtrer sur un statut
-	 *  @return   integer       			Tableau des stats
+	 *  @return   array       			Tableau des stats
 	 */
 	function load_stats_sending($socid=0,$filtrestatut='')
 	{
@@ -1753,7 +1753,7 @@ class Product extends CommonObject
 	 *
 	 *  @param    int	$socid       	Id societe pour filtrer sur une societe
 	 *  @param    int	$filtrestatut  	Id statut pour filtrer sur un statut
-	 *  @return   integer       			Tableau des stats
+	 *  @return   array       			Tableau des stats
 	 */
 	function load_stats_reception($socid=0,$filtrestatut='')
 	{
@@ -1794,7 +1794,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats contrat pour le produit/service
 	 *
 	 *  @param    int	$socid      Id societe
-	 *  @return   integer       		Tableau des stats
+	 *  @return   array       		Tableau des stats
 	 */
 	function load_stats_contrat($socid=0)
 	{
@@ -1836,7 +1836,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats facture pour le produit/service
 	 *
 	 *  @param    int		$socid      Id societe
-	 *  @return   integer       			Tableau des stats
+	 *  @return   array       			Tableau des stats
 	 */
 	function load_stats_facture($socid=0)
 	{
@@ -1878,7 +1878,7 @@ class Product extends CommonObject
 	 *  Charge tableau des stats facture pour le produit/service
 	 *
 	 *  @param    int		$socid      Id societe
-	 *  @return   integer       			Tableau des stats
+	 *  @return   array       			Tableau des stats
 	 */
 	function load_stats_facture_fournisseur($socid=0)
 	{
@@ -2373,7 +2373,7 @@ class Product extends CommonObject
 	 *
 	 *  @param	int		$fromId     Id product source
 	 *  @param  int		$toId       Id product target
-	 *  @return integer         			< 0 if KO, > 0 if OK
+	 *  @return nt         			< 0 if KO, > 0 if OK
 	 */
 	function clone_price($fromId, $toId)
 	{
@@ -2401,7 +2401,7 @@ class Product extends CommonObject
 	 *
 	 * @param 	int		$fromId		Product id
 	 * @param 	int		$toId		Product id
-	 * @return integer
+	 * @return number
 	 */
 	function clone_associations($fromId, $toId)
 	{
@@ -2884,7 +2884,7 @@ class Product extends CommonObject
 	 *  @param  	double	$nbpiece        nb of units
 	 *  @param  	int		$movement       0 = add, 1 = remove
 	 * 	@param		string	$label			Label of stock movement
-	 * 	@param		integer	$price			Price to use for stock eval
+	 * 	@param		double	$price			Price to use for stock eval
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
 	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0)
@@ -3479,7 +3479,7 @@ class Product extends CommonObject
 	 *  @param  	double	$nbpiece        nb of units
 	 *  @param  	int		$movement       0 = add, 1 = remove
 	 * 	@param		string	$label			Label of stock movement
-	 * 	@param		integer	$price			Price to use for stock eval
+	 * 	@param		double	$price			Price to use for stock eval
 	 * 	@param		date	$dlc			eat-by date
 	 * 	@param		date	$dluo			sell-by date
 	 * 	@param		string	$lot			Lot number

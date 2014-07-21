@@ -13,7 +13,7 @@ class LogHandler
 	/**
 	 * Content of the info tooltip.
 	 *
-	 * @return boolean
+	 * @return false|string
 	 */
 	public function getInfo()
 	{
