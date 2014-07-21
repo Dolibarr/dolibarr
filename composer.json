@@ -16,6 +16,7 @@
         "ext-curl": "*",
         "phpoffice/phpexcel": "1.7.9",
         "tecnick.com/tcpdf": "6.0.021"
+        "geoip/geoip": "v1.14"
     },
     "suggest": {
         "ext-mysqli": "*",
