@@ -44,6 +44,7 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - New: [ task #1204 ] add a Supplier reference to contract
+- New: Invoice clone clone invoice contact
 
 For translators:
 - Update language files.
