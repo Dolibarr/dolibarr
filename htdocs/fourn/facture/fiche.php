@@ -1566,11 +1566,10 @@ else
 
         }
 
-	    if (! $formconfirm)
-	    {
-		    $parameters=array('lineid'=>$lineid);
-		    $formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	    }
+		if (!$formconfirm) {
+			$parameters=array('lineid'=>$lineid);
+			$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		}
 
 		// Print form confirm
 	    print $formconfirm;
