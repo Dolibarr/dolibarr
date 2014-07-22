@@ -43,26 +43,15 @@ include_once DOL_DOCUMENT_ROOT .'/core/lib/json.lib.php';
  * @param	string 	$class		Class name
  * @param 	string 	$member		Name of property
  * @return 	mixed				Return value of static property
+ * @deprecated PHP 5.3 is now the minimum requirement, this is no longer necessary
  */
 function getStaticMember($class, $member)
 {
-	if (is_object($class)) $class = get_class($class);
-	$classObj = new ReflectionClass($class);
-	$result = null;
-
-	$found=0;
-	foreach($classObj->getStaticProperties() as $prop => $value)
-	{
-		if ($prop == $member)
-		{
-			$result = $value;
-			$found++;
-			break;
-		}
+	if (isset($class::$member)) {
+		return $class::$member;
 	}
 
-	if (! $found) dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
-	return $result;
+	dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
 }
 
 
