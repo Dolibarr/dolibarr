@@ -3629,14 +3629,10 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
-	if (! $nl2brmode)
-	{
-		if (version_compare(PHP_VERSION, '5.3.0') < 0) return nl2br($stringtoencode);
-		else return nl2br($stringtoencode,$forxml);
-	}
-	else
-	{
-		$ret=preg_replace('/(\r\n|\r|\n)/i',($forxml?'<br />':'<br>'),$stringtoencode);
+	if (!$nl2brmode) {
+		return nl2br($stringtoencode, $forxml);
+	} else {
+		$ret=preg_replace('/(\r\n|\r|\n)/i', ($forxml?'<br />':'<br>'), $stringtoencode);
 		return $ret;
 	}
 }
