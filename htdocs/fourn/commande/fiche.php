@@ -1702,7 +1702,7 @@ elseif (! empty($object->id))
 			print "</tr>";
 		}
 
-		// Ligne en mode update
+		// Edit line
 		if ($action	== 'edit_line' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $line->id))
 		{
 			print "\n";
@@ -1728,8 +1728,7 @@ elseif (! empty($object->id))
 			else
 			{
                 $forceall=1;	// For suppliers, we always show all types
-				print $form->select_type_of_lines($line->product_type,'type',1,0,$forceall);
-				if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) print '<br>';
+                print $form->select_type_of_lines($line->product_type,'type',1,0,$forceall);
                 if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
                 || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 			}

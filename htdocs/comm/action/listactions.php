@@ -195,16 +195,6 @@ if ($resql)
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
-	/*if ($socid)
-	{
-		$societe = new Societe($db);
-		$societe->fetch($socid);
-		$newtitle=$langs->trans($title).' '.$langs->trans("For").' '.$societe->nom;
-	}
-	else
-	{
-		$newtitle=$langs->trans($title);
-	}*/
 	$newtitle=$langs->trans($title);
 
 	$tabactive='';
@@ -298,7 +288,7 @@ if ($resql)
 		{
 			$societestatic->id=$obj->socid;
 			$societestatic->client=$obj->client;
-			$societestatic->nom=$obj->societe;
+			$societestatic->name=$obj->societe;
 			print $societestatic->getNomUrl(1,'',10);
 		}
 		else print '&nbsp;';

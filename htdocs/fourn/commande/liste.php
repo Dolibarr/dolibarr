@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,11 +152,12 @@ if ($resql)
 	$i = 0;
 
 	$param="";
-	if ($search_ref)   $param.="&search_ref=".$search_ref;
-	if ($search_nom)   $param.="&search_nom=".$search_nom;
-	if ($search_user)  $param.="&search_user=".$search_user;
-	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
+	if ($search_ref)	$param.="&search_ref=".$search_ref;
+	if ($search_nom)	$param.="&search_nom=".$search_nom;
+	if ($search_user)	$param.="&search_user=".$search_user;
+	if ($search_ttc)	$param.="&search_ttc=".$search_ttc;
 	if ($search_refsupp) $param.="&search_refsupp=".$search_refsupp;
+	if ($socid)			$param.="&socid=".$socid;
 	if ($search_status >= 0)  $param.="&search_status=".$search_status;
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

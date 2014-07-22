@@ -1634,7 +1634,7 @@ else
          */
         $nbrows=9; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
-        if (! empty($conf->banque->enabled)) $nbcols++;
+        if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
 
         // Local taxes
         if ($societe->localtax1_assuj=="1") $nbrows++;
@@ -1948,7 +1948,7 @@ else
 
                 print '<input type="hidden" name="lineid" value="'.$object->lines[$i]->rowid.'">';
 
-                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product)
+                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product > 0)
                 {
                     print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
                     $product_static=new ProductFournisseur($db);

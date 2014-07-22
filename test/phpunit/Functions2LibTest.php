@@ -154,23 +154,41 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals(0,$result);
     }
 
-	/**
-	 * is_ip
-	 *
-	 * @return void
-	 */
-	public function testIsIp() {
+    /**
+     * isIP
+     *
+     * @return	void
+     */
+    public function testIsIP()
+    {
+    	$ip='a299.299.299.299';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(0,$result,$ip);
 
-		//Test not valid IP
-		$result = is_ip('192.168.1.267');
-		$this->assertEquals(0, $result);
+    	$ip='1.2.3.4';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(1,$result,$ip);
 
-		//Test private range IP
-		$result = is_ip('192.168.1.1');
-		$this->assertEquals(2, $result);
+    	$ip='10.0.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
 
-		//Test public range IP
-		$result = is_ip('91.121.33.228');
-		$this->assertEquals(1, $result);
-	}
+    	$ip='172.16.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
+
+    	$ip='192.168.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
+
+    	$ip='169.254.0.0';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(2,$result,$ip);
+    }
 }

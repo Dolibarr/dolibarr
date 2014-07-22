@@ -15,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
@@ -120,10 +119,7 @@ $var=true;
 
 if (empty($conf->use_javascript_ajax))
 {
-	setEventMessage(array(
-		$langs->trans("NotAvailable"),
-		$langs->trans("JavascriptDisabled")
-	), 'errors');
+	setEventMessage(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), 'errors');
 }
 else
 {

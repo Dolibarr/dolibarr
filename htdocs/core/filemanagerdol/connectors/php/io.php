@@ -70,6 +70,14 @@ function GetResourceTypeDirectory($resourceType, $sCommand)
 	}
 }
 
+/**
+ * GetUrlFromPath
+ *
+ * @param	string 	$resourceType	Resource type
+ * @param 	string 	$folderPath		Path
+ * @param	string	$sCommand		Command
+ * @return	string					Full url
+ */
 function GetUrlFromPath($resourceType, $folderPath, $sCommand)
 {
 	return CombinePaths(GetResourceTypePath($resourceType, $sCommand), $folderPath);
