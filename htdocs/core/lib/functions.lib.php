@@ -52,6 +52,7 @@ function getStaticMember($class, $member)
 	}
 
 	dol_print_error('','Try to get a static member "'.$member.'" in class "'.$class.'" that does not exists or is not static.');
+	return null;
 }
 
 
