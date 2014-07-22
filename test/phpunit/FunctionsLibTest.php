@@ -783,5 +783,27 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}',json_encode($tmp));
     }
 
+	/**
+	 * dol_nl2br
+	 *
+	 * @return void
+	 */
+	public function testDolNl2Br() {
+
+		//String to encode
+		$string = "a\na";
+
+		$this->assertEquals(dol_nl2br($string), "a<br>\na");
+
+		//With $forxml parameter
+		$this->assertEquals(dol_nl2br($string, 0, 1), "a<br />\na");
+
+		//Replacing \n by br
+		$this->assertEquals(dol_nl2br($string, 1), "a<br>a");
+
+		//With $forxml parameter
+		$this->assertEquals(dol_nl2br($string, 1, 1), "a<br />a");
+	}
+
 }
 ?>
