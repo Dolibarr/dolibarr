@@ -67,7 +67,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
   	{
   		$db->commit();
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+	    setEventMessage($langs->trans("SetupSaved"));
   	}
   	else
   	{
@@ -226,8 +226,6 @@ if (! empty($conf->adherent->enabled))
 
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 dol_fiche_end();

@@ -125,3 +125,6 @@ DocumentModelBaleine=Pilnīgu projekta ziņojums modelis (logo. ..)
 PlannedWorkload = Plānotais darba apjoms
 WorkloadOccupation= Darba slodze izlikšanās
 ProjectReferers=Atsaucoties objekti
+SearchAProject=Meklēt projektu
+ProjectMustBeValidatedFirst=Projektu vispirms jāpārbauda
+ProjectDraft=Melnraksta projekts

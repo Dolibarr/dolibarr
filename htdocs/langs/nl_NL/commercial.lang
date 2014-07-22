@@ -71,6 +71,7 @@ ActionAC_FAX=Verzenden per fax
 ActionAC_PROP=Verstuur offerte
 ActionAC_EMAIL=E-mail verzenden
 ActionAC_RDV=Vergaderingen
+ActionAC_INT=Interventie op het terrein
 ActionAC_FAC=Stuur factuur
 ActionAC_REL=Stuur factuur (herinnering)
 ActionAC_CLO=Sluiten

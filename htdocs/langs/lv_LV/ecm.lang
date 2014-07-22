@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - ecm
 MenuECM=Dokumenti
 DocsMine=Mani dokumenti
-DocsGenerated=Radītais dokumenti
+DocsGenerated=Izveidotie dokumenti
 DocsElements=Elements dokumenti
-DocsThirdParties=Dokumenti trešajām personām
-DocsContracts=Dokumenti, līgumi
+DocsThirdParties=Trešo personu dokumenti
+DocsContracts=Līgumu dokumenti
 DocsProposals=Dokumenti priekšlikumi
 DocsOrders=Dokumenti pasūtījumi
 DocsInvoices=Dokumenti rēķini
@@ -32,7 +32,7 @@ ECMSectionWasRemoved=Katalogs <b>%s</b> ir dzēsts.
 ECMDocumentsSection=Dokuments katalogs
 ECMSearchByKeywords=Meklēt pēc atslēgvārdiem
 ECMSearchByEntity=Meklēt pēc objekta
-ECMSectionOfDocuments=Katalogi dokumentu
+ECMSectionOfDocuments=Dokumentu sadaļas
 ECMTypeManual=Manuāli
 ECMTypeAuto=Automātiski
 ECMDocsBySocialContributions=Dokumenti, kas saistīti ar sociālajām iemaksām

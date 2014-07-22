@@ -77,11 +77,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		    setEventMessage($langs->trans("SetupSaved"));
 	    }
 	    else
 	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		    setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 	
@@ -92,11 +92,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
-			$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+			setEventMessage($langs->trans("SetupSaved"));
 		}
 		else
 		{
-			$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+			setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 }
@@ -121,12 +121,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -220,11 +220,11 @@ if ($action=="setaddrefinlist") {
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -297,9 +297,6 @@ print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 $head = societe_admin_prepare_head(null);
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
-
-dol_htmloutput_mesg($mesg);
-
 
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
 

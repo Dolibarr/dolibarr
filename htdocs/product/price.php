@@ -94,15 +94,16 @@ if ($action == 'update_price' && ! $_POST ["cancel"] && ($user->rights->produit-
 	
 	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0) {
 		$action = '';
-		$mesg = '<div class="ok">' . $langs->trans("RecordSaved") . '</div>';
+		setEventMessage($langs->trans("RecordSaved"));
 	} else {
 		$action = 'edit_price';
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 } else if ($action == 'delete' && $user->rights->produit->supprimer) {
 	$result = $object->log_price_delete($user, $_GET ["lineid"]);
-	if ($result < 0)
-		$mesg = '<div class="error">' . $object->error . '</div>';
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 /**
@@ -136,11 +137,11 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 
 	if (empty($quantity)) {
 		$error ++;
-		$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")) . '</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Qty")), 'errors');
 	}
 	if (empty($newprice)) {
 		$error ++;
-		$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")) . '</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), 'errors');
 	}
 	if (! $error) {
 		// Calcul du prix HT et du prix unitaire
@@ -546,10 +547,6 @@ print '</td></tr>';
 print "</table>\n";
 
 print "</div>\n";
-
-if (! empty($mesg)) {
-	dol_htmloutput_mesg($mesg);
-}
 
 /* ************************************************************************** */
 /*                                                                            */

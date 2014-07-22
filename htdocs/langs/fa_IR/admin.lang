@@ -65,6 +65,8 @@ ShowPreview=نشان دادن پیش نمایش
 PreviewNotAvailable=پیش بازی در دسترس نیست
 ThemeCurrentlyActive=تم در حال حاضر فعال
 CurrentTimeZone=منطقه زمانی PHP (سرور)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=فضا
 Table=جدول
 Fields=زمینه
@@ -294,7 +296,7 @@ CurrentVersion=نسخه فعلی Dolibarr
 CallUpdatePage=برو به صفحه ای که به روز رسانی ساختار بانک اطلاعاتی و دادهها:٪ است.
 LastStableVersion=آخرین نسخه پایدار
 GenericMaskCodes=شما می توانید ماسک شماره را وارد کنید. در این ماسک، تگ های زیر می تواند مورد استفاده قرار گیرد: <br> <b>{000000}</b> مربوط به تعداد خواهد شد که در هر یک از٪ s را افزایش مییابد. به عنوان بسیاری از صفر را وارد کنید به عنوان طول مورد نظر از ضد. شمارنده خواهد شد صفر از سمت چپ به منظور به صفر کرده اند و بسیاری از ماسک به پایان رسید. <br> <b>{000.000 +000}</b> همان قبلی است اما جبران مربوطه را به شماره در سمت راست علامت + شروع به کار رفته در اولین٪ است. <br> <b>{000000 @ X}</b> همان قبلی است اما شمارنده به صفر زمانی که ماه X برسد (x بین 1 و 12، و یا 0 به استفاده از ماه های اولیه سال مالی تعیین شده در تنظیمات خود را، و یا 99 به صفر هر ماه ). اگر این گزینه استفاده می شود و x است 2 یا بالاتر، و سپس دنباله {YY} {میلی متر} یا {تاریخ برای ورود yyyy} {میلی متر} نیز مورد نیاز است. <br> <b>{تولد}</b> روز (01 تا 31). <br> <b>{میلی متر}</b> ماه (01 تا 12). <br> <b>{YY}، {تاریخ برای ورود yyyy}</b> یا <b>{Y}</b> سال بیش از 2، 4 و یا 1 عدد. <br>
-GenericMaskCodes2=<b>{CCCC}</b> کد مشتری در N کاراکتر <br> <b>{cccc000}</b> کد مشتری در N کاراکتر با یک ضد اختصاص داده شده برای مشتری به دنبال. این مبارزه اختصاص داده شده به مشتریان است و در همان زمان از مبارزه جهانی را بازنشانی کنید. <br> <b>{TTTT}</b> کد از نوع شرکت در N حرف (نگاه کنید به انواع فرهنگ لغت، شرکت). <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=تمام شخصیت های دیگر در ماسک دست نخورده باقی خواهد ماند. <br> فضاهای امکان پذیر نیست. <br>
 GenericMaskCodes4a=<u>به عنوان مثال در 99٪ از TheCompany شخص ثالث انجام می شود 2007/1/31:</u> <br>
 GenericMaskCodes4b=<u>به عنوان مثال در شخص ثالث ایجاد شده در 2007/03/01:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=به طور پیش فرض مالیات بر ارزش افزود
 VATIsUsedExampleFR=در فرانسه، به این معنی شرکت و یا سازمان داشتن یک سیستم مالی واقعی (ساده شده واقعی یا عادی واقعی). یک سیستم است که در آن مالیات بر ارزش افزوده اعلام شده است.
 VATIsNotUsedExampleFR=در فرانسه، به این معنی انجمن هایی که بدون مالیات بر ارزش افزوده اعلام کرد و شرکت ها، سازمان ها و یا حرفه های لیبرال که انتخاب کرده اند سیستم میکرو به شرکت های مالی (مالیات بر ارزش افزوده در حق رای دادن) و بدون اعلان مالیات بر ارزش افزوده پرداخت مالیات بر ارزش افزوده حق رای دادن. در فاکتورها - این انتخاب خواهد شد مرجع "هنر 293B از CGI مالیات بر ارزش افزوده قابل اعمال غیر" نشان می دهد.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=استفاده از مالیات دوم
 LocalTax1IsNotUsed=آیا مالیات دوم استفاده نکنید
 LocalTax1IsUsedDesc=استفاده از نوع دوم از مالیات (به غیر از مالیات بر ارزش افزوده)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= نرخ RE به طور پیش فرض هنگام ایجاد
 LocalTax2IsNotUsedDescES= به طور پیش فرض IRPF پیشنهاد 0. پایان حکومت است.
 LocalTax2IsUsedExampleES= در اسپانیا، مترجمان آزاد و مستقل حرفه ای که ارائه خدمات و شرکت های که انتخاب کرده اند نظام مالیاتی از ماژول های.
 LocalTax2IsNotUsedExampleES= در اسپانیا آنها bussines به سیستم مالیاتی از ماژول های موضوع نیست.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=برچسب استفاده می شود به طور پیش فرض اگر هیچ ترجمه ای برای کد یافت
 LabelOnDocuments=برچسب در اسناد
 NbOfDays=Nb در روز
@@ -1453,6 +1463,9 @@ AgendaSetup=رویدادها و برنامه راه اندازی ماژول
 PasswordTogetVCalExport=کلیدی به اجازه لینک صادرات
 PastDelayVCalExport=آیا رویداد صادرات و نه بزرگتر از
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=این ماژول اجازه می دهد تا پس از شماره تلفن به اضافه کردن یک آیکون. با کلیک بر روی این آیکون به یک سرور با یک URL خاص زیر تعریف می کنید تماس بگیرید. این می تواند مورد استفاده قرار گیرد به تماس سیستم مرکز تماس از Dolibarr است که می تواند شماره تلفن را بر روی یک سیستم SIP به عنوان مثال تماس بگیرید.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=گزارش کارهای سند مدل
 ##### ECM (GED) #####
 ECMSetup = راه اندازی GED
 ECMAutoTree = پوشه درخت به صورت خودکار و سند
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=قالب

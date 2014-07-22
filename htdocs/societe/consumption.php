@@ -442,14 +442,6 @@ else {
 print "</table>";
 print "</form>";
 
-
-/*
- * Errors
- */
-
-dol_htmloutput_errors($warning);
-dol_htmloutput_errors($error,$errors);
-
 llxFooter();
 
 $db->close();

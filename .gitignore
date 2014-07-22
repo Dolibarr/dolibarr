@@ -18,6 +18,3 @@ doxygen_warnings.log
 Thumbs.db
 # Vagrant generated files
 .vagrant
-/index.html
-/phpmyadmin
-/xhprof

@@ -15,3 +15,5 @@ printBatch= Lot: %s
 printEatby= DLC: %s
 printSellby= DLUO: %s
 printQty= Qté: %d
+AddDispatchBatchLine=Ajouter une ligne de dispatch
+BatchDefaultNumber= Indéfini

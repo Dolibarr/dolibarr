@@ -65,6 +65,8 @@ ShowPreview=Előnézet megtekintése
 PreviewNotAvailable=Előnézet nem elérhető
 ThemeCurrentlyActive=Téma aktív
 CurrentTimeZone=TimeZone PHP (szerver)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Hely
 Table=Table
 Fields=Fields
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr jelenlegi verzió
 CallUpdatePage=Lépjen arra az oldalra, amely frissíti az adatbázis szerkezetét és adatok: %s.
 LastStableVersion=Utolsó stabil verzió
 GenericMaskCodes=Megadhat bármilyen számozás maszk. Ebben a maszk, az alábbi címkék is használhatók: <br> <b>{000000}</b> felel meg egy számot, amelyet fogja megnövelni minden %s. Adja meg a nullákat, mint annyi a kívánt méretre a számláló. A számláló tölti nullákkal balról annak érdekében, hogy minél több nullák, mint a maszk. <br> <b>{000000} 000</b> ugyanaz, mint korábban, hanem ellensúlyozza számának megfelelő jobbra a + jel alkalmazzák kezdve az első %s. <br> <b>{000000} @ x</b> ugyanaz, mint korábban, de a számláló lenullázódik, ha havi x-ért (x 1 és 12 között, vagy 0 használni a korai hónapokban a pénzügyi év van megadva a konfiguráció). Ha ezt az opciót használjuk, és az x 2 vagy magasabb, akkor a sorozat nn {} {} vagy {mm yyyy}} {mm is szükség van. <br> <b>{} Dd</b> nap (01 31). <br> <b>{} Mm</b> hónap (01-12). <br> <b>Yy {}, {ÉÉÉÉ}</b> vagy <b>{} y</b> évben több mint 2, 4 vagy 1 számokat. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Az összes többi karakter a maszkban marad érintetlen. <br> A szóközök nem megengedettek. <br>
 GenericMaskCodes4a=<u>Példa a 99. %s a harmadik fél kész TheCompany 2007/01/31:</u> <br>
 GenericMaskCodes4b=<u>Példa: a harmadik fél létre 2007/03/01:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Alapértelmezésben a tervezett áfa 0, amelyet fel lehet haszn
 VATIsUsedExampleFR=Franciaországban, az azt jelenti, vállalatok vagy szervezetek, amelyek a valós pénzügyi rendszer (egyszerűsített vagy normál valós valós). Egy rendszer, amelyekre a HÉA nyilvánítják.
 VATIsNotUsedExampleFR=Franciaországban, az azt jelenti, szervezetekkel, amelyek a nem bejelentett vagy ÁFA cégek, szervezetek vagy szabadfoglalkozásúak, hogy kiválasztotta a mikrovállalkozás fiskális rendszer (HÉA-franchise) és kifizetett franchise ÁFA nélkül ÁFA nyilatkozat. Ez a választás megjelenik a referencia &quot;Nem alkalmazandó hozzáadottérték-adó - art-293B CGI&quot; a számlákat.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= A RE mértéke alapesetben létrehozásakor kilátások, 
 LocalTax2IsNotUsedDescES= Alapértelmezésben a javasolt IRPF 0. Vége a szabály.
 LocalTax2IsUsedExampleES= Spanyolországban, szabadúszók és független szakemberek, akik szolgáltatásokat nyújtanak és a vállalatok akik úgy döntöttek, az adórendszer a modulok.
 LocalTax2IsNotUsedExampleES= Spanyolországban vannak bussines nem adóköteles rendszer modulok.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Label az alap, ha nincs fordítás megtalálható a kód
 LabelOnDocuments=Címke dokumentumok
 NbOfDays=Nb napok
@@ -1453,6 +1463,9 @@ AgendaSetup=Rendezvények és napirend modul beállítási
 PasswordTogetVCalExport=Főbb kiviteli engedélyezésének linket
 PastDelayVCalExport=Ne export esetén, mint a régebbi
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Ez a modul lehetővé teszi, hogy egészítsék ki egy ikont telefonszámot. Egy kattintással erre az ikonra fogja hívni a szerver egy adott URL-t meg az alábbiakban. Ezt fel lehet használni, hogy hívja a call center rendszert Dolibarr hogy hívhatjuk a telefonszámot egy SIP rendszert pl.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

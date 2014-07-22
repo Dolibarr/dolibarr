@@ -125,3 +125,6 @@ DocumentModelBaleine=Mô hình báo cáo hoàn chỉnh của dự án (lôgô...
 PlannedWorkload = Tải tiến trình công việc đã dự định
 WorkloadOccupation= Sử dụng tiến trình công việc
 ProjectReferers=Các đối tượng tham chiếu
+SearchAProject=Search a project
+ProjectMustBeValidatedFirst=Project must be validated first
+ProjectDraft=Draft projects

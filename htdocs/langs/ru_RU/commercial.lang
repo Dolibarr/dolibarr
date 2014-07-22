@@ -71,6 +71,7 @@ ActionAC_FAX=Отправить факс
 ActionAC_PROP=Отправить предложение по Email
 ActionAC_EMAIL=Отправить электронное письмо
 ActionAC_RDV=Встречи
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Отправить платежную
 ActionAC_REL=Отправить платежную (напоминание)
 ActionAC_CLO=Закрыть

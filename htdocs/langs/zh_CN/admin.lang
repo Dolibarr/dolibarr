@@ -65,6 +65,8 @@ ShowPreview=显示预览
 PreviewNotAvailable=无预览
 ThemeCurrentlyActive=当前使用的主题
 CurrentTimeZone=PHP 服务器的时区
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=空间
 Table=表
 Fields=字段
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr 当前版本
 CallUpdatePage=请到数据库的结构和数据更新页面：%s。
 LastStableVersion=最新的稳定版本
 GenericMaskCodes=您可自由设置格式掩码。在 %s 格式掩码中， 有如下计数标记可用：<br><b>{000000}</b>表示按顺序递增的序号。序号位数与掩码中0的个数相同，不足自动补零，达最大值后自动归零。<br><b>{000000+000}</b> 同上但 %s 起始序号从 + 后的数值记起。<br><b>{000000@x}</b> 与第一种相同，但序号到X月时自动清零(x=1~12 、0＝程序设置中的财年起始月、99＝每月清零)。 如果使用此种掩码且 x >= 2 ，则必须同时使用日期掩码 {yy}{mm} 或 {yyyy}{mm}。<br><b>{dd}</b> 天 (01~31)。<br><b>{mm}</b> 月 (01~12)。<br><b>{yy}</b>，<b>{yyyy}</b> 或 <b>{y}</b> 代表 2位, 4位 或 1 位年。<br><br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=其它非标记字符将维持不变。<br>不允许使用空格<br>
 GenericMaskCodes4a=<u>例如: 2007-01-31 第三方“TheCompany”的第99笔 %s ：</u> <br>
 GenericMaskCodes4b=<u>例如: 2007-03-1 建立的第三方公司:</u><br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=默认情况下，建议的营业税为0，可用于像协会�
 VATIsUsedExampleFR=In France, it means companies or organisations having a real fiscal system (Simplified real or normal real).  A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organisations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=使用第二项税率
 LocalTax1IsNotUsed=不使用第二项税率
 LocalTax1IsUsedDesc=使用其它类型税率(非增值税VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= The RE rate by default when creating prospects, invoices,
 LocalTax2IsNotUsedDescES= By default the proposed IRPF is 0. 规则结束。
 LocalTax2IsUsedExampleES= In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
 LocalTax2IsNotUsedExampleES= In Spain they are bussines not subject to tax system of modules.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=如果代码没有翻译则默认使用以下标签
 LabelOnDocuments=文档中的标签
 NbOfDays=天数
@@ -1453,6 +1463,9 @@ AgendaSetup=事件及行程模块设置
 PasswordTogetVCalExport=导出链接的授权密钥
 PastDelayVCalExport=不要导出事件，如果事件日期旧于
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=此模块可以在电话号码后添加图标点击此图标将根据您设置的URL呼叫服务器。您可以用此从Dolibarr中拨打呼叫中心系统，例如来通过SIP系统呼叫电话号码。
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=任务报告文档模型
 ##### ECM (GED) #####
 ECMSetup = GED 设置
 ECMAutoTree = 自动树形文件夹和文档
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

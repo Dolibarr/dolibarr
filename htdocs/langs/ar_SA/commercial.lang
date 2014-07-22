@@ -71,6 +71,7 @@ ActionAC_FAX=إرسال فاكس
 ActionAC_PROP=إرسال اقتراح
 ActionAC_EMAIL=ارسال بريد الكتروني
 ActionAC_RDV=اجتماعات
+ActionAC_INT=Intervention on site
 ActionAC_FAC=ارسال الفواتير
 ActionAC_REL=ارسال الفواتير (للتذكير)
 ActionAC_CLO=إغلاق

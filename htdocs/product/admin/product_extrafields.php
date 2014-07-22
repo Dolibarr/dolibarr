@@ -89,8 +89,6 @@ dol_fiche_head($head, 'attributes', $tab, 0, 'product');
 print $langs->trans('DefineHereComplementaryAttributes', $tab).'<br>'."\n";
 print '<br>';
 
-dol_htmloutput_errors($mesg);
-
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
 

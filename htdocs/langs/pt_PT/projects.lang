@@ -125,3 +125,6 @@ DocumentModelBaleine=modelo de um projeto completo do relatório (logo. ..)
 PlannedWorkload = Carga de trabalho planeada
 WorkloadOccupation= Afectação da carga de trabalho
 ProjectReferers=Refering objects
+SearchAProject=Search a project
+ProjectMustBeValidatedFirst=Project must be validated first
+ProjectDraft=Draft projects
