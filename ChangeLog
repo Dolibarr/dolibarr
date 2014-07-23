@@ -57,7 +57,7 @@ For developers:
 - New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
 - New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
 - New: Added hook "formConfirm" and "doActions" for supplier invoice card
-- New: Added hook "doActions" for supplier order card
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
