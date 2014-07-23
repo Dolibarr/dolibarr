@@ -3,6 +3,12 @@
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
 
+	<exclude-pattern>*/conf.php</exclude-pattern>
+	<exclude-pattern>*/includes/*</exclude-pattern>
+	<exclude-pattern>*/documents/*</exclude-pattern>
+	<exclude-pattern>*/custom/*</exclude-pattern>
+	<exclude-pattern>*/nltechno*</exclude-pattern>
+		
 	<!-- List of all tests -->
 
 	<rule ref="Internal.NoCodeFound">
@@ -17,6 +23,9 @@
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowedWarning">
 		<severity>0</severity>
 	</rule>
+
+    <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
+    <!-- <rule ref="Zend.Files.ClosingTag"/> -->
 
     <!-- <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop" /> -->
 
@@ -45,6 +54,9 @@
 		<properties> <property name="error" value="false"/> </properties>
 		</rule>
 	-->
+
+    <!-- PHP code MUST use only UTF-8 without BOM. -->
+    <rule ref="Generic.Files.ByteOrderMark"/>
 
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">

@@ -55,6 +55,7 @@ ErrorStatusCantBeZeroIfStarted=Se o campo '<b>Ficha de Realização</b>' tiver d
 ActionAC_TEL=Chamada Telefônica
 ActionAC_FAX=Envio Fax
 ActionAC_PROP=Envio Orçamento por Correio
+ActionAC_INT=Intervenção no lugar
 ActionAC_FAC=Envio Fatura por Correio
 ActionAC_REL=Lembrete fatura por correio
 ActionAC_EMAILING=Envio mailing massivo

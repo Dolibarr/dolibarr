@@ -1698,7 +1698,7 @@ elseif (! empty($object->id))
 			print "</tr>";
 		}
 
-		// Ligne en mode update
+		// Edit line
 		if ($action	== 'edit_line' && $user->rights->fournisseur->commande->creer && ($_GET["rowid"] == $line->id))
 		{
 			print "\n";
@@ -1723,8 +1723,10 @@ elseif (! empty($object->id))
 			}
 			else
 			{
-				print $form->select_type_of_lines($line->product_type,'type',1);
-				if (! empty($conf->product->enabled) && ! empty($conf->service->enabled)) print '<br>';
+                $forceall=1;	// For suppliers, we always show all types
+                print $form->select_type_of_lines($line->product_type,'type',1,0,$forceall);
+                if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+                || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
 			}
 
 			if (is_object($hookmanager))
@@ -1753,24 +1755,20 @@ elseif (! empty($object->id))
 	}
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action <> 'edit_line')
+	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer && $action != 'edit_line')
 	{
 		// Add free products/services form
 		global $forceall, $senderissupplier, $dateSelector;
 		$forceall=1; $senderissupplier=1; $dateSelector=0;
-		if ($object->statut == 0 && $user->rights->propal->creer)
-		{
-			if ($action != 'editline')
-			{
-				$var = true;
 
-				// Add free products/services
-				$object->formAddObjectLine(1, $societe, $mysoc);
+		$var = true;
 
-				$parameters = array();
-				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			}
-		}
+		// Add free products/services
+		$object->formAddObjectLine(1, $societe, $mysoc);
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
 	}
 	print '</table>';
 

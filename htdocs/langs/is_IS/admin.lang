@@ -65,6 +65,8 @@ ShowPreview=Sýna forskoðun
 PreviewNotAvailable=Forskoðun er ekki í boði
 ThemeCurrentlyActive=Þema virk
 CurrentTimeZone=PHP-miðlara Tímasvæði
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Space
 Table=Table
 Fields=Fields
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr núverandi útgáfa
 CallUpdatePage=Fara á næstu síðu sem að endurnýja gagnagrunn uppbyggingu og gögn: %s .
 LastStableVersion=Síðasta stöðuga útgáfa
 GenericMaskCodes=Þú getur fært inn hvaða tala lagsins. Í þessu maska gæti eftirfarandi tög að nota: <br> <b>(000000)</b> samsvarar fjölda sem verður incremented á hverjum %s . Sláðu inn eins mörg núll og löngun lengd borðið. Teljarinn verður lokið við núllum frá vinstri til að fá eins mörg núll og lagsins. <br> <b>(000000 000)</b> sami eins og fyrri en að vega upp á móti sem svarar til fjölda til hægri á + merki er notað sem hófst á fyrsta %s . <br> <b>(000000 @ x)</b> sami eins og fyrri en borðið er endurstilla á núll þegar mánaðar x er náð (x á milli 1 og 12). Ef þessi möguleiki er notaður og x er 2 eða hærra, þá röð (YY) (mm) eða (áááá) (mm) er einnig nauðsynleg. <br> <b>(Dd)</b> dag (01-31). <br> <b>(Mm)</b> mánuði (01-12). <br> <b>(YY), (áááá)</b> eða <b>(y)</b> ár yfir 2, 4 eða 1 númer. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Allir aðrir stafir í möskva haldast óbreytt. <br> Bil eru ekki leyfð. <br>
 GenericMaskCodes4a=<u>Dæmi um 99 %s  af þriðja aðila TheCompany gert 2007/01/31:</u> <br>
 GenericMaskCodes4b=<u>Dæmi um þriðja aðila skapa á 2007/3/1:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Sjálfgefið er fyrirhuguð VSK er 0 sem hægt er að nota til 
 VATIsUsedExampleFR=Í Frakklandi, þá þýðir það fyrirtæki eða stofnanir sem hafa raunveruleg reikningsár kerfi (Simplified raunverulegur eða venjulegt alvöru). Kerfi þar sem VSK er lýst.
 VATIsNotUsedExampleFR=Í Frakklandi, það þýðir samtök sem eru ekki VSK lýst eða fyrirtæki, stofnanir eða frjálslynda starfsstéttum sem hafa valið ör framtak reikningsár kerfi (VSK í kosningaréttur) og greidd kosningaréttur VSK án VSK yfirlýsingu. Þetta val mun birta tilvísunarnúmer "Non viðeigandi VSK - list-293B af CGI" á reikningum.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= RE hlutfall sjálfgefið þegar þú býrð til viðskipt
 LocalTax2IsNotUsedDescES= Sjálfgefið er fyrirhuguð IRPF er 0. Lok reglu.
 LocalTax2IsUsedExampleES= Á Spáni freelancers og sjálfstæða sérfræðinga sem veita þjónustu og fyrirtæki sem hafa valið skatt kerfi eininga.
 LocalTax2IsNotUsedExampleES= Á Spáni eru bussines ekki skattskyldar kerfi eininga.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Merki notaður við vanræksla, ef ekki þýðingu er að finna í kóða
 LabelOnDocuments=Merki um skjöl
 NbOfDays=ATH daga
@@ -1453,6 +1463,9 @@ AgendaSetup=Aðgerðir og dagskrá mát skipulag
 PasswordTogetVCalExport=Lykill að heimila útflutning hlekkur
 PastDelayVCalExport=Ekki flytja atburður eldri en
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Þessi eining leyfir þér að bæta við tákn eftir símanúmeri Dolibarr tengiliði. A smella á þetta tákn mun hringja í serveur með ákveðinni vefslóð sem þú tilgreinir hér að neðan. Þetta má nota til að hringja í miðju símtali kerfi frá Dolibarr að geta hringt í símanúmer á SIP kerfi til dæmis.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

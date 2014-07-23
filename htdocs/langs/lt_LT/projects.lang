@@ -125,3 +125,6 @@ DocumentModelBaleine=Pilnas projekto ataskaitos modelis (logo. ..)
 PlannedWorkload = Planuojamas darbo krūvis
 WorkloadOccupation= Darbo krūvio paskirtis
 ProjectReferers=Nurodomi objektai
+SearchAProject=Search a project
+ProjectMustBeValidatedFirst=Project must be validated first
+ProjectDraft=Draft projects

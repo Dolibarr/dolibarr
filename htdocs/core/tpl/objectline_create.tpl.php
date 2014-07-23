@@ -31,7 +31,7 @@
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
 
-global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
@@ -244,7 +244,7 @@ else {
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
 	<?php
-	// Line extrafield
+	// Lines for extrafield
 	if (!empty($extrafieldsline)) {
 		if ($this->table_element_line=='commandedet') {
 			$newline = new OrderLine($this->db);
@@ -259,7 +259,7 @@ else {
 			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
 		}
 	}
-		?>
+	?>
 </tr>
 
 <?php
@@ -267,6 +267,8 @@ if (! empty($conf->service->enabled) && $dateSelector)
 {
 	if(! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) $colspan = 10;
 	else $colspan = 9;
+	if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
+	if (in_array($object->element,array('propal','facture','invoice','commande','order'))) $colspan++;	// With this, there is a column move button
 
 	if (! empty($usemargins))
 	{

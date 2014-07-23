@@ -71,6 +71,7 @@ ActionAC_FAX=Envoi fax
 ActionAC_PROP=Envoi proposition par email
 ActionAC_EMAIL=Envoi email
 ActionAC_RDV=Rendez-vous
+ActionAC_INT=Intervention sur site
 ActionAC_FAC=Envoi facture client par email
 ActionAC_REL=Relance facture client par email
 ActionAC_CLO=Clôture

@@ -65,6 +65,8 @@ ShowPreview=Arată previzualizare
 PreviewNotAvailable=Preview nu este disponibil
 ThemeCurrentlyActive=Tema activă în prezent
 CurrentTimeZone=TimeZone PHP (server)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Spaţiu
 Table=Tabel
 Fields=Câmpuri
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr versiunea curentă
 CallUpdatePage=Du-te la pagina care se actualizează datele şi structura bazei de date %s.
 LastStableVersion=Ultima versiune stabilă
 GenericMaskCodes=Puteți introduce orice mască de numerotare. În această mască, ar putea fi folosit următoarele etichete: <br> <b>{000000}</b> corespunde unui număr care va fi incrementat pe fiecare% s. Introduceți cât mai multe zerouri ca lungimea dorită a contra. Contorul va fi completat cu zerouri la stânga, în scopul de a avea cât mai multe zerouri ca masca. <br> <b>{000000} +000</b> fel ca și anterior, dar o compensare corespunzător cu numărul din dreapta semnului + se aplică începând cu prima% s. <br> <b>{000000 @ x}</b> fel ca și anterior, dar contorul este resetat la zero atunci când se ajunge la o lună x (x între 1 și 12, sau 0 pentru a folosi primele luni ale anului fiscal definite în configurația dvs., sau 99 pentru a reseta la zero în fiecare lună ). Dacă această opțiune este folosită și x este 2 sau mai mare, atunci secvența {aa} {mm} sau {AAAA} {mm} este de asemenea necesară. <br> <b>{Dd}</b> zi (01 la 31). <br> <b>{Mm}</b> luni (01 la 12). <br> <b>{AA}, {AAAA}</b> sau <b>{y}</b> an peste 2, 4 sau 1 numere. <br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Toate celelalte caractere în masca va rămâne intactă. <br> Spaţiile nu sunt permise. <br>
 GenericMaskCodes4a=<u>Exemplu pe 99th %s de-a treia parte TheCompany făcut 2007-01-31:</u> <br>
 GenericMaskCodes4b=<u>Exemplu de la o terţă parte a creat pe 2007-03-01:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=În mod implicit propuse de TVA este 0, care poate fi utilizat 
 VATIsUsedExampleFR=În Franţa, aceasta înseamnă societăţilor sau organizaţiilor care au un real sistemului fiscal (Simplified reale sau normale de real). Un sistem în care TVA-ul este declarat.
 VATIsNotUsedExampleFR=În Franţa, înseamnă că asociaţiile care nu sunt declarate de TVA sau de companii, organizaţii sau profesiilor liberale care au ales de micro-întreprindere sistemului fiscal (TVA în franciză) şi a plătit o franciza de TVA, fără nici o declaraţie de TVA. Această opţiune va afişa de referinţă "nu se aplică TVA - art-293B din CGI" pe facturi.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Utilizează taxa secundă
 LocalTax1IsNotUsed=Nu utilizează taxa secundă
 LocalTax1IsUsedDesc=Utilizează un al doilea tip de taxă ( altul decât TVA )
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= Rata de RE, în mod implicit atunci când perspectivele c
 LocalTax2IsNotUsedDescES= În mod implicit propus IRPF este 0. Sfârşitul regulă.
 LocalTax2IsUsedExampleES= În Spania, liber profesionişti şi specialişti independenţi, care presta servicii şi companiile care au ales sistemul de impozitare de module.
 LocalTax2IsNotUsedExampleES= În Spania nu sunt afaceri care fac obiectul sistemului de impozitare de module.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Eticheta utilizat în mod implicit în cazul în care nu poate fi găsit de traducere pentru codul
 LabelOnDocuments=Eticheta de pe documente
 NbOfDays=Nr zile
@@ -1453,6 +1463,9 @@ AgendaSetup=Acţiuni de ordine de zi şi de modul de configurare
 PasswordTogetVCalExport=Cheia de a autoriza export link
 PastDelayVCalExport=Nu de export eveniment mai în vârstă decât
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Acest modul permite să adăugaţi o pictogramă după numărul de telefon de contact Dolibarr. Un clic pe această pictogramă, se va apela un serveur cu un URL particular definiţi mai jos. Acest lucru poate fi utilizat pentru a apela un sistem de call center din Dolibarr care pot apela numărul de telefon pe un sistem de SIP, de exemplu.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Modele  de document de rapoarte taskuri
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Arborescenţa automată este disponibilă
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

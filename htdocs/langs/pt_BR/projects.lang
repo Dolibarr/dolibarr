@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - projects
 ProjectId=Id do projeto
-SharedProject=Projeto Compartilhado
-PrivateProject=Contatos do Projeto
-MyProjectsDesc=Exibe apenas os projetos você for um contato(seja qual for o tipo).
-ProjectsPublicDesc=Exibe todos os projetos que esta autorizado a ver.
-ProjectsDesc=Essa exibição apresenta todos os projetos (suas permissões de usuário conceder-lhe permissão para ver tudo).
+SharedProject=A todos
+PrivateProject=Contatos do projeto
+MyProjectsDesc=Exibe apenas os projetos que você for um contato (independente do tipo).
+ProjectsPublicDesc=Exibe todos os projetos que você esta autorizado a ver.
+ProjectsDesc=Exibi todos os projetos (sua permissão de usuário lhe permite ver todos).
 MyTasksDesc=Esta exibição é limitado a projetos ou tarefas que você é um contato (seja qual for o tipo).
 TasksPublicDesc=Essa exibição apresenta todos os projetos e tarefas que você tem permissão para ler.
 TasksDesc=Essa exibição apresenta todos os projetos e tarefas (suas permissões de usuário concede-lhe ver tudo).
@@ -85,3 +85,6 @@ DocumentModelBaleine=Modelo de relatório de um projeto completo (logo. ..)
 PlannedWorkload =carga horária planejada
 WorkloadOccupation=Carga horária empregada
 ProjectReferers=Fazendo referência a objetos
+SearchAProject=Buscar um projeto
+ProjectMustBeValidatedFirst=O projeto tem que primeiramente ser validado
+ProjectDraft=Rascunhos de projetos

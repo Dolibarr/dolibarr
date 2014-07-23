@@ -106,6 +106,9 @@ ProjectReportDate=Cambia la data del compito a seconda della data di inizio prog
 ErrorShiftTaskDate=Impossibile cambiare la data del compito a seconda della data di inizio del progetto
 ProjectsAndTasksLines=Progetti e compiti
 ProjectCreatedInDolibarr=Progetto %s creato
+TaskCreatedInDolibarr=Task %s created
+TaskModifiedInDolibarr=Task %s modified
+TaskDeletedInDolibarr=Task %s deleted
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Capo progetto
 TypeContact_project_external_PROJECTLEADER=Capo progetto
@@ -122,3 +125,6 @@ DocumentModelBaleine=Modello per il report di un progetto completo (logo, etc..)
 PlannedWorkload = Carico di lavoro previsto
 WorkloadOccupation= Carico di lavoro supposto
 ProjectReferers=Elementi correlati
+SearchAProject=Search a project
+ProjectMustBeValidatedFirst=Project must be validated first
+ProjectDraft=Draft projects

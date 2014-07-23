@@ -65,6 +65,8 @@ ShowPreview=Kuva eelvaade
 PreviewNotAvailable=Eelvaade pole saadaval
 ThemeCurrentlyActive=Hetkel kasutatav teema
 CurrentTimeZone=PHP ajavöönd (serveri ajavöönd)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Ruum
 Table=Tabel
 Fields=Väljad
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarri praegune versioo
 CallUpdatePage=Mine lehele, mis uuendab andmebaasi struktuuri ja andmed: %s.
 LastStableVersion=Viimane stabiilne versioon
 GenericMaskCodes=Sa võid sisestada suvalise numeratsiooni maski. Järgnevas maskis saab kasutada järgmisi silte:<br><b>{000000}</b> vastab arvule, mida suurendatakse iga sündmuse %s korral. Sisesta niipalju nulle, kui soovid loenduri pikkuseks. Loendurile lisatakse vasakult alates niipalju nulle, et ta oleks maskiga sama pikk.<br><b>{000000+000}</b> on eelmisega sama, kuid esimesele %s lisatakse nihe, mis vastab + märgist paremal asuvale arvule.<br><b>{000000@x}</b> on eelmisega sama, ent kuuni x jõudmisel nullitakse loendur (x on 1 ja 12 vahel, või 0 seadistuses määratletud majandusaasta alguse kasutamiseks, või 99 loenduri nullimiseks iga kuu alguses). Kui kasutad seda funktsiooni ja x on 2 või kõrgem, siis on jada {yy}{mm} or {yyyy}{mm} nõutud.<br><b>{dd}</b> päev (01 kuni 31).<br><b>{mm}</b> kuu (01 kuni 12).<br><b>{yy}</b>, <b>{yyyy}</b> või <b>{y}</b> aasta 2, 4 või 1 numbri kasutamisks.<br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Kõik teised maskis olevad tähemärgid jäävad puutuamata.<br>Tühikud ei ole lubatud.<br>
 GenericMaskCodes4a=<u>Näiteks 99ndal %s tegi kolmas isik KolmasIsik 2007-01-31:</u> <br>
 GenericMaskCodes4b=<u>Näiteks 2007-03-01 loodud kolmas isik:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Vaikimisi pakutakse käibemaksumääraks 0, mida kasutavad näi
 VATIsUsedExampleFR=Prantsusmaa juhul tähendab see ettevõtteid või organisatsioone, mis kasutavad real fiscal süsteemi (simplified real või normal real), ehk süsteemi, kus deklareeritakse käibemaks.
 VATIsNotUsedExampleFR=Prantsusmaal tähendab see ühendusi, mis ei ole käibemaksukohuslased, või ettevõtteid, organisatsioone või kutsetegevuse vallas tegutsejaid, kes kasutavad mikroettevõtte fiskaalsüsteemi (frantsiisi käibemaks) ning maksavad frantsiisi käibemaksu ise käibemaksu deklareerimata. See valik näitab arvetel viidet "Non applicable VAT - art-293B of CGI".
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Kasuta teist maksu
 LocalTax1IsNotUsed=Ära kasuta teist maksu
 LocalTax1IsUsedDesc=Kasuta teist liiki maksu (mitte KM)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= Pakkumiste, arvete, tellimuste jne loomisel kasutatav RE 
 LocalTax2IsNotUsedDescES= Vaikimisi pakutud IRPF on 0. Reegli lõpp.
 LocalTax2IsUsedExampleES= Hispaanias on nad vabakutselised ja spetsialistid, kes pakuvad teenuseid ja ettevõtted, kes on valinud moodulipõhise maksusüsteemi.
 LocalTax2IsNotUsedExampleES= Hispaanias on nad ettevõtted, kes ei kasuta moodulipõhist maksusüsteemi.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Vaikimisi kasutatav silt, kui koodile ei leitud tõlke vastet
 LabelOnDocuments=Dokumentide silt
 NbOfDays=Päevade arv
@@ -1453,6 +1463,9 @@ AgendaSetup=Tegevuste ja päevakava mooduli seadistamine
 PasswordTogetVCalExport=Ekspordilingi autoriseerimise võti
 PastDelayVCalExport=Ära ekspordi tegevusi, mis on vanemad kui
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=See moodul võimaldab lisada ikooni pärast telefoninumbreid. Klõps sellel ikoonil helistab allpool määratletud URLiga serverisse. See võimaldab näiteks Dolibarrist helistada kõnekeskuse süsteemi, mis helistab SIP-süsteemis olevale numbrile.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Ülesannete aruande dokumendi mudel
 ##### ECM (GED) #####
 ECMSetup = GED seadistamine
 ECMAutoTree = Automaatmne kaustapuu ja dokument
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Formaat
