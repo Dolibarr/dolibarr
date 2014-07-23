@@ -42,7 +42,8 @@ For users:
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
 - New: Can define custom fields for categories.
 - New: Prepare generation of SEPA files into module withdrawal.
-- New: Can filter on status for supplier order.
+- New: [ task #1164 ] Add "Ref. supplier" search box in supplier orders
+- New: [ task #1345 ] Can filter on status for supplier order.
 - New: Add option FACTURE_SENDBYEMAIL_FOR_ALL_STATUS to allow to send invoice by email 
        whatever is its status.
 - New: Add filter date in bank writing list page.
