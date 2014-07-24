@@ -142,7 +142,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " '".$this->fk_user_c."'";
 			$sql.= ")";
 
-			dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::create", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -152,12 +152,10 @@ class EcmDirectory // extends CommonObject
 				$result=dol_mkdir($dir);
 				if ($result < 0) { $error++; $this->error="ErrorFailedToCreateDir"; }
 
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('MYECMDIR_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('MYECMDIR_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 
 				if (! $error)
 				{
@@ -173,7 +171,6 @@ class EcmDirectory // extends CommonObject
 			else
 			{
 				$this->error="Error ".$this->db->lasterror();
-				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -210,23 +207,20 @@ class EcmDirectory // extends CommonObject
 		$sql.= " description='".$this->db->escape($this->description)."'";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$error++;
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog("EcmDirectories::update ".$this->error, LOG_ERR);
 		}
 
 		if (! $error && ! $notrigger)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('MYECMDIR_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('MYECMDIR_MODIFY',$user);
+            if ($result < 0) { $error++; }            
+            // End call triggers
 		}
 
 		if (! $error)
@@ -257,12 +251,11 @@ class EcmDirectory // extends CommonObject
 		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::changeNbOfFiles sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::changeNbOfFiles", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::changeNbOfFiles ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -291,7 +284,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
 		$sql.= " WHERE t.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -318,7 +311,6 @@ class EcmDirectory // extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -348,16 +340,26 @@ class EcmDirectory // extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."ecm_directories";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->db->rollback();
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -2;
 		}
-
+		else
+		{
+            // Call trigger
+            $result=$this->call_trigger('MYECMDIR_DELETE',$user);
+            if ($result < 0)
+            {
+            	$this->db->rollback();
+            	return -2;
+            }            
+            // End call triggers
+		}
+		
 		if ($mode != 'databaseonly')
 		{
 			$file = $conf->ecm->dir_output . "/" . $relativepath;
@@ -374,16 +376,6 @@ class EcmDirectory // extends CommonObject
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			$error++;
-		}
-
-		if (! $error)
-		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('MYECMDIR_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
 		}
 
 		if (! $error) return 1;
@@ -499,7 +491,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
+		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -563,7 +555,7 @@ class EcmDirectory // extends CommonObject
 		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " ORDER BY c.label, c.rowid";
 
-		dol_syslog(get_class($this)."::get_full_arbo sql=".$sql);
+		dol_syslog(get_class($this)."::get_full_arbo", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -688,7 +680,7 @@ class EcmDirectory // extends CommonObject
 			$sql.= " WHERE entity = ".$conf->entity;
 		}
 
-		dol_syslog(get_class($this)."::refreshcachenboffile sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::refreshcachenboffile", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -698,9 +690,41 @@ class EcmDirectory // extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::refreshcachenboffile ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
+	
+	/**
+     * Call trigger based on this instance
+     *
+     *  NB: Error from trigger are stacked in errors
+     *  NB2: if trigger fail, action should be canceled.
+     *  NB3: Should be deleted if EcmDirectory extend CommonObject
+     *
+     * @param   string    $trigger_name   trigger's name to execute
+     * @param   User      $user           Object user
+     * @return  int                       Result of run_triggers
+     */
+    function call_trigger($trigger_name, $user)
+    {
+        global $langs,$conf;
+
+        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+        $interface=new Interfaces($this->db);
+        $result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+        if ($result < 0) {
+            if (!empty($this->errors))
+            {
+                $this->errors=array_merge($this->errors,$interface->errors);
+            }
+            else
+            {
+                $this->errors=$interface->errors;
+            }
+        }
+        return $result;
+
+    }
+	
 
 }

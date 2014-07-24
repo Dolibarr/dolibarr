@@ -220,7 +220,7 @@ if (empty($reshook))
             $object->barcode_type_code      = $stdobject->barcode_type_code;
             $object->barcode_type_coder     = $stdobject->barcode_type_coder;
             $object->barcode_type_label     = $stdobject->barcode_type_label;
-            
+
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
             $object->url					= GETPOST('url');
             $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
@@ -334,7 +334,7 @@ if (empty($reshook))
     	        $object->barcode_type_code      = $stdobject->barcode_type_code;
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
     	        $object->barcode_type_label     = $stdobject->barcode_type_label;
-    	         
+
             	$object->accountancy_code_sell  = GETPOST('accountancy_code_sell');
                 $object->accountancy_code_buy   = GETPOST('accountancy_code_buy');
 
@@ -1014,8 +1014,6 @@ else
 
     else if ($object->id > 0)
     {
-        $res=$object->fetch_optionals($object->id,$extralabels);
-
         // Fiche en mode edition
         if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
         {
@@ -1278,17 +1276,21 @@ else
             if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO)) $nblignes+=2;
             if ($object->isservice()) $nblignes++;
             else $nblignes+=4;
-            
+
             // Photo
             if ($showphoto || $showbarcode)
             {
                 print '<td valign="middle" align="center" width="25%" rowspan="'.$nblignes.'">';
-                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,1,0,0,0,80);
+				print '<div class="photolist">';
+				$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
+				if ($conf->browser->phone) $maxvisiblephotos=1;
+                if ($showphoto)   print $object->show_photos($conf->product->multidir_output[$object->entity],1,$maxvisiblephotos,0,0,0,80);
                 if ($showphoto && $showbarcode) print '<br><br>';
                 if ($showbarcode) print $form->showbarcode($object);
+				print '</div>';
                 print '</td>';
             }
-            
+
             print '</tr>';
 
             // Type
@@ -1300,7 +1302,7 @@ else
                 print $form->editfieldval("Type",'fk_product_type',$object->type,$object,$user->rights->produit->creer||$user->rights->service->creer,$typeformat);
                 print '</td></tr>';
             }
-            
+
             if ($showbarcode)
             {
                 // Barcode type

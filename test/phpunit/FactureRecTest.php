@@ -131,7 +131,7 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
 		$localobjectinv=new Facture($this->savdb);
 		$localobjectinv->initAsSpecimen();
 		$localobjectinv->create($user);
-		
+
 		$localobject=new FactureRec($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user, $localobjectinv->id);
@@ -141,11 +141,11 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * Edit an object to test updates
      *
@@ -196,4 +196,3 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
         return $retAr;
     }
 }
-?>

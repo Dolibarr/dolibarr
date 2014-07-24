@@ -307,6 +307,8 @@ class Don extends CommonObject
         $this->country=($this->country?$this->country:$this->country);
 
         $now=dol_now();
+        
+        $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (";
         $sql.= "datec";
@@ -354,25 +356,23 @@ class Don extends CommonObject
         $sql.= ", '".$this->db->escape($this->phone_mobile)."'";
         $sql.= ")";
 
-        dol_syslog("Don::create sql=".$sql, LOG_DEBUG);
+        dol_syslog("Don::create", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 
-            // Appel des triggers
-            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('DON_CREATE',$this,$user,$langs,$conf);
-            if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-            }
-            // Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('DON_CREATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
+            $this->db->commit();
             return $this->id;
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -393,6 +393,8 @@ class Don extends CommonObject
         $this->country_id=($this->country_id>0?$this->country_id:$this->country_id);
         $this->country=($this->country?$this->country:$this->country);
 
+        $this->db->begin();
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
         $sql .= "amount = " . price2num($this->amount);
         $sql .= ",fk_paiement = ".($this->modepaiementid?$this->modepaiementid:"null");
@@ -414,14 +416,21 @@ class Don extends CommonObject
         $sql .= ",fk_statut=".$this->statut;
         $sql .= " WHERE rowid = $this->id";
 
-        dol_syslog("Don::update sql=".$sql);
+        dol_syslog("Don::update", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
+            // Call trigger
+            $result=$this->call_trigger('DON_UPDATE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
+            
+            $this->db->commit();
             return 1;
         }
         else
         {
+            $this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -435,6 +444,8 @@ class Don extends CommonObject
      */
     function delete($rowid)
     {
+        
+        $this->db-begin();
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
@@ -443,10 +454,17 @@ class Don extends CommonObject
         {
             if ( $this->db->affected_rows($resql) )
             {
+                // Call trigger
+                $result=$this->call_trigger('DON_DELETE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                // End call triggers
+                
+                $this->db->commit();
                 return 1;
             }
             else
             {
+                $this->db->rollback();
                 return -1;
             }
         }
@@ -478,7 +496,7 @@ class Don extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_paiement";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.entity = ".$conf->entity;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -535,7 +553,6 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -571,7 +588,6 @@ class Don extends CommonObject
         }
         $sql .=  " WHERE rowid = $rowid AND fk_statut = 1";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -603,7 +619,6 @@ class Don extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2";
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -633,7 +648,6 @@ class Don extends CommonObject
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$rowid;
 
-        dol_syslog("sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {

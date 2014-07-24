@@ -447,6 +447,9 @@ if (! defined('NOLOGIN'))
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged, to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
                 $dol_tz_string=$_POST["tz_string"];
+                $dol_tz_string=preg_replace('/\s*\(.+\)$/','',$dol_tz_string);
+                $dol_tz_string=preg_replace('/,/','/',$dol_tz_string);
+                $dol_tz_string=preg_replace('/\s/','_',$dol_tz_string);
                 $dol_dst=0;
                 if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
                 {
@@ -1797,18 +1800,21 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     global $conf,$langs;
 
     $ret='';
-    $ret.='<div class="menu_titre">';
-    $ret.='<a class="vsmenu" href="'.$urlobject.'">';
-    $ret.=$title.'</a><br>';
-    $ret.='</div>';
     $ret.='<form action="'.$urlaction.'" method="post">';
+	$ret.='<label for="'.$htmlinputname.'">';
+	$ret.='<div class="menu_titre">';
+	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
+	$ret.=$title;
+	$ret.='</a><br>';
+	$ret.='</div>';
+	$ret.='</label>';
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
     $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';
     $ret.='<input type="text" class="flat" ';
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
-    $ret.=' name="'.$htmlinputname.'" size="10" />';
+    $ret.=' name="'.$htmlinputname.'" id="'.$htmlinputname.'" size="10" />';
     $ret.='<input type="submit" class="button" value="'.$langs->trans("Go").'">';
     $ret.="</form>\n";
     return $ret;

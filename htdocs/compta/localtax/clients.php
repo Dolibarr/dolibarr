@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2011	Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+/* Copyright (C) 2011-2014	Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2014	    Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ $langs->load("bills");
 $langs->load("compta");
 $langs->load("companies");
 $langs->load("products");
+
+$local=GETPOST('localTaxType', 'int');
 
 // Date range
 $year=GETPOST("year");
@@ -102,15 +104,17 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
+$calc=MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
-if ($modetax==1)	// Calculate on invoice for goods and services
+if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
+    $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
+    $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT'.$local.'Rec");
+    $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-    $description=$langs->trans("RulesVATDue");
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
-    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
 	$builddate=time();
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -120,14 +124,15 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 }
-if ($modetax==0) 	// Invoice for goods, payment for services
+if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->transcountry("LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
+    $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
+    $calcmode=$langs->trans("CalcModeLT2Debt");
+    $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-    $description=$langs->trans("RulesVATIn");
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
-    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $builddate=time();
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -137,173 +142,179 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$productsup=$langs->trans("Description");
 	$amountsup=$langs->trans("AmountHT");
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
-$vatcust=$langs->transcountry("LT2",$mysoc->country_code);
-$vatsup=$langs->transcountry("LT2",$mysoc->country_code);
+
+$vatcust=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
+$vatsup=$langs->transcountry($local==1?"LT1":"LT2",$mysoc->country_code);
 
 // IRPF that the customer has retained me
+if($conf->global->$calc ==0 || $conf->global->$calc == 2){
+	print "<table class=\"noborder\" width=\"100%\">";
+	print "<tr class=\"liste_titre\">";
+	print '<td align="left">'.$langs->trans("Num")."</td>";
+	print '<td align="left">'.$langs->trans("Customer")."</td>";
+	print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
+	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
+	print "<td align=\"right\">".$vatcust."</td>";
+	print "</tr>\n";
 
-print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Customer")."</td>";
-print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
-print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
-print "<td align=\"right\">".$vatcust."</td>";
-print "</tr>\n";
-
-$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
-
-$action = "tvaclient";
-$object = &$coll_list;
-$parameters["mode"] = $modetax;
-$parameters["start"] = $date_start;
-$parameters["end"] = $date_end;
-$parameters["direction"] = 'sell';
-// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-if (is_array($coll_list))
-{
-	$var=true;
-	$total = 0;  $totalamount = 0;
-	$i = 1;
-	foreach($coll_list as $coll)
+	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+	
+	$action = "tvaclient";
+	$object = &$coll_list;
+	$parameters["mode"] = $modetax;
+	$parameters["start"] = $date_start;
+	$parameters["end"] = $date_end;
+	$parameters["direction"] = 'sell';
+	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	$hookmanager->initHooks(array('externalbalance'));
+	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	
+	if (is_array($coll_list))
 	{
-		if(($min == 0 or ($min > 0 && $coll->amount > $min)) && $coll->localtax2!=0)
+		$var=true;
+		$total = 0;  $totalamount = 0;
+		$i = 1;
+		foreach($coll_list as $coll)
 		{
-			$var=!$var;
-			$intra = str_replace($find,$replace,$coll->tva_intra);
-			if(empty($intra))
+			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
-				if($coll->assuj == '1')
+				$var=!$var;
+				$intra = str_replace($find,$replace,$coll->tva_intra);
+				if(empty($intra))
 				{
-					$intra = $langs->trans('Unknown');
+					if($coll->assuj == '1')
+					{
+						$intra = $langs->trans('Unknown');
+					}
+					else
+					{
+						$intra = '';
+					}
 				}
-				else
-				{
-					$intra = '';
-				}
+				print "<tr ".$bc[$var].">";
+				print '<td class="nowrap">'.$i."</td>";
+				$company_static->id=$coll->socid;
+				$company_static->nom=$coll->nom;
+				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
+				$find = array(' ','.');
+				$replace = array('','');
+				print '<td class="nowrap">'.$intra."</td>";
+				print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
+				print "<td class=\"nowrap\" align=\"right\">".price($local==1?$coll->localtax1:$coll->localtax2)."</td>";
+	            $totalamount = $totalamount + $coll->amount;
+				$total = $total + ($local==1?$coll->localtax1:$coll->localtax2);
+				print "</tr>\n";
+				$i++;
 			}
-			print "<tr ".$bc[$var].">";
-			print '<td class="nowrap">'.$i."</td>";
-			$company_static->id=$coll->socid;
-			$company_static->nom=$coll->nom;
-			print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
-			$find = array(' ','.');
-			$replace = array('','');
-			print '<td class="nowrap">'.$intra."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->localtax2)."</td>";
-            $totalamount = $totalamount + $coll->amount;
-			$total = $total + $coll->localtax2;
-			print "</tr>\n";
-			$i++;
 		}
+	    $x_coll_sum = $total;
+	
+		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
+	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
+		print '<td class="nowrap" align="right">'.price($total).'</td>';
+		print '</tr>';
 	}
-    $x_coll_sum = $total;
-
-	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-	print '<td class="nowrap" align="right">'.price($total).'</td>';
-	print '</tr>';
-}
-else
-{
-	$langs->load("errors");
-	if ($coll_list == -1)
-		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-	else if ($coll_list == -2)
-		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else
-		print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+	{
+		$langs->load("errors");
+		if ($coll_list == -1)
+			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
+		else if ($coll_list == -2)
+			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+		else
+			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+	}
 }
 
 // IRPF I retained my supplier
+if($conf->global->$calc ==0 || $conf->global->$calc == 1){
+	print "<table class=\"noborder\" width=\"100%\">";
+	print "<tr class=\"liste_titre\">";
+	print '<td align="left">'.$langs->trans("Num")."</td>";
+	print '<td align="left">'.$langs->trans("Supplier")."</td>";
+	print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
+	print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
+	print "<td align=\"right\">".$vatsup."</td>";
+	print "</tr>\n";
 
-print "<tr class=\"liste_titre\">";
-print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Supplier")."</td>";
-print "<td>".$langs->transcountry("ProfId1",$mysoc->country_code)."</td>";
-print "<td align=\"right\">".$langs->trans("TotalHT")."</td>";
-print "<td align=\"right\">".$vatsup."</td>";
-print "</tr>\n";
-
-$company_static=new Societe($db);
-
-$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
-$parameters["direction"] = 'buy';
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if (is_array($coll_list))
-{
-	$var=true;
-	$total = 0;  $totalamount = 0;
-	$i = 1;
-	foreach($coll_list as $coll)
+	$company_static=new Societe($db);
+	
+	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
+	$parameters["direction"] = 'buy';
+	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	if (is_array($coll_list))
 	{
-		if(($min == 0 or ($min > 0 && $coll->amount > $min)) && $coll->localtax2!=0)
+		$var=true;
+		$total = 0;  $totalamount = 0;
+		$i = 1;
+		foreach($coll_list as $coll)
 		{
-			$var=!$var;
-			$intra = str_replace($find,$replace,$coll->tva_intra);
-			if(empty($intra))
+			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
-				if($coll->assuj == '1')
+				$var=!$var;
+				$intra = str_replace($find,$replace,$coll->tva_intra);
+				if(empty($intra))
 				{
-					$intra = $langs->trans('Unknown');
+					if($coll->assuj == '1')
+					{
+						$intra = $langs->trans('Unknown');
+					}
+					else
+					{
+						$intra = '';
+					}
 				}
-				else
-				{
-					$intra = '';
-				}
+				print "<tr ".$bc[$var].">";
+				print '<td class="nowrap">'.$i."</td>";
+				$company_static->id=$coll->socid;
+				$company_static->nom=$coll->nom;
+				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
+				$find = array(' ','.');
+				$replace = array('','');
+				print '<td class="nowrap">'.$intra."</td>";
+				print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
+				print "<td class=\"nowrap\" align=\"right\">".price($local==1?$coll->localtax1:$coll->localtax2)."</td>";
+	            $totalamount = $totalamount + $coll->amount;
+				$total = $total + ($local==1?$coll->localtax1:$coll->localtax2);
+				print "</tr>\n";
+				$i++;
 			}
-			print "<tr ".$bc[$var].">";
-			print '<td class="nowrap">'.$i."</td>";
-			$company_static->id=$coll->socid;
-			$company_static->nom=$coll->nom;
-			print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
-			$find = array(' ','.');
-			$replace = array('','');
-			print '<td class="nowrap">'.$intra."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->localtax2)."</td>";
-            $totalamount = $totalamount + $coll->amount;
-			$total = $total + $coll->localtax2;
-			print "</tr>\n";
-			$i++;
 		}
+	    $x_paye_sum = $total;
+	
+		print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
+	    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
+		print '<td class="nowrap" align="right">'.price($total).'</td>';
+		print '</tr>';
+	
+		print '</table>';
+	
 	}
-    $x_paye_sum = $total;
-
-	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-	print '<td class="nowrap" align="right">'.price($total).'</td>';
-	print '</tr>';
-
-	print '</table>';
-
-    // Total to pay
-    print '<br><br>';
-    print '<table class="noborder" width="100%">';
-    $diff = $x_paye_sum;
-    print '<tr class="liste_total">';
-    print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
-    print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
-    print "</tr>\n";
-
-}
-else
-{
-	$langs->load("errors");
-	if ($coll_list == -1)
-		print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
-	else if ($coll_list == -2)
-		print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else
-		print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+	{
+		$langs->load("errors");
+		if ($coll_list == -1)
+			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
+		else if ($coll_list == -2)
+			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+		else
+			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+	}
 }
 
+if($conf->global->$calc ==0){
+	// Total to pay
+	print '<br><br>';
+	print '<table class="noborder" width="100%">';
+	$diff = $x_coll_sum - $x_paye_sum ;
+	print '<tr class="liste_total">';
+	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
+	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
+	print "</tr>\n";
+
+}
 print '</table>';
 
 

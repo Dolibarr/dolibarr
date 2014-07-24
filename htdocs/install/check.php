@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,6 +152,7 @@ if ($memmaxorig != '')
 	preg_match('/([0-9]+)([a-zA-Z]*)/i',$memmax,$reg);
 	if ($reg[2])
 	{
+		if (strtoupper($reg[2]) == 'G') $memmax=$reg[1]*1024*1024*1024;
 		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
 		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
 	}
@@ -393,7 +394,8 @@ else
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
 								array('from'=>'3.3.0', 'to'=>'3.4.0'),
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
-								array('from'=>'3.5.0', 'to'=>'3.6.0')
+								array('from'=>'3.5.0', 'to'=>'3.6.0'),
+								array('from'=>'3.6.0', 'to'=>'3.7.0')
 		);
 
 		$count=0;

@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'update')
         }
         else
         {
-            $mesg = $object->error;
+	        setEventMessage($object->error, 'errors');
             $action='create';
         }
     }
@@ -147,7 +147,7 @@ if ($action == 'add' || $action == 'update')
         else
         {
             $reload = 0;
-            $mesg = $object->error;
+	        setEventMessage($object->error, 'errors');
             $actino= "edit";
         }
     }
@@ -180,9 +180,6 @@ llxHeader();
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
-
-dol_htmloutput_errors($mesg);
-
 
 if ($action == 'create')
 {
@@ -307,7 +304,7 @@ elseif ($action == 'edit')
     $societe->fetch($socid);
     $head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'card', $societe->nom);
+    dol_fiche_head($head, 'card', $societe->name);
 
     print_titre($langs->trans("EditAddress"));
     print "<br>\n";
@@ -410,7 +407,7 @@ else
     $societe->fetch($object->socid);
     $head = societe_prepare_head($societe);
 
-    dol_fiche_head($head, 'customer', $societe->nom);
+    dol_fiche_head($head, 'customer', $societe->name);
 
 
     // Confirmation delete

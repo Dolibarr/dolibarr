@@ -71,6 +71,7 @@ ActionAC_FAX=FAXを送信
 ActionAC_PROP=メールで提案を送る
 ActionAC_EMAIL=電子メールを送信
 ActionAC_RDV=ミーティング
+ActionAC_INT=Intervention on site
 ActionAC_FAC=メールでの顧客の請求書を送る
 ActionAC_REL=メール（リマインダー）が顧客の請求書を送付
 ActionAC_CLO=閉じる

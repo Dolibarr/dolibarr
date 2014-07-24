@@ -79,7 +79,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 	$result = $account->update($user);
 	if (! $result)
 	{
-		$message=$account->error;
+		setEventMessage($account->error, 'errors');
 		$_GET["action"]='edit';     // Force chargement page edition
 	}
 	else
@@ -137,7 +137,7 @@ if ($action == 'add' && ! $_POST["cancel"])
 	    $result = $account->update($user);	// TODO Use create and include update into create method
 	    if (! $result)
 	    {
-	        $message=$account->error;
+		    setEventMessage($account->error, 'errors');
 	        $_GET["action"]='create';     // Force chargement page création
 	    }
 	    else
@@ -158,7 +158,7 @@ if ($action == 'setasdefault')
         header('Location: '.$url);
         exit;
     } else {
-        $message=$db->lasterror;
+	    setEventMessage($db->lasterror, 'errors');
     }
 }
 
@@ -176,12 +176,12 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
 		}
 		else
 		{
-			$message = $account->error;
+			setEventMessage($account->error, 'errors');
 		}
 	}
 	else
 	{
-         $message = $account->error;
+		setEventMessage($account->error, 'errors');
     }
 }
 
@@ -399,8 +399,6 @@ if ($socid && $action != 'edit' && $action != "create")
 
 if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
-    dol_htmloutput_mesg($message);
-
     print '<form action="rib.php?socid='.$soc->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
@@ -515,8 +513,6 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
-    dol_htmloutput_mesg($message);
-
     print '<form action="rib.php?socid='.$soc->id.'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="add">';

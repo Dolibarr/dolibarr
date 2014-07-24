@@ -82,7 +82,6 @@ else
 	$sql.= $db->plimit($conf->liste_limit +1, $offset);
 }
 
-dol_syslog("sql=".$sql);
 //print $sql;
 $result = $db->query($sql);
 if ($result)

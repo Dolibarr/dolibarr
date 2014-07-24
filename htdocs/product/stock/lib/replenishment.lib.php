@@ -122,7 +122,6 @@ function ordered($product_id)
 	{
 		$error = $db->lasterror();
 		dol_print_error($db);
-		dol_syslog('replenish.php: ' . $error, LOG_ERR);
 
 		return $langs->trans('error');
 	}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,16 +57,16 @@ class FormCompany
 	 */
 	function typent_array($mode=0, $filter='')
 	{
-		global $langs;
+		global $langs,$mysoc;
 
 		$effs = array();
 
 		$sql = "SELECT id, code, libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_typent";
-		$sql.= " WHERE active = 1";
+		$sql.= " WHERE active = 1 AND (fk_country IS NULL OR fk_country = ".(empty($mysoc->country_id)?'0':$mysoc->country_id).")";
 		if ($filter) $sql.=" ".$filter;
 		$sql.= " ORDER by id";
-		dol_syslog(get_class($this).'::typent_array sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::typent_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -104,7 +105,7 @@ class FormCompany
 		$sql.= " WHERE active = 1";
 		if ($filter) $sql.=" ".$filter;
 		$sql .= " ORDER BY id ASC";
-		dol_syslog(get_class($this).'::effectif_array sql='.$sql,LOG_DEBUG);
+		dol_syslog(get_class($this).'::effectif_array', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -229,7 +230,7 @@ class FormCompany
 		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND p.code = '".$country_codeid."'";
 		$sql .= " ORDER BY p.code, d.code_departement";
 
-		dol_syslog(get_class($this)."::select_departement sql=".$sql);
+		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -306,7 +307,7 @@ class FormCompany
 		$sql.= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1";
 		$sql.= " ORDER BY p.code, p.libelle ASC";
 
-		dol_syslog(get_class($this)."::select_region sql=".$sql);
+		dol_syslog(get_class($this)."::select_region", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -369,11 +370,11 @@ class FormCompany
 		$sql = "SELECT rowid, code, civilite as civility_label, active FROM ".MAIN_DB_PREFIX."c_civilite";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog("Form::select_civility sql=".$sql);
+		dol_syslog("Form::select_civility", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$out.= '<select class="flat" name="'.$htmlname.'">';
+			$out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			$out.= '<option value="">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -447,12 +448,12 @@ class FormCompany
 		if ($filter) $sql .= " ".$filter;
 		$sql .= " ORDER BY p.code";
 
-		dol_syslog(get_class($this)."::select_juridicalstatus sql=".$sql);
+		dol_syslog(get_class($this)."::select_juridicalstatus", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$out.= '<div id="particulier2" class="visible">';
-			$out.= '<select class="flat" name="forme_juridique_code">';
+			$out.= '<select class="flat" name="forme_juridique_code" id="legal_form">';
 			if ($country_codeid) $out.= '<option value="0">&nbsp;</option>';
 
 			$num = $this->db->num_rows($resql);
@@ -771,9 +772,50 @@ class FormCompany
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
 
-        $out = '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $out = '<input type="text" name="'.$htmlname.'" id="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
+    }
+
+    /**
+     * Return a HTML select with localtax values for thirdparties
+     *
+     * @param 	int 		$local			LocalTax
+     * @param 	int 		$selected		Preselected value
+     * @param 	string      $htmlname		HTML select name
+     * @return	void
+     */
+    function select_localtax($local, $selected, $htmlname)
+    {
+    	$tax=get_localtax_by_third($local);
+
+    	$num = $this->db->num_rows($tax);
+    	$i = 0;
+    	if ($num)
+    	{
+    		$valors=explode(":", $tax);
+
+    		if (count($valors) > 1)
+    		{
+    			//montar select
+    			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+    			while ($i <= (count($valors))-1)
+    			{
+    				if ($selected == $valors[$i])
+    				{
+    					print '<option value="'.$valors[$i].'" selected="selected">';
+    				}
+    				else
+    				{
+    					print '<option value="'.$valors[$i].'">';
+    				}
+    				print $valors[$i];
+    				print '</option>';
+    				$i++;
+    			}
+    			print'</select>';
+    		}
+    	}
     }
 
 }

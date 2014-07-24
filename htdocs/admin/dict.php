@@ -130,16 +130,16 @@ $tablib[24]= "DictionaryAccountancysystem";
 $tablib[25]= "DictionaryRevenueStamp";
 $tablib[26]= "DictionaryResourceType";
 
-// Requete pour extraction des donnees des dictionnaires
+// Requests to extract data
 $tabsql=array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as country_code, p.libelle as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, p.code as country_code, p.libelle as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code, nom as libelle, r.fk_pays as country_id, p.code as country_code, p.libelle as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, p.code as country_code, p.libelle as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, p.code as country_code, p.libelle as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
-$tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
+$tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country as country_id, p.code as country_code, p.libelle as country, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON t.fk_country=p.rowid";
 $tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
@@ -159,7 +159,7 @@ $tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, p.c
 $tabsql[25]= "SELECT t.rowid, t.taux, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
 
-// Critere de tri du dictionnaire
+// Criteria to sort dictionaries
 $tabsqlsort=array();
 $tabsqlsort[1] ="country ASC, code ASC";
 $tabsqlsort[2] ="country ASC, code ASC";
@@ -168,7 +168,7 @@ $tabsqlsort[4] ="code ASC";
 $tabsqlsort[5] ="libelle ASC";
 $tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] ="country ASC, code ASC, a.libelle ASC";
-$tabsqlsort[8] ="libelle ASC";
+$tabsqlsort[8] ="country DESC, libelle ASC";
 $tabsqlsort[9] ="label ASC";
 $tabsqlsort[10]="country ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
@@ -197,7 +197,7 @@ $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,country_id,country,accountancy_code,deductible";
-$tabfield[8] = "code,libelle";
+$tabfield[8] = "code,libelle,country_id,country";
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle";
@@ -226,7 +226,7 @@ $tabfieldvalue[4] = "code,libelle";
 $tabfieldvalue[5] = "code,libelle";
 $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
-$tabfieldvalue[8] = "code,libelle";
+$tabfieldvalue[8] = "code,libelle,country";
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10]= "country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
@@ -255,7 +255,7 @@ $tabfieldinsert[4] = "code,libelle";
 $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
-$tabfieldinsert[8] = "code,libelle";
+$tabfieldinsert[8] = "code,libelle,fk_country";
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
@@ -428,7 +428,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if ($value == 'country' && in_array('region_id',$listfield)) continue;		// For region page, we do not require the country input
+        if ($value == 'country' && in_array($tablib[$id],array('DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ((! isset($_POST[$value]) || $_POST[$value]=='')
@@ -473,9 +474,17 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
 	    }*/
     }
-    if (isset($_POST["country"]) && $_POST["country"]=='0') {
-        $ok=0;
-        setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
+    if (isset($_POST["country"]) && $_POST["country"]=='0')
+    {
+    	if (in_array($tablib[$id],array('DictionaryCompanyType')))
+    	{
+    		$_POST["country"]='';
+    	}
+    	else
+    	{
+        	$ok=0;
+        	setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
+    	}
     }
 
 	// Clean some parameters
@@ -528,7 +537,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
         $sql.=",1)";
 
-        dol_syslog("actionadd sql=".$sql);
+        dol_syslog("actionadd", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
@@ -576,7 +585,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
 
-        dol_syslog("actionmodify sql=".$sql);
+        dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
         $resql = $db->query($sql);
         if (! $resql)
@@ -599,7 +608,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
 
-    dol_syslog("delete sql=".$sql);
+    dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
     if (! $result)
     {
@@ -826,7 +835,7 @@ if ($id)
     print '</form>';
 
     // List of available values in database
-    dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
+    dol_syslog("htdocs/admin/dict", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {

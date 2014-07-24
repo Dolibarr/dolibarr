@@ -49,8 +49,6 @@ $contact->fetch($id, $user);
 
 if ($action == 'dolibarr2ldap')
 {
-	$message="";
-
 	$db->begin();
 
 	$ldap=new Ldap();
@@ -64,12 +62,12 @@ if ($action == 'dolibarr2ldap')
 
 	if ($result >= 0)
 	{
-		$message.='<div class="ok">'.$langs->trans("ContactSynchronized").'</div>';
+		setEventMessage($langs->trans("ContactSynchronized"));
 		$db->commit();
 	}
 	else
 	{
-		$message.='<div class="error">'.$ldap->error.'</div>';
+		setEventMessage($ldap->error, 'errors');
 		$db->rollback();
 	}
 }
@@ -135,10 +133,6 @@ print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur" c
 print '</table>';
 
 print '</div>';
-
-
-dol_htmloutput_mesg($message);
-
 
 /*
  * Barre d'actions

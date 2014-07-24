@@ -87,20 +87,22 @@ before_script:
 
 script: 
  - cd htdocs/install
+ - date
  - php upgrade.php 3.4.0 3.5.0 > upgrade.log
  - php upgrade2.php 3.4.0 3.5.0 > upgrade2.log
  - php upgrade.php 3.5.0 3.6.0 >> upgrade.log
  - php upgrade2.php 3.5.0 3.6.0 >> upgrade2.log
- - cd ../..
+ - php upgrade.php 3.6.0 3.7.0 >> upgrade.log
+ - php upgrade2.php 3.6.0 3.7.0 >> upgrade2.log
 # - cat upgrade.log
 # - cat upgrade2.log
-# - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/AllTests.php
-# - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml --coverage-text test/phpunit/BuildDocTest.php
-# - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/WebservicesOtherTest.php
-# - phpcs --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php
- - phpcs --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ . 
-# - phpcs --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/documents/,/includes/,/test/report/ .
+ - cd ../..
+ - date
  - phpunit -d memory_limit=-1 --configuration test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+ - date
+# - phpcs -p --warning-severity=0 -s --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ htdocs/core/class/dolgraph.class.php 2>&1
+ - phpcs -p --warning-severity=0 -s --report-checkstyle --report-summary --standard=dev/codesniffer/ruleset.xml --tab-width=4 --ignore=/build/html/,/dev/vagrant/,/documents/,/includes/,/test/report/ . 2>&1
+ - date
 
 after_script:
 # - echo Output dolibarr log file; cat $(pwd)/htdocs/documents/dolibarr.log

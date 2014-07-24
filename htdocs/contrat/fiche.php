@@ -3,9 +3,9 @@
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +40,14 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
+require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 $langs->load("contracts");
 $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
+$langs->load('compta');
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -65,6 +67,10 @@ $usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MA
 $hookmanager->initHooks(array('contractcard'));
 
 $object = new Contrat($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 $permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -86,7 +92,7 @@ if ($action == 'confirm_active' && $confirm == 'yes' && $user->rights->contrat->
         exit;
     }
     else {
-        $mesg=$object->error;
+        setEventMessage($object->error,'errors');
     }
 }
 
@@ -107,7 +113,7 @@ else if ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->c
 	        exit;
 	    }
 	    else {
-	        $mesg=$object->error;
+	        setEventMessage($object->error,'errors');
 	    }
 	}
 }
@@ -176,7 +182,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	if (empty($datecontrat))
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		$action='create';
 	}
 
@@ -200,6 +206,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
     	$object->fk_project					= GETPOST('projectid','int');
     	$object->remise_percent				= GETPOST('remise_percent','alpha');
     	$object->ref						= GETPOST('ref','alpha');
+    	$object->ref_ext					= GETPOST('ref_ext','alpha');
 
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
 	    if ($_POST['origin'] && $_POST['originid'])
@@ -228,7 +235,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 
 	        $id = $object->create($user);
 	        if ($id < 0) {
-	            $mesg='<div class="error">'.$object->error.'</div>';
+	        	setEventMessage($object->error,'errors');
 	        }
 
 	        if ($id > 0)
@@ -319,26 +326,30 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	            }
 	            else
 	            {
-	                $mesg=$srcobject->error;
+	                setEventMessage($srcobject->error,'errors');
 	                $error++;
 	            }
 	        }
 	        else
 	        {
-	            $mesg=$object->error;
+	            setEventMessage($object->error,'errors');
 	            $error++;
 	        }
 	    }
 	    else
 	    {
-	        $result = $object->create($user,$langs,$conf);
+	    	
+	    	// Fill array 'array_options' with data from add form
+	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+	    	
+	        $result = $object->create($user);
 	        if ($result > 0)
 	        {
 	            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 	            exit;
 	        }
 	        else {
-	            $mesg='<div class="error">'.$object->error.'</div>';
+	        	setEventMessage($object->error,'errors');
 	        }
 	        $action='create';
 		}
@@ -389,7 +400,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         $ret=$object->fetch($id);
         if ($ret < 0)
         {
-            dol_print_error($db,$object->error);
+        	setEventMessage($object->error,'errors');
             exit;
         }
         $ret=$object->fetch_thirdparty();
@@ -546,7 +557,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
         }
         else
         {
-            $mesg='<div class="error">'.$object->error.'</div>';
+        	setEventMessage($object->error,'errors');
         }
     }
 }
@@ -604,13 +615,13 @@ else if ($action == 'updateligne' && $user->rights->contrat->creer && ! GETPOST(
         }
         else
         {
-            dol_print_error($db,'Failed to update contrat_det');
+        	setEventMessage($objectline->error,'errors');
             $db->rollback();
         }
     }
     else
     {
-        dol_print_error($db);
+    	setEventMessage($objectline->error,'errors');
     }
 }
 
@@ -626,7 +637,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
     }
     else
     {
-        $mesg=$object->error;
+    	setEventMessage($object->error,'errors');
     }
 }
 
@@ -655,7 +666,7 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->cont
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error,'errors');
 	}
 }
 
@@ -674,12 +685,48 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		}
 		else
 		{
-			$mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error,'errors');
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefNewContract")),'errors');
+	}
+} else if ($action == 'update_extras') {
+	// Fill array 'array_options' with data from update form
+	$object->fetch($id);
+	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	if ($ret < 0)
+		$error ++;
+
+	if (! $error) {
+		
+			$result = $object->insertExtraFields();
+			if ($result < 0) {
+				$error ++;
+			}
+		} else if ($reshook < 0)
+			$error ++;
+
+	if ($error) {
+		$action = 'edit_extras';
+		setEventMessage($object->error,'errors');
+	}
+} elseif ($action=='setref_ext') {
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+	}
+	$object->ref_ext=GETPOST('ref_ext','alpha');
+	
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+		$action='editref_ext';
+	} else {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit;
 	}
 }
 
@@ -705,11 +752,11 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat-
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"),'errors');
 			}
 			else
 			{
-				$mesg = '<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error,'errors');
 			}
 		}
 	}
@@ -723,7 +770,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat-
 		}
 		else
 		{
-			dol_print_error($db);
+			setEventMessage($object->error,'errors');
 		}
 	}
 
@@ -739,7 +786,7 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat-
 			exit;
 		}
 		else {
-			dol_print_error($db);
+			setEventMessage($object->error,'errors');
 		}
 	}
 }
@@ -764,8 +811,6 @@ $objectlignestatic=new ContratLigne($db);
 if ($action == 'create')
 {
 	print_fiche_titre($langs->trans('AddContract'));
-
-    dol_htmloutput_errors($mesg,'');
 
     $soc = new Societe($db);
     if ($socid>0) $soc->fetch($socid);
@@ -830,6 +875,10 @@ if ($action == 'create')
 
     // Ref
 	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
+	
+	// Ref Int
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+	print '<td colspan="2"><input type="text" siez="5" name="ref_ext" id="ref_ext" value="'.GETPOST('ref_ext','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';
@@ -902,8 +951,13 @@ if ($action == 'create')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="3"');
+    $parameters=array('objectsrc' => $objectsrc,'colspan' => ' colspan="3"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    
+    // Other attributes
+    if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+    	print $object->showOptionals($extrafields, 'edit');
+    }
 
     print "</table>\n";
 
@@ -936,8 +990,6 @@ else
         if ($result < 0) dol_print_error($db,$object->error);
         $result=$object->fetch_thirdparty();
         if ($result < 0) dol_print_error($db,$object->error);
-
-        dol_htmloutput_errors($mesg,'');
 
         $nbofservices=count($object->lines);
 
@@ -1015,6 +1067,14 @@ else
         print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
         print "</td></tr>";
 
+        print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("RefCustomer",'ref_ext',$object->ref_ext,$object,$user->rights->contrat->creer);
+		print '</td>';
+		print '</tr>';
+
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";
         print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
@@ -1065,6 +1125,50 @@ else
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        
+        $res = $object->fetch_optionals($object->id, $extralabels);
+        if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+        	foreach ($extrafields->attribute_label as $key => $label) {
+        		if ($action == 'edit_extras') {
+        			$value = (isset($_POST ["options_" . $key]) ? $_POST ["options_" . $key] : $object->array_options ["options_" . $key]);
+        		} else {
+        			$value = $object->array_options ["options_" . $key];
+        		}
+        		if ($extrafields->attribute_type [$key] == 'separate') {
+        			print $extrafields->showSeparator($key);
+        		} else {
+        			print '<tr><td';
+        			if (! empty($extrafields->attribute_required [$key]))
+        				print ' class="fieldrequired"';
+        			print '>' . $label . '</td><td colspan="5">';
+        			// Convert date into timestamp format
+        			if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
+        				$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
+        			}
+        
+        			if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key) {
+        				print '<form enctype="multipart/form-data" action="' . $_SERVER["PHP_SELF"] . '" method="post" name="formcontract">';
+        				print '<input type="hidden" name="action" value="update_extras">';
+        				print '<input type="hidden" name="attribute" value="' . $key . '">';
+        				print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+        				print '<input type="hidden" name="id" value="' . $object->id . '">';
+        
+        				print $extrafields->showInputField($key, $value);
+        
+        				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+        				print '</form>';
+        			} else {
+        				print $extrafields->showOutputField($key, $value);
+        				if ($object->statut == 0 && $user->rights->commande->creer)
+        					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
+        			}
+        			print '</td></tr>' . "\n";
+        		}
+        	}
+        }
+        
+        
+        
 
         print "</table>";
 

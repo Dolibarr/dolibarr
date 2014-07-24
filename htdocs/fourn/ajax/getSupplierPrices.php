@@ -58,7 +58,7 @@ if (! empty($idprod))
 	$sql.= " AND s.fournisseur = 1";
 	$sql.= " ORDER BY s.nom, pfp.ref_fourn DESC";
 
-	dol_syslog("Ajax::getSupplierPrices sql=".$sql, LOG_DEBUG);
+	dol_syslog("Ajax::getSupplierPrices", LOG_DEBUG);
 	$result=$db->query($sql);
 
 	if ($result)

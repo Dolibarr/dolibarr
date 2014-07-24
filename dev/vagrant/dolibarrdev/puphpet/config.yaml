@@ -29,10 +29,12 @@ vagrantfile-local:
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
                     - '--parser future'
         synced_folder:
-            PL1BkioqqvGY:
+            jopH6005bn96:
                 source: ../../../
-                target: /var/www
-                nfs: 'false'
+                target: /var/www/dolibarr
+                sync_type: default
+                rsync:
+                    auto: 'false'
         usable_port_range: 2200..2250
     ssh:
         host: null
@@ -71,7 +73,7 @@ apache:
     settings:
         user: www-data
         group: www-data
-        default_vhost: false
+        default_vhost: true
         manage_user: false
         manage_group: false
         sendfile: 0
@@ -79,9 +81,9 @@ apache:
         - php
         - rewrite
     vhosts:
-        CGyWQB0fx4x0:
+        b2tOrs1TMtoF:
             servername: dev.dolibarr.org
-            docroot: /var/www/htdocs
+            docroot: /var/www/dolibarr/htdocs
             port: '80'
             setenv:
                 - 'APP_ENV dev'
@@ -97,7 +99,7 @@ apache:
 nginx:
     install: 0
     vhosts:
-        jeF1sybIJ3V2:
+        0dU5luf5AnIe:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
@@ -152,7 +154,7 @@ mysql:
     root_password: root
     adminer: 0
     databases:
-        2OfuuapoIqsl:
+        V6H3W2FVB7Yq:
             grant:
                 - ALTER
                 - CREATE
@@ -166,16 +168,16 @@ mysql:
             host: localhost
             user: user
             password: user
-            sql_file: /var/www/dev/initdata/mysqldump_dolibarr_3.5.0.sql
+            sql_file: /var/www/dolibarr/dev/initdata/mysqldump_dolibarr_3.5.0.sql
 postgresql:
-    install: 0
+    install: '1'
     settings:
-        root_password: '123'
+        root_password: root
         user_group: postgres
         encoding: UTF8
         version: '9.3'
     databases: {  }
-    adminer: 0
+    adminer: '1'
 mariadb:
     install: 0
     root_password: '123'

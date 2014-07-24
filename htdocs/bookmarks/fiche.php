@@ -50,14 +50,14 @@ $backtopage=GETPOST('backtopage','alpha');
 
 if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 {
+	$error = 0;
+
 	if (GETPOST("cancel"))
 	{
 		if (empty($backtopage)) $backtopage=(GETPOST("urlsource")?GETPOST("urlsource"):((! empty($url))?$url:DOL_URL_ROOT.'/bookmarks/liste.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
-
-	$mesg='';
 
 	$bookmark=new Bookmark($db);
 	if ($action == 'update') $bookmark->fetch($_POST["id"]);
@@ -67,10 +67,17 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 	$bookmark->target=$target;
 	$bookmark->position=$position;
 
-	if (! $title) $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle"));
-	if (! $url)   $mesg.=($mesg?'<br>':'').$langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink"));
+	if (! $title) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("BookmarkTitle")), 'errors');
+	}
 
-	if (! $mesg)
+	if (! $url) {
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("UrlOrLink")), 'errors');
+	}
+
+	if (! $error)
 	{
 		$bookmark->favicon='none';
 
@@ -88,18 +95,17 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 			if ($bookmark->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
-				$mesg='<div class="warning">'.$langs->trans("WarningBookmarkAlreadyExists").'</div>';
+				setEventMessage($langs->trans("WarningBookmarkAlreadyExists"), 'warnings');
 			}
 			else
 			{
-				$mesg='<div class="error">'.$bookmark->error.'</div>';
+				setEventMessage($bookmark->error, 'errors');
 			}
 			$action='create';
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$mesg.'</div>';
 		$action='create';
 	}
 }
@@ -121,7 +127,7 @@ if ($action == 'delete')
 	}
 	else
 	{
-		$mesg='<div class="error">'.$bookmark->error.'</div>';
+		setEventMessage($bookmark->error, 'errors');
 	}
 }
 
@@ -149,8 +155,6 @@ if ($action == 'create')
 
 	dol_fiche_head($head, $hselected, $langs->trans("Bookmark"),0,'bookmark');
 	
-	dol_htmloutput_mesg($mesg);
-
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("BookmarkTitle").'</td><td><input class="flat" name="title" size="30" value="'.$title.'"></td><td class="hideonsmartphone">'.$langs->trans("SetHereATitleForLink").'</td></tr>';

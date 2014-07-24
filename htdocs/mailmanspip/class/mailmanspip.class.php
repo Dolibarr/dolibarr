@@ -112,7 +112,7 @@ class MailmanSpip
     /**
      * Function used to connect to Mailman
      *
-     * @param	object 	$object 	Object with the data
+     * @param	Adherent 	$object 	Object with the data
      * @param	string 	$url    	Mailman URL to be called with patterns
      * @param	string	$list		Name of mailing-list
      * @return 	mixed				Boolean or string
@@ -146,6 +146,7 @@ class MailmanSpip
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
         curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
         $result = curl_exec($ch);
         dol_syslog('result curl_exec='.$result);

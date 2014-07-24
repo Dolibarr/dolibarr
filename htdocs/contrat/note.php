@@ -64,8 +64,6 @@ $form = new Form($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	dol_htmloutput_mesg($mesg);
-
     $object->fetch_thirdparty();
 
     $head = contract_prepare_head($object);

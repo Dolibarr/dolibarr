@@ -65,6 +65,8 @@ ShowPreview=Zobrazit náhled
 PreviewNotAvailable=Náhled není k dispozici
 ThemeCurrentlyActive=Téma aktivní
 CurrentTimeZone=Časové pásmo PHP (server)
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Mezera
 Table=Tabulka
 Fields=Pole
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr aktuální verze
 CallUpdatePage=Přejděte na stránku, která aktualizuje databázovou strukturu a údaje: %s.
 LastStableVersion=Poslední stabilní verze
 GenericMaskCodes=Můžete zadat jakoukoliv masku číselné řady. V masce můžete použít následující značky: <br><b>{000000}</b> číslo, automaticky inkrementované o 1 při každým %s. Počet nul odpovídá požadovanému počtu číslic. Číslo se zleva doplní nulami pro dosažení požadovaného počtu číslic. <br><b>{000000+000}</b> stejné jako předchozí, ale ofset odpovídající číslu napravo od znaku + bude použit pro první %s. <br><b>{000000@x}</b> stejné jako předchozí, ale počítadlo se resetuje na nulu, když je dosaženo měsíce x (x je v rozmezí 1 ~ 12, nebo 0 pro použití prvního měsíce fiskálního roku definované ve vaší konfiguraci, nebo 99 pro vynulování každý měsíc ). Pokud se tato volba používá, a x je 2 nebo vyšší, pak je rovněž požadovaná posloupnost {yy}{mm} či {yyyy}{mm}. <br><b>{dd}</b> den (01 až 31).<br><b>{mm}</b> měsíc (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> nebo <b>{y}</b> rok, 2, 4 nebo 1 číslo. <br>
-GenericMaskCodes2=<b>{cccc}</b> Zákaznický kód s n znaky<br><b>{cccc000}</b> Zákaznický kód s n znaky je sledován počítadlem určeným pro zákazníka. Toto počítadlo se resetuje ve stejný čas, jako globální počítadlo<br><b>{tttt}</b> Kód společnosti s n znaky (viz. seznam typů společností). <br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Všechny ostatní znaky v masce zůstanou nedotčeny. <br> Mezery nejsou povoleny. <br>
 GenericMaskCodes4a=<u>Příklad na 99. %s třetí strany TheCompany proveden 2007-01-31:</u> <br>
 GenericMaskCodes4b=<u>Příklad třetí osoby vytvořené 03.01.2007:</u> <br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=Ve výchozím nastavení je navrhovaná DPH 0, který lze použ
 VATIsUsedExampleFR=Ve Francii, to znamená, že podniky a organizace, které mají skutečnou fiskální systém (zjednodušený reálný nebo normální reálné). Systém, v němž je deklarován DPH.
 VATIsNotUsedExampleFR=Ve Francii, to znamená, asociace, které jsou bez DPH prohlášené nebo společnosti, organizace nebo svobodných povolání, které se rozhodly pro Micro Enterprise daňového systému (s DPH v povolení) a placenými franšízové ​​DPH bez DPH prohlášení. Tato volba se zobrazí odkaz &quot;nepoužitelné DPH - art-293B CGI&quot; na fakturách.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Použití druhé daně
 LocalTax1IsNotUsed=Nepoužívejte druhá daň
 LocalTax1IsUsedDesc=Použijte druhý typ daně (kromě DPH)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= RE sazba ve výchozím nastavení při vytváření vyhl�
 LocalTax2IsNotUsedDescES= Ve výchozím nastavení je navrhovaná IRPF je 0. Konec vlády.
 LocalTax2IsUsedExampleES= Ve Španělsku, na volné noze a nezávislí odborníci, kteří poskytují služby a firmy, kteří se rozhodli daňového systému modulů.
 LocalTax2IsNotUsedExampleES= Ve Španělsku jsou bussines, které nejsou předmětem daňového systému modulů.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Label používá ve výchozím nastavení, pokud není překlad lze nalézt kód
 LabelOnDocuments=Štítek na dokumenty
 NbOfDays=Nb dní
@@ -1453,6 +1463,9 @@ AgendaSetup=Akce a agenda Nastavení modulu
 PasswordTogetVCalExport=Klíč povolit export odkaz
 PastDelayVCalExport=Neexportovat události starší než
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Tento modul umožňuje přidat ikonu po telefonních čísel. Klepnutím na tuto ikonu bude volat server s konkrétní URL, kterou definujete níže. To lze použít k volání call centra systému z Dolibarr které mohou volat na telefonní číslo SIP systému pro příklad.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Úkoly zprávy Vzor dokladu
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatické strom složek a dokumentů
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

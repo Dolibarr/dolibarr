@@ -245,7 +245,6 @@ print_barre_liste($langs->trans('ProductsIntoElements', $typeElementString.' '.$
 
 if ($sql_select)
 {
-	dol_syslog("sql=".$sql);
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
 }
@@ -442,14 +441,6 @@ else {
 
 print "</table>";
 print "</form>";
-
-
-/*
- * Errors
- */
-
-dol_htmloutput_errors($warning);
-dol_htmloutput_errors($error,$errors);
 
 llxFooter();
 

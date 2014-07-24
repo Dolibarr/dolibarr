@@ -1,19 +1,20 @@
 <?php
 /* Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *      \file       htdocs/compta/salaries/class/paymentsalary.class.php
@@ -114,25 +115,22 @@ class PaymentSalary extends CommonObject
 
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 
 		if (! $notrigger)
 		{
-			// Start triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('PAYMENT_SALARY_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
-			}
-			// End triggers
+            // Call trigger
+            $result=$this->call_trigger('PAYMENT_SALARY_MODIFY',$user);
+            if ($result < 0) $error++;            
+            // End call triggers
+
+			//FIXME: Add rollback if trigger fail
 		}
 
 		return 1;
@@ -174,7 +172,7 @@ class PaymentSalary extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql.= " WHERE s.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -209,7 +207,6 @@ class PaymentSalary extends CommonObject
 		else
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -226,27 +223,23 @@ class PaymentSalary extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
+		
+		// Call trigger
+		$result=$this->call_trigger('PAYMENT_SALARY_DELETE',$user);
+		if ($result < 0) return -1;
+		// End call triggers
+		
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_salary";
 		$sql.= " WHERE rowid=".$this->id;
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
-
-		// Start triggers
-		include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		$interface=new Interfaces($this->db);
-		$result=$interface->run_triggers('PAYMENT_SALARY_DELETE',$this,$user,$langs,$conf);
-		if ($result < 0) {
-			$error++; $this->errors=$interface->errors;
-		}
-		// End triggers
 
 		return 1;
 	}
@@ -286,6 +279,8 @@ class PaymentSalary extends CommonObject
 	function create($user)
 	{
 		global $conf,$langs;
+		
+		$error=0;
 
 		// Clean parameters
 		$this->amount=price2num(trim($this->amount));
@@ -355,11 +350,10 @@ class PaymentSalary extends CommonObject
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$ok=1;
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_salary");
 
@@ -395,10 +389,10 @@ class PaymentSalary extends CommonObject
 					else
 					{
 						$this->error=$acc->error;
-						$ok=0;
+						$error++;
 					}
 
-					if ($ok)
+					if (! $error)
 					{
 						// Add link 'payment_salary' in bank_url between payment and bank transaction
 						$url=DOL_URL_ROOT.'/compta/salaries/fiche.php?id=';
@@ -407,7 +401,7 @@ class PaymentSalary extends CommonObject
 						if ($result <= 0)
 						{
 							$this->error=$acc->error;
-							$ok=0;
+							$error++;
 						}
 					}
 
@@ -427,38 +421,25 @@ class PaymentSalary extends CommonObject
 					if ($result <= 0)
 					{
 						$this->error=$acc->error;
-						$ok=0;
+						$error++;
 					}
 				}
 
-				// Start triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PAYMENT_SALARY_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// End triggers
-
+	            // Call trigger
+	            $result=$this->call_trigger('PAYMENT_SALARY_CREATE',$user);
+	            if ($result < 0) $error++;            
+	            // End call triggers
+	
 			}
-			else $ok=0;
+			else $error++;
 
-			if ($ok)
+			if (! $error)
 			{
-				if ($ok)
-				{
-					$this->db->commit();
-					return $this->id;
-				}
-				else
-				{
-					$this->db->rollback();
-					return -3;
-				}
+				$this->db->commit();
+				return $this->id;
 			}
 			else
 			{
-				$this->error=$this->db->error();
 				$this->db->rollback();
 				return -2;
 			}

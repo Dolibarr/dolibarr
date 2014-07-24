@@ -114,6 +114,7 @@ See ChangeLog file found into package.
 - Very user friendly and easy to use.
 - Highly customizable: Enable only modules you need, user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one).
 - Works with PHP 5.3+, MySql 4.1 or PostgreSQL 8.1.
+- Require PHP and Mysql or Postgresql (See exatc versions on http://wiki.dolibarr.org/index.php/Prerequisite).
 - Compatible with all Cloud solutions that match MySql, PHP or PostgreSQL prerequisites.
 - An easy to understand, maintain and code interfaces with your own system information (PHP with no heavy frameworks, trigger and hook architecture).
 - Support countries specific features:

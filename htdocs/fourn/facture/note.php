@@ -21,8 +21,8 @@
 /**
  *      \file       htdocs/fourn/facture/note.php
  *      \ingroup    facture
-*      \brief      Fiche de notes sur une facture fournisseur
-*/
+ *      \brief      Fiche de notes sur une facture fournisseur
+ */
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
@@ -137,7 +137,7 @@ if ($object->id > 0)
 	// Label
 	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
 	print $form->editfieldval("Label",'label',$object->label,$object,0);
-	print '</td>';
+	print '</td></tr>';
 
 	print "</table>";
 

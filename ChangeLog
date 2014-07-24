@@ -5,18 +5,63 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
+       on uploaded file names. 
+- New: No more dependency between contract and service module.
 - New: [ task #867 ] Remove ESAEB external module code from core.
 - New: Can create proposal from an intervention.
 - New: Can filter events on a group of users.
-- New: Add thirdparty to filter on events. 
+- New: Can filter events of a thirdparty.
+- New: Split Agenda view (month, week, day) into different tabs.
+- New: Form to add a photo is immediatly available on photo page if
+       permissions are ok (save one click per photo to add).
+- New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
+       shown on main product card.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by default)
+- New: Add country into table of thirdparties type. This will allow to provide
+       a list of thirdparty types specific to a country (like argentina that
+       need type A or B).
+- New: Can force a specific bank account onto an invoice/order.
+- New: First changes for accessibility.
+- New: Home page of project area shows list of draft project (like other main page).
+- New: Can search on project ref or string from project main page (like other main page).
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+- Fix: [ bug #1470, #1472, #1473] User trigger problem
+- Fix: [ bug #1489, #1491 ] Intervention trigger problem
+- Fix: [ bug #1492, #1493 ] Member trigger problem
+- Fix: [ bug #1474, #1475 ] Contract trigger problem
+- Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
+- Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
+- Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
+- Fix: [ bug #1505, #1504] Project trigger problem
+- Fix: [ bug #1463, #1464 ] Proposal triggers problem
+- Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
+- Fix: [ bug #1465, #1466 ] Product triggers problem
+- Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
+- Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
+- Fix: [ bug #1506, #1507 ] ECM trigger error problem
+- Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- New: [ task #1204 ] add a External reference to contract
 
 For translators:
 - Update language files.
 
 For developers:
 - New: Add hook "searchAgendaFrom".
+- New: Add trigger DON_UPDATE, DON_DELETE
+- New: Add country iso code on 3 chars into table of countries.
+- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
+- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
+- New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
+- New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
 
+WARNING: Following change may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- Change the way parameters are provides to scripts sync_xxx_ldap2dolibarr.php  
+ 
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
@@ -87,6 +132,12 @@ For users:
 - Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
 - Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
+- Fix: [ bug #1471 ] Several PHP warnings when intercepting USER_CREATE trigger.
+- Fix: [ bug #1517 ] Packages sizes.
+- Fix: [ bug #1521 ] The second order's page from a provider shows all orders
+
+TODO
+- New: Predefined product and free product use same form.
 
 For translators:
 - Update language files.
@@ -124,10 +175,12 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
   So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
+- Remove add_photo_web() that is ot used anymore by core code.
 
 
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Hide title of event when agenda module disabled.
 Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
 Fix: Question about warehouse must not be done when module stock is disabled.
 Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
@@ -168,6 +221,9 @@ Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order l
 Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
 Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
 Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
+Fix: [ bug #1522 ] Element list into associate object into project are no more filterd by project thirdparty
+Fix: [ bug #1526 ] Thumbs of files uploaded with dots in their names do not load correctly
+Fix: Import ProfId1 to siren and ProfId2 to siret
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.

@@ -69,7 +69,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
 					$result=$bankline->update_conciliation($user,$_POST["cat"]);
 					if ($result < 0)
 					{
-						$mesg.=$bankline->error;
+						setEventMessage($bankline->error, 'errors');
 						$error++;
 						break;
 					}
@@ -81,7 +81,7 @@ if ($action == 'rappro' && $user->rights->banque->consolidate)
     {
     	$error++;
     	$langs->load("errors");
-        $mesg='<div class="error">'.$langs->trans("ErrorPleaseTypeBankTransactionReportName").'</div>';
+	    setEventMessage($langs->trans("ErrorPleaseTypeBankTransactionReportName"), 'errors');
     }
 
     if (! $error)
@@ -182,8 +182,6 @@ if ($resql)
 
     print_fiche_titre($langs->trans("Reconciliation").': <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>');
     print '<br>';
-
-    dol_htmloutput_mesg($mesg);
 
     // Show last bank receipts
     $nbmax=5;

@@ -190,7 +190,7 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= " ORDER BY s.nom, s.rowid";
 
-dol_syslog("get customer invoices sql=".$sql);
+dol_syslog("get customer invoices", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
@@ -235,7 +235,7 @@ if ($modecompta != 'CREANCES-DETTES')
     $sql.= " GROUP BY nom, idp";
     $sql.= " ORDER BY nom";
 
-    dol_syslog("get old customer payments not linked to invoices sql=".$sql);
+    dol_syslog("get old customer payments not linked to invoices", LOG_DEBUG);
     $result = $db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -320,7 +320,7 @@ print '<tr><td colspan="4">'.$langs->trans("SuppliersInvoices").'</td></tr>';
 
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
-dol_syslog("get suppliers invoices sql=".$sql);
+dol_syslog("get suppliers invoices", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
@@ -401,7 +401,7 @@ $sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, c.id";
 $sql.= " ORDER BY c.libelle, c.id";
 
-dol_syslog("get social contributions deductible=0 sql=".$sql);
+dol_syslog("get social contributions deductible=0", LOG_DEBUG);
 $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -478,7 +478,7 @@ else
     $sql.= " ORDER BY c.libelle, c.id";
 }
 
-dol_syslog("get social contributions deductible=1 sql=".$sql);
+dol_syslog("get social contributions deductible=1", LOG_DEBUG);
 $result=$db->query($sql);
 $subtotal_ht = 0;
 $subtotal_ttc = 0;
@@ -564,7 +564,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm";
 
-    dol_syslog("get vat to pay sql=".$sql);
+    dol_syslog("get vat to pay", LOG_DEBUG);
     $result=$db->query($sql);
     if ($result)
     {
@@ -609,7 +609,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm";
 
-    dol_syslog("get vat received back sql=".$sql);
+    dol_syslog("get vat received back", LOG_DEBUG);
     $result=$db->query($sql);
     if ($result)
     {
@@ -653,7 +653,7 @@ else
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm";
 
-    dol_syslog("get vat really paid sql=".$sql);
+    dol_syslog("get vat really paid", LOG_DEBUG);
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
@@ -694,7 +694,7 @@ else
     $sql.= " GROUP BY dm";
     $sql.= " ORDER BY dm";
 
-    dol_syslog("get vat really received back sql=".$sql);
+    dol_syslog("get vat really received back", LOG_DEBUG);
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);

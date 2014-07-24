@@ -44,5 +44,3 @@ function check_user_password_http($usertotest,$passwordtotest,$entitytotest)
 	return $login;
 }
 
-
-?>

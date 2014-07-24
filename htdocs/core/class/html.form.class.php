@@ -486,7 +486,7 @@ class Form
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
 
-        dol_syslog(get_class($this)."::select_country sql=".$sql);
+        dol_syslog(get_class($this)."::select_country", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -543,8 +543,8 @@ class Form
      *	@param  string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in html form
      * 	@param	int		$showempty		Add an empty field
-     * 	@param	int		$hidetext		Do not show label before combo box
-     * 	@param	string	$forceall		Force to show products and services in combo list, whatever are activated modules
+     * 	@param	int		$hidetext		Do not show label 'Type' before combo box (used only if there is at least 2 choices to select)
+     * 	@param	string	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
      *  @return	void
      */
     function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
@@ -552,8 +552,8 @@ class Form
         global $db,$langs,$user,$conf;
 
         // If product & services are enabled or both disabled.
-        if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
-        || (empty($conf->product->enabled) && empty($conf->service->enabled)))
+        if ($forceall > 0 || (empty($forceall) && ! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+        || (empty($forceall) && empty($conf->product->enabled) && empty($conf->service->enabled)) )
         {
             if (empty($hidetext)) print $langs->trans("Type").': ';
             print '<select class="flat" id="select_'.$htmlname.'" name="'.$htmlname.'">';
@@ -575,15 +575,20 @@ class Form
             print '</select>';
             //if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         }
-        if (! $forceall && empty($conf->product->enabled) && ! empty($conf->service->enabled))
+        if (empty($forceall) && empty($conf->product->enabled) && ! empty($conf->service->enabled))
         {
+        	print $langs->trans("Service");
             print '<input type="hidden" name="'.$htmlname.'" value="1">';
         }
-        if (! $forceall && ! empty($conf->product->enabled) && empty($conf->service->enabled))
+        if (empty($forceall) && ! empty($conf->product->enabled) && empty($conf->service->enabled))
         {
+        	print $langs->trans("Product");
             print '<input type="hidden" name="'.$htmlname.'" value="0">';
         }
-
+		if ($forceall < 0)	// This should happened only for contracts when both predefined product and service are disabled.
+		{
+            print '<input type="hidden" name="'.$htmlname.'" value="1">';	// By default we set on service for contract. If CONTRACT_SUPPORT_PRODUCTS is set, forceall should be 1 not -1
+		}
     }
 
     /**
@@ -604,7 +609,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
         $sql.= " ORDER BY lower(c.libelle) ASC";
 
-        dol_syslog(get_class($this).'::load_cache_types_fees sql='.$sql, LOG_DEBUG);
+        dol_syslog(get_class($this).'::load_cache_types_fees', LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -795,7 +800,7 @@ class Form
         $sql.=$this->db->order("nom","ASC");
 		if ($limit > 0) $sql.=$this->db->plimit($limit);
 
-        dol_syslog(get_class($this)."::select_thirdparty_list sql=".$sql);
+        dol_syslog(get_class($this)."::select_thirdparty_list", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -889,7 +894,7 @@ class Form
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
-        dol_syslog(get_class($this)."::select_remises sql=".$sql);
+        dol_syslog(get_class($this)."::select_remises", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -995,7 +1000,7 @@ class Form
         if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut<>0 ";
         $sql.= " ORDER BY sp.lastname ASC";
 
-        dol_syslog(get_class($this)."::select_contacts sql=".$sql);
+        dol_syslog(get_class($this)."::select_contacts", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1163,7 +1168,7 @@ class Form
         if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
         $sql.= " ORDER BY u.lastname ASC";
 
-        dol_syslog(get_class($this)."::select_dolusers sql=".$sql);
+        dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1413,7 +1418,7 @@ class Form
         $sql.= $db->plimit($limit);
 
         // Build output string
-        dol_syslog(get_class($this)."::select_produits_list search product sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_list search product", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1436,7 +1441,7 @@ class Form
 					$sql.= " WHERE fk_product_price=".$objp->price_rowid;
 					$sql.= " ORDER BY quantity ASC";
 
-					dol_syslog(get_class($this)."::select_produits_list search price by qty sql=".$sql);
+					dol_syslog(get_class($this)."::select_produits_list search price by qty", LOG_DEBUG);
 					$result2 = $this->db->query($sql);
 					if ($result2)
 					{
@@ -1555,7 +1560,7 @@ class Form
             $sql.= " ORDER BY date_price";
             $sql.= " DESC LIMIT 1";
 
-            dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.' sql='.$sql);
+            dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
             $result2 = $this->db->query($sql);
             if ($result2)
             {
@@ -1776,7 +1781,7 @@ class Form
 
         // Build output string
 
-        dol_syslog(get_class($this)."::select_produits_fournisseurs_list sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_produits_fournisseurs_list", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -1922,7 +1927,7 @@ class Form
         $sql.= " AND p.rowid = ".$productid;
         $sql.= " ORDER BY s.nom, pfp.ref_fourn DESC";
 
-        dol_syslog(get_class($this)."::select_product_fourn_price sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::select_product_fourn_price", LOG_DEBUG);
         $result=$this->db->query($sql);
 
         if ($result)
@@ -2006,7 +2011,7 @@ class Form
         $sql .= " WHERE a.fk_soc = ".$socid;
         $sql .= " ORDER BY a.label ASC";
 
-        dol_syslog(get_class($this)."::select_address sql=".$sql);
+        dol_syslog(get_class($this)."::select_address", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -2056,7 +2061,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_payment_term';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY sortorder";
-        dol_syslog(get_class($this).'::load_cache_conditions_paiements sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).'::load_cache_conditions_paiements', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2095,7 +2100,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_availability';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this).'::load_cache_availability sql='.$sql,LOG_DEBUG);
+        dol_syslog(get_class($this).'::load_cache_availability', LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2168,7 +2173,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX.'c_input_reason';
         $sql.= " WHERE active=1";
         $sql.= " ORDER BY rowid";
-        dol_syslog(get_class($this)."::loadCacheInputReason sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::loadCacheInputReason", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2249,7 +2254,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
         $sql.= " WHERE active > 0";
         $sql.= " ORDER BY id";
-        dol_syslog(get_class($this)."::load_cache_types_paiements sql=".$sql,LOG_DEBUG);
+        dol_syslog(get_class($this)."::load_cache_types_paiements", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2438,7 +2443,7 @@ class Form
         if ($filtre) $sql.=" AND ".$filtre;
         $sql.= " ORDER BY label";
 
-        dol_syslog(get_class($this)."::select_comptes sql=".$sql);
+        dol_syslog(get_class($this)."::select_comptes", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -2477,6 +2482,40 @@ class Form
         }
         else {
             dol_print_error($this->db);
+        }
+    }
+
+    /**
+     *    Display form to select bank account
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id of bank account
+     *    @param    string	$htmlname    Name of select html field
+     *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @return	void
+     */
+    function formSelectAccount($page, $selected='', $htmlname='fk_account', $addempty=0)
+    {
+        global $langs;
+        if ($htmlname != "none") {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setbankaccount">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_comptes($selected, $htmlname, 0, '', $addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        } else {
+            if ($selected) {
+                require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
+                $bankstatic=new Account($this->db);
+                $bankstatic->fetch($selected);
+                print $bankstatic->label.' ('.$bankstatic->currency_code.')';
+            } else {
+                print "&nbsp;";
+            }
         }
     }
 
@@ -3272,7 +3311,7 @@ class Form
 
         if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
 
-        $out.= '<select class="flat" name="'.$htmlname.'">';
+        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
         foreach ($langs->cache_currencies as $code_iso => $currency)
         {
         	if ($selected && $selected == $code_iso)
@@ -4231,7 +4270,7 @@ class Form
         if (is_array($include) && $includeGroups) $sql.= " AND ug.rowid IN ('".$includeGroups."')";
         $sql.= " ORDER BY ug.nom ASC";
 
-        dol_syslog(get_class($this)."::select_dolgroups sql=".$sql);
+        dol_syslog(get_class($this)."::select_dolgroups", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

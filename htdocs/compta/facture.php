@@ -115,9 +115,9 @@ include DOL_DOCUMENT_ROOT . '/core/actions_setnotes.inc.php'; // Must be include
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer) {
-	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
-		$mesgs [] = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
-	} else {
+//	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
+//		$mesgs [] = '<div class="error">' . $langs->trans("NoCloneOptionsSpecified") . '</div>';
+//	} else {
 		if ($object->fetch($id) > 0) {
 			$result = $object->createFromClone($socid);
 			if ($result > 0) {
@@ -128,7 +128,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->c
 				$action = '';
 			}
 		}
-	}
+//	}
 }
 
 // Change status of invoice
@@ -216,13 +216,13 @@ else if ($action == 'valid' && $user->rights->facture->creer) {
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) {
 		// Si avoir, le signe doit etre negatif
 		if ($object->total_ht >= 0) {
-			$mesgs [] = '<div class="error">' . $langs->trans("ErrorInvoiceAvoirMustBeNegative") . '</div>';
+			setEventMessage($langs->trans("ErrorInvoiceAvoirMustBeNegative"), 'errors');
 			$action = '';
 		}
 	} else {
 		// Si non avoir, le signe doit etre positif
 		if (empty($conf->global->FACTURE_ENABLE_NEGATIVE) && $object->total_ht < 0) {
-			$mesgs [] = '<div class="error">' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive") . '</div>';
+			setEventMessage($langs->trans("ErrorInvoiceOfThisTypeMustBePositive"), 'errors');
 			$action = '';
 		}
 	}
@@ -302,6 +302,11 @@ else if ($action == 'setrevenuestamp' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->facture->creer) {
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+}
+
 else if ($action == 'setremisepercent' && $user->rights->facture->creer) {
 	$object->fetch($id);
 	$result = $object->set_remise($user, $_POST['remise_percent']);
@@ -314,7 +319,7 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer) {
 		if ($ret > 0) {
 			$result = $object->insert_discount($_POST["remise_id"]);
 			if ($result < 0) {
-				$mesgs [] = '<div class="error">' . $object->error . '</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		} else {
 			dol_print_error($db, $object->error);
@@ -327,7 +332,7 @@ else if ($action == "setabsolutediscount" && $user->rights->facture->creer) {
 
 		$result = $discount->link_to_invoice(0, $id);
 		if ($result < 0) {
-			$mesgs [] = '<div class="error">' . $discount->error . '</div>';
+			setEventMessage($discount->error, 'errors');
 		}
 	}
 }
@@ -566,7 +571,6 @@ else if ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $user->righ
 			$result = $object->set_paid($user);
 			if ($result >= 0)
 			{
-				//$mesgs[]='OK'.$discount->id;
 				$db->commit();
 			}
 			else
@@ -628,6 +632,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project			= $_POST['projectid'];
 			$object->cond_reglement_id	= $_POST['cond_reglement_id'];
 			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->fk_account         = GETPOST('fk_account', 'int');
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
 
@@ -636,8 +641,9 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->type = Facture::TYPE_REPLACEMENT;
 
 			$id = $object->createFromCurrent($user);
-			if ($id <= 0)
-				$mesgs [] = $object->error;
+			if ($id <= 0) {
+				setEventMessage($object->error, 'errors');
+			}
 		}
 	}
 
@@ -670,6 +676,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project			= $_POST['projectid'];
 			$object->cond_reglement_id	= 0;
 			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->fk_account         = GETPOST('fk_account', 'int');
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
 
@@ -795,6 +802,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 			$object->fk_project			= $_POST['projectid'];
 			$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
 			$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+            $object->fk_account         = GETPOST('fk_account', 'int');
 			$object->amount				= $_POST['amount'];
 			$object->remise_absolue		= $_POST['remise_absolue'];
 			$object->remise_percent		= $_POST['remise_percent'];
@@ -880,7 +888,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									$amountdeposit = ($totalamount * $valuedeposit) / 100;
 								}
 							} else {
-								$mesgs [] = $srcobject->error;
+								setEventMessage($srcobject->error, 'errors');
 								$error ++;
 							}
 						}
@@ -947,7 +955,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 									if ($discountid > 0) {
 										$result = $object->insert_discount($discountid); // This include link_to_invoice
 									} else {
-										$mesgs [] = $discount->error;
+										setEventMessage($discount->error, 'errors');
 										$error ++;
 										break;
 									}
@@ -1008,12 +1016,12 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							if ($reshook < 0)
 								$error ++;
 						} else {
-							$mesgs [] = $srcobject->error;
+							setEventMessage($srcobject->error, 'errors');
 							$error ++;
 						}
 					}
 				} else {
-					$mesgs [] = $object->error;
+					setEventMessage($object->error, 'errors');
 					$error ++;
 				}
 			} 			// If some invoice's lines already known
@@ -1046,7 +1054,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 		$action = 'create';
 		$_GET ["origin"] = $_POST["origin"];
 		$_GET ["originid"] = $_POST["originid"];
-		$mesgs [] = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -1598,7 +1606,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, - 1);
 			if ($mailfile->error) {
-				$mesgs [] = '<div class="error">' . $mailfile->error . '</div>';
+				setEventMessage($mailfile->error, 'errors');
 			} else {
 				$result = $mailfile->sendfile();
 				if ($result) {
@@ -1634,15 +1642,15 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					}
 				} else {
 					$langs->load("other");
-					$mesg = '<div class="error">';
+
 					if ($mailfile->error) {
 						$mesg .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$mesg .= '<br>' . $mailfile->error;
 					} else {
 						$mesg .= 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
-					$mesg .= '</div>';
-					$mesgs [] = $mesg;
+
+					setEventMessage($mesg, 'errors');
 				}
 			}
 			/*            }
@@ -1654,12 +1662,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}*/
 		} else {
 			$langs->load("errors");
-			$mesgs [] = '<div class="error">' . $langs->trans('ErrorCantReadFile', $file) . '</div>';
+			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
 			dol_syslog('Failed to read file: ' . $file);
 		}
 	} else {
 		$langs->load("other");
-		$mesgs [] = '<div class="error">' . $langs->trans('ErrorFailedToReadEntity', $langs->trans("Invoice")) . '</div>';
+		setEventMessage($langs->trans('ErrorFailedToReadEntity', $langs->trans("Invoice")), 'errors');
 		dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
 	}
 
@@ -1741,9 +1749,9 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->facture-
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$mesgs [] = '<div class="error">' . $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType") . '</div>';
+				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 			} else {
-				$mesgs [] = '<div class="error">' . $object->error . '</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
@@ -1886,6 +1894,7 @@ if ($action == 'create')
 
 			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
 			$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
@@ -1900,6 +1909,7 @@ if ($action == 'create')
 	{
 		$cond_reglement_id 	= $soc->cond_reglement_id;
 		$mode_reglement_id 	= $soc->mode_reglement_id;
+        $fk_account         = $soc->fk_account;
 		$remise_percent 	= $soc->remise_percent;
 		$remise_absolue 	= 0;
 		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
@@ -2215,6 +2225,11 @@ if ($action == 'create')
 	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
+
 	// Project
 	if (! empty($conf->projet->enabled) && $socid > 0) {
 		$formproject = new FormProjets($db);
@@ -2302,12 +2317,12 @@ if ($action == 'create')
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
-		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
 		}
 
-		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
@@ -2907,9 +2922,9 @@ if ($action == 'create')
 	if (! empty($conf->banque->enabled))
 		$nbcols ++;
 		// if (! empty($soc->outstandingbill)) $nbrows++;
-	if ($mysoc->localtax1_assuj == "1")
+	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 		$nbrows ++;
-	if ($mysoc->localtax2_assuj == "1")
+	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)
 		$nbrows ++;
 	if ($selleruserevenustamp)
 		$nbrows ++;
@@ -3166,6 +3181,26 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
+	// Bank Account
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('BankAccount');
+	print '<td>';
+	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editbankaccount')
+	{
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+	}
+	else
+	{
+	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+	}
+	print "</td>";
+	print '</tr>';
+
 	// Amount
 	print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 	print '<td align="right" colspan="3" nowrap>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
@@ -3173,12 +3208,12 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Amount Local Taxes
-	if ($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) 	// Localtax1 (example RE)
+	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) 	// Localtax1
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 		print '<td align="right" colspan="3" nowrap>' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 	}
-	if ($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) 	// Localtax2 (example IRPF)
+	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) 	// Localtax2
 	{
 		print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 		print '<td align="right" colspan="3" nowrap>' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
@@ -3428,7 +3463,7 @@ if ($action == 'create')
 					if ($resteapayer == 0) {
 						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
 					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans('DoPayment') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPayment') . '</a></div>';
 					}
 				}
 			}
@@ -3728,8 +3763,6 @@ if ($action == 'create')
 		print '<br>';
 	}
 }
-
-dol_htmloutput_mesg('', $mesgs);
 
 llxFooter();
 $db->close();

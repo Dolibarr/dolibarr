@@ -115,8 +115,8 @@ Divers:
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
-- Fonctionne avec PHP 5.3+, MySQL 4.1+ ou PostgreSql 8.1.4+.
-- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP. 
+- Requiert PHP et Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
+- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP ou Postgresql.
 
 
 ## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)

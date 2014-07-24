@@ -25,36 +25,40 @@ ListOfEvents= فهرست وقایع Dolibarr
 ActionsAskedBy=رویدادهای گزارش شده توسط
 ActionsToDoBy=رویدادهای اختصاص یافته به
 ActionsDoneBy=رویدادهای انجام شده توسط
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= همه رویدادها من / وظایف
 AllActions= همه رویدادها / وظایف
 ViewList=مشاهده لیست
 ViewCal=مشاهده ماه
 ViewDay=نمای روز
 ViewWeek=مشاهده هفته
+ViewPerUser=Per user
 ViewWithPredefinedFilters= نمایش با فیلترهای از پیش تعریف شده
 AutoActions= پر کردن خودکار
 AgendaAutoActionDesc= تعریف اینجا رویدادی که می خواهید Dolibarr برای ایجاد به طور خودکار یک رویداد در دستور کار. اگر چیزی (به طور پیش فرض) انتخاب شود، فقط اقدامات تجاری خواهد شد در دستور کار گنجانده شده است.
 AgendaSetupOtherDesc= این صفحه فراهم می کند گزینه اجازه می دهد تا صادرات رویدادی Dolibarr خود را در تقویم های خارجی (تاندربرد، تقویم گوگل، ...)
 AgendaExtSitesDesc=این صفحه اجازه می دهد تا به اعلام منابع خارجی از تقویم برای دیدن رویدادی خود را در دستور کار Dolibarr.
 ActionsEvents= رویدادهای که Dolibarr یک اقدام در دستور کار به طور خودکار ایجاد
-PropalValidatedInDolibarr= پیشنهاد از%s معتبر
+PropalValidatedInDolibarr= پیشنهاد از٪ s معتبر
 InvoiceValidatedInDolibarr= فاکتور٪ بازدید کنندگان اعتبار
-InvoiceBackToDraftInDolibarr=فاکتور%s را به بازگشت به پیش نویس وضعیت
-InvoiceDeleteDolibarr=فاکتور%s را حذف
-OrderValidatedInDolibarr= منظور از%s معتبر
-OrderApprovedInDolibarr=منظور از%s را تایید
-OrderRefusedInDolibarr=منظور از%s را رد کرد
-OrderBackToDraftInDolibarr=منظور از%s به بازگشت به پیش نویس وضعیت
-OrderCanceledInDolibarr=منظور از%s را لغو
+InvoiceBackToDraftInDolibarr=فاکتور٪ s را به بازگشت به پیش نویس وضعیت
+InvoiceDeleteDolibarr=فاکتور٪ s را حذف
+OrderValidatedInDolibarr= منظور از٪ s معتبر
+OrderApprovedInDolibarr=منظور از٪ s را تایید
+OrderRefusedInDolibarr=منظور از٪ s را رد کرد
+OrderBackToDraftInDolibarr=منظور از٪ s به بازگشت به پیش نویس وضعیت
+OrderCanceledInDolibarr=منظور از٪ s را لغو
 InterventionValidatedInDolibarr=مداخله٪ بازدید کنندگان اعتبار
-ProposalSentByEMail=پیشنهاد تجاری%s ارسال با ایمیل
-OrderSentByEMail=سفارش مشتری%s ارسال با ایمیل
-InvoiceSentByEMail=صورت حساب به مشتری%s ارسال با ایمیل
-SupplierOrderSentByEMail=تامین کننده نظم%s ارسال با ایمیل
-SupplierInvoiceSentByEMail=تامین کننده فاکتور%s ارسال با ایمیل
-ShippingSentByEMail=حمل و نقل%s ارسال با ایمیل
-ShippingValidated= حمل و نقل از%s معتبر
-InterventionSentByEMail=مداخله%s ارسال با ایمیل
+ProposalSentByEMail=پیشنهاد تجاری٪ s ارسال با ایمیل
+OrderSentByEMail=سفارش مشتری٪ s ارسال با ایمیل
+InvoiceSentByEMail=صورت حساب به مشتری٪ s ارسال با ایمیل
+SupplierOrderSentByEMail=تامین کننده نظم٪ s ارسال با ایمیل
+SupplierInvoiceSentByEMail=تامین کننده فاکتور٪ s ارسال با ایمیل
+ShippingSentByEMail=حمل و نقل٪ s ارسال با ایمیل
+ShippingValidated= حمل و نقل از٪ s معتبر
+InterventionSentByEMail=مداخله٪ s ارسال با ایمیل
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= شخص ثالث ایجاد شده
 DateActionPlannedStart= تاریخ شروع برنامه ریزی شده
 DateActionPlannedEnd= تاریخ پایان برنامه ریزی شده
@@ -63,10 +67,10 @@ DateActionDoneEnd= تاریخ پایان واقعی
 DateActionStart= تاریخ شروع
 DateActionEnd= تاریخ پایان
 AgendaUrlOptions1=شما همچنین می توانید پارامترهای زیر برای فیلتر کردن خروجی اضافه:
-AgendaUrlOptions2=<b>ورود =%s را</b> برای محدود کردن خروجی به اقدامات ایجاد شده توسط، اختصاص یافته به و یا انجام شده توسط <b>کاربر%s را.</b>
-AgendaUrlOptions3=<b>logina =%s را</b> برای محدود کردن خروجی به اقدامات ایجاد شده توسط <b>کاربر%s را.</b>
-AgendaUrlOptions4=<b>logint =%s را</b> برای محدود کردن خروجی به اقدامات داده شده به کاربر <b>از%s.</b>
-AgendaUrlOptions5=<b>logind =%s را</b> برای محدود کردن خروجی به اقدامات انجام شده توسط <b>کاربر%s را.</b>
+AgendaUrlOptions2=<b>ورود =٪ s را</b> برای محدود کردن خروجی به اقدامات ایجاد شده توسط، اختصاص یافته به و یا انجام شده توسط <b>کاربر٪ s را.</b>
+AgendaUrlOptions3=<b>logina =٪ s را</b> برای محدود کردن خروجی به اقدامات ایجاد شده توسط <b>کاربر٪ s را.</b>
+AgendaUrlOptions4=<b>logint =٪ s را</b> برای محدود کردن خروجی به اقدامات داده شده به کاربر <b>از٪ s.</b>
+AgendaUrlOptions5=<b>logind =٪ s را</b> برای محدود کردن خروجی به اقدامات انجام شده توسط <b>کاربر٪ s را.</b>
 AgendaShowBirthdayEvents=نمایش تماس های تولد را
 AgendaHideBirthdayEvents=مخفی کردن تماس های تولد را
 Busy=مشغول
@@ -77,6 +81,6 @@ ExportCal=تقویم صادرات
 ExtSites=واردات تقویم خارجی
 ExtSitesEnableThisTool=نمایش تقویم های خارجی را در دستور کار
 ExtSitesNbOfAgenda=شماره تقویم
-AgendaExtNb=تقویم توجه از%s
+AgendaExtNb=تقویم توجه از٪ s
 ExtSiteUrlAgenda=فایل مقرون URL برای دسترسی به.
 ExtSiteNoLabel=بدون شرح

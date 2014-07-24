@@ -72,7 +72,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     if ($foruserlogin) $sql.=" AND d.login='".$db->escape($foruserlogin)."'";
     $sql.= " ORDER BY d.rowid ASC";
 
-    dol_syslog("Search members sql=".$sql);
+    dol_syslog("Search members", LOG_DEBUG);
     $result = $db->query($sql);
     if ($result)
     {

@@ -94,7 +94,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'add';
-		$mesg = '<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -127,7 +127,7 @@ $cancel != $langs->trans("Cancel") &&
 	else
 	{
 		$action = 'edit';
-		$mesg = '<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -152,10 +152,6 @@ else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
 dol_fiche_head($head, 'translation', $title, 0, 'category');
-
-if (! empty($mesg)) {
-	dol_htmloutput_mesg($mesg);
-}
 
 print '<table class="border" width="100%">';
 

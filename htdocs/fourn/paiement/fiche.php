@@ -36,8 +36,6 @@ $langs->load('banks');
 $langs->load('companies');
 $langs->load("suppliers");
 
-$mesg='';
-
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -61,7 +59,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
     }
     else
     {
-        $mesg='<div class="error">'.$object->error.'</div>';
+	    setEventMessage($object->error, 'errors');
         $db->rollback();
     }
 }
@@ -80,7 +78,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		$db->rollback();
 	}
 }
@@ -98,7 +96,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisse
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 		$db->rollback();
 	}
 }
@@ -109,11 +107,11 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
     $res = $object->update_num($_POST['num_paiement']);
 	if ($res === 0)
 	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentNumberUpdateSucceeded').'</div>';
+		$setEventMessage($langs->trans('PaymentNumberUpdateSucceeded'));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentNumberUpdateFailed').'</div>';
+		setEventMessage($langs->trans('PaymentNumberUpdateFailed'), 'errors');
 	}
 }
 
@@ -124,11 +122,11 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
-		$mesg = '<div class="ok">'.$langs->trans('PaymentDateUpdateSucceeded').'</div>';
+		setEventMessage($langs->trans('PaymentDateUpdateSucceeded'));
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('PaymentDateUpdateFailed').'</div>';
+		setEventMessage($langs->trans('PaymentDateUpdateFailed'), 'errors');
 	}
 }
 
@@ -228,8 +226,6 @@ if ($result > 0)
     }
 
 	print '</table>';
-
-	dol_htmloutput_mesg($mesg);
 
 	print '<br>';
 

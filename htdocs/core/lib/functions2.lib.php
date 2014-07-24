@@ -744,7 +744,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
     //print $sql.'<br>';
-    dol_syslog("functions2::get_next_value mode=".$mode." sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2::get_next_value mode=".$mode."", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -783,7 +783,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
-        dol_syslog("functions2::get_next_value sql=".$sql);
+        dol_syslog("functions2::get_next_value", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -837,7 +837,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
 
-            dol_syslog("functions2::get_next_value maskrefclient_sql=".$maskrefclient_sql, LOG_DEBUG);
+            dol_syslog("functions2::get_next_value maskrefclient", LOG_DEBUG);
             $maskrefclient_resql=$db->query($maskrefclient_sql);
             if ($maskrefclient_resql)
             {
@@ -1168,7 +1168,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         $i++;
     }
     $sql.= ")";
-    dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+    dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
 
     $resql=$db->query($sql);
     if (! $resql)
@@ -1187,7 +1187,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
             $sql.= " '".$key."','".$db->escape($value)."')";
 
-            dol_syslog("functions2.lib::dol_set_user_param sql=".$sql, LOG_DEBUG);
+            dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
             $result=$db->query($sql);
             if (! $result)
             {
@@ -1293,7 +1293,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
     $sql.= " WHERE type = '".$type."'";
     $sql.= " AND entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
 
-    dol_syslog('/core/lib/function2.lib.php::getListOfModels sql='.$sql, LOG_DEBUG);
+    dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -1582,7 +1582,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 
 		// Check loops on each other
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree." SET ".$fieldfkparent." = 0 WHERE ".$fieldfkparent." = rowid";	// So we update only records linked to themself
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1623,7 +1622,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
 		$sql.= " WHERE rowid IN (".join(',',$listofidtoclean).")";	// So we update only records detected wrong
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -1643,7 +1641,6 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$tabletocleantree;
 		$sql.= " SET ".$fieldfkparent." = 0";
 		$sql.= " WHERE ".$fieldfkparent." NOT IN (".join(',',$listofid).")";	// So we update only records linked to a non existing parent
-		dol_syslog("sql=".$sql);
 		$resql = $db->query($sql);
 		if ($resql)
 		{

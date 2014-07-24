@@ -138,19 +138,30 @@ if (empty($reshook))
     if ($action == 'disable')
     {
     	$object->fetch($id);
-    	$object->setstatus(0);
-    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-    	exit;
+    	if ($object->setstatus(0)<0)
+    	{
+    	    setEventMessage($object->error,'errors');
+    	}
+    	else 
+    	{
+        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+        	exit;    	    
+    	}
     }
 
     // Confirmation activation
     if ($action == 'enable')
     {
     	$object->fetch($id);
-    	$object->setstatus(1);
-    	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-    	exit;
-
+        	if ($object->setstatus(1)<0)
+    	{
+    	    setEventMessage($object->error,'errors');
+    	}
+    	else 
+    	{
+        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+        	exit;    	    
+    	}    	
     }
 
     // Add contact
@@ -235,7 +246,8 @@ if (empty($reshook))
         }
         else
         {
-            $error=$object->error; $errors=$object->errors;
+            setEventMessage($object->error,'errors');
+            setEventMessage($object->errors,'errors');
         }
     }
 
@@ -295,7 +307,8 @@ if (empty($reshook))
             }
             else
             {
-                $error=$object->error; $errors=$object->errors;
+                setEventMessage($object->error,'errors');
+                setEventMessage($object->errors,'errors');
                 $action = 'edit';
             }
         }
@@ -367,6 +380,8 @@ else
 
         $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
         dol_fiche_head($head, 'card', $title, 0, 'contact');
+        
+        dol_htmloutput_events();
     }
 
     if ($user->rights->societe->contact->creer)
@@ -424,42 +439,45 @@ else
             print '<table class="border" width="100%">';
 
             // Name
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname")?GETPOST("lastname"):$object->lastname).'"></td>';
-            print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname")?GETPOST("firstname"):$object->firstname).'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
+	        print '<td width="30%"><input name="lastname" id="lastname" type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname")?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td width="20%"><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
+	        print '<td width="30%"><input name="firstname" id="firstname"type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname")?GETPOST("firstname"):$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
             {
                 if ($socid > 0)
                 {
-                    print '<tr><td>'.$langs->trans("Company").'</td>';
+                    print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
                     print $objsoc->getNomUrl(1);
                     print '</td>';
-                    print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
+                    print '<input type="hidden" name="socid" id="socid" value="'.$objsoc->id.'">';
                     print '</td></tr>';
                 }
                 else {
-                    print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3" class="maxwidthonsmartphone">';
+                    print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                     print $form->select_company($socid,'socid','',1);
                     print '</td></tr>';
                 }
             }
 
             // Civility
-            print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
+            print '<tr><td width="15%"><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
             print $formcompany->select_civility(GETPOST("civility_id",'alpha')?GETPOST("civility_id",'alpha'):$object->civility_id);
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.dol_escape_htmltag(GETPOST("poste",'alpha')?GETPOST("poste",'alpha'):$object->poste).'"></td>';
+            print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
+	        print '<td colspan="3"><input name="poste" id="title" type="text" size="50" maxlength="80" value="'.dol_escape_htmltag(GETPOST("poste",'alpha')?GETPOST("poste",'alpha'):$object->poste).'"></td>';
 
             $colspan=3;
             if ($conf->use_javascript_ajax && $socid > 0) $colspan=2;
 
             // Address
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->address)) == 0) $object->address = $objsoc->address;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Address");
-            print '</td><td colspan="'.$colspan.'"><textarea class="flat" name="address" cols="70">'.(GETPOST("address",'alpha')?GETPOST("address",'alpha'):$object->address).'</textarea></td>';
+            print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
+            print '<td colspan="'.$colspan.'"><textarea class="flat" name="address" id="address" cols="70">'.(GETPOST("address",'alpha')?GETPOST("address",'alpha'):$object->address).'</textarea></td>';
 
             if ($conf->use_javascript_ajax && $socid > 0)
             {
@@ -475,13 +493,13 @@ else
             // Zip / Town
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+            print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
             print $formcompany->select_ziptown((GETPOST("zipcode")?GETPOST("zipcode"):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
             print $formcompany->select_ziptown((GETPOST("town")?GETPOST("town"):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
-            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+            print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
             print $form->select_country((GETPOST("country_id",'alpha')?GETPOST("country_id",'alpha'):$object->country_id),'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
@@ -489,7 +507,7 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+                print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
                 if ($object->country_id)
                 {
                     print $formcompany->select_state(GETPOST("state_id",'alpha')?GETPOST("state_id",'alpha'):$object->state_id,$object->country_code,'state_id');
@@ -503,19 +521,25 @@ else
 
             // Phone / Fax
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->phone_pro)) == 0) $object->phone_pro = $objsoc->phone;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_pro")?GETPOST("phone_pro"):$object->phone_pro).'"></td>';
-            print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_perso")?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
+            print '<tr><td><label for="phone_pro">'.$langs->trans("PhonePro").'</label></td>';
+	        print '<td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_pro")?GETPOST("phone_pro"):$object->phone_pro).'"></td>';
+            print '<td><label for="phone_perso">'.$langs->trans("PhonePerso").'</label></td>';
+	        print '<td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_perso")?GETPOST("phone_perso"):$object->phone_perso).'"></td></tr>';
 
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) $object->fax = $objsoc->fax;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" id="phone_mobile" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_mobile")?GETPOST("phone_mobile"):$object->phone_mobile).'"></td>';
-            print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" id="fax" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("fax",'alpha')?GETPOST("fax",'alpha'):$object->fax).'"></td></tr>';
+            print '<tr><td><label for="phone_mobile">'.$langs->trans("PhoneMobile").'</label></td>';
+	        print '<td><input name="phone_mobile" id="phone_mobile" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("phone_mobile")?GETPOST("phone_mobile"):$object->phone_mobile).'"></td>';
+            print '<td><label for="fax">'.$langs->trans("Fax").'</label></td>';
+	        print '<td><input name="fax" id="fax" type="text" size="18" maxlength="80" value="'.dol_escape_htmltag(GETPOST("fax",'alpha')?GETPOST("fax",'alpha'):$object->fax).'"></td></tr>';
 
             // EMail
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
-            print '<tr><td>'.$langs->trans("Email").'</td><td><input name="email" id="email" type="text" size="50" maxlength="80" value="'.(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
+            print '<tr><td><label for="email">'.$langs->trans("Email").'</label></td>';
+	        print '<td><input name="email" id="email" type="text" size="50" maxlength="80" value="'.(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
-            	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
+            	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+	            print '<td>'.$form->selectyesno('no_email',(GETPOST("no_email",'alpha')?GETPOST("no_email",'alpha'):$object->no_email), 1).'</td>';
             }
             else
 			      {
@@ -524,16 +548,18 @@ else
             print '</tr>';
 
             // Instant message and no email
-            print '<tr><td>'.$langs->trans("IM").'</td><td colspan="3"><input name="jabberid" type="text" size="50" maxlength="80" value="'.(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
+	        print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" size="50" maxlength="80" value="'.(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
 
             // Skype
             if (! empty($conf->skype->enabled))
             {
-                print '<tr><td>'.$langs->trans("Skype").'</td><td colspan="3"><input name="skype" type="text" size="50" maxlength="80" value="'.(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+                print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
+	            print '<td colspan="3"><input name="skype" id="skype" type="text" size="50" maxlength="80" value="'.(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             }
 
             // Visibility
-            print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+            print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
             print $form->selectarray('priv',$selectarray,(GETPOST("priv",'alpha')?GETPOST("priv",'alpha'):$object->priv),0);
             print '</td></tr>';
@@ -555,7 +581,7 @@ else
             print '<table class="border" width="100%">';
 
             // Date To Birth
-            print '<tr><td width="20%">'.$langs->trans("DateToBirth").'</td><td width="30%">';
+            print '<tr><td width="20%"><label for="birthday">'.$langs->trans("DateToBirth").'</label></td><td width="30%">';
             $form=new Form($db);
             if ($object->birthday)
             {
@@ -567,14 +593,14 @@ else
             }
             print '</td>';
 
-            print '<td colspan="2">'.$langs->trans("Alert").': ';
+            print '<td colspan="2"><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
             if ($object->birthday_alert)
             {
-                print '<input type="checkbox" name="birthday_alert" checked></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_aler" checked></td>';
             }
             else
             {
-                print '<input type="checkbox" name="birthday_alert"></td>';
+                print '<input type="checkbox" name="birthday_alert" id="birthday_alert"></td>';
             }
             print '</tr>';
 
@@ -649,13 +675,15 @@ else
             print '</td></tr>';
 
             // Lastname
-            print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</td><td width="30%"><input name="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'"></td>';
-            print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="30%"><input name="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
+            print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
+            print '<td width="30%"><input name="lastname" id="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td width="20%"><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
+	        print '<td width="30%"><input name="firstname" id="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
             {
-                print '<tr><td>'.$langs->trans("Company").'</td>';
+                print '<tr><td><label for="socid">'.$langs->trans("Company").'</label></td>';
                 print '<td colspan="3" class="maxwidthonsmartphone">';
                 print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1),'socid','',1);
                 print '</td>';
@@ -663,15 +691,16 @@ else
             }
 
             // Civility
-            print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
+            print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
             print $formcompany->select_civility(isset($_POST["civility_id"])?$_POST["civility_id"]:$object->civility_id);
             print '</td></tr>';
 
-            print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
+            print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
+	        print '<td colspan="3"><input name="poste" id="title" type="text" size="50" maxlength="80" value="'.(isset($_POST["poste"])?$_POST["poste"]:$object->poste).'"></td></tr>';
 
             // Address
-            print '<tr><td>'.$langs->trans("Address");
-            print '</td><td colspan="2"><textarea class="flat" name="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
+            print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
+            print '<td colspan="2"><textarea class="flat" name="address" id="address" cols="70">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea></td>';
 
             $rowspan=3;
     		if (empty($conf->global->SOCIETE_DISABLE_STATE)) $rowspan++;
@@ -681,13 +710,13 @@ else
             print '</td></tr>';
 
             // Zip / Town
-            print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td colspan="2" class="maxwidthonsmartphone">';
+            print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="2" class="maxwidthonsmartphone">';
             print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
             print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
-            print '<tr><td>'.$langs->trans("Country").'</td><td colspan="2" class="maxwidthonsmartphone">';
+            print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="2" class="maxwidthonsmartphone">';
             print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
@@ -695,20 +724,25 @@ else
             // State
             if (empty($conf->global->SOCIETE_DISABLE_STATE))
             {
-                print '<tr><td>'.$langs->trans('State').'</td><td colspan="2" class="maxwidthonsmartphone">';
+                print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="2" class="maxwidthonsmartphone">';
                 print $formcompany->select_state($object->state_id,isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'state_id');
                 print '</td></tr>';
             }
 
             // Phone
-            print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$object->phone_pro).'"></td>';
-            print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
+            print '<tr><td><label for="phone_pro">'.$langs->trans("PhonePro").'</label></td>';
+	        print '<td><input name="phone_pro" id="phone_pro" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_pro"])?$_POST["phone_pro"]:$object->phone_pro).'"></td>';
+            print '<td><label for="phone_perso">'.$langs->trans("PhonePerso").'</label></td>';
+	        print '<td><input name="phone_perso" id="phone_perso" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_perso"])?$_POST["phone_perso"]:$object->phone_perso).'"></td></tr>';
 
-            print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td>';
-            print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$object->fax).'"></td></tr>';
+            print '<tr><td><label for="phone_mobile">'.$langs->trans("PhoneMobile").'</label></td>';
+	        print '<td><input name="phone_mobile" id="phone_mobile" type="text" size="18" maxlength="80" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td>';
+            print '<td><label for="fax">'.$langs->trans("Fax").'</label></td>';
+	        print '<td><input name="fax" id="fax" type="text" size="18" maxlength="80" value="'.(isset($_POST["fax"])?$_POST["fax"]:$object->fax).'"></td></tr>';
 
             // EMail
-            print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
+            print '<tr><td><label for="email">'.$langs->trans("EMail").'</label></td>';
+	        print '<td><input name="email" id="email" type="text" size="40" maxlength="80" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
                 $langs->load("mails");
@@ -722,10 +756,12 @@ else
             print '</tr>';
 
             // Jabberid
-            print '<tr><td>'.$langs->trans("Jabberid").'</td><td><input name="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
+            print '<tr><td><label for="jabberid">'.$langs->trans("Jabberid").'</label></td>';
+	        print '<td><input name="jabberid" id="jabberid" type="text" size="40" maxlength="80" value="'.(isset($_POST["jabberid"])?$_POST["jabberid"]:$object->jabberid).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
-            	print '<td>'.$langs->trans("No_Email").'</td><td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
+            	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
+	            print '<td>'.$form->selectyesno('no_email',(isset($_POST["no_email"])?$_POST["no_email"]:$object->no_email), 1).'</td>';
             }
             else
 			{
@@ -736,23 +772,24 @@ else
             // Skype
             if (! empty($conf->skype->enabled))
             {
-                print '<tr><td>'.$langs->trans("Skype").'</td><td><input name="skype" type="text" size="40" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+                print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
+	            print '<td><input name="skype" id="skype" type="text" size="40" maxlength="80" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
             }
 
             // Visibility
-            print '<tr><td>'.$langs->trans("ContactVisibility").'</td><td colspan="3">';
+            print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
             print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
              // Note Public
-            print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td><td colspan="3">';
+            print '<tr><td valign="top"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
             $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);
             print '</td></tr>';
 
             // Note Private
-            print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td><td colspan="3">';
+            print '<tr><td valign="top"><label for="note_private">'.$langs->trans("NotePrivate").'</label></td><td colspan="3">';
             $doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);
             print '</td></tr>';
@@ -1071,11 +1108,14 @@ else
 
         print "</div><br>";
 
-        print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
+		if (! empty($conf->agenda->enabled))
+		{
+        	print load_fiche_titre($langs->trans("TasksHistoryForThisContact"),'','');
 
-        print show_actions_todo($conf,$langs,$db,$objsoc,$object);
+        	print show_actions_todo($conf,$langs,$db,$objsoc,$object);
 
-        print show_actions_done($conf,$langs,$db,$objsoc,$object);
+        	print show_actions_done($conf,$langs,$db,$objsoc,$object);
+		}
     }
 }
 

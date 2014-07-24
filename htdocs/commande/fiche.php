@@ -65,8 +65,6 @@ $lineid = GETPOST('lineid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
-$mesg = GETPOST('mesg');
-
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
@@ -108,7 +106,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 {
 	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
 	{
-		$mesg='<div class="error">'.$langs->trans("NoCloneOptionsSpecified").'</div>';
+		setEventMessage($langs->trans("NoCloneOptionsSpecified"), 'errors');
 	}
 	else
 	{
@@ -201,7 +199,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 	$datelivraison = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 
 	if ($datecommande == '') {
-		$mesg = '<div class="error">' . $langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')) . '</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentities('Date')), 'errors');
 		$action = 'create';
 		$error ++;
 	}
@@ -227,6 +225,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->modelpdf = GETPOST('model');
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
 		$object->mode_reglement_id = GETPOST('mode_reglement_id');
+        $object->fk_account = GETPOST('fk_account', 'int');
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
 		$object->date_livraison = $datelivraison;
@@ -339,11 +338,11 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 						if ($reshook < 0)
 							$error ++;
 					} else {
-						$mesg = $srcobject->error;
+						setEventMessage($srcobject->error, 'errors');
 						$error ++;
 					}
 				} else {
-					$mesg = $object->error;
+					setEventMessage($object->error, 'errors');
 					$error ++;
 				}
 			} else {
@@ -377,7 +376,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 			if (GETPOST('contactidp')) {
 				$result = $object->add_contact(GETPOST('contactidp'), 'CUSTOMER', 'external');
 				if ($result < 0) {
-					$mesg = '<div class="error">' . $langs->trans("ErrorFailedToAddContact") . '</div>';
+					setEventMessage($langs->trans("ErrorFailedToAddContact"), 'errors');
 					$error ++;
 				}
 			}
@@ -394,8 +393,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		} else {
 			$db->rollback();
 			$action = 'create';
-			if (! $mesg)
-				$mesg = '<div class="error">' . $object->error . '</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -434,7 +432,7 @@ else if ($action == 'setdate' && $user->rights->commande->creer) {
 
 	$result = $object->set_date($user, $date);
 	if ($result < 0) {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -444,7 +442,7 @@ else if ($action == 'setdate_livraison' && $user->rights->commande->creer) {
 
 	$result = $object->set_date_livraison($user, $datelivraison);
 	if ($result < 0) {
-		$mesg = '<div class="error">' . $object->error . '</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -486,6 +484,11 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 			commande_pdf_create($db, $object, $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	}
+}
+
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
@@ -878,7 +881,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
 			$error++;
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 			$action='';
 		}
 	}
@@ -923,7 +926,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
 			$error++;
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 			$action='';
 		}
 	}
@@ -976,7 +979,7 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
 			$error++;
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")).'</div>';
+			setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Warehouse")), 'errors');
 			$action='';
 		}
 	}
@@ -1215,12 +1218,13 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, - 1);
 			if ($mailfile->error) {
-				$mesg = '<div class="error">' . $mailfile->error . '</div>';
+				setEventMessage($mailfile->error, 'errors');
 			} else {
 				$result = $mailfile->sendfile();
 				if ($result) {
-					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)); // Must not
-					                                                                                                                      // contains "
+					//Must not contain quotes
+					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
+					setEventMessage($mesg);
 
 					$error = 0;
 
@@ -1247,19 +1251,19 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 					} else {
 						// Redirect here
 						// This avoid sending mail twice if going out and then back to page
-						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&mesg=' . urlencode($mesg));
+						header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 						exit();
 					}
 				} else {
 					$langs->load("other");
-					$mesg = '<div class="error">';
 					if ($mailfile->error) {
 						$mesg .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$mesg .= '<br>' . $mailfile->error;
 					} else {
 						$mesg .= 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 					}
-					$mesg .= '</div>';
+
+					setEventMessage($mesg, 'errors');
 				}
 			}
 			/*            }
@@ -1272,12 +1276,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			}*/
 		} else {
 			$langs->load("errors");
-			$mesg = '<div class="error">' . $langs->trans('ErrorCantReadFile', $file) . '</div>';
+			setEventMessage($langs->trans('ErrorCantReadFile', $file), 'errors');
 			dol_syslog('Failed to read file: ' . $file);
 		}
 	} else {
 		$langs->load("other");
-		$mesg = '<div class="error">' . $langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")) . '</div>';
+		setEventMessage($langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")), 'errors');
 		dol_syslog($langs->trans('ErrorFailedToReadEntity', $langs->trans("Order")));
 	}
 }
@@ -1295,9 +1299,9 @@ if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->righ
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				$mesg = '<div class="error">' . $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType") . '</div>';
+				setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 			} else {
-				$mesg = '<div class="error">' . $object->error . '</div>';
+				setEventMessage($object->error, 'errors');
 			}
 		}
 	}
@@ -1343,8 +1347,6 @@ $formorder = new FormOrder($db);
  */
 if ($action == 'create' && $user->rights->commande->creer) {
 	print_fiche_titre($langs->trans('CreateOrder'));
-
-	dol_htmloutput_mesg($mesg, $mesgs, 'error');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1392,6 +1394,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$soc = $objectsrc->client;
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
+            $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
@@ -1411,6 +1414,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	{
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
+        $fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
@@ -1506,6 +1510,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
+
 	// Delivery delay
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1);
@@ -1589,12 +1598,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
-		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		if ($mysoc->localtax1_assuj == "1" || $objectsrc->total_localtax1 != 0) 		// Localtax1 RE
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax1) . "</td></tr>";
 		}
 
-		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		if ($mysoc->localtax2_assuj == "1" || $objectsrc->total_localtax2 != 0) 		// Localtax2 IRPF
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td><td colspan="2">' . price($objectsrc->total_localtax2) . "</td></tr>";
 		}
@@ -1658,8 +1667,6 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	$now = dol_now();
 
 	if ($object->id > 0) {
-		dol_htmloutput_mesg($mesg, $mesgs);
-
 		$product_static = new Product($db);
 
 		$soc = new Societe($db);
@@ -1840,9 +1847,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$nbrow ++;
 
 			// Local taxes
-		if ($mysoc->localtax1_assuj == "1")
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 			$nbrow ++;
-		if ($mysoc->localtax2_assuj == "1")
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0 )
 			$nbrow ++;
 
 		print '<table class="border" width="100%">';
@@ -2115,12 +2122,29 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		}
 
 		$rowspan = 4;
-		if ($mysoc->localtax1_assuj == "1")
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 			$rowspan ++;
-		if ($mysoc->localtax2_assuj == "1")
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)
 			$rowspan ++;
 
-			// Total HT
+        // Bank Account
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('BankAccount');
+        print '<td>';
+        if ($action != 'editbankaccount' && $user->rights->commande->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editbankaccount') {
+            $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+        } else {
+            $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+        }
+        print '</td>';
+        print '</tr>';
+
+		// Total HT
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 		print '<td align="right">' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
 
@@ -2138,12 +2162,12 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td align="right">' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 
 		// Amount Local Taxes
-		if ($mysoc->localtax1_assuj == "1") 		// Localtax1 RE
+		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 		// Localtax1
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 			print '<td align="right">' . price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
 		}
-		if ($mysoc->localtax2_assuj == "1") 		// Localtax2 IRPF
+		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 		// Localtax2 IRPF
 		{
 			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 			print '<td align="right">' . price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';

@@ -623,9 +623,10 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  * @param   int		$socid				Id thirdparty
  * @param   int		$projectsListId     Id of project i have permission on
  * @param   int		$mytasks            Limited to task i am contact to
+ * @param	int		$statut				-1=No filter on statut, 0 or 1 = Filter on status
  * @return	void
  */
-function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
+function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0, $statut=-1)
 {
 	global $langs,$conf,$user,$bc;
 
@@ -636,9 +637,13 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 	$sortfield='';
 	$sortorder='';
 
+	$title=$langs->trans("Project");
+	if ($statut == 0) $title=$langs->trans("ProjectDraft");
+	if ($statut == 1) $title=$langs->trans("Project").' ('.$langs->trans("Validated").')';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Project"),"index.php","","","","",$sortfield,$sortorder);
+	print_liste_field_titre($title,"index.php","","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Tasks"),"","","","",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),"","","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -665,6 +670,10 @@ function print_projecttasks_array($db, $socid, $projectsListId, $mytasks=0)
 		$sql.= " AND ctc.rowid = ec.fk_c_type_contact";
 		$sql.= " AND ctc.element = 'project_task'";
 		$sql.= " AND ec.fk_socpeople = ".$user->id;
+	}
+	if ($statut >= 0)
+	{
+		$sql.= " AND p.fk_statut = ".$statut;
 	}
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.fk_user_creat, p.public, p.fk_statut";
 	$sql.= " ORDER BY p.title, p.ref";

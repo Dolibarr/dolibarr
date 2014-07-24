@@ -81,7 +81,9 @@ create table llx_societe
   cond_reglement_supplier  tinyint,                             		-- condition de reglement fournisseur
   tva_assuj                tinyint        DEFAULT 1,	        		-- assujeti ou non a la TVA
   localtax1_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 1
+  localtax1_value 		   double(6,3),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
+  localtax2_value 		   double(6,3),
   barcode                  varchar(255),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices

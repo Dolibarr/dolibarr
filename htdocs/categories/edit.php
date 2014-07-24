@@ -80,12 +80,12 @@ if ($action == 'update' && $user->rights->categorie->creer)
 	if (empty($categorie->label))
 	{
 		$action = 'create';
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	}
 	if (empty($categorie->description))
 	{
 		$action = 'create';
-		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Description")), 'errors');
 	}
 	if (empty($categorie->error))
 	{
@@ -98,12 +98,12 @@ if ($action == 'update' && $user->rights->categorie->creer)
 		}
 		else
 		{
-			$mesg=$categorie->error;
+			setEventMessage($categorie->error, 'errors');
 		}
 	}
 	else
 	{
-		$mesg=$categorie->error;
+		setEventMessage($categorie->error, 'errors');
 	}
 }
 
@@ -116,10 +116,6 @@ if ($action == 'update' && $user->rights->categorie->creer)
 llxHeader("","",$langs->trans("Categories"));
 
 print_fiche_titre($langs->trans("ModifCat"));
-
-
-dol_htmloutput_errors($mesg);
-
 
 $object->fetch($id);
 

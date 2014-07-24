@@ -60,11 +60,11 @@ if ($action == 'updateMask')
 
 	if (! $error)
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -79,11 +79,11 @@ if ($action == 'updateMaskTask')
 
 	if (! $error)
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -121,13 +121,13 @@ else if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<div class="error">'.$obj->error.'</div>';
+			setEventMessage($obj->error, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"), 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -166,13 +166,13 @@ else if ($action == 'specimentask')
 		}
 		else
 		{
-			$mesg='<div class="error">'.$obj->error.'</div>';
+			setEventMessage($obj->error, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"), 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -785,8 +785,6 @@ foreach ($dirmodels as $reldir)
 }
 
 print '</table><br/>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

@@ -65,6 +65,8 @@ ShowPreview=Εμφάνιση προ επισκόπησης
 PreviewNotAvailable=Η προ επισκόπηση δεν είναι διαθέσιμη
 ThemeCurrentlyActive=Θεματική Επι του Παρόντος Ενεργή
 CurrentTimeZone=TimeZone PHP (server)
+MySQLTimeZone=TimeZone MySql (βάση δεδομένων)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Κενό
 Table=Πίνακας
 Fields=Πεδία
@@ -294,7 +296,7 @@ CurrentVersion=Dolibarr current version
 CallUpdatePage=Go to the page that updates the database structure and datas: %s.
 LastStableVersion=Τελευταία σταθερή έκδοση
 GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags could be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as previous but an offset corresponding to the number to the right of the + sign is applied starting on first %s. <br><b>{000000@x}</b> same as previous but the counter is reset to zero when month x is reached (x between 1 and 12). If this option is used and x is 2 or higher, then sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
-GenericMaskCodes2=<b>{cccc}</b> ο κωδικός πελάτη σε n χαρακτήρες<br><b>{cccc000}</b> ο κωδικός πελάτη σε n χαρακτήρες ακολουθείται από έναν απαριθμητή αφιερωμένο για τον πελάτη.This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> Ο κωδικός του τύπου της εταιρείας σε n χαρακτήρες (δείτε τύπους λεξικό-εταιρεία).<br>
+GenericMaskCodes2=<b>{cccc}</b> ο κωδικός πελάτη σε n χαρακτήρες <br> <b>{cccc000}</b> ο κωδικός πελάτη σε n χαρακτήρες ακολουθείται από ένα μετρητή αφιερωμένο για τον πελάτη. Αυτός ο μετρητής ειναι αφιερωμένος στον πελάτη μηδενίζεται ταυτόχρονα από την γενικό μετρητή. <br> <b>{tttt}</b> Ο κωδικός των Πελ./Προμ. σε n χαρακτήρες (βλέπε λεξικό-thirdparty types). <br>
 GenericMaskCodes3=All other characters in the mask will remain intact.<br>Spaces are not allowed.<br>
 GenericMaskCodes4a=<u>Example on the 99th %s of the third party TheCompany done 2007-01-31:</u><br>
 GenericMaskCodes4b=<u>Example on third party created on 2007-03-01:</u><br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=By default the proposed VAT is 0 which can be used for cases li
 VATIsUsedExampleFR=In France, it means companies or organisations having a real fiscal system (Simplified real or normal real).  A system in which VAT is declared.
 VATIsNotUsedExampleFR=In France, it means associations that are non VAT declared or companies, organisations or liberal professions that have chosen the micro enterprise fiscal system (VAT in franchise) and paid a franchise VAT without any VAT declaration.  This choice will display the reference "Non applicable VAT - art-293B of CGI" on invoices.
 ##### Local Taxes #####
+LTRate=Τιμή
 LocalTax1IsUsed=Δεύτερος Φόρος Προστιθέμενης Αξίας
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= The RE rate by default when creating prospects, invoices,
 LocalTax2IsNotUsedDescES= By default the proposed IRPF is 0. End of rule.
 LocalTax2IsUsedExampleES= In Spain, freelancers and independent professionals who provide services and companies who have chosen the tax system of modules.
 LocalTax2IsNotUsedExampleES= In Spain they are bussines not subject to tax system of modules.
+CalcLocaltax=Αναφορές
+CalcLocaltax1ES=Πωλήσεις - Αγορές
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Αγορές
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Πωλήσεις
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Label used by default if no translation can be found for code
 LabelOnDocuments=Ετικέτα στα έγγραφα
 NbOfDays=Πλήθος Ημερών
@@ -1453,6 +1463,9 @@ AgendaSetup=Events and agenda module setup
 PasswordTogetVCalExport=Key to authorize export link
 PastDelayVCalExport=Do not export event older than
 AGENDA_USE_EVENT_TYPE=Χρησιμοποιήστε τους τύπους των γεγονότων (διαχείριση στο μενού Ρυθμίσεις -> Λεξικό -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Ρυθμίστε αυτόματα αυτό το είδος της εκδήλωσης στο φίλτρο αναζήτησης του προβολή ατζέντας
+AGENDA_DEFAULT_FILTER_STATUS=Ορίστε αυτό το καθεστώς για τα γεγονότα στο φίλτρο αναζήτησης της προβολής ατζέντας
+AGENDA_DEFAULT_VIEW=Ποια καρτέλα θέλετε να ανοίξετε από προεπιλογή κατά την επιλογή του μενού Ατζέντα
 ##### ClickToDial #####
 ClickToDialDesc=This module allows to add an icon after phone numbers. A click on this icon will call a server with a particular URL you define below. This can be used to call a call center system from Dolibarr that can call the phone number on a SIP system for example.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Εργασίες υπόδειγμα εγγράφου αναφο�
 ##### ECM (GED) #####
 ECMSetup = GED Setup
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Οικονομικά έτη
+FiscalYear=Οικονομικό έτος
+FiscalYearCard=Κάρτα οικονομικού έτος
+NewFiscalYear=Νέο οικονομικό έτος
+EditFiscalYear=Επεξεργασία οικονομικού έτους
+OpenFiscalYear=Άνοιγμα οικονομικού έτους
+CloseFiscalYear=Κλείσιμο οικονομικού έτους
+DeleteFiscalYear=Διαγραφή οικονομικού έτους
+ConfirmDeleteFiscalYear=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το οικονομικό έτος;
+Opened=Ανοίξτε
+Closed=Κλείστε
 
 Format=Μορφή

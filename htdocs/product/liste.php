@@ -199,7 +199,7 @@ else
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
-    dol_syslog("product:list.php: sql=".$sql);
+    dol_syslog("product:list.php:", LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -230,7 +230,9 @@ else
     	llxHeader('',$title,$helpurl,'');
 
     	// Displays product removal confirmation
-    	if (GETPOST('delprod'))	dol_htmloutput_mesg($langs->trans("ProductDeleted",GETPOST('delprod')));
+    	if (GETPOST('delprod'))	{
+		    setEventMessage($langs->trans("ProductDeleted", GETPOST('delprod')));
+	    }
 
     	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");

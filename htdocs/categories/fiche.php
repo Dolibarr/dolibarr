@@ -131,7 +131,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	if (! $object->label)
 	{
 		$error++;
-		$errors[] = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")), 'errors');
 		$action = 'create';
 	}
 
@@ -223,8 +223,6 @@ if ($user->rights->categorie->creer)
 		if ($catorigin)	print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 
 		print_fiche_titre($langs->trans("CreateCat"));
-
-		dol_htmloutput_errors('',$errors);
 
 		print '<table width="100%" class="border">';
 

@@ -211,7 +211,7 @@ $sql.= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
 $sql.= ' AND f.entity = '.$conf->entity;
 $sql.= ' AND pf.rowid = '.$paiement->id;
 
-dol_syslog("compta/payment_sc/fiche.php sql=".$sql);
+dol_syslog("compta/payment_sc/fiche.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {

@@ -186,7 +186,7 @@ class CommActionRapport
 		$sql.= " AND '".$this->db->idate(dol_get_last_day($this->year,$this->month,false))."'";
 		$sql.= " ORDER BY a.datep DESC";
 
-		dol_syslog(get_class($this)."::_page sql=".$sql);
+		dol_syslog(get_class($this)."::_page", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

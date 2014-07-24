@@ -65,6 +65,8 @@ ShowPreview=Ver Vista Prévia
 PreviewNotAvailable=Visualização não disponível
 ThemeCurrentlyActive=Tema Actualmente Activo
 CurrentTimeZone=Zona Horaria Actual
+MySQLTimeZone=TimeZone MySql (database)
+TZHasNoEffect=Dates are stored and returned by database server as if they were kept as submited string. The timezone has effect only when using UNIX_TIMESTAMP function (that should not be used by Dolibarr, so database TZ should have no effect, even if changed after data was entered).
 Space=Área
 Table=Tabela
 Fields=Campos
@@ -294,7 +296,7 @@ CurrentVersion=Versão actual do ERP/CRM
 CallUpdatePage=Chamar a página de actualização da estrutura da base de dados %s.
 LastStableVersion=Última Versão estável
 GenericMaskCodes=Pode introduzir qualquer máscara numérica. Nesta máscara, pode utilizar as seguintes etiquetas:<br><b>{000000} </b> corresponde a um número que se incrementa em cada um de %s. Introduza tantos zeros como longitude que deseja mostrar. O contador completar-se-á a partir de zeros pela esquerda com o fim de ter tantos zeros como a máscara. <br> <b> {000000+000}</ b> Igual que o anterior, com uma compensação correspondente ao número da direita do sinal + aplica-se a partir do primeiro %s. <br> <b> {000000@x}</b> igual que o anterior, mas o contador restablece-se a zero quando se chega a x meses (x entre 1 e 12). Se esta opção se utiliza e x é de 2 ou superior, então a sequência {yy}{mm} ou {yyyy}{mm} também é necessário. <br> <b> {dd} </b> días (01 a 31). <br><b> {mm}</b> mês (01 a 12). <br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{e}</b> ano em 2, 4 ou 1 figura.<br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of company type on n characters (see dictionary-company types).<br>
+GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
 GenericMaskCodes3=Qualquer outro caractere na máscara  fica sem alterações. <br>Não são permitidos espaços <br>
 GenericMaskCodes4a=<u>Exemplo em 99 ª %s o Terceiro a Empresa realizada em 31/03/2007: </u><br>
 GenericMaskCodes4b=<u>Exemplo sobre um Terceiro criado em 31/03/2007:</u><br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=O tipo de IVA proposto por defeito é 0. Este é o caso de asso
 VATIsUsedExampleFR=Em França, trata-se de sociedades ou organismos que elegem um regime fiscal general (Geral simplificado ou Geral normal), regime ao qual se declara o IVA.
 VATIsNotUsedExampleFR=Em França, trata-se de associações ou sociedades isentas de IVA, organismos o profissionais liberais que escolheram o régime fiscal de módulos (IVA em franquia), pagando um IVA em franquia sem fazer declarações de IVA. Esta eleição faz aparecer a anotação  "IVA não aplicavel" nas facturas.
 ##### Local Taxes #####
+LTRate=Rate
 LocalTax1IsUsed=Use second tax
 LocalTax1IsNotUsed=Do not use second tax
 LocalTax1IsUsedDesc=Use a second type of tax (other than VAT)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= A taxa de RE por padrão, quando as perspectivas de cria�
 LocalTax2IsNotUsedDescES= Por padrão, o IRPF proposto é 0. Fim da regra.
 LocalTax2IsUsedExampleES= Em Espanha, os freelancers e profissionais liberais que prestam serviços e empresas que escolheram o regime fiscal dos módulos.
 LocalTax2IsNotUsedExampleES= Em Espanha, eles não são negócios sujeitas ao regime fiscal dos módulos.
+CalcLocaltax=Reports
+CalcLocaltax1ES=Sales - Purchases
+CalcLocaltax1Desc=Local Taxes reports are calculated with the difference between localtaxes sales and localtaxes purchases
+CalcLocaltax2ES=Purchases
+CalcLocaltax2Desc=Local Taxes reports are the total of localtaxes purchases
+CalcLocaltax3ES=Sales
+CalcLocaltax3Desc=Local Taxes reports are the total of localtaxes sales
 LabelUsedByDefault=Etiqueta que se utilizará se não se encontra tradução para este código
 LabelOnDocuments=Etiqueta sobre documentos
 NbOfDays=Nº de Dias
@@ -1453,6 +1463,9 @@ AgendaSetup=Módulo configuração de acções e agenda
 PasswordTogetVCalExport=Chave de autorização para exportação do link vcal.
 PastDelayVCalExport=Não exportar evento com mais de
 AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
+AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
+AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite juntar um icon depois do número de telefone de contactos ERP/CRM. Um click no icon, liga  a um servidor com uma URL . Pode ser usado para ligar a um sistema call center, ligando a um número de telefone de um sistema SIP, por Exemplo.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Tasks reports document model
 ##### ECM (GED) #####
 ECMSetup = Configuração GED
 ECMAutoTree = Automatic tree folder and document
-
+##### Fiscal Year #####
+FiscalYears=Fiscal years
+FiscalYear=Fiscal year
+FiscalYearCard=Fiscal year card
+NewFiscalYear=New fiscal year
+EditFiscalYear=Edit fiscal year
+OpenFiscalYear=Open fiscal year
+CloseFiscalYear=Close fiscal year
+DeleteFiscalYear=Delete fiscal year
+ConfirmDeleteFiscalYear=Are you sure to delete this fiscal year ?
+Opened=Opened
+Closed=Closed
 
 Format=Format

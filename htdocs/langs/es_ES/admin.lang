@@ -65,6 +65,8 @@ ShowPreview=Ver vista previa
 PreviewNotAvailable=Vista previa no disponible
 ThemeCurrentlyActive=Tema actualmente activo
 CurrentTimeZone=Zona horaria PHP (Servidor)
+MySQLTimeZone=Zona horaria MySql (base de datos)
+TZHasNoEffect=Las fechas se guardan y devuelven por el servidor de base de datos tal y como si se las hubieran enviado como una cadena. La zona horaria solamente tiene efecto si se usa la función UNIX_TIMESTAMP (que no debe ser usada por dolibarr, por lo que la zona horaria de la base de datos no debe tener efecto, aunque se haya cambiado después de introducir los datos).
 Space=Área
 Table=Tabla
 Fields=Campos
@@ -294,7 +296,7 @@ CurrentVersion=Versión actual de Dolibarr
 CallUpdatePage=Llamar a la página de actualización de la estructura y datos de la base de datos %s.
 LastStableVersion=Última versión estable disponible
 GenericMaskCodes=Puede introducir cualquier máscara numérica. En esta máscara, puede utilizar las siguientes etiquetas:<br><b>{000000} </b> corresponde a un número que se incrementa en cada uno de %s. Introduzca tantos ceros como longitud desee mostrar. El contador se completará a partir de ceros por la izquierda con el fin de tener tantos ceros como la máscara. <br> <b> {000000+000}</ b> Igual que el anterior, con una compensación correspondiente al número a la derecha del signo + se aplica a partir del primer %s. <br> <b> {000000@x}</b> igual que el anterior, pero el contador se restablece a cero cuando se llega a x meses (x entre 1 y 12). Si esta opción se utiliza y x es de 2 o superior, entonces la secuencia {yy}{mm} o {yyyy}{mm} también es necesaria. <br> <b> {dd} </b> días (01 a 31). <br><b> {mm}</b> mes (01 a 12). <br><b>{yy}</b>, <b>{yyyy}</b> ou <b>{y}</b> año en 2, 4 ó 1 cifra.<br>
-GenericMaskCodes2=<b>{cccc}</b> código de cliente con n caracteres<br><b>{cccc000}</b> código de cliente con n caracteres es seguido por un contador dedicado a clientes. Este contador dedicado a clientes se reseteará al mismo tiempo que el contador global.<br><b>{tttt}</b> El código del tipo de empresa con n caracteres (vea diccionarios->tipos de terceros).<br>
+GenericMaskCodes2=<b>{cccc}</b> código de cliente con n caracteres<br><b>{cccc000}</b> código de cliente con n caracteres es seguido por un contador dedicado a clientes. Este contador dedicado a clientes se reseteará al mismo tiempo que el contador global.<br><b>{tttt}</b> El código del tipo de empresa con n caracteres (vea diccionarios->tipos de empresa).<br>
 GenericMaskCodes3=Cualquier otro carácter en la máscara se quedará sin cambios. <br>No se permiten espacios <br>
 GenericMaskCodes4a=<u>Ejemplo en la 99 ª %s del tercero La Empresa realizada el 31/03/2007: </u><br>
 GenericMaskCodes4b=<u>Ejemplo sobre un tercero creado el 31/03/2007:</u><br>
@@ -783,6 +785,7 @@ VATIsNotUsedDesc=El tipo de IVA propuesto por defecto es 0. Este es el caso de a
 VATIsUsedExampleFR=En Francia, se trata de las sociedades u organismos que eligen un régimen fiscal general (General simplificado o General normal), régimen en el cual se declara el IVA.
 VATIsNotUsedExampleFR=En Francia, se trata de asociaciones exentas de IVA o sociedades, organismos o profesiones liberales que han elegido el régimen fiscal de módulos (IVA en franquicia), pagando un IVA en franquicia sin hacer declaración de IVA. Esta elección hace aparecer la anotación  "IVA no aplicable - art-293B del CGI" en las facturas.
 ##### Local Taxes #####
+LTRate=Tasa
 LocalTax1IsUsed=Sujeto
 LocalTax1IsNotUsed=No sujeto
 LocalTax1IsUsedDesc=Uso de un 2º tipo de impuesto (Distinto del IVA)
@@ -807,6 +810,13 @@ LocalTax2IsUsedDescES= El tipo de IRPF propuesto por defecto en las creaciones d
 LocalTax2IsNotUsedDescES= El tipo de IRPF propuesto por defecto es 0. Final de regla.
 LocalTax2IsUsedExampleES= En España, se trata de personas físicas: autónomos y profesionales independientes que prestan servicios y empresas que han elegido el régimen fiscal de módulos.
 LocalTax2IsNotUsedExampleES= En España, se trata de empresas no sujetas al régimen fiscal de módulos.
+CalcLocaltax=Informes
+CalcLocaltax1ES=Ventas - Compras
+CalcLocaltax1Desc=Los informes se calculan con la diferencia entre las ventas y las compras
+CalcLocaltax2ES=Compras
+CalcLocaltax2Desc=Los informes se basan en el total de las compras
+CalcLocaltax3ES=Ventas
+CalcLocaltax3Desc=Los informes se basan en el total de las ventas
 LabelUsedByDefault=Etiqueta que se utilizará si no se encuentra traducción para este código
 LabelOnDocuments=Etiqueta sobre documentos
 NbOfDays=Nº de días
@@ -1453,6 +1463,9 @@ AgendaSetup=Módulo configuración de acciones y agenda
 PasswordTogetVCalExport=Clave de autorización vcal export link
 PastDelayVCalExport=No exportar los eventos de más de
 AGENDA_USE_EVENT_TYPE=Usar tipos de evento (gestionados en el menú Configuración->Diccionarios->Tipos de eventos de la agenda)
+AGENDA_DEFAULT_FILTER_TYPE=Establecer por defecto este tipo de evento en el filtro de búsqueda en la vista de la agenda
+AGENDA_DEFAULT_FILTER_STATUS=Establecer por defecto este estado de eventos en el filtro de búsqueda en la vista de la agenda
+AGENDA_DEFAULT_VIEW=Establecer la pestaña por defecto al seleccionar el menú Agenda
 ##### ClickToDial #####
 ClickToDialDesc=Este módulo permite agregar un icono después del número de teléfono de contactos Dolibarr. Un clic en este icono, Llama a un servidor con una URL que se indica a continuación. Esto puede ser usado para llamar al sistema call center de Dolibarr que puede llamar al número de teléfono en un sistema SIP, por ejemplo.
 ##### Point Of Sales (CashDesk) #####
@@ -1503,6 +1516,17 @@ TaskModelModule=Módulo de documentos informes de tareas
 ##### ECM (GED) #####
 ECMSetup = Configuración del módulo GED
 ECMAutoTree = El árbol automático está disponible
-
+##### Fiscal Year #####
+FiscalYears=Años fiscales
+FiscalYear=Año fiscal
+FiscalYearCard=Ficha Año fiscal
+NewFiscalYear=Nuevo año fiscal
+EditFiscalYear=Editar año fiscal
+OpenFiscalYear=Abrir año fiscal
+CloseFiscalYear=Cerrar año fiscal
+DeleteFiscalYear=Eliminar año fiscal
+ConfirmDeleteFiscalYear=¿Está seguro de querer eliminar este año fiscal?
+Opened=Abierto
+Closed=Cerrado
 
 Format=Formatear 
