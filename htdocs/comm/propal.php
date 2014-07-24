@@ -51,6 +51,7 @@ $langs->load('bills');
 $langs->load('orders');
 $langs->load('products');
 $langs->load("deliveries");
+$langs->load('sendings');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -251,6 +252,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$object->availability_id = GETPOST('availability_id');
 				$object->demand_reason_id = GETPOST('demand_reason_id');
 				$object->fk_delivery_address = GETPOST('fk_address');
+                $object->fk_shipping_method = GETPOST('fk_shipping_method', 'int');
 				$object->duree_validite = $duration;
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -277,6 +279,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id');
 			$object->fk_delivery_address = GETPOST('fk_address');
+            $object->fk_shipping_method = GETPOST('fk_shipping_method', 'int');
 			$object->duree_validite = GETPOST('duree_validite');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -1110,6 +1113,11 @@ else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
 }
 
+// shipping method
+else if ($action == 'setshippingmethod' && $user->rights->propal->creer) {
+    $result=$object->setShippingMethod(GETPOST('fk_shipping_method', 'int'));
+}
+
 /*
  * Ordonnancement des lignes
 */
@@ -1388,6 +1396,11 @@ if ($action == 'create') {
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
+
+    // Shipping Method
+    print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
+    print $form->selectShippingMethod($fk_shipping_method, 'fk_shipping_method', '', 1);
+    print '</td></tr>';
 
 	// Delivery date (or manufacturing)
 	print '<tr><td>' . $langs->trans("DeliveryDate") . '</td>';
@@ -1850,6 +1863,23 @@ if ($action == 'create') {
 
 	print '</td>';
 	print '</tr>';
+
+    // Shipping Method
+    print '<tr><td>';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
+    print $langs->trans('SendingMethod');
+    print '<td>';
+    if ($action != 'editshippingmethod' && $user->rights->propal->creer)
+        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editshippingmethod') {
+        $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'fk_shipping_method', 1);
+    } else {
+        $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'none');
+    }
+    print '</td>';
+    print '</tr>';
 
 	// Origin of demand
 	print '<tr><td>';

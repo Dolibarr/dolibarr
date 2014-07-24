@@ -1042,6 +1042,37 @@ abstract class CommonObject
     	}
     }
 
+
+    /**
+     *  Change the shipping method
+     *
+     *  @param      int     $fk_shipping_method     Id of shipping method
+     *  @return     int              1 if OK, 0 if KO
+     */
+    function setShippingMethod($fk_shipping_method)
+    {
+        if (! $this->table_element) {
+            dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        if ($fk_shipping_method<0) $fk_shipping_method='NULL';
+        dol_syslog(get_class($this).'::setShippingMethod('.$fk_shipping_method.')');
+
+        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+        $sql.= " SET fk_shipping_method = ".$fk_shipping_method;
+        $sql.= " WHERE rowid=".$this->id;
+
+        if ($this->db->query($sql)) {
+            $this->fk_shipping_method = ($fk_shipping_method=='NULL')?null:$fk_shipping_method;
+            return 1;
+        } else {
+            dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);
+            $this->error=$this->db->error();
+            return 0;
+        }
+    }
+
+
     /**
      *		Set last model used by doc generator
      *
