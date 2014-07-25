@@ -998,7 +998,7 @@ class Fichinter extends CommonObject
 /**
  *	Classe permettant la gestion des lignes d'intervention
  */
-class FichinterLigne
+class FichinterLigne extends CommonObject
 {
 	var $db;
 	var $error;
