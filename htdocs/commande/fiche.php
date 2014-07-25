@@ -52,6 +52,7 @@ $langs->load('companies');
 $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
+$langs->load('sendings');
 $langs->load('products');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');

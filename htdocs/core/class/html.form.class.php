@@ -2429,7 +2429,7 @@ class Form
      *  @param  string	$moreattrib        To add more attribute on select
      * 	@return	void
      */
-    function selectShippingMethod($selected='',$htmlname='fk_shipping_method',$filtre='',$useempty=0,$moreattrib='')
+    function selectShippingMethod($selected='',$htmlname='shipping_method_id',$filtre='',$useempty=0,$moreattrib='')
     {
         global $langs, $conf, $user;
 
@@ -2482,7 +2482,7 @@ class Form
      *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
      *    @return	void
      */
-    function formSelectShippingMethod($page, $selected='', $htmlname='fk_shipping_method', $addempty=0)
+    function formSelectShippingMethod($page, $selected='', $htmlname='shipping_method_id', $addempty=0)
     {
         global $langs, $db;
 

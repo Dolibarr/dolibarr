@@ -1331,7 +1331,7 @@ class Commande extends CommonOrder
         $sql.= ', c.fk_account';
         $sql.= ', c.date_commande';
         $sql.= ', c.date_livraison';
-        $sql.= ", c.fk_shipping_method";
+        $sql.= ', c.fk_shipping_method';
         $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as billed';
         $sql.= ', c.note_private, c.note_public, c.ref_client, c.ref_ext, c.ref_int, c.model_pdf, c.fk_delivery_address, c.extraparams';
         $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
