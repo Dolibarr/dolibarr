@@ -1868,7 +1868,7 @@ if ($action == 'create') {
     print '<tr><td>';
     print '<table width="100%" class="nobordernopadding"><tr><td>';
     print $langs->trans('SendingMethod');
-    print '<td>';
+    print '</td>';
     if ($action != 'editshippingmethod' && $user->rights->propal->creer)
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
     print '</tr></table>';

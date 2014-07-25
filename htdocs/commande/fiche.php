@@ -229,6 +229,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
 		$object->date_livraison = $datelivraison;
+        $object->fk_shipping_method = GETPOST('fk_shipping_method', 'int');
 		$object->fk_delivery_address = GETPOST('fk_address');
 		$object->contactid = GETPOST('contactidp');
 
@@ -489,6 +490,11 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 // bank account
 else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+}
+
+// shipping method
+else if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
+    $result = $object->setShippingMethod(GETPOST('fk_shipping_method', 'int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
@@ -1396,6 +1402,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
+            $fk_shipping_method = (! empty($objectsrc->fk_shipping_method)?$objectsrc->fk_shipping_method:(! empty($soc->fk_shipping_method)?$soc->fk_shipping_method:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
@@ -1416,6 +1423,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$mode_reglement_id  = $soc->mode_reglement_id;
         $fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
+        $fk_shipping_method = $soc->fk_shipping_method;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
@@ -1519,6 +1527,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1);
 	print '</td></tr>';
+
+    // Shipping Method
+    print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
+    print $form->selectShippingMethod($fk_shipping_method, 'fk_shipping_method', '', 1);
+    print '</td></tr>';
 
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td colspan="2">';
@@ -1974,6 +1987,23 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		}
 		print '</td>';
 		print '</tr>';
+
+        // Shipping Method
+        print '<tr><td height="10">';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('SendingMethod');
+        print '</td>';
+        if ($action != 'editshippingmethod' && $user->rights->commande->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editshippingmethod') {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'fk_shipping_method', 1);
+        } else {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'none');
+        }
+        print '</td>';
+        print '</tr>';
 
 		// Terms of payment
 		print '<tr><td height="10">';
