@@ -252,7 +252,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 				$object->availability_id = GETPOST('availability_id');
 				$object->demand_reason_id = GETPOST('demand_reason_id');
 				$object->fk_delivery_address = GETPOST('fk_address');
-                $object->fk_shipping_method = GETPOST('fk_shipping_method', 'int');
+                $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 				$object->duree_validite = $duration;
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -279,7 +279,7 @@ else if ($action == 'add' && $user->rights->propal->creer) {
 			$object->availability_id = GETPOST('availability_id');
 			$object->demand_reason_id = GETPOST('demand_reason_id');
 			$object->fk_delivery_address = GETPOST('fk_address');
-            $object->fk_shipping_method = GETPOST('fk_shipping_method', 'int');
+            $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->duree_validite = GETPOST('duree_validite');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -1115,7 +1115,7 @@ else if ($action == 'setbankaccount' && $user->rights->propal->creer) {
 
 // shipping method
 else if ($action == 'setshippingmethod' && $user->rights->propal->creer) {
-    $result=$object->setShippingMethod(GETPOST('fk_shipping_method', 'int'));
+    $result=$object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 }
 
 /*
@@ -1399,7 +1399,7 @@ if ($action == 'create') {
 
     // Shipping Method
     print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
-    print $form->selectShippingMethod($fk_shipping_method, 'fk_shipping_method', '', 1);
+    print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
     print '</td></tr>';
 
 	// Delivery date (or manufacturing)
@@ -1874,9 +1874,9 @@ if ($action == 'create') {
     print '</tr></table>';
     print '</td><td colspan="3">';
     if ($action == 'editshippingmethod') {
-        $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'fk_shipping_method', 1);
+        $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
     } else {
-        $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'none');
+        $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
     }
     print '</td>';
     print '</tr>';

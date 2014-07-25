@@ -72,7 +72,7 @@ class Commande extends CommonOrder
     var $date;				// Date commande
     var $date_commande;		// Date commande (deprecated)
     var $date_livraison;	// Date livraison souhaitee
-    var $fk_shipping_method;
+    var $shipping_method_id;
     var $fk_remise_except;
     var $remise_percent;
     var $total_ht;			// Total net of tax
@@ -677,7 +677,7 @@ class Commande extends CommonOrder
         $sql.= ", ".($this->demand_reason_id>0?"'".$this->demand_reason_id."'":"null");
         $sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:'NULL');
-        $sql.= ", ".($this->fk_shipping_method>0?$this->fk_shipping_method:'NULL');
+        $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
         $sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
         $sql.= ", ".($this->remise_percent>0?$this->remise_percent:0);
         $sql.= ", ".$conf->entity;
@@ -987,7 +987,7 @@ class Commande extends CommonOrder
             $this->availability_id      = $object->availability_id;
             $this->demand_reason_id     = $object->demand_reason_id;
             $this->date_livraison       = $object->date_livraison;
-            $this->fk_shipping_method   = $object->fk_shipping_method;
+            $this->shipping_method_id   = $object->shipping_method_id;
             $this->fk_delivery_address  = $object->fk_delivery_address;
             $this->contact_id           = $object->contactid;
             $this->ref_client           = $object->ref_client;
@@ -1395,7 +1395,7 @@ class Commande extends CommonOrder
                 $this->demand_reason_id		= $obj->fk_input_reason;
                 $this->demand_reason_code	= $obj->demand_reason_code;
                 $this->date_livraison		= $this->db->jdate($obj->date_livraison);
-                $this->fk_shipping_method   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
+                $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
                 $this->fk_delivery_address	= $obj->fk_delivery_address;
 
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);

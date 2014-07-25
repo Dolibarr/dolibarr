@@ -116,6 +116,13 @@ if ($action == 'setconditions' && $user->rights->commande->creer)
 	if ($result < 0) dol_print_error($db,$commande->error);
 }
 
+// shipping method
+if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
+    $commande = new Commande($db);
+    $commande->fetch($id);
+    $result=$commande->setShippingMethod(GETPOST('shipping_method_id', 'int'));
+}
+
 
 
 /*
@@ -261,6 +268,23 @@ if ($id > 0 || ! empty($ref))
 		print nl2br($commande->note_public);
 		print '</td>';
 		print '</tr>';
+
+        // Shipping Method
+        print '<tr><td>';
+        print '<table width="100%" class="nobordernopadding"><tr><td>';
+        print $langs->trans('SendingMethod');
+        print '</td>';
+        if ($action != 'editshippingmethod' && $user->rights->expedition->creer)
+            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editshippingmethod') {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->shipping_method_id, 'shipping_method_id', 1);
+        } else {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$commande->id, $commande->shipping_method_id, 'none');
+        }
+        print '</td>';
+        print '</tr>';
 
 		// Terms of payment
 		print '<tr><td height="10">';
@@ -607,6 +631,7 @@ if ($id > 0 || ! empty($ref))
 				print '<form method="GET" action="'.DOL_URL_ROOT.'/expedition/fiche.php">';
 				print '<input type="hidden" name="action" value="create">';
 				print '<input type="hidden" name="id" value="'.$commande->id.'">';
+                print '<input type="hidden" name="shipping_method_id" value="'.$commande->shipping_method_id.'">';
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$commande->id.'">';
 				print '<table class="border" width="100%">';

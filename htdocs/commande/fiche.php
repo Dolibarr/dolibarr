@@ -229,7 +229,7 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 		$object->availability_id = GETPOST('availability_id');
 		$object->demand_reason_id = GETPOST('demand_reason_id');
 		$object->date_livraison = $datelivraison;
-        $object->fk_shipping_method = GETPOST('fk_shipping_method', 'int');
+        $object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 		$object->fk_delivery_address = GETPOST('fk_address');
 		$object->contactid = GETPOST('contactidp');
 
@@ -494,7 +494,7 @@ else if ($action == 'setbankaccount' && $user->rights->commande->creer) {
 
 // shipping method
 else if ($action == 'setshippingmethod' && $user->rights->commande->creer) {
-    $result = $object->setShippingMethod(GETPOST('fk_shipping_method', 'int'));
+    $result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
 }
 
 else if ($action == 'setremisepercent' && $user->rights->commande->creer) {
@@ -1402,7 +1402,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
-            $fk_shipping_method = (! empty($objectsrc->fk_shipping_method)?$objectsrc->fk_shipping_method:(! empty($soc->fk_shipping_method)?$soc->fk_shipping_method:0));
+            $shipping_method_id = (! empty($objectsrc->shipping_method_id)?$objectsrc->shipping_method_id:(! empty($soc->shipping_method_id)?$soc->shipping_method_id:0));
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
@@ -1423,7 +1423,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		$mode_reglement_id  = $soc->mode_reglement_id;
         $fk_account         = $soc->fk_account;
 		$availability_id    = $soc->availability_id;
-        $fk_shipping_method = $soc->fk_shipping_method;
+        $shipping_method_id = $soc->shipping_method_id;
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
@@ -1530,7 +1530,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 
     // Shipping Method
     print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
-    print $form->selectShippingMethod($fk_shipping_method, 'fk_shipping_method', '', 1);
+    print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
     print '</td></tr>';
 
 	// What trigger creation
@@ -1998,9 +1998,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
         print '</tr></table>';
         print '</td><td colspan="3">';
         if ($action == 'editshippingmethod') {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'fk_shipping_method', 1);
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
         } else {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_shipping_method, 'none');
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
         }
         print '</td>';
         print '</tr>';

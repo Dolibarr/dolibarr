@@ -1046,24 +1046,24 @@ abstract class CommonObject
     /**
      *  Change the shipping method
      *
-     *  @param      int     $fk_shipping_method     Id of shipping method
+     *  @param      int     $shipping_method_id     Id of shipping method
      *  @return     int              1 if OK, 0 if KO
      */
-    function setShippingMethod($fk_shipping_method)
+    function setShippingMethod($shipping_method_id)
     {
         if (! $this->table_element) {
             dol_syslog(get_class($this)."::setShippingMethod was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
-        if ($fk_shipping_method<0) $fk_shipping_method='NULL';
-        dol_syslog(get_class($this).'::setShippingMethod('.$fk_shipping_method.')');
+        if ($shipping_method_id<0) $shipping_method_id='NULL';
+        dol_syslog(get_class($this).'::setShippingMethod('.$shipping_method_id.')');
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " SET fk_shipping_method = ".$fk_shipping_method;
+        $sql.= " SET fk_shipping_method = ".$shipping_method_id;
         $sql.= " WHERE rowid=".$this->id;
 
         if ($this->db->query($sql)) {
-            $this->fk_shipping_method = ($fk_shipping_method=='NULL')?null:$fk_shipping_method;
+            $this->shipping_method_id = ($shipping_method_id=='NULL')?null:$shipping_method_id;
             return 1;
         } else {
             dol_syslog(get_class($this).'::setShippingMethod Error ', LOG_DEBUG);

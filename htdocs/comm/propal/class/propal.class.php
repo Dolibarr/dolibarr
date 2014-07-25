@@ -92,7 +92,7 @@ class Propal extends CommonObject
     var $fk_address;
     var $address_type;
     var $address;
-    var $fk_shipping_method;
+    var $shipping_method_id;
     var $availability_id;
     var $availability_code;
     var $demand_reason_id;
@@ -746,7 +746,7 @@ class Propal extends CommonObject
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
-        $sql.= ", ".($this->fk_shipping_method>0?$this->fk_shipping_method:'NULL');
+        $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
         $sql.= ", ".$this->availability_id;
         $sql.= ", ".$this->demand_reason_id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
@@ -1110,7 +1110,7 @@ class Propal extends CommonObject
                 $this->datep                = $this->db->jdate($obj->dp);    // deprecated
                 $this->fin_validite         = $this->db->jdate($obj->dfv);
                 $this->date_livraison       = $this->db->jdate($obj->date_livraison);
-                $this->fk_shipping_method   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
+                $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
                 $this->availability_id      = $obj->fk_availability;
                 $this->availability_code    = $obj->availability_code;
                 $this->availability         = $obj->availability;
