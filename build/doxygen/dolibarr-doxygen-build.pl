@@ -15,7 +15,7 @@ $CONFFILE="dolibarr-doxygen.doxyfile";
 
 use Cwd;
 my $dir = getcwd;
-    
+
 print "Current dir is: $dir\n";
 print "Running dir for doxygen must be: $DIR\n";
 
@@ -24,14 +24,31 @@ if (! -s $CONFFILE)
     print "Error: current directory for building Dolibarr doxygen documentation is not correct.\n";
     print "\n";
 	print "Change your current directory then, to launch the script, run:\n";
-	print '> perl ..\dolibarr-doxygen-build.pl  (on Windows)'."\n";
+	print '> perl .\dolibarr-doxygen-build.pl  (on Windows)'."\n";
 	print '> perl ../dolibarr-doxygen-build.pl  (on Linux or BSD)'."\n";
     sleep 4;
     exit 1;   
 }
 
-print "Running doxygen, please wait...\n";
-$result=`doxygen $OPTIONS $CONFFILE 2>&1`;
+$SOURCE="../..";
+
+# Get version $MAJOR, $MINOR and $BUILD
+$result = open( IN, "< " . $SOURCE . "/htdocs/filefunc.inc.php" );
+if ( !$result ) { die "Error: Can't open descriptor file " . $SOURCE . "/htdocs/filefunc.inc.php\n"; }
+while (<IN>) {
+	if ( $_ =~ /define\('DOL_VERSION','([\d\.a-z\-]+)'\)/ ) { $PROJVERSION = $1; break; }
+}
+close IN;
+($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
+if ($MINOR eq '') { die "Error can't detect version into ".$SOURCE . "/htdocs/filefunc.inc.php"; }
+
+
+$version=$MAJOR.".".$MINOR.".".$BUILD;
+
+
+print "Running doxygen for version ".$version.", please wait...\n";
+print "cat $CONFFILE | sed -e 's/x\.y\.z/".$version."/' | doxygen $OPTIONS - 2>&1\n";
+$result=`cat $CONFFILE | sed -e 's/x\.y\.z/$version/' | doxygen $OPTIONS - 2>&1`;
 
 print $result;
 
