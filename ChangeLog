@@ -42,7 +42,8 @@ For users:
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
 - New: Can define custom fields for categories.
 - New: Prepare generation of SEPA files into module withdrawal.
-- New: Can filter on status for supplier order.
+- New: [ task #1164 ] Add "Ref. supplier" search box in supplier orders
+- New: [ task #1345 ] Can filter on status for supplier order.
 - New: Add option FACTURE_SENDBYEMAIL_FOR_ALL_STATUS to allow to send invoice by email 
        whatever is its status.
 - New: Add filter date in bank writing list page.
@@ -70,6 +71,7 @@ For users:
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
 - Fix: [ bug #1471 ] Several PHP warnings when intercepting USER_CREATE trigger.
 - Fix: [ bug #1517 ] Packages sizes.
+- Fix: [ bug #1521 ] The second order's page from a provider shows all orders
 
 TODO
 - New: Predefined product and free product use same form.

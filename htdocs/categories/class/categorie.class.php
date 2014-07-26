@@ -74,6 +74,9 @@ class Categorie extends CommonObject
 	function fetch($id,$label='')
 	{
 		global $conf;
+		
+		// Check parameters
+		if (empty($id) && empty($label)) return -1;
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
