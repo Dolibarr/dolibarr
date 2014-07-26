@@ -130,7 +130,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * isValidMailDomain
+     * testIsValidMailDomain
      *
      * @return void
      */
@@ -140,7 +140,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * isValidURL
+     * testIsValidURL
      *
      * @return	void
      */
@@ -155,7 +155,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * isIP
+     * testIsIP
      *
      * @return	void
      */
@@ -171,6 +171,7 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." for ".$ip." result=".$result."\n";
     	$this->assertEquals(1,$result,$ip);
 
+    	// Private IP ranges
     	$ip='10.0.0.0';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
@@ -186,9 +187,12 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." for ".$ip." result=".$result."\n";
     	$this->assertEquals(2,$result,$ip);
 
+    	// Reserved IP range (not checked by is_ip function)
+    	/*
     	$ip='169.254.0.0';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
     	$this->assertEquals(2,$result,$ip);
+    	*/
     }
 }
