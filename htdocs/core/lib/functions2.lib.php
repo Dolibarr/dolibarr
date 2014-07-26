@@ -1365,19 +1365,20 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
  * This function evaluates a string that should be a valid IPv4
  *
  * @param	string $ip IP Address
- * @return	int 0 if not valid, 1 if valid and public IP, 2 if valid and private range IP
+ * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */
 function is_ip($ip)
 {
-	//First we test if it is a valid IPv4
+	// First we test if it is a valid IPv4
 	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
 
-		//Then we test if it is not a private range
-		if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
-			return 1;
-		}
+		// Then we test if it is a private range
+		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
 
-		return 2;
+		// Then we test if it is a reserved range
+		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE)) return 0;
+
+		return 1;
 	}
 
 	return 0;

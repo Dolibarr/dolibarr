@@ -161,7 +161,14 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
      */
     public function testIsIP()
     {
+    	// Not valid
     	$ip='a299.299.299.299';
+    	$result=is_ip($ip);
+        print __METHOD__." for ".$ip." result=".$result."\n";
+    	$this->assertEquals(0,$result,$ip);
+
+    	// Reserved IP range (not checked by is_ip function)
+    	$ip='169.254.0.0';
     	$result=is_ip($ip);
         print __METHOD__." for ".$ip." result=".$result."\n";
     	$this->assertEquals(0,$result,$ip);
@@ -187,12 +194,5 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." for ".$ip." result=".$result."\n";
     	$this->assertEquals(2,$result,$ip);
 
-    	// Reserved IP range (not checked by is_ip function)
-    	/*
-    	$ip='169.254.0.0';
-    	$result=is_ip($ip);
-        print __METHOD__." for ".$ip." result=".$result."\n";
-    	$this->assertEquals(2,$result,$ip);
-    	*/
     }
 }
