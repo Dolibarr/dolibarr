@@ -1978,10 +1978,10 @@ if ($action == 'create') {
 	}
 
     // Bank Account
-    print '<tr><td class="nowrap">';
-    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print '<tr><td">';
+    print '<table width="100%" class="nobordernopadding"><tr><td>';
     print $langs->trans('BankAccount');
-    print '<td>';
+    print '</td>';
     if ($action != 'editbankaccount' && $user->rights->propal->creer)
         print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
     print '</tr></table>';
