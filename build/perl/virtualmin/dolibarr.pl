@@ -30,7 +30,8 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.6.0", "3.5.3", "3.5.2", "3.5.1", "3.5.0", "3.4.1", "3.4.0", "3.3.3", "3.3.2", "3.3.1", "3.3.0", "3.2.1", "3.1.1" );
+	# TODO Replace this with version of Dolibar we want to install 
+	return ( "x.y.z", "3.6.0");
 }
 
 sub script_dolibarr_category
