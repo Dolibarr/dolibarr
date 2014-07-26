@@ -471,6 +471,11 @@ function createThirdParty($authentication,$thirdparty)
         if (! $error)
         {
             $db->commit();
+
+            // Patch to add capability to associate (one) sale representative
+            if($thirdparty['commid'] && $thirdparty['commid']>0)
+                $newobject->add_commercial($fuser, $thirdparty["commid"]);
+
             $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
         }
         else
