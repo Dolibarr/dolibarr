@@ -1530,9 +1530,11 @@ if ($action == 'create' && $user->rights->commande->creer) {
 	print '</td></tr>';
 
     // Shipping Method
-    print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
-    print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
-    print '</td></tr>';
+    if (! empty($conf->expedition->enabled)) {
+        print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
+        print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
+        print '</td></tr>';
+    }
 
 	// What trigger creation
 	print '<tr><td>' . $langs->trans('Source') . '</td><td colspan="2">';
@@ -1990,21 +1992,23 @@ if ($action == 'create' && $user->rights->commande->creer) {
 		print '</tr>';
 
         // Shipping Method
-        print '<tr><td height="10">';
-        print '<table width="100%" class="nobordernopadding"><tr><td>';
-        print $langs->trans('SendingMethod');
-        print '</td>';
-        if ($action != 'editshippingmethod' && $user->rights->commande->creer)
-            print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
-        print '</tr></table>';
-        print '</td><td colspan="3">';
-        if ($action == 'editshippingmethod') {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
-        } else {
-            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
+        if (! empty($conf->expedition->enabled)) {
+            print '<tr><td height="10">';
+            print '<table width="100%" class="nobordernopadding"><tr><td>';
+            print $langs->trans('SendingMethod');
+            print '</td>';
+            if ($action != 'editshippingmethod' && $user->rights->commande->creer)
+                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td colspan="3">';
+            if ($action == 'editshippingmethod') {
+                $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
+            } else {
+                $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
+            }
+            print '</td>';
+            print '</tr>';
         }
-        print '</td>';
-        print '</tr>';
 
 		// Terms of payment
 		print '<tr><td height="10">';
