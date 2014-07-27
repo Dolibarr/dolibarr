@@ -887,7 +887,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
         {
             while (($file = readdir($handle))!==false)
             {
-                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
+            	if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
                     if (is_dir($dirroot . '/' . $file . '/core/modules/'))
                     {
@@ -898,7 +898,6 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
             closedir($handle);
         }
     }
-    //var_dump($modulesdir);
 
     foreach ($modulesdir as $dir)
     {
@@ -959,7 +958,8 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 
                             // Complete arrays
                             //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
-                            //$objMod
+                            if (empty($objMod->dictionaries) && ! empty($objMod->dictionnaries)) $objMod->dictionaries=$objMod->dictionnaries;		// For backward compatibility
+
                             if (! empty($objMod->dictionaries))
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
