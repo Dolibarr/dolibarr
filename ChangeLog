@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Add info page about browser.
 - New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
        on uploaded file names. 
 - New: No more dependency between contract and service module.

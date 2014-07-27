@@ -328,16 +328,8 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=0;
-	$heightmenu=19;
-}
-else
-{
-	$minwidthtmenu=70;
-	$heightmenu=47;
-}
+$minwidthtmenu=70;
+$heightmenu=47;
 ?>
 
 div#tmenu_tooltip {
@@ -479,7 +471,9 @@ div.mainmenu {
 	margin-left: 0px;
 }
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
 
 div.mainmenu.agenda {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
@@ -610,7 +604,7 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 <?php
-}	// End test if not phone
+}	// End test if $dol_hide_topmenu
 ?>
 
 .tmenuimage {
@@ -859,9 +853,13 @@ div.blockvmenusearch div.menu_titre {
 {
 	padding-top: 1px;
 	padding-bottom: 1px;
-	height: 20px;
+	min-height: 20px;
 }
 
+#blockvmenusearch form
+{
+	clear: both;
+}
 
 div.blockvmenubookmarks
 {

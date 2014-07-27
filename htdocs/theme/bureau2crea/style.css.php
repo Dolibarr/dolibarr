@@ -364,16 +364,8 @@ div.ficheaddleft {
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=70;
-	$heightmenu=39;
-}
-else
-{
-	$minwidthtmenu=70;
-	$heightmenu=39;
-}
+$minwidthtmenu=70;
+$heightmenu=39;
 ?>
 
 /* This theme is bugged. If width not large enough, menu are not wrapped on next line
@@ -414,7 +406,9 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) {
+
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
 
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -785,6 +779,11 @@ div.blockvmenusearch div.menu_titre {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	min-height: 14px;
+}
+
+#blockvmenusearch form
+{
+	clear: both;
 }
 
 div.blockvmenubookmarks

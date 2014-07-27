@@ -356,7 +356,6 @@ div.tmenu {
     height: <?php print $heightmenu; ?>px;
     background: #7FAEC6;
     background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/table_bg.gif',1); ?>);
-/*    background-position: center bottom; */
     color: #000000;
     text-decoration: none;
 <?php } ?>
@@ -375,7 +374,9 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) {
+
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) {
 
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -434,7 +435,7 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 <?php
-}	// End test if not phone
+}	// End test if $dol_hide_topmenu
 ?>
 
 .tmenu{
@@ -707,8 +708,8 @@ div.blockvmenusearch
 {
 	padding-top: 1px;
 	padding-bottom: 1px;
-	height: 16px;
 	background: #DDDDDD !important;
+	min-height: 16px;
 }
 
 div.blockvmenubookmarks

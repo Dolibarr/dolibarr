@@ -90,6 +90,20 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentMenuHandler").'</td><td colspan="2">';
 print $conf->standard_menu;
 print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Screen").'</td><td colspan="2">';
+print $_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
+print '</td></tr>'."\n";
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Session").'</td><td colspan="2">';
+$i=0;
+foreach($_SESSION as $key => $val)
+{
+	if ($i > 0) print ', ';
+	print $key.' => '.$val;
+	$i++;
+}
+print '</td></tr>'."\n";
 print '</table>';
 print '<br>';
 

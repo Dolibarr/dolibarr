@@ -212,7 +212,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->phone=$tmp['phone'];
     $conf->browser->name=$tmp['browsername'];
     $conf->browser->os=$tmp['browseros'];
-    $conf->browser->firefox=$tmp['browserfirefox'];
     $conf->browser->version=$tmp['browserversion'];
 }
 
@@ -717,10 +716,11 @@ if (GETPOST('dol_hide_topmenu') || ! empty($_SESSION['dol_hide_topmenu']))      
 if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
-if (! empty($conf->browser->phone))
+if (! empty($conf->browser->phone)) $conf->dol_no_mouse_hover=1;
+if ((! empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
+	|| (! empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400))
 {
 	$conf->dol_optimize_smallscreen=1;
-	$conf->dol_no_mouse_hover=1;
 }
 
 // Disabled bugged themes
@@ -1037,14 +1037,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 	        	}
 	        }
         }
-        $themeparam='?lang='.$langs->defaultlang.'&amp;theme='.$conf->theme.(GETPOST('optioncss')?'&amp;optioncss='.GETPOST('optioncss','alpha',1):'').'&amp;userid='.$user->id.'&amp;entity='.$conf->entity;
-        $themeparam.=($ext?'&amp;'.$ext:'');
-        if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&amp;dol_resetcache='.$_SESSION['dol_resetcache'];
-        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&amp;dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
-        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&amp;dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
-        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
-        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
-        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
+        $themeparam='?lang='.$langs->defaultlang.'&theme='.$conf->theme.(GETPOST('optioncss')?'&optioncss='.GETPOST('optioncss','alpha',1):'').'&userid='.$user->id.'&entity='.$conf->entity;
+        $themeparam.=($ext?'&'.$ext:'');
+        if (! empty($_SESSION['dol_resetcache'])) $themeparam.='&dol_resetcache='.$_SESSION['dol_resetcache'];
+        if (GETPOST('dol_hide_topmenu'))           { $themeparam.='&dol_hide_topmenu='.GETPOST('dol_hide_topmenu','int'); }
+        if (GETPOST('dol_hide_leftmenu'))          { $themeparam.='&dol_hide_leftmenu='.GETPOST('dol_hide_leftmenu','int'); }
+        if (GETPOST('dol_optimize_smallscreen'))   { $themeparam.='&dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen','int'); }
+        if (GETPOST('dol_no_mouse_hover'))         { $themeparam.='&dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover','int'); }
+        if (GETPOST('dol_use_jmobile'))            { $themeparam.='&dol_use_jmobile='.GETPOST('dol_use_jmobile','int'); $conf->dol_use_jmobile=GETPOST('dol_use_jmobile','int'); }
         //print 'themepath='.$themepath.' themeparam='.$themeparam;exit;
         print '<link rel="stylesheet" type="text/css" title="default" href="'.$themepath.$themeparam.'">'."\n";
 
@@ -1802,10 +1802,10 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post">';
 	$ret.='<label for="'.$htmlinputname.'">';
-	$ret.='<div class="menu_titre">';
+	$ret.='<div class="menu_titre menu_titre_search">';
 	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
 	$ret.=$title;
-	$ret.='</a><br>';
+	$ret.='</a>';
 	$ret.='</div>';
 	$ret.='</label>';
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

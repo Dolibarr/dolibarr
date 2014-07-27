@@ -207,6 +207,8 @@ print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
 print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
+print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
+print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print '*/'."\n";
 
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
@@ -490,18 +492,9 @@ margin : 0px auto;
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=0;
-	$heightmenu=19;
-	$heightmenu2=19;
-}
-else
-{
-	$minwidthtmenu=66;
-	$heightmenu=52;
-	$heightmenu2=40;
-}
+$minwidthtmenu=66;
+$heightmenu=52;
+$heightmenu2=40;
 ?>
 
 div#tmenu_tooltip {
@@ -579,7 +572,6 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-    /* height: <?php print $heightmenu; ?>px; */
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
 }
 ul.tmenu li {
@@ -623,11 +615,13 @@ li.tmenusel, li.tmenu:hover {
 .tmenuend .tmenuleft { width: 0px; }
 div.tmenuleft
 {
-	width: 5px;
 	float: <?php print $left; ?>;
-    height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
 	margin-top: 0px;
+	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+	width: 5px;
+	height: <?php print $heightmenu+4; ?>px;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
+	<?php } ?>
 }
 div.tmenucenter
 {
@@ -640,7 +634,6 @@ div.tmenucenter
 .mainmenuaspan
 {
 	padding-right: 4px;
-	/*text-shadow: 1px 1px 1px #DDD;*/
 }
 
 div.mainmenu {
@@ -652,7 +645,8 @@ div.mainmenu {
 	min-width: 40px;
 }
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
@@ -798,7 +792,7 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 <?php
-}	// End test if not phone
+}	// End test if $dol_hide_topmenu
 ?>
 
 .tmenuimage {
