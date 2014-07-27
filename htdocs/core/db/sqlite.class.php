@@ -389,7 +389,9 @@ class DoliDBSqlite extends DoliDB
 		$query=$this->convertSQLFromMysql($query,$type);
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 
-		// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
+	    // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
         try {
             //$ret = $this->db->exec($query);
             $ret = $this->db->query($query);        // $ret is a PDO object
@@ -398,8 +400,6 @@ class DoliDBSqlite extends DoliDB
         {
             $this->error=$e->getMessage();
         }
-
-	    dol_syslog('sql='.$query, LOG_DEBUG);
 
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
         {
