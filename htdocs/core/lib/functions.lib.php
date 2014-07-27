@@ -120,11 +120,11 @@ function getEntity($element=false, $shared=false)
 /**
  * Return information about user browser
  *
- * @return	array		Array of information ('browsername'=>,'browseros'=>,'phone'=>,'browserversion'=>)
+ * @return	array		Array of information ('browsername'=>,'browseros'=>,'browserversion'=>,'layout'=>(classic|phone|tablet))
  */
 function getBrowserInfo()
 {
-	$name='unknown'; $version=''; $os='unknown'; $phone='';
+	$name='unknown'; $version=''; $os='unknown'; $phone=''; $tablet='';
 
 	// If phone/smartphone, we set phone os name.
 	if (preg_match('/android/i',$_SERVER["HTTP_USER_AGENT"]))			{ $os=$phone='android'; }
@@ -156,7 +156,12 @@ function getBrowserInfo()
 	$firefox=0;
 	if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
 
-	return array('browsername'=>$name, 'browserversion'=>$version, 'browseros'=>$os, 'phone'=>$phone, 'browserfirefox'=>$firefox);
+	include_once DOL_DOCUMENT_ROOT.'/core/class/MobileDetect.class.php';
+	$detectmobile=new MobileDetect();
+	$phone=$detectmobile->isMobile();
+	$tablet=$detectmobile->isTablet();
+
+	return array('browsername'=>$name, 'browserversion'=>$version, 'browseros'=>$os, 'browserfirefox'=>$firefox, 'layout'=> ($tablet?'tablet':($phone?'phone':'classic')), 'phone'=>$phone, 'tablet'=>$tablet);
 }
 
 /**

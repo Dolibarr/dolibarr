@@ -51,6 +51,7 @@ For translators:
 - Update language files.
 
 For developers:
+- New: getBrowserInfo can return type of layout (classic/phone/tablet)
 - New: Add hook "searchAgendaFrom".
 - New: Add trigger DON_UPDATE, DON_DELETE
 - New: Add country iso code on 3 chars into table of countries.

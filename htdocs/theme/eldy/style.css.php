@@ -460,25 +460,25 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 35%;\n"; } ?>
-	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 35%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 65%;\n"; } ?>
-	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 65%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
+	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {

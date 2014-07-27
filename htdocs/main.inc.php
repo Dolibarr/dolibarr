@@ -209,10 +209,12 @@ register_shutdown_function('dol_shutdown');
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
     $tmp=getBrowserInfo();
-    $conf->browser->phone=$tmp['phone'];
     $conf->browser->name=$tmp['browsername'];
     $conf->browser->os=$tmp['browseros'];
     $conf->browser->version=$tmp['browserversion'];
+    $conf->browser->layout=$tmp['layout'];
+    $conf->browser->phone=$tmp['phone'];	// deprecated, use layout
+    $conf->browser->tablet=$tmp['tablet'];	// deprecated, use layout
 }
 
 

@@ -59,7 +59,7 @@ print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("BrowserOS").'</td><td 
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Version").'</td><td colspan="2">'.$tmp['browserversion'].'</td></tr>'."\n";
 $var=!$var;
-print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Smartphone").' ?</td><td colspan="2">'.$tmp['phone'].'</td></tr>'."\n";
+print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("Layout").' (phone/tablet/classic)</td><td colspan="2">'.$tmp['layout'].'</td></tr>'."\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("IPAddress").'</td><td colspan="2">'.$_SERVER['REMOTE_ADDR'].'</td></tr>'."\n";
 $var=!$var;
