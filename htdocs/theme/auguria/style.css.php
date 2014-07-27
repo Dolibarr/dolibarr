@@ -2296,6 +2296,11 @@ div.ecmjqft {
 {
 	text-decoration: underline !important;
 }
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
+}
 
 
 /* ============================================================================== */

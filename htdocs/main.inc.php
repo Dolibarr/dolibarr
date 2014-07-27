@@ -717,8 +717,10 @@ if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_small
 if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
 if (! empty($conf->browser->phone)) $conf->dol_no_mouse_hover=1;
-if ((! empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
-	|| (! empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400))
+if (! empty($conf->browser->phone)
+	|| (! empty($_SESSION['dol_screenwidth']) && $_SESSION['dol_screenwidth'] < 400)
+	|| (! empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] < 400)
+)
 {
 	$conf->dol_optimize_smallscreen=1;
 }

@@ -1645,11 +1645,10 @@ table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 
 	margin: 0px 0px 2px 0px;
-	/*padding: 1px 2px 1px 2px;*/
 
-	-moz-box-shadow: 3px 3px 4px #DDD;
-	-webkit-box-shadow: 3px 3px 4px #DDD;
-	box-shadow: 3px 3px 4px #DDD;
+	-moz-box-shadow: 2px 2px 4px #DDD;
+	-webkit-box-shadow: 2px 2px 4px #DDD;
+	box-shadow: 2px 2px 4px #DDD;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -2702,6 +2701,12 @@ div.dolEventError h1, div.dolEventError h2 {
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
+}
 
 
 /* ============================================================================== */

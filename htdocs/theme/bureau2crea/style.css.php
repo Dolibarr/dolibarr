@@ -384,7 +384,6 @@ div.tmenu {
     border-left: 0px;
     padding: 0px;
     margin: 5px 0px 10px 0px;
-    font-size: 13px;
     background-image : url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_mainNav.jpg',1); ?>);
     background-repeat: no-repeat;
     background-color: #996644;
@@ -408,7 +407,7 @@ div.mainmenu {
 
 
 /* Do not load menu img if hidden to save bandwidth */
-<?php if (empty($dol_hide_topmenu)) { ?>
+<?php if (empty($dol_hide_topmenu)) {
 
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -784,6 +783,7 @@ div.blockvmenusearch div.menu_titre {
 #blockvmenusearch form
 {
 	clear: both;
+	margin-bottom: 14px;
 }
 
 div.blockvmenubookmarks
@@ -2481,6 +2481,11 @@ div.ecmjqft {
 .paginate_enabled_previous:hover, .paginate_enabled_next:hover
 {
 	text-decoration: underline !important;
+}
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
 }
 
 
