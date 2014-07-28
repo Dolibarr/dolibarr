@@ -491,9 +491,9 @@ class DoliDBPgsql extends DoliDB
 			@pg_query($this->db, 'SAVEPOINT mysavepoint');
 		}
 
-		$ret = @pg_query($this->db, $query);
-
 		dol_syslog('sql='.$query, LOG_DEBUG);
+
+		$ret = @pg_query($this->db, $query);
 
 		//print $query;
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query)) // Si requete utilisateur, on la sauvegarde ainsi que son resultset

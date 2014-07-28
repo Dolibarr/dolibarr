@@ -349,6 +349,8 @@ class DoliDBMssql extends DoliDB
 
 		//print "<!--".$query."-->";
 
+		dol_syslog('sql='.$query, LOG_DEBUG);
+
 		if (! $this->database_name)
 		{
 			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -358,8 +360,6 @@ class DoliDBMssql extends DoliDB
 		{
 			$ret = mssql_query($query, $this->db);
 		}
-
-		dol_syslog('sql='.$query, LOG_DEBUG);
 
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{

@@ -180,7 +180,7 @@ class FormAdmin
 			$newprefix=$tab[0];
 			if ($newprefix=='1' && ($conf->global->MAIN_FEATURES_LEVEL < 1)) continue;
 			if ($newprefix=='2' && ($conf->global->MAIN_FEATURES_LEVEL < 2)) continue;
-			if (! empty($conf->browser->firefox) && $newprefix != $oldprefix)	// Add separators
+			if ($newprefix != $oldprefix)	// Add separators
 			{
 				// Affiche titre
 				print '<option value="-1" disabled="disabled">';

@@ -491,7 +491,7 @@ class FormOther
                 {
                     if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
-                        if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
+                        if ($i > 0) print '<option value="0" disabled="disabled">----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
                         if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
                         print '>';	// Project -> Task

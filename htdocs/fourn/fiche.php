@@ -52,6 +52,9 @@ $object = new Fournisseur($db);
  * Action
  */
 
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 if ($action == 'setsupplieraccountancycode')
 {
     $result=$object->fetch($id);

@@ -2,6 +2,7 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
+
 require '../../main.inc.php';
 
 if (!empty($conf->global->MAIN_FEATURES_LEVEL))
@@ -9,11 +10,18 @@ if (!empty($conf->global->MAIN_FEATURES_LEVEL))
 	print "Page available onto dev environment only";
 	exit;
 }
-?>
+$usedolheader=0;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
+
+// HEADER
+//--------
+
+if (empty($usedolheader))
+{
+	header("Content-type: text/html; charset=UTF8");
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
 <head>
 <meta name="robots" content="noindex,nofollow" />
 <meta name="author" content="Dolibarr Development Team">
@@ -31,20 +39,33 @@ if (!empty($conf->global->MAIN_FEATURES_LEVEL))
 <script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
 </head>
 
-
-
 <body style="margin: 4px;">
 <div data-role="page">
+
+<?php
+}
+else
+{
+	llxHeader();
+}
+
+
+// CONTENT
+//---------
+?>
+
+
 <br>
 This page is a sample of page using tables. To make test with<br>
 - css (edit page to change)<br>
 - jmobile (edit page to enable/disable)<br>
 - dataTables<br>
 - tablednd<br>
-<br>
 
 
-Example 0a : Table with div+div+div containg a select that should be overflowed and truncated<br>
+<br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+
+
 <div class="tagtable centpercent">
 	<div class="tagtr">
 	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 100px;"> <!-- If you remove max-width, the jmobile overflow does not work -->
@@ -55,7 +76,9 @@ Example 0a : Table with div+div+div containg a select that should be overflowed 
 	</div>
 	</div>
 </div>
-Example 0b: Table with div+form+div containg a select that should be overflowed and truncated<br>
+
+<br><hr><br>Example 0b: Table with div+form+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+
 <div class="tagtable centpercent">
 	<form action="xxx" method="POST" class="tagtr">
 	<div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
@@ -66,7 +89,9 @@ Example 0b: Table with div+form+div containg a select that should be overflowed 
 	</div>
 	</form>
 </div>
-Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated<br>
+
+<br><hr><br>Example 0c: Table with table+tr+td containg a select that should be overflowed and truncated => Use this to align text or form<br>
+
 <table class="centpercent">
     <tr>
     <td class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;"> <!-- If you remove max-width, the jmobile overflow does not work -->
@@ -80,8 +105,9 @@ Example 0c: Table with table+tr+td containg a select that should be overflowed a
 
 
 
-<br>
-Example 1 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd<br>
+<br><hr><br>Example 1 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tagtr+div.tagtd => Use this for tables that are edited forms<br><br>
+
+
 <?php
 	$tasksarray=array(1,2,3);	// To force having several lines
 	$tagidfortablednd='tablelines';
@@ -124,19 +150,48 @@ Example 1 : Table using tags: div.tagtable+div.tagtr+div or div.tagtable+div.tag
 
 
 
-<br><br>
+<br><hr><br>Example 2 : Table using tags: table/thead/tbody/tr/td + dataTable => Use this for long result tables<br>
 
 
-
-Example 2 : Table using tags: table/thead/tbody/tr/td + dataTable<br>
 
 <script type="text/javascript">
 $(document).ready(function(){
-    $('#idtableexample2').dataTable();
+    $('#idtableexample2').dataTable( {
+		"sPaginationType": "full_numbers",
+		"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+		"oLanguage": {
+			"sLengthMenu": "Voir _MENU_ lignes",
+			"sSearch": "Recherche:",
+			"sZeroRecords": "Aucune ligne &agrave; afficher",
+			"sInfoEmpty": "Aucune ligne &agrave; afficher",
+			"sInfoFiltered": "(Filtrer sur _MAX_ Total de lignes)",
+			"sInfo": "Afficher _START_ &agrave; _END_ sur les _TOTAL_ lignes &agrave; afficher",
+			"oPaginate": {
+				"sFirst": "Début",
+				"sLast": "Fin",
+				"sPrevious": "Précédent",
+				"sNext": "Suivant"
+			}
+		},
+		"aaSorting": [[0,'desc']],
+		"sDom": 'T<"clear">lfrtip',
+/* To get flash tools
+ 		"oTableTools": {
+			"sSwfPath": "<?php echo DOL_URL_ROOT.'/includes/jquery/plugins/datatables/extras/TableTools/swf/copy_csv_xls_pdf.swf'; ?>"
+		}
+*/
+/* To use in ajax mode
+		"bProcessing": true,	// Show	"processing message"
+		"bServerSide": true,
+		"bJQueryUI": true,
+		"sAjaxSource": "../ajaxlist.php"
+*/
+    })
 });
 
+
 /*
-// counts total number of td in a head so that we can can use it for label extraction
+// counts total number of td in a head so that we can use it for label extraction
 var head_col_count =  $('xxxthead td').size();
 // loop which replaces td
 for ( i=0; i <= head_col_count; i++ )  {
@@ -176,7 +231,7 @@ $('xxxth').replaceWith(
 */
 </script>
 
-<table id="idtableexample2">
+<table id="idtableexample2" class="centpercent">
 	<thead>
     <tr>
         <th>snake</th>
@@ -249,12 +304,9 @@ $('xxxth').replaceWith(
 </table>
 
 
-<br><br>
 
+<br><hr><br>Example 3 : Standard table => Use this if you need the drag and drop for lines<br>
 
-
-<br>
-Example 3 : Standard table<br>
 <?php
 	$tasksarray=array(1,2,3);	// To force having several lines
 	$tagidfortablednd='tablelines3';
@@ -269,6 +321,13 @@ Example 3 : Standard table<br>
 <br>
 
 
+<?php
+if (! empty($usedolheader))
+{
+	llxFooter();
+} else { ?>
 </div>
 </body>
+<?php } ?>
+
 </html>
