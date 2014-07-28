@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2014      Teddy Andreotti 		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,6 +207,40 @@ else
     print $desc;
 }
 print '</td></tr>';
+
+
+// Enable Captcha Key Sensitive
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("UseCaptchaCodeKeySensitive").'</td>';
+print '<td align="right">';
+if (function_exists("imagecreatefrompng"))
+{
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print ajax_constantonoff('MAIN_SECURITY_KEYSENSITIVECAPTCHA');
+    }
+    else
+    {
+        if (empty($conf->global->MAIN_SECURITY_KEYSENSITIVECAPTCHA))
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_KEYSENSITIVECAPTCHA">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+        }
+        else
+        {
+            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_KEYSENSITIVECAPTCHA">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+        }
+    }
+}
+else
+{
+    $desc = $form->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
+    print $desc;
+}
+print '</td></tr>';
+
+
+
 
 // Enable advanced perms
 $var=!$var;

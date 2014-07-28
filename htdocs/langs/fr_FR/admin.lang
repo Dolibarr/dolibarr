@@ -77,6 +77,7 @@ MustBeLowerThanPHPLimit=Remarque : Votre PHP limite la taille des envois à <b>
 NoMaxSizeByPHPLimit=Aucune limite configurée dans votre serveur PHP
 MaxSizeForUploadedFiles=Taille maximum des fichiers envoyés (0 pour interdire l'envoi)
 UseCaptchaCode=Utilisation du code graphique (CAPTCHA) sur la page de connexion
+UseCaptchaCodeKeySensitive=Activation de la casse sur le Captcha
 UseAvToScanUploadedFiles=Utiliser un antivirus pour vérifier les fichiers envoyés
 AntiVirusCommand= Chemin complet vers la commande antivirus
 AntiVirusCommandExample= Exemple pour ClamWin : c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Exemple pour ClamAv : /usr/bin/clamscan
