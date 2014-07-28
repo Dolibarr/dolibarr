@@ -376,7 +376,7 @@ class pdf_crabe extends ModelePDFFactures
                     if ($object->lines[$i]->remise_percent)
                     {
                         $pdf->SetXY($this->posxdiscount-2, $curY);
-                        $remise_amount = pdf_getlineremisevalue($object, $i, $outputlangs, $hidedetails);
+                        //$remise_amount = pdf_getlineremisevalue($object, $i, $outputlangs, $hidedetails);
                         $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails)."\n Soit : ".$remise_amount;
                         $pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
                     }
