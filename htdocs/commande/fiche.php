@@ -2411,14 +2411,15 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 				$newlang = $object->client->default_lang;
 
+			if (!empty($newlang))
+			{
+				$outputlangs = new Translate('', $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('commercial');
+			}
+
 			// Build document if it not exists
 			if (! $file || ! is_readable($file)) {
-				
-				if (! empty($newlang)) {
-					$outputlangs = new Translate("", $conf);
-					$outputlangs->setDefaultLang($newlang);
-				}
-
 				$result = commande_pdf_create($db, $object, GETPOST('model') ? GETPOST('model') : $object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result <= 0) {
 					dol_print_error($db, $result);
@@ -2447,9 +2448,9 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			$formmail->withtocc = $liste;
 			$formmail->withtoccc = $conf->global->MAIN_EMAIL_USECCC;
 			if (empty($object->ref_client)) {
-				$formmail->withtopic = $langs->trans('SendOrderRef', '__ORDERREF__');
+				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__');
 			} else if (! empty($object->ref_client)) {
-				$formmail->withtopic = $langs->trans('SendOrderRef', '__ORDERREF__(__REFCLIENT__)');
+				$formmail->withtopic = $outputlangs->trans('SendOrderRef', '__ORDERREF__(__REFCLIENT__)');
 			}
 			$formmail->withfile = 2;
 			$formmail->withbody = 1;

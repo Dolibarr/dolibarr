@@ -2264,15 +2264,16 @@ else
             if ($conf->global->MAIN_MULTILANGS && empty($newlang))
             	$newlang = $object->client->default_lang;
 
+            if (!empty($newlang))
+            {
+                $outputlangs = new Translate('', $conf);
+                $outputlangs->setDefaultLang($newlang);
+                $outputlangs->load('bills');
+            }
+
             // Build document if it not exists
             if (! $file || ! is_readable($file))
             {
-                if (! empty($newlang))
-                {
-                    $outputlangs = new Translate("",$conf);
-                    $outputlangs->setDefaultLang($newlang);
-                }
-
                 $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
@@ -2300,7 +2301,7 @@ else
 			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
+            $formmail->withtopic=$outputlangs->trans('SendBillRef','__FACREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;
