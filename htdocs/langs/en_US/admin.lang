@@ -1444,8 +1444,8 @@ ConfirmDeleteLine=Are you sure you want to delete this line ?
 ##### Tax #####
 TaxSetup=Taxes, social contributions and dividends module setup
 OptionVatMode=VAT due 
-OptionVATDefault=Standard
-OptionVATDebitOption=Option services on Debit
+OptionVATDefault=Cash basis
+OptionVATDebitOption=Accrual basis
 OptionVatDefaultDesc=VAT is due:<br>- on delivery for goods (we use invoice date)<br>- on payments for services
 OptionVatDebitOptionDesc=VAT is due:<br>- on delivery for goods (we use invoice date)<br>- on invoice (debit) for services
 SummaryOfVatExigibilityUsedByDefault=Time of VAT exigibility by default according to chosen option: 

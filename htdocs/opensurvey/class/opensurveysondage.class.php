@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,7 +100,12 @@ class Opensurveysondage extends CommonObject
 		$this->cleanParameters();
 
 		// Check parameters
-		// Put here code to add control on parameters values
+		if (! $this->date_fin > 0)
+		{
+			$this->error='BadValueForEndDate';
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+			return -1;
+		}
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_sondage(";
