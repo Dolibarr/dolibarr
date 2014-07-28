@@ -79,6 +79,7 @@ MustBeLowerThanPHPLimit=Note: your PHP limits each file upload's size to <b>%s</
 NoMaxSizeByPHPLimit=Note: No limit is set in your PHP configuration
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
 UseCaptchaCode=Use graphical code (CAPTCHA) on login page
+UseCaptchaCodeKeySensitive=Use Case sensitive on captcha
 UseAvToScanUploadedFiles=Use anti-virus to scan uploaded files
 AntiVirusCommand= Full path to antivirus command
 AntiVirusCommandExample= Example for ClamWin: c:\Progra~1\ClamWin\bin\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
