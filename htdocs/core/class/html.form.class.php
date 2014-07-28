@@ -4093,7 +4093,7 @@ class Form
             $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
         }
 
-        $ret.=$object->$fieldref;
+        $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
