@@ -1404,25 +1404,61 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 {
-	global $hookmanager;
+    global $hookmanager;
 
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	if ($object->lines[$i]->special_code != 3)
-	{
-		if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			return $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
-		}
-	}
+    if ($object->lines[$i]->special_code != 3)
+    {
+        if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+            $special_code = $object->lines[$i]->special_code;
+            if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+            $parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+            $action='';
+            return $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+        }
+    }
+}
+
+/**
+ *	Return line remise value
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ * 	@return	string
+ */
+function pdf_getlineremisevalue($object,$i,$outputlangs,$hidedetails=0)
+{
+    global $hookmanager;
+
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+    if ($object->lines[$i]->special_code != 3)
+    {
+        if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+            $special_code = $object->lines[$i]->special_code;
+            if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+            $parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+            $action='';
+            return $hookmanager->executeHooks('pdf_getlineremisevalue',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1){
+                // ici
+                $remisevalue = price($object->lines[$i]->subprice * $object->lines[$i]->qty - $object->lines[$i]->total_ht);
+                return $remisevalue;
+            }
+        }
+    }
 }
 
 /**
