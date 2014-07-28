@@ -1453,6 +1453,7 @@ function pdf_getlineremisevalue($object,$i,$outputlangs,$hidedetails=0)
         else
         {
             if (empty($hidedetails) || $hidedetails > 1){
+                //ici
                 $remisevalue = price($object->lines[$i]->subprice * $object->lines[$i]->qty - $object->lines[$i]->total_ht);
                 return $remisevalue;
             }
