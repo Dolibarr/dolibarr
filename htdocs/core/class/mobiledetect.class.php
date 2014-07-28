@@ -23,6 +23,9 @@
  * @version     2.8.3
  */
 
+/**
+ *  Class to manage detection of type of terminal (classic, tablet, mobile)
+ */
 class MobileDetect
 {
     /**
@@ -548,10 +551,8 @@ class MobileDetect
      * @param string $userAgent Inject the User-Agent header. If null, will use HTTP_USER_AGENT
      *                          from the $headers array instead.
      */
-    public function __construct(
-        array $headers = null,
-        $userAgent = null
-    ){
+    public function __construct(array $headers = null, $userAgent = null)
+    {
         $this->setHttpHeaders($headers);
         $this->setUserAgent($userAgent);
     }
@@ -572,8 +573,9 @@ class MobileDetect
     /**
      * Set the HTTP Headers. Must be PHP-flavored. This method will reset existing headers.
      *
-     * @param array $httpHeaders The headers to set. If null, then using PHP's _SERVER to extract
-     *                           the headers. The default null is left for backwards compatibilty.
+     * @param 	array 	$httpHeaders The headers to set. If null, then using PHP's _SERVER to extract
+     *                  	         the headers. The default null is left for backwards compatibilty.
+     * @return	void
      */
     public function setHttpHeaders($httpHeaders = null)
     {
@@ -691,10 +693,11 @@ class MobileDetect
      * Set the detection type. Must be one of self::DETECTION_TYPE_MOBILE or
      * self::DETECTION_TYPE_EXTENDED. Otherwise, nothing is set.
      *
-     * @deprecated since version 2.6.9
+     * @param 	string 	$type 	The type. Must be a self::DETECTION_TYPE_* constant. The default
+     *                     		parameter is null which will default to self::DETECTION_TYPE_MOBILE.
+     * @return	void
      *
-     * @param string $type The type. Must be a self::DETECTION_TYPE_* constant. The default
-     *                     parameter is null which will default to self::DETECTION_TYPE_MOBILE.
+     * @deprecated since version 2.6.9
      */
     public function setDetectionType($type = null)
     {
@@ -869,11 +872,12 @@ class MobileDetect
     /**
      * Magic overloading method.
      *
-     * @method boolean is[...]()
-     * @param  string                 $name
-     * @param  array                  $arguments
+     * @param  string                 $name			Name
+     * @param  array                  $arguments	Arguments
      * @return mixed
+     *
      * @throws BadMethodCallException when the method doesn't exist and doesn't start with 'is'
+     * @method boolean is[...]()
      */
     public function __call($name, $arguments)
     {
@@ -915,9 +919,9 @@ class MobileDetect
      * If the key is found the try to match the corresponding
      * regex agains the User-Agent.
      *
-     * @param string $key
-     * @param null $userAgent deprecated
-     * @return mixed
+     * @param 	string 	$key		Key
+     * @param 	string 	$userAgent 	deprecated
+     * @return 	mixed
      */
     protected function matchUAAgainstKey($key, $userAgent = null)
     {
@@ -941,8 +945,9 @@ class MobileDetect
     /**
      * Check if the device is mobile.
      * Returns true if any type of mobile device detected, including special ones
-     * @param null $userAgent deprecated
-     * @param null $httpHeaders deprecated
+     *
+     * @param 	string	$userAgent 		deprecated
+     * @param 	string	$httpHeaders 	deprecated
      * @return bool
      */
     public function isMobile($userAgent = null, $httpHeaders = null)
@@ -990,12 +995,13 @@ class MobileDetect
     /**
      * This method checks for a certain property in the
      * userAgent.
-     * @todo: The httpHeaders part is not yet used.
      *
-     * @param string $key
-     * @param string        $userAgent   deprecated
-     * @param string        $httpHeaders deprecated
+     * @param string 		$key			key
+     * @param string        $userAgent   	deprecated
+     * @param string        $httpHeaders 	deprecated
      * @return bool|int|null
+     *
+     * @todo: The httpHeaders part is not yet used.
      */
     public function is($key, $userAgent = null, $httpHeaders = null)
     {
@@ -1018,13 +1024,12 @@ class MobileDetect
      * because of the diversity of devices, vendors and
      * their conventions in representing the User-Agent or
      * the HTTP headers.
-     *
      * This method will be used to check custom regexes against
      * the User-Agent string.
      *
-     * @param $regex
-     * @param  string $userAgent
-     * @return bool
+     * @param 	string	$regex		Regex
+     * @param  	string 	$userAgent	User agent
+     * @return 	bool
      *
      * @todo: search in the HTTP headers too.
      */
@@ -1049,11 +1054,10 @@ class MobileDetect
     /**
      * Prepare the version number.
      *
-     * @todo Remove the error supression from str_replace() call.
-     *
-     * @param string $ver The string version, like "2.6.21.2152";
-     *
+     * @param 	string 	$ver 	The string version, like "2.6.21.2152";
      * @return float
+     *
+     * @todo Remove the error supression from str_replace() call.
      */
     public function prepareVersionNo($ver)
     {
