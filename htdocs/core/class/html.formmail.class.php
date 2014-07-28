@@ -564,6 +564,7 @@ class FormMail
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('other');
 				}
 				
 
