@@ -335,6 +335,9 @@ class Categorie extends CommonObject
 
 		$error=0;
 
+        // Clean parameters
+		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
+
 		dol_syslog(get_class($this)."::remove");
 
 		$this->db->begin();
