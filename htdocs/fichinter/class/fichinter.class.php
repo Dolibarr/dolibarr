@@ -959,6 +959,7 @@ class Fichinter extends CommonObject
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.= ' WHERE fk_fichinter = '.$this->id;
+		$sql.= ' ORDER BY rang ASC' ;
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql=$this->db->query($sql);
