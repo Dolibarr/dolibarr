@@ -225,7 +225,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 						if (! empty($contents[$i][$j]['logo']))
 						{
 							$logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
-							print img_object(':'.$langs->trans("Show"),$logo);
+							print img_object($langs->trans("Show"),$logo);
 						}
 
 						$maxlength=$MAXLENGTHBOX;
