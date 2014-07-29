@@ -739,7 +739,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->currency);
+		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",price($fromcompany->capital,0,$outputlangs, 0, 0))." ".$outputlangs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
