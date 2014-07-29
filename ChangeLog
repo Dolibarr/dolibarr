@@ -28,6 +28,7 @@ For users:
 - New: First changes for accessibility.
 - New: Home page of project area shows list of draft project (like other main page).
 - New: Can search on project ref or string from project main page (like other main page).
+- New: Differentiate text and img for better accessibility.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem

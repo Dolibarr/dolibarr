@@ -1785,7 +1785,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$alt         		Text on alt and title of image (alt only if param notitle is set to 1)
+ *	@param      string		$alt         		Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show ('filenew', ...)
  *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
@@ -1842,13 +1842,19 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 	}
 
 	if ($srconly) return $fullpathpicto;
-	else return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($alt).'"').($options?' '.$options:'').'>';
+	else
+	{
+		$tmparray=explode(':',$alt);
+		$alt=$tmparray[0];
+		$title=empty($tmparray[1])?$alt:$tmparray[1];
+		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($options?' '.$options:'').'>';	// Alt is used for accessibility, title for popup
+	}
 }
 
 /**
  *	Show a picto called object_picto (generic function)
  *
- *	@param	string	$alt				Text of alt on image
+ *	@param	string	$alt				Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *										For external modules use imagename@mymodule to search into directory "img" of module.
  *	@param	string	$options			Add more attribute on img tag (ie: class="datecallink")
@@ -1864,7 +1870,7 @@ function img_object($alt, $picto, $options = '', $pictoisfullpath = false)
 /**
  *	Show picto (generic function)
  *
- *	@param      string		$alt         		Text on alt and title of image
+ *	@param      string		$alt         		Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		string		$options			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
@@ -1896,7 +1902,7 @@ function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
 /**
  *	Show logo action
  *
- *	@param	string	$alt         	Text for image alt and title ('default', ...)
+ *	@param	string	$alt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$numaction   	Action to show
  *	@return string      			Return an img tag
  */
@@ -1919,7 +1925,7 @@ function img_action($alt, $numaction)
 /**
  *  Show pdf logo
  *
- *  @param	string		$alt        Texte sur le alt de l'image
+ *  @param	string		$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
  *  @return string      			Retourne tag img
  */
@@ -1935,7 +1941,7 @@ function img_pdf($alt = 'default', $size = 3)
 /**
  *	Show logo +
  *
- *	@param	string	$alt        Texte sur le alt de l'image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return tag img
  */
 function img_edit_add($alt = 'default')
@@ -1949,7 +1955,7 @@ function img_edit_add($alt = 'default')
 /**
  *	Show logo -
  *
- *	@param	string	$alt         Texte sur le alt de l'image
+ *	@param	string	$alt         Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      Retourne tag img
  */
 function img_edit_remove($alt = 'default')
@@ -1964,7 +1970,7 @@ function img_edit_remove($alt = 'default')
 /**
  *	Show logo editer/modifier fiche
  *
- *	@param  string	$alt        Texte sur le alt de l'image
+ *	@param  string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  float	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      		Retourne tag img
@@ -1981,7 +1987,7 @@ function img_edit($alt = 'default', $float = 0, $other = '')
 /**
  *	Show logo view card
  *
- *	@param	string	$alt         Texte sur le alt de l'image
+ *	@param	string	$alt         Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  float	$float       Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
  *	@return string      Retourne tag img
@@ -2000,7 +2006,7 @@ function img_view($alt = 'default', $float = 0, $other = '')
 /**
  *  Show delete logo
  *
- *  @param	string	$alt        Text on alt image
+ *  @param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
  *  @return string      		Retourne tag img
  */
@@ -2016,7 +2022,7 @@ function img_delete($alt = 'default', $other = '')
 /**
  *  Show printer logo
  *
- *  @param  string  $alt        Text on alt image
+ *  @param  string  $alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *  @param  string  $other      Add more attributes on img
  *  @return string              Retourne tag img
  */
@@ -2050,7 +2056,7 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 /**
  *	Show info logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
 function img_info($alt = 'default')
@@ -2065,7 +2071,7 @@ function img_info($alt = 'default')
 /**
  *	Show warning logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$float      If we must add style "float: right"
  *	@return string      		Return img tag
  */
@@ -2081,7 +2087,7 @@ function img_warning($alt = 'default', $float = 0)
 /**
  *  Show error logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
 function img_error($alt = 'default')
@@ -2096,7 +2102,7 @@ function img_error($alt = 'default')
 /**
  *	Show next logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
 function img_next($alt = 'default')
@@ -2111,7 +2117,7 @@ function img_next($alt = 'default')
 /**
  *	Show previous logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
 function img_previous($alt = 'default')
@@ -2126,7 +2132,7 @@ function img_previous($alt = 'default')
 /**
  *	Show down arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected   Selected
  *	@return string      		Return img tag
  */
@@ -2142,7 +2148,7 @@ function img_down($alt = 'default', $selected = 0)
 /**
  *	Show top arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
@@ -2158,7 +2164,7 @@ function img_up($alt = 'default', $selected = 0)
 /**
  *	Show left arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
  *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
@@ -2175,7 +2181,7 @@ function img_left($alt = 'default', $selected = 0, $options='')
 /**
  *	Show right arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
  *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
@@ -2193,7 +2199,7 @@ function img_right($alt = 'default', $selected = 0, $options='')
  *	Show tick logo if allowed
  *
  *	@param	string	$allow		Allow
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
 function img_allow($allow, $alt = 'default')
@@ -2212,7 +2218,7 @@ function img_allow($allow, $alt = 'default')
  *	Show MIME img of a file
  *
  *	@param	string	$file		Filename
- * 	@param	string	$alt		Alternate text to show on img mous hover
+ * 	@param	string	$alt		Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string     			Return img tag
  */
 function img_mime($file, $alt = '')
@@ -2232,7 +2238,7 @@ function img_mime($file, $alt = '')
  *	Show phone logo.
  *  Use img_picto instead.
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$alt        Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$option		Option
  *	@return string      		Return img tag
  *  @deprecated

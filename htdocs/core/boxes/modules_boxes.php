@@ -162,7 +162,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 			if (! empty($head['sublink'])) print '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
 			if (! empty($head['subpicto'])) print img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
 			if (! empty($head['sublink'])) '</a>';
-			if ($conf->use_javascript_ajax)
+			if (! empty($conf->use_javascript_ajax))
 			{
 				print '</td><td class="nocellnopadd boxclose nowrap">';
 				// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
@@ -225,7 +225,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 						if (! empty($contents[$i][$j]['logo']))
 						{
 							$logo=preg_replace("/^object_/i","",$contents[$i][$j]['logo']);
-							print img_object($langs->trans("Show"),$logo);
+							print img_object(':'.$langs->trans("Show"),$logo);
 						}
 
 						$maxlength=$MAXLENGTHBOX;
