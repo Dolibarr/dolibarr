@@ -217,9 +217,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 
 
 	// Tools
-	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled)),
-	'perms'=>(! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run)),
-	'module'=>'mailing|export|import');
+	$tmpentry=array('enabled'=>(! empty($conf->mailing->enabled) || ! empty($conf->export->enabled) || ! empty($conf->import->enabled) || ! empty($conf->opensurvey->enabled)),
+	'perms'=>(! empty($user->rights->mailing->lire) || ! empty($user->rights->export->lire) || ! empty($user->rights->import->run) || ! empty($user->rights->opensurvey->read)),
+	'module'=>'mailing|export|import|opensurvey');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
 	{
@@ -690,7 +690,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                 $newmenu->add("/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=0", $langs->trans("StatusOrderDraftShort"), 2, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=1", $langs->trans("StatusOrderValidated"), 2, $user->rights->commande->lire);
-                if (empty($leftmenu) || $leftmenu=="orders" && ! empty($conf->expedition->enabled)) $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderOnProcessShort"), 2, $user->rights->commande->lire);
+                if (empty($leftmenu) || $leftmenu=="orders" && ! empty($conf->expedition->enabled)) $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=2", $langs->trans("StatusOrderSentShort"), 2, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=3", $langs->trans("StatusOrderToBill"), 2, $user->rights->commande->lire);  // The translation key is StatusOrderToBill but it means StatusDelivered. TODO We should renamed this later
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=4", $langs->trans("StatusOrderProcessed"), 2, $user->rights->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders") $newmenu->add("/commande/liste.php?leftmenu=orders&viewstatut=-1", $langs->trans("StatusOrderCanceledShort"), 2, $user->rights->commande->lire);

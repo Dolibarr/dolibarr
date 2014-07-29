@@ -156,7 +156,7 @@ function getBrowserInfo()
 	$firefox=0;
 	if (in_array($name,array('firefox','iceweasel'))) $firefox=1;
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/MobileDetect.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/mobiledetect.class.php';
 	$detectmobile=new MobileDetect();
 	$phone=$detectmobile->isMobile();
 	$tablet=$detectmobile->isTablet();

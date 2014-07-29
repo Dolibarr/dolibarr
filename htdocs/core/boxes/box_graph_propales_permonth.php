@@ -202,6 +202,12 @@ class box_graph_propales_permonth extends ModeleBoxes
 				}
 			}
 
+			if (empty($conf->use_javascript_ajax))
+			{
+				$langs->load("errors");
+				$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
+			}
+
 			if (! $mesg)
 			{
 				$stringtoshow='';

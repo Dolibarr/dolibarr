@@ -677,6 +677,7 @@ AccountCurrency=Account Currency
 ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
 PublicUrl=Public URL
+AddBox=Add box
 
 # Week day
 Monday=Monday

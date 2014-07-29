@@ -46,6 +46,17 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
     exit;
 }
 
+if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+	$zone=GETPOST('areacode');
+	$userid=GETPOST('userid');
+	$boxorder=GETPOST('boxorder');
+	$boxorder.=GETPOST('boxcombo');
+
+	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+}
+
 
 
 /*
