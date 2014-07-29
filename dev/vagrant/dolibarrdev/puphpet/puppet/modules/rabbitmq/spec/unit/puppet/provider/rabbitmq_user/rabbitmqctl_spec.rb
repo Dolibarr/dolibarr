@@ -147,4 +147,90 @@ EOT
     @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ['bar','baz'].sort) 
     @provider.admin=:false
   end
+
+  it 'should clear all tags on existing user' do
+    @provider.expects(:rabbitmqctl).with('list_users').returns <<-EOT
+Listing users ...
+one [administrator]
+foo [tag1,tag2]
+icinga  [monitoring]
+kitchen []
+kitchen2        [abc, def, ghi]
+...done.
+EOT
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', [])
+    @provider.tags=[]
+  end
+
+  it 'should set multiple tags' do
+    @provider.expects(:rabbitmqctl).with('list_users').returns <<-EOT
+Listing users ...
+one [administrator]
+foo []
+icinga  [monitoring]
+kitchen []
+kitchen2        [abc, def, ghi]
+...done.
+EOT
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ['tag1','tag2'])
+    @provider.tags=['tag1','tag2']
+  end
+
+  it 'should clear tags while keep admin tag' do
+    @resource[:admin]  = true
+    @provider.expects(:rabbitmqctl).with('list_users').returns <<-EOT
+Listing users ...
+one [administrator]
+foo [administrator, tag1, tag2]
+icinga  [monitoring]
+kitchen []
+kitchen2        [abc, def, ghi]
+...done.
+EOT
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ["administrator"])
+    @provider.tags=[]
+  end
+
+  it 'should change tags while keep admin tag' do
+    @resource[:admin]  = true
+    @provider.expects(:rabbitmqctl).with('list_users').returns <<-EOT
+Listing users ...
+one [administrator]
+foo [administrator, tag1, tag2]
+icinga  [monitoring]
+kitchen []
+kitchen2        [abc, def, ghi]
+...done.
+EOT
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ["administrator","tag1","tag3","tag7"])
+    @provider.tags=['tag1','tag7','tag3']
+  end
+
+  it 'should create user with tags and without admin' do
+    @resource[:tags] = [ "tag1", "tag2" ]
+    @provider.expects(:rabbitmqctl).with('add_user', 'foo', 'bar')
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ["tag1","tag2"])
+    @provider.expects(:rabbitmqctl).with('list_users').returns <<-EOT
+Listing users ...
+foo []
+...done.
+EOT
+    @provider.create
+  end
+
+  it 'should create user with tags and with admin' do
+    @resource[:tags] = [ "tag1", "tag2" ]
+    @resource[:admin]  = true
+    @provider.expects(:rabbitmqctl).with('add_user', 'foo', 'bar')
+    @provider.expects(:rabbitmqctl).with('list_users').twice.returns <<-EOT
+Listing users ...
+foo []
+...done.
+EOT
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ["administrator"])
+    @provider.expects(:rabbitmqctl).with('set_user_tags', 'foo', ["administrator","tag1","tag2"])
+    @provider.create
+  end
+  
+
 end

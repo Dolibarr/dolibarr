@@ -5,6 +5,7 @@ vagrantfile-local:
         box_url: puphpet/debian75-x64
         hostname: null
         memory: '512'
+        cpus: '1'
         chosen_provider: virtualbox
         network:
             private_network: 192.168.42.101
@@ -29,7 +30,7 @@ vagrantfile-local:
                     - '--hiera_config /vagrant/puphpet/puppet/hiera.yaml'
                     - '--parser future'
         synced_folder:
-            jopH6005bn96:
+            w6GqzzS2a7lu:
                 source: ../../../
                 target: /var/www/dolibarr
                 sync_type: default
@@ -63,8 +64,7 @@ mailcatcher:
         smtp_port: 1025
         http_ip: 0.0.0.0
         http_port: '1080'
-        mailcatcher_path: /usr/local/bin
-        log_path: /var/log/mailcatcher/mailcatcher.log
+        mailcatcher_path: /usr/local/rvm/wrappers/default
 firewall:
     install: '1'
     rules: null
@@ -81,7 +81,7 @@ apache:
         - php
         - rewrite
     vhosts:
-        b2tOrs1TMtoF:
+        syTi8VestVdG:
             servername: dev.dolibarr.org
             docroot: /var/www/dolibarr/htdocs
             port: '80'
@@ -98,8 +98,12 @@ apache:
     mod_spdy: 0
 nginx:
     install: 0
+    settings:
+        default_vhost: 1
+        proxy_buffer_size: 128k
+        proxy_buffers: '4 256k'
     vhosts:
-        0dU5luf5AnIe:
+        kZiLLcLAIVAF:
             server_name: awesome.dev
             server_aliases:
                 - www.awesome.dev
@@ -154,7 +158,7 @@ mysql:
     root_password: root
     adminer: 0
     databases:
-        V6H3W2FVB7Yq:
+        HHTBm64g1siG:
             grant:
                 - ALTER
                 - CREATE

@@ -1,10 +1,20 @@
 Puppet::Type.type(:rabbitmq_plugin).provide(:rabbitmqplugins) do
 
   if Puppet::PUPPETVERSION.to_f < 3
-    commands :rabbitmqplugins => 'rabbitmq-plugins'
+    if Facter.value(:osfamily) == 'RedHat'
+      commands :rabbitmqplugins => '/usr/lib/rabbitmq/bin/rabbitmq-plugins'
+    else
+      commands :rabbitmqplugins => 'rabbitmq-plugins'
+    end
   else
-    has_command(:rabbitmqplugins, 'rabbitmq-plugins') do
-      environment :HOME => "/tmp"
+    if Facter.value(:osfamily) == 'RedHat'
+      has_command(:rabbitmqplugins, '/usr/lib/rabbitmq/bin/rabbitmq-plugins') do
+        environment :HOME => "/tmp"
+      end
+    else
+      has_command(:rabbitmqplugins, 'rabbitmq-plugins') do
+        environment :HOME => "/tmp"
+      end
     end
   end
 

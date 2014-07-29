@@ -53,9 +53,14 @@ class puphpet::params {
     'Redhat' => 'php-cgi'
   }
 
+  $nginx_default_conf_location = $::osfamily ? {
+    'Debian' => '/etc/nginx/conf.d/default.conf',
+    'Redhat' => '/etc/nginx/conf.d/default.conf'
+  }
+
   $nginx_webroot_location = $::osfamily ? {
     'Debian' => '/var/www/html',
-    'Redhat' => '/usr/share/nginx/html'
+    'Redhat' => '/var/www/html'
   }
 
   $mariadb_package_client_name = $::osfamily ? {
