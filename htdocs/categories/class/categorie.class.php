@@ -137,7 +137,7 @@ class Categorie extends CommonObject
 	 *          					-3 : categorie invalide
 	 * 								-4 : category already exists
 	 */
-	function create($user='')
+	function create($user)
 	{
 		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
