@@ -407,17 +407,23 @@ if ($resql)
 		$i++;
 	}
 
-	if (! empty($conf->global->MAIN_SHOW_TOTAL_FOR_LIMITED_LIST))
+	if ($total>0)
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
-		print '<td class="nowrap" colspan="5">'.$langs->trans('TotalHT').'</td>';
-		// Total HT
-		print '<td align="right" class="nowrap">'.price($total).'</td>';
-		print '<td class="nowrap">&nbsp;</td>';
-		print '</tr>';
+		if($num<$limit){
+			$var=!$var;
+			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT").'</td>';
+			print '<td colspan="5" align="right"">'.price($total).'<td/></td>';
+			print '</tr>';
+		}
+		else
+		{
+			$var=!$var;
+			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total HT for this page").'</td>';
+			print '<td colspan="5" align="right"">'.price($total).'<td/></td>';
+			print '</tr>';
+		}
+			
 	}
-
 	print '</table>';
 
 	print '</form>'."\n";
