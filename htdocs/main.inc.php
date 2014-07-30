@@ -166,7 +166,6 @@ require_once 'filefunc.inc.php';
 // If there is a POST parameter to tell to save automatically some POST parameters into a cookies, we do it
 if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 	$tmpautoset=explode(':',$_POST["DOL_AUTOSET_COOKIE"],2);
 	$tmplist=explode(',',$tmpautoset[1]);
 	$cookiearrayvalue='';
