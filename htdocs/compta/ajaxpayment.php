@@ -114,4 +114,4 @@ $toJsonArray['result'] = price($result);		// Return value to user format
 $toJsonArray['resultnum'] = price2num($result);	// Return value to numeric format
 
 // Encode to JSON to return
-echo dol_json_encode($toJsonArray);	// Printing the call's result
+echo json_encode($toJsonArray);	// Printing the call's result

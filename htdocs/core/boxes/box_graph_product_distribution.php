@@ -96,7 +96,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 		else
 		{
-			$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+			$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 			$year=$tmparray['year'];
 			$showinvoicenb=$tmparray['showinvoicenb'];
 			$showpropalnb=$tmparray['showpropalnb'];

@@ -104,7 +104,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			}
 			else
 			{
-				$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];

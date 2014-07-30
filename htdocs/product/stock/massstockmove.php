@@ -64,7 +64,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();
-if (! empty($_SESSION['massstockmove'])) $listofdata=dol_json_decode($_SESSION['massstockmove'],true);
+if (! empty($_SESSION['massstockmove'])) $listofdata=json_decode($_SESSION['massstockmove'],true);
 
 
 /*
@@ -105,7 +105,7 @@ if ($action == 'addline')
 		if (count(array_keys($listofdata)) > 0) $id=max(array_keys($listofdata)) + 1;
 		else $id=1;
 		$listofdata[$id]=array('id'=>$id, 'id_product'=>$id_product, 'qty'=>$qty, 'id_sw'=>$id_sw, 'id_tw'=>$id_tw);
-		$_SESSION['massstockmove']=dol_json_encode($listofdata);
+		$_SESSION['massstockmove']=json_encode($listofdata);
 
 		unset($id_product);
 		//unset($id_sw);
@@ -117,7 +117,7 @@ if ($action == 'addline')
 if ($action == 'delline' && $idline != '')
 {
 	if (! empty($listofdata[$idline])) unset($listofdata[$idline]);
-	if (count($listofdata) > 0) $_SESSION['massstockmove']=dol_json_encode($listofdata);
+	if (count($listofdata) > 0) $_SESSION['massstockmove']=json_encode($listofdata);
 	else unset($_SESSION['massstockmove']);
 }
 
