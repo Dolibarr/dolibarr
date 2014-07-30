@@ -13,7 +13,11 @@
     "require": {
         "php": ">=5.3.0",
         "ext-gd": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "phpoffice/phpexcel": "1.7.9",
+        "tecnick.com/tcpdf": "6.0.021",
+        "adodb/adodb-php": "v5.19",
+        "geoip/geoip": "v1.14"
     },
     "suggest": {
         "ext-mysqli": "*",
