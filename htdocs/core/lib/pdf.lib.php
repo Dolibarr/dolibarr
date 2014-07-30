@@ -6,6 +6,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Cedric GROSS		<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014	    Teddy Andreotti     <125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -524,6 +525,28 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
+        // Use correct name of bank id according to country
+        $ibankey="IBANNumber";
+        if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+        if (! empty($account->iban))
+        {
+
+            $ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+            $ibanDisplay = "";
+
+            for($i = 0; $i < strlen($ibanDisplay_temp); $i++){
+                $ibanDisplay .= $ibanDisplay_temp[$i];
+                if($i%4 == 3 && $i > 0){
+                    $ibanDisplay .= " ";
+                }
+            }
+
+            $pdf->SetFont('','B',$default_font_size - 3);
+            $pdf->SetXY($curx, $cury);
+            $pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
+            $cury+=3;
+        }
+
 		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8);
 
 		if ($usedetailedbban == 1)
@@ -604,9 +627,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 
 	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
 	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
@@ -623,14 +644,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
-	if (! empty($account->iban))
-	{
-		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-		$cury+=3;
-	}
-
-	if (! empty($account->bic))
+    if (! empty($account->bic))
 	{
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
@@ -739,7 +753,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->currency);
+		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",price($fromcompany->capital,0,$outputlangs, 0, 0))." ".$outputlangs->transnoentities("Currency".$conf->currency);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
@@ -1404,25 +1418,61 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
  */
 function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 {
-	global $hookmanager;
+    global $hookmanager;
 
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	if ($object->lines[$i]->special_code != 3)
-	{
-		if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
-		{
-			$special_code = $object->lines[$i]->special_code;
-			if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
-			$parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
-			$action='';
-			return $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-		}
-		else
-		{
-			if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
-		}
-	}
+    if ($object->lines[$i]->special_code != 3)
+    {
+        if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+            $special_code = $object->lines[$i]->special_code;
+            if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+            $parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+            $action='';
+            return $hookmanager->executeHooks('pdf_getlineremisepercent',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1) return dol_print_reduction($object->lines[$i]->remise_percent,$outputlangs);
+        }
+    }
+}
+
+/**
+ *	Return line remise value
+ *
+ *	@param	Object		$object				Object
+ *	@param	int			$i					Current line number
+ *  @param  Translate	$outputlangs		Object langs for output
+ *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ * 	@return	string
+ */
+function pdf_getlineremisevalue($object,$i,$outputlangs,$hidedetails=0)
+{
+    global $hookmanager;
+
+    include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+    if ($object->lines[$i]->special_code != 3)
+    {
+        if (is_object($hookmanager) && ( ($object->lines[$i]->product_type == 9 && !empty($object->lines[$i]->special_code) ) || ! empty($object->lines[$i]->fk_parent_line) ) )
+        {
+            $special_code = $object->lines[$i]->special_code;
+            if (! empty($object->lines[$i]->fk_parent_line)) $special_code = $object->getSpecialCode($object->lines[$i]->fk_parent_line);
+            $parameters = array('i'=>$i,'outputlangs'=>$outputlangs,'hidedetails'=>$hidedetails,'special_code'=>$special_code);
+            $action='';
+            return $hookmanager->executeHooks('pdf_getlineremisevalue',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+        }
+        else
+        {
+            if (empty($hidedetails) || $hidedetails > 1){
+                //ici
+                $remisevalue = price($object->lines[$i]->subprice * $object->lines[$i]->qty - $object->lines[$i]->total_ht);
+                return $remisevalue;
+            }
+        }
+    }
 }
 
 /**
