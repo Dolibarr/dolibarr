@@ -6,6 +6,7 @@
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Cedric GROSS		<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014	    Teddy Andreotti     <125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -524,6 +525,28 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 			$cury+=3;
 		}
 
+        // Use correct name of bank id according to country
+        $ibankey="IBANNumber";
+        if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+        if (! empty($account->iban))
+        {
+
+            $ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
+            $ibanDisplay = "";
+
+            for($i = 0; $i < strlen($ibanDisplay_temp); $i++){
+                $ibanDisplay .= $ibanDisplay_temp[$i];
+                if($i%4 == 3 && $i > 0){
+                    $ibanDisplay .= " ";
+                }
+            }
+
+            $pdf->SetFont('','B',$default_font_size - 3);
+            $pdf->SetXY($curx, $cury);
+            $pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $ibanDisplay, 0, 'L', 0);
+            $cury+=3;
+        }
+
 		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+8);
 
 		if ($usedetailedbban == 1)
@@ -604,9 +627,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 
 	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
 	$bickey="BICNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 	if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 	$pdf->SetFont('','',$default_font_size - $diffsizecontent);
@@ -623,14 +644,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	}
 	else if (! $usedetailedbban) $cury+=1;
 
-	if (! empty($account->iban))
-	{
-		$pdf->SetXY($curx, $cury);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($ibankey).': ' . $outputlangs->convToOutputCharset($account->iban), 0, 'L', 0);
-		$cury+=3;
-	}
-
-	if (! empty($account->bic))
+    if (! empty($account->bic))
 	{
 		$pdf->SetXY($curx, $cury);
 		$pdf->MultiCell(100, 3, $outputlangs->transnoentities($bickey).': ' . $outputlangs->convToOutputCharset($account->bic), 0, 'L', 0);
