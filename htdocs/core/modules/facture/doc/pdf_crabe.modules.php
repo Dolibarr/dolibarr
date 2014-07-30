@@ -103,11 +103,11 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=112;
-		$this->posxup=126;
-		$this->posxqty=145;
-		$this->posxdiscount=162;
-		$this->postotalht=174;
+		$this->posxtva=95;
+		$this->posxup=109;
+		$this->posxqty=128;
+        $this->posxdiscount=148;
+        $this->postotalht=174;
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -116,8 +116,8 @@ class pdf_crabe extends ModelePDFFactures
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
-			$this->posxdiscount-=20;
-			$this->postotalht-=20;
+            $this->posxdiscount-=20;
+            $this->postotalht-=20;
 		}
 
 		$this->tva=array();
@@ -230,11 +230,11 @@ class pdf_crabe extends ModelePDFFactures
 				}
 				if (empty($this->atleastonediscount))
 				{
-					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
-					$this->posxtva+=($this->postotalht - $this->posxdiscount);
-					$this->posxup+=($this->postotalht - $this->posxdiscount);
-					$this->posxqty+=($this->postotalht - $this->posxdiscount);
-					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+                    $this->posxpicture+=($this->postotalht - $this->posxdiscount);
+                    $this->posxtva+=($this->postotalht - $this->posxdiscount);
+                    $this->posxup+=($this->postotalht - $this->posxdiscount);
+                    $this->posxqty+=($this->postotalht - $this->posxdiscount);
+                    $this->posxdiscount+=($this->postotalht - $this->posxdiscount);
 					//$this->postotalht;
 				}
 
@@ -308,7 +308,7 @@ class pdf_crabe extends ModelePDFFactures
 					$showpricebeforepagebreak=1;
 
 					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,3,$curX,$curY,$hideref,$hidedesc);
+					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->posxtva-$curX,8,$curX,$curY,$hideref,$hidedesc);
 					$pageposafter=$pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -372,20 +372,20 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->SetXY($this->posxqty, $curY);
 					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
 
-					// Discount on line
-					if ($object->lines[$i]->remise_percent)
-					{
+                    // Discount % on line
+                    if ($object->lines[$i]->remise_percent)
+                    {
                         $pdf->SetXY($this->posxdiscount-2, $curY);
-					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
-					}
+                        $remise_amount = pdf_getlineremisevalue($object, $i, $outputlangs, $hidedetails);
+                        $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails)."\n Soit : ".$remise_amount;
+                        $pdf->MultiCell($this->postotalht-$this->posxdiscount+2, 3, $remise_percent, 0, 'R');
+                    }
+                    // Total HT line
+                    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
+                    $pdf->SetXY($this->postotalht, $curY);
+                    $pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
-					// Total HT line
-					$total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
-
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+                    // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$object->lines[$i]->total_tva;
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
@@ -1049,16 +1049,29 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->revenuestamp), $useborder, 'R', 1);
 				}
 
-				// Total TTC
-				$index++;
-				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->SetTextColor(0,0,60);
-				$pdf->SetFillColor(224,224,224);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
+                // Total TTC
+                $index++;
+                $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+                $pdf->SetTextColor(0,0,60);
+                $pdf->SetFillColor(224,224,224);
+                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
-				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc, 0, $outputlangs), $useborder, 'R', 1);
-			}
+                $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+                $pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc, 0, $outputlangs), $useborder, 'R', 1);
+
+                if($this->atleastonediscount){
+                    // Total Discount
+                    $index++;
+                    $index++;
+                    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+                    $pdf->SetTextColor(0,0,60);
+                    $pdf->SetFillColor(224,224,224);
+                    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalDiscount"), $useborder, 'L', 1);
+
+                    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+                    $pdf->MultiCell($largcol2, $tab2_hl, price($sign * $object->total_ttc, 0, $outputlangs), $useborder, 'R', 1);
+                }
+            }
 		}
 
 		$pdf->SetTextColor(0,0,0);
@@ -1194,23 +1207,23 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			if ($this->atleastonediscount)
-			{
-				$pdf->SetXY($this->posxdiscount-1, $tab_top+1);
-				$pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
-			}
-		}
+        if (empty($hidetop))
+        {
+            if ($this->atleastonediscount)
+            {
+                $pdf->SetXY($this->posxdiscount-1, $tab_top+1);
+                $pdf->MultiCell($this->postotalht-$this->posxdiscount+1,2, $outputlangs->transnoentities("ReductionShort"),'','C');
+            }
+        }
 		if ($this->atleastonediscount)
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->postotalht-1, $tab_top+1);
-			$pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
-		}
+        if (empty($hidetop))
+        {
+            $pdf->SetXY($this->postotalht-1, $tab_top+1);
+            $pdf->MultiCell(30,2, $outputlangs->transnoentities("TotalHT"),'','C');
+        }
 	}
 
 	/**

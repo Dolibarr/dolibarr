@@ -1908,7 +1908,7 @@ class Facture extends CommonInvoice
 	 *		@param		array		$array_option		extrafields array
 	 *    	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $remise_amount=0, $date_start='', $date_end='', $ventil=0, $info_bits=0, $fk_remise_except='', $price_base_type='HT', $pu_ttc=0, $type=self::TYPE_STANDARD, $rang=-1, $special_code=0, $origin='', $origin_id=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='', $array_option=0)
 	{
 		global $mysoc, $conf, $langs;
 
@@ -1916,7 +1916,8 @@ class Facture extends CommonInvoice
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Clean parameters
-		if (empty($remise_percent)) $remise_percent=0;
+        if (empty($remise_percent)) $remise_percent=0;
+        if (empty($remise_amount)) $remise_amount=0;
 		if (empty($qty)) $qty=0;
 		if (empty($info_bits)) $info_bits=0;
 		if (empty($rang)) $rang=0;
@@ -1926,7 +1927,8 @@ class Facture extends CommonInvoice
 		if (empty($txlocaltax2)) $txlocaltax2=0;
 		if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
 
-		$remise_percent=price2num($remise_percent);
+        $remise_percent=price2num($remise_percent);
+        $remise_amount=price2num($remise_amount);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
 		$pu_ttc=price2num($pu_ttc);
@@ -2000,7 +2002,8 @@ class Facture extends CommonInvoice
 			$this->line->localtax2_tx=$txlocaltax2;
 			$this->line->fk_product=$fk_product;
 			$this->line->product_type=$product_type;
-			$this->line->remise_percent=$remise_percent;
+            $this->line->remise_percent=$remise_percent;
+            $this->line->remise_amount=$remise_amount;
 			$this->line->subprice=       ($this->type==self::TYPE_CREDIT_NOTE?-abs($pu_ht):$pu_ht); // For credit note, unit price always negative, always positive otherwise
 			$this->line->date_start=$date_start;
 			$this->line->date_end=$date_end;
@@ -3144,7 +3147,7 @@ class Facture extends CommonInvoice
 	{
 		$sql = 'SELECT l.rowid, l.label as custom_label, l.description, l.fk_product, l.product_type, l.qty, l.tva_tx,';
 		$sql.= ' l.fk_remise_except, l.localtax1_tx, l.localtax2_tx,';
-		$sql.= ' l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code, l.fk_parent_line,';
+		$sql.= ' l.remise_percent, l.remise_amount, l.subprice, l.info_bits, l.rang, l.special_code, l.fk_parent_line,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql.= ' l.date_start, l.date_end,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type, p.label as product_label,';
@@ -3246,7 +3249,8 @@ class FactureLigne  extends CommonInvoiceLine
 	var $localtax1_type;	// Local tax 1 type
 	var $localtax2_type;	// Local tax 2 type
 	var $subprice;      	// P.U. HT (example 100)
-	var $remise_percent;	// % de la remise ligne (example 20%)
+    var $remise_percent;	// % de la remise ligne (example 20%)
+    var $remise_amount;	    // montant de la remise ligne
 	var $fk_remise_except;	// Link to line into llx_remise_except
 	var $rang = 0;
 
@@ -3313,7 +3317,7 @@ class FactureLigne  extends CommonInvoiceLine
 	function fetch($rowid)
 	{
 		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.tva_tx,';
-		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
+		$sql.= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.remise_amount, fd.fk_remise_except, fd.subprice,';
 		$sql.= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql.= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql.= ' fd.fk_code_ventilation,';
@@ -3337,7 +3341,8 @@ class FactureLigne  extends CommonInvoiceLine
 			$this->tva_tx				= $objp->tva_tx;
 			$this->localtax1_tx			= $objp->localtax1_tx;
 			$this->localtax2_tx			= $objp->localtax2_tx;
-			$this->remise_percent		= $objp->remise_percent;
+            $this->remise_percent		= $objp->remise_percent;
+            $this->remise_amount		= $objp->remise_amount;
 			$this->fk_remise_except		= $objp->fk_remise_except;
 			$this->fk_product			= $objp->fk_product;
 			$this->product_type			= $objp->product_type;
@@ -3396,7 +3401,8 @@ class FactureLigne  extends CommonInvoiceLine
 		if (empty($this->total_localtax1)) $this->total_localtax1=0;
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
 		if (empty($this->rang)) $this->rang=0;
-		if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->remise_amount)) $this->remise_amount=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
 		if (empty($this->subprice)) $this->subprice=0;
 		if (empty($this->special_code)) $this->special_code=0;
@@ -3433,7 +3439,7 @@ class FactureLigne  extends CommonInvoiceLine
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' (fk_facture, fk_parent_line, label, description, qty,';
 		$sql.= ' tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql.= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
+		$sql.= ' fk_product, product_type, remise_percent, remise_amount, subprice, fk_remise_except,';
 		$sql.= ' date_start, date_end, fk_code_ventilation, ';
 		$sql.= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2)';
@@ -3449,7 +3455,8 @@ class FactureLigne  extends CommonInvoiceLine
 		$sql.= " '".$this->localtax2_type."',";
 		$sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
 		$sql.= " ".$this->product_type.",";
-		$sql.= " ".price2num($this->remise_percent).",";
+        $sql.= " ".price2num($this->remise_percent).",";
+        $sql.= " ".price2num($this->remise_amount).",";
 		$sql.= " ".price2num($this->subprice).",";
 		$sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
 		$sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").",";
@@ -3577,7 +3584,8 @@ class FactureLigne  extends CommonInvoiceLine
 		if (empty($this->localtax2_type)) $this->localtax2_type=0;
 		if (empty($this->total_localtax1)) $this->total_localtax1=0;
 		if (empty($this->total_localtax2)) $this->total_localtax2=0;
-		if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->remise_percent)) $this->remise_percent=0;
+        if (empty($this->remise_amount)) $this->remise_amount=0;
 		if (empty($this->info_bits)) $this->info_bits=0;
 		if (empty($this->special_code)) $this->special_code=0;
 		if (empty($this->product_type)) $this->product_type=0;
@@ -3602,6 +3610,7 @@ class FactureLigne  extends CommonInvoiceLine
         $sql.= ",label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
         $sql.= ",subprice=".price2num($this->subprice)."";
         $sql.= ",remise_percent=".price2num($this->remise_percent)."";
+        $sql.= ",remise_amount=".price2num($this->remise_amount)."";
         if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
         else $sql.= ",fk_remise_except=null";
         $sql.= ",tva_tx=".price2num($this->tva_tx)."";
