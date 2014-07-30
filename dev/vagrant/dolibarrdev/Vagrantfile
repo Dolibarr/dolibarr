@@ -23,6 +23,47 @@ Vagrant.configure("2") do |config|
     end
   end
 
+  if Vagrant.has_plugin?('vagrant-hostsupdater')
+    hosts = Array.new()
+
+    if !configValues['apache']['install'].nil? &&
+        configValues['apache']['install'].to_i == 1 &&
+        configValues['apache']['vhosts'].is_a?(Hash)
+      configValues['apache']['vhosts'].each do |i, vhost|
+        hosts.push(vhost['servername'])
+
+        if vhost['serveraliases'].is_a?(Array)
+          vhost['serveraliases'].each do |vhost_alias|
+            hosts.push(vhost_alias)
+          end
+        end
+      end
+    elsif !configValues['nginx']['install'].nil? &&
+           configValues['nginx']['install'].to_i == 1 &&
+           configValues['nginx']['vhosts'].is_a?(Hash)
+      configValues['nginx']['vhosts'].each do |i, vhost|
+        hosts.push(vhost['server_name'])
+
+        if vhost['server_aliases'].is_a?(Array)
+          vhost['server_aliases'].each do |x, vhost_alias|
+            hosts.push(vhost_alias)
+          end
+        end
+      end
+    end
+
+    if hosts.any?
+      contents = File.open("#{dir}/puphpet/shell/hostsupdater-notice.txt", 'r'){ |file| file.read }
+      puts "\n\033[34m#{contents}\033[0m\n"
+
+      if config.vm.hostname.to_s.strip.length == 0
+        config.vm.hostname = 'puphpet-dev-machine'
+      end
+
+      config.hostsupdater.aliases = hosts
+    end
+  end
+
   data['vm']['synced_folder'].each do |i, folder|
     if folder['source'] != '' && folder['target'] != ''
       if folder['sync_type'] == 'nfs'
@@ -53,6 +94,9 @@ Vagrant.configure("2") do |config|
         if key == "memory"
           next
         end
+        if key == "cpus"
+          next
+        end
 
         if key == "natdnshostresolver1"
           value = value ? "on" : "off"
@@ -62,6 +106,7 @@ Vagrant.configure("2") do |config|
       end
 
       virtualbox.customize ["modifyvm", :id, "--memory", "#{data['vm']['memory']}"]
+      virtualbox.customize ["modifyvm", :id, "--cpus", "#{data['vm']['cpus']}"]
 
       if data['vm']['hostname'].to_s.strip.length != 0
         virtualbox.customize ["modifyvm", :id, "--name", config.vm.hostname]
@@ -77,11 +122,15 @@ Vagrant.configure("2") do |config|
         if key == "memsize"
           next
         end
+        if key == "cpus"
+          next
+        end
 
         v.vmx["#{key}"] = "#{value}"
       end
 
       v.vmx["memsize"] = "#{data['vm']['memory']}"
+      v.vmx["numvcpus"] = "#{data['vm']['cpus']}"
 
       if data['vm']['hostname'].to_s.strip.length != 0
         v.vmx["displayName"] = config.vm.hostname
@@ -97,11 +146,15 @@ Vagrant.configure("2") do |config|
         if key == "memsize"
           next
         end
+        if key == "cpus"
+          next
+        end
 
         v.customize ["set", :id, "--#{key}", "#{value}"]
       end
 
       v.memory = "#{data['vm']['memory']}"
+      v.cpus = "#{data['vm']['cpus']}"
 
       if data['vm']['hostname'].to_s.strip.length != 0
         v.name = config.vm.hostname
@@ -119,7 +172,8 @@ Vagrant.configure("2") do |config|
     kg.path = "puphpet/shell/ssh-keygen.sh"
     kg.args = "#{ssh_username}"
   end
-  config.vm.provision :shell, :path => "puphpet/shell/update-puppet.sh"
+  config.vm.provision :shell, :path => "puphpet/shell/install-ruby.sh"
+  config.vm.provision :shell, :path => "puphpet/shell/install-puppet.sh"
 
   config.vm.provision :puppet do |puppet|
     puppet.facter = {
@@ -182,4 +236,5 @@ Vagrant.configure("2") do |config|
   end
 
 end
+
 

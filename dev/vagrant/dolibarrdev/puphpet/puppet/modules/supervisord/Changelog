@@ -1,3 +1,9 @@
+2014-07-02 - v0.4.1
+
+Fixes:
+
+- Fixed status code error on supervisord::supervisorctl commands, thanks to @jtreminio for the PR.
+
 2014-06-20 - v0.4.0
 
 Fixes:

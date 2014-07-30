@@ -6,6 +6,7 @@ class rabbitmq(
   $cluster_nodes              = $rabbitmq::params::cluster_nodes,
   $config                     = $rabbitmq::params::config,
   $config_cluster             = $rabbitmq::params::config_cluster,
+  $config_mirrored_queues     = $rabbitmq::params::config_mirrored_queues,
   $config_path                = $rabbitmq::params::config_path,
   $config_stomp               = $rabbitmq::params::config_stomp,
   $default_user               = $rabbitmq::params::default_user,
@@ -29,6 +30,7 @@ class rabbitmq(
   $service_manage             = $rabbitmq::params::service_manage,
   $service_name               = $rabbitmq::params::service_name,
   $ssl                        = $rabbitmq::params::ssl,
+  $ssl_only                   = $rabbitmq::params::ssl_only,
   $ssl_cacert                 = $rabbitmq::params::ssl_cacert,
   $ssl_cert                   = $rabbitmq::params::ssl_cert,
   $ssl_key                    = $rabbitmq::params::ssl_key,
@@ -59,7 +61,6 @@ class rabbitmq(
   validate_string($package_gpg_key)
   validate_string($package_name)
   validate_string($package_provider)
-  validate_string($package_source)
   validate_bool($manage_repos)
   validate_re($version, '^\d+\.\d+\.\d+(-\d+)*$') # Allow 3 digits and optional -n postfix.
   # Validate config parameters.
@@ -69,6 +70,7 @@ class rabbitmq(
   validate_string($config)
   validate_absolute_path($config_path)
   validate_bool($config_cluster)
+  validate_bool($config_mirrored_queues)
   validate_bool($config_stomp)
   validate_string($default_user)
   validate_string($default_pass)
@@ -87,6 +89,7 @@ class rabbitmq(
   validate_bool($service_manage)
   validate_string($service_name)
   validate_bool($ssl)
+  validate_bool($ssl_only)
   validate_string($ssl_cacert)
   validate_string($ssl_cert)
   validate_string($ssl_key)
@@ -104,6 +107,10 @@ class rabbitmq(
   validate_hash($environment_variables)
   validate_hash($config_variables)
   validate_hash($config_kernel_variables)
+
+  if $ssl_only and ! $ssl {
+    fail('$ssl_only => true requires that $ssl => true')
+  }
 
   include '::rabbitmq::install'
   include '::rabbitmq::config'

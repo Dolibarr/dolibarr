@@ -3,14 +3,35 @@
 # Default parameters for supervisord
 #
 class supervisord::params {
+  case $::osfamily {
+    'RedHat': {
+      $init_defaults     = '/etc/sysconfig/supervisord'
+      $unix_socket_group = 'nobody'
+      $install_init      = true
+      $executable_path   = '/usr/bin'
+    }
+    'Debian': {
+      $init_defaults     = '/etc/default/supervisor'
+      $unix_socket_group = 'nogroup'
+      $install_init      = true
+      $executable_path   = '/usr/local/bin'
+    }
+    default:  {
+      $init_defaults     = false
+      $unix_socket_group = 'nogroup'
+      $install_init      = false
+      $executable_path   = '/usr/local/bin'
+    }
+  }
+
   # default supervisord params
   $package_ensure       = 'installed'
   $package_provider     = 'pip'
   $service_ensure       = 'running'
   $service_name         = 'supervisord'
   $package_name         = 'supervisor'
-  $executable           = 'supervisord'
-  $executable_ctl       = 'supervisorctl'
+  $executable           = "${$executable_path}/supervisord"
+  $executable_ctl       = "${executable_path}/supervisorctl"
 
   $run_path             = '/var/run'
   $pid_file             = 'supervisord.pid'
@@ -36,22 +57,4 @@ class supervisord::params {
   $inet_server_hostname = '127.0.0.1'
   $inet_server_port     = '9001'
   $inet_auth            = false
-
-  case $::osfamily {
-    'RedHat': {
-      $init_defaults     = '/etc/sysconfig/supervisord'
-      $unix_socket_group = 'nobody'
-      $install_init      = true
-    }
-    'Debian': {
-      $init_defaults     = '/etc/default/supervisor'
-      $unix_socket_group = 'nogroup'
-      $install_init      = true
-    }
-    default:  {
-      $init_defaults     = false
-      $unix_socket_group = 'nogroup'
-      $install_init      = false
-    }
-  }
 }

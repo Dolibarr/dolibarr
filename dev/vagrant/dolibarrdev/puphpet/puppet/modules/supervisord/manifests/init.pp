@@ -4,6 +4,7 @@
 #
 class supervisord(
   $package_ensure       = $supervisord::params::package_ensure,
+  $package_name         = $supervisord::params::package_name,
   $package_provider     = $supervisord::params::package_provider,
   $service_ensure       = $supervisord::params::service_ensure,
   $service_name         = $supervisord::params::service_name,
@@ -11,6 +12,7 @@ class supervisord(
   $install_pip          = false,
   $init_defaults        = $supervisord::params::init_defaults,
   $setuptools_url       = $supervisord::params::setuptools_url,
+  $executable_path      = $supervisord::params::executable_path,
   $executable           = $supervisord::params::executable,
   $executable_ctl       = $supervisord::params::executable_ctl,
 
