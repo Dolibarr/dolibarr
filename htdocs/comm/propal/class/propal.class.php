@@ -92,6 +92,7 @@ class Propal extends CommonObject
     var $fk_address;
     var $address_type;
     var $address;
+    var $shipping_method_id;
     var $availability_id;
     var $availability_code;
     var $demand_reason_id;
@@ -718,6 +719,7 @@ class Propal extends CommonObject
         $sql.= ", fk_account";
         $sql.= ", ref_client";
         $sql.= ", date_livraison";
+        $sql.= ", fk_shipping_method";
         $sql.= ", fk_availability";
         $sql.= ", fk_input_reason";
         $sql.= ", fk_projet";
@@ -744,6 +746,7 @@ class Propal extends CommonObject
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->ref_client)."'";
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
+        $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
         $sql.= ", ".$this->availability_id;
         $sql.= ", ".$this->demand_reason_id;
         $sql.= ", ".($this->fk_project?$this->fk_project:"null");
@@ -1053,6 +1056,7 @@ class Propal extends CommonObject
         $sql.= ", p.fk_cond_reglement";
         $sql.= ", p.fk_mode_reglement";
         $sql.= ', p.fk_account';
+        $sql.= ", p.fk_shipping_method";
         $sql.= ", c.label as statut_label";
         $sql.= ", ca.code as availability_code, ca.label as availability";
         $sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
@@ -1106,6 +1110,7 @@ class Propal extends CommonObject
                 $this->datep                = $this->db->jdate($obj->dp);    // deprecated
                 $this->fin_validite         = $this->db->jdate($obj->dfv);
                 $this->date_livraison       = $this->db->jdate($obj->date_livraison);
+                $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
                 $this->availability_id      = $obj->fk_availability;
                 $this->availability_code    = $obj->availability_code;
                 $this->availability         = $obj->availability;

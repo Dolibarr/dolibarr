@@ -2915,7 +2915,7 @@ if ($action == 'create')
 	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 		$sign = - 1;
 
-	$nbrows = 8;
+	$nbrows = 9;
 	$nbcols = 2;
 	if (! empty($conf->projet->enabled))
 		$nbrows ++;

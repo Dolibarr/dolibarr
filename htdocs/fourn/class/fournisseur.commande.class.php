@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2013	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2014	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -194,6 +194,13 @@ class CommandeFournisseur extends CommonOrder
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
+            
+            // Retreive all extrafield
+            // fetch optionals attributes and labels
+            require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+            $extrafields=new ExtraFields($this->db);
+            $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+            $this->fetch_optionals($this->id,$extralabels);
 
             if ($this->statut == 0) $this->brouillon = 1;
 

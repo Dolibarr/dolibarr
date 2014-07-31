@@ -2421,6 +2421,95 @@ class Form
     }
 
     /**
+     *  Return a HTML select list of shipping mode
+     *
+     *  @param	string	$selected          Id shipping mode pre-selected
+     *  @param  string	$htmlname          Name of select zone
+     *  @param  string	$filtre            To filter list
+     *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string	$moreattrib        To add more attribute on select
+     * 	@return	void
+     */
+    function selectShippingMethod($selected='',$htmlname='shipping_method_id',$filtre='',$useempty=0,$moreattrib='')
+    {
+        global $langs, $conf, $user;
+
+        $langs->load("admin");
+        $langs->load("deliveries");
+
+        $sql = "SELECT rowid, code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
+        $sql.= " WHERE active = 1";
+        if ($filtre) $sql.=" AND ".$filtre;
+        $sql.= " ORDER BY libelle ASC";
+        
+        dol_syslog(get_class($this)."::selectShippingMode", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            if ($num) {
+                print '<select id="select'.$htmlname.'" class="flat selectshippingmethod" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+                if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
+                    print '<option value="-1">&nbsp;</option>';
+                }
+                while ($i < $num) {
+                    $obj = $this->db->fetch_object($result);
+                    if ($selected == $obj->rowid) {
+                        print '<option value="'.$obj->rowid.'" selected="selected">';
+                    } else {
+                        print '<option value="'.$obj->rowid.'">';
+                    }
+                    print $langs->trans("SendingMethod".strtoupper($obj->code));
+                    print '</option>';
+                    $i++;
+                }
+                print "</select>";
+                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            } else {
+                print $langs->trans("NoShippingMethodDefined");
+            }
+        } else {
+            dol_print_error($this->db);
+        }
+    }
+    
+    /**
+     *    Display form to select shipping mode
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id of shipping mode
+     *    @param    string	$htmlname    Name of select html field
+     *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @return	void
+     */
+    function formSelectShippingMethod($page, $selected='', $htmlname='shipping_method_id', $addempty=0)
+    {
+        global $langs, $db;
+
+        $langs->load("deliveries");
+
+        if ($htmlname != "none") {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setshippingmethod">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->selectShippingMethod($selected, $htmlname, '', $addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        } else {
+            if ($selected) {
+                $code=$langs->getLabelFromKey($db, $selected, 'c_shipment_mode', 'rowid', 'code');
+                print $langs->trans("SendingMethod".strtoupper($code));
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
+    /**
      *  Return a HTML select list of bank accounts
      *
      *  @param	string	$selected          Id account pre-selected

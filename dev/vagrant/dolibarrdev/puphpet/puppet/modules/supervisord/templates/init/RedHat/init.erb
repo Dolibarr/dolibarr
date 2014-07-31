@@ -23,9 +23,16 @@
 [ -e <%= @init_defaults %> ] && . <%= @init_defaults %>
 
 RETVAL=0
-DAEMON=/usr/bin/supervisord
+DAEMON=<%= @executable %>
+CTL=<%= @executable_ctl %>
 DESC=supervisord
 PIDFILE=<%= @run_path %>/<%= @pid_file %>
+
+# Tests if executable exists
+if [ ! -x $DAEMON ] ; then
+    echo "Executable not found ${DAEMON}"
+    exit 1
+fi
 
 running_pid()
 {
@@ -89,7 +96,7 @@ case "$1" in
         restart
         ;;
     reload)
-        /usr/bin/supervisorctl $OPTIONS reload
+        $CTL $OPTIONS reload
         RETVAL=$?
         ;;
     condrestart)

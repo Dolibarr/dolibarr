@@ -34,9 +34,9 @@ class DoliDBSqlite extends DoliDB
     //! Database type
     public $type='sqlite';
     //! Database label
-    static $label='PDO Sqlite';
+    const label='PDO Sqlite';
     //! Version min database
-    static $versionmin=array(3,0,0);
+    const versionmin='3.0.0';
 	//! Resultset of last query
 	private $_results;
 

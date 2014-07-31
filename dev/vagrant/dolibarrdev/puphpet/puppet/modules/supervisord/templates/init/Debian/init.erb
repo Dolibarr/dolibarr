@@ -16,7 +16,11 @@ DAEMON=<%= @executable %>
 NAME=supervisord
 DESC=supervisor
 
-test -x $DAEMON || exit 0
+# Tests if executable exists
+if [ ! -x $DAEMON ] ; then
+    echo "Executable not found ${DAEMON}"
+    exit 1
+fi
 
 LOGDIR=<%= @log_path %>
 PIDFILE=<%= @run_path %>/<%= @pid_file %>

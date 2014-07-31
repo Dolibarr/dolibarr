@@ -11427,7 +11427,7 @@ class TCPDF {
 		}
 		$seed .= uniqid('', true);
 		$seed .= rand();
-		$seed .= getmypid();
+		$seed .= dol_getmypid();
 		$seed .= __FILE__;
 		$seed .= $this->bufferlen;
 		if (isset($_SERVER['REMOTE_ADDR'])) {
