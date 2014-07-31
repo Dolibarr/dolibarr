@@ -146,12 +146,54 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
      */
     public function testIsValidUrl()
     {
-    	$result=isValidUrl('http://www.google.com',1);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(1,$result);
-    	$result=isValidUrl('www.google.com',2);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(0,$result);
+	    //Simple check
+	    $result = isValidUrl('http://google.com');
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('gooçgle');
+	    $this->assertEquals($result, 0);
+
+	    //With scheme check
+    	$result = isValidUrl('http://www.google.com', 1);
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('ftp://www.google.com', 1);
+	    $this->assertEquals($result, 0);
+
+	    //With password check
+	    $result = isValidUrl('http://user:password@http://www.google.com', 1, 1);
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('http://www.google.com', 1, 1);
+	    $this->assertEquals($result, 0);
+
+	    //With port check
+	    $result = isValidUrl('http://google.com:8080', 0, 0, 1);
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 1);
+	    $this->assertEquals($result, 0);
+
+	    //With path check
+	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 1);
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 0, 1);
+	    $this->assertEquals($result, 0);
+
+	    //With query check
+	    $result = isValidUrl('http://google.com/search?test=test', 0, 0, 0, 0, 1);
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 0, 0, 1);
+	    $this->assertEquals($result, 0);
+
+	    //With anchor check
+	    $result = isValidUrl('http://google.com/search#done', 0, 0, 0, 0, 0, 1);
+	    $this->assertEquals($result, 1);
+
+	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 0, 0, 1);
+	    $this->assertEquals($result, 0);
     }
 
     /**
