@@ -114,11 +114,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
 			$mode='customer';
-			$userid=0;
 			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
-			$stats = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			$stats = new PropaleStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
