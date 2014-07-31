@@ -2312,7 +2312,7 @@ function dol_print_error($db='',$error='')
 	else                              // Mode CLI
 	{
 		$out.='> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
-		$syslog.="pid=".getmypid();
+		$syslog.="pid=".dol_getmypid();
 	}
 
 	if (is_object($db))
@@ -4715,18 +4715,20 @@ function dol_set_focus($selector)
 }
 
 
-if (! function_exists('getmypid'))
+/**
+ * Return getmypid() or random PID when function is disabled
+ * Some web hosts disable this php function for security reasons
+ * and sometimes we can't redeclare function
+ *
+ * @return	int
+ */
+function dol_getmypid()
 {
-	/**
-	 * Return random PID
-	 * Some web hosts disable this php function for security reasons
-	 *
-	 * @return	int
-	 */
-	function getmypid()
-	{
-		return rand(1,32768);
-	}
+    if (! function_exists('getmypid')) {
+        return rand(1,32768);
+    } else {
+        return getmypid();
+    }
 }
 
 
