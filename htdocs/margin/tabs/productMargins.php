@@ -128,91 +128,86 @@ if ($id > 0 || ! empty($ref))
 		print '</div>';
 
 
-		$sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
-		$sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
-		$sql.= " f.datef, f.paye, f.fk_statut as statut,";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
-		$sql.= " sum(d.total_ht) as selling_price,";
-		$sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
-		$sql.= $db->ifsql('f.type =2','sum(d.qty * d.buy_price_ht *-1)','sum(d.qty * d.buy_price_ht)')." as buying_price,";
-        $sql.= $db->ifsql('f.type =2','sum(-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty)))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge" ;
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-		$sql.= ", ".MAIN_DB_PREFIX."facture as f";
-		$sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE f.fk_soc = s.rowid";
-		$sql.= " AND f.fk_statut > 0";
-		$sql.= " AND s.entity = ".$conf->entity;
-		$sql.= " AND d.fk_facture = f.rowid";
-		$sql.= " AND d.fk_product =".$object->id;
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-		if (! empty($socid)) $sql.= " AND f.fk_soc = $socid";
-		$sql .= " AND d.buy_price_ht IS NOT NULL";
-		if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
-		$sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
-		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
-		$sql.= " ORDER BY ".$sortfield." ".$sortorder;
-		// TODO: calculate total to display then restore pagination
-		//$sql.= $db->plimit($conf->liste_limit +1, $offset);
-		dol_syslog('margin:tabs:productMargins.php', LOG_DEBUG);
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
+        if ($user->rights->facture->lire) {
+            $sql = "SELECT s.nom, s.rowid as socid, s.code_client,";
+            $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
+            $sql.= " f.datef, f.paye, f.fk_statut as statut,";
+            if (!$user->rights->societe->client->voir && !$socid) $sql.= " sc.fk_soc, sc.fk_user,";
+            $sql.= " sum(d.total_ht) as selling_price,";
+            $sql.= $db->ifsql('f.type =2','sum(d.qty *-1)','sum(d.qty)')." as qty,";
+            $sql.= $db->ifsql('f.type =2','sum(d.qty * d.buy_price_ht *-1)','sum(d.qty * d.buy_price_ht)')." as buying_price,";
+            $sql.= $db->ifsql('f.type =2','sum(-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty)))','sum(d.total_ht - (d.buy_price_ht * d.qty))')." as marge" ;
+            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql.= ", ".MAIN_DB_PREFIX."facture as f";
+            $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
+            if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql.= " WHERE f.fk_soc = s.rowid";
+            $sql.= " AND f.fk_statut > 0";
+            $sql.= " AND s.entity = ".$conf->entity;
+            $sql.= " AND d.fk_facture = f.rowid";
+            $sql.= " AND d.fk_product =".$object->id;
+            if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if (! empty($socid)) $sql.= " AND f.fk_soc = $socid";
+            $sql .= " AND d.buy_price_ht IS NOT NULL";
+            if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1) $sql .= " AND d.buy_price_ht <> 0";
+            $sql.= " GROUP BY s.nom, s.rowid, s.code_client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+            if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user";
+            $sql.= " ORDER BY ".$sortfield." ".$sortorder;
+            // TODO: calculate total to display then restore pagination
+            //$sql.= $db->plimit($conf->liste_limit +1, $offset);
+            dol_syslog('margin:tabs:productMargins.php', LOG_DEBUG);
+            $result = $db->query($sql);
+            if ($result) {
+                $num = $db->num_rows($result);
 
-			print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$object->id",$sortfield,$sortorder,'',0,0,'');
+                print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$object->id",$sortfield,$sortorder,'',0,0,'');
 
-			$i = 0;
-			print "<table class=\"noborder\" width=\"100%\">";
+                $i = 0;
+                print '<table class="noborder" width="100%">';
 
-			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$object->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$object->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$object->id,'',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$object->id,'align="center"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-			print "</tr>\n";
+                print '<tr class="liste_titre">';
+                print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$object->id,'align="center"',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+                    print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                if (! empty($conf->global->DISPLAY_MARK_RATES))
+                    print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print "</tr>\n";
 
-			$cumul_achat = 0;
-			$cumul_vente = 0;
-			$cumul_qty = 0;
-			$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
+                $cumul_achat = 0;
+                $cumul_vente = 0;
+                $cumul_qty = 0;
+                $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
-			if ($num > 0)
-			{
-				$var=True;
-				while ($i < $num /*&& $i < $conf->liste_limit*/)
-				{
-					$objp = $db->fetch_object($result);
-					$var=!$var;
+                if ($num > 0) {
+                    $var=True;
+                    while ($i < $num /*&& $i < $conf->liste_limit*/) {
+                        $objp = $db->fetch_object($result);
+                        $var=!$var;
 
-					if ($objp->marge < 0)
-					{
-						$marginRate = ($objp->buying_price != 0)?-1*(100 * $objp->marge / $objp->buying_price):'' ;
-						$markRate = ($objp->selling_price != 0)?-1*(100 * $objp->marge / $objp->selling_price):'' ;
-					}
-					else
-					{
-						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
-						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
-					}
+                        if ($objp->marge < 0) {
+                            $marginRate = ($objp->buying_price != 0)?-1*(100 * $objp->marge / $objp->buying_price):'' ;
+                            $markRate = ($objp->selling_price != 0)?-1*(100 * $objp->marge / $objp->selling_price):'' ;
+                        } else {
+                            $marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
+                            $markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
+                        }
 
-					print "<tr ".$bc[$var].">";
-					print '<td>';
-					$invoicestatic->id=$objp->facid;
-					$invoicestatic->ref=$objp->facnumber;
-					print $invoicestatic->getNomUrl(1);
-					print "</td>\n";
-					print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
-					print "<td>".$objp->code_client."</td>\n";
+                        print '<tr '.$bc[$var].'>';
+                        print '<td>';
+                        $invoicestatic->id=$objp->facid;
+                        $invoicestatic->ref=$objp->facnumber;
+                        print $invoicestatic->getNomUrl(1);
+                        print "</td>\n";
+                        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
+                        print "<td>".$objp->code_client."</td>\n";
 					print "<td align=\"center\">";
 					print dol_print_date($db->jdate($objp->datef),'day')."</td>";
 					print "<td align=\"right\">".price($objp->selling_price, null, null, null, null, $rounding)."</td>\n";
@@ -224,52 +219,46 @@ if ($id > 0 || ! empty($ref))
 					if (! empty($conf->global->DISPLAY_MARK_RATES))
 						print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
 					print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
-					print "</tr>\n";
-					$i++;
-					$cumul_achat += $objp->buying_price;
-					$cumul_vente += $objp->selling_price;
-					$cumul_qty += $objp->qty;
-				}
-			}
+                        print "</tr>\n";
+                        $i++;
+                        $cumul_achat += $objp->buying_price;
+                        $cumul_vente += $objp->selling_price;
+                        $cumul_qty += $objp->qty;
+                    }
+                }
 
-			// affichage totaux marges
-			$var=!$var;
-			$totalMargin = $cumul_vente - $cumul_achat;
-			if ($totalMargin < 0)
-			{
-				$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
-				$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
-			}
-			else
-			{
-				$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
-				$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-			}
-			print '<tr class="liste_total">';
-			print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
-			print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($cumul_qty, null, null, null, null, $rounding)."</td>\n";
-			print "<td align=\"right\">".price($totalMargin, null, null, null, null, $rounding)."</td>\n";
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print "<td align=\"right\">".(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
-			print '<td align="right">&nbsp;</td>';
-			print "</tr>\n";
-		}
-		else
-		{
-			dol_print_error($db);
-		}
-		print "</table>";
-		print '<br>';
-		$db->free($result);
-	}
-}
-else
-{
-	dol_print_error();
+                // affichage totaux marges
+                $var=!$var;
+                $totalMargin = $cumul_vente - $cumul_achat;
+                if ($totalMargin < 0) {
+                    $marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
+                    $markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
+                } else {
+                    $marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
+                    $markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
+                }
+                print '<tr class="liste_total">';
+                print '<td colspan=4>'.$langs->trans('TotalMargin')."</td>";
+                print '<td align="right">'.price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
+                print '<td align="right">'.price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
+                print '<td align="right">'.price($cumul_qty, null, null, null, null, $rounding)."</td>\n";
+                print '<td align="right">'.price($totalMargin, null, null, null, null, $rounding)."</td>\n";
+                if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+                    print '<td align="right">'.(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%")."</td>\n";
+                if (! empty($conf->global->DISPLAY_MARK_RATES))
+                    print "<td align=\"right\">".(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%")."</td>\n";
+                print '<td align="right">&nbsp;</td>';
+                print "</tr>\n";
+                print "</table>";
+                print '<br>';
+            } else {
+                dol_print_error($db);
+            }
+            $db->free($result);
+        }
+    }
+} else {
+    dol_print_error();
 }
 
 
