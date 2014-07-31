@@ -20,7 +20,7 @@ describe 'rabbitmq' do
       let(:facts) {{ :osfamily => 'Debian' }}
       it 'should add a repo with defaults values' do
         contain_file('/etc/apt/sources.list.d/rabbitmq.list')\
-          .with_content(/deb http\:\/\/www\.rabbitmq.com\/debian\/ testing main/)
+          .with_content(%r|deb http\://www\.rabbitmq.com/debian/ testing main|)
       end
     end
 
@@ -32,7 +32,7 @@ describe 'rabbitmq' do
         }}
       it 'should add a repo with custom new values' do
         contain_file('/etc/apt/sources.list.d/rabbitmq.list')\
-          .with_content(/deb http\:\/\/www\.foorepo.com\/debian\/ unstable main/)
+          .with_content(%r|deb http\://www\.foorepo.com/debian/ unstable main|)
       end
     end
   end
@@ -275,6 +275,30 @@ describe 'rabbitmq' do
         end
       end
 
+      describe 'configuring ldap authentication' do
+        let :params do
+          { :config_stomp         => false,
+            :ldap_auth            => true,
+            :ldap_server          => 'ldap.example.com',
+            :ldap_user_dn_pattern => 'ou=users,dc=example,dc=com',
+            :ldap_use_ssl         => false,
+            :ldap_port            => '389',
+            :ldap_log             => true
+          }
+        end
+
+        it { should contain_rabbitmq_plugin('rabbitmq_auth_backend_ldap') }
+
+        it 'should contain ldap parameters' do
+          verify_contents(subject, 'rabbitmq.config', 
+                          ['[', '  {rabbit, [', '    {auth_backends, [rabbit_auth_backend_internal, rabbit_auth_backend_ldap]},', '  ]}',
+                            '  {rabbitmq_auth_backend_ldap, [', '    {other_bind, anon},',
+                            '    {servers, ["ldap.example.com"]},',
+                            '    {user_dn_pattern, "ou=users,dc=example,dc=com"},', '    {use_ssl, false},',
+                            '    {port, 389},', '    {log, true}'])
+        end
+      end
+
       describe 'default_user and default_pass set' do
         let(:params) {{ :default_user => 'foo', :default_pass => 'bar' }}
         it 'should set default_user and default_pass to specified values' do
@@ -295,10 +319,31 @@ describe 'rabbitmq' do
 
         it 'should set ssl options to specified values' do
           contain_file('rabbitmq.config').with({
-            'content' => /ssl_listeners, \[3141\].*
-            ssl_options, \[{cacertfile,"\/path\/to\/cacert".*
-            certfile="\/path\/to\/cert".*
-            keyfile,"\/path\/to\/key/,
+            'content' => %r|ssl_listeners, \[3141\].*
+            ssl_options, \[{cacertfile,"/path/to/cacert".*
+            certfile="/path/to/cert".*
+            keyfile,"/path/to/key|,
+          })
+        end
+      end
+
+      describe 'ssl options with ssl_only' do
+        let(:params) {
+          { :ssl => true,
+            :ssl_only => true,
+            :ssl_management_port => 3141,
+            :ssl_cacert => '/path/to/cacert',
+            :ssl_cert => '/path/to/cert',
+            :ssl_key => '/path/to/key'
+        } }
+
+        it 'should set ssl options to specified values' do
+          contain_file('rabbitmq.config').with({
+            'content' => %r|tcp_listeners, \[\].*
+            ssl_listeners, \[3141\].*
+            ssl_options, \[{cacertfile,"/path/to/cacert".*
+            certfile="/path/to/cert".*
+            keyfile,"/path/to/key|,
           })
         end
       end

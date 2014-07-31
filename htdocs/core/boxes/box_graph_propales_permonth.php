@@ -227,7 +227,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfProposalsByMonthHT");
 				$stringtoshow.='<br>';
 				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)

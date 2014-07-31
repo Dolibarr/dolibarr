@@ -33,6 +33,10 @@ Puppet::Type.newtype(:rabbitmq_user) do
     defaultto :false
   end
 
+  newproperty(:tags, :array_matching => :all) do
+    desc 'additional tags for the user'
+  end
+
   validate do
     if self[:ensure] == :present and ! self[:password]
       raise ArgumentError, 'must set password when creating user' unless self[:password]

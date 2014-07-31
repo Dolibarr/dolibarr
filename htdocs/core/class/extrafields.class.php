@@ -673,7 +673,7 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox('options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);

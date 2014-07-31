@@ -123,6 +123,8 @@ create table llx_accounting_fiscalyear
 
 ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
 
+ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
+ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 
 ALTER TABLE llx_adherents MODIFY COLUMN societe VARCHAR(60);
 

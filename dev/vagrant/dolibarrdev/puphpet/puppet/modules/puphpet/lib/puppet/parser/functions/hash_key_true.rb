@@ -28,11 +28,15 @@ module Puppet::Parser::Functions
       return false
     end
 
-    if arr[key].empty?
+    if arr[key] == false
       return false
     end
 
     if arr[key] == 'false'
+      return false
+    end
+
+    if arr[key].empty?
       return false
     end
 

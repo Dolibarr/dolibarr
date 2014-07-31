@@ -957,8 +957,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
     //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
     //print '<!DOCTYPE HTML>';
     print "\n";
-    if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
-    else print '<html>'."\n";
+    if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html lang="'.substr($langs->defaultlang,0,2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
+    else print '<html lang="'.substr($langs->defaultlang,0,2).'">'."\n";
     //print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
     if (empty($disablehead))
     {
@@ -1403,6 +1403,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    $logintext.='>'.$user->login.'</a>';
 	    if ($user->societe_id) $logintext.=$companylink;
 	    $logintext.='</div>';
+
 	    $loginhtmltext.='<u>'.$langs->trans("User").'</u>';
 	    $loginhtmltext.='<br><b>'.$langs->trans("Name").'</b>: '.$user->getFullName($langs);
 	    $loginhtmltext.='<br><b>'.$langs->trans("Login").'</b>: '.$user->login;
@@ -1436,27 +1437,23 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    }
 	    else $appli.=" ".DOL_VERSION;
 
-	    // Link info
 	    $logouttext='';
 	    $logouthtmltext=$appli.'<br>';
 	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
 	    {
 	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
 
-	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-	        //$logouttext .=empty($atarget?(' target="'.$atarget.'"'):'';
-	        $logouttext .='>';
-	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
+	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
 	        $logouttext .='</a>';
 	    }
 	    else
 	    {
 	    	$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
-	        $logouttext .= img_picto($langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
+	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout.png', 'class="login"', 0, 0, 1);
 	    }
 
 	    print '<div class="login_block">'."\n";
-	    //print '<table class="nobordernopadding" summary=""><tr>';
 
 	    $toprightmenu.='<div class="login_block_user">';
 	    // Add login user link
@@ -1483,7 +1480,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $qs=$_SERVER["QUERY_STRING"];
 	        $qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
-	        $text.= img_picto('', 'printer.png', 'class="printer"');
+	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer.png', 'class="printer"');
 	        $text.='</a>';
 	        $toprightmenu.=$form->textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
@@ -1491,7 +1488,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 	    print $toprightmenu;
 
-	    //print '</tr></table>'."\n";
 	    print "</div>\n";
 
 	    unset($form);
@@ -1540,7 +1536,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && ! empty($conf->global->MAIN_SEARCHFORM_SOCIETE) && $user->rights->societe->lire)
 	    {
 	        $langs->load("companies");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/societe.php', DOL_URL_ROOT.'/societe/societe.php', img_object('','company').' '.$langs->trans("ThirdParties"), 'soc', 'socname', 'T');
 	    }
 
 	    if (! empty($conf->societe->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_CONTACT) && $user->rights->societe->lire)
@@ -1553,7 +1549,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    && ! empty($conf->global->MAIN_SEARCHFORM_PRODUITSERVICE))
 	    {
 	        $langs->load("products");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/liste.php', DOL_URL_ROOT.'/product/liste.php', img_object('','product').' '.$langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P');
 	    }
 
 	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire)) && ! empty($conf->fournisseur->enabled)
@@ -1566,7 +1562,7 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
 	    if (! empty($conf->adherent->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_ADHERENT) && $user->rights->adherent->lire)
 	    {
 	        $langs->load("members");
-	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall');
+	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/liste.php', DOL_URL_ROOT.'/adherents/liste.php', img_object('','user').' '.$langs->trans("Members"), 'member', 'sall', 'M');
 	    }
 
 	    // Execute hook printSearchForm
@@ -1797,9 +1793,10 @@ function getHelpParamFor($helppagename,$langs)
  *  @param  string	$title              Title search area
  *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
  *  @param  string	$htmlinputname      Field Name input form
+ *  @param	string	$accesskey			Accesskey
  *  @return	string
  */
-function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname)
+function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname,$accesskey='')
 {
     global $conf,$langs;
 
@@ -1815,7 +1812,8 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
     $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';
-    $ret.='<input type="text" class="flat" ';
+    $ret.='<input type="text" class="flat"';
+    $ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
     $ret.=' name="'.$htmlinputname.'" id="'.$htmlinputname.'" size="10" />';

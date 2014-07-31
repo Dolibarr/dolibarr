@@ -337,7 +337,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
-			$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+			$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto('','refresh.png','','',1).'">';
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
 

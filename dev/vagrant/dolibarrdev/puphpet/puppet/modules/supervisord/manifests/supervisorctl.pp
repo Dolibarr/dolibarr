@@ -8,8 +8,6 @@ define supervisord::supervisorctl(
   $refreshonly   = false
 ) {
 
-  Exec { path => [ '/usr/bin/', '/usr/local/bin' ] }
-
   validate_string($command)
   validate_string($process)
 

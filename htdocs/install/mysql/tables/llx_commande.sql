@@ -61,6 +61,7 @@ create table llx_commande
   fk_mode_reglement		integer,						-- mode de reglement
   
   date_livraison		date 	  default NULL,
+  fk_shipping_method    integer,                        -- shipping method id
   fk_availability		integer NULL,
   fk_input_reason		integer,
   fk_delivery_address	integer,						-- delivery address (deprecated)

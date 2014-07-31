@@ -44,7 +44,11 @@ class puphpet::hhvm(
         'deb http://security.debian.org/ wheezy/updates main',
         'deb-src http://security.debian.org/ wheezy/updates main',
         'deb http://http.us.debian.org/debian wheezy-updates main',
-        'deb-src http://http.us.debian.org/debian wheezy-updates main'
+        'deb-src http://http.us.debian.org/debian wheezy-updates main',
+        'deb http://http.debian.net/debian wheezy main',
+        'deb-src http://http.debian.net/debian wheezy main',
+        'deb http://http.debian.net/debian wheezy-updates main',
+        'deb-src http://http.debian.net/debian wheezy-updates main',
       ]
 
       each( $deb_srcs ) |$value| {

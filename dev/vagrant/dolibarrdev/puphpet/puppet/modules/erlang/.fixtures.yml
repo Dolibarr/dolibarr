@@ -1,0 +1,7 @@
+fixtures:
+  repositories:
+    apt: git://github.com/puppetlabs/puppetlabs-apt.git
+    stdlib: git://github.com/puppetlabs/puppetlabs-stdlib.git
+    epel: git://github.com/stahnma/puppet-module-epel.git
+  symlinks:
+    erlang: "#{source_dir}"

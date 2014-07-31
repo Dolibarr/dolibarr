@@ -77,11 +77,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td><td class="nowrap maxwidthonsmartphone">';
 		//print ' &nbsp;';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
-		print ajax_combobox('usertodo');
+		if (! empty($conf->use_javascript_ajax))
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			print ajax_combobox('usertodo');
+		}
 		print ' &nbsp; '.$langs->trans("or") . ' ';
 		print $langs->trans("ActionsForUsersGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
-		print ajax_combobox('usergroup');
+		if (! empty($conf->use_javascript_ajax))
+		{
+			print ajax_combobox('usergroup');
+		}
 		print '</td></tr>';
 
 		/*print '<tr>';

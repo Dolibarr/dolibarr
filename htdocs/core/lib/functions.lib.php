@@ -1785,7 +1785,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 /**
  *	Show picto whatever it's its name (generic function)
  *
- *	@param      string		$alt         		Text on alt and title of image (alt only if param notitle is set to 1)
+ *	@param      string		$titlealt         	Text on title and alt. If text is "TextA:TextB", use Text A on alt and Text B on title. Alt only if param notitle is set to 1.
  *	@param      string		$picto       		Name of image file to show ('filenew', ...)
  *												If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
  *                                  			Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
@@ -1798,7 +1798,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
-function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
+function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $srconly=0, $notitle=0)
 {
 	global $conf;
 
@@ -1842,13 +1842,19 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
 	}
 
 	if ($srconly) return $fullpathpicto;
-	else return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($alt).'"').($options?' '.$options:'').'>';
+	else
+	{
+		$tmparray=explode(':',$titlealt);
+		$title=$tmparray[0];
+		$alt=empty($tmparray[1])?'':$tmparray[1];
+		return '<img src="'.$fullpathpicto.'" border="0" alt="'.dol_escape_htmltag($alt).'"'.($notitle?'':' title="'.dol_escape_htmltag($title).'"').($options?' '.$options:'').'>';	// Alt is used for accessibility, title for popup
+	}
 }
 
 /**
  *	Show a picto called object_picto (generic function)
  *
- *	@param	string	$alt				Text of alt on image
+ *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
  *										For external modules use imagename@mymodule to search into directory "img" of module.
  *	@param	string	$options			Add more attribute on img tag (ie: class="datecallink")
@@ -1856,22 +1862,22 @@ function img_picto($alt, $picto, $options = '', $pictoisfullpath = false, $srcon
  *	@return	string						Return img tag
  *	@see	#img_picto, #img_picto_common
  */
-function img_object($alt, $picto, $options = '', $pictoisfullpath = false)
+function img_object($titlealt, $picto, $options = '', $pictoisfullpath = false)
 {
-	return img_picto($alt, 'object_'.$picto, $options, $pictoisfullpath);
+	return img_picto($titlealt, 'object_'.$picto, $options, $pictoisfullpath);
 }
 
 /**
  *	Show picto (generic function)
  *
- *	@param      string		$alt         		Text on alt and title of image
+ *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
  *	@param		string		$options			Add more attribute on img tag
  *	@param		int			$pictoisfullpath	If 1, image path is a full path
  *	@return     string      					Return img tag
  *  @see        #img_object, #img_picto
  */
-function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
+function img_picto_common($titlealt, $picto, $options = '', $pictoisfullpath = 0)
 {
 	global $conf;
 
@@ -1890,141 +1896,141 @@ function img_picto_common($alt, $picto, $options = '', $pictoisfullpath = 0)
 		}
 	}
 
-	return img_picto($alt, $path, $options, 1);
+	return img_picto($titlealt, $path, $options, 1);
 }
 
 /**
  *	Show logo action
  *
- *	@param	string	$alt         	Text for image alt and title ('default', ...)
+ *	@param	string	$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$numaction   	Action to show
  *	@return string      			Return an img tag
  */
-function img_action($alt, $numaction)
+function img_action($titlealt, $numaction)
 {
 	global $conf, $langs;
 
-	if ($alt == 'default')
+	if ($titlealt == 'default')
 	{
-		if ($numaction == -1) $alt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
-		if ($numaction == 0) $alt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
-		if ($numaction == 1) $alt = $langs->transnoentitiesnoconv('ChangeToContact');
-		if ($numaction == 2) $alt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
-		if ($numaction == 3) $alt = $langs->transnoentitiesnoconv('ChangeContactDone');
+		if ($numaction == -1) $titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
+		if ($numaction == 0) $titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
+		if ($numaction == 1) $titlealt = $langs->transnoentitiesnoconv('ChangeToContact');
+		if ($numaction == 2) $titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
+		if ($numaction == 3) $titlealt = $langs->transnoentitiesnoconv('ChangeContactDone');
 	}
 
-	return img_picto($alt, 'stcomm'.$numaction.'.png');
+	return img_picto($titlealt, 'stcomm'.$numaction.'.png');
 }
 
 /**
  *  Show pdf logo
  *
- *  @param	string		$alt        Texte sur le alt de l'image
+ *  @param	string		$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *  @param  int		    $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
  *  @return string      			Retourne tag img
  */
-function img_pdf($alt = 'default', $size = 3)
+function img_pdf($titlealt = 'default', $size = 3)
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Show');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Show');
 
-	return img_picto($alt, 'pdf'.$size.'.png');
+	return img_picto($titlealt, 'pdf'.$size.'.png');
 }
 
 /**
  *	Show logo +
  *
- *	@param	string	$alt        Texte sur le alt de l'image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return tag img
  */
-function img_edit_add($alt = 'default')
+function img_edit_add($titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Add');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Add');
 
-	return img_picto($alt, 'edit_add.png');
+	return img_picto($titlealt, 'edit_add.png');
 }
 /**
  *	Show logo -
  *
- *	@param	string	$alt         Texte sur le alt de l'image
- *	@return string      Retourne tag img
+ *	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@return string      		Return tag img
  */
-function img_edit_remove($alt = 'default')
+function img_edit_remove($titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Remove');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Remove');
 
-	return img_picto($alt, 'edit_remove.png');
+	return img_picto($titlealt, 'edit_remove.png');
 }
 
 /**
  *	Show logo editer/modifier fiche
  *
- *	@param  string	$alt        Texte sur le alt de l'image
+ *	@param  string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  float	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
- *	@return string      		Retourne tag img
+ *	@return string      		Return tag img
  */
-function img_edit($alt = 'default', $float = 0, $other = '')
+function img_edit($titlealt = 'default', $float = 0, $other = '')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Modify');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Modify');
 
-	return img_picto($alt, 'edit.png', ($float ? 'style="float: right"' : $other));
+	return img_picto($titlealt, 'edit.png', ($float ? 'style="float: right"' : $other));
 }
 
 /**
  *	Show logo view card
  *
- *	@param	string	$alt         Texte sur le alt de l'image
- *	@param  float	$float       Si il faut y mettre le style "float: right"
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param  float	$float      Si il faut y mettre le style "float: right"
  *	@param  string	$other		Add more attributes on img
- *	@return string      Retourne tag img
+ *	@return string      		Return tag img
  */
-function img_view($alt = 'default', $float = 0, $other = '')
+function img_view($titlealt = 'default', $float = 0, $other = '')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('View');
+	if ($titlealt == 'default') $titlealt = $langs->trans('View');
 
 	$options = ($float ? 'style="float: right" ' : '').$other;
 
-	return img_picto($alt, 'view.png', $options);
+	return img_picto($titlealt, 'view.png', $options);
 }
 
 /**
  *  Show delete logo
  *
- *  @param	string	$alt        Text on alt image
+ *  @param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string	$other      Add more attributes on img
  *  @return string      		Retourne tag img
  */
-function img_delete($alt = 'default', $other = '')
+function img_delete($titlealt = 'default', $other = '')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Delete');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
-	return img_picto($alt, 'delete.png', $other);
+	return img_picto($titlealt, 'delete.png', $other);
 }
 
 /**
  *  Show printer logo
  *
- *  @param  string  $alt        Text on alt image
+ *  @param  string  $titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *  @param  string  $other      Add more attributes on img
  *  @return string              Retourne tag img
  */
-function img_printer($alt = "default", $other='')
+function img_printer($titlealt = "default", $other='')
 {
     global $conf,$langs;
-    if ($alt=="default") $alt=$langs->trans("Print");
-    return img_picto($alt,'printer.png',$other);
+    if ($titlealt=="default") $titlealt=$langs->trans("Print");
+    return img_picto($titlealt,'printer.png',$other);
 }
 
 /**
@@ -2050,159 +2056,159 @@ function img_help($usehelpcursor = 1, $usealttitle = 1)
 /**
  *	Show info logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
-function img_info($alt = 'default')
+function img_info($titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Informations');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Informations');
 
-	return img_picto($alt, 'info.png');
+	return img_picto($titlealt, 'info.png');
 }
 
 /**
  *	Show warning logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$float      If we must add style "float: right"
  *	@return string      		Return img tag
  */
-function img_warning($alt = 'default', $float = 0)
+function img_warning($titlealt = 'default', $float = 0)
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Warning');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($alt, 'warning.png', ($float ? 'style="float: right"' : ''));
+	return img_picto($titlealt, 'warning.png', ($float ? 'style="float: right"' : ''));
 }
 
 /**
  *  Show error logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
-function img_error($alt = 'default')
+function img_error($titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Error');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Error');
 
-	return img_picto($alt, 'error.png');
+	return img_picto($titlealt, 'error.png');
 }
 
 /**
  *	Show next logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
-function img_next($alt = 'default')
+function img_next($titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Next');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($alt, 'next.png');
+	return img_picto($titlealt, 'next.png');
 }
 
 /**
  *	Show previous logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
-function img_previous($alt = 'default')
+function img_previous($titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Previous');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($alt, 'previous.png');
+	return img_picto($titlealt, 'previous.png');
 }
 
 /**
  *	Show down arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected   Selected
  *	@return string      		Return img tag
  */
-function img_down($alt = 'default', $selected = 0)
+function img_down($titlealt = 'default', $selected = 0)
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Down');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Down');
 
-	return img_picto($alt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown"');
+	return img_picto($titlealt, ($selected ? '1downarrow_selected.png' : '1downarrow.png'), 'class="imgdown"');
 }
 
 /**
  *	Show top arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
  *	@return string      		Return img tag
  */
-function img_up($alt = 'default', $selected = 0)
+function img_up($titlealt = 'default', $selected = 0)
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Up');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Up');
 
-	return img_picto($alt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup"');
+	return img_picto($titlealt, ($selected ? '1uparrow_selected.png' : '1uparrow.png'), 'class="imgup"');
 }
 
 /**
  *	Show left arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
  *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_left($alt = 'default', $selected = 0, $options='')
+function img_left($titlealt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Left');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
 
-	return img_picto($alt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $options);
+	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $options);
 }
 
 /**
  *	Show right arrow logo
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$selected	Selected
  *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_right($alt = 'default', $selected = 0, $options='')
+function img_right($titlealt = 'default', $selected = 0, $options='')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Right');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Right');
 
-	return img_picto($alt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $options);
+	return img_picto($titlealt, ($selected ? '1rightarrow_selected.png' : '1rightarrow.png'), $options);
 }
 
 /**
  *	Show tick logo if allowed
  *
  *	@param	string	$allow		Allow
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string      		Return img tag
  */
-function img_allow($allow, $alt = 'default')
+function img_allow($allow, $titlealt = 'default')
 {
 	global $conf, $langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Active');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Active');
 
-	if ($allow == 1) return img_picto($alt, 'tick.png');
+	if ($allow == 1) return img_picto($titlealt, 'tick.png');
 
 	return '-';
 }
@@ -2212,19 +2218,19 @@ function img_allow($allow, $alt = 'default')
  *	Show MIME img of a file
  *
  *	@param	string	$file		Filename
- * 	@param	string	$alt		Alternate text to show on img mous hover
+ * 	@param	string	$titlealt	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@return string     			Return img tag
  */
-function img_mime($file, $alt = '')
+function img_mime($file, $titlealt = '')
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$mimetype = dol_mimetype($file, '', 1);
 	$mimeimg = dol_mimetype($file, '', 2);
 
-	if (empty($alt)) $alt = 'Mime type: '.$mimetype;
+	if (empty($titlealt)) $titlealt = 'Mime type: '.$mimetype;
 
-	return img_picto_common($alt, 'mime/'.$mimeimg);
+	return img_picto_common($titlealt, 'mime/'.$mimeimg);
 }
 
 
@@ -2232,21 +2238,21 @@ function img_mime($file, $alt = '')
  *	Show phone logo.
  *  Use img_picto instead.
  *
- *	@param	string	$alt        Text to show on alt image
+ *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  int		$option		Option
  *	@return string      		Return img tag
  *  @deprecated
  */
-function img_phone($alt = 'default', $option = 0)
+function img_phone($titlealt = 'default', $option = 0)
 {
 	global $conf,$langs;
 
-	if ($alt == 'default') $alt = $langs->trans('Call');
+	if ($titlealt == 'default') $titlealt = $langs->trans('Call');
 
 	if ($option == 1) $img = 'call';
 	else $img = 'call_out';
 
-	return img_picto($alt, $img);
+	return img_picto($titlealt, $img);
 }
 
 
