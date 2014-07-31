@@ -534,7 +534,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
             $ibanDisplay_temp = $outputlangs->convToOutputCharset($account->iban);
             $ibanDisplay = "";
 
-            for($i = 0; $i < strlen($ibanDisplay_temp); $i++){
+            for($i = 0; $i < dol_strlen($ibanDisplay_temp); $i++){
                 $ibanDisplay .= $ibanDisplay_temp[$i];
                 if($i%4 == 3 && $i > 0){
                     $ibanDisplay .= " ";
@@ -695,7 +695,6 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// First line of company infos
-
 	if ($showdetails)
 	{
 		$line1="";
@@ -1255,7 +1254,7 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 	}
 	else
 	{
-		if (empty($hidedetails) || $hidedetails > 1) return price($sign * $object->lines[$i]->subprice, 0, $outputlangs);
+		if (empty($hidedetails) || $hidedetails > 1)return price($sign * $object->lines[$i]->subprice, 0, $outputlangs, 1, -1, 2);
 	}
 }
 
@@ -1466,11 +1465,7 @@ function pdf_getlineremisevalue($object,$i,$outputlangs,$hidedetails=0)
         }
         else
         {
-            if (empty($hidedetails) || $hidedetails > 1){
-                //ici
-                $remisevalue = price($object->lines[$i]->subprice * $object->lines[$i]->qty - $object->lines[$i]->total_ht);
-                return $remisevalue;
-            }
+            if (empty($hidedetails) || $hidedetails > 1) return price($object->lines[$i]->subprice * $object->lines[$i]->qty - $object->lines[$i]->total_ht,0, $outputlangs, 1, -1, 2);
         }
     }
 }
