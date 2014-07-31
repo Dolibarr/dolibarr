@@ -2012,7 +2012,7 @@ if ($action == 'create') {
 	}
 
     // Bank Account
-    print '<tr><td">';
+    print '<tr><td>';
     print '<table width="100%" class="nobordernopadding"><tr><td>';
     print $langs->trans('BankAccount');
     print '</td>';
