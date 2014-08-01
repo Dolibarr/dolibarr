@@ -672,9 +672,12 @@ HelpCopyToClipboard=Naudokite Ctrl+C kopijuoti į iškarpinę (clipboard)
 SaveUploadedFileWithMask=Išsaugokite failą serveryje su pavadinimu "<strong>%s</strong>" (kitaip "%s")
 OriginFileName=Originalus failo pavadinimas
 SetDemandReason=Nustatykite šaltinį
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Peržiūrėti pastabas
 XMoreLines=%s paslėptos eilutės
 PublicUrl=Viešas URL
+AddBox=Add box
 
 # Week day
 Monday=Pirmadienis

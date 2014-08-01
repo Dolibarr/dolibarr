@@ -47,7 +47,7 @@ DictionarySetup=راه اندازی فرهنگ لغت
 Dictionary=واژه نامه ها
 ErrorReservedTypeSystemSystemAuto=ارزش 'سيستم' و  برای نوع محفوظ است. شما می توانيد 'کاربر' به عنوان ارزش برای اضافه کردن رکورد خود استفاده کنيد
 ErrorCodeCantContainZero=کد می تواند مقدار 0 را شامل نمی شود
-DisableJavascript=غیر فعال کردن توابع جاوا اسکریپت و آژاکس
+DisableJavascript=Disable JavaScript and Ajax functions (Recommended for blind person or text browsers)
 ConfirmAjax=استفاده از popup ها به تایید آژاکس
 UseSearchToSelectCompanyTooltip=همچنین اگر شما تعداد زیادی از اشخاص ثالث (> 100 000)، شما می توانید سرعت با تنظیم COMPANY_DONOTSEARCH_ANYWHERE ثابت به 1 در راه اندازی-> دیگر افزایش دهد. جست و جو خواهد شد و سپس محدود به شروع از رشته است.
 UseSearchToSelectCompany=استفاده از رشته های تکمیل خودکار را انتخاب کنید اشخاص ثالث به جای استفاده از یک جعبه لیست.
@@ -928,11 +928,14 @@ EventsSetup=پیکربندی برای رویدادهای گزارشات
 LogEvents=مراجعة الحسابات الأحداث الأمنية
 Audit=ممیزی
 InfoDolibarr=ساعات Dolibarr
+InfoBrowser=Infos Browser
 InfoOS=ساعات OS
 InfoWebServer=ساعات وب سرور
 InfoDatabase=پایگاه داده ساعات روز
 InfoPHP=ساعات PHP
 InfoPerf=ساعات اجرای
+BrowserName=Browser name
+BrowserOS=Browser OS
 ListEvents=مراجعة الأحداث
 ListOfSecurityEvents=قائمة الأحداث الأمنية Dolibarr
 SecurityEventsPurged=رویدادهای امنیتی پاکسازی
@@ -1441,8 +1444,8 @@ ConfirmDeleteLine=آیا مطمئن هستید که می خواهید این خ�
 ##### Tax #####
 TaxSetup=مالیات، مشارکت اجتماعی و سود سهام راه اندازی ماژول
 OptionVatMode=مالیات بر ارزش افزوده به دلیل
-OptionVATDefault=استاندارد
-OptionVATDebitOption=خدمات گزینه در اعتباری
+OptionVATDefault=Cash basis
+OptionVATDebitOption=Accrual basis
 OptionVatDefaultDesc=مالیات بر ارزش افزوده است به دلیل: <br> - تحویل کالا (ما استفاده از تاریخ فاکتور) <br> - در پرداختهای مربوط به خدمات
 OptionVatDebitOptionDesc=مالیات بر ارزش افزوده است به دلیل: <br> - تحویل کالا (ما استفاده از تاریخ فاکتور) <br> - در فاکتور (بدهی) برای خدمات
 SummaryOfVatExigibilityUsedByDefault=Time of VAT exigibility by default according to chosen option:

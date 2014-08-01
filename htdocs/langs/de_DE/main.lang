@@ -672,9 +672,12 @@ HelpCopyToClipboard=Benutze Ctrl+C für Kopie in Zwischenablage
 SaveUploadedFileWithMask=Datei auf dem Server speichern mit dem Namen "<strong>%s</strong>" (oder "%s")
 OriginFileName=Original Dateiname
 SetDemandReason=Quelle definieren
+SetBankAccount=Bankkonto angeben
+AccountCurrency=Kontowährung
 ViewPrivateNote=Zeige Notizen
 XMoreLines=%s Zeile(n) versteckt
 PublicUrl=Öffentliche URL
+AddBox=Add box
 
 # Week day
 Monday=Montag

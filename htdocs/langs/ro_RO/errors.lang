@@ -153,3 +153,4 @@ WarningCloseAlways=Atenţie, închiderea are loc chiar dacă suma diferă. Nu ac
 WarningUsingThisBoxSlowDown=Atenție, folosind această casetă încetiniţi serios toate paginile ce arată caseta.
 WarningClickToDialUserSetupNotComplete=Setările informațiilor ClickToDial pentru userul dvs. nu sunt complete (vezi tabul ClickToDial pe fişal dvs. de utilizator).
 WarningNotRelevant=Operaţiuni irelevante pentru acest dataset
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
