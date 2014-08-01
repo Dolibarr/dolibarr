@@ -24,6 +24,7 @@
  * 	\brief      Fichier de la classe des gestion des fiches interventions
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 
 /**
@@ -998,7 +999,7 @@ class Fichinter extends CommonObject
 /**
  *	Classe permettant la gestion des lignes d'intervention
  */
-class FichinterLigne extends CommonObject
+class FichinterLigne extends CommonObjectLine
 {
 	var $db;
 	var $error;
