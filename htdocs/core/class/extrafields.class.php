@@ -939,11 +939,11 @@ class ExtraFields
 		{
 			$param_list=array_keys($params['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
-
+			var_dump($InfoFieldList);
 			$selectkey="rowid";
 			$keyList='rowid';
 
-			if (count($InfoFieldList)==3)
+			if (count($InfoFieldList)>=3)
 			{
 				$selectkey = $InfoFieldList[2];
 				$keyList=$InfoFieldList[2].' as rowid';
