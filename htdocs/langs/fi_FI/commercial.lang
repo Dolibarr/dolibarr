@@ -71,6 +71,7 @@ ActionAC_FAX=Lähetä faksi
 ActionAC_PROP=Lähetä ehdotus
 ActionAC_EMAIL=Lähetä sähköpostiviesti
 ActionAC_RDV=Kokoukset
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Lähetä laskutustietosi
 ActionAC_REL=Lähetä laskutustilanteesi (muistutus)
 ActionAC_CLO=Sulje

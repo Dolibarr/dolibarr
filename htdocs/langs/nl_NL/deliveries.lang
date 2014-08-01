@@ -23,4 +23,4 @@ GoodStatusDeclaration=Hebben de bovenstaande goederen in goede conditie ontvange
 Deliverer=Bezorger:
 Sender=Afzender
 Recipient=Ontvanger
-# ErrorStockIsNotEnough=There's not enough stock
+ErrorStockIsNotEnough=Er is niet genoeg voorraad

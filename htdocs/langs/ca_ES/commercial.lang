@@ -71,6 +71,7 @@ ActionAC_FAX=Enviament Fax
 ActionAC_PROP=Enviament pressupost per correu
 ActionAC_EMAIL=Enviament E-Mail
 ActionAC_RDV=Cita
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Enviament factura a client per correu
 ActionAC_REL=Recordatori factura a client per correu
 ActionAC_CLO=Tancament

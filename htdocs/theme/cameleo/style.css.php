@@ -662,6 +662,7 @@ form#login {
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {

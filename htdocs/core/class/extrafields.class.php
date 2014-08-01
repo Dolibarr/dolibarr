@@ -979,7 +979,7 @@ class ExtraFields
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($field_toshow);
+						$translabel=$langs->trans($obj->field_toshow);
 						if ($translabel!=$field_toshow) {
 							$value.=dol_trunc($translabel,18).' ';
 						}else {

@@ -5,11 +5,12 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
- * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014      Cédric Gross         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -513,6 +514,24 @@ if (empty($reshook))
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
+   		elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+
+			$prodcustprice = new Productcustomerprice($db);
+
+			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
+
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines [0]->price);
+					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+					$price_base_type = $prodcustprice->lines [0]->price_base_type;
+					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+				}
+			}
+		}
 
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -586,7 +605,24 @@ if (empty($reshook))
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
+    	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
+			$prodcustprice = new Productcustomerprice($db);
+
+			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
+
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines [0]->price);
+					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+					$price_base_type = $prodcustprice->lines [0]->price_base_type;
+					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+				}
+			}
+		}
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
         if ($tva_tx != $object->tva_tx)
@@ -659,7 +695,24 @@ if (empty($reshook))
             $pu_ttc = $object->multiprices_ttc[$soc->price_level];
             $price_base_type = $object->multiprices_base_type[$soc->price_level];
         }
+    	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+		{
+			require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
+			$prodcustprice = new Productcustomerprice($db);
+
+			$filter = array('t.fk_product' => $object->id,'t.fk_soc' => $soc->id);
+
+			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+			if ($result) {
+				if (count($prodcustprice->lines) > 0) {
+					$pu_ht = price($prodcustprice->lines [0]->price);
+					$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+					$price_base_type = $prodcustprice->lines [0]->price_base_type;
+					$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+				}
+			}
+		}
         // On reevalue prix selon taux tva car taux tva transaction peut etre different
         // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
         if ($tva_tx != $object->tva_tx)

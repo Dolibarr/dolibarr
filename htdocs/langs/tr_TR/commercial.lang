@@ -71,6 +71,7 @@ ActionAC_FAX=Faks gönder
 ActionAC_PROP=Teklifi postayla gönder
 ActionAC_EMAIL=Eposta gönder
 ActionAC_RDV=Toplantılar
+ActionAC_INT=Siteden müdahale
 ActionAC_FAC=Müşteri faturasını postayla gönder gönder
 ActionAC_REL=Müşteri faturasını postayla gönder (anımsatma)
 ActionAC_CLO=Kapat

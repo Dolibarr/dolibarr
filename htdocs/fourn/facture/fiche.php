@@ -306,7 +306,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
         $object->fk_project    = ($tmpproject > 0) ? $tmpproject : null;
-		
+
 		// Auto calculation of date due if not filled by user
 		if(empty($object->date_echeance)) $object->date_echeance = $object->calculate_date_lim_reglement();
 
@@ -1953,7 +1953,7 @@ else
 
                 print '<input type="hidden" name="lineid" value="'.$object->lines[$i]->rowid.'">';
 
-                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product)
+                if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && $object->lines[$i]->fk_product > 0)
                 {
                     print '<input type="hidden" name="idprod" value="'.$object->lines[$i]->fk_product.'">';
                     $product_static=new ProductFournisseur($db);
@@ -1964,9 +1964,9 @@ else
                     print '<br>';
                 }
                 else
-                {
+				{
                     $forceall=1;	// For suppliers, we always show all types
-                    print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1);
+                    print $form->select_type_of_lines($object->lines[$i]->product_type,'type',1,0,$forceall);
                     if ($forceall || (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
                     || (empty($conf->product->enabled) && empty($conf->service->enabled))) print '<br>';
                 }

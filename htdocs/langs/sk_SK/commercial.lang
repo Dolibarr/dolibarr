@@ -71,6 +71,7 @@ ActionAC_FAX=Odoslať fax
 ActionAC_PROP=Poslať e-mailom návrh
 ActionAC_EMAIL=Odoslať e-mail
 ActionAC_RDV=Schôdza
+ActionAC_INT=Intervention on site
 ActionAC_FAC=Poslať zákazníka faktúru poštou
 ActionAC_REL=Poslať zákazníka faktúru poštou (pripomienka)
 ActionAC_CLO=Zavrieť

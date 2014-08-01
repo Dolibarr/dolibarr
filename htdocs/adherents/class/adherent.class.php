@@ -90,6 +90,7 @@ class Adherent extends CommonObject
     var $user_login;
 
     var $fk_soc;
+	var $thirdparty;		// Loaded by ->fetch_thirdparty()
 
     // Fields loaded by fetch_subscriptions()
     var $first_subscription_date;

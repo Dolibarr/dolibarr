@@ -589,6 +589,39 @@ class Product extends CommonObject
 
         if ($result >= 0)
         {
+            if (empty($this->oldcopy))
+            {
+                $org=new self($this->db);
+                $org->fetch($this->id);
+                $this->oldcopy=$org;
+            }
+            // test if batch management is activated on existing product
+            if ($this->hasbatch() && !$this->oldcopy->hasbatch())
+            {
+                $this->load_stock();
+                foreach ($this->stock_warehouse as $idW => $ObjW)
+                {
+                    $qty_batch = 0;
+                    foreach ($ObjW->detail_batch as $detail)    
+                    {
+                        $qty_batch += $detail->qty;
+                    }
+                    // Quantities in batch details are not same same as stock quantity
+                    // So we add a default batch record
+                    if ($ObjW->real <> $qty_batch)
+                    {
+                        $ObjBatch = new Productbatch($this->db);
+                        $ObjBatch->batch = $langs->trans('BatchDefaultNumber');
+                        $ObjBatch->qty = $ObjW->real - $qty_batch;
+                        $ObjBatch->fk_product_stock = $ObjW->id;
+                        if ($ObjBatch->create($user,1) < 0)
+                        { 
+                            $error++;
+                            $this->errors=$ObjBatch->errors;
+                        }
+                    }
+                }    
+            }
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
@@ -2918,6 +2951,7 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
+					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
 					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
 					$i++;
@@ -3148,15 +3182,15 @@ class Product extends CommonObject
     							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
     							if ($photo_vignette && preg_match('/(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$/i', $photo) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
     							{
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
     							}
     							if ($user->rights->produit->creer || $user->rights->service->creer)
     							{
     								// Link to resize
-    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
     			               		// Link to delete
-    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+    								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
     								$return.= img_delete().'</a>';
     							}
     						}
@@ -3176,10 +3210,10 @@ class Product extends CommonObject
     							if ($user->rights->produit->creer || $user->rights->service->creer)
     							{
     								// Link to resize
-    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$_GET["id"].'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
+    			               		$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','',1).'</a> &nbsp; ';
 
     			               		// Link to delete
-    			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+    			               		$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
     								$return.= img_delete().'</a>';
     							}
     						}
