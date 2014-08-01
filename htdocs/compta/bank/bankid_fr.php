@@ -35,6 +35,7 @@ $langs->load("bills");
 
 $action=GETPOST('action');
 $id=GETPOST('id');
+$ref=GETPOST('ref');
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -89,7 +90,8 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 {
 	// Modification
 	$account = new Account($db);
-	$account->delete($_GET["id"]);
+	$account->fetch($id);
+	$account->delete();
 
 	header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
 	exit;

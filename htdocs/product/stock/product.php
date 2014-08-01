@@ -68,7 +68,7 @@ if ($action == 'setstocklimit')
     $product = new Product($db);
     $result=$product->fetch($id);
     $product->seuil_stock_alerte=$stocklimit;
-    $result=$product->update($product->id,$user,1,0,1);
+    $result=$product->update($product->id,$user,0,'update');
     if ($result < 0)
     	setEventMessage($product->error, 'errors');
     $action='';
@@ -80,7 +80,7 @@ if ($action == 'setdesiredstock')
     $product = new Product($db);
     $result=$product->fetch($id);
     $product->desiredstock=$desiredstock;
-    $result=$product->update($product->id,$user,1,0,1);
+    $result=$product->update($product->id,$user,0,'update');
     if ($result < 0)
     	setEventMessage($product->error, 'errors');
     $action='';
@@ -154,7 +154,7 @@ if ($action == "correct_stock" && ! $cancel)
 	            header("Location: ".$_SERVER["PHP_SELF"]."?id=".$product->id);
 				exit;
 			}
-			else 
+			else
 			{
 			    setEventMessage($product->error,'errors');
 			    $action='correction';
@@ -258,7 +258,7 @@ if ($id > 0 || $ref)
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'stock', $titre, 0, $picto);
-		
+
 		dol_htmloutput_events();
 
 		$form = new Form($db);
