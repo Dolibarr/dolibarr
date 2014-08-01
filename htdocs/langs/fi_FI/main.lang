@@ -672,9 +672,12 @@ HelpCopyToClipboard=Käytä Ctrl+C kopioisaksesi leikepöydälle
 SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
 OriginFileName=Alkuperäinen tiedostonimi
 SetDemandReason=Aseta lähde
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Katso huomiot
 XMoreLines=%s rivi(ä) piilossa
 PublicUrl=Julkinen URL
+AddBox=Add box
 
 # Week day
 Monday=Maanantai

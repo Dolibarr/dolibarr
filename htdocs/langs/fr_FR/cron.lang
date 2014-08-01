@@ -1,22 +1,14 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = À propos
 CronAbout = À propos de Cron
 CronAboutPage = Page à propos de Cron
-
-#
 # Right
-#
 Permission23101 = Voir les travaux planifiés
 Permission23102 = Créer/modifier des travaux planifiés
 Permission23103 = Supprimer un travail planifiée
 Permission23104 = Lancer un travail planifié
-
-#
 # Admin
-#
 CronSetup= Page de configuration du module - Gestion des travaux programmés
 URLToLaunchCronJobs=URL pour vérifier et lancer les travaux programmés actifs
 OrToLaunchASpecificJob=Ou pour vérifier et lancer un travail programmé spécifique
@@ -24,20 +16,12 @@ KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux programm
 FileToLaunchCronJobs=Commande pour lancer les travaux programmés actifs
 CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
-
-
-#
 # Menu
-#
 CronJobs=Travaux programmés
 CronListActive= Liste des travaux actifs
 CronListInactive= Liste des travaux inactifs
 CronListActive= Liste des travaux actifs
-
-
-#
 # Page list
-#
 CronDateLastRun=Dernier lancement
 CronLastOutput=Sortie du dernier lancement
 CronLastResult=Dernier code de retour
@@ -70,10 +54,7 @@ CronLabel=Description
 CronNbRun=Nb. exec.
 CronEach=Tous les
 JobFinished=Tâche lancée et terminée
-
-#
 #Page card
-#
 CronAdd= Ajoutez des travaux
 CronHourStart= Jour et heure de début de la tâche
 CronEvery= Puis exécution toutes les
@@ -95,20 +76,12 @@ CronObjectHelp=Le nom de l'objet à charger. <BR> Par exemple pour appeler la m�
 CronMethodHelp=La méthode à lancer. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur de la méthode est <i>fetch</i>
 CronArgsHelp=Les arguments de la méthode. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être <i>0, RefProduit</i>
 CronCommandHelp=La commande système a exécuter.
-
-#
 # Info
-#
 CronInfoPage=Information
-
-
-#
 # Common
-#
 CronType=Type de tâche
 CronType_method=Méthode d'appel d'une classe Dolibarr
 CronType_command=Commande terminal
 CronMenu=Cron
 CronCannotLoadClass=Impossible de charger la classe %s ou l'objet %s
-
-UseMenuModuleToolsToAddCronJobs=Aller dans le menu "Accueil - Configuration des modules - Liste des travaux" pour voir et éditer les travaux planifiés.
+UseMenuModuleToolsToAddCronJobs=Aller dans le menu "Accueil - Outils modules - Liste des travaux" pour voir et éditer les travaux planifiés.

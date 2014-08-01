@@ -672,9 +672,12 @@ HelpCopyToClipboard=Gebruik Ctrl + C om te kopiëren naar het klembord
 SaveUploadedFileWithMask=Sla het bestand op de server met de naam "<strong>%s</strong>" (anders "%s")
 OriginFileName=Oorspronkelijke bestandsnaam
 SetDemandReason=Stel bron in
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Notities bekijken
 XMoreLines=%s regel(s) verborgen
 PublicUrl=Openbare URL
+AddBox=Add box
 
 # Week day
 Monday=Maandag

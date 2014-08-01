@@ -672,9 +672,12 @@ HelpCopyToClipboard=Použite Ctrl + C skopírujte do schránky
 SaveUploadedFileWithMask=Uloženie súboru na serveri s názvom <strong>&quot;%s&quot;</strong> (inak &quot;%s&quot;)
 OriginFileName=Original filename
 SetDemandReason=Set source
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
 PublicUrl=Public URL
+AddBox=Add box
 
 # Week day
 Monday=Pondelok

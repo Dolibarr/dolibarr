@@ -672,9 +672,12 @@ HelpCopyToClipboard=استفاده از کلیدهای Ctrl + C برای کپی 
 SaveUploadedFileWithMask=ذخیره فایل بر روی سرور با نام <strong>"٪ s"</strong> (در غیر این صورت "٪ s")
 OriginFileName=نام فایل اصلی
 SetDemandReason=تنظیم منبع
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=مشاهده یادداشت
 XMoreLines=٪ خط (بازدید کنندگان) پنهان
 PublicUrl=URL عمومی
+AddBox=Add box
 
 # Week day
 Monday=دوشنبه

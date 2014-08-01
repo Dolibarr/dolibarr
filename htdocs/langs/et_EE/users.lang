@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
-HRMArea=HRM area
+HRMArea=Personalihalduse ala
 UserCard=Kasutaja kaart
 ContactCard=Kontakti kaart
 GroupCard=Grupi kaart
@@ -87,7 +87,7 @@ MyInformations=Minu andmed
 ExportDataset_user_1=Dolibarr kasutajad ja omadused
 DomainUser=Domeeni kasutaja %s
 Reactivate=Aktiveeri uuesti
-CreateInternalUserDesc=This form allows you to create an user internal to your company/foundation. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
+CreateInternalUserDesc=Antud vorm võimaldab organisatsioonisisese kasutaja loomist. Välise kasutaja (klient, hankija jne) loomiseks kasuta kolmanda isikuga seotud kontakti kaardilt nuppu 'Loo Dolibarri kasutaja'.
 InternalExternalDesc=<b>Sisemine</b> kasutaja on kasutaja, kes on osa Sinu ettevõttest/ühendusest.<br><b>Väline</b> kasutaja on klient, hankija või muu isik.<br><br>Mõlemal määratlevad kasutaja õigused tema ligipääsu, lisaks sellele võib välisel kasutajal olla sisemisest kasutajast erinev menüü töötleja (vt Kodu->Seadistamine->Kuva)
 PermissionInheritedFromAGroup=Õigus on antud, kuna see pärineb mõnest grupist, kuhu kasutaja kuulub
 Inherited=Päritud
