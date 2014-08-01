@@ -939,7 +939,7 @@ class ExtraFields
 		{
 			$param_list=array_keys($params['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
-			var_dump($InfoFieldList);
+
 			$selectkey="rowid";
 			$keyList='rowid';
 
