@@ -207,5 +207,5 @@ MigrationActioncommElement=Uuenda tegevuste andmec
 MigrationPaymentMode=Maksete režiimi andmete migreerimine
 MigrationCategorieAssociation=Kategooriate migreerimine
 
-ShowNotAvailableOptions=Show not available options
-HideNotAvailableOptions=Hide not available options
+ShowNotAvailableOptions=Näita mitte saadaval olevaid lisavalikuid
+HideNotAvailableOptions=Peida mitte saadaval olevad lisavalikud

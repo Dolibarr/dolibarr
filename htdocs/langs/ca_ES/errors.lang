@@ -153,3 +153,4 @@ WarningCloseAlways=Avís, el tancament és realitzat encara que la quantitat tot
 WarningUsingThisBoxSlowDown=Atenció, l'ús d'aquest panell provoca serioses alentiments en les pàgines que mostren aquest panell.
 WarningClickToDialUserSetupNotComplete=La configuració de ClickToDial per al compte d'usuari no està completa (vegeu la pestanya ClickToDial en la seva fitxa d'usuari)
 WarningNotRelevant=Operació irrellevant per a aquest conjunt de dades
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.
