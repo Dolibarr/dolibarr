@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - mailmanspip
-MailmanSpipSetup=Pastnieks un SPIP modulis iestatīšana
+MailmanSpipSetup=Pastnieka un SPIP moduļa iestatīšana
 MailmanTitle=Pastnieks adresātu sarakstu sistēma
 TestSubscribe=Lai pārbaudītu abonementu pastnieks sarakstiem
 TestUnSubscribe=Lai pārbaudītu atrakstīties no pastnieks sarakstiem
@@ -7,7 +7,7 @@ MailmanCreationSuccess=Abonēšana tests tika izpildīts veiksmīgi
 MailmanDeletionSuccess=Abonēšanas tests tika izpildīts veiksmīgi
 SynchroMailManEnabled=Mailman atjauninājums tiks veikta
 SynchroSpipEnabled=Spip atjauninājums tiks veikta
-DescADHERENT_MAILMAN_ADMINPW=Pastnieks administratora paroli
+DescADHERENT_MAILMAN_ADMINPW=Pastnieka administratora parole
 DescADHERENT_MAILMAN_URL=URL pastnieks abonementu
 DescADHERENT_MAILMAN_UNSUB_URL=URL pastnieks unsubscriptions
 DescADHERENT_MAILMAN_LISTS=Saraksts (s), lai automātiski ierakstīt jaunu locekļu (atdalīti ar komatu)

@@ -523,8 +523,10 @@ abstract class DolibarrModules
 
         if (is_array($this->boxes))
         {
-            foreach ($this->boxes as $key => $value)
-            {
+            $pos_name = InfoBox::getListOfPagesForBoxes();
+
+			foreach ($this->boxes as $key => $value)
+			{
                 $file  = isset($this->boxes[$key]['file'])?$this->boxes[$key]['file']:'';
                 $note  = isset($this->boxes[$key]['note'])?$this->boxes[$key]['note']:'';
                 $enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton'])?$this->boxes[$key]['enabledbydefaulton']:'Home';
@@ -564,7 +566,6 @@ abstract class DolibarrModules
                         {
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
-                            $pos_name = getStaticMember('InfoBox','listOfPages');
                             foreach ($pos_name as $key2 => $val2)
                             {
                             	//print 'key2='.$key2.'-val2='.$val2."<br>\n";

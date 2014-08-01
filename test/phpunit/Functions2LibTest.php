@@ -146,12 +146,62 @@ class Functions2LibTest extends PHPUnit_Framework_TestCase
      */
     public function testIsValidUrl()
     {
-    	$result=isValidUrl('http://www.google.com',1);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(1,$result);
-    	$result=isValidUrl('www.google.com',2);
-        print __METHOD__." result=".$result."\n";
-    	$this->assertEquals(0,$result);
+	    //Simple check
+	    $result = isValidUrl('http://google.com');
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('goo=gle');	// This is good, it might be an alias of hostname
+	    $this->assertEquals(1, $result);
+
+	    //With scheme check
+    	$result = isValidUrl('http://www.google.com', 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('ftp://www.google.com', 1);
+	    $this->assertEquals(0, $result);
+
+	    //With password check invalid. This test should be ko but currently it is not
+	    //$result = isValidUrl('http://user:password@http://www.google.com', 1, 1);
+	    //$this->assertEquals(0, $result);
+
+	    //With password check valid
+	    $result = isValidUrl('http://user:password@www.google.com', 1, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://www.google.com', 1, 1);
+	    $this->assertEquals(0, $result);
+
+	    //With port check
+	    $result = isValidUrl('http://google.com:8080', 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 1);
+	    $this->assertEquals(0, $result);
+
+	    //With path check
+	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 0, 0);
+	    $this->assertEquals(1, $result);
+
+	    //With query check
+	    $result = isValidUrl('http://google.com/search?test=test', 0, 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    //With query check
+	    $result = isValidUrl('http://google.com?test=test', 0, 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com', 0, 0, 0, 0, 1);
+	    $this->assertEquals(0, $result);
+
+	    //With anchor check
+	    $result = isValidUrl('http://google.com/search#done', 0, 0, 0, 0, 0, 1);
+	    $this->assertEquals(1, $result);
+
+	    $result = isValidUrl('http://google.com/search', 0, 0, 0, 0, 0, 1);
+	    $this->assertEquals(0, $result);
     }
 
     /**

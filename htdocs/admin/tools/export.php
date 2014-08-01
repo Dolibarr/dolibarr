@@ -416,7 +416,7 @@ function backup_tables($outputfile, $tables='*')
 
     // Print headers and global mysql config vars
     $sqlhead = '';
-    $sqlhead .= "-- ".getStaticMember($db, 'label')." dump via php
+    $sqlhead .= "-- ".$db::LABEL." dump via php
 --
 -- Host: ".$db->db->host_info."    Database: ".$db->database_name."
 -- ------------------------------------------------------
@@ -464,11 +464,11 @@ function backup_tables($outputfile, $tables='*')
 	        fwrite($handle, "\n--\n-- Dumping data for table `".$table."`\n--\n");
 	        if (!GETPOST("nobin_nolocks")) fwrite($handle, "LOCK TABLES `".$table."` WRITE;\n"); // Lock the table before inserting data (when the data will be imported back)
 	        if (GETPOST("nobin_disable_fk")) fwrite($handle, "ALTER TABLE `".$table."` DISABLE KEYS;\n");
-        
+
 	        $sql='SELECT * FROM '.$table;
 	        $result = $db->query($sql);
 	        $num_fields = $db->num_rows($result);
-	        while($row = $db->fetch_row($result)) 
+	        while($row = $db->fetch_row($result))
 	        {
 	            // For each row of data we print a line of INSERT
 	            fwrite($handle,'INSERT '.$delayed.$ignore.'INTO `'.$table.'` VALUES (');
@@ -497,7 +497,7 @@ function backup_tables($outputfile, $tables='*')
 	        fwrite($handle,"\n\n\n");
 	    }
     }
-    
+
     /* Backup Procedure structure*/
     /*
      $result = $db->query('SHOW PROCEDURE STATUS');

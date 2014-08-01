@@ -67,7 +67,12 @@ if (GETPOST("button_removefilter"))
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):'invoice';
+if ($conf->facture->enabled && $user->rights->facture->lire)
+	$type_element = 'invoice';
+elseif ($conf->commande->enabled && $user->rights->commande->lire)
+	$type_element = 'order';
+$type_element = GETPOST('type_element')?GETPOST('type_element'):$type_element;
+
 
 $langs->load("companies");
 $langs->load("bills");
@@ -126,8 +131,8 @@ if ($object->client)
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer']=$langs->trans("customer");
-	if ($conf->facture->enabled) $elementTypeArray['invoice']=$langs->trans('Invoices');
-	if ($conf->commande->enabled) $elementTypeArray['order']=$langs->trans('Orders');
+	if($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->trans('Invoices');
+	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->trans('Orders');
 }
 
 if ($object->fournisseur)
@@ -144,8 +149,8 @@ if ($object->fournisseur)
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier']=$langs->trans("supplier");
-	if ($conf->fournisseur->enabled) $elementTypeArray['supplier_invoice']=$langs->trans('SuppliersInvoices');
-	if ($conf->fournisseur->enabled) $elementTypeArray['supplier_order']=$langs->trans('SuppliersOrders');
+	if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire) $elementTypeArray['supplier_invoice']=$langs->trans('SuppliersInvoices');
+	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order']=$langs->trans('SuppliersOrders');
 }
 print '</table>';
 

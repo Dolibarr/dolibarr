@@ -103,8 +103,7 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			}
 			else
 			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-				$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
@@ -114,11 +113,10 @@ class box_graph_invoices_supplier_permonth extends ModeleBoxes
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
 			$mode='supplier';
-			$userid=0;
 			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
-			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			$stats = new FactureStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)

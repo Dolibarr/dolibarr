@@ -672,9 +672,12 @@ HelpCopyToClipboard=Χρησιμοποιήστε το Ctrl + C για να αν�
 SaveUploadedFileWithMask=Αποθηκεύστε το αρχείο στον server με το όνομα "<strong>%s</strong>" (αλλιώς "%s")
 OriginFileName=Αρχική Ονομασία
 SetDemandReason=Ρυθμίστε την πηγή
+SetBankAccount=Προσδιορίστε Τραπεζικό λογαριασμό
+AccountCurrency=Νόμισμα Λογαριασμού
 ViewPrivateNote=Προβολή σημειώσεων
 XMoreLines=%s γραμμή (ές) κρυμμένη
 PublicUrl=Δημόσια URL
+AddBox=Προσθήκη πεδίου
 
 # Week day
 Monday=Δευτέρα

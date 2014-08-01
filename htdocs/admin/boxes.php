@@ -35,8 +35,9 @@ if (! $user->admin) accessforbidden();
 $rowid = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
 
+
 // Define possible position of boxes
-$pos_name = getStaticMember('InfoBox','listOfPages');
+$pos_name = InfoBox::getListOfPagesForBoxes();
 $boxes = array();
 
 

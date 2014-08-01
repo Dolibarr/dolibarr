@@ -256,15 +256,7 @@ class ImportCsv extends ModeleImports
 	{
 		global $conf;
 
-		$arrayres=array();
-		if (version_compare(phpversion(), '5.3') < 0)
-		{
-			$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure);
-		}
-		else
-		{
-			$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
-		}
+		$arrayres=fgetcsv($this->handle,100000,$this->separator,$this->enclosure,$this->escape);
 
 		// End of file
 		if ($arrayres === false) return false;

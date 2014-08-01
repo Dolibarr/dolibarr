@@ -168,7 +168,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerVersion")." : $version");
 
         // Test database version
-        $versionmindb=getStaticMember(get_class($db),'versionmin');
+        $versionmindb=$db::VERSIONMIN;
         //print join('.',$versionarray).' - '.join('.',$versionmindb);
         if (count($versionmindb) && count($versionarray)
         	&& versioncompare($versionarray,$versionmindb) < 0)
