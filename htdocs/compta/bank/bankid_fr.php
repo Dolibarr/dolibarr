@@ -88,7 +88,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
 {
 	// Modification
-	$account = new Account($db, $_GET["id"]);
+	$account = new Account($db);
 	$account->delete($_GET["id"]);
 
 	header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");

@@ -187,7 +187,7 @@ class Adherent extends CommonObject
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
 		$infos='';
-		if ($this->civility_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel(1)."\n";
+		if ($this->civility_id) $infos.= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel()."\n";
 		$infos.= $langs->transnoentities("id").": ".$this->id."\n";
 		$infos.= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos.= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
@@ -210,7 +210,7 @@ class Adherent extends CommonObject
 		$substitutionarray=array(
 				'%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
 				'%ID%'=>$msgishtml?dol_htmlentitiesbr($this->id):$this->id,
-				'%CIVILITY%'=>$this->getCivilityLabel($msgishtml?0:1),
+				'%CIVILITY%'=>$this->getCivilityLabel(),
 				'%FIRSTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->firstname):$this->firstname,
 				'%LASTNAME%'=>$msgishtml?dol_htmlentitiesbr($this->lastname):$this->lastname,
 				'%FULLNAME%'=>$msgishtml?dol_htmlentitiesbr($this->getFullName($langs)):$this->getFullName($langs),
@@ -350,7 +350,7 @@ class Adherent extends CommonObject
                 {
                     // Call trigger
                     $result=$this->call_trigger('MEMBER_CREATE',$user);
-                    if ($result < 0) { $error++; }            
+                    if ($result < 0) { $error++; }
                     // End call triggers
                 }
 
@@ -599,7 +599,7 @@ class Adherent extends CommonObject
                 {
                     // Call trigger
                     $result=$this->call_trigger('MEMBER_MODIFY',$user);
-                    if ($result < 0) { $error++; }            
+                    if ($result < 0) { $error++; }
                     // End call triggers
                 }
             }
@@ -774,7 +774,7 @@ class Adherent extends CommonObject
         {
             // Call trigger
             $result=$this->call_trigger('MEMBER_DELETE',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
         }
 
@@ -830,7 +830,7 @@ class Adherent extends CommonObject
         }
 
         $this->db->begin();
-        
+
         // Mise a jour
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".$this->db->escape($password_indatabase)."'";
         $sql.= " WHERE rowid = ".$this->id;
@@ -877,7 +877,7 @@ class Adherent extends CommonObject
                 {
                     // Call trigger
                     $result=$this->call_trigger('MEMBER_NEW_PASSWORD',$user);
-                    if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
                     // End call triggers
                 }
 
@@ -1292,7 +1292,7 @@ class Adherent extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('MEMBER_SUBSCRIPTION',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
             }
 
@@ -1351,7 +1351,7 @@ class Adherent extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('MEMBER_VALIDATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
             $this->db->commit();
@@ -1399,7 +1399,7 @@ class Adherent extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('MEMBER_RESILIATE',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
             // End call triggers
 
             $this->db->commit();
@@ -1530,7 +1530,7 @@ class Adherent extends CommonObject
     /**
      *    Return civility label of a member
      *
-     *    @return   string              	Translated name of civility
+     *    @return   string              	Translated name of civility (translated with transnoentitiesnoconv)
      */
     function getCivilityLabel()
     {

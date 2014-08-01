@@ -139,7 +139,7 @@ class Commande extends CommonOrder
 		{
 	            $file = $conf->global->COMMANDE_ADDON.".php";
 	            $classname = $conf->global->COMMANDE_ADDON;
-	
+
 	            // Include file with class
 	            foreach ($conf->file->dol_document_root as $dirroot)
 	            {
@@ -262,7 +262,7 @@ class Commande extends CommonOrder
                         // We decrement stock of product (and sub-products)
                         $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderValidatedInDolibarr",$num));
                         if ($result < 0)
-                        { 
+                        {
                         	$error++;
                         	$this->error=$mouvP->error;
                         }
@@ -305,7 +305,7 @@ class Commande extends CommonOrder
         {
             // Call trigger
             $result=$this->call_trigger('ORDER_VALIDATE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -436,7 +436,7 @@ class Commande extends CommonOrder
         {
             // Call trigger
             $result=$this->call_trigger('ORDER_REOPEN',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
         else
@@ -495,9 +495,9 @@ class Commande extends CommonOrder
             {
 	            // Call trigger
 	            $result=$this->call_trigger('ORDER_CLOSE',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
- 
+
                 if (! $error)
                 {
                 	$this->statut=3;
@@ -558,7 +558,7 @@ class Commande extends CommonOrder
 						$mouvP = new MouvementStock($this->db);
 						// We increment stock of product (and sub-products)
 						$result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderCanceledInDolibarr",$this->ref));
-						if ($result < 0) 
+						if ($result < 0)
 						{
 							$error++;
 							$this->error=$mouvP->error;
@@ -572,7 +572,7 @@ class Commande extends CommonOrder
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('ORDER_CANCEL',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
 			}
 
@@ -764,9 +764,10 @@ class Commande extends CommonOrder
                         		if ($origin == 'propal' && $origin_id)
                         		{
                         			// On recupere les differents contact interne et externe
-                        			$prop = new Propal($this->db, $this->socid, $origin_id);
+                        			$prop = new Propal($this->db);
+									$prop->fetch($origin_id);
 
-                        			// On recupere le commercial suivi propale
+                        			// We get ids of sales representatives of proposal
                         			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
 
                         			if ($this->userid)
@@ -775,7 +776,7 @@ class Commande extends CommonOrder
                         				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
                         			}
 
-                        			// On recupere le contact client suivi propale
+                        			// We get ids of customer follower of proposal
                         			$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
 
                         			if ($this->contactid)
@@ -813,7 +814,7 @@ class Commande extends CommonOrder
                     {
 			            // Call trigger
 			            $result=$this->call_trigger('ORDER_CREATE',$user);
-			            if ($result < 0) $error++;            
+			            if ($result < 0) $error++;
 			            // End call triggers
                     }
 
@@ -908,7 +909,7 @@ class Commande extends CommonOrder
 
             // Call trigger
             $result=$this->call_trigger('ORDER_CLONE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -2228,7 +2229,7 @@ class Commande extends CommonOrder
 		{
             // Call trigger
             $result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 			if (! $error)
@@ -2447,7 +2448,7 @@ class Commande extends CommonOrder
         {
             // Call trigger
             $result=$this->call_trigger('ORDER_DELETE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
         }
 
@@ -3189,7 +3190,7 @@ class OrderLine extends CommonOrderLine
 
             // Call trigger
             $result=$this->call_trigger('LINEORDER_DELETE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 	        if (!$error) {
@@ -3312,7 +3313,7 @@ class OrderLine extends CommonOrderLine
             {
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_INSERT',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
             }
 
@@ -3427,7 +3428,7 @@ class OrderLine extends CommonOrderLine
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_UPDATE',$user);
-	            if ($result < 0) $error++;            
+	            if ($result < 0) $error++;
 	            // End call triggers
 			}
 

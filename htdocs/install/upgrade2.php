@@ -1412,7 +1412,7 @@ function migrate_price_propal($db,$langs,$conf)
 
                 dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
-                $propalligne->update_total($rowid);
+                $propalligne->update_total();
 
 
                 /* On touche pas a propal mere
@@ -1521,7 +1521,7 @@ function migrate_price_contrat($db,$langs,$conf)
 
                 dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
-                $contratligne->update_total($rowid);
+                $contratligne->update_total();
 
                 $i++;
             }
@@ -1606,7 +1606,7 @@ function migrate_price_commande($db,$langs,$conf)
 
                 dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
-                $commandeligne->update_total($rowid);
+                $commandeligne->update_total();
 
                 /* On touche pas a facture mere
                  $commande = new Commande($db);
@@ -1720,7 +1720,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 
                 dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
-                $commandeligne->update_total($rowid);
+                $commandeligne->update_total();
 
                 /* On touche pas a facture mere
                  $commande = new Commande($db);
