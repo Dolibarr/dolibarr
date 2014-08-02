@@ -64,13 +64,21 @@ function societe_prepare_head($object)
         $h++;
     }
 
-	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("LocalTaxes");
-		$head[$h][2] = 'localtaxes';
-		$h++;
-	}
+    if (! empty($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Contact");
+        $head[$h][2] = 'contact';
+        $h++;
+    }
+
+    if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
+	$head[$h][1] = $langs->trans("LocalTaxes");
+	$head[$h][2] = 'localtaxes';
+	$h++;
+    }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
