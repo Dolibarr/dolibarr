@@ -22,7 +22,7 @@
 /**
  *     \file       htdocs/societe/societecontact.php
  *     \ingroup    societe
- *     \brief      Onglet de gestion des contacts additionnel d'une société
+ *     \brief      Onglet de gestion des contacts additionnel d'une sociÃ©tÃ©
  */
 
 require '../main.inc.php';
