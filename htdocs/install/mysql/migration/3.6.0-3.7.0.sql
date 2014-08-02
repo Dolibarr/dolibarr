@@ -919,4 +919,29 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 
 
 DELETE FROM llx_c_departements WHERE fk_region NOT IN (select rowid from llx_c_regions) AND fk_regions IS NOT NULL;
+
+
+DROP TABLE llx_texts;
+
+
+DROP TABLE llx_c_email_templates;
+CREATE table llx_c_email_templates
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
+  module          varchar(32),                   -- Nom du module en rapport avec le modele
+  type_template   varchar(32),  				  -- template for which type of email (send invoice by email, send order, ...)
+  sortorder       smallint,					  -- Ordre affichage
+
+  private         smallint DEFAULT 0 NOT NULL, -- Template public or private
+  fk_user         integer,                       -- Id utilisateur si modele prive, sinon null
+  datec           datetime,
+  tms             timestamp,
+
+  label           varchar(255),
+  content         text
+)ENGINE=innodb;
+
+
+
 ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_region	FOREIGN KEY (fk_region) REFERENCES llx_c_regions (rowid);

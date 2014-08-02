@@ -21,8 +21,15 @@ create table llx_c_email_templates
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
-  type_template   varchar(32),  -- template for wich type of email (send invoice by email, send order, ...)
+  module          varchar(32),                   -- Nom du module en rapport avec le modele
+  type_template   varchar(32),  				  -- template for which type of email (send invoice by email, send order, ...)
+  sortorder       smallint,					  -- Ordre affichage
+
+  private         smallint DEFAULT 0 NOT NULL, -- Template public or private
+  fk_user         integer,                       -- Id utilisateur si modele prive, sinon null
   datec           datetime,
+  tms             timestamp,
+
   label           varchar(255),
   content         text
 )ENGINE=innodb;
