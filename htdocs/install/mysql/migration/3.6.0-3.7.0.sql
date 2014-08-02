@@ -918,3 +918,5 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4784, 'PCG08-PYME','VENTAS E INGRESOS', 'XXXXXX', '7993', '4780', 'Revisión del deterioro de créditos a corto plazo otras empresas', '1');
 
 
+DELETE FROM llx_c_departements WHERE fk_region NOT IN (select rowid from llx_c_regions) AND fk_regions IS NOT NULL;
+ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_region	FOREIGN KEY (fk_region) REFERENCES llx_c_regions (rowid);
