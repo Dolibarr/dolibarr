@@ -1679,5 +1679,5 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 -- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_cond_reglement DROP NOT NULL;
 
 UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
-
+UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
 
