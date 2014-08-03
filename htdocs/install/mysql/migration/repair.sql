@@ -144,6 +144,8 @@ drop table tmp_societe_double;
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
 
 
+UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
+
 
 
 -- Requests to clean old tables or external modules tables
@@ -174,12 +176,4 @@ UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
 -- DROP TABLE llx_pos_facture;
 -- DROP TABLE llx_pos_moviments;
 -- DROP TABLE llx_pos_ticketdet;
-
-
-
-
-
-
-
-
 
