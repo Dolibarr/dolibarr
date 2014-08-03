@@ -435,7 +435,7 @@ function actions_prepare_head($object)
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
-    $head[$h][2] = 'document';
+    $head[$h][2] = 'documents';
     $h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$object->id;
