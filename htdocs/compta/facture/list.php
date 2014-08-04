@@ -62,6 +62,7 @@ $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
+$search_refnumber=GETPOST('sf_refnumber')?GETPOST('sf_refnumber','alpha'):GETPOST('sf_refnumber','alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
@@ -145,6 +146,9 @@ $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
+
+$sql.=", SUBSTRING_INDEX(f.facnumber,'-', -1) as numfacture"; //Return numero facture
+
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
@@ -177,6 +181,10 @@ if ($filtre)
 if ($search_ref)
 {
     $sql .= natural_search('f.facnumber', $search_ref);
+}
+if ($search_refnumber)
+{
+    $sql .= natural_search('numfacture', $search_refnumber);
 }
 if ($search_refcustomer)
 {
@@ -225,7 +233,7 @@ if (! $sall)
 }
 else
 {
-    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
+    $sql .= natural_search(array('s.nom', 'f.facnumber', 'numfacture', 'f.note_public', 'fd.description'), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
@@ -288,13 +296,14 @@ if ($resql)
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="10">';
+        print '<td class="liste_titre" colspan="11">';
         print $moreforfilter;
         print '</td></tr>';
     }
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('NumFacture'),$_SERVER['PHP_SELF'],'numfacture','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
@@ -312,7 +321,10 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-	print '<td class="liste_titre">';
+    print '<td class="liste_titre" align="center">';
+    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_refnumber.'">';
+    print '</td>';
+    print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
     print '<td class="liste_titre" align="center">';
@@ -354,12 +366,10 @@ if ($resql)
             $paiement = $facturestatic->getSommePaiement();
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-
             print '<td class="nobordernopadding nowrap">';
             print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
-
             print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
             if (! empty($objp->note_private))
             {
@@ -374,8 +384,12 @@ if ($resql)
 			print '</td>';
             print '</tr>';
             print '</table>';
-
             print "</td>\n";
+
+            // Numero facture
+            print '<td align="center" class="nobordernopadding nowrap">';
+			print $objp->numfacture;
+            print '</td>';
 
 			// Customer ref
 			print '<td class="nowrap">';
