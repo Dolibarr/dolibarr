@@ -28,7 +28,7 @@
 /**
  *	Class to manage stock movements
  */
-class MouvementStock
+class MouvementStock extends CommonObject
 {
     var $error;
     var $db;

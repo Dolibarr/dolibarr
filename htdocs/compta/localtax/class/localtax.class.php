@@ -106,11 +106,11 @@ class Localtax extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('LOCALTAX_CREATE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
 			//FIXME: Add rollback if trigger fail
-            
+
             return $this->id;
         }
         else
@@ -167,9 +167,9 @@ class Localtax extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('LOCALTAX_MODIFY',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
-            
+
             //FIXME: Add rollback if trigger fail
     	}
 
@@ -257,8 +257,8 @@ class Localtax extends CommonObject
 		$result=$this->call_trigger('LOCALTAX_DELETE',$user);
 		if ($result < 0) return -1;
 		// End call triggers
-		
-		
+
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."localtax";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -326,35 +326,32 @@ class Localtax extends CommonObject
      */
     function localtax_sum_collectee($year = 0)
     {
-
         $sql = "SELECT sum(f.localtax) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-
         if ($year)
         {
             $sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
         }
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+            	$ret = $obj->amount;
+                $this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+				return 0;
             }
-
-            $this->db->free($result);
-
         }
         else
-        {
-            print $this->db->error();
+		{
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -370,31 +367,30 @@ class Localtax extends CommonObject
 
         $sql = "SELECT sum(f.total_localtax) as total_localtax";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-
         if ($year)
         {
             $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
         }
-        $result = $this->db->query($sql);
 
+        $result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->total_localtax;
+            	$ret = $obj->total_localtax;
+                $this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+            	return 0;
             }
-
-            $this->db->free();
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -412,32 +408,30 @@ class Localtax extends CommonObject
 
         $sql = "SELECT sum(f.amount) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."localtax as f";
-
         if ($year)
         {
             $sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
         }
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+                $ret = $obj->amount;
+            	$this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+				return 0;
             }
-
-            $this->db->free();
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -543,14 +537,14 @@ class Localtax extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
                 $this->db->rollback();
                 return -2;
             }
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             $this->db->rollback();
             return -1;
         }

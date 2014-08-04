@@ -38,7 +38,7 @@ create table llx_c_email_templates
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
-  type_template   varchar(32),  -- template for wich type of email (send invoice by email, send order, ...)
+  type_template   varchar(32),  -- template for which type of email (send invoice by email, send order, ...)
   datec           datetime,
   label           varchar(255),
   content         text
@@ -1681,4 +1681,7 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 -- Fix: Missing instruction not correctly done into 3.5
 -- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_mode_reglement DROP NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_facture_fourn ALTER fk_cond_reglement DROP NOT NULL;
- 
+
+UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
+
+

@@ -395,12 +395,12 @@ function isValidMailDomain($mail)
  *  <http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
  *
  *	@param	string	$url		Url
- *  @param  int		$http		1: verify http, 0: not verify http
- *  @param  int		$pass		1: verify user and pass, 0: not verify user and pass
- *  @param  int		$port		1: verify port, 0: not verify port
- *  @param  int		$path		1: verify path, 0: not verify path
- *  @param  int		$query		1: verify query, 0: not verify query
- *  @param  int		$anchor		1: verify anchor, 0: not verify anchor
+ *  @param  int		$http		1: verify http is provided, 0: not verify http
+ *  @param  int		$pass		1: verify user and pass is provided, 0: not verify user and pass
+ *  @param  int		$port		1: verify port is provided, 0: not verify port
+ *  @param  int		$path		1: verify a path is provided "/" or "/..." or "/.../", 0: not verify path
+ *  @param  int		$query		1: verify query is provided, 0: not verify query
+ *  @param  int		$anchor		1: verify anchor is provided, 0: not verify anchor
  *	@return int					1=Check is OK, 0=Check is KO
  */
 function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
@@ -415,9 +415,9 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
 
     // HOSTNAME OR IP
-    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
-    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // http://x.x = minimum
-    $urlregex .= "([a-z0-9+\$_-]+\.)*[a-z0-9+\$_-]{2,3}";  // http://x.xx(x) = minimum
+    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // x allowed (ex. http://localhost, http://routerlogin)
+    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // x.x
+    $urlregex .= "([a-z0-9+\$_\\\:-])+(\.[a-z0-9+\$_-][a-z0-9+\$_-]+)*";  // x ou x.xx (2 x ou plus)
     //use only one of the above
 
     // PORT
@@ -434,7 +434,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     {
         $ValidUrl = 1;
     }
-    //print $urlregex.' - '.$url.' - '.$ValidUrl;exit;
+    //print $urlregex.' - '.$url.' - '.$ValidUrl;
 
     return $ValidUrl;
 }

@@ -34,9 +34,9 @@ class DoliDBMysql extends DoliDB
 	//! Database type
 	public $type='mysql';
 	//! Database label
-	const label='MySQL';
+	const LABEL='MySQL';
 	//! Version min database
-	const versionmin='4.1.0';
+	const VERSIONMIN='4.1.0';
 	//! Resultset of last query
 	private $_results;
 

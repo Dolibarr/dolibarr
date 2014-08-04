@@ -113,11 +113,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$nowarray=dol_getdate(dol_now(),true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
-			$mode='customer';
 			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
-			$stats = new PropaleStats($this->db, $socid, $mode, 0);
+			$stats = new PropaleStats($this->db, $socid, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
@@ -126,8 +125,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
 				$filenamenb = $dir."/".$prefix."propalsnbinyear-".$endyear.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$endyear.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$endyear.'.png';
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$endyear.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();

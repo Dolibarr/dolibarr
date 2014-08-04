@@ -672,9 +672,12 @@ HelpCopyToClipboard=Lõikelauale kopeerimiseks kasuta Ctrl+C klahvikombinatsioon
 SaveUploadedFileWithMask=Salvesta fail serverisse nimega "<strong>%s</strong>" (muul juhul "%s")
 OriginFileName=Faili algne nimi
 SetDemandReason=Määratle allikas
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Vaata märkmeid
 XMoreLines=%s joon(t) varjatud
 PublicUrl=Avalik link
+AddBox=Add box
 
 # Week day
 Monday=Esmaspäev

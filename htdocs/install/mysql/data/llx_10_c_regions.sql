@@ -32,7 +32,7 @@
 -- Regions
 --
 
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1,0,0,'0',0,'-');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 
 -- Regions France (id country=1)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 101, 1,   1,'97105',3,'Guadeloupe');

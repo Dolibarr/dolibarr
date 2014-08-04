@@ -37,13 +37,13 @@ class DoliDBPgsql extends DoliDB
     //! Database type
 	public $type='pgsql';            // Name of manager
     //! Database label
-	const label='PostgreSQL';      // Label of manager
+	const LABEL='PostgreSQL';      // Label of manager
 	//! Charset
 	var $forcecharset='UTF8';       // Can't be static as it may be forced with a dynamic value
     //! Collate used to force collate when creating database
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	const versionmin='8.4.0';	// Version min database
+	const VERSIONMIN='8.4.0';	// Version min database
 	//! Resultset of last query
 	private $_results;
 

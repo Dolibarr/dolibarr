@@ -672,9 +672,12 @@ HelpCopyToClipboard=Bruk Ctrl + C for å kopiere til utklippstavle
 SaveUploadedFileWithMask=Lagre filen på serveren med navnet <strong>"%s"</strong> (ellers "%s")
 OriginFileName=Original filnavn
 SetDemandReason=Sett kilde
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Vis notater
 XMoreLines=%s linje(r) skjult
 PublicUrl=Offentlig URL
+AddBox=Add box
 
 # Week day
 Monday=Mandag

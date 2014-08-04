@@ -9,6 +9,7 @@
  * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,7 +171,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
 			$newlang = GETPOST('lang_id');
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 		if (! empty($newlang)) {
 			$outputlangs = new Translate("", $conf);
 			$outputlangs->setDefaultLang($newlang);
@@ -476,7 +477,7 @@ else if ($action == 'setconditions' && $user->rights->commande->creer) {
 			$outputlangs = $langs;
 			$newlang = GETPOST('lang_id', 'alpha');
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -581,18 +582,22 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 			$label = ((GETPOST('product_label') && GETPOST('product_label') != $prod->label) ? GETPOST('product_label') : '');
 
 			// Update if prices fields are defined
-				$tva_tx = get_default_tva($mysoc, $object->client, $prod->id);
-				$tva_npr = get_default_npr($mysoc, $object->client, $prod->id);
+				$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
+				$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+				$pu_ht = $prod->price;
+				$pu_ttc = $prod->price_ttc;
+				$price_min = $prod->price_min;
+				$price_base_type = $prod->price_base_type;
 
 				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
+				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->client->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
-					$price_min = $prod->multiprices_min [$object->client->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+					$pu_ht = $prod->multiprices [$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc [$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min [$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type [$object->thirdparty->price_level];
+					$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
@@ -600,12 +605,11 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 
 					$prodcustprice = new Productcustomerprice($db);
 
-					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->client->id);
+					$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 					$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 					if ($result) {
 						if (count($prodcustprice->lines) > 0) {
-							$found = true;
 							$pu_ht = price($prodcustprice->lines [0]->price);
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
@@ -613,14 +617,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 						}
 					}
 				}
-				else
-				{
-					$pu_ht = $prod->price;
-					$pu_ttc = $prod->price_ttc;
-					$price_min = $prod->price_min;
-					$price_base_type = $prod->price_base_type;
-				}
-
+				
 				// if price ht is forced (ie: calculated by margin rate and cost price)
 				if (! empty($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
@@ -646,7 +643,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 					if (empty($newlang) && GETPOST('lang_id'))
 						$newlang = GETPOST('lang_id');
 					if (empty($newlang))
-						$newlang = $object->client->default_lang;
+						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -688,8 +685,8 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 		$buyingprice = (GETPOST('buying_price' . $predef) ? GETPOST('buying_price' . $predef) : '');
 
 		// Local Taxes
-		$localtax1_tx = get_localtax($tva_tx, 1, $object->client);
-		$localtax2_tx = get_localtax($tva_tx, 2, $object->client);
+		$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
+		$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
 		$desc = dol_htmlcleanlastbr($desc);
 
@@ -712,7 +709,7 @@ else if ($action == 'addline' && $user->rights->commande->creer) {
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
 					if (! empty($conf->global->MAIN_MULTILANGS) && empty($newlang))
-						$newlang = $object->client->default_lang;
+						$newlang = $object->thirdparty->default_lang;
 					if (! empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -778,8 +775,8 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 		// Define vat_rate
 	$vat_rate = str_replace('*', '', $vat_rate);
-	$localtax1_rate = get_localtax($vat_rate, 1, $object->client);
-	$localtax2_rate = get_localtax($vat_rate, 2, $object->client);
+	$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty);
+	$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
 
 	// Add buying price
 	$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
@@ -805,8 +802,8 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 		$type = $product->type;
 
 		$price_min = $product->price_min;
-		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
-			$price_min = $product->multiprices_min [$object->client->price_level];
+		if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
+			$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 
 		$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
@@ -836,7 +833,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
 					$newlang = GETPOST('lang_id');
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-					$newlang = $object->client->default_lang;
+					$newlang = $object->thirdparty->default_lang;
 				if (! empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -902,7 +899,7 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -947,7 +944,7 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer) {
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+				$newlang = $object->thirdparty->default_lang;
 			if (! empty($newlang)) {
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($newlang);
@@ -1013,7 +1010,7 @@ else if ($action == 'up' && $user->rights->commande->creer) {
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 		$newlang = $_REQUEST['lang_id'];
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-		$newlang = $object->client->default_lang;
+		$newlang = $object->thirdparty->default_lang;
 	if (! empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
@@ -1035,7 +1032,7 @@ else if ($action == 'down' && $user->rights->commande->creer) {
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 		$newlang = $_REQUEST['lang_id'];
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-		$newlang = $object->client->default_lang;
+		$newlang = $object->thirdparty->default_lang;
 	if (! empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
@@ -1064,7 +1061,7 @@ else if ($action == 'builddoc') // In get or post
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 		$newlang = $_REQUEST['lang_id'];
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-		$newlang = $object->client->default_lang;
+		$newlang = $object->thirdparty->default_lang;
 	if (! empty($newlang)) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlang);
@@ -1179,11 +1176,11 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			// Recipient was provided from combo list
 			if (GETPOST('receiver') == 'thirdparty') 			// Id of third party
 			{
-				$sendto = $object->client->email;
+				$sendto = $object->thirdparty->email;
 				$sendtoid = 0;
 			} else 			// Id du contact
 			{
-				$sendto = $object->client->contact_get_property(GETPOST('receiver'), 'email');
+				$sendto = $object->thirdparty->contact_get_property(GETPOST('receiver'), 'email');
 				$sendtoid = GETPOST('receiver');
 			}
 		}
@@ -2444,7 +2441,7 @@ if ($action == 'create' && $user->rights->commande->creer) {
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 				$newlang = $_REQUEST['lang_id'];
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-				$newlang = $object->client->default_lang;
+				$newlang = $object->thirdparty->default_lang;
 
 			if (!empty($newlang))
 			{

@@ -251,7 +251,7 @@ if ($action == 'add')
         $extralabels=$extrafields->fetch_name_optionals_label($adh->table_element);
         $ret = $extrafields->setOptionalsFromPost($extralabels,$adh);
 
-        $result=$adh->create($user->id);
+        $result=$adh->create($user);
         if ($result > 0)
         {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';

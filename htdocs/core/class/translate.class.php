@@ -335,11 +335,12 @@ class Translate
 	 * Return translated value of key. Search in lang file, then into database.
 	 * Key must be any complete entry into lang file: CurrencyEUR, ...
 	 * If not found, return key.
-	 * WARNING: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), getLabelFromKey must
-	 * not be called with same value than input.
+	 * The string return is not formated (translated with transnoentitiesnoconv)
+	 * NOTE: To avoid infinite loop (getLabelFromKey->transnoentities->getTradFromKey), if you modify this function,
+	 * check that getLabelFromKey is not called with same value than input.
 	 *
 	 * @param	string		$key		Key to translate
-	 * @return 	string					Translated string
+	 * @return 	string					Translated string (translated with transnoentitiesnoconv)
 	 */
 	private function getTradFromKey($key)
 	{
@@ -347,7 +348,6 @@ class Translate
 
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
-		//print 'xx'.$key;
 		$newstr=$key;
 		if (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i',$key,$reg))
 		{

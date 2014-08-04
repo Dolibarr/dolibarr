@@ -80,7 +80,7 @@ print '<table class="border" width="100%">';
 $client = false;
 if ($socid > 0) {
 
-	$soc = new Societe($db, $socid);
+	$soc = new Societe($db);
 	$soc->fetch($socid);
 
 	if ($soc->client)
