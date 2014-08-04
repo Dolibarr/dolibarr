@@ -1879,19 +1879,23 @@ else
             print "</tr>\n";
 
 			// Accountancy code
-            print "<tr>";
-            print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
-            print '<td>';
-            if ($caneditfield)
+            if (! empty($conf->global->USER_ENABLE_ACCOUNTANCY_CODE))	// For the moment field is not used so must not appeared.
             {
-                print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+	            print "<tr>";
+	            print '<td valign="top">'.$langs->trans("AccountancyCode").'</td>';
+	            print '<td>';
+	            if ($caneditfield)
+	            {
+	                print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+	            }
+	            else
+	            {
+	                print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+	                print $object->accountancy_code;
+	            }
+	            print '</td>';
+	            print "</tr>";
             }
-            else
-            {
-                print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-                print $object->accountancy_code;
-            }
-            print '</td>';
 
             // Status
             print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
