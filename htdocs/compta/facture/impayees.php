@@ -37,6 +37,7 @@ $langs->load("bills");
 $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action = GETPOST('action','alpha');
 $option = GETPOST('option');
+$builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -50,7 +51,7 @@ if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'
  * Action
  */
 
-if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search'))
+if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search') && !empty($builddoc_generatebutton))
 {
 	if (is_array($_POST['toGenerate']))
 	{
