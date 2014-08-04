@@ -277,7 +277,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 									$outputlangs = $langs;
 									$newlang='';
 									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-									if (empty($newlang)) $newlang=$srcobject->client->default_lang;
+									if (empty($newlang)) $newlang=$srcobject->thirdparty->default_lang;
 									if (! empty($newlang))
 									{
 										$outputlangs = new Translate("",$conf);
@@ -441,7 +441,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
 				$prodcustprice = new Productcustomerprice($db);
 
-				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->client->id);
+				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 				$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 				if ($result) {
