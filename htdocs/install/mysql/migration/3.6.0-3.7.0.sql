@@ -29,6 +29,9 @@ INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 
 
+ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
+ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
+
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
