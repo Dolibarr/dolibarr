@@ -416,6 +416,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/vagrant`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/dev/dolibarr_changes.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/dev/README`;
