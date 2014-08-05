@@ -941,6 +941,11 @@ class FormFile
         	include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
         	$object_instance=new Fichinter($this->db);
         }
+        else if ($modulepart == 'user')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+        	$object_instance=new User($this->db);
+        }
 
         $var=true;
         foreach($filearray as $key => $file)
@@ -969,6 +974,7 @@ class FormFile
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'project')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
                 if ($modulepart == 'fichinter')        { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'user')             { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $id=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
 
