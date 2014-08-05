@@ -334,7 +334,7 @@ if ($resql)
 		print '</td>';
 
 		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_valid),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && max($db->jdate($objp->date_commande),$db->jdate($objp->date_livraison)) < ($now - $conf->commande->client->warning_delay))
 			print img_picto($langs->trans("Late"),"warning");
 		if(!empty($objp->note_private))
 		{
