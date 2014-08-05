@@ -886,7 +886,7 @@ class Holiday extends CommonObject
             $month = date('m',$now);
             $lastUpdate = $this->getConfCP('lastUpdate');
             $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;
+			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;exit;
 
             // Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
             if ($month != $monthLastUpdate)
@@ -1618,7 +1618,7 @@ class Holiday extends CommonObject
         $sql.= ")";
 
         $this->db->begin();
-
+print $sql;exit;
    	   	dol_syslog(get_class($this)."::addLogCP sql=".$sql, LOG_DEBUG);
    	   	$resql=$this->db->query($sql);
        	if (! $resql) {
@@ -1674,12 +1674,12 @@ class Holiday extends CommonObject
 
         // Filtrage de séléction
         if(!empty($filter)) {
-            $sql.= $filter;
+            $sql.= " ".$filter;
         }
 
         // Ordre d'affichage
         if(!empty($order)) {
-            $sql.= $order;
+            $sql.= " ".$order;
         }
 
         dol_syslog(get_class($this)."::fetchLog sql=".$sql, LOG_DEBUG);
