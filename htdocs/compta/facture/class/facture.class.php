@@ -1303,6 +1303,22 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			// Replaced invoices by invoice we delete are freed from status 'replaced' (so they can be opened again)
+			if (! empty($this->fk_facture_source) && $this->fk_facture_source > 0)
+			{
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+				$sql.= " SET close_code = 'abandon' where close_code = 'replaced'";
+				$sql.= ' AND rowid = '.$this->fk_facture_source;
+				dol_syslog(get_class($this)."::delete sql=".$sql);
+				if (! $this->db->query($sql))
+				{
+					$this->error=$this->db->error()." sql=".$sql;
+					dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+					$this->db->rollback();
+					return -6;
+				}
+			}
+						
 			// If we decrament stock on invoice validation, we increment
 			if ($this->type != 3 && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse!=-1)
 			{

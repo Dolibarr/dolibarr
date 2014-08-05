@@ -54,6 +54,9 @@ delete from llx_adherent_extrafields where fk_object not in (select rowid from l
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
+-- Clean invoice thare were replaced and after the replacing invoice were deleted
+-- To detect such records: select * from llx_facture as f1 left join llx_facture as f2 on f2.fk_facture_source = f1.rowid where f1.fk_statut = 3 AND f1.close_code = 'replaced' AND f2.rowid IS NULL;
+--update llx_facture set close_code = 'abandon' where fk_statut = 3 AND close_code = 'replaced' and rowid not in (select fk_facture_source from llx_facture); 
 
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
