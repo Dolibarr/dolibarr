@@ -71,7 +71,7 @@ if ($action == 'update' && isset($_POST['update_cp']))
     $comment = ((isset($_POST['note_holiday'][$userID]) && !empty($_POST['note_holiday'][$userID])) ? ' ('.$_POST['note_holiday'][$userID].')' : '');
 
     // We add the modification to the log
-    $holiday->addLogCP($user->id,$userID, $langs->trans('ManualUpdate').$comment,$userValue);
+    $holiday->addLogCP($user->id,$userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment,$userValue);
 
     // Update of the days of the employee
     $holiday->updateSoldeCP($userID,$userValue);
