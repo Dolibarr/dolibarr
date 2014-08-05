@@ -1618,7 +1618,7 @@ class Holiday extends CommonObject
         $sql.= ")";
 
         $this->db->begin();
-print $sql;exit;
+
    	   	dol_syslog(get_class($this)."::addLogCP sql=".$sql, LOG_DEBUG);
    	   	$resql=$this->db->query($sql);
        	if (! $resql) {
