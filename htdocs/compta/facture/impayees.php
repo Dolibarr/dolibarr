@@ -121,6 +121,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 						$subject = GETPOST('subject');
 						$message = GETPOST('message');
 						$sendtocc = GETPOST('sentocc');
+						$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
 
 						$substitutionarray=array(
 							'__ID__' => $object->id,
@@ -151,7 +152,7 @@ if ($action == 'presend' && GETPOST('sendmail'))
 
 						// Send mail
 						require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
-						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+						$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 						if ($mailfile->error)
 						{
 							$resultmasssend.='<div class="error">'.$mailfile->error.'</div>';

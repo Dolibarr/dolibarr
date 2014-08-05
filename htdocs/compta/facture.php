@@ -1152,7 +1152,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				$pu_ttc = $prod->price_ttc;
 				$price_min = $prod->price_min;
 				$price_base_type = $prod->price_base_type;
-					
+
 				// We define price for product
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
@@ -1181,7 +1181,7 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 						}
 					}
 				}
-				
+
 				// if price ht is forced (ie: calculated by margin rate and cost price)
 				if (! empty($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
@@ -1559,6 +1559,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$replyto = $_POST['replytoname'] . ' <' . $_POST['replytomail'] . '>';
 			$message = $_POST['message'];
 			$sendtocc = $_POST['sendtocc'];
+			$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO);
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send') {
@@ -1601,7 +1602,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, - 1);
+			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, - 1);
 			if ($mailfile->error) {
 				setEventMessage($mailfile->error, 'errors');
 			} else {
