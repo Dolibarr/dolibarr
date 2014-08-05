@@ -514,17 +514,17 @@ if ($action == 'create')
     // Location
     print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
 
+	// Assigned to
+	$var=false;
+	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
+	print '</td></tr>';
+
 	print '</table>';
 
 	print '<br><br>';
 
 	print '<table class="border" width="100%">';
-
-	// Assigned to
-	$var=false;
-	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
-	print '</td></tr>';
 
 	// Busy
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
@@ -764,15 +764,15 @@ if ($id > 0)
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
 
-		print '</table><br><br><table class="border" width="100%">';
-
 		// Assigned to
-		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($object->usertodo->id>0?$object->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
+        print '</table><br><br><table class="border" width="100%">';
+
 		// Busy
-		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td>';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
 		print '<input id="transparency" type="checkbox" name="transparency"'.($object->transparency?' checked="checked"':'').'">';
 		print '</td></tr>';
 
@@ -939,15 +939,15 @@ if ($id > 0)
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
 
-		print '</table><br><br><table class="border" width="100%">';
-
 		// Assigned to
 		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
+		print '</table><br><br><table class="border" width="100%">';
+
 		// Busy
-		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
 		if ($object->usertodo->id > 0) print yn(($object->transparency > 0)?1:0);	// We show nothing if event is assigned to nobody
 		print '</td></tr>';
 

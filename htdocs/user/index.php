@@ -72,9 +72,11 @@ $sql.= " u.datec,";
 $sql.= " u.tms as datem,";
 $sql.= " u.datelastlogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
+$sql.= " u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2,";
 $sql.= " s.nom, s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && (! empty($conf->multicompany->transverse_mode) || (! empty($user->admin) && empty($user->entity))))
 {
 	$sql.= " WHERE u.entity IS NOT NULL";
@@ -108,19 +110,20 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LastName"),"index.php","u.lastname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("LastConnexion"),"index.php","u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"index.php","u.statut",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Login"),$_SERVER['PHP_SELF'],"u.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastName"),$_SERVER['PHP_SELF'],"u.lastname",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("FirstName"),$_SERVER['PHP_SELF'],"u.firstname",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"u.fk_societe",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),$_SERVER['PHP_SELF'],"u.datec",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastConnexion"),$_SERVER['PHP_SELF'],"u.datelastlogin",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("HierarchicalResponsible"),$_SERVER['PHP_SELF'],"u2.login",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"u.statut",$param,"",'align="center"',$sortfield,$sortorder);
     print '<td width="1%">&nbsp;</td>';
     print "</tr>\n";
 
     //SearchBar
     print '<tr class="liste_titre">';
-    print '<td colspan="6">&nbsp;</td>';
+    print '<td colspan="7">&nbsp;</td>';
 
 	// Status
     print '<td>';
@@ -132,6 +135,9 @@ if ($result)
     print '</td>';
 
     print "</tr>\n";
+
+    $user2=new User($db);
+
     $var=True;
     while ($i < $num)
     {
@@ -192,9 +198,22 @@ if ($result)
         // Date last login
         print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($obj->datelastlogin),"dayhour").'</td>';
 
-		// Statut
+        // Resp
+        print '<td class="nowrap" align="center">';
+        if ($obj->login2)
+        {
+	        $user2->login=$obj->login2;
+	        //$user2->lastname=$obj->lastname2;
+	        //$user2->firstname=$obj->firstname2;
+	        $user2->lastname=$user2->login;
+	        $user2->firstname='';
+	        print $user2->getNomUrl(1);
+        }
+        print '</td>';
+
+        // Statut
 		$userstatic->statut=$obj->statut;
-                print '<td width="100" align="center">'.$userstatic->getLibStatut(5).'</td>';
+		print '<td width="100" align="center">'.$userstatic->getLibStatut(5).'</td>';
         print '<td>&nbsp;</td>';
         print "</tr>\n";
         $i++;

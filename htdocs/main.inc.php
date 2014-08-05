@@ -411,7 +411,7 @@ if (! defined('NOLOGIN'))
                 // Call of triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,GETPOST('entity','int'));
+                $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
                 if ($result < 0) {
                     $error++;
                 }
@@ -514,10 +514,11 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$user->error;
             }
 
+            // TODO We should use a hook here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
-            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,$_POST["entity"]);
+            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
             if ($result < 0) {
                 $error++;
             }
@@ -556,10 +557,11 @@ if (! defined('NOLOGIN'))
                 $_SESSION["dol_loginmesg"]=$user->error;
             }
 
+            // TODO We should use a hook here, not a trigger.
             // Call triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
             $interface=new Interfaces($db);
-            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf,(isset($_POST["entity"])?$_POST["entity"]:0));
+            $result=$interface->run_triggers('USER_LOGIN_FAILED',$user,$user,$langs,$conf);
             if ($result < 0) {
                 $error++;
             }
@@ -572,10 +574,11 @@ if (! defined('NOLOGIN'))
        {
             if (! empty($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER))	// We do not execute such trigger at each page load by default (triggers are time consuming)
             {
+                // TODO We should use a hook here, not a trigger.
                 // Call triggers
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($db);
-                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf,$conf->entity);
+                $result=$interface->run_triggers('USER_UPDATE_SESSION',$user,$user,$langs,$conf);
                 if ($result < 0) {
                     $error++;
                 }
@@ -588,7 +591,7 @@ if (! defined('NOLOGIN'))
     // If we are here, this means authentication was successfull.
     if (! isset($_SESSION["dol_login"]))
     {
-        // New session for this login.
+        // New session for this login has started.
     	$error=0;
 
     	// Store value into session (values always stored)
@@ -617,10 +620,11 @@ if (! defined('NOLOGIN'))
 
         $user->update_last_login_date();
 
+        // TODO We should use a hook here, not a trigger
         // Call triggers
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($db);
-        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf,GETPOST('entity','int'));
+        $result=$interface->run_triggers('USER_LOGIN',$user,$user,$langs,$conf);
         if ($result < 0) {
             $error++;
         }

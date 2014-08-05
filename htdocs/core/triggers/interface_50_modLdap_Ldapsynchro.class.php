@@ -165,7 +165,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;
@@ -322,7 +322,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;
@@ -399,7 +399,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-	    	    $result=$ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;
@@ -576,7 +576,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-				$result=$ldap->delete($dn,$info,$user);
+				$result=$ldap->delete($dn);
 				if ($result < 0)
 				{
 					$this->error="ErrorLDAP ".$ldap->error;

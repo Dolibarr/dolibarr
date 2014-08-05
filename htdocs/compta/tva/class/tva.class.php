@@ -123,7 +123,7 @@ class Tva extends CommonObject
 
             // Call trigger
             $result=$this->call_trigger('TVA_CREATE',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
 
             //FIXME: Add rollback if trigger fail
@@ -138,7 +138,7 @@ class Tva extends CommonObject
 
     /**
      * Update database
-     * 
+     *
      * @param   User	$user        	User that modify
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
@@ -188,9 +188,9 @@ class Tva extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('TVA_MODIFY',$user);
-            if ($result < 0) $error++;            
+            if ($result < 0) $error++;
             // End call triggers
-            
+
             //FIXME: Add rollback if trigger fail
     	}
 
@@ -200,7 +200,7 @@ class Tva extends CommonObject
 
     /**
      *  Load object in memory from database
-     *  
+     *
      *  @param	int		$id         id object
      *  @param  User	$user       User that load
      *  @return int         		<0 if KO, >0 if OK
@@ -269,7 +269,7 @@ class Tva extends CommonObject
 
  	/**
 	 *  Delete object in database
-	 *  
+	 *
      *	@param	User	$user       User that delete
 	 *	@return	int					<0 if KO, >0 if OK
 	 */
@@ -278,12 +278,12 @@ class Tva extends CommonObject
 		global $conf, $langs;
 
 		$error=0;
-		
+
 		// Call trigger
 		$result=$this->call_trigger('TVA_DELETE',$user);
 		if ($result < 0) return -1;
 		// End call triggers
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 
@@ -325,7 +325,7 @@ class Tva extends CommonObject
 
     /**
      *  Balance of VAT
-     *  
+     *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
@@ -344,7 +344,7 @@ class Tva extends CommonObject
 
     /**
      * 	Total of the VAT from invoices emitted by the society.
-     * 
+     *
      *	@param	int		$year		Year
      *	@return	double				Amount
      */
@@ -353,32 +353,30 @@ class Tva extends CommonObject
 
         $sql = "SELECT sum(f.tva) as amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-
         if ($year)
         {
             $sql .= " AND f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
         }
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+				$ret = $obj->amount;
+                $this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+                $this->db->free($result);
+				return 0;
             }
-
-            $this->db->free($result);
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -394,31 +392,30 @@ class Tva extends CommonObject
 
         $sql = "SELECT sum(f.total_tva) as total_tva";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-
         if ($year)
         {
             $sql .= " WHERE f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
         }
-        $result = $this->db->query($sql);
 
+        $result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->total_tva;
+                $ret = $obj->total_tva;
+            	$this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+				return 0;
             }
-
-            $this->db->free();
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -442,25 +439,24 @@ class Tva extends CommonObject
         }
 
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-                return $obj->amount;
+                $ret = $obj->amount;
+            	$this->db->free($result);
+                return $ret;
             }
             else
-            {
-                return 0;
+			{
+            	$this->db->free($result);
+				return 0;
             }
-
-            $this->db->free();
-
         }
         else
         {
-            print $this->db->error();
+            print $this->db->lasterror();
             return -1;
         }
     }
@@ -485,7 +481,7 @@ class Tva extends CommonObject
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
-		
+
         // Check parameters
 		if (! $this->label)
 		{
@@ -542,13 +538,13 @@ class Tva extends CommonObject
             // Call trigger
             //XXX: Should be done just befor commit no ?
             $result=$this->call_trigger('TVA_ADDPAYMENT',$user);
-            if ($result < 0) 
+            if ($result < 0)
             {
             	$this->id = 0;
             	$ok = 0;
             }
             // End call triggers
-            
+
             if ($this->id > 0)
             {
                 $ok=1;

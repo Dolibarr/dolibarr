@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copytight (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com> 
+ * Copytight (C) 2014		Alexandre Spangaro		<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ if ($_POST["action"] == 'add')
     $error=0;
 
     // Create account
-    $account = new Account($db,0);
+    $account = new Account($db);
 
     $account->ref           = dol_sanitizeFileName(trim($_POST["ref"]));
     $account->label         = trim($_POST["label"]);
@@ -119,7 +119,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $error=0;
 
     // Update account
-    $account = new Account($db, $_POST["id"]);
+    $account = new Account($db);
     $account->fetch($_POST["id"]);
 
     $account->ref             = dol_string_nospecial(trim($_POST["ref"]));
@@ -325,9 +325,9 @@ if ($action == 'create')
 	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
 
 	print '</table>';
-	
+
 	print '<br>';
-	
+
 	print '<table class="border" width="100%">';
 	// Accountancy code
     if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
@@ -340,11 +340,11 @@ if ($action == 'create')
         print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
         print '<td colspan="3"><input type="text" name="account_number" value="'.$account->account_number.'"></td></tr>';
     }
-	
+
 	// Accountancy journal
 	print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
     print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.$account->accountancy_journal.'"></td></tr>';
-	
+
 	print '</table>';
 
 	print '<center><br><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></center>';
@@ -458,19 +458,19 @@ else
 		print '<td colspan="3">'.$account->comment.'</td></tr>';
 
 		print '</table>';
-		
+
 		print '<br>';
 		print '<table class="border" width="100%">';
 		// Accountancy code
 		print '<tr><td valign="top" width="25%">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td colspan="3">'.$account->account_number.'</td></tr>';
-		
+
 		// Accountancy journal
 		print '<tr><td valign="top">'.$langs->trans("AccountancyJournal").'</td>';
 		print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
-		
+
 		print '</table>';
-		
+
 		print '</div>';
 
 
@@ -611,7 +611,7 @@ else
 		$doleditor=new DolEditor('account_comment',(isset($_POST["account_comment"])?$_POST["account_comment"]:$account->comment),'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,70);
 		$doleditor->Create();
 		print '</td></tr>';
-		
+
 		// Accountancy code
         if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
         {
@@ -623,7 +623,7 @@ else
             print '<tr><td valign="top">'.$langs->trans("AccountancyCode").'</td>';
             print '<td colspan="3"><input type="text" name="account_number" value="'.(isset($_POST["account_number"])?$_POST["account_number"]:$account->account_number).'"></td></tr>';
         }
-		
+
 		// Accountancy journal
         print '<tr><td valign="top">'.$langs->trans("AccountancyJournalCode").'</td>';
         print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';

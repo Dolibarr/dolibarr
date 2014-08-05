@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Supervisor is now visible into user list. 
+- New: Add user of creation and validation on invoice export.
 - New: Add info page about browser.
 - New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
        on uploaded file names. 
@@ -186,6 +188,8 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: Fusion PDF button on unpaid invoice is no more displayed 
+Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click)
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.

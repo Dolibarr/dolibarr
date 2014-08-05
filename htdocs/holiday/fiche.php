@@ -1070,7 +1070,7 @@ else
                     // Liste des utiliseurs du groupes choisi dans la config
                     $idGroupValid = $cp->getConfCP('userGroup');
 
-                    $validator = new UserGroup($db,$idGroupValid);
+                    $validator = new UserGroup($db);
                     $valideur = $validator->listUsersForGroup('',1);
 
                     print '<td>';
