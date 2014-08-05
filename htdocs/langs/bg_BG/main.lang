@@ -672,9 +672,12 @@ HelpCopyToClipboard=Използвайте Ctrl+C за да копирате в 
 SaveUploadedFileWithMask=Запишете файла на сървъра с име "<strong>%s</strong>" (otherwise "%s")
 OriginFileName=Оригинално име на файла
 SetDemandReason=Set source
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=View notes
 XMoreLines=%s line(s) hidden
 PublicUrl=Public URL
+AddBox=Add box
 
 # Week day
 Monday=Понеделник

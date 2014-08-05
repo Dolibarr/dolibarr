@@ -356,7 +356,7 @@ ActionNotApplicable=Uygulanamaz
 ActionRunningNotStarted=Başlayacak
 ActionRunningShort=Başladı
 ActionDoneShort=Bitti
-ActionUncomplete=Uncomplete
+ActionUncomplete=Tamamlanmamış
 CompanyFoundation=Firma/Dernek
 ContactsForCompany=Bu üçüncü partinin kişileri
 ContactsAddressesForCompany=Bu üçüncü partinin kişleri/adresleri
@@ -672,9 +672,12 @@ HelpCopyToClipboard=Panoya kopyalamak için Crtl+C
 SaveUploadedFileWithMask=Dosyayı sunucuya "<strong>%s</strong>" (aksi durumda "%s") adıyla kaydedin
 OriginFileName=Özgün dosya adı
 SetDemandReason=Kaynağı ayarlayın
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Notları izle
 XMoreLines=%s gizli satır(lar)
 PublicUrl=Genel URL
+AddBox=Add box
 
 # Week day
 Monday=Pazartesi

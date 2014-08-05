@@ -153,3 +153,4 @@ WarningCloseAlways=Hoiatus: sulgemine toimub isegi siis, kui lähte- ja sihtelem
 WarningUsingThisBoxSlowDown=Hoiatus: selle kasti kasutamine muudab kõik seda kasti kasutavad lehed märgatavalt aeglaseks.
 WarningClickToDialUserSetupNotComplete=Sinu kasutaja ClickToDial info seadistamine ei ole lõpetatud (vaata oma kasutaja kaardi ClickToDial sakki).
 WarningNotRelevant=Selle andmehulga juures ei ole see tegevus otstarbekas
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

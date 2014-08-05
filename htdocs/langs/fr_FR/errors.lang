@@ -153,3 +153,4 @@ WarningCloseAlways=Attention, la fermeture se fait même lorsque le montant diff
 WarningUsingThisBoxSlowDown=Attention, l'utilisation de cette boite provoque de sérieux ralentissement des pages affichant cette boite.
 WarningClickToDialUserSetupNotComplete=La configuration ClickToDial pour votre compte utilisateur n'est pas complète (voir l'onglet ClickToDial sur votre fiche utilisateur)
 WarningNotRelevant=Opération non pertinente pour cet ensemble de données
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Fonction désactivé quand l'affichage est en mode optimisé pour les personnes aveugles ou les navigateurs textes.
