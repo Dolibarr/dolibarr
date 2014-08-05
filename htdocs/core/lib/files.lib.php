@@ -1582,6 +1582,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	// Wrapping for interventions
+	else if ($modulepart == 'fichinter')
+	{
+		if ($fuser->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
 
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
