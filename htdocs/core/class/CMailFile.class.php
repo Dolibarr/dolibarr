@@ -170,7 +170,7 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to
+		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc.=($addr_bcc?', ':'').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
 		// Action according to choosed sending method
