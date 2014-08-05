@@ -1069,12 +1069,11 @@ else
             $res=$object->fetch_optionals($object->id,$extralabels);
             //if ($res < 0) { dol_print_error($db); exit; }
 
-
 	        $head = societe_prepare_head($object);
 
 	        dol_fiche_head($head, 'card', $langs->trans("ThirdParty"),0,'company');
 
-
+	         
             // Load object modCodeTiers
             $module=(! empty($conf->global->SOCIETE_CODECLIENT_ADDON)?$conf->global->SOCIETE_CODECLIENT_ADDON:'mod_codeclient_leopard');
             if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -1110,7 +1109,9 @@ else
             {
                 $prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
             }
-
+            
+            $object->oldcopy=dol_clone($object);
+            
             if (GETPOST('nom'))
             {
                 // We overwrite with values if posted
@@ -1142,7 +1143,7 @@ else
                 $object->barcode				= GETPOST('barcode');
                 $object->forme_juridique_code	= GETPOST('forme_juridique_code');
                 $object->default_lang			= GETPOST('default_lang');
-
+                
                 $object->tva_assuj				= GETPOST('assujtva_value');
                 $object->tva_intra				= GETPOST('tva_intra');
                 $object->status					= GETPOST('status');
@@ -1179,7 +1180,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
-
+            
             print '<table class="border" width="100%">';
 
             // Name
@@ -1247,6 +1248,7 @@ else
                 if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
                 {
                     $tmpcode=$object->code_fournisseur;
+                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur;
                     if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
                     print '<input type="text" name="code_fournisseur" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
                 }
