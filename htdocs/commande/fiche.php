@@ -1341,6 +1341,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 			$replyto = GETPOST('replytoname'). ' <' . GETPOST('replytomail').'>';
 			$message = GETPOST('message');
 			$sendtocc = GETPOST('sendtocc');
+			$sendtobcc = (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO)?'':$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO);
 			$deliveryreceipt = GETPOST('deliveryreceipt');
 
 			if ($action == 'send')
@@ -1369,7 +1370,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
 			// Send mail
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
+			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 			if ($mailfile->error)
 			{
 				$mesg='<div class="error">'.$mailfile->error.'</div>';

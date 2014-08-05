@@ -51,6 +51,7 @@ if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'
  * Action
  */
 
+
 if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search') && !empty($builddoc_generatebutton))
 {
 	if (is_array($_POST['toGenerate']))
