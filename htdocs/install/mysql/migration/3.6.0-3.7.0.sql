@@ -925,21 +925,20 @@ DROP TABLE llx_texts;
 
 
 DROP TABLE llx_c_email_templates;
-CREATE table llx_c_email_templates
+create table llx_c_email_templates
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
-  module          varchar(32),                   -- Nom du module en rapport avec le modele
+  module          varchar(32),                    -- Nom du module en rapport avec le modele
   type_template   varchar(32),  				  -- template for which type of email (send invoice by email, send order, ...)
-  sortorder       smallint,					  -- Ordre affichage
-
-  private         smallint DEFAULT 0 NOT NULL, -- Template public or private
-  fk_user         integer,                       -- Id utilisateur si modele prive, sinon null
+  private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
+  fk_user         integer,                        -- Id utilisateur si modele prive, sinon null
   datec           datetime,
   tms             timestamp,
-
-  label           varchar(255),
-  content         text
+  label           varchar(255),					  -- Label of predefined email
+  position        smallint,					      -- Position
+  topic			  text,                           -- Predefined topic
+  content         text                            -- Predefined text
 )ENGINE=innodb;
 
 
