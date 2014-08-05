@@ -2271,6 +2271,8 @@ else
 	*/
 	if ($action == 'presend')
 	{
+		$object->fetch_projet();
+
 		$ref = dol_sanitizeFileName($object->ref);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->propal->dir_output . '/' . $ref, preg_quote($ref,'/'));
@@ -2310,19 +2312,17 @@ else
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
-		$formmail->withfrom=1;
-		$liste=array();
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
-		$formmail->withtocc=$liste;
-		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		if(empty($object->ref_client))
-		{
-			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__');
-		}
-		else if(!empty($object->ref_client))
-		{
-			$formmail->withtopic=$langs->trans('SendPropalRef','__PROPREF__(__REFCLIENT__)');
+		$formmail->withfrom = 1;
+		$liste = array();
+		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
+			$liste [$key] = $value;
+		$formmail->withto = GETPOST("sendto") ? GETPOST("sendto") : $liste;
+		$formmail->withtocc = $liste;
+		$formmail->withtoccc = (! empty($conf->global->MAIN_EMAIL_USECCC) ? $conf->global->MAIN_EMAIL_USECCC : false);
+		if (empty($object->ref_client)) {
+			$formmail->withtopic = $langs->trans('SendPropalRef', '__PROPREF__');
+		} else if (! empty($object->ref_client)) {
+			$formmail->withtopic = $langs->trans('SendPropalRef', '__PROPREF__ (__REFCLIENT__)');
 		}
 		$formmail->withfile=2;
 		$formmail->withbody=1;
@@ -2330,23 +2330,25 @@ else
 		$formmail->withcancel=1;
 
 		// Tableau des substitutions
-		$formmail->substit['__PROPREF__']=$object->ref;
-		$formmail->substit['__SIGNATURE__']=$user->signature;
-		$formmail->substit['__REFCLIENT__']=$object->ref_client;
-		$formmail->substit['__PERSONALIZED__']='';
-		$formmail->substit['__CONTACTCIVNAME__']='';
+		$formmail->substit ['__PROPREF__'] = $object->ref;
+		$formmail->substit ['__SIGNATURE__'] = $user->signature;
+		$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
+		$formmail->substit ['__THIRPARTY_NAME__'] = $object->thirdparty->name;
+		$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$formmail->substit ['__PERSONALIZED__'] = '';
+		$formmail->substit ['__CONTACTCIVNAME__'] = '';
 
 		//Find the good contact adress
 		$custcontact='';
 		$contactarr=array();
 		$contactarr=$object->liste_contact(-1,'external');
 
-		if (is_array($contactarr) && count($contactarr)>0) {
-			foreach($contactarr as $contact) {
-				if ($contact['libelle']==$langs->trans('TypeContact_propal_external_CUSTOMER')) {
-					$contactstatic=new Contact($db);
-					$contactstatic->fetch($contact['id']);
-					$custcontact=$contactstatic->getFullName($langs,1);
+		if (is_array($contactarr) && count($contactarr) > 0) {
+			foreach ($contactarr as $contact) {
+				if ($contact ['libelle'] == $langs->trans('TypeContact_propal_external_CUSTOMER')) {	// TODO Use code and not label
+					$contactstatic = new Contact($db);
+					$contactstatic->fetch($contact ['id']);
+					$custcontact = $contactstatic->getFullName($langs, 1);
 				}
 			}
 

@@ -2,6 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
 Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
 Fix: Fusion PDF button on unpaid invoice is no more displayed 
