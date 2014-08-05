@@ -936,6 +936,11 @@ class FormFile
         	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         	$object_instance=new Project($this->db);
         }
+        else if ($modulepart == 'fichinter')
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+        	$object_instance=new Fichinter($this->db);
+        }
 
         $var=true;
         foreach($filearray as $key => $file)
@@ -962,7 +967,8 @@ class FormFile
                 if ($modulepart == 'contract')         { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'product')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:''); }
                 if ($modulepart == 'tax')              { preg_match('/(\d+)\/[^\/]+$/',$relativefile,$reg); $id=(isset($reg[1])?$reg[1]:''); }
-                if ($modulepart == 'project')            { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'project')          { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
+                if ($modulepart == 'fichinter')        { preg_match('/(.*)\/[^\/]+$/',$relativefile,$reg);  $ref=(isset($reg[1])?$reg[1]:'');}
 
                 if (! $id && ! $ref) continue;
 
