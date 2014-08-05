@@ -889,7 +889,7 @@ class Holiday extends CommonObject
             $month = date('m',$now);
             $lastUpdate = $this->getConfCP('lastUpdate');
             $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;
+			//print 'month: '.$month.' '.$lastUpdate.' '.$monthLastUpdate;exit;
 
             // Si la date du mois n'est pas la même que celle sauvegardée, on met à jour le timestamp
             if ($month != $monthLastUpdate)
