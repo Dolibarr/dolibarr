@@ -513,6 +513,7 @@ if (empty($reshook))
     $id=$socid;
     $actiontypecode='AC_OTH_AUTO';
     $paramname='socid';
+    $mode='emailfromthirdparty';
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
