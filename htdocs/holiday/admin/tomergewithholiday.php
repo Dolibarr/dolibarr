@@ -223,4 +223,3 @@ echo '</div>';
 llxFooter();
 
 $db->close();
-?>
