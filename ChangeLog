@@ -4,6 +4,7 @@ English Dolibarr ChangeLog
 
 
 ***** ChangeLog for 3.5.5 compared to 3.5.4 *****
+Fix: Holiday module was broken. Initializaion of amount of holidays failed.
 Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
 Fix: Fusion PDF button on unpaid invoice is no more displayed 
 Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click)
@@ -333,6 +334,7 @@ Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
 Fix: Agenda and Banks module were not working with multicompany module
 Fix: [ bug #1317 ] Removing a category does not remove all child categories
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).
