@@ -150,3 +150,8 @@ drop table tmp_societe_double;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
+
+
+UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
+UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
+

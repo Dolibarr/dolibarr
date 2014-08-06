@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Dimitri Mouillard    <dmouillard@teclib.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,7 +37,7 @@ if(!$user->rights->holiday->view_log) accessforbidden();
 
 /*
  * View
-*/
+ */
 
 $langs->load('users');
 
@@ -45,7 +45,7 @@ llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 
 $cp = new Holiday($db);
-//Recent changes are more important than old changes
+// Recent changes are more important than old changes
 $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC','');
 
 print_fiche_titre($langs->trans('LogCP'));
