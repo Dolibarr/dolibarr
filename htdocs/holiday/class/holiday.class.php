@@ -1733,6 +1733,30 @@ class Holiday extends CommonObject
   		}
     }
 
+
+    /**
+     *  Tous les types
+     *
+     *  @return     boolean    Return array with list of types
+     */
+    function getTypes()
+    {
+    	$result = $this->db->query("SELECT rowid, type, affect FROM " . MAIN_DB_PREFIX . "holiday_types");
+    	$num = $this->db->num_rows($result);
+    	if ($num)
+    	{
+    		while ($obj = $this->db->fetch_object($result))
+    		{
+    			$types[] = array('rowid'=> $obj->rowid, 'type'=> $obj->type, 'affect'=>$obj->affect);
+    		}
+
+    		return $types;
+    	}
+
+    	return array();
+    }
+
+
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.
