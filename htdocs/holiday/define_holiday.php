@@ -43,14 +43,17 @@ $action=GETPOST('action');
  */
 
 $form = new Form($db);
+$userstatic=new User($db);
+$holiday = new Holiday($db);
+
 
 llxHeader(array(),$langs->trans('CPTitreMenu'));
 
 print_fiche_titre($langs->trans('MenuConfCP'));
 
-$holiday = new Holiday($db);
+$holiday->updateSold();	// Create users into table holiday if they don't exists. TODO Remove if we use field into table user.
+
 $listUsers = $holiday->fetchUsers(false,false);
-$userstatic=new User($db);
 
 // Si il y a une action de mise à jour
 if ($action == 'update' && isset($_POST['update_cp']))
