@@ -123,4 +123,3 @@ foreach($congespayes->getTypes() as $type)
 // Fin de page
 $db->close();
 llxFooter();
-?>
