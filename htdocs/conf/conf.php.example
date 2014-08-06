@@ -12,8 +12,8 @@
 //###################
 
 // dolibarr_main_url_root
-// This parameter defines the root URL of your Dolibarr index.php page.
-// It must link to the htdocs directory htdocs.
+// This parameter defines the root URL of your Dolibarr index.php page without ending "/".
+// It must link to the directory htdocs.
 // In most cases, this is autodetected but it's still required 
 // * to show full url bookmarks for some services (ie: agenda rss export url, ...)
 // * or when using Apache dir aliases (autodetect fails)
