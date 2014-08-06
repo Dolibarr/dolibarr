@@ -34,6 +34,7 @@ For users:
        Use label into quick search form.
        Use accesskey on form search.
 - New: Intervention documents are now available in ECM module
+- New: Add attachments on user card + in ECM module
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
