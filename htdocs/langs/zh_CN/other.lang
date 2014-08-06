@@ -1,44 +1,45 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-09 00:32:00
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-09 00:32:00).
-// Reference language: en_US
-CHARSET=UTF-8
-ErrorPasswordDiffers=密码不同，请重新输入。
-ErrorForbidden=访问被拒绝。 <br>您尝试访问的页面，无一被验证的会话区或功能，或者不允许你的用户。
-ErrorForbidden2=此登录权限可以定义你的Dolibarr从菜单%的S ->%s的管理员
-ErrorForbidden3=看来Dolibarr是不是通过身份验证的会话中使用。以在Dolibarr安装文件就会知道如何管理认证（htaccess的，mod_auth或其他...).
-ErrorNoImagickReadimage=功能imagick_readimage是没有发现在这个PHP。没有预览可用。管理员可以从菜单中禁用此设置 - 显示选项卡。
-ErrorRecordAlreadyExists=记录已存在
-ErrorCantReadFile=无法读取档案'%s'
-ErrorCantReadDir=无法读取目录'%s'
-ErrorFailedToFindEntity=无法读取实体'%s'的
-ErrorBadLoginPassword=坏值的帐号和密码
-ErrorLoginDisabled=您的帐户已被禁用
-ErrorFailedToRunExternalCommand=无法运行外部命令。检查它是可用和可运行在PHP的服务器。如果PHP <b>安全模式</b>被激活，请检查命令<b>safe_mode_exec_dir之</b>内，是由参数定义一个目录。
-ErrorFailedToChangePassword=无法更改密码
-ErrorLoginDoesNotExists=<b>如何正确</b>使用手机与登录<b>%</b>找不到。
-ErrorLoginHasNoEmail=这位用户没有电子邮件地址。进程中止。
-ErrorBadValueForCode=代码有错误的值类型。再次尝试以新的价值...
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=安全代码
 Calendar=日历
 AddTrip=添加行程
 Tools=工具
+ToolsDesc=这个区域是专门用于杂项工具组到其他菜单项。 <br><br>这些工具可以达到从侧面菜单。
 Birthday=生日
 BirthdayDate=生日
 DateToBirth=在出生日期
-BirthdayAlertOn=生日提醒活跃
-BirthdayAlertOff=生日提醒无效
-Notify_NOTIFY_VAL_FICHINTER=验证干预
-Notify_NOTIFY_VAL_FAC=客户发票验证
-Notify_NOTIFY_APP_ORDER_SUPPLIER=供应商的订单批准
-Notify_NOTIFY_REF_ORDER_SUPPLIER=供应商的订单拒绝
-Notify_NOTIFY_VAL_ORDER=验证客户订单
-Notify_NOTIFY_VAL_PROPAL=验证客户的建议
+BirthdayAlertOn= 生日提醒活跃
+BirthdayAlertOff= 生日提醒无效
+Notify_FICHINTER_VALIDATE=干预验证
+Notify_FICHINTER_SENTBYMAIL=通过邮件发送的干预
+Notify_BILL_VALIDATE=客户发票验证
+Notify_BILL_UNVALIDATE=未经验证客户发票
+Notify_ORDER_SUPPLIER_APPROVE=供应商为了批准
+Notify_ORDER_SUPPLIER_REFUSE=供应商的订单被拒绝
+Notify_ORDER_VALIDATE=验证客户订单
+Notify_PROPAL_VALIDATE=验证客户的建议
+Notify_WITHDRAW_TRANSMIT=传输撤军
+Notify_WITHDRAW_CREDIT=信贷撤离
+Notify_WITHDRAW_EMIT=执行撤离
+Notify_ORDER_SENTBYMAIL=通过邮件发送的客户订单
+Notify_COMPANY_CREATE=第三方创建
+Notify_PROPAL_SENTBYMAIL=通过邮件发送的商业提案
+Notify_ORDER_SENTBYMAIL=通过邮件发送的客户订单
+Notify_BILL_PAYED=客户发票payed
+Notify_BILL_CANCEL=客户发票取消
+Notify_BILL_SENTBYMAIL=通过邮件发送的客户发票
+Notify_ORDER_SUPPLIER_VALIDATE=供应商为了验证
+Notify_ORDER_SUPPLIER_SENTBYMAIL=通过邮件发送的供应商的订单
+Notify_BILL_SUPPLIER_VALIDATE=供应商发票验证
+Notify_BILL_SUPPLIER_PAYED=供应商发票payed
+Notify_BILL_SUPPLIER_SENTBYMAIL=通过邮件发送的供应商发票
+Notify_CONTRACT_VALIDATE=合同验证
+Notify_FICHEINTER_VALIDATE=干预验证
+Notify_SHIPPING_VALIDATE=航运验证
+Notify_SHIPPING_SENTBYMAIL=通过电子邮件发送的航运
+Notify_MEMBER_VALIDATE=会员验证
+Notify_MEMBER_SUBSCRIPTION=会员订阅
+Notify_MEMBER_RESILIATE=会员resiliated
+Notify_MEMBER_DELETE=会员删除
 NbOfAttachedFiles=所附文件数/文件
 TotalSizeOfAttachedFiles=所附文件的总大小/文件
 MaxSize=最大尺寸
@@ -46,10 +47,16 @@ AttachANewFile=附加一个新的文件/文件
 LinkedObject=链接对象
 Miscellaneous=杂项
 NbOfActiveNotifications=号码的通知
-WarningInstallDirExists=警告，安装目录<b>（htdocs中/安装</b> ）依然存在。这是一个严重的安全漏洞。您应该删除它尽快。
-WarningUntilDirRemoved=所有安全警告（可见由管理员用户只）将保持活跃，只要是存在的脆弱性（或常数MAIN_REMOVE_INSTALL_WARNING是在安装程序->其他设置添加）。
-PredefinedMailTest=这是一个测试邮件。\ n该两行是由一个回车分隔。
+PredefinedMailTest=这是一个测试邮件。\\ n该两行是由一个回车分隔。
 PredefinedMailTestHtml=这是一个<b>测试</b>邮件（单词测试必须大胆）。 <br>这两条线隔开，回车。
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n你会发现这里 invoice __FACREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n 我们想提醒你， invoice  __FACREF__ seems 不支付。因此，这是再次附件发票，作为提醒。\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n 你会发现这里的商业proposal __PROPREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n你会发现这里 order __ORDERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n在这里你会发现你的 order __ORDERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n 你会发现这里 invoice __FACREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n你会发现这里shipping __SHIPPINGREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n你会发现这里 intervention __FICHINTERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 DemoDesc=Dolibarr是紧凑型的ERP / CRM的几个功能模块组成。一个演示，其中包括所有模块并不意味着什么，因为这永远不会发生。因此，一些演示配置文件都可用。
 ChooseYourDemoProfil=演示材选择符合您的活动...
 DemoFundation=一个基金会管理成员
@@ -74,12 +81,19 @@ FeaturesSupported=功能支持
 Width=宽度
 Height=高度
 Depth=深度
+Top=顶部
+Bottom=底部的
+Left=左
+Right=右键
+CalculatedWeight=计算重量
+CalculatedVolume=计算量
 Weight=重量
 TotalWeight=总重量
 WeightUnitton=吨
 WeightUnitkg=公斤
 WeightUnitg=克
 WeightUnitmg=毫克
+WeightUnitpound=英镑
 Length=长度
 LengthUnitm=米
 LengthUnitdm=马克
@@ -90,17 +104,27 @@ SurfaceUnitm2=平方米
 SurfaceUnitdm2=2型糖尿病
 SurfaceUnitcm2=平方厘米
 SurfaceUnitmm2=平方毫米
+SurfaceUnitfoot2=平方英尺
+SurfaceUnitinch2=平方英寸
 Volume=体积
 TotalVolume=总量
 VolumeUnitm3=立方米
 VolumeUnitdm3=DM3的
 VolumeUnitcm3=立方厘米
 VolumeUnitmm3=万立方米
+VolumeUnitfoot3=立方英尺
+VolumeUnitinch3=立方英寸
+VolumeUnitounce=盎司
+VolumeUnitlitre=升
+VolumeUnitgallon=加仑
 Size=大小
 SizeUnitm=米
 SizeUnitdm=马克
 SizeUnitcm=厘米
 SizeUnitmm=毫米
+SizeUnitinch=英寸
+SizeUnitfoot=脚
+SizeUnitpoint=点
 BugTracker=bug跟踪系统
 SendNewPasswordDesc=这种形式可以让您申请一个新的密码。它将被发送到您的电子邮件地址。 <br>更改才生效后确认此电子邮件里面点击链接。 <br>检查你的电子邮件阅读器软件。
 BackToLoginPage=回到登录页面
@@ -114,10 +138,12 @@ StatsByNumberOfEntities=统计中所指的实体数量
 NumberOfProposals=数量与去年12个月的建议
 NumberOfCustomerOrders=数量与去年12个月的客户订单
 NumberOfCustomerInvoices=发票号码的客户比去年12个月
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=对供应商的发票号码的最后12个月
 NumberOfUnitsProposals=单位数就过去12个月的建议
 NumberOfUnitsCustomerOrders=单位数就过去12个月的客户订单
 NumberOfUnitsCustomerInvoices=客户数比去年发票的单位12个月
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=供应商的数量比去年发票的单位12个月
 EMailTextInterventionValidated=干预%s已被验证。
 EMailTextInvoiceValidated=发票%s已被确认。
@@ -127,6 +153,7 @@ EMailTextOrderApproved=该命令%s已被批准。
 EMailTextOrderApprovedBy=该命令%s已被%s的批准
 EMailTextOrderRefused=该命令%s已被拒绝。
 EMailTextOrderRefusedBy=该命令%s已经拒绝%s的
+EMailTextExpeditionValidated=该托运 %s 已得到证实。
 ImportedWithSet=输入数据集
 DolibarrNotification=自动通知
 ResizeDesc=输入新的高度新的宽度<b>或</b> 。比率将维持在调整大小...
@@ -135,11 +162,27 @@ NewHeight=新高度
 NewSizeAfterCropping=新的尺寸裁剪后
 DefineNewAreaToPick=定义图像的新领域挑选（图像左侧单击然后拖动，直到到达对面角落）
 CurrentInformationOnImage=对当前图像信息
+ImageEditor=图像编辑器
 YouReceiveMailBecauseOfNotification=您收到此消息，因为您的电子邮件已被添加到列表的目标是特定的事件通知到%%的S软件第
 YouReceiveMailBecauseOfNotification2=此事件是：
-LoginWebcal=登录为Webcalendar
-ErrorWebcalLoginNotDefined=登录相关的Webcalendar登录到您的<b>Dolibarr%s</b>是没有定义。
-ErrorPhenixLoginNotDefined=登录相关的凤凰登录到您的<b>Dolibarr%s</b>是没有定义。
+ThisIsListOfModules=这是一个模块，此演示配置文件（只有最常见的模块在此演示中看到）预选名单。编辑本有一个更个性化的演示，并点击“开始”。
+ClickHere=点击这里
+UseAdvancedPerms=一些模块使用先进的权限
+FileFormat=文件格式
+SelectAColor=选择一种颜色
+AddFiles=添加文件
+StartUpload=开始上传
+CancelUpload=取消上传
+FileIsTooBig=文件过大
+PleaseBePatient=请耐心等待...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
 AddCalendarEntry=日历项中添加%s的
 NewCompanyToDolibarr=%s的公司加入Dolibarr
 ContractValidatedInDolibarr=%s的验证合同中Dolibarr
@@ -158,6 +201,10 @@ MemberValidatedInDolibarr=成员%s验证在Dolibarr
 MemberResiliatedInDolibarr=成员%s resiliated在Dolibarr
 MemberDeletedInDolibarr=成员%s删除Dolibarr
 MemberSubscriptionAddedInDolibarr=对成员%认购s加入Dolibarr
+ShipmentValidatedInDolibarr=运费%s在Dolibarr验证
+ShipmentDeletedInDolibarr=从Dolibarr删除 %s 出货
+##### Export #####
+Export=出口
 ExportsArea=出口地区
 AvailableFormats=可用的格式
 LibraryUsed=Librairy使用
@@ -166,73 +213,5 @@ ExportableDatas=导出的数据
 NoExportableData=没有出口的数据（导出加载的数据，或丢失的权限没有模块）
 ToExport=出口
 NewExport=新的出口
+##### External sites #####
 ExternalSites=外部网站
-CalculatedWeight=计算重量
-CalculatedVolume=计算量
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-WeightUnitpound=英镑
-VolumeUnitounce=盎司
-VolumeUnitlitre=升
-VolumeUnitgallon=加仑
-SizeUnitinch=英寸
-SizeUnitfoot=脚
-ImageEditor=图像编辑器
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:19).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> zh_CN
-ToolsDesc=这个区域是专门用于杂项工具组到其他菜单项。 <br><br>这些工具可以达到从侧面菜单。
-Notify_WITHDRAW_TRANSMIT=传输撤军
-Notify_BILL_PAYED=客户发票payed
-Notify_BILL_CANCEL=客户发票取消
-Notify_BILL_SENTBYMAIL=通过邮件发送的客户发票
-Notify_ORDER_SUPPLIER_VALIDATE=供应商为了验证
-Notify_ORDER_SUPPLIER_SENTBYMAIL=通过邮件发送的供应商的订单
-Notify_BILL_SUPPLIER_VALIDATE=供应商发票验证
-Notify_BILL_SUPPLIER_PAYED=供应商发票payed
-Notify_BILL_SUPPLIER_SENTBYMAIL=通过邮件发送的供应商发票
-Notify_CONTRACT_VALIDATE=合同验证
-Notify_FICHEINTER_VALIDATE=干预验证
-Notify_MEMBER_DELETE=会员删除
-Top=顶部
-Bottom=底部的
-Left=左
-Right=右键
-ThisIsListOfModules=这是一个模块，此演示配置文件（只有最常见的模块在此演示中看到）预选名单。编辑本有一个更个性化的演示，并点击“开始”。
-ClickHere=点击这里
-FileIsTooBig=文件过大
-Export=出口
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:16:51).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-Notify_FICHINTER_VALIDATE=干预验证
-Notify_BILL_VALIDATE=客户发票验证
-Notify_ORDER_SUPPLIER_APPROVE=供应商为了批准
-Notify_ORDER_SUPPLIER_REFUSE=供应商的订单被拒绝
-Notify_ORDER_VALIDATE=验证客户订单
-Notify_PROPAL_VALIDATE=验证客户的建议
-Notify_WITHDRAW_CREDIT=信贷撤离
-Notify_WITHDRAW_EMIT=执行撤离
-Notify_ORDER_SENTBYMAIL=通过邮件发送的客户订单
-Notify_COMPANY_CREATE=第三方创建
-Notify_PROPAL_SENTBYMAIL=通过邮件发送的商业提案
-Notify_ORDER_SENTBYMAIL=envíopedido POR电子邮件
-Notify_SHIPPING_VALIDATE=航运验证
-Notify_SHIPPING_SENTBYMAIL=通过电子邮件发送的航运
-Notify_MEMBER_VALIDATE=会员验证
-Notify_MEMBER_SUBSCRIPTION=会员订阅
-Notify_MEMBER_RESILIATE=会员resiliated
-UseAdvancedPerms=一些模块使用先进的权限
-FileFormat=文件格式
-SelectAColor=选择一种颜色
-AddFiles=添加文件
-StartUpload=开始上传
-CancelUpload=取消上传
-ShipmentValidatedInDolibarr=运费%s在Dolibarr验证
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:15).

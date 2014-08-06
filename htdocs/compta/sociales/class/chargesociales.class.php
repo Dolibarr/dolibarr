@@ -35,6 +35,7 @@ class ChargeSociales extends CommonObject
     public $table_element='chargesociales';
 
     var $id;
+    var $ref;
     var $date_ech;
     var $lib;
     var $type;

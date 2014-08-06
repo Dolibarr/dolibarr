@@ -1,5 +1,4 @@
 # Dolibarr language file - en_IN - admin
-CHARSET=UTF-8
 Module20Name=Quotations
 Module20Desc=Quotation's management
 Permission21=Read quotations
@@ -16,4 +15,4 @@ ProposalsNumberingModules=Quotations numbering modules
 ProposalsPDFModules=Quotations documents models
 HideTreadedPropal=Hide the treated quotations in the list
 FreeLegalTextOnProposal=Free text on quotations
-WatermarkOnDraftProposal=Watermark on draft quotations (any if empty)
+WatermarkOnDraftProposal=Watermark on draft quotations (none if empty)

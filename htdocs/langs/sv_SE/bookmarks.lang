@@ -1,15 +1,5 @@
-/*
- * Language code: sv_SE
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sv_SE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=Lägg till sidan som bokmärken
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:05:10).
-
 Bookmark=Bokmärk
 Bookmarks=Bokmärken
 NewBookmark=Nytt bokmärke

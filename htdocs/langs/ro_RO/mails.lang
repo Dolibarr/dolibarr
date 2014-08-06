@@ -1,18 +1,9 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=Email-uri
 EMailing=Email-uri
 Mailings=EMailings
 EMailings=EMailings
+AllEMailings=Toate eMailings
 MailCard=Carte de email-uri
 MailTargets=Ţinte
 MailRecipients=Destinatari
@@ -32,6 +23,7 @@ ShowEMailing=Arata email-uri
 ListOfEMailings=Lista de emailings
 NewMailing=Nou email-uri
 EditMailing=Editaţi email-uri
+ResetMailing=Retrimiteţi email-uri
 DeleteMailing=Ştergere email-uri
 DeleteAMailing=A şterge un email-uri
 PreviewMailing=Previzualizare email-uri
@@ -51,9 +43,14 @@ MailingStatusSentCompletely=Trimis complet
 MailingStatusError=Eroare
 MailingStatusNotSent=Nu trimis
 MailSuccessfulySent=Email trimis cu succes (din %s în %s)
+MailingSuccessfullyValidated=EMail validat cu succes
+MailUnsubcribe=Dezabonare
+Unsuscribe=Dezabonare
+MailingStatusNotContact=Nu mă mai contacta
 ErrorMailRecipientIsEmpty=Email destinatar este gol
 WarningNoEMailsAdded=Nu nou e-mail pentru a adăuga şi a destinatarului, listă.
 ConfirmValidMailing=Sunteţi sigur că doriţi pentru a valida acest email?
+ConfirmResetMailing=Atenţie, de reinitializing <b>email-uri %s,</b> va permite de a face o masă de a trimite acest e-mail-un alt timp. Esti sigur ca asta e ceea ce vrei să faci?
 ConfirmDeleteMailing=Sunteţi sigur că doriţi să ştergeţi acest emailling?
 NbOfRecipients=Numărul de beneficiari
 NbOfUniqueEMails=Nb unic de e-mail-uri
@@ -67,11 +64,36 @@ YouCanAddYourOwnPredefindedListHere=Pentru a crea dvs. de e-mail selectorul de m
 EMailTestSubstitutionReplacedByGenericValues=Când utilizaţi modul de testare, substituţiilor variabile sunt înlocuite de valorile generic
 MailingAddFile=Ataşaţi acest fisier
 NoAttachedFiles=Nu fişiere ataşate
+BadEMail=Bad valoarea de email
+CloneEMailing=Clone email-uri
+ConfirmCloneEMailing=Sunteţi sigur că doriţi să trimiteţi un email la acest clona?
+CloneContent=Clone mesaj
+CloneReceivers=Cloner destinatari
+DateLastSend=Data ultimei trimiterea
+DateSending=Data trimiterea
+SentTo=Trimis la <b>%s</b>
+MailingStatusRead=Citit
+CheckRead=Confirmarea de primire
+YourMailUnsubcribeOK=Emailul  <b>%s</b>  este dezabonat din mailing list
+MailtoEMail=Hyper link către email
+ActivateCheckRead=Permite utiliyarea linkului  "Dezabonare"
+ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare"
+EMailSentToNRecipients=EMail trimis la %s destinatari.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=De contact ale tuturor părţilor terţe (client, perspectiva, furnizor, ...)
 MailingModuleDescDolibarrUsers=Toate Dolibarr utilizatorii cu mesajele de poştă electronică
 MailingModuleDescFundationMembers=Fundaţia membri cu e-mail-uri
 MailingModuleDescEmailsFromFile=Mesaje de poştă electronică de la un fişier text (de e-mail, nume, prenume)
+MailingModuleDescEmailsFromUser=EMailuri de la un utilizator (email; nume; prenume;altele)
 MailingModuleDescContactsCategories=De contact ale tuturor părţilor terţe (pe categorii)
+MailingModuleDescDolibarrContractsLinesExpired=Terţe părţi, cu contract expirat de linii
+MailingModuleDescContactsByCompanyCategory=Date de contact ale terţilor (de către părţi a treia categorie)
+MailingModuleDescContactsByCategory=Contacte/adrese ale terţilor după caegorie
+MailingModuleDescMembersCategories=Membrii fundaţiei (pe categorii)
+MailingModuleDescContactsByFunction=Date de contact ale terţilor (de poziţie / funcţie)
+
+
 LineInFile=Linia %s în fişierul
 RecipientSelectionModules=Definit pentru cererile beneficiarilor de selecţie
 MailSelectedRecipients=Selectat destinatarii
@@ -84,59 +106,27 @@ SearchAMailing=Căutare de e-mail
 SendMailing=Trimite email-uri
 SendMail=Trimite un email
 SentBy=Trimis de
-MailingNeedCommand=Pentru valori mobiliare motiv, trimitand un email-uri pot fi efectuate numai de la linia de comandă. Adresaţi-vă de administrator pentru a lansa următoarea comandă pentru a trimite email-uri la toate destinatari:
+MailingNeedCommand=Din motive de securitate, trimiterea unui email-uri este mai bine cand este efectuată de la linia de comandă. Dacă aveți unul, întrebați administratorul pentru a lansa următoarea comandă pentru a trimite email-uri la toți destinatarii:
 MailingNeedCommand2=Puteţi, totuşi, trimite-le on-line, prin adăugarea parametrului MAILING_LIMIT_SENDBYWEB cu valoare de numărul maxim de mesaje de poştă electronică pe care doriţi să o trimiteţi prin sesiuni.
-ConfirmSendingEmailing=Sunteţi sigur că doriţi să trimiteţi e-mail? <br> Pe linie de trimiterea de emailings sunt limitate de securitate, motiv pentru <b>a %s</b> destinatari, prin trimiterea de sesiune.
+ConfirmSendingEmailing=Dacă nu puteţi sau preferaţi să le trimiteţi cu browser-ul web, vă rugăm să confirmați că sunteți sigur că doriți să trimiteți emailurile acum de la browser-ul dvs.?
+LimitSendingEmailing=Notă: Trimiterea online a emailurilor sunt limitate din motive de securitate şi timeout către  <b>%s</b> destinatari pe sesiune de trimiterea .
 TargetsReset=Cer senin lista
 ToClearAllRecipientsClickHere=Pentru a goli beneficiarilor lista pentru acest email-uri, faceţi clic pe butonul
 ToAddRecipientsChooseHere=Pentru a adăuga destinatari, alegeţi din aceste liste
 NbOfEMailingsReceived=Mass emailings primit
 IdRecord=ID-ul de înregistrare
 DeliveryReceipt=Livrarea Chitanţă
+YouCanUseCommaSeparatorForSeveralRecipients=Aveţi posibilitatea de a utiliza <b>comma</b> separator pentru a specifica mai mulţi destinatari.
+TagCheckMail=Urmăreşte deschiderea emailului
+TagUnsubscribe=Link Dezabonare
+TagSignature=Semnătura utilizator expeditor
+TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=Anunturi
 NoNotificationsWillBeSent=Nu notificări prin email sunt planificate pentru acest eveniment şi a companiei
 ANotificationsWillBeSent=1 notificarea va fi trimis prin e-mail
-SomeNotificationsWillBeSent= %s notificări vor fi trimise prin e-mail
+SomeNotificationsWillBeSent=%s notificări vor fi trimise prin e-mail
 AddNewNotification=Activaţi-o nouă notificare cerere
 ListOfActiveNotifications=Lista tuturor notificărilor activă a cererilor
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-AllEMailings=Toate eMailings
-ResetMailing=Retrimiteţi email-uri
-ConfirmResetMailing=Atenţie, de reinitializing <b>email-uri %s,</b> va permite de a face o masă de a trimite acest e-mail-un alt timp. Esti sigur ca asta e ceea ce vrei să faci?
-BadEMail=Bad valoarea de email
-CloneEMailing=Clone email-uri
-ConfirmCloneEMailing=Sunteţi sigur că doriţi să trimiteţi un email la acest clona?
-CloneContent=Clone mesaj
-CloneReceivers=Cloner destinatari
-DateLastSend=Data ultimei trimiterea
-MailingModuleDescDolibarrContractsLinesExpired=Terţe părţi, cu contract expirat de linii
-YouCanUseCommaSeparatorForSeveralRecipients=Aveţi posibilitatea de a utiliza <b>comma</b> separator pentru a specifica mai mulţi destinatari.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-DateSending=Data trimiterea
-SentTo=Trimis la <b>%s</b>
-LimitSendingEmailing=Pe linia trimiterea emailings sunt limitate pentru motive de securitate şi timeout destinatarilor <b>%s</b> prin trimiterea sesiune.
 ListOfNotificationsDone=Lista toate notificările e-mail trimis
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:51).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
-MailingModuleDescContactsByCompanyCategory=Date de contact ale terţilor (de către părţi a treia categorie)
-MailingModuleDescMembersCategories=Membrii fundaţiei (pe categorii)
-MailingModuleDescContactsByFunction=Date de contact ale terţilor (de poziţie / funcţie)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:50:16).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-MailingStatusRead=Citit
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:24).

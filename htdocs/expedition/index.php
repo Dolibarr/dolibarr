@@ -39,7 +39,7 @@ $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
-llxHeader('',$langs->trans("Sendings"),$helpurl);
+llxHeader('',$langs->trans("Shipment"),$helpurl);
 
 print_fiche_titre($langs->trans("SendingsArea"));
 
@@ -67,7 +67,7 @@ $sql = "SELECT e.rowid, e.ref";
 $sql.= ", s.nom, s.rowid as socid";
 $sql.= ", c.ref as commande_ref, c.rowid as commande_id";
 $sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'shipping'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
@@ -144,7 +144,7 @@ if ($resql)
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td class="nowrap">';
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
@@ -196,7 +196,7 @@ if ( $resql )
 		{
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
-			print "<tr $bc[$var]><td width=\"30%\">";
+			print "<tr ".$bc[$var]."><td width=\"30%\">";
 			$orderstatic->id=$obj->rowid;
 			$orderstatic->ref=$obj->ref;
 			print $orderstatic->getNomUrl(1);

@@ -112,7 +112,9 @@ $contact_fields = array(
 	'ref_propal' => array('name'=>'ref_propal','type'=>'xsd:string'),
 	'user_id' => array('name'=>'user_id','type'=>'xsd:string'),
 	'user_login' => array('name'=>'user_login','type'=>'xsd:string'),
-	'civility_id' => array('name'=>'civility_id','type'=>'xsd:string')
+	'civility_id' => array('name'=>'civility_id','type'=>'xsd:string'),
+	'poste' => array('name'=>'poste','type'=>'xsd:string'),
+	'statut' => array('name'=>'statut','type'=>'xsd:string')
 	//...
 );
 //Retreive all extrafield for contact
@@ -300,7 +302,9 @@ function getContact($authentication,$id,$ref='',$ref_ext='')
 	            	'ref_propal' => $contact->ref_propal,
 	            	'user_id' => $contact->user_id,
 	            	'user_login' => $contact->user_login,
-	            	'civilite_id' => $contact->civility_id
+	            	'civilite_id' => $contact->civility_id,
+            		'poste' => $contact->poste,
+            		'statut' => $contact->statut
             	);
             	
             	//Retreive all extrafield for thirdsparty
@@ -409,6 +413,8 @@ function createContact($authentication,$contact)
 		$newobject->ref_propal=$contact['ref_propal'];
 		$newobject->user_id=$contact['user_id'];
 		$newobject->user_login=$contact['user_login'];
+		$newobject->poste=$contact['poste'];
+		$newobject->statut=$contact['statut'];
 		
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
@@ -485,7 +491,7 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.lastname, c.firstname, c.statut,";
 		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -562,7 +568,8 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 				'ref_commande' => $contact->ref_commande?$contact->ref_commande:'',
 				'ref_propal' => $contact->ref_propal?$contact->ref_propal:'',
 				'user_id' => $contact->user_id?$contact->user_id:'',
-				'user_login' => $contact->no_email?$contact->user_login:''
+				'user_login' => $contact->user_login?$contact->user_login:'',
+				'statut' => $contact->statut?$contact->statut:''
 				
 				
 				
@@ -654,6 +661,9 @@ function updateContact($authentication,$contact)
 			$object->email=$contact['email'];
 			
 			$object->civilite_id=$contact['civility_id'];
+			$object->poste=$contact['poste'];
+			
+			$object->statut=$contact['statut'];
 			
 
 			//Retreive all extrafield for contact

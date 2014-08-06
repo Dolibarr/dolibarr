@@ -1,16 +1,8 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=お客様の注文エリア
 SuppliersOrdersArea=仕入先の受注エリア
 OrderCard=注文カード
+# OrderId=Order Id
 Order=オーダー
 Orders=受注
 OrderLine=注文明細行
@@ -36,9 +28,11 @@ StatusOrderCanceledShort=キャンセル
 StatusOrderDraftShort=ドラフト
 StatusOrderValidatedShort=検証
 StatusOrderSentShort=プロセスの
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=レセプション
 StatusOrderProcessedShort=処理
 StatusOrderToBillShort=請求する
+StatusOrderToBill2Short=請求する
 StatusOrderApprovedShort=承認された
 StatusOrderRefusedShort=拒否
 StatusOrderToProcessShort=処理するには
@@ -50,6 +44,7 @@ StatusOrderValidated=検証
 StatusOrderOnProcess=受け取るために待っている
 StatusOrderProcessed=処理
 StatusOrderToBill=請求する
+StatusOrderToBill2=請求する
 StatusOrderApproved=承認された
 StatusOrderRefused=拒否
 StatusOrderReceivedPartially=部分的に受け
@@ -58,9 +53,8 @@ ShippingExist=出荷が存在する
 DraftOrWaitingApproved=下書きまたは承認まだ順序付けられていません
 DraftOrWaitingShipped=ドラフトまたは検証まだ出荷されていない
 MenuOrdersToBill=法案に注文
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=検索順序
-Sending=送信
-Sendings=Sendings
 ShipProduct=船積
 Discount=割引
 CreateOrder=順序を作成します。
@@ -73,9 +67,11 @@ CancelOrder=注文を取り消す
 AddOrder=注文を追加
 AddToMyOrders=私の注文に追加
 AddToOtherOrders=他の注文に追加
+# AddToDraftOrders=Add to draft order
 ShowOrder=順序を示す
 NoOpenedOrders=いいえ開かれたオーダーがない
 NoOtherOpenedOrders=他の注文を開かれていません
+# NoDraftOrders=No draft orders
 OtherOrders=他の注文
 LastOrders=最後%s受注
 LastModifiedOrders=最後%s注文を変更
@@ -85,7 +81,7 @@ NbOfOrders=注文数
 OrdersStatistics=注文の統計
 OrdersStatisticsSuppliers=サプライヤーのための統計情報
 NumberOfOrdersByMonth=月別受注数
-AmountOfOrdersByMonthHT=月別の受注額（税引後）
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=注文の一覧
 CloseOrder=密集隊形
 ConfirmCloseOrder=あなたはこの順序を閉じてもよろしいですか？注文がクローズされると、それだけ請求することができます。
@@ -96,6 +92,7 @@ ConfirmUnvalidateOrder=下書きのステータスに注文<b>%sを</b>復元し
 ConfirmCancelOrder=あなたがこの注文をキャンセルしてもよろしいですか？
 ConfirmMakeOrder=あなたは<b>%s</b>にこの順序を作ったことを確認してもよろしいですか？
 GenerateBill=請求書を生成します。
+# ClassifyShipped=Classify delivered
 ClassifyBilled=&quot;銘打たれた&quot;分類
 ComptaCard=会計カード
 DraftOrders=ドラフト注文
@@ -117,6 +114,7 @@ PaymentOrderRef=オーダーの%sの支払い
 CloneOrder=クローンの順序
 ConfirmCloneOrder=あなたは、この順序<b>%sの</b>クローン<b>を作成</b>してもよろしいですか？
 DispatchSupplierOrder=サプライヤの注文%sを受信
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=代表的なフォローアップ、顧客の注文
 TypeContact_commande_internal_SHIPPING=代表的なフォローアップ出荷
 TypeContact_commande_external_BILLING=顧客の請求書の連絡先
@@ -127,10 +125,15 @@ TypeContact_order_supplier_internal_SHIPPING=代表的なフォローアップ�
 TypeContact_order_supplier_external_BILLING=サプライヤの請求書の連絡先
 TypeContact_order_supplier_external_SHIPPING=サプライヤの出荷の連絡先
 TypeContact_order_supplier_external_CUSTOMER=サプライヤーの連絡先のフォローアップの順序
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=定数COMMANDE_SUPPLIER_ADDONが定義されていません
 Error_COMMANDE_ADDON_NotDefined=定数COMMANDE_ADDONが定義されていません
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=モジュールファイル '%s'の読み込みに失敗しました
 Error_FailedToLoad_COMMANDE_ADDON_File=モジュールファイル '%s'の読み込みに失敗しました
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
 OrderSource0=商業的提案
 OrderSource1=インターネット
 OrderSource2=メールキャンペーン
@@ -140,11 +143,24 @@ OrderSource5=コマーシャル
 OrderSource6=店舗
 QtyOrdered=数量は、注文された
 AddDeliveryCostLine=注文の重量を示す配信コストの行を追加します。
+
+# Documents models
 PDFEinsteinDescription=完全受注モデル（logo. ..）
 PDFEdisonDescription=単純な次のモデル
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=電子メール
 OrderByFax=ファックス
 OrderByEMail=メールしてください
 OrderByWWW=オンライン
 OrderByPhone=電話
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:44:30).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

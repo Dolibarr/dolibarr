@@ -1,16 +1,19 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Errors
+Error=خطأ
+Errors=أخطاء
+# ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorBadEMail=بريد إلكتروني خاطئ %s
+ErrorBadUrl=عنوان الموقع هو الخطأ %s
 ErrorLoginAlreadyExists=ادخل ٪ ق موجود بالفعل.
 ErrorGroupAlreadyExists=المجموعة ٪ ق موجود بالفعل.
+ErrorRecordNotFound=لم يتم العثور على السجل.
+# ErrorFailToCopyFile=Failed to copy file '<b>%s</b>' into '<b>%s</b>'.
+# ErrorFailToRenameFile=Failed to rename file '<b>%s</b>' into '<b>%s</b>'.
 ErrorFailToDeleteFile=فشل إزالة الملف <b>'٪ ق.</b>
 ErrorFailToCreateFile=فشل إنشاء الملف <b>'٪ ق.</b>
 ErrorFailToRenameDir=فشل إعادة تسمية الدليل <b>'٪ ق'</b> الى <b>'٪ ق.</b>
@@ -21,6 +24,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=هذا الاتصال هو اتصال
 ErrorCashAccountAcceptsOnlyCashMoney=هذا الحساب المصرفي هو الحساب النقدي ، وذلك ما وافق على نوع من المدفوعات النقدية فقط.
 ErrorFromToAccountsMustDiffers=المصدر والأهداف يجب أن تكون الحسابات المصرفية المختلفة.
 ErrorBadThirdPartyName=سوء قيمة اسم طرف ثالث
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=سوء تركيب الزبون مدونة
 ErrorCustomerCodeRequired=رمز العميل المطلوبة
 ErrorCustomerCodeAlreadyUsed=الشفرة المستخدمة بالفعل العملاء
@@ -30,6 +34,9 @@ ErrorBadSupplierCodeSyntax=مورد سوء تركيب لمدونة
 ErrorSupplierCodeRequired=رمز المورد المطلوب
 ErrorSupplierCodeAlreadyUsed=الشفرة المستخدمة بالفعل مورد
 ErrorBadParameters=بارامترات سيئة
+# ErrorBadValueForParameter=Wrong value '%s' for parameter incorrect '%s'
+# ErrorBadImageFormat=Image file has not a supported format
+# ErrorBadDateFormat=Value '%s' has wrong date format
 ErrorFailedToWriteInDir=لم يكتب في دليل ٪ ق
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=العثور على بريد إلكتروني صحيح لتركيب خطوط ق ٪ في ملف (على سبيل المثال خط ٪ ق= ٪ مع البريد الإلكتروني)
 ErrorUserCannotBeDelete=المستخدم لا يمكن حذفها. قد يكون ذلك مرتبطا Dolibarr على الكيانات.
@@ -40,13 +47,21 @@ ErrorFeatureNeedJavascript=هذه الميزة تحتاج إلى تفعيل جا
 ErrorTopMenuMustHaveAParentWithId0=وهناك قائمة من نوع 'توب' لا يمكن أن يكون أحد الوالدين القائمة. 0 وضعت في القائمة أو الأم في اختيار قائمة من نوع 'اليسار'.
 ErrorLeftMenuMustHaveAParentId=وهناك قائمة من نوع 'اليسار' يجب أن يكون لها هوية الوالد.
 ErrorFileNotFound=لم يتم العثور على الملف (باد الطريق الخطأ أو أذونات الوصول نفى المعلم openbasedir)
+ErrorDirNotFound=لم يتم العثور على دليل <b>%s</b> (مسار غير صالح ، أو الحصول على أذونات خاطئة نفته openbasedir بي إتش بي أو safe_mode المعلمة)
 ErrorFunctionNotAvailableInPHP=<b>ق ٪</b> وظيفة مطلوبة لهذه الميزة ولكن لا تتوافر في هذه النسخة / الإعداد للPHP.
 ErrorDirAlreadyExists=دليل بهذا الاسم بالفعل.
+ErrorFileAlreadyExists=ملف بهذا الاسم موجود مسبقا.
+ErrorPartialFile=الملف لم تتلق تماما بواسطة الخادم.
+ErrorNoTmpDir=%s directy مؤقتة لا وجود.
+ErrorUploadBlockedByAddon=حظر حمل من قبل البرنامج المساعد بى اباتشي /.
+ErrorFileSizeTooLarge=حجم الملف كبير جدا.
+# ErrorSizeTooLongForIntType=Size too long for int type (%s digits maximum)
+# ErrorSizeTooLongForVarcharType=Size too long for string type (%s chars maximum)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=ميدان <b>٪ ق</b> يجب ألا يحتوي على أحرف خاصة.
-WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> المعلم يجب أن يوضع <b>على</b> المدون في <b>php.ini</b> لتعمل هذه الوحدة بشكل كامل. يجب عليك أن تعدل عن هذا الملف يدويا.
-WarningBuildScriptNotRunned=السيناريو <b>٪ ق</b> لم يكن يتعارض مع بناء الرسومات ، أو عدم وجود بيانات تظهر.
-WarningBookmarkAlreadyExists=المرجعية هذا الكتاب أو هذا الهدف (عنوان) موجود بالفعل.
-WarningPassIsEmpty=تحذير كلمة سر قاعدة بيانات فارغة. هذه هي ثغرة أمنية. يجب عليك أن تضيف كلمة السر الخاصة بك لقاعدة البيانات وتغيير conf.php ليعكس هذا الملف.
 ErrorNoAccountancyModuleLoaded=أي وحدة المحاسبة وتفعيل
 ErrorExportDuplicateProfil=هذا ملف الاسم بالفعل لتصدير هذه المجموعة.
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP المطابقة وليس كاملا.
@@ -55,37 +70,28 @@ ErrorCantSaveADoneUserWithZeroPercentage=لا يمكن انقاذ عمل مع "�
 ErrorRefAlreadyExists=المرجع المستخدمة لإنشاء موجود بالفعل.
 ErrorPleaseTypeBankTransactionReportName=الرجاء كتابة اسم البنك استلام المعاملات ويقال فيها (شكل YYYYMM أو YYYYMMDD)
 ErrorRecordHasChildren=فشل حذف السجلات منذ نحو الطفل.
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-Error=خطأ
-Errors=أخطاء
-ErrorBadEMail=بريد إلكتروني خاطئ %s
-ErrorBadUrl=عنوان الموقع هو الخطأ %s
-ErrorRecordNotFound=لم يتم العثور على السجل.
-ErrorDirNotFound=لم يتم العثور على دليل <b>%s</b> (مسار غير صالح ، أو الحصول على أذونات خاطئة نفته openbasedir بي إتش بي أو safe_mode المعلمة)
-ErrorFileAlreadyExists=ملف بهذا الاسم موجود مسبقا.
-ErrorPartialFile=الملف لم تتلق تماما بواسطة الخادم.
-ErrorNoTmpDir=%s directy مؤقتة لا وجود.
-ErrorUploadBlockedByAddon=حظر حمل من قبل البرنامج المساعد بى اباتشي /.
-ErrorFileSizeTooLarge=حجم الملف كبير جدا.
-WarningSafeModeOnCheckExecDir=انذار ، فب <b>safe_mode</b> الخيار في ذلك تخزين الأمر يجب أن يكون داخل الدليل الذي أعلنته <b>safe_mode_exec_dir</b> المعلمة بي.
-WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / أسيوط / conf.php)</b> الخاص يمكن أن تكون الكتابة بواسطة خادم الويب. هذه هي ثغرة أمنية خطيرة. أذونات تعديل على ملف ليكون في وضع القراءة فقط لمستخدم نظام التشغيل المستخدمة من قبل ملقم ويب. إذا كنت تستخدم ويندوز وشكل نسبة الدهون لمدة القرص الخاص بك ، فإنك يجب أن نعرف أن هذا النظام لا يسمح ملف لإضافة الأذونات على الملف ، بحيث لا تكون آمنة تماما.
 ErrorModuleRequireJavascript=يجب عدم تعطيل جافا سكريبت لجعل هذا العمل الميزة. لتمكين / تعطيل جافا سكريبت ، انتقل إلى القائمة الرئيسية -> الإعداد -> العرض.
 ErrorPasswordsMustMatch=ويجب على كلا كلمات المرور المكتوبة تطابق بعضها البعض
+# ErrorContactEMail=A technical error occured. Please, contact administrator to following email <b>%s</b> en provide the error code <b>%s</b> in your message, or even better by adding a screen copy of this page.
 ErrorWrongValueForField=قيمة خاطئة لعدد <b>%s</b> الحقل (قيمة <b>'%s'</b> لا يتطابق <b>%s</b> حكم [رجإكس])
+# ErrorFieldValueNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a value available into field <b>%s</b> of table <b>%s</b>)
+# ErrorFieldRefNotIn=Wrong value for field number <b>%s</b> (value '<b>%s</b>' is not a <b>%s</b> existing ref)
 ErrorsOnXLines=الأخطاء على خطوط مصدر <b>%s</b>
-WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
 ErrorFileIsInfectedWithAVirus=وكان برنامج مكافحة الفيروسات غير قادرة على التحقق من صحة الملف (ملف قد يكون مصابا بواسطة فيروس)
 ErrorSpecialCharNotAllowedForField=غير مسموح الأحرف الخاصة لحقل "%s"
-WarningNoDocumentModelActivated=لا يوجد نموذج لجيل وثيقة ، قد تم تنشيط. سيكون نموذج المختار افتراضيا حتى يمكنك التحقق من إعداد وحدة الخاص.
 ErrorDatabaseParameterWrong=قاعدة بيانات المعلمة الإعداد <b>'%s'</b> يحتوي على قيمة غير متوافق لاستخدام Dolibarr (يجب أن يكون قيمة <b>'%s').</b>
 ErrorNumRefModel=إشارة إلى وجود قاعدة بيانات (%s) ، وغير متوافق مع هذه القاعدة الترقيم. سجل إزالة أو إعادة تسميته اشارة الى تفعيل هذه الوحدة.
 ErrorQtyTooLowForThisSupplier=كمية قليلة جدا لهذا المورد أو السعر لا تعرف عن هذا المنتج لهذا المورد
+# ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Setup - Modules to complete.
+# ErrorBadMask=Error on mask
+# ErrorBadMaskFailedToLocatePosOfSequence=Error, mask without sequence number
+# ErrorBadMaskBadRazMonth=Error, bad reset value
+# ErrorSelectAtLeastOne=Error. Select at least one entry.
+# ErrorProductWithRefNotExist=Product with reference '<i>%s</i>' don't exist
+# ErrorDeleteNotPossibleLineIsConsolidated=Delete not possible because record is linked to a bank transation that is conciliated
+# ErrorProdIdAlreadyExist=%s is assigned to another third
 ErrorFailedToSendPassword=لم ترسل كلمة السر
+# ErrorFailedToLoadRSSFile=Fails to get RSS feed. Try to add constant MAIN_SIMPLEXMLLOAD_DEBUG if error messages does not provide enough information.
 ErrorPasswordDiffers=وتختلف كلمات السر ، يرجى منها من نوع جديد.
 ErrorForbidden=الوصول ممنوع. <br> محاولة الوصول إلى صفحة ، أو منطقة دون سمة في الدورة من صحة أو عدم السماح لالمستخدم.
 ErrorForbidden2=إذن لدخول هذا يمكن تعريف بلدكم من قائمة مدير Dolibarr ٪ ق -> ٪ s.
@@ -102,6 +108,39 @@ ErrorFailedToChangePassword=فشل تغيير كلمة المرور
 ErrorLoginDoesNotExists=للمستخدم تسجيل الدخول <b>٪ ق</b> لم يتم العثور على.
 ErrorLoginHasNoEmail=هذا المستخدم ليس لديها عنوان بريد إلكتروني. عملية اجهاض.
 ErrorBadValueForCode=قيمة أنواع سيئة للقانون. حاول مرة أخرى مع قيمة جديدة...
-ErrorFileIsInfectedWith=هذا الملف هو مصاب ق ٪
-WarningInstallDirExists=تحذير تركيب دليل (٪) لا تزال موجودة. هذه هي ثغرة أمنية خطيرة. يجب عليك إزالة عليه في أقرب وقت ممكن.
+# ErrorBothFieldCantBeNegative=Fields %s and %s can't be both negative
+# ErrorWebServerUserHasNotPermission=User account <b>%s</b> used to execute web server has no permission for that
+# ErrorNoActivatedBarcode=No barcode type activated
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningSafeModeOnCheckExecDir=انذار ، فب <b>safe_mode</b> الخيار في ذلك تخزين الأمر يجب أن يكون داخل الدليل الذي أعلنته <b>safe_mode_exec_dir</b> المعلمة بي.
+WarningAllowUrlFopenMustBeOn=<b>allow_url_fopen</b> المعلم يجب أن يوضع <b>على</b> المدون في <b>php.ini</b> لتعمل هذه الوحدة بشكل كامل. يجب عليك أن تعدل عن هذا الملف يدويا.
+WarningBuildScriptNotRunned=السيناريو <b>٪ ق</b> لم يكن يتعارض مع بناء الرسومات ، أو عدم وجود بيانات تظهر.
+WarningBookmarkAlreadyExists=المرجعية هذا الكتاب أو هذا الهدف (عنوان) موجود بالفعل.
+WarningPassIsEmpty=تحذير كلمة سر قاعدة بيانات فارغة. هذه هي ثغرة أمنية. يجب عليك أن تضيف كلمة السر الخاصة بك لقاعدة البيانات وتغيير conf.php ليعكس هذا الملف.
+WarningConfFileMustBeReadOnly=انذار ، ملف (التكوين <b>htdocs / أسيوط / conf.php)</b> الخاص يمكن أن تكون الكتابة بواسطة خادم الويب. هذه هي ثغرة أمنية خطيرة. أذونات تعديل على ملف ليكون في وضع القراءة فقط لمستخدم نظام التشغيل المستخدمة من قبل ملقم ويب. إذا كنت تستخدم ويندوز وشكل نسبة الدهون لمدة القرص الخاص بك ، فإنك يجب أن نعرف أن هذا النظام لا يسمح ملف لإضافة الأذونات على الملف ، بحيث لا تكون آمنة تماما.
+WarningsOnXLines=تحذيرات عن مصدر خطوط <b>%s</b>
+WarningNoDocumentModelActivated=لا يوجد نموذج لجيل وثيقة ، قد تم تنشيط. سيكون نموذج المختار افتراضيا حتى يمكنك التحقق من إعداد وحدة الخاص.
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
 WarningUntilDirRemoved=هذا التحذير وسوف تظل نشطة ما دام هذا الدليل هو هذا (يظهر فقط لمستخدمي المشرف).
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
 ProductRef=製品のref。
 ProductLabel=製品のラベル
 ProductServiceCard=製品/サービスカード
@@ -85,6 +76,7 @@ ContractStatusToRun=mettre ENサービス
 ContractNotRunning=この契約は実行されていません
 ErrorProductAlreadyExists=参照%sした製品はすでに存在しています。
 ErrorProductBadRefOrLabel=参照またはラベルの間違った値。
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=サプライヤー
 SupplierRef=サプライヤーの製品REF。
 ShowProduct=製品を表示
@@ -99,14 +91,12 @@ AddToOtherBills=他の法案に追加する
 CorrectStock=正しい株式
 AddPhoto=写真を追加する
 ListOfStockMovements=在庫変動のリスト
-NoPhotoYet=まだまだ写真はありません
 BuyingPrice=買価
 SupplierCard=サプライヤーカード
 CommercialCard=コマーシャルカード
 AllWays=在庫製品を検索するためのパス
 NoCat=お使いの製品は、任意のカテゴリではありません
 PrimaryWay=プライマリパス
-DeleteFromCat=カテゴリから削除
 PriceRemoved=価格は、削除
 BarCode=バーコード
 BarcodeType=バーコードの種類
@@ -122,6 +112,8 @@ AssociatedProductsAbility=サブプロダクトをアクティブにする
 AssociatedProducts=サブプロダクト
 AssociatedProductsNumber=この製品を構成する製品の数
 ParentProductsNumber=親製品の数
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=関連付ける
 Translation=翻訳
 KeywordFilter=キーワードフィルタ
@@ -150,12 +142,15 @@ NoStockForThisProduct=この製品は在庫なし
 NoStock=在庫がありません
 Restock=補充する
 ProductSpecial=特別な
-QtyMin=量の最小値
+# QtyMin=Minimum Qty
 PriceQty=この量の価格
-PriceQtyMin=価格数量分。
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=価格/数量このサプライヤー/製品用に定義されません
 NoSupplierPriceDefinedForThisProduct=この製品に対して定義されたサプライヤ価格なし/数量
 RecordedProducts=記録された製品
+# RecordedServices=Services recorded
 RecordedProductsAndServices=記録された製品/サービス
 GenerateThumb=親指を生成します。
 ProductCanvasAbility=特別な &quot;キャンバス&quot;アドオンを使用
@@ -169,6 +164,7 @@ CloneProduct=クローン製品やサービス
 ConfirmCloneProduct=あなたが製品やサービス<b>%sの</b>クローン<b>を作成</b>してもよろしいですか？
 CloneContentProduct=製品/サービスのすべての主要な情報のクローンを作成する
 ClonePricesProduct=主な情報と価格のクローンを作成する
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=本製品が使用されます
 NewRefForClone=REF。新製品/サービスの
 CustomerPrices=お客様の価格
@@ -176,4 +172,35 @@ SuppliersPrices=仕入価格
 CustomCode=税関コード
 CountryOrigin=原産国
 HiddenIntoCombo=selectリストの中に隠れて
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:46:11).
+Nature=自然
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=個数
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

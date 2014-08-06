@@ -1,72 +1,76 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-RefSending=Ref. saadetis
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Saadetise viide
 Sending=Saadetis
 Sendings=Saadetised
+Shipment=Saadetis
 Shipments=Saadetised
-Receivings=Receivings
-SendingsArea=Vedude alal
-ListOfSendings=List saadetiste
-SendingMethod=Shipping meetod
-SendingReceipt=Shipping kätte
-LastSendings=Last %s saadetiste
-SearchASending=Otsi saadetise
-StatisticsOfSendings=Statistika saadetiste
-NbOfSendings=Vedude arvu,
-SendingCard=Shipping kaart
-NewSending=New saadetise
-CreateASending=Loo saadetise
-CreateSending=Loo saadetise
-QtyOrdered=Kogus tellitud
-QtyShipped=Kogus veetud
-QtyToShip=Kogus laeva
-QtyReceived=Kogus saanud
-KeepToShip=Hoidke laeva
-OtherSendingsForSameOrder=Muud veod seda, et
-DateSending=Kuupäev saates selleks
-DateSendingShort=Kuupäev saates selleks
-SendingsForSameOrder=Saadetised seda, et
-SendingsAndReceivingForSameOrder=Vedude ja receivings seda, et
-SendingsToValidate=Saadetiste kinnitamiseks
+Receivings=Saabumised
+SendingsArea=Saadetiste ala
+ListOfSendings=Saadetiste nimekiri
+SendingMethod=Saatmisviis
+SendingReceipt=Saatmise kinnitus
+LastSendings=Viimased %s saadetist
+SearchASending=Otsi saadetist
+StatisticsOfSendings=Saadetiste statistika
+NbOfSendings=Saadetiste arv
+NumberOfShipmentsByMonth=Saadetiste arv kuude järgi
+SendingCard=Saadetise kaart
+NewSending=Uus saadetis
+CreateASending=Koosta saadetis
+CreateSending=Koosta saadetis
+QtyOrdered=Tellitud kogus
+QtyShipped=Saadetud kogus
+QtyToShip=Kogus saata
+QtyReceived=Saabunud kogus
+KeepToShip=Jätkuvalt saata
+OtherSendingsForSameOrder=Tellimusega seotud teised saadetised
+DateSending=Tellimuse saatmise kuupäev
+DateSendingShort=Tellimuse saatmise kuupäev
+SendingsForSameOrder=Tellimusega seotud saadetised
+SendingsAndReceivingForSameOrder=Tellimusega seotud saadetised ja saabumised
+SendingsToValidate=Kinnitamast vajavad saadetised
 StatusSendingCanceled=Tühistatud
-StatusSendingDraft=Eelnõu
-StatusSendingValidated=Kinnitatud (tooted laevale või juba veetud)
+StatusSendingDraft=Mustand
+StatusSendingValidated=Kinnitatud (väljastamisele minevad või juba väljastatud kaubad)
+StatusSendingProcessed=Töödeldud
 StatusSendingCanceledShort=Tühistatud
-StatusSendingDraftShort=Eelnõu
-StatusSendingValidatedShort=Valideeritud
-SendingSheet=Saates lehed
+StatusSendingDraftShort=Mustand
+StatusSendingValidatedShort=Kinnitatud
+StatusSendingProcessedShort=Töödeldud
+SendingSheet=Saateleht
 Carriers=Vedajad
-Carrier=Kandja
-CarriersArea=Vedajad ala
+Carrier=Vedaja
+CarriersArea=Vedajate ala
 NewCarrier=Uus vedaja
-ConfirmDeleteSending=Oled sa kindel, et soovite kustutada selle saadetise?
-ConfirmValidateSending=Oled sa kindel, et soovid, et kinnitada selle saadetise viitega <b>%s?</b>
-ConfirmCancelSending=Oled kindel, et soovite tühistada see saadetis?
-GenericTransport=Generic transport
-Enlevement=Saanud kliendi
-DocumentModelSimple=Simple dokumendi mudel
-DocumentModelMerou=Merou A5 mudeli
-WarningNoQtyLeftToSend=Hoiatus, ole tooteid ootavad tarnimist.
-StatsOnShipmentsOnlyValidated=Statistics läbi saadetiste ainult valideeritud
-DateDeliveryPlanned=Hööveldatud tarnekuupäev
-DateReceived=Kuupäev kohaletoimetamise saanud
-SendShippingByEMail=Saada saatmist e-postiga
-SendShippingRef=Saada saadetise %s
-ActionsOnShipping=Sündmuste saadetise
-LinkToTrackYourPackage=Seos jälgida oma paketi
-ShipmentCreationIsDoneFromOrder=Praegu uue saadetise tehakse alates tellimuse kaart.
-SendingMethodCATCH=Saak kliendi
+ConfirmDeleteSending=Kas soovid kindlasti selle saadetise kustutada?
+ConfirmValidateSending=Kas soovid kindlasti selle saadetise kinnitada viitega <b>%s</b> ?
+ConfirmCancelSending=Kas soovid kindlasti selle saadetise tühistada?
+GenericTransport=Üldine transdpor
+Enlevement=Klient tuleb järele
+DocumentModelSimple=Lihtsa dokumendi mudel
+DocumentModelMerou=Merou A5 mudel
+WarningNoQtyLeftToSend=Hoiatus: pole ühtki lähetamise ootel kaupa.
+StatsOnShipmentsOnlyValidated=Statistika põhineb vaid kinnitatud saadetistel. Kasutatavaks kuupäevaks on saadetise kinnitamise kuupäev (plaanitav kohaletoimetamise aeg ei ole alati teada).
+DateDeliveryPlanned=Plaanitud kohaletoimetamise aeg
+DateReceived=Saadetise kättesaamise kuupäev
+SendShippingByEMail=Saada saadetis e-postiga
+SendShippingRef=Läheta saadetis %s
+ActionsOnShipping=Saatmisel toimuvad tegevused
+LinkToTrackYourPackage=Paki jälgimise link
+ShipmentCreationIsDoneFromOrder=Praegu luuakse saadetised tellimuse kaardilt.
+RelatedShippings=Seotud saatmised
+ShipmentLine=Saadetise rida
+CarrierList=Vedajate nimekiri
+
+# Sending methods
+SendingMethodCATCH=Kliendi saak
 SendingMethodTRANS=Transportija
 SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Simple dokumendi mudel kohaletoimetamisteatised
-DocumentModelTyphon=Täiuslikum dokument mudel kohaletoimetamisteatised (logo. ..)
-Error_EXPEDITION_ADDON_NUMBER_NotDefined=Pidev EXPEDITION_ADDON_NUMBER ole määratletud
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:46:09).
+
+# ModelDocument
+DocumentModelSirocco=Lihtne saatelehtede dokumendi mudel
+DocumentModelTyphon=Täiuslikum saatelehtede dokumendi mudel (logo jne)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER on määratlemata
+SumOfProductVolumes=Toodete ruumala summa
+SumOfProductWeights=Toodete kaalude summa

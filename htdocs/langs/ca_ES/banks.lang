@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - banks 
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=Banc
 Banks=Bancs
 MenuBankCash=Bancs/Caixes
@@ -20,6 +19,8 @@ SavingAccount=Compte d'estalvis
 SavingAccounts=comptes d'estalvis
 ErrorBankLabelAlreadyExists=Etiqueta de compte financier existent
 BankBalance=Saldo
+BankBalanceBefore=Saldo anterior
+BankBalanceAfter=Saldo posterior
 BalanceMinimalAllowed=Saldo mínim autoritzat
 BalanceMinimalDesired=Saldo mínim desitjat
 InitialBankBalance=Saldo inicial
@@ -103,6 +104,7 @@ ConciliatedBy=Conciliat per
 DateConciliating=Data conciliació
 BankLineConciliated=Registre conciliat
 CustomerInvoicePayment=Cobrament a client
+CustomerInvoicePaymentBack=Reemborsament a client
 SupplierInvoicePayment=Pagament a proveïdor
 WithdrawalPayment=Cobrament de domiciliació
 SocialContributionPayment=Pagament càrrega social
@@ -147,3 +149,10 @@ InputReceiptNumber=Indiqui l'extracte bancari relacionat amb la conciliació. Ut
 EventualyAddCategory=Eventualment, indiqui una categoria en la qual classificar els registres
 ToConciliate=A conciliar?
 ThenCheckLinesAndConciliate=A continuació, comproveu les línies presents en l'extracte bancari i feu clic
+BankDashboard=Resum comptes bancaris
+# DefaultRIB=Default BAN
+# AllRIB=All BAN
+# LabelRIB=BAN Label
+# NoBANRecord=No BAN record
+# DeleteARib=Delete BAN record
+# ConfirmDeleteRib=Are you sure you want to delete this BAN record ?

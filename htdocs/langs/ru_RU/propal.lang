@@ -1,22 +1,14 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Коммерческие предложения
 Proposal=Коммерческое предложение
+ProposalShort=Предложение
 ProposalsDraft=Проект коммерческого предложения
 ProposalDraft=Проект коммерческого предложения
 ProposalsOpened=Открытие коммерческих предложений
 Prop=Коммерческие предложения
 CommercialProposal=Коммерческое предложение
 CommercialProposals=Коммерческие предложения
+ProposalCard=Предложение карты
 NewProp=Новое коммерческое предложение
 NewProposal=Новое коммерческое предложение
 NewPropal=Новое предложение
@@ -29,6 +21,7 @@ ConfirmDeleteProp=Вы уверены, что хотите удалить это
 ConfirmValidateProp=Вы уверены, что хотите проверить эту коммерческое предложение?
 LastPropals=Последнее% с предложениями
 LastClosedProposals=Последнее% с закрытых предложений
+LastModifiedProposals=Последнее% с измененными предложения
 AllPropals=Все предложения
 LastProposals=Последние предложения
 SearchAProposal=Поиск предложений
@@ -66,64 +59,44 @@ FileNotUploaded=Файл не был загружен
 FileUploaded=Этот файл был успешно загружен
 AssociatedDocuments=Документы, связанные с предложением:
 ErrorCantOpenDir=Не удается открыть каталог
+DatePropal=Дата предложения
 DateEndPropal=Дата окончания действия
 DateEndPropalShort=Дата окончания
 ValidityDuration=Срок действия
 CloseAs=Закрыть со статусом
 ClassifyBilled=Классифицировать счета
 BuildBill=Создание счета-фактуры
-RelatedBill=Похожие счета
-RelatedBills=Похожие счета
 ErrorPropalNotFound=Пропал% не найдены
 Estimate=Оценка:
 EstimateShort=Расчетный показатель
 OtherPropals=Другие предложения
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Создание коммерческого предложения, копируя существующие предложения
 CreateEmptyPropal=Создайте пустую коммерческих предложений vierge либо из списка товаров / услуг
 DefaultProposalDurationValidity=По умолчанию коммерческого предложения действительности продолжительность (в днях)
 UseCustomerContactAsPropalRecipientIfExist=Используйте адрес клиента, если определено, вместо третьей стороной решения, как предложение, адрес получателя
 ClonePropal=Клон коммерческого предложения
 ConfirmClonePropal=Вы уверены, что хотите этого клона коммерческие <b>предложения %s?</b>
-DocModelAzurDescription=Полный текст предложения модели (logo. ..)
-DocModelJauneDescription=Желтый предложение модель
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-ProposalShort=Предложение
-LastModifiedProposals=Последнее% с измененными предложения
-DatePropal=Дата предложения
+ConfirmReOpenProp=Вы уверены, что хотите открыть обратно коммерческих <b>%s</b> предложение?
 ProposalsAndProposalsLines=Коммерческое предложение и линий
 ProposalLine=Предложение линия
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-TypeContact_propal_internal_SALESREPFOLL=Представитель следующие меры предложение
-TypeContact_propal_external_BILLING=свяжитесь со счета
-TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:29).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-ProposalCard=Предложение карты
 AvailabilityPeriod=Наличие задержки
 SetAvailability=Задержка устанавливается доступность
 AfterOrder=после заказа
+##### Availability #####
 AvailabilityTypeAV_NOW=Немедленный
 AvailabilityTypeAV_1W=1 неделя
 AvailabilityTypeAV_2W=2-х недель
 AvailabilityTypeAV_3W=3 недели
 AvailabilityTypeAV_1M=1 месяц
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:52).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-ConfirmReOpenProp=Вы уверены, что хотите открыть обратно коммерческих <b>%s</b> предложение?
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:59).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Представитель следующие меры предложение
+TypeContact_propal_external_BILLING=свяжитесь со счета
+TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
+# Document models
+DocModelAzurDescription=Полный текст предложения модели (logo. ..)
+DocModelJauneDescription=Желтый предложение модель
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

@@ -1,22 +1,11 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Kategoria
 Categories=Kategorie
 Rubrique=Kategoria
 Rubriques=Kategorie
 categories=kategorie
 TheCategorie=Kategoria
+NoCategoryYet=Nr kategorii tego typu tworzone
 In=W
 AddIn=Dodaj w
 modify=modyfikować
@@ -26,6 +15,8 @@ ProductsCategoriesArea=Produkty / Usługi kategorii powierzchni
 SuppliersCategoriesArea=Dostawcy kategorii powierzchni
 CustomersCategoriesArea=Klienci kategorii powierzchni
 ThirdPartyCategoriesArea=Stron trzecich kategorii powierzchni
+MembersCategoriesArea=Członków kategorii obszaru
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Główne kategorie
 SubCats=Podkategorie
 CatStatistics=Statystyki
@@ -58,11 +49,16 @@ ProductIsInCategories=Produktu / usługi posiada do następujących kategorii
 SupplierIsInCategories=Trzeciej posiada do następujących kategorii dostawców
 CompanyIsInCustomersCategories=Wspomniana strona trzecia posiada do następujących klientów / perspektywy kategorii
 CompanyIsInSuppliersCategories=Wspomniana strona trzecia posiada do następujących kategorii dostawców
+MemberIsInCategories=Ten użytkownik posiada do następujących kategorii użytkowników
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Ten produkt / usługa nie jest w żaden kategorii
 SupplierHasNoCategory=To dostawca nie jest w żaden kategorii
 CompanyHasNoCategory=Ta firma nie jest w żaden kategorii
+MemberHasNoCategory=Członek ten nie jest w żadnym kategorii
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Klasyfikacja w kategorii
 NoneCategory=Żaden
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Ta kategoria już istnieje w tym samym miejscu
 ReturnInProduct=Powrót do produktów / usług karty
 ReturnInSupplier=Powrót do dostawcy kart
@@ -79,39 +75,33 @@ NoCategoriesDefined=Nr kategorii zdefiniowanych
 SuppliersCategoryShort=Dostawcy kategorii
 CustomersCategoryShort=Klienci kategorii
 ProductsCategoryShort=Produkty kategorii
+MembersCategoryShort=Członków kategorii
 SuppliersCategoriesShort=Dostawcy kategorii
 CustomersCategoriesShort=Klienci kategorii
 CustomersProspectsCategoriesShort=Custo. / prosp. kategorie
 ProductsCategoriesShort=Produkty kategorii
+MembersCategoriesShort=Członków kategorii
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Ta kategoria nie zawiera żadnych produktów.
 ThisCategoryHasNoSupplier=Ta kategoria nie zawiera żadnego dostawcy.
 ThisCategoryHasNoCustomer=Ta kategoria nie zawiera żadnych klientów.
+ThisCategoryHasNoMember=Ta kategoria nie zawiera żadnych członków.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Przypisany do klienta
 AssignedToTheCustomer=Przypisany do klienta
 InternalCategory=Inernal kategorii
 CategoryContents=Kategoria treści
 CategId=Kategoria id
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-NoCategoryYet=Nr kategorii tego typu tworzone
 CatSupList=Lista kategorii dostawcy
 CatCusList=Lista klientów / perspektywa kategorii
 CatProdList=Lista produktów kategorii
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-MembersCategoriesArea=Członków kategorii obszaru
-MemberIsInCategories=Ten użytkownik posiada do następujących kategorii użytkowników
-MemberHasNoCategory=Członek ten nie jest w żadnym kategorii
-MembersCategoryShort=Członków kategorii
-MembersCategoriesShort=Członków kategorii
-ThisCategoryHasNoMember=Ta kategoria nie zawiera żadnych członków.
 CatMemberList=Lista członków kategorii
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:11).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

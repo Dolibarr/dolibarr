@@ -52,7 +52,11 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
  * View
  */
 
-llxHeader('',$langs->trans("HomeArea"));
+// Title
+$title=$langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
+if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
+
+llxHeader('',$title);
 
 print_fiche_titre($langs->trans("HomeArea"));
 
@@ -61,6 +65,15 @@ if (! empty($conf->global->MAIN_MOTD))
     $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
     if (! empty($conf->global->MAIN_MOTD))
     {
+    	$i=0;
+    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_MOTD,$reg) && $i < 100)
+    	{
+    		$tmp=explode('|',$reg[1]);
+    		if (! empty($tmp[1])) $langs->load($tmp[1]);
+    		$conf->global->MAIN_MOTD=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_MOTD);
+    		$i++;
+    	}
+
         print "\n<!-- Start of welcome text -->\n";
         print '<table width="100%" class="notopnoleftnoright"><tr><td>';
         print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
@@ -99,7 +112,8 @@ $langs->load("bills");
 $langs->load("orders");
 $langs->load("contracts");
 
-if ($user->societe_id == 0)
+//print memory_get_usage();
+if (empty($user->societe_id))
 {
     print '<br>';
     print '<table class="noborder" width="100%">';
@@ -107,135 +121,143 @@ if ($user->societe_id == 0)
     print '<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrStateBoard").'</th>';
     print '<th class="liste_titre" align="right">&nbsp;</th>';
     print '</tr>';
+    print '<tr class="impair"><td colspan="3" class="impair tdboxstats nohover">';
 
     $var=true;
-
-    // Condition to be checked for each display line dashboard
-    $conditions=array(
-    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
-    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
-    ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
-    ! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
-    ! empty($conf->product->enabled) && $user->rights->produit->lire,
-    ! empty($conf->service->enabled) && $user->rights->service->lire,
-    ! empty($conf->propal->enabled) && $user->rights->propale->lire,
-    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
-    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
-    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer);
-    // Class file containing the method load_state_board for each line
-    $includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
-    DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php",
-    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
-    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
-    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
-    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
-    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
-    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
-    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
-    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
-    // Name class containing the method load_state_board for each line
-    $classes=array('Client',
-                   'Prospect',
-                   'Fournisseur',
-                   'Adherent',
-                   'Product',
-                   'Service',
-				   'Propal',
-				   'Commande',
-				   'Facture',
-                   'Contrat');
-    // Cle array returned by the method load_state_board for each line
-    $keys=array('customers',
-                'prospects',
-                'suppliers',
-                'members',
-                'products',
-                'services',
-				'proposals',
-				'orders',
-				'invoices',
-				'Contracts');
-    // Dashboard Icon lines
-    $icons=array('company',
-                 'company',
-                 'company',
-                 'user',
-                 'product',
-                 'service',
-				 'propal',
-				 'order',
-				 'bill',
-				 'order');
-    // Translation keyword
-    $titres=array("ThirdPartyCustomersStats",
-                  "ThirdPartyProspectsStats",
-                  "Suppliers",
-                  "Members",
-                  "Products",
-                  "Services",
-                  "CommercialProposals",
-                  "CustomersOrders",
-                  "BillsCustomers",
-                  "Contracts");
-    // Dashboard Link lines
-    $links=array(DOL_URL_ROOT.'/comm/list.php',
-    DOL_URL_ROOT.'/comm/prospect/list.php',
-    DOL_URL_ROOT.'/fourn/liste.php',
-    DOL_URL_ROOT.'/adherents/liste.php?statut=1&mainmenu=members',
-    DOL_URL_ROOT.'/product/liste.php?type=0&mainmenu=products',
-    DOL_URL_ROOT.'/product/liste.php?type=1&mainmenu=products',
-    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
-    DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
-    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
-    DOL_URL_ROOT.'/contrat/liste.php');
-    // Translation lang files
-    $langfile=array("companies",
-                    "prospects",
-                    "suppliers",
-                    "members",
-                    "products",
-                    "produts",
-                    "propal",
-                    "orders",
-                    "bills",
-					"Contracts");
-
-
-    // Loop and displays each line of table
-    foreach ($keys as $key=>$val)
-    {
-        if ($conditions[$key])
-        {
-            $classe=$classes[$key];
-            // Search in cache if load_state_board is already realized
-            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
-            {
-                include_once $includes[$key];
-
-                $board=new $classe($db);
-                $board->load_state_board($user);
-                $boardloaded[$classe]=$board;
-            }
-            else $board=$boardloaded[$classe];
-
-            $var=!$var;
-            if ($langfile[$key]) $langs->load($langfile[$key]);
-            $title=$langs->trans($titres[$key]);
-            print '<tr '.$bc[$var].'><td width="16">'.img_object($title,$icons[$key]).'</td>';
-            print '<td>'.$title.'</td>';
-            print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
-            print '</tr>';
-        }
-    }
 
     $object=new stdClass();
     $parameters=array();
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+    if (empty($reshook))
+    {
+	    // Condition to be checked for each display line dashboard
+	    $conditions=array(
+	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
+	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
+	    ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
+	    ! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
+	    ! empty($conf->product->enabled) && $user->rights->produit->lire,
+	    ! empty($conf->service->enabled) && $user->rights->service->lire,
+	    ! empty($conf->propal->enabled) && $user->rights->propale->lire,
+	    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
+	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
+	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer);
+	    // Class file containing the method load_state_board for each line
+	    $includes=array(DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
+	    DOL_DOCUMENT_ROOT."/comm/prospect/class/prospect.class.php",
+	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
+	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
+	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
+	    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
+	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
+	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
+	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
+	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
+	    // Name class containing the method load_state_board for each line
+	    $classes=array('Client',
+	                   'Prospect',
+	                   'Fournisseur',
+	                   'Adherent',
+	                   'Product',
+	                   'Service',
+					   'Propal',
+					   'Commande',
+					   'Facture',
+	                   'Contrat');
+	    // Cle array returned by the method load_state_board for each line
+	    $keys=array('customers',
+	                'prospects',
+	                'suppliers',
+	                'members',
+	                'products',
+	                'services',
+					'proposals',
+					'orders',
+					'invoices',
+					'Contracts');
+	    // Dashboard Icon lines
+	    $icons=array('company',
+	                 'company',
+	                 'company',
+	                 'user',
+	                 'product',
+	                 'service',
+					 'propal',
+					 'order',
+					 'bill',
+					 'order');
+	    // Translation keyword
+	    $titres=array("ThirdPartyCustomersStats",
+	                  "ThirdPartyProspectsStats",
+	                  "Suppliers",
+	                  "Members",
+	                  "Products",
+	                  "Services",
+	                  "CommercialProposalsShort",
+	                  "CustomersOrders",
+	                  "BillsCustomers",
+	                  "Contracts");
+	    // Dashboard Link lines
+	    $links=array(DOL_URL_ROOT.'/comm/list.php',
+	    DOL_URL_ROOT.'/comm/prospect/list.php',
+	    DOL_URL_ROOT.'/fourn/liste.php',
+	    DOL_URL_ROOT.'/adherents/liste.php?statut=1&mainmenu=members',
+	    DOL_URL_ROOT.'/product/liste.php?type=0&mainmenu=products',
+	    DOL_URL_ROOT.'/product/liste.php?type=1&mainmenu=products',
+	    DOL_URL_ROOT.'/comm/propal/list.php?mainmenu=commercial',
+	    DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
+	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
+	    DOL_URL_ROOT.'/contrat/liste.php');
+	    // Translation lang files
+	    $langfile=array("companies",
+	                    "prospects",
+	                    "suppliers",
+	                    "members",
+	                    "products",
+	                    "produts",
+	                    "propal",
+	                    "orders",
+	                    "bills",
+						"contracts");
+
+
+	    // Loop and displays each line of table
+	    foreach ($keys as $key=>$val)
+	    {
+	        if ($conditions[$key])
+	        {
+	            $classe=$classes[$key];
+	            // Search in cache if load_state_board is already realized
+	            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
+	            {
+	            	include_once $includes[$key];	// Loading a class cost around 1Mb
+
+	                $board=new $classe($db);
+	                $board->load_state_board($user);
+	                $boardloaded[$classe]=$board;
+	            }
+	            else $board=$boardloaded[$classe];
+
+	            $var=!$var;
+	            if ($langfile[$key]) $langs->load($langfile[$key]);
+	            $text=$langs->trans($titres[$key]);
+	            print '<div class="boxstats">';
+	            print '<a href="'.$links[$key].'" class="nobold nounderline">';
+	            print img_object($text,$icons[$key]).' '.$text.'<br>';
+	            print '</a>';
+	            print '<a href="'.$links[$key].'">';
+	            print $board->nb[$val];
+	            print '</a>';
+	            print '</div>';
+	        }
+	    }
+    }
+
+    print '</td></tr>';
     print '</table>';
 }
-
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
@@ -393,7 +415,7 @@ if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && 
     $board->load_board($user);
     $board->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
     $board->label=$langs->trans("SupplierBillsToPay");
-    $board->url=DOL_URL_ROOT.'/fourn/facture/index.php?filtre=paye:0';
+    $board->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0';
     $board->img=img_object($langs->trans("Bills"),"bill");
     $rowspan++;
     $dashboardlines[]=$board;

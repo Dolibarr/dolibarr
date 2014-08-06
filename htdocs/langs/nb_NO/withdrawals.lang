@@ -1,10 +1,11 @@
-# Dolibarr language file - no_NB - withdrawals
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Område for utestående ordre
 CustomersStandingOrdersArea=Område for utestående kundeordre
 StandingOrders=Utestående ordre
 StandingOrder=Utestående ordre
 NewStandingOrder=Ny utestående ordre
+StandingOrderToProcess=Å behandle
+StandingOrderProcessed=Behandlet
 Withdrawals=Innbetalinger
 Withdrawal=Innbetaling
 WithdrawalsReceipts=Kvitteringer
@@ -18,6 +19,7 @@ RequestStandingOrderTreated=Vis behandlede utestående ordre
 CustomersStandingOrders=Utestående kundeordre
 CustomerStandingOrder=Utestående kundeordre
 NbOfInvoiceToWithdraw=Ant. fakurar med betalingsønske
+NbOfInvoiceToWithdrawWithInfo=Nb av faktura med trekke tilbake anmodningen om kunder som har definert bankkonto
 InvoiceWaitingWithdraw=Vaktura venter på betaling
 AmountToWithdraw=Beløp å betale
 WithdrawsRefused=Betaling avvist
@@ -33,17 +35,12 @@ ThirdPartyDeskCode=Tredjepartens desk code
 NoInvoiceCouldBeWithdrawed=Kunne ikke betale noen fakturaer. Sjekk at faktura er på firmaer med gyldig BAN.
 ClassCredited=Godkjenn belastning
 ClassCreditedConfirm=Er du sikker på at du vil godkjenne denne betalingen som bokført på din bankkonto?
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> nb_NO
-StandingOrderToProcess=Å behandle
-StandingOrderProcessed=Behandlet
 TransData=Dato Transmission
 TransMetod=Metode Transmission
 Send=Send
 Lines=Linjer
 StandingOrderReject=Utstede en avvise
+InvoiceRefused=Lad avvisningen til kunden
 WithdrawalRefused=Uttak Refuseds
 WithdrawalRefusedConfirm=Er du sikker på at du vil angi en tilbaketrekning avslag for samfunnet
 RefusedData=Dato for avvisning
@@ -54,6 +51,7 @@ InvoiceRefused=Lad avvisningen til kunden
 Status=Status
 StatusUnknown=Ukjent
 StatusWaiting=Venter
+StatusTrans=Overført
 StatusCredited=Kreditert
 StatusRefused=Nektet
 StatusMotif0=Uspesifisert
@@ -73,13 +71,6 @@ NotifyTransmision=Uttak Transmission
 NotifyEmision=Uttak Emisjon
 NotifyCredit=Uttak Credit
 NumeroNationalEmetter=Nasjonale Transmitter nummer
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:22:53).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-NbOfInvoiceToWithdrawWithInfo=Nb av faktura med trekke tilbake anmodningen om kunder som har definert bankkonto
-StatusTrans=Overført
 PleaseSelectCustomerBankBANToWithdraw=Velg informasjon om kundens bankkonto å trekke seg
 WithBankUsingRIB=For bankkontoer bruker RIB
 WithBankUsingBANBIC=For bankkontoer bruker IBAN / BIC / SWIFT
@@ -89,6 +80,11 @@ WithdrawalFileNotCapable=Kan ikke generere uttak kvittering fil for ditt land
 ShowWithdraw=Vis Angrerett
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Men hvis faktura har minst én tilbaketrekning betaling ennå ikke behandlet, vil det ikke bli satt som utbetales å tillate å administrere uttak før.
 DoStandingOrdersBeforePayments=Dette faner lar deg for å be om en stående ordre. Når det blir ferdig, kan du skrive inn betaling for å lukke fakturaen.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Betaling av fast oppdrag %s av banken
 InfoCreditMessage=Den stående ordre %s er betalt av banken <br> Data om betaling: %s
 InfoTransSubject=Overføring av fast oppdrag %s til bank
@@ -96,6 +92,5 @@ InfoTransMessage=Den stående ordre %s har blitt transmited til banken ved %s %s
 InfoTransData=Beløp: %s <br> Metode: %s <br> Dato: %s
 InfoFoot=Dette er en automatisk melding som sendes av Dolibarr
 InfoRejectSubject=Stående ordre nektet
-InfoRejectMessage=Hei, <br><br> den standig rekkefølgen av faktura %s knyttet til selskapet %s, med en mengde %s har blitt nektet av banken. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Mulighet for reell modus ble ikke satt, stopper vi etter denne simuleringen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:15).

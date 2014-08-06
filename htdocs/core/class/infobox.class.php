@@ -100,13 +100,12 @@ class InfoBox
 					// TODO PERF Do not make "dol_include_once" here, nor "new" later. This means, we must store a 'depends' field to store modules list, then
                     // the "enabled" condition for modules forbidden for external users and the depends condition can be done.
                     // Goal is to avoid making a new instance for each boxes returned by select.
-
                     dol_include_once($relsourcefile);
                     if (class_exists($boxname))
                     {
-                        $box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
+                    	$box=new $boxname($db,$obj->note);		// Constructor may set properties like box->enabled. obj->note is note into box def, not user params.
                         //$box=new stdClass();
-                        
+
                         // box properties
                         $box->rowid		= (empty($obj->rowid) ? '' : $obj->rowid);
                         $box->id		= (empty($obj->box_id) ? '' : $obj->box_id);
@@ -115,7 +114,8 @@ class InfoBox
                         $box->fk_user	= (empty($obj->fk_user) ? 0 : $obj->fk_user);
                         $box->sourcefile= $relsourcefile;
                     	$box->class     = $boxname;
-                        if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
+
+                    	if ($mode == 'activated' && ! is_object($user))	// List of activated box was not yet personalized into database
                         {
                             if (is_numeric($box->box_order))
                             {
@@ -126,20 +126,31 @@ class InfoBox
                         // box_def properties
                         $box->box_id	= (empty($obj->box_id) ? '' : $obj->box_id);
                         $box->note		= (empty($obj->note) ? '' : $obj->note);
-                        
-                        // Filter on box->enabled (fused for example by box_comptes) and box->depends
-                        //$enabled=1;
+
+                        // Filter on box->enabled (used for example by box_comptes)
+                        // Filter also on box->depends. Example: array("product|service") or array("contrat", "service")
                         $enabled=$box->enabled;
                         if (isset($box->depends) && count($box->depends) > 0)
                         {
-                            foreach($box->depends as $module)
+                            foreach($box->depends as $moduleelem)
                             {
-                                //print $boxname.'-'.$module.'<br>';
-                                $tmpmodule=preg_replace('/@[^@]+/','',$module);
-                                if (empty($conf->$tmpmodule->enabled)) $enabled=0;
+                            	$arrayelem=explode('|',$moduleelem);
+                            	$tmpenabled=0;	// $tmpenabled is used for the '|' test (OR)
+                            	foreach($arrayelem as $module)
+                            	{ 
+    	                        	$tmpmodule=preg_replace('/@[^@]+/','',$module);
+    	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1; 
+                            		//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
+                            	}
+                            	if (empty($tmpenabled))	// We found at least one module required that disabled 
+        	                    {
+        	                    	$enabled=0;
+        	                    	break;
+        	                    }
                             }
                         }
-
+                        //print '=>'.$boxname.'-enabled='.$enabled.'<br>';
+                        
                         //print 'xx module='.$module.' enabled='.$enabled;
                         if ($enabled) $boxes[]=$box;
                         else unset($box);

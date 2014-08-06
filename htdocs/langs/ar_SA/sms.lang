@@ -1,13 +1,4 @@
-/*
- * Language code: ar_SA
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 15:55:27
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=SMS
 SmsSetup=SMS الإعداد
 SmsDesc=هذه الصفحة يسمح لك لتحديد الخيارات غلوبالس على ميزات SMS
@@ -56,7 +47,7 @@ NbOfSms=Nbre من أرقام فون
 ThisIsATestMessage=هذه هي رسالة اختبار
 SendSms=ارسال الرسائل القصيرة
 SmsInfoCharRemain=ملحوظة من الأحرف المتبقية
-SmsInfoNumero=(تنسيق دولي أي: +33899701761)
+SmsInfoNumero= (تنسيق دولي أي: +33899701761)
 DelayBeforeSending=تأخير قبل إرسال (دقائق)
 SmsNoPossibleRecipientFound=لا هدف متاح. تحقق الإعداد من مزود خدمات الرسائل القصيرة.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:32).
+

@@ -1,11 +1,10 @@
-# Dolibarr language file - pt_PT - mails
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=Mailing
 EMailing=Mailing
 Mailings=Mailings
 EMailings=Mailings
-MailCard=Ficha de Mailing
 AllEMailings=Todos os E-Mailings
+MailCard=Ficha de Mailing
 MailTargets=Destinatarios
 MailRecipients=Dsetinatarios
 MailRecipient=Destinatario
@@ -24,6 +23,7 @@ ShowEMailing=Mostrar E-Mailing
 ListOfEMailings=Lista de mailings
 NewMailing=Novo Mailing
 EditMailing=Editar Mailing
+ResetMailing=Reenviar e-mail
 DeleteMailing=Eliminar Mailing
 DeleteAMailing=Eliminar um Mailing
 PreviewMailing=Previsualizar um Mailing
@@ -43,9 +43,14 @@ MailingStatusSentCompletely=Enviado Completamente
 MailingStatusError=Erro
 MailingStatusNotSent=Não Enviado
 MailSuccessfulySent=E-mail enviado correctamente (de %s a %s)
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=A direcção do destinatario está vazia
 WarningNoEMailsAdded=nenhum Novo e-mail a Adicionar à lista destinatarios.
 ConfirmValidMailing=Confirma a validação do mailing?
+ConfirmResetMailing=Atenção, por reinitializing <b>emailing %s,</b> que permitem fazer uma massa enviando este e-mail de outro tempo. Tem certeza de que isto é o que você quer fazer?
 ConfirmDeleteMailing=Confirma a eliminação do mailing?
 NbOfRecipients=Número de destinatarios
 NbOfUniqueEMails=Nº de e-mails únicos
@@ -59,12 +64,36 @@ YouCanAddYourOwnPredefindedListHere=Para Criar o seu módulo de selecção e-mai
 EMailTestSubstitutionReplacedByGenericValues=Em modo teste, as Variávels de substituição são sustituidas por valores genéricos
 MailingAddFile=Adicionar este Ficheiro
 NoAttachedFiles=Sem ficheiros anexos
-# Libelle des modules de liste de destinataires mailing=
+BadEMail=Valor inválido para o email
+CloneEMailing=Clone Emailing
+ConfirmCloneEMailing=Tem certeza de que deseja clonar este email?
+CloneContent=Clone mensagem
+CloneReceivers=Clonar destinatários
+DateLastSend=Data do último envio
+DateSending=Data de envio
+SentTo=Enviado para <b>%s</b>
+MailingStatusRead=Ler
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contactos de Terceiros (clientes potenciais, clientes, Fornecedores...)
 MailingModuleDescDolibarrUsers=Utilizadores de Dolibarr que tem e-mail
 MailingModuleDescFundationMembers=Membros que tem e-mail
 MailingModuleDescEmailsFromFile=E-Mails de um Ficheiro (e-mail;Nome;Vários)
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Terceiros com e-mail (por categoria)
+MailingModuleDescDolibarrContractsLinesExpired=Terceiros com contrato expirou as linhas
+MailingModuleDescContactsByCompanyCategory=Contactos de terceiros (por terceiros categoria)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescMembersCategories=Membros da Fundação (por categorias)
+MailingModuleDescContactsByFunction=Contactos de terceiros (por cargo / função)
+
+
 LineInFile=Linha %s em Ficheiro
 RecipientSelectionModules=Módulos de selecção dos destinatarios
 MailSelectedRecipients=Destinatarios seleccionados
@@ -77,9 +106,10 @@ SearchAMailing=Procurar um mailing
 SendMailing=Enviar mailing
 SendMail=Enviar e-mail
 SentBy=Enviado por
-MailingNeedCommand=Por razões de segurança, o envío de um mailing em massa podem realizar-se em linha de comandos. Peça ao seu administrador que lance o comando seguinte para para enviar a correspondencia e a todos os destinatarios:
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Pode enviar em linha adicionando o parâmetro MAILING_LIMIT_SENDBYWEB com um valor número que indica o máximo nº de e-mails enviados por Sessão.
-ConfirmSendingEmailing=Confirma o envío do e-mailing?<br>o envío em linha de e-mails estão limitados por segurança a <b>%s</b> destinatarios por Sessão.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=Limpar lista
 ToClearAllRecipientsClickHere=Para limpar a lista dos destinatarios deste mailing, faça click ao botão
 ToAddRecipientsChooseHere=Para Adicionar destinatarios, escoja os que figuran em listas a continuação
@@ -87,42 +117,16 @@ NbOfEMailingsReceived=Mailings em masa recibidos
 IdRecord=ID registo
 DeliveryReceipt=Recibo de recpção
 YouCanUseCommaSeparatorForSeveralRecipients=Pode usar o carácter de separação <b>coma </b> para especificar multiplos destinatarios.
-# Module Notifications=
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=Notificações
 NoNotificationsWillBeSent=Nenhuma notificação por e-mail está prevista para este evento e empresa
 ANotificationsWillBeSent=1 notificação vai a ser enviada por e-mail
 SomeNotificationsWillBeSent=%s Notificações vão ser enviadas por e-mail
 AddNewNotification=Activar um novo pedido de notificação
 ListOfActiveNotifications=Lista das pedidos de notificações activas
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-ResetMailing=Reenviar e-mail
-ConfirmResetMailing=Atenção, por reinitializing <b>emailing %s,</b> que permitem fazer uma massa enviando este e-mail de outro tempo. Tem certeza de que isto é o que você quer fazer?
-BadEMail=Valor inválido para o email
-CloneEMailing=Clone Emailing
-ConfirmCloneEMailing=Tem certeza de que deseja clonar este email?
-CloneContent=Clone mensagem
-CloneReceivers=Clonar destinatários
-DateLastSend=Data do último envio
-MailingModuleDescDolibarrContractsLinesExpired=Terceiros com contrato expirou as linhas
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-DateSending=Data de envio
-SentTo=Enviado para <b>%s</b>
-LimitSendingEmailing=Na linha de envio de emailings são limitadas por motivos de segurança e limite de destinatários <b>%s</b> enviando sessão.
 ListOfNotificationsDone=Lista de todas as notificações de e-mail enviado
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:54).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-MailingStatusRead=Ler
-MailingModuleDescContactsByCompanyCategory=Contactos de terceiros (por terceiros categoria)
-MailingModuleDescMembersCategories=Membros da Fundação (por categorias)
-MailingModuleDescContactsByFunction=Contactos de terceiros (por cargo / função)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:05).

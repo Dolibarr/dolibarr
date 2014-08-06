@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,7 @@ if (!$user->admin) accessforbidden();
 $langs->load("admin");
 $langs->load("other");
 
-$error=0; $mesg='';
+$error=0;
 $action = GETPOST("action");
 
 $syslogModules = array();
@@ -110,12 +111,12 @@ if ($action == 'set')
     if (! $error)
 	{
 		$db->commit();
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
 		$db->rollback();
-		if (empty($mesg)) $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"),'errors');
 	}
 
 }
@@ -129,12 +130,12 @@ if ($action == 'setlevel')
 
 	if (! $res > 0) $error++;
 	if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
 	}
 }
 
@@ -248,8 +249,6 @@ print '</select>';
 print '</td></tr>';
 print '</table>';
 print "</form>\n";
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

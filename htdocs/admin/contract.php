@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2012      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2013      Philippe Grand	    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 
 $langs->load("admin");
 $langs->load("errors");
@@ -34,6 +35,8 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
+$scandir = GETPOST('scandir','alpha');
+$type='contrat';
 
 if (empty($conf->global->CONTRACT_ADDON))
 {
@@ -53,36 +56,145 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
+ 	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
-if ($action == 'setmod')
+else if ($action == 'specimen') // For contract
 {
-    dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
+	$modele= GETPOST('module','alpha');
+
+	$contract = new Contrat($db);
+	$contract->initAsSpecimen();
+
+	// Search template files
+	$file=''; $classname=''; $filefound=0;
+	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+	foreach($dirmodels as $reldir)
+	{
+	    $file=dol_buildpath($reldir."core/modules/contract/doc/pdf_".$modele.".modules.php",0);
+		if (file_exists($file))
+		{
+			$filefound=1;
+			$classname = "pdf_".$modele;
+			break;
+		}
+	}
+
+	if ($filefound)
+	{
+		require_once $file;
+
+		$module = new $classname($db);
+
+		if ($module->write_file($contract,$langs) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=contract&file=SPECIMEN.pdf");
+			return;
+		}
+		else
+		{
+			setEventMessage($obj->error,'errors');
+			dol_syslog($obj->error, LOG_ERR);
+		}
+	}
+	else
+	{
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+	}
 }
 
-/*
- // constants of magre model
- if ($action == 'updateMatrice') dolibarr_set_const($db, "CONTRACT_NUM_MATRICE",$_POST["matrice"],'chaine',0,'',$conf->entity);
- if ($action == 'updatePrefix') dolibarr_set_const($db, "CONTRACT_NUM_PREFIX",$_POST["prefix"],'chaine',0,'',$conf->entity);
- if ($action == 'setOffset') dolibarr_set_const($db, "CONTRACT_NUM_DELTA",$_POST["offset"],'chaine',0,'',$conf->entity);
- if ($action == 'setNumRestart') dolibarr_set_const($db, "CONTRACT_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"],'chaine',0,'',$conf->entity);
- */
+// Activate a model
+else if ($action == 'set')
+{
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+}
+
+else if ($action == 'del')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->CONTRACT_ADDON_PDF == "$value") dolibarr_del_const($db, 'CONTRACT_ADDON_PDF',$conf->entity);
+	}
+}
+
+// Set default model
+else if ($action == 'setdoc')
+{
+	if (dolibarr_set_const($db, "CONTRACT_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+	{
+		// La constante qui a ete lue en avant du nouveau set
+		// on passe donc par une variable pour avoir un affichage coherent
+		$conf->global->CONTRACT_ADDON_PDF = $value;
+	}
+
+	// On active le modele
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+		$ret = addDocumentModel($value, $type, $label, $scandir);
+	}
+}
+
+else if ($action == 'setmod')
+{
+	// TODO Verifier si module numerotation choisi peut etre active
+	// par appel methode canBeActivated
+
+	dolibarr_set_const($db, "CONTRACT_ADDON",$value,'chaine',0,'',$conf->entity);
+}
+
+else if ($action == 'set_CONTRACT_FREE_TEXT')
+{
+	$freetext= GETPOST('CONTRACT_FREE_TEXT','alpha');
+	$res = dolibarr_set_const($db, "CONTRACT_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
+
+else if ($action == 'set_CONTRACT_DRAFT_WATERMARK')
+{
+	$draft= GETPOST('CONTRACT_DRAFT_WATERMARK','alpha');
+
+	$res = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK",trim($draft),'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
 
 /*
  * View
  */
 
+$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+ 
 llxHeader();
 
-$dir=DOL_DOCUMENT_ROOT."/core/modules/contract/";
 $form=new Form($db);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
@@ -90,15 +202,9 @@ print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'setup');
 
 print "<br>";
 
-$h = 0;
+$head=contract_admin_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/contract.php";
-$head[$h][1] = $langs->trans("Contracts");
-$head[$h][2] = 'Contract';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'contract', $langs->trans("ModuleSetup"));
 
 /*
  * Contracts Numbering model
@@ -112,94 +218,302 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
 
-$dir = "../core/modules/contract/";
-$handle = opendir($dir);
-if (is_resource($handle))
+foreach ($dirmodels as $reldir)
 {
-    $var=true;
+	$dir = dol_buildpath($reldir."core/modules/contract/");
 
-    while (($file = readdir($handle))!==false)
-    {
-        if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-        {
-            $file = substr($file, 0, dol_strlen($file)-4);
+	if (is_dir($dir))
+	{
+		$handle = opendir($dir);
+		if (is_resource($handle))
+		{
+			$var=true;
 
-            require_once DOL_DOCUMENT_ROOT ."/core/modules/contract/".$file.'.php';
+			while (($file = readdir($handle))!==false)
+			{
+				if (substr($file, 0, 13) == 'mod_contract_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				{
+					$file = substr($file, 0, dol_strlen($file)-4);
 
-            $module = new $file;
+					require_once $dir.$file.'.php';
 
-            // Show modules according to features level
-            if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-            if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
+					$module = new $file($db);
 
-            if ($module->isEnabled())
-            {
-                $var=!$var;
-                print '<tr '.$bc[$var].'><td>'.$module->nom."</td>\n";
-                print '<td>';
-                print $module->info();
-                print '</td>';
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                // Show example of numbering model
-                print '<td class="nowrap">';
-                $tmp=$module->getExample();
-                if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
-                elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
-                else print $tmp;
-                print '</td>'."\n";
+					if ($module->isEnabled())
+					{
+						$var=!$var;
+						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+						print $module->info();
+						print '</td>';
 
-                print '<td align="center">';
-                if ($conf->global->CONTRACT_ADDON == "$file")
-                {
-                    print img_picto($langs->trans("Activated"),'switch_on');
-                }
-                else
-                {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
-                    print img_picto($langs->trans("Disabled"),'switch_off');
-                    print '</a>';
-                }
-                print '</td>';
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp=$module->getExample();
+						if (preg_match('/^Error/',$tmp)) { $langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>'; }
+						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+						else print $tmp;
+						print '</td>'."\n";
 
-                $contract=new Contrat($db);
-                $contract->initAsSpecimen();
+						print '<td align="center">';
+						if ($conf->global->CONTRACT_ADDON == "$file")
+						{
+							print img_picto($langs->trans("Activated"),'switch_on');
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"),'switch_off');
+							print '</a>';
+						}
+						print '</td>';
 
-                // Info
-                $htmltooltip='';
-                $htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-                $nextval=$module->getNextValue($mysoc,$contract);
-                if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
-                {
-                    $htmltooltip.=''.$langs->trans("NextValue").': ';
-                    if ($nextval)
-                    {
-                        $htmltooltip.=$nextval.'<br>';
-                    }
-                    else
-                    {
-                        $htmltooltip.=$langs->trans($module->error).'<br>';
-                    }
-                }
+						$contract=new Contrat($db);
+						$contract->initAsSpecimen();
 
-                print '<td align="center">';
-                print $form->textwithpicto('',$htmltooltip,1,0);
-                print '</td>';
+						// Info
+						$htmltooltip='';
+						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval=$module->getNextValue($mysoc,$contract);
+						if ("$nextval" != $langs->trans("NotAvailable"))	// Keep " on nextval
+						{
+							$htmltooltip.=''.$langs->trans("NextValue").': ';
+							if ($nextval)
+							{
+								$htmltooltip.=$nextval.'<br>';
+							}
+							else
+							{
+								$htmltooltip.=$langs->trans($module->error).'<br>';
+							}
+						}
 
-                print '</tr>';
-            }
-        }
-    }
-    closedir($handle);
+						print '<td align="center">';
+						print $form->textwithpicto('',$htmltooltip,1,0);
+						print '</td>';
+
+						print '</tr>';
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
 }
 
 print '</table><br>';
 
-dol_htmloutput_mesg($mesg);
+/*
+ *  Documents models for Contracts
+ */
+
+print_titre($langs->trans("TemplatePDFContracts"));
+
+// Defini tableau def des modeles
+$type='contrat';
+$def = array();
+$sql = "SELECT nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql.= " WHERE type = '".$type."'";
+$sql.= " AND entity = ".$conf->entity;
+$resql=$db->query($sql);
+if ($resql)
+{
+	$i = 0;
+	$num_rows=$db->num_rows($resql);
+	while ($i < $num_rows)
+	{
+		$array = $db->fetch_array($resql);
+		array_push($def, $array[0]);
+		$i++;
+	}
+}
+else
+{
+	dol_print_error($db);
+}
+
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
+print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+$var=true;
+foreach ($dirmodels as $reldir)
+{
+    foreach (array('','/doc') as $valdir)
+    {
+    	$dir = dol_buildpath($reldir."core/modules/contract".$valdir);
+
+        if (is_dir($dir))
+        {
+            $handle=opendir($dir);
+            if (is_resource($handle))
+            {
+                while (($file = readdir($handle))!==false)
+                {
+                    $filelist[]=$file;
+                }
+                closedir($handle);
+                arsort($filelist);
+
+                foreach($filelist as $file)
+                {
+                    if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
+                    {
+
+                    	if (file_exists($dir.'/'.$file))
+                    	{
+                    		$name = substr($file, 4, dol_strlen($file) -16);
+	                        $classname = substr($file, 0, dol_strlen($file) -12);
+
+	                        require_once $dir.'/'.$file;
+	                        $module = new $classname($db);
+
+	                        $modulequalified=1;
+	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+
+	                        if ($modulequalified)
+	                        {
+	                            $var = !$var;
+	                            print '<tr '.$bc[$var].'><td width="100">';
+	                            print (empty($module->name)?$name:$module->name);
+	                            print "</td><td>\n";
+	                            if (method_exists($module,'info')) print $module->info($langs);
+	                            else print $module->description;
+	                            print '</td>';
+
+	                            // Active
+	                            if (in_array($name, $def))
+	                            {
+	                            	print '<td align="center">'."\n";
+	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print img_picto($langs->trans("Enabled"),'switch_on');
+	                            	print '</a>';
+	                            	print '</td>';
+	                            }
+	                            else
+	                            {
+	                                print '<td align="center">'."\n";
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+	                                print "</td>";
+	                            }
+
+	                            // Defaut
+	                            print '<td align="center">';
+	                            if ($conf->global->CONTRACT_ADDON_PDF == $name)
+	                            {
+	                                print img_picto($langs->trans("Default"),'on');
+	                            }
+	                            else
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	                            }
+	                            print '</td>';
+
+	                           // Info
+		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+			                    if ($module->type == 'pdf')
+			                    {
+			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			                    }
+					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
+					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
+
+
+	                            print '<td align="center">';
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
+	                            print '</td>';
+
+	                            // Preview
+	                            print '<td align="center">';
+	                            if ($module->type == 'pdf')
+	                            {
+	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'contract').'</a>';
+	                            }
+	                            else
+	                            {
+	                                print img_object($langs->trans("PreviewNotAvailable"),'generic');
+	                            }
+	                            print '</td>';
+
+	                            print "</tr>\n";
+	                        }
+                    	}
+                    }
+                }
+            }
+        }
+    }
+}
+
+print '</table>';
+print "<br>";
+
+/*
+ * Other options
+ *
+ */
+
+print_titre($langs->trans("OtherOptions"));
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print "<td>&nbsp;</td>\n";
+print "</tr>\n";
+$var=true;
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_CONTRACT_FREE_TEXT">';
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("FreeLegalTextOnContracts").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+print '<textarea name="CONTRACT_FREE_TEXT" class="flat" cols="120">'.$conf->global->CONTRACT_FREE_TEXT.'</textarea>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+//Use draft Watermark
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"set_CONTRACT_DRAFT_WATERMARK\">";
+print '<tr '.$bc[$var].'><td colspan="2">';
+print $langs->trans("WatermarkOnDraftContractCards").'<br>';
+print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+print '</table>';
+
+print '<br>';
 
 $db->close();
 

@@ -1,75 +1,51 @@
-# Dolibarr language file - pt_PT - agenda
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID do evento
 Actions=Acções
 ActionsArea=Área de Acções
-Agenda=Agenda
-Agendas=Agendas
-Calendar=Calendário
-Calendars=Calendários
-AffectedTo=Afecta o
-DoneBy=Realizado por
-Events=Eventos
-ListOfActions=Lista de Eventos
-Location=Localização
-SearchAnAction=Procurar uma Acção
-MenuToDoActions=
-MenuDoneActions=
-MenuToDoMyActions=
-MenuDoneMyActions=
-ListOfEvents=Lista de Eventos
-ActionsAskedBy=
-ActionsToDoBy=
-ActionsDoneBy=
-AllMyActions=Todas as minhas acções
-AllActions=Todas as Acções
-ViewList=Ver Lista
-ViewCal=Ver Calendário
-ViewWithPredefinedFilters=
-AutoActions=
-AgendaAutoActionDesc=
-AgendaSetupOtherDesc=
-ActionsEvents=
-PropalValidatedInDolibarr=Proposta Validada
-InvoiceValidatedInDolibarr=Factura Validada
-OrderValidatedInDolibarr=
-NewCompanyToDolibarr=Nova Empresa Adicionada
-DateActionPlannedStart=Planeada data de início
-DateActionPlannedEnd=Planeada data de fim
-DateActionDoneStart=Data Real de Início
-DateActionDoneEnd=Data Real de Fim
-DateActionStart=Data de Início
-DateActionEnd=Data Fim
-AgendaUrlOptions1=Também pode adicionar os seguintes parâmetros de filtro de saída:
-AgendaUrlOptions2=<b>login=%s</b>para restringir a produção para acções criadas por, ou afectadas a fazer pelo utilizador <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> para restringir a produção para acções criadas pelo utilizador <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> para restringir a produção para as acções para o utilizador afectado <b>%s</b>.
-AgendaUrlOptions5=<b>logind=%s</b> para restringir a produção para acções feitas pelo utilizador <b>%s</b>.
-AgendaShowBirthdayEvents=Mostrar Aniversários dos Contactos
-AgendaHideBirthdayEvents=Esconder Aniversários dos Contactos
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
-// Reference language: en_US
-InterventionValidatedInDolibarr=Intervenção %s validada
-InterventionValidatedInDolibarr=Intervenção %s validada
-MenuToDoActions=Wszystkich działań niekompletne
-InterventionValidatedInDolibarr=%s Intervenção validada
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:53).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
+Agenda= Agenda
+Agendas= Agendas
+Calendar= Calendário
+Calendars= Calendários
 LocalAgenda=Calendário local
+AffectedTo= Afecta o
+DoneBy= Realizado por
+Events= Eventos
+EventsNb=Número de eventos
 MyEvents=Meus eventos
 OtherEvents=Outros eventos
-EventOnFullDay=Evento no dia completo
+ListOfActions=Lista de Eventos
+Location=Localização
+EventOnFullDay=Evento para todo o dia
+SearchAnAction= Procurar uma Acção
+MenuToDoActions= Acções a fazer
+MenuDoneActions= Todos os eventos terminados
+MenuToDoMyActions= Os meus eventos incompletos
+MenuDoneMyActions= Os meus eventos terminados
+ListOfEvents= Lista de Eventos
+ActionsAskedBy=Os meus eventos reportados
+ActionsToDoBy=Eventos atribuídos a
+ActionsDoneBy=Eventos realizados por
+AllMyActions= Todas as minhas acções
+AllActions= Todas as Acções
+ViewList=Ver Lista
+ViewCal=Ver Calendário
 ViewDay=Modo de exibição Dia
 ViewWeek=Vista da semana
+ViewWithPredefinedFilters= Ver com filtros predefinidos
+AutoActions= Preenchimento automático
+# AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
+# AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Esta página permite declarar as fontes externas de calendários para ver os seus eventos na agenda do Dolibarr.
+ActionsEvents= Eventos em que o Dolibarr criará uma acção em agenda automáticamente
+PropalValidatedInDolibarr= Proposta Validada
+InvoiceValidatedInDolibarr= Factura Validada
 InvoiceBackToDraftInDolibarr=Factura %s voltou ao estado de rascunho
+InvoiceDeleteDolibarr=Fatura %s apagada
+OrderValidatedInDolibarr= Encomenda %s validada
 OrderApprovedInDolibarr=Encomenda %s aprovada
 OrderBackToDraftInDolibarr=Encomenda %s voltou ao estado de rascunho
 OrderCanceledInDolibarr=Encomenda %s cancelada
+InterventionValidatedInDolibarr=Intervenção %s validada
 ProposalSentByEMail=Proposta a cliente %s enviada por e-mail
 OrderSentByEMail=Encomenda de cliente %s enviada por email
 InvoiceSentByEMail=Factura de cliente %s enviada por e-mail
@@ -77,6 +53,24 @@ SupplierOrderSentByEMail=Encomenda a fornecedor %s enviada por email
 SupplierInvoiceSentByEMail=Factura de fornecedor %s enviada por e-mail
 ShippingSentByEMail=Expedição %s enviada por email
 InterventionSentByEMail=Intervanção %s enviada por e-mail
+NewCompanyToDolibarr= Nova Empresa Adicionada
+DateActionPlannedStart= Planeada data de início
+DateActionPlannedEnd= Planeada data de fim
+DateActionDoneStart= Data Real de Início
+DateActionDoneEnd= Data Real de Fim
+DateActionStart= Data de Início
+DateActionEnd= Data Fim
+AgendaUrlOptions1=Também pode adicionar os seguintes parâmetros de filtro de saída:
+AgendaUrlOptions2=<b>login=%s</b>para restringir a produção para acções criadas por, ou afectadas a fazer pelo utilizador <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> para restringir a produção para acções criadas pelo utilizador <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> para restringir a produção para as acções para o utilizador afectado <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> para restringir a produção para acções feitas pelo utilizador <b>%s</b>.
+AgendaShowBirthdayEvents=Mostrar Aniversários dos Contactos
+AgendaHideBirthdayEvents=Esconder Aniversários dos Contactos
+Busy=Ocupado
+# ExportDataset_event1=List of agenda events
+
+# External Sites ical
 ExportCal=Exportar calendário
 ExtSites=Importar calendários externos
 ExtSitesEnableThisTool=Mostrar calendários externos na agenda
@@ -84,4 +78,3 @@ ExtSitesNbOfAgenda=Número de calendários
 AgendaExtNb=Calendário nb %s
 ExtSiteUrlAgenda=URL para aceder. Ficheiro iCal
 ExtSiteNoLabel=Sem Descrição
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:48:38).

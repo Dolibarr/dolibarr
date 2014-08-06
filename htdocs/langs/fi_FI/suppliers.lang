@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Tavarantoimittajat
 Supplier=Toimittaja
 AddSupplier=Lisää toimittaja
@@ -20,17 +10,24 @@ ListOfSuppliers=Luettelo toimittajat
 ShowSupplier=Näytä toimittaja
 OrderDate=Tilaa päivämäärä
 BuyingPrice=Osto
+BuyingPriceMin=Minimi ostohinnan
+BuyingPriceMinShort=Min ostohinnan
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Lisää toimittaja hinta
 ChangeSupplierPrice=Vaihtaa toimittajaa hinta
 ErrorQtyTooLowForThisSupplier=Määrä liian alhaisia tämän toimittajan tai ei hinta määritellään tämän tuotteen tämän toimittajan
 ErrorSupplierCountryIsNotDefined=Maa tämä toimittaja ei ole määritelty. Korjata ensin.
 ProductHasAlreadyReferenceInThisSupplier=Tämä tuote on jo viittaus tässä toimittaja
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Tämä viittaus toimittaja on jo liitetty viite: %s
 NoRecordedSuppliers=N: o toimittajat kirjataan
 SupplierPayment=Toimittaja maksu
 SuppliersArea=Tavarantoimittajat alueella
 RefSupplierShort=Ref. toimittaja
+Availability=Saatavuus
 ExportDataset_fournisseur_1=Toimittajan laskujen luettelo ja laskut "linjat
 ExportDataset_fournisseur_2=Toimittajan laskut ja maksut
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Hyväksy tämä tilaus
 ConfirmApproveThisOrder=Oletko varma, että haluat hyväksyä tämän tilauksen?
 DenyingThisOrder=Kiellä tätä järjestystä
@@ -41,25 +38,5 @@ AddCustomerInvoice=Luo asiakkaalle laskun
 AddSupplierOrder=Luo toimittaja jotta
 AddSupplierInvoice=Luo toimittajan laskun
 ListOfSupplierProductForSupplier=Luettelo tuotteista ja hinnoista <b>toimittaja %s</b>
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
 NoneOrBatchFileNeverRan=Ei mitään tai <b>erän %s</b> ei juoksi hiljattain
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Tämä viittaus toimittaja on jo liitetty viite: %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:11).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-BuyingPriceMin=Minimi ostohinnan
-BuyingPriceMinShort=Min ostohinnan
-Availability=Saatavuus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:10).
+# SentToSuppliers=Sent to suppliers

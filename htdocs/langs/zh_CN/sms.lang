@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:37:09
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=短信
 SmsSetup=SMS安装
 SmsDesc=此页面允许您定义全局选项上的短信功能
@@ -56,7 +47,7 @@ NbOfSms=喷号码的nbre
 ThisIsATestMessage=这是一条测试消息
 SendSms=发送短信
 SmsInfoCharRemain=铌的剩余字符
-SmsInfoNumero=（国际格式如：33899701761）
+SmsInfoNumero= （国际格式如：33899701761）
 DelayBeforeSending=延迟发送前（分钟）
 SmsNoPossibleRecipientFound=没有目标。检查您的SMS提供商的设置。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:24).
+

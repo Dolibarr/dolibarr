@@ -1,5 +1,4 @@
 # Dolibarr language file - en_IN - boxes
-CHARSET=UTF-8
 BoxLastProposals=Last quotations
 BoxTitleLastPropals=Last %s recorded quotations
 NoRecordedProposals=No recorded quotations

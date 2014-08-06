@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Kommerciel
 CommercialArea=Kommercielle område
 CommercialCard=Kommerciel kortet
@@ -23,6 +11,8 @@ DeleteAction=Slet en foranstaltning / opgave
 NewAction=Ny action / opgave
 AddAction=Tilføj action / opgave
 AddAnAction=Tilføj en foranstaltning / opgave
+AddActionRendezVous=Tilføj en Rendezvous opgave
+Rendez-Vous=Rendezvous
 ConfirmDeleteAction=Er du sikker på du vil slette denne opgave?
 CardAction=Action-kortet
 PercentDone=Procentdel gjort
@@ -33,6 +23,7 @@ TaskRDVWith=Møde med %s
 ShowTask=Vis opgave
 ShowAction=Vis aktion
 ActionsReport=Aktioner rapport
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Salg repræsentant
 SalesRepresentatives=Salgsrepræsentanter
 SalesRepresentativeFollowUp=Salg repræsentant (opfølgning)
@@ -51,9 +42,11 @@ DoneAndToDoActionsFor=Udfærdiget og gøre opgaver for %s
 DoneAndToDoActions=Udfærdiget og gøre opgaver
 DoneActions=Udfærdiget aktioner
 DoneActionsFor=Gøres tiltag for %s
+ToDoActions=Ufuldstændig aktioner
+ToDoActionsFor=Ufuldstændig aktioner for %s
 SendPropalRef=Send kommercielle forslag %s
 SendOrderRef=Send for %s
-NoRecordedProspects=Ingen udsigt registreres
+StatusNotApplicable=Ikke relevant
 StatusActionToDo=At gøre
 StatusActionDone=Gjort
 MyActionsAsked=Aktioner jeg har indspillet
@@ -83,32 +76,20 @@ ActionAC_REL=Send faktureringsstatus (påmindelse)
 ActionAC_CLO=Luk
 ActionAC_EMAILING=Send masse emailing
 ActionAC_COM=Send ordre ved mail
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-AddActionRendezVous=Tilføj en Rendezvous opgave
-Rendez-Vous=Rendezvous
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-ToDoActions=Ufuldstændig aktioner
-ToDoActionsFor=Ufuldstændig aktioner for %s
+ActionAC_SHIP=Send en forsendelse med posten
 ActionAC_SUP_ORD=Send leverandør opstil efter mail
 ActionAC_SUP_INV=Send leverandør faktura med posten
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:20).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-StatusNotApplicable=Ikke relevant
-ActionAC_SHIP=Send en forsendelse med posten
 ActionAC_OTH=Andet
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect status
 DraftPropals=Forslaget til handelslov forslag
 SearchPropal=Søg en kommerciel forslag
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:46).
+# CommercialDashboard=Commercial summary

@@ -5,6 +5,7 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='commande_fournisseur'; //Must be the $table_element of the class that manage extrafield
+$elementtype='facture_fourn'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -58,7 +59,7 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
+require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 
 

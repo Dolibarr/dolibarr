@@ -1,142 +1,91 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
-BoxLastRssInfos=RSS信息
-BoxLastProducts=最后%的产品/服务
-BoxLastProductsInContract=上次%s的合同产品/服务
-BoxLastSupplierBills=最后供应商的发票
-BoxLastCustomerBills=最后客户的发票
-BoxOldestUnpaidCustomerBills=最古老的未付客户的发票
-BoxOldestUnpaidSupplierBills=最古老的未付供应商的发票
-BoxLastProposals=最后商业建议
-BoxLastProspects=最后展望
-BoxLastCustomers=最后客户
-BoxLastCustomerOrders=最后客户订单
-BoxLastSuppliers=最后供应商
-BoxLastBooks=最后书籍
-BoxLastActions=最后行动
-BoxLastContracts=最后合同
-BoxCurrentAccounts=往来帐户余额
+# Dolibarr language file - Source file is en_US - boxes
+BoxLastRssInfos=RSS 信息
+BoxLastProducts=最近的 %s 项产品/服务
+BoxProductsAlertStock=库存提醒
+BoxLastProductsInContract=最近成交的 %s 项产品/服务
+BoxLastSupplierBills=最近的采购交易明细
+BoxLastCustomerBills=最近的销售交易明细
+BoxOldestUnpaidCustomerBills=亟待收款的销售账单
+BoxOldestUnpaidSupplierBills=亟待支付的采购账单
+BoxLastProposals=最近的报价单
+BoxLastProspects=最近更新的潜在客户
+BoxLastCustomers=最近更新的客户信息
+BoxLastSuppliers=最近更新的供应商信息
+BoxLastCustomerOrders=最近的订单
+BoxLastBooks=Last books
+BoxLastActions=最近的操作
+BoxLastContracts=最近的合同
+BoxLastContacts=最近的联系人/地址
+BoxLastMembers=最近的成员
+BoxFicheInter=最近的干预
+BoxCurrentAccounts=当前账户余额
 BoxSalesTurnover=销售营业额
-BoxTotalUnpaidCustomerBills=共有未付客户的发票
-BoxTotalUnpaidSuppliersBills=共有未付供应商的发票
-BoxTitleLastBooks=上次%s的记录书籍
-BoxTitleNbOfCustomers=农布雷代客户端
-BoxTitleLastRssInfos=最后从%%s的消息等
-BoxTitleLastProducts=最后更改%s的产品/服务
-BoxTitleLastCustomerOrders=最后修改%s的客户订单
-BoxTitleLastSuppliers=上次%s的记录供应商
-BoxTitleLastCustomers=上次%s的记录客户
-BoxTitleLastCustomersOrProspects=最后%S修饰客户或潜在客户
-BoxTitleLastPropals=最后建议%s的记录
-BoxTitleLastCustomerBills=上次%对客户的发票
-BoxTitleLastSupplierBills=上次%s的供应商的发票
-BoxTitleLastProspects=上次%s的记录前景
-BoxTitleLastProductsInContract=最后%的产品/服务合同
-BoxTitleOldestUnpaidCustomerBills=最古老的%s的未付客户的发票
-BoxTitleOldestUnpaidSupplierBills=最古老的%s的未付供应商的发票
-BoxTitleCurrentAccounts=当前帐户的结余
+BoxTotalUnpaidCustomerBills=待收款的销售账单总额
+BoxTotalUnpaidSuppliersBills=待支付的采购账单总额
+BoxTitleLastBooks=Last %s recorded books
+BoxTitleNbOfCustomers=客户总数
+BoxTitleLastRssInfos=最新的 %s 项新闻 (来自 %s )
+BoxTitleLastProducts=最近更新的 %s 项产品/服务
+BoxTitleProductsAlertStock=库存提醒
+BoxTitleLastCustomerOrders=最近更新的 %s 个销售订单
+BoxTitleLastSuppliers=最近添加的 %s 个供应商信息
+BoxTitleLastCustomers=最近添加的 %s 个客户信息
+BoxTitleLastModifiedSuppliers=最近更新的 %s 个供应商信息
+BoxTitleLastModifiedCustomers=最近更新的 %s 个客户信息
+BoxTitleLastCustomersOrProspects=最近更新的 %s 个客户信息(当前/潜在)
+BoxTitleLastPropals=最近添加的 %s 个报价
+BoxTitleLastCustomerBills=最近的 %s 笔销售账单
+BoxTitleLastSupplierBills=最近的 %s 笔采购账单
+BoxTitleLastProspects=最近添加的 %s 个潜在客户
+BoxTitleLastModifiedProspects=最近更新的 %s 个潜在客户
+BoxTitleLastProductsInContract=最近销售的 %s 个产品/服务
+BoxTitleLastModifiedMembers=最近更新的 %s 个成员信息
+BoxTitleLastFicheInter=最近更新的 %s 个交易干预
+BoxTitleOldestUnpaidCustomerBills=催款最久的 %s 笔销售账单
+BoxTitleOldestUnpaidSupplierBills=欠款最久的 %s 笔采购账单
+BoxTitleCurrentAccounts=当前账户的余额
 BoxTitleSalesTurnover=销售营业额
-BoxTitleTotalUnpaidCustomerBills=未付客户的发票
-BoxTitleTotalUnpaidSuppliersBills=未付供应商的发票
-BoxMyLastBookmarks=我最后的%s的书签
-FailedToRefreshDataInfoNotUpToDate=无法刷新的RSS流量。上次成功刷新日期：%s
-LastRefreshDate=最后更新日期
-NoRecordedBookmarks=没有书签定义。点击<a href="%s">这里</a>添加书签。
-NoRecordedCustomers=没有记录客户
-BoxTitleLastActionsToDo=上次%s的行动做
-BoxTitleLastContracts=上次%的承
-NoActionsToDo=做任何动作
-NoRecordedOrders=没有记录客户的订单
-NoRecordedProposals=没有记录的建议
-NoRecordedInvoices=没有记录客户的发票
-NoUnpaidCustomerBills=没有未付客户的发票
-NoRecordedSupplierInvoices=没有记录供应商的发票
-NoUnpaidSupplierBills=没有未付供应商的发票
-NoRecordedProducts=没有记录的产品/服务
-NoRecordedProspects=没有记录的前景
-NoContractedProducts=没有产品/服务合同
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
-// Reference language: en_US
-BoxLastContracts=Siste kontrakter
-LastRefreshDate=Siste oppdatering dato
-BoxTitleLastContracts=Siste %s kontrakter
-NoModifiedSupplierBills=Ingen registrert leverandørens faktura
-NoRecordedProducts=Ingen registrert produkter / tjenester
-NoRecordedProspects=Ingen registrert utsikter
-NoContractedProducts=Ingen produkter / tjenester innleide
-NoRecordedContracts=Ingen registrert kontrakter
-BoxLastContracts=Laatste contracten
-BoxTitleLastContracts=Laatste %s contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
-BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
-BoxLastContracts=Laatste contracten
-BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
-BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
-BoxTitleOldestUnpaidCustomerBills=Oudste %s onbetaalde facturen klant
-BoxTitleOldestUnpaidSupplierBills=Oudste %s onbetaalde facturen van de leverancier
-BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
-BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
-BoxTitleLastContracts=Laatste %s contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxLastContracts=Ostatnie zamówienia
-BoxTitleLastProductsInContract=Ostatnie %s produktów / usług w umowie
-BoxTitleLastContracts=Ostatnie %s umów
-NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
-NoRecordedContracts=Umów nie zarejestrowanych
-BoxLastContracts=Última contratos
-BoxTitleLastContracts=Última contratos %s
-NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
-NoRecordedContracts=Sem contratos registrados
-BoxLastContracts=Последние контракты
-BoxTitleLastProductsInContract=Последние продукты %s / услуги на основании договора
-BoxTitleLastContracts=Последние контракты %s
-NoModifiedSupplierBills=Нет зарегистрированных поставщиков счетов
-NoRecordedContracts=Нет зарегистрированных контрактов
-BoxLastContracts=Zadnja naročila
-BoxTitleLastContracts=Zadnja pogodbe %s
-NoModifiedSupplierBills=Št zabeležene dobavitelja račune
-NoRecordedContracts=Št zabeležene pogodbe
-BoxLastContracts=Son sözleşmeleri
-BoxTitleLastContracts=Son Ssss sözleşmeleri
-NoModifiedSupplierBills=No kaydedildi tedarikçinin faturalar
-NoRecordedContracts=No kaydedildi sözleşmeleri
-NoModifiedSupplierBills=没有记录供应商的发票
-NoRecordedContracts=合同没有记录
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:27).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-BoxTitleLastModifiedSuppliers=最后%s修改供应商
-BoxTitleLastModifiedCustomers=最后%s修改客户
-BoxTitleLastModifiedProspects=最后%s修改前景
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:41).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-BoxLastContacts=最后接触/地址
-BoxLastMembers=最后成员
-BoxTitleLastModifiedMembers=修改最后%s成员的
-BoxTitleLastModifiedContacts=最后%s修改联系人/地址
-BoxOldestExpiredServices=最早的活动过期服务
-BoxLastExpiredServices=上次%s最古老的接触，积极过期服务
-BoxTitleLastModifiedDonations=最后%s修改捐款
-BoxTitleLastModifiedExpenses=最后%s修改费用
-ClickToAdd=点击这里添加。
-NoRecordedContacts=没有记录的接触
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:41).
+BoxTitleTotalUnpaidCustomerBills=待收款销售账单
+BoxTitleTotalUnpaidSuppliersBills=待付款采购账单
+BoxTitleLastModifiedContacts=最近更新的 %s 项联系人/地址
+BoxMyLastBookmarks=我最近的书签
+BoxOldestExpiredServices=执行中的逾期时间最长的服务
+BoxLastExpiredServices=近期逾期服务中涉及的 %s 个联系人
+BoxTitleLastActionsToDo=最近的 %s 项待办事项
+BoxTitleLastContracts=最近的 %s 个联系人
+BoxTitleLastModifiedDonations=最近更新的 %s 项捐赠
+BoxTitleLastModifiedExpenses=最近更新的 %s 项支出
+BoxGlobalActivity=全局活动(账单,报价,订单)
+FailedToRefreshDataInfoNotUpToDate=RSS 刷新失败上次成功更新日期: %s
+LastRefreshDate=上次更新日期
+NoRecordedBookmarks=未设置任何书签。
+ClickToAdd=点此添加
+NoRecordedCustomers=无客户记录
+NoRecordedContacts=无联系人记录
+NoActionsToDo=无待办事件记录
+NoRecordedOrders=无销售合同记录
+NoRecordedProposals=无报价单记录
+NoRecordedInvoices=无销售账单记录
+NoUnpaidCustomerBills=无未支付的销售账单
+NoRecordedSupplierInvoices=无采购账单记录
+NoUnpaidSupplierBills=无未支付的采购账单
+NoModifiedSupplierBills=无采购账单记录
+NoRecordedProducts=无产品/服务记录
+NoRecordedProspects=无潜在客户记录
+NoContractedProducts=无签订合同的产品
+NoRecordedContracts=无合同记录
+NoRecordedInterventions=没有干预措施的记录
+BoxLatestSupplierOrders=最近的采购订单
+BoxTitleLatestSupplierOrders=最近的 %s 笔采购订单
+NoSupplierOrder=无采购订单记录
+BoxCustomersInvoicesPerMonth=客户每月发票
+BoxSuppliersInvoicesPerMonth=供应商每月的发票
+BoxCustomersOrdersPerMonth=客户每月的订单
+BoxSuppliersOrdersPerMonth=供应商每月的订单
+BoxProposalsPerMonth=笔报价/月
+NoTooLowStockProducts=无产品触发低库存提醒
+BoxProductDistribution=产品/服务布局
+BoxProductDistributionFor=%s的%s分布
+ForCustomersInvoices=客户的发票
+ForCustomersOrders=客户订单
+ForProposals=报价

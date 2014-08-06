@@ -255,6 +255,20 @@ $server->register(
 
 // Register WSDL
 $server->register(
+    'updateProductOrService',
+    // Entry values
+    array('authentication'=>'tns:authentication','product'=>'tns:product'),
+    // Exit values
+    array('result'=>'tns:result','id'=>'xsd:string'),
+    $ns,
+    $ns.'#updateProductOrService',
+    $styledoc,
+    $styleuse,
+    'WS to update a product or service'
+);
+
+// Register WSDL
+$server->register(
     'getListOfProductsOrServices',
     // Entry values
     array('authentication'=>'tns:authentication','filterproduct'=>'tns:filterproduct'),
@@ -319,8 +333,11 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
         {
             $product=new Product($db);
             $result=$product->fetch($id,$ref,$ref_ext);
+            
             if ($result > 0)
             {
+            	$product->load_stock();
+            	
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
             	$pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             	$dir = $dir . '/'. $pdir;
@@ -357,8 +374,6 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='')
 				        //! Spanish local taxes
 				        'localtax1_tx' => $product->localtax1_tx,
 				        'localtax2_tx' => $product->localtax2_tx,
-
-                		'price_base_type' => $product->price_base_type,
 
 				        'stock_real' => $product->stock_reel,
                 		'stock_alert' => $product->seuil_stock_alerte,
@@ -470,6 +485,117 @@ function createProductOrService($authentication,$product)
         $db->begin();
 
         $result=$newobject->create($fuser,0);
+        if ($result <= 0)
+        {
+            $error++;
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+            $objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''),'id'=>$newobject->id,'ref'=>$newobject->ref);
+        }
+        else
+        {
+            $db->rollback();
+            $error++;
+            $errorcode='KO';
+            $errorlabel=$newobject->error;
+        }
+
+    }
+
+    if ($error)
+    {
+        $objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+    }
+
+    return $objectresp;
+}
+
+
+/**
+ * Update an invoice
+ *
+ * @param	array		$authentication		Array of authentication information
+ * @param	Product		$product			Product
+ * @return	array							Array result
+ */
+function updateProductOrService($authentication,$product)
+{
+    global $db,$conf,$langs;
+
+    $now=dol_now();
+
+    dol_syslog("Function: updateProductOrService login=".$authentication['login']);
+
+    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+
+    // Init and check authentication
+    $objectresp=array();
+    $errorcode='';$errorlabel='';
+    $error=0;
+    $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    // Check parameters
+    if ($product['price_net'] > 0) $product['price_base_type']='HT';
+    if ($product['price'] > 0)     $product['price_base_type']='TTC';
+
+    if ($product['price_net'] > 0 && $product['price'] > 0)
+    {
+        $error++; $errorcode='KO'; $errorlabel="You must choose between price or price_net to provide price.";
+    }
+
+
+    if (! $error)
+    {
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+        $newobject=new Product($db);
+        $newobject->fetch($product['id']);
+        
+        if (isset($product['ref']))     $newobject->ref=$product['ref'];
+        if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
+        $newobject->type=$product['type'];
+        $newobject->libelle=$product['label'];    // TODO deprecated
+        $newobject->label=$product['label'];
+        $newobject->description=$product['description'];
+        $newobject->note=$product['note'];
+        $newobject->status=$product['status_tosell'];
+        $newobject->status_buy=$product['status_tobuy'];
+        $newobject->price=$product['price_net'];
+        $newobject->price_ttc=$product['price'];
+        $newobject->tva_tx=$product['vat_rate'];
+        $newobject->price_base_type=$product['price_base_type'];
+        $newobject->date_creation=$now;
+
+        $newobject->stock_reel=$product['stock_real'];
+        $newobject->pmp=$product['pmp'];
+        $newobject->seuil_stock_alert=$product['stock_alert'];
+
+        $newobject->country_id=$product['country_id'];
+        if ($product['country_code']) $newobject->country_id=getCountry($product['country_code'],3);
+        $newobject->customcode=$product['customcode'];
+
+        $newobject->canvas=$product['canvas'];
+        /*foreach($product['lines'] as $line)
+        {
+            $newline=new FactureLigne($db);
+            $newline->type=$line['type'];
+            $newline->desc=$line['desc'];
+            $newline->fk_product=$line['fk_product'];
+            $newline->total_ht=$line['total_net'];
+            $newline->total_vat=$line['total_vat'];
+            $newline->total_ttc=$line['total'];
+            $newline->vat=$line['vat_rate'];
+            $newline->qty=$line['qty'];
+            $newline->fk_product=$line['product_id'];
+        }*/
+        //var_dump($product['ref_ext']);
+        //var_dump($product['lines'][0]['type']);
+
+        $db->begin();
+
+        $result=$newobject->update($newobject->id,$fuser);
         if ($result <= 0)
         {
             $error++;

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,12 +44,12 @@ if (GETPOST("action") == 'set_proxy')
 {
     if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorValueMustBeInteger").'</div>';
+        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
         $error++;
     }
     if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorValueMustBeInteger").'</div>';
+        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
         $error++;
     }
 
@@ -67,7 +68,7 @@ if (GETPOST("action") == 'set_proxy')
 
     if (! $error)
     {
-        $mesg='<div class="ok">'.$langs->trans("RecordModifiedSuccessfully").'</div>';
+        setEventMessage($langs->trans("RecordModifiedSuccessfully"));
     }
 }
 
@@ -195,16 +196,13 @@ print '</tr>';
 
 print '</table>';
 
-dol_fiche_end();
-
-print '<center>';
+print '<br><center>';
 print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
 print '</center>';
 
-print '</form><br>';
+print '</form>';
 
-
-dol_htmloutput_mesg($mesg);
+dol_fiche_end();
 
 
 $db->close();

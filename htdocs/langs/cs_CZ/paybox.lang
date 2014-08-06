@@ -1,0 +1,37 @@
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=Paybox modul nastavení
+PayBoxDesc=Tento modul nabízejí stránky, které umožní platby na <a href="http://www.paybox.com" target="_blank">Paybox</a> zákazníky. Toho lze využít pro volný platbu nebo platbu na určitý objekt Dolibarr (faktury, objednávky, ...)
+FollowingUrlAreAvailableToMakePayments=Následující adresy URL jsou k dispozici nabídnout stránky na zákazníka, aby platbu na Dolibarr objektů
+PaymentForm=Platba formulář
+WelcomeOnPaymentPage=Vítáme Vás na naší on-line platební služby
+ThisScreenAllowsYouToPay=Tato obrazovka vám umožní provést on-line platbu %s.
+ThisIsInformationOnPayment=Jsou to informace o platbě dělat
+ToComplete=Chcete-li dokončit
+YourEMail=E-mail obdržet potvrzení platby
+Creditor=Věřitel
+PaymentCode=Platební kód
+PayBoxDoPayment=Jít na zaplacení
+YouWillBeRedirectedOnPayBox=Budete přesměrováni na zabezpečené stránky Paybox vstupní vás informace o kreditní kartě
+PleaseBePatient=Prosím, buďte trpěliví
+Continue=Další
+ToOfferALinkForOnlinePayment=URL pro %s platby
+ToOfferALinkForOnlinePaymentOnOrder=URL nabídnout %s on-line platební uživatelské rozhraní pro objednávky zákazníka
+ToOfferALinkForOnlinePaymentOnInvoice=URL nabídnout %s on-line platební uživatelské rozhraní pro zákazníka faktury
+ToOfferALinkForOnlinePaymentOnContractLine=URL nabídnout %s on-line platební uživatelské rozhraní pro smlouvy linky
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL nabídnout %s on-line platební uživatelské rozhraní pro volný částku
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL nabídnout %s on-line platební uživatelské rozhraní pro členské předplatné
+YouCanAddTagOnUrl=Můžete také přidat parametr URL <b>&amp; tag = <i>hodnota</i></b> na některou z těchto URL (nutné pouze pro volný platby) přidat vlastní komentář platební tag.
+SetupPayBoxToHavePaymentCreatedAutomatically=Nastavte si Paybox s url <b>%s</b> mít platba vytvořena automaticky při ověřena Paybox.
+YourPaymentHasBeenRecorded=Tato stránka potvrzuje, že platba byla zaznamenána. Děkuju.
+YourPaymentHasNotBeenRecorded=Vaše platba nebyla zaznamenána a transakce byla zrušena. Děkuju.
+AccountParameter=Parametry účtu
+UsageParameter=Použití parametrů
+InformationToFindParameters=Pomozte najít %s informace o účtu
+PAYBOX_CGI_URL_V2=URL Paybox modulu CGI pro platbu
+VendorName=Název dodavatele
+CSSUrlForPaymentForm=CSS stylů url platebního formuláře
+MessageOK=Zpráva o ověřených straně platební návratu
+MessageKO=Zpráva o zrušení straně platební návratu
+NewPayboxPaymentReceived=Nový Paybox přijaté platby
+NewPayboxPaymentFailed=Nový Paybox platba snažil se ale propadal
+PAYBOX_PAYONLINE_SENDEMAIL=E-mail upozornit po platbě (úspěch nebo selhání)

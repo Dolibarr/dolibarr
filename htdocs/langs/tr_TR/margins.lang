@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - marges
-CHARSET=UTF-8
 
 Margin=Oran
 Margins=Oranlar
@@ -48,5 +47,5 @@ BuyingCost=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
 
-AgentContactType=Komisyonlandırmada kullanılan kişi tipi
-AgentContactTypeDetails=Ticari temsilci ile ilişkilendirilecek kişi türünü (faturalarla bağlantılı) tanımlayın
+AgentContactType=Ticari temsilci ilgili tipi
+AgentContactTypeDetails=Ticari temsilciler tarafından oran raporları ile ilişkilendirilecek kişi türünü (faturalarla bağlantılı) tanımlayın

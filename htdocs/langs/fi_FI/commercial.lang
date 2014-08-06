@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Kaupalliset
 CommercialArea=Kaupallinen ala
 CommercialCard=Kaupalliset kortti
@@ -21,6 +11,8 @@ DeleteAction=Poista toiminto / tehtävä
 NewAction=Uusi toimi / tehtävä
 AddAction=Lisää toiminta / tehtävä
 AddAnAction=Lisää toiminta / tehtävä
+AddActionRendezVous=Lisää Rendezvous tehtävä
+Rendez-Vous=Rendezvous
 ConfirmDeleteAction=Oletko varma, että haluat poistaa tämän tehtävän?
 CardAction=Toimi-kortti
 PercentDone=Prosenttiosuus tehnyt
@@ -31,6 +23,7 @@ TaskRDVWith=Tapaaminen %s
 ShowTask=Näytä tehtävä
 ShowAction=Näytä toiminta
 ActionsReport=Toimet raportti
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Myyntiedustaja
 SalesRepresentatives=Myyntiedustajat
 SalesRepresentativeFollowUp=Myyntiedustajaasi (follow-up)
@@ -49,9 +42,11 @@ DoneAndToDoActionsFor=Tehty ja tehdä tehtäviä %s
 DoneAndToDoActions=Tehty ja tehdä tehtäviä
 DoneActions=Tehty toimia
 DoneActionsFor=Tehty toimia %s
+ToDoActions=Puutteellinen toimet
+ToDoActionsFor=Puutteellinen toimia %s
 SendPropalRef=Lähetä kaupallinen ehdotus %s
 SendOrderRef=Lähetä jotta %s
-NoRecordedProspects=Ole näköpiirissä kirjataan
+StatusNotApplicable=Ei sovelleta
 StatusActionToDo=Voit tehdä
 StatusActionDone=Tehty
 MyActionsAsked=Toimet olen kirjataan
@@ -81,32 +76,20 @@ ActionAC_REL=Lähetä laskutustilanteesi (muistutus)
 ActionAC_CLO=Sulje
 ActionAC_EMAILING=Lähetä massa sähköpostia
 ActionAC_COM=Lähetä tilata postitse
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-AddActionRendezVous=Lisää Rendezvous tehtävä
-Rendez-Vous=Rendezvous
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-ToDoActions=Puutteellinen toimet
-ToDoActionsFor=Puutteellinen toimia %s
+ActionAC_SHIP=Lähetä toimitus postitse
 ActionAC_SUP_ORD=Lähetä toimittaja tilaa postitse
 ActionAC_SUP_INV=Lähetä toimittaja lasku postitse
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:03).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-StatusNotApplicable=Ei sovelleta
-ActionAC_SHIP=Lähetä toimitus postitse
 ActionAC_OTH=Muut
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect tila
 DraftPropals=Suunnitelmiin liiketoimintaehdotukset
 SearchPropal=Etsi kaupallinen ehdotuksen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:49).
+# CommercialDashboard=Commercial summary

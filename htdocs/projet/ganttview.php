@@ -122,7 +122,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
     if (! empty($object->societe->id)) print $object->societe->getNomUrl(1);
     else print '&nbsp;';
     print '</td>';
@@ -161,7 +161,7 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer)
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 }
 
 print '</div>';
@@ -210,7 +210,7 @@ if (count($tasksarray)>0)
 		{
 			$s.=$langs->trans("Internals").': ';
 			$i=0;
-			foreach($idofusers as $key => $valid)
+			foreach($idofusers as $valid)
 			{
 				$userstatic->fetch($valid);
 				if ($i) $s.=',';
@@ -224,7 +224,7 @@ if (count($tasksarray)>0)
 			if ($s) $s.=' - ';
 			$s.=$langs->trans("Externals").': ';
 			$i=0;
-			foreach($idofthirdparty as $key => $valid)
+			foreach($idofthirdparty as $valid)
 			{
 				$companystatic->fetch($valid);
 				if ($i) $s.=',';

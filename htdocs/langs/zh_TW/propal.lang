@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=商業建議
 Proposal=商業建議
 ProposalShort=建議
@@ -17,6 +8,7 @@ ProposalsOpened=新開張的商業建議
 Prop=商業建議
 CommercialProposal=商業建議
 CommercialProposals=商業建議
+ProposalCard=建議卡
 NewProp=新的商業建議
 NewProposal=新的商業建議
 NewPropal=新建議
@@ -78,33 +70,33 @@ ErrorPropalNotFound=Propal%s不符合
 Estimate=估計：
 EstimateShort=估計
 OtherPropals=其他建議
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=通過復制現有的商業建議提案
 CreateEmptyPropal=創建空的商業建議維耶熱或從產品/服務列表
 DefaultProposalDurationValidity=默認的商業建議有效期（天數）
 UseCustomerContactAsPropalRecipientIfExist=使用客戶聯系地址，如果定義的，而不是作為提案的第三黨的地址收件人地址
 ClonePropal=克隆的商業建議
 ConfirmClonePropal=你確定要克隆這種商業建議<b>%s嗎</b> ？
+ConfirmReOpenProp=你確定你要打開商業建議<b>%s</b>嗎？
 ProposalsAndProposalsLines=商業建議和行
 ProposalLine=建議行
-TypeContact_propal_internal_SALESREPFOLL=代表隨訪的建議
-TypeContact_propal_external_BILLING=客戶發票接觸
-TypeContact_propal_external_CUSTOMER=客戶聯系隨訪的建議
-DocModelAzurDescription=一個完整的方案模型（logo. ..）
-DocModelJauneDescription=特賈恩方案模型
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-ProposalCard=建議卡
-ConfirmReOpenProp=你確定你要打開商業建議<b>%s</b>嗎？
 AvailabilityPeriod=可用性延遲
 SetAvailability=設置可用性延遲
 AfterOrder=訂單後
+##### Availability #####
 AvailabilityTypeAV_NOW=即時
 AvailabilityTypeAV_1W=1個星期
 AvailabilityTypeAV_2W=2個星期
 AvailabilityTypeAV_3W=3個星期
 AvailabilityTypeAV_1M=1個月
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:01).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=代表隨訪的建議
+TypeContact_propal_external_BILLING=客戶發票接觸
+TypeContact_propal_external_CUSTOMER=客戶聯系隨訪的建議
+# Document models
+DocModelAzurDescription=一個完整的方案模型（logo. ..）
+DocModelJauneDescription=特賈恩方案模型
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

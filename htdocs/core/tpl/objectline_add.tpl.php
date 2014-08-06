@@ -41,17 +41,31 @@ if (! empty($conf->margin->enabled)) {
 ?>
 	<td align="right"><?php echo $langs->trans('BuyingPrice'); ?></td>
 <?php
-  if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-  	$colspan++;
-  	$colspan2++;
-  }
-  if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-  	$colspan++;
-  	$colspan2++;
-  }
-  if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-  	$colspan2++;
-  }
+	if ($user->rights->margins->creer)
+	{
+		if(! empty($conf->global->DISPLAY_MARGIN_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarginRate').'</td>';
+		}
+		if(! empty($conf->global->DISPLAY_MARK_RATES))
+		{
+			echo '<td align="right">'.$langs->trans('MarkRate').'</td>';
+		}
+	}
+	else
+	{
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+			$colspan++;
+   			$colspan2++;
+		}
+		if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+			$colspan++;
+   			$colspan2++;
+		}
+	}
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+		$colspan2++;
+  	}
 }
 ?>
 	<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -161,24 +175,38 @@ if (! empty($conf->margin->enabled)) {
 	</td>
 	<td align="right"><input type="text" size="3" id="qty" name="qty" value="<?php echo (GETPOST('qty')?GETPOST('qty'):1); ?>"></td>
 	<td align="right" class="nowrap">
-		<input type="text" size="1" value="<?php echo $buyer->remise_client; ?>" id="remise_percent" name="remise_percent">%
-		<input type="hidden" id="origin_remise_percent" name="origin_remise_percent" value="<?php echo $buyer->remise_client; ?>" />
+		<input type="text" size="1" value="<?php echo $buyer->remise_percent; ?>" id="remise_percent" name="remise_percent">%
+		<input type="hidden" id="origin_remise_percent" name="origin_remise_percent" value="<?php echo $buyer->remise_percent; ?>" />
 	</td>
-<?php
-$colspan = 4;
-if (! empty($conf->margin->enabled)) {
-?>
-	<td align="right">
-		<select id="fournprice" name="fournprice" style="display: none;"></select>
-		<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (GETPOST('buying_price')?GETPOST('buying_price'):''); ?>">
-	</td>
-<?php
-  if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-  	$colspan++;
-  if (! empty($conf->global->DISPLAY_MARK_RATES))
-  	$colspan++;
-}
-?>
+	<?php
+	$colspan = 4;
+	if (! empty($conf->margin->enabled)) {
+	?>
+		<td align="right">
+			<select id="fournprice" name="fournprice" style="display: none;"></select>
+			<input type="text" size="5" id="buying_price" name="buying_price" value="<?php echo (GETPOST('buying_price')?GETPOST('buying_price'):''); ?>">
+		</td>
+			<?php
+			if ($user->rights->margins->creer)
+			{
+				if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+					echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_marginRate" value="'.(isset($_POST["np_marginRate"])?$_POST["np_marginRate"]:'').'">%</td>';
+				}
+				elseif (! empty($conf->global->DISPLAY_MARK_RATES)) {
+					echo '<td align="right" class="nowrap"><input type="text" size="2" name="np_markRate" value="'.(isset($_POST["np_markRate"])?$_POST["np_markRate"]:'').'">%</td>';
+				}
+			}
+			else
+			{
+				if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
+					$colspan++;
+				}
+				if (! empty($conf->global->DISPLAY_MARK_RATES)) {
+					$colspan++;
+				}
+			}
+	}
+	?>
 	<td align="center" valign="middle" colspan="<?php echo $colspan; ?>"><input type="submit" class="button"  id="addlinebutton" name="addline" value="<?php echo $langs->trans('Add'); ?>"></td>
 </tr>
 
@@ -188,12 +216,7 @@ if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	$colspan = 12;
 else
 	$colspan = 11;
-if (! empty($conf->margin->enabled)) {
-	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		$colspan++;
-	if (! empty($conf->global->DISPLAY_MARK_RATES))
-		$colspan++;
-}
+
 ?>
 <tr id="service_duration_area" <?php echo $bcnd[$var]; ?>>
 	<td colspan="<?php echo $colspan; ?>">
@@ -219,7 +242,6 @@ $(document).ready(function() {
 	$('#service_duration_area').hide();
 
 	$('#idprod').change(function() {
-
 		if ($(this).val() > 0) {
 
 			// Update vat rate combobox
@@ -237,11 +259,11 @@ $(document).ready(function() {
 				if (typeof data != 'undefined') {
 					$('#product_ref').val(data.ref);
 					$('#product_label').val(data.label);
+					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#price_base_type').val(data.pricebasetype).trigger('change');
 					$('#price_ht').val(data.price_ht).trigger('change');
 					$('#origin_price_ht_cache').val(data.price_ht);
 					//$('#origin_price_ttc_cache').val(data.price_ttc);
-					$('#origin_tva_tx_cache').val(data.tva_tx);
 					$('#select_type').val(data.type).attr('disabled','disabled').trigger('change');
 					//$('#price_base_type_area').show();
 					$('#qty').val(data.qty);
@@ -259,9 +281,6 @@ $(document).ready(function() {
 	    } else {
 
 	    	$('#price_ttc').val('');
-
-	    	// Restore vat rate combobox
-	    	getVATRates('getSellerVATRates', 'tva_tx');
 
 	    	// For compatibility with combobox
 			<?php if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) { ?>
@@ -438,16 +457,23 @@ $(document).ready(function() {
 
 	function getVATRates(action, htmlname, idprod) {
 		var productid = (idprod?idprod:0);
-		$.post('<?php echo DOL_URL_ROOT; ?>/core/ajax/vatrates.php', {
-			'action': action,
-			'id': <?php echo $buyer->id; ?>,
-			'productid': productid,
-			'htmlname': htmlname },
-		function(data) {
-			if (typeof data != 'undefined' && data.error == null) {
-				$("#" + htmlname).html(data.value).trigger('change');
-			}
-		}, 'json');
+		$.ajax({
+			type: "POST",
+			url: '<?php echo DOL_URL_ROOT;?>/core/ajax/vatrates.php',
+			data: {
+				'action': action,
+				'id': <?php echo $buyer->id; ?>,
+				'productid': productid,
+				'htmlname': htmlname
+			},
+			success: function(data){
+				if (typeof data != 'undefined' && data.error == null) {
+					$("#" + htmlname).html(data.value).trigger('change');
+				}
+			},
+			dataType: "json",
+			async: false
+		});
 	}
 
 	// Check if decription is not empty for free line
@@ -491,11 +517,7 @@ $(document).ready(function() {
 	});
 	<?php } ?>
 
-});
-</script>
-
 <?php if (! empty($conf->margin->enabled)) { ?>
-<script type="text/javascript">
 $("#idprod").change(function() {
 	$("#fournprice").empty();
 	$("#buying_price").show();
@@ -536,6 +558,115 @@ $("#idprod").change(function() {
 		$('#buying_price').val('');
     }
 });
-</script>
+	var npRate = null;
+<?php
+			if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
+				npRate = "np_marginRate";
+			<?php }
+			elseif (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
+				npRate = "np_markRate";
+			<?php }
+?>
+
+$("form#addproduct").submit(function(e) {
+	if (npRate) return checkFreeLine(e, npRate);
+	else return true;
+});
+if (npRate == 'np_marginRate') {
+	$("input[name='np_marginRate']:first").blur(function(e) {
+		return checkFreeLine(e, npRate);
+	});
+}
+else {
+	if (npRate == 'np_markRate') {
+		$("input[name='np_markRate']:first").blur(function(e) {
+			return checkFreeLine(e, npRate);
+		});
+	}
+}
+
+function checkFreeLine(e, npRate)
+{
+	var buying_price = $("input[name='buying_price']:first");
+	var remise = $("input[name='remise_percent']:first");
+
+	var rate = $("input[name='"+npRate+"']:first");
+	if (rate.val() == '')
+		return true;
+	if (! $.isNumeric(rate.val().replace(',','.')))
+	{
+		alert('<?php echo $langs->trans("rateMustBeNumeric"); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
+	}
+	if (npRate == "np_markRate" && rate.val() >= 100)
+	{
+		alert('<?php echo $langs->trans("markRateShouldBeLesserThan100"); ?>');
+		e.stopPropagation();
+		setTimeout(function () { rate.focus() }, 50);
+		return false;
+	}
+
+	var price = 0;
+	remisejs=price2numjs(remise.val());
+
+	if (remisejs != 100)
+	{
+		bpjs=price2numjs(buying_price.val());
+		ratejs=price2numjs(rate.val());
+
+		if (npRate == "np_marginRate")
+			price = ((bpjs * (1 + ratejs / 100)) / (1 - remisejs / 100));
+		else if (npRate == "np_markRate")
+			price = ((bpjs / (1 - ratejs / 100)) / (1 - remisejs / 100));
+	}
+	$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
+
+	update_price('price_ht', 'price_ttc');
+
+	return true;
+}
+
+
+
+/* Function similar to price2num in PHP */
+function price2numjs(num)
+{
+	<?php
+	$dec=','; $thousand=' ';
+	if ($langs->transnoentitiesnoconv("SeparatorDecimal") != "SeparatorDecimal")  $dec=$langs->transnoentitiesnoconv("SeparatorDecimal");
+	if ($langs->transnoentitiesnoconv("SeparatorThousand")!= "SeparatorThousand") $thousand=$langs->transnoentitiesnoconv("SeparatorThousand");
+	if ($thousand == 'None') $thousand='';
+	print "var dec='".$dec."'; var thousand='".$thousand."';\n";
+	?>
+
+	var main_max_dec_shown = <?php echo $conf->global->MAIN_MAX_DECIMALS_SHOWN; ?>;
+	var main_rounding_unit = <?php echo $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
+	var main_rounding_tot = <?php echo $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+
+	var amount = num.toString();
+
+	// rounding for unit price
+	var rounding = main_rounding_unit;
+	var pos = amount.indexOf(dec);
+	var decpart = '';
+	if (pos >= 0) decpart = amount.substr(pos+1).replace('/0+$/i','');	// Supprime les 0 de fin de partie decimale
+	var nbdec = decpart.length;
+	if (nbdec > rounding) rounding = nbdec;
+    // If rounding higher than max shown
+    if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
+
+	if (thousand != ',' && thousand != '.') amount=amount.replace(',','.');
+	amount=amount.replace(' ','');			// To avoid spaces
+	amount=amount.replace(thousand,'');		// Replace of thousand before replace of dec to avoid pb if thousand is .
+	amount=amount.replace(dec,'.');
+
+	return parseFloat(amount).toFixed(rounding);
+}
+
 <?php } ?>
+});
+</script>
+
 <!-- END PHP TEMPLATE objectline_add.tpl.php -->

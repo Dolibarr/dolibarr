@@ -1,6 +1,5 @@
 # Dolibarr language file - nl_BE - suppliers
 Suppliers=Leveranciers
-CHARSET=UTF-8
 Supplier=Leverancier
 AddSupplier=Voeg een leverancier toe
 SupplierRemoved=Leverancier verwijderd

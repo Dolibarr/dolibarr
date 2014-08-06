@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:32:03
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms konfiguration
 SmsDesc=Den här sidan kan du definiera Globals optioner på SMS funktioner
@@ -56,7 +47,7 @@ NbOfSms=Nbre av telefo nummer
 ThisIsATestMessage=Detta är ett testmeddelande
 SendSms=Skicka SMS
 SmsInfoCharRemain=Nb av återstående tecken
-SmsInfoNumero=(Format internationella dvs 33899701761)
+SmsInfoNumero= (Format internationella dvs 33899701761)
 DelayBeforeSending=Fördröjning innan du skickar (minuter)
 SmsNoPossibleRecipientFound=Inget mål tillgänglig. Kontrollera inställningarna i din SMS-leverantör.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:33:03).
+

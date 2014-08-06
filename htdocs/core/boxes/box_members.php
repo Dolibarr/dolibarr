@@ -91,7 +91,6 @@ class box_members extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-
 			if ($result)
 			{
 				$num = $db->num_rows($result);
@@ -132,6 +131,8 @@ class box_members extends ModeleBoxes
 				}
 
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedCustomers"));
+
+				$db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',

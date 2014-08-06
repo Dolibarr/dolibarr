@@ -64,14 +64,35 @@ $conf->file->main_authentication		= empty($dolibarr_main_authentication)?'':$dol
 $conf->file->main_force_https			= empty($dolibarr_main_force_https)?'':$dolibarr_main_force_https;			// Force https
 $conf->file->strict_mode 				= empty($dolibarr_strict_mode)?'':$dolibarr_strict_mode;					// Force php strict mode (for debug)
 $conf->file->cookie_cryptkey			= empty($dolibarr_main_cookie_cryptkey)?'':$dolibarr_main_cookie_cryptkey;	// Cookie cryptkey
-$conf->file->dol_document_root			= array('main' => DOL_DOCUMENT_ROOT);										// Define array of document root directories
+$conf->file->dol_document_root			= array('main' => (string) DOL_DOCUMENT_ROOT);								// Define array of document root directories ('/home/htdocs')
+$conf->file->dol_url_root				= array('main' => (string) DOL_URL_ROOT);									// Define array of url root path ('' or '/dolibarr')
 if (! empty($dolibarr_main_document_root_alt))
 {
 	// dolibarr_main_document_root_alt can contains several directories
 	$values=preg_split('/[;,]/',$dolibarr_main_document_root_alt);
+	$i=0;
+	foreach($values as $value) $conf->file->dol_document_root['alt'.($i++)]=(string) $value;
+	$values=preg_split('/[;,]/',$dolibarr_main_url_root_alt);
+	$i=0;
 	foreach($values as $value)
 	{
-		$conf->file->dol_document_root['alt']=$value;
+		if (preg_match('/^http(s)?:/',$value))
+		{
+			// TODO: Make this a warning rather than an error since the correct value can be derived in most cases
+			$correct_value = str_replace($dolibarr_main_url_root, '', $value);
+			print '<b>Error:</b><br>'."\n";
+			print 'Wrong <b>$dolibarr_main_url_root_alt</b> value in <b>conf.php</b> file.<br>'."\n";
+			print 'We now use a relative path to $dolibarr_main_url_root to build alternate URLs.<br>'."\n";
+			print 'Value found: '.$value.'<br>'."\n";
+			print 'Should be replaced by: '.$correct_value.'<br>'."\n";
+			print "Or something like following examples:<br>\n";
+			print "\"/extensions\"<br>\n";
+			print "\"/extensions1,/extensions2,...\"<br>\n";
+			print "\"/../extensions\"<br>\n";
+			print "\"/custom\"<br>\n";
+			exit;
+		}
+		$conf->file->dol_url_root['alt'.($i++)]=(string) $value;
 	}
 }
 
@@ -139,18 +160,21 @@ if (! defined('NOREQUIREDB'))
 	{
 		$conf->entity = GETPOST("entity",'int');
 	}
-	else if (defined('DOLENTITY') && is_int(DOLENTITY))				// For public page with MultiCompany module
+	else if (defined('DOLENTITY') && is_numeric(DOLENTITY))			// For public page with MultiCompany module
 	{
 		$conf->entity = DOLENTITY;
 	}
-	else if (!empty($_COOKIE['DOLENTITY']))							// For other application with MultiCompany module
+	else if (!empty($_COOKIE['DOLENTITY']))						// For other application with MultiCompany module (TODO: We should remove this. entity to use should never be stored into client side)
 	{
 		$conf->entity = $_COOKIE['DOLENTITY'];
 	}
-	else if (! empty($conf->multicompany->force_entity) && is_int($conf->multicompany->force_entity)) // To force entity in login page
+	else if (! empty($conf->multicompany->force_entity) && is_numeric($conf->multicompany->force_entity)) // To force entity in login page
 	{
 		$conf->entity = $conf->multicompany->force_entity;
 	}
+
+	// Sanitize entity
+	if (! is_numeric($conf->entity)) $conf->entity=1;
 
 	//print "Will work with data into entity instance number '".$conf->entity."'";
 

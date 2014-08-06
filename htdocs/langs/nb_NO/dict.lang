@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - dict
-CHARSET=UTF-8 
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=Frankrike
 CountryBE=Belgia
 CountryIT=Italia
@@ -7,6 +6,7 @@ CountryES=Spania
 CountryDE=Tyskland
 CountryCH=Sveits
 CountryGB=Storbritannia
+# CountryUK=United Kingdom
 CountryIE=Irland
 CountryCN=Kina
 CountryTN=Tunisia
@@ -252,52 +252,49 @@ CivilityMME=Fru
 CivilityMR=Herr
 CivilityMLE=Frk.
 CivilityMTRE=-
+# CivilityDR=Doctor
 
 ##### Currencies #####
 Currencyeuros=Euro
-CurrencyNOK=NOK
 CurrencyAUD=Australske dollar
-CurrencyCAD=Kanadiske dollar
-CurrencyCHF=Sveitsiske franc
-CurrencyEUR=Euro
-CurrencyFRF=Franske franc
-CurrencyMAD=Dirham
-CurrencyMGA=Ariary
-CurrencyGBP=Britiske pund
-CurrencyTND=TND
-CurrencyUSD=Amerikanske dollar
-CurrencyXAF=CFA Francs BEAC
-CurrencyXOF=CFA Francs BCEAO
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
 CurrencySingAUD=AU Dollar
+CurrencyCAD=Kanadiske dollar
 CurrencySingCAD=CAN dollar
+CurrencyCHF=Sveitsiske franc
 CurrencySingCHF=Sveitsisk franc
+CurrencyEUR=Euro
 CurrencySingEUR=Euro
+CurrencyFRF=Franske franc
 CurrencySingFRF=Franske franc
+CurrencyGBP=Britiske pund
 CurrencySingGBP=GB Pound
 CurrencyINR=Indian rupees
 CurrencySingINR=Indisk rupee
+CurrencyMAD=Dirham
 CurrencySingMAD=Dirham
+CurrencyMGA=Ariary
 CurrencySingMGA=Ariary
 CurrencyMUR=Mauritius rupees
 CurrencySingMUR=Mauritius rupee
+CurrencyNOK=NOK
 CurrencySingNOK=Norske kroner
+CurrencyTND=TND
 CurrencySingTND=Tunisisk dinar
+CurrencyUSD=Amerikanske dollar
 CurrencySingUSD=US Dollar
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+CurrencyXAF=CFA Francs BEAC
 CurrencySingXAF=CFA franc BEAC
+CurrencyXOF=CFA Francs BCEAO
 CurrencySingXOF=CFA franc BCEAO
 CurrencyXPF=CFP franc
 CurrencySingXPF=CFP Franc
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:27).
 
+# CurrencyCentSingEUR=cent
+# CurrencyThousandthSingTND=thousandth
 
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> nb_NO
-CurrencyUAH=Hryvnia
-CurrencySingUAH=Hryvnia
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internett
 DemandReasonTypeSRC_CAMP_MAIL=Mailing kampanje
 DemandReasonTypeSRC_CAMP_EMAIL=E-post-kampanje
@@ -305,4 +302,28 @@ DemandReasonTypeSRC_CAMP_PHO=Telefon kampanje
 DemandReasonTypeSRC_CAMP_FAX=Fax kampanje
 DemandReasonTypeSRC_COMM=Kommersielle kontakt
 DemandReasonTypeSRC_SHOP=Butikk Kontakt
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 08:49:17).
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+# DemandReasonTypeSRC_EMPLOYEE=Employee
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
+
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

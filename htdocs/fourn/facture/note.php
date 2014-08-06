@@ -41,7 +41,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
-$object->fetch($id,$ref);
+$object->fetch($id, $ref);
 
 
 
@@ -71,13 +71,13 @@ if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 
 llxHeader();
 
-if ($id)
+if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 
@@ -88,11 +88,11 @@ if ($id)
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="20%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 	print '</td>';
 	print "</tr>\n";
 
@@ -101,7 +101,7 @@ if ($id)
 	print "</tr>\n";
 
 	// Company
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
 
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';

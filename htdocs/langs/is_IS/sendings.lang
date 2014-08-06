@@ -1,16 +1,9 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Tilv. sendingunni
 Sending=Sendingunni
 Sendings=Sendingar
+Shipment=Sendingunni
+Shipments=Sendingar
 Receivings=Receivings
 SendingsArea=Sendingar area
 ListOfSendings=Listi yfir sendings
@@ -20,6 +13,7 @@ LastSendings=Last %s  sendingar
 SearchASending=Leita að sendingunni
 StatisticsOfSendings=Tölfræði fyrir sendingar
 NbOfSendings=Fjöldi sendinga
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Shipping kort
 NewSending=New sendingunni
 CreateASending=Búa til sendingu
@@ -38,9 +32,11 @@ SendingsToValidate=Sendi til að sannreyna
 StatusSendingCanceled=Hætt við
 StatusSendingDraft=Víxill
 StatusSendingValidated=Staðfestar (vörur til skip eða þegar flutt)
+StatusSendingProcessed=Afgreitt
 StatusSendingCanceledShort=Hætt við
 StatusSendingDraftShort=Víxill
 StatusSendingValidatedShort=Staðfestar
+StatusSendingProcessedShort=Afgreitt
 SendingSheet=Senda athugasemd
 Carriers=Flutningsaðili
 Carrier=Flutningsaðili
@@ -54,29 +50,27 @@ Enlevement=Fengið við viðskiptavini
 DocumentModelSimple=Einföld skjal líkan
 DocumentModelMerou=Merou A5 líkan
 WarningNoQtyLeftToSend=Aðvörun, að engar vörur sem bíður sendar.
-StatsOnShipmentsOnlyValidated=Tölfræði fram á sendingar aðeins staðfestar
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Flugvél fæðingardag
 DateReceived=Date sending berast
-SendingMethodCATCH=Afli eftir viðskiptavina
-SendingMethodTRANS=Transporter
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Einföld skjal líkan fyrir kvittunum sending
-DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
-// Reference language: en_US
-Shipments=Sendingar
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:29:22).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
 SendShippingByEMail=Senda sendingu með tölvupósti
 SendShippingRef=Senda sendingunni %s
 ActionsOnShipping=Viðburðir á sendingunni
 LinkToTrackYourPackage=Tengill til að fylgjast með pakka
 ShipmentCreationIsDoneFromOrder=Í augnablikinu er sköpun af a nýr sendingunni gert úr þeirri röð kortinu.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Afli eftir viðskiptavina
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Einföld skjal líkan fyrir kvittunum sending
+DocumentModelTyphon=Meira heill skjal líkan fyrir kvittunum sending (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER skilgreind ekki
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:29:02).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

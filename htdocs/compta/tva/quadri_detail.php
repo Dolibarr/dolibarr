@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -121,10 +121,13 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 //$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 //$fsearch.='  <input type="text" name="min" value="'.$min.'">';
 
+
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
     $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
+    $calcmode=$langs->trans("CalcModeVATDebt");
+    $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
@@ -140,7 +143,6 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
-    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $description.=$fsearch;
     $builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
@@ -159,6 +161,8 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
     $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
+    $calcmode=$langs->trans("CalcModeVATEngagement");
+    $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
@@ -176,7 +180,6 @@ if ($modetax==0) 	// Invoice for goods, payment for services
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
     //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
-    $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$builddate=time();
     //$exportlink=$langs->trans("NotYetAvailable");
 
@@ -191,7 +194,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -342,7 +345,7 @@ else
 				print '<tr '.$bc[$var].'>';
 
 				// Ref
-				print '<td nowrap align="left">'.$fields['link'].'</td>';
+				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
 
 				// Description
 				print '<td align="left">';
@@ -374,7 +377,7 @@ else
 				// Total HT
 				if ($modetax == 0)
 				{
-					print '<td nowrap align="right">';
+					print '<td class="nowrap" align="right">';
 					print price($fields['totalht']);
 					if (price2num($fields['ftotal_ttc']))
 					{
@@ -390,7 +393,7 @@ else
 				if ($modetax == 0)
 				{
 					if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-					print '<td nowrap align="right">';
+					print '<td class="nowrap" align="right">';
 					//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
@@ -409,14 +412,14 @@ else
 				}
 
 				// Total collected
-				print '<td nowrap align="right">';
+				print '<td class="nowrap" align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 				print price(price2num($temp_ht,'MT'));
 				print '</td>';
 
 				// VAT
-				print '<td nowrap align="right">';
+				print '<td class="nowrap" align="right">';
 				$temp_vat=$fields['vat'];
 				if ($type == 1) $temp_vat=$fields['vat']*$ratiopaymentinvoice;
 				print price(price2num($temp_vat,'MT'));
@@ -435,11 +438,11 @@ else
         print '<td align="right">'.$langs->trans("Total").':</td>';
         if ($modetax == 0)
         {
-            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td class="nowrap" align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
         }
         print '<td align="right">'.price(price2num($subtot_coll_total_ht,'MT')).'</td>';
-        print '<td nowrap align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
         print '</tr>';
 	}
 
@@ -450,11 +453,11 @@ else
         print '<td align="right">'.$langs->trans("Total").':</td>';
         if ($modetax == 0)
         {
-            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td class="nowrap" align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
         }
         print '<td align="right">'.price(price2num(0,'MT')).'</td>';
-        print '<td nowrap align="right">'.price(price2num(0,'MT')).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num(0,'MT')).'</td>';
         print '</tr>';
     }
 
@@ -499,7 +502,7 @@ else
 				print '<tr '.$bc[$var].'>';
 
 				// Ref
-				print '<td nowrap align="left">'.$fields['link'].'</td>';
+				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
 
 				// Description
 				print '<td align="left">';
@@ -525,7 +528,7 @@ else
 				// Total HT
 				if ($modetax == 0)
 				{
-					print '<td nowrap align="right">';
+					print '<td class="nowrap" align="right">';
 					print price($fields['totalht']);
 					if (price2num($fields['ftotal_ttc']))
 					{
@@ -541,7 +544,7 @@ else
 				if ($modetax == 0)
 				{
 					if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
-					print '<td nowrap align="right">';
+					print '<td class="nowrap" align="right">';
 					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 					{
 						$paymentfourn_static->id=$fields['payment_id'];
@@ -560,14 +563,14 @@ else
 				}
 
 				// VAT paid
-				print '<td nowrap align="right">';
+				print '<td class="nowrap" align="right">';
 				$temp_ht=$fields['totalht'];
 				if ($type == 1) $temp_ht=$fields['totalht']*$ratiopaymentinvoice;
 				print price(price2num($temp_ht,'MT'));
 				print '</td>';
 
 				// VAT
-				print '<td nowrap align="right">';
+				print '<td class="nowrap" align="right">';
 				$temp_vat=$fields['vat'];
 				if ($type == 1) $temp_vat=$fields['vat']*$ratiopaymentinvoice;
 				print price(price2num($temp_vat,'MT'));
@@ -586,11 +589,11 @@ else
         print '<td align="right">'.$langs->trans("Total").':</td>';
         if ($modetax == 0)
         {
-            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td class="nowrap" align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
         }
         print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
-        print '<td nowrap align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
         print '</tr>';
 	}
 
@@ -601,11 +604,11 @@ else
         print '<td align="right">'.$langs->trans("Total").':</td>';
         if ($modetax == 0)
         {
-            print '<td nowrap align="right">&nbsp;</td>';
+            print '<td class="nowrap" align="right">&nbsp;</td>';
             print '<td align="right">&nbsp;</td>';
         }
         print '<td align="right">'.price(price2num(0,'MT')).'</td>';
-        print '<td nowrap align="right">'.price(price2num(0,'MT')).'</td>';
+        print '<td class="nowrap" align="right">'.price(price2num(0,'MT')).'</td>';
         print '</tr>';
 	}
 

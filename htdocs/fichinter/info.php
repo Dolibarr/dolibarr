@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2009-2010  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2013  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011       Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,32 +31,36 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 $langs->load('companies');
 $langs->load("interventions");
 
-$fichinterid = GETPOST('id','int');
+$id = GETPOST('id','int');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
+$object = new Fichinter($db);
+
+if ($id > 0)
+{
+	$object->fetch($id);
+}
+
 
 /*
-*	View
-*/
+ *	View
+ */
 
 llxHeader();
 
-$fichinter = new Fichinter($db);
-$fichinter->fetch($fichinterid);
-
 $societe = new Societe($db);
-$societe->fetch($fichinter->socid);
+$societe->fetch($object->socid);
 
-$head = fichinter_prepare_head($fichinter);
+$head = fichinter_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans('InterventionCard'), 0, 'intervention');
 
-$fichinter->info($fichinter->id);
+$object->info($object->id);
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($fichinter);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';

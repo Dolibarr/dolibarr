@@ -1,13 +1,4 @@
-/*
- * Language code: nl_NL
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 01:37:25
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
-// Reference language: en_US -> nl_NL
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal module setup
 PaypalDesc=Deze module biedt om betaling op laten <a href="http://www.paypal.com" target="_blank">PayPal</a> door de klanten. Dit kan gebruikt worden voor een gratis betaling of voor een betaling op een bepaald Dolibarr object (factuur, bestelling, ...)
 PaypalOrCBDoPayment=Betalen met credit card of Paypal
@@ -18,14 +9,14 @@ PAYPAL_API_USER=API gebruikersnaam
 PAYPAL_API_PASSWORD=API wachtwoord
 PAYPAL_API_SIGNATURE=API handtekening
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Aanbod betaling "integraal" (Credit card + Paypal) of "Paypal" alleen
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=, Eventueel met Url van CSS style sheet op betaalpagina
 ThisIsTransactionId=Dit is id van de transactie: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Voeg de url van Paypal betaling wanneer u een document verzendt via e-mail
 PAYPAL_IPN_MAIL_ADDRESS=E-mail adres voor de directe kennisgeving van de betaling (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 01:40:41).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
-// Reference language: en_US -> nl_NL
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=U bevindt zich momenteel in de &quot;sandbox&quot;-modus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:11:58).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

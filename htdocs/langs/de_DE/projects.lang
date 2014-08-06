@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - projects
 Project=Projekt
 Projects=Projekte
 SharedProject=Jeder
@@ -53,6 +45,8 @@ MyActivities=Meine Aufgaben/Tätigkeiten
 MyProjects=Meine Projekte
 DurationEffective=Effektivdauer
 Progress=Fortschritt
+ProgressDeclared=Angegebener Fortschritt
+ProgressCalculated=Kalkulierter Fortschritt
 Time=Zeitaufwand
 ListProposalsAssociatedProject=Liste der mit diesem Projekt verbundenen Angebote
 ListOrdersAssociatedProject=Liste der mit diesem Projekt verbundenen Bestellungen
@@ -92,14 +86,30 @@ TaskIsNotAffectedToYou=Der Aufgabe sind sie nicht zugeordnet
 ErrorTimeSpentIsEmpty=Zeitaufwand ist leer
 ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt (<b>%s</b> akutelle Aufgaben) und alle Zeitaufwände.
 IfNeedToUseOhterObjectKeepEmpty=Wenn einige Zuordnungen (Rechnung, Bestellung, ...), einem Dritten gehören, müssen Sie erst alle mit dem Projekt verbinden, damit das Projekt auch Dritten zugänglich ist .
+CloneProject=Dupliziere Projekt
+CloneTasks=Dupliziere Aufgaben
+CloneContacts=Dupliziere Kontakte
+CloneNotes=Dupliziere Hinweise
+CloneProjectFiles=Dupliziere verbundene Projektdateien
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
+ConfirmCloneProject=Möchten Sie dieses Projekt wirklich duplizieren?
+ProjectReportDate=Passe Aufgaben-Datum dem Projekt-Startdatum an
+ErrorShiftTaskDate=Es ist nicht möglich, das Aufgabendatum dem neuen Projektdatum anzupassen
+ProjectsAndTasksLines=Projekte und Aufgaben
+ProjectCreatedInDolibarr=Projekt %s erstellt
 ##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Projektleiter
 TypeContact_project_external_PROJECTLEADER=Projektleiter
-TypeContact_project_internal_CONTRIBUTOR=Mitwirkender
-TypeContact_project_external_CONTRIBUTOR=Mitwirkender
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Mitwirkender
+TypeContact_project_external_PROJECTCONTRIBUTOR=Mitwirkender
 TypeContact_project_task_internal_TASKEXECUTIVE=Verantwortlich
 TypeContact_project_task_external_TASKEXECUTIVE=Verantwortlich
-TypeContact_project_task_internal_CONTRIBUTOR=Mitwirkender
-TypeContact_project_task_external_CONTRIBUTOR=Mitwirkender
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Mitwirkender
+TypeContact_project_task_external_TASKCONTRIBUTOR=Mitwirkender
+SelectElement=Element wählen
+AddElement=Mit Element verknüpfen
 # Documents models
 DocumentModelBaleine=Eine vollständige Projektberichtsvorlage (Logo, uwm.)
+PlannedWorkload = Geplante Auslastung
+# WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

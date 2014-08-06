@@ -67,13 +67,10 @@ $object->substitutionarray=array(
     '__OTHER4__' => 'Other4',
     '__OTHER5__' => 'Other5',
     '__SIGNATURE__' => 'TagSignature',
-    '__CHECK_READ__' => 'TagCheckMail'
+    '__CHECK_READ__' => 'TagCheckMail',
+	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
 	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
 );
-if (! empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
-{
-    $object->substitutionarray=array_merge($object->substitutionarray, array('__UNSUBSCRIBE__' => 'TagUnsubscribe'));
-}
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
@@ -86,19 +83,12 @@ $object->substitutionarrayfortest=array(
     '__OTHER3__' => 'TESTOther3',
     '__OTHER4__' => 'TESTOther4',
     '__OTHER5__' => 'TESTOther5',
-	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:'')
-    //,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
+	'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
+    '__CHECK_READ__' => 'TagCheckMail',
+	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
+//,'__PERSONALIZED__' => 'TESTPersonalized'	// Not used yet
 );
-if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
-{
-    $object->substitutionarrayfortest=array_merge(
-        $object->substitutionarrayfortest,
-        array(
-            '__CHECK_READ__' => 'TESTCheckMail',
-            '__UNSUBSCRIBE__' => 'TESTUnsubscribe'
-        )
-    );
-}
+
 
 /*
  * Actions
@@ -700,20 +690,17 @@ else
 		// Confirmation de la validation du mailing
 		if ($action == 'valid')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
 		}
 		// Confirm reset
 		else if ($action == 'reset')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$object->ref),"confirm_reset",'','',2);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$object->ref),"confirm_reset",'','',2);
 		}
 		// Confirm delete
 		else if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
 		}
 
 
@@ -749,8 +736,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,260);
-					if ($ret == 'html') print '<br>';
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,260);
 				}
 			}
 
@@ -1094,7 +1080,7 @@ else
 				{
 					$out.= '<div id="attachfile_'.$key.'">';
 					$out.= img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
-					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+					$out.= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"),'delete.png','','',1).'" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 					$out.= '<br></div>';
 				}
 			}

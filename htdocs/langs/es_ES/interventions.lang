@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - interventions
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervención
 Interventions=Intervenciones
 InterventionCard=Ficha intervención
@@ -25,17 +24,6 @@ NameAndSignatureOfInternalContact=Nombre y firma del participante:
 NameAndSignatureOfExternalContact=Nombre y firma del cliente:
 DocumentModelStandard=Documento modelo estándar para intervenciones
 InterventionCardsAndInterventionLines=Fichas y líneas de intervención
-InterId=Id intervención
-InterRef=Ref. intervención
-InterDateCreation=Fecha creación
-InterDuration=Duración total
-InterStatus=Estado
-InterNote=Descripción
-InterLine=Línea intervención
-InterLineId=Id línea detalle
-InterLineDate=Fecha línea
-InterLineDuration=Duración línea
-InterLineDesc=Descripción linea
 ClassifyBilled=Clasificar "Facturado"
 StatusInterInvoiced=Facturado
 RelatedInterventions=Intervenciones adjuntas
@@ -50,5 +38,5 @@ ArcticNumRefModelDesc1=Modelo de numeración genérico
 ArcticNumRefModelError=Activación imposible
 PacificNumRefModelDesc1=Devuelve el número con el formato %syymm-nnnn dónde yy es el año, mm. el mes y nnnn un contador secuencial sin ruptura y sin quedar a 0
 PacificNumRefModelError=Una factura que empieza por # $$syymm existe en base y es incompatible con esta numeración. Elimínela  o renombrela para activar este módulo.
-SendInterventionByMail=Envío ficha de intervención por correo
-SendInterventionRef=Envío intervención %s
+PrintProductsOnFichinter=Mostrar los productos en la ficha de intervención
+PrintProductsOnFichinterDetails=para las intervenciones generadas a partir de pedidos

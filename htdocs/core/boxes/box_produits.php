@@ -135,6 +135,8 @@ class box_produits extends ModeleBoxes
                     $i++;
 				}
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProducts"));
+
+				$db->free($result);
 			}
 			else
 			{

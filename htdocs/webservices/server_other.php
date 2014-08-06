@@ -173,13 +173,16 @@ function getVersions($authentication)
 }
 
 
-/*
+/**
  * Method to get a document by webservice
-* \param 	authentication	array
-* \param 	modulepart		array 	Properties of document
-*
-*/
-function getDocument($authentication, $modulepart, $file)
+ *
+ * @param 	array	$authentication		Array with permissions
+ * @param 	string	$modulepart		 	Properties of document
+ * @param	string	$file				Relative path
+ * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
+ * @return	void
+ */
+function getDocument($authentication, $modulepart, $file, $refname='')
 {
 	global $db,$conf,$langs,$mysoc;
 
@@ -194,8 +197,8 @@ function getDocument($authentication, $modulepart, $file)
 	// Properties of doc
 	$original_file = $file;
 	$type=dol_mimetype($original_file);
-	$relativefilepath = $ref . "/";
-	$relativepath = $relativefilepath . $ref.'.pdf';
+	//$relativefilepath = $ref . "/";
+	//$relativepath = $relativefilepath . $ref.'.pdf';
 
 	$accessallowed=0;
 
@@ -218,10 +221,10 @@ function getDocument($authentication, $modulepart, $file)
 		$original_file = str_replace("../","/", $original_file);
 
 		// find the subdirectory name as the reference
-		$refname=basename(dirname($original_file)."/");
+		if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 		// Security check
-		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$fuser);
+		$check_access = dol_check_secure_access_document($modulepart,$original_file,$conf->entity,$fuser,$refname);
 		$accessallowed              = $check_access['accessallowed'];
 		$sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 		$original_file              = $check_access['original_file'];

@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - errors
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - errors
 
 # No errors
 NoErrorCommitIsDone=Sense errors, és vàlid
@@ -13,11 +12,10 @@ ErrorBadUrl=Url %s invàlida
 ErrorLoginAlreadyExists=El login %s ja existeix.
 ErrorGroupAlreadyExists=El grup %s ja existeix.
 ErrorRecordNotFound=Registre no trobat
-ErrorDuplicateTrigger=Un arxiu trigger de nom '<b>%s</b>' està carregat. Treure el doble de la carpeta '<b>%s</b>'.
 ErrorFailToCopyFile=Error al copiar l'arxiu '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToRenameFile=Error al renomenar l'arxiu '<b>%s</b>' a '<b>%s</b>'.
-ErrorFailToCreateFile=Error al crear l'arxiu  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al suprimir el fitxer '<b>%s</b>'.
+ErrorFailToCreateFile=Error al crear l'arxiu  '<b>%s</b>'
 ErrorFailToRenameDir=Error al renomenar la carpeta '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToCreateDir=Error al crear la carpeta '<b>%s</b>'
 ErrorFailToDeleteDir=Error en eliminar la carpeta '<b>%s</b>'.
@@ -125,6 +123,10 @@ ErrorFailedToValidatePasswordReset=No s'ha pogut restablir la contrasenya. És p
 ErrorToConnectToMysqlCheckInstance=Error de connexió amb el servidor de la base de dades. Comprovi que MySQL està funcionant (en la majoria dels casos, pot executar des de la línia d'ordres utilitzant el comandament 'etc sudo /etc/ init.d/mysql start).
 ErrorFailedToAddContact=Error en l'addició del contacte
 ErrorDateMustBeBeforeToday=La data no pot ser superior a avui
+ErrorPaymentModeDefinedToWithoutSetup=S'ha establert la forma de pagament al tipus %s però a la configuració del mòdul de factures no s'ha indicat la informació per mostrar aquesta forma de pagament.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
 
 # Warnings
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits

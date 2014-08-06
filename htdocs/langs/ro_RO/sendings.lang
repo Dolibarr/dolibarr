@@ -1,90 +1,76 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. Livrare
+Sending=Livrare
+Sendings=Livrari
+Shipment=Livrare
+Shipments=Livrari
+Receivings=Recepţii
+SendingsArea=Zona Livrari
+ListOfSendings=Lista Livrari
+SendingMethod=Metodă Livrare
+SendingReceipt=Borderou Livrare
+LastSendings=Ultimele %s Livrari
+SearchASending=Caută o Livrare
+StatisticsOfSendings=Statistici Livrari
+NbOfSendings=Număr Livrari
+NumberOfShipmentsByMonth=Număr livrări pe lună
+SendingCard=Fişă Livrare
+NewSending=Livrare nouă
+CreateASending=Crează Livrare
+CreateSending=Crează Livrare
+QtyOrdered=Cant.  comandată
+QtyShipped=Cant.  livrată
+QtyToShip=Cant.  de livrat
+QtyReceived=Cant.  primită
+KeepToShip=Rest de livrat
+OtherSendingsForSameOrder=Alte livrări pentru această comandă
+DateSending=Data dispoziţiei de livrare
+DateSendingShort=Data disp.  de livrare
+SendingsForSameOrder=Livrări pentru această comandă
+SendingsAndReceivingForSameOrder=Livrările şi recepţiile pentru această comandă
+SendingsToValidate=Livrări de validat
+StatusSendingCanceled=Anulată
+StatusSendingDraft=Nevalidată
+StatusSendingValidated=Validată (produse  de livrat sau deja livrate)
+StatusSendingProcessed=Procesată
+StatusSendingCanceledShort=Anulată
+StatusSendingDraftShort=Nevalidată
+StatusSendingValidatedShort=Validată
+StatusSendingProcessedShort=Procesată
+SendingSheet=Borderou de livrare
+Carriers=Transportatori
+Carrier=Transportator
+CarriersArea=Zona Transportatori
+NewCarrier=Transportatori Nou
+ConfirmDeleteSending=Sigur doriți să ștergeți această livrare ?
+ConfirmValidateSending=Sigur doriți să valdaţiaceastă livrare cu referinţa <b>%s</b> ?
+ConfirmCancelSending=Sigur doriți să anulaţi această livrare ?
+GenericTransport=Transportator Generic
+Enlevement=Ajuns de client
+DocumentModelSimple=Model simplu
+DocumentModelMerou=Model Merou A5
+WarningNoQtyLeftToSend=Atenţie,  nu sunt produse care aşteaptă să fie expediate.
+StatsOnShipmentsOnlyValidated=Statisticil ectuate privind numai livrările validate. Data folosită este data validării livrării (data de livrare planificată nu este întotdeauna cunoscută).
+DateDeliveryPlanned=Data de livrare planificată
+DateReceived=Data de livrare reală
+SendShippingByEMail=Trimite dispoziţia de livrare prin e-mail
+SendShippingRef=Trimite dispoziţia de livrare  %s
+ActionsOnShipping=Evenimente pe livrare
+LinkToTrackYourPackage=Link pentru a urmări pachetul dvs
+ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unei noi livrări se face din fişa comenzii.
+RelatedShippings=Livrări asociate
+ShipmentLine=Linie de livrare
+CarrierList=Lista transportatori
 
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-RefSending=Ref. trimite
-Sending=Trimiterea
-Sendings=Sendings
-Receivings=Receivings
-SendingsArea=Sendings zona
-ListOfSendings=Lista de sendings
-SendingMethod=Trimiterea metodă
-SendingReceipt=Trimiterea la primirea
-LastSendings=Ultima %s sendings
-SearchASending=Cautati o trimitere
-StatisticsOfSendings=Statistica de sendings
-NbOfSendings=Numărul de sendings
-SendingCard=Trimiterea de carte
-NewSending=New trimiterea
-CreateASending=Creaţi o trimitere
-CreateSending=Creaţi trimiterea
-QtyOrdered=Cantitate ordonat
-QtyShipped=Cantitate transportate
-QtyToShip=Cantitate de navă
-QtyReceived=Cantitate primit
-KeepToShip=Păstraţi la navă
-OtherSendingsForSameOrder=Alte sendings pentru acest ordin
-DateSending=Data de trimitere pentru
-DateSendingShort=Data de trimitere pentru
-SendingsForSameOrder=Sendings pentru acest ordin
-SendingsAndReceivingForSameOrder=Sendings şi receivings pentru acest ordin
-SendingsToValidate=Trimiterea pentru a valida
-StatusSendingDraft=Proiect
-StatusSendingValidated=Validat (produse pentru a navei sau deja livrat)
-StatusSendingDraftShort=Proiect
-StatusSendingValidatedShort=Validat
-SendingSheet=Trimiterea foaie
-Carriers=Suporti
-Carrier=Transportatorul
-CarriersArea=Suporti zona
-NewCarrier=Nou operator de transport
-ConfirmDeleteSending=Sunteţi sigur că doriţi să ştergeţi acest trimiterea?
-ConfirmValidateSending=Sunteţi sigur că doriţi să valdate acest trimiterea?
-ConfirmCancelSending=Sunteţi sigur că doriţi să anulaţi această expediere?
-GenericTransport=Generic de transport
-Enlevement=Ajuns de către client
-DocumentModelSimple=Simplă documentul model
-WarningNoQtyLeftToSend=Atenţie, nu produse care aşteaptă să fie expediate.
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-StatsOnShipmentsOnlyValidated=Statistici privind transferurile efectuate numai validate
-SendingMethodCATCH=Prinde de către client
-SendingMethodTRANS=Transporter
+# Sending methods
+SendingMethodCATCH=Colectată de client
+SendingMethodTRANS=Transportator
 SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Simplă document model pentru livrare încasări
-DocumentModelTyphon=Mai completă, documentul model de livrare încasări (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
 
+# ModelDocument
+DocumentModelSirocco=Model simplu pentru dispoziţie de livrare
+DocumentModelTyphon=Model complet pentru dispoziţie de livrare  (logo. ..)
 
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-Shipments=Transporturile
-StatusSendingCanceled=Anulat
-StatusSendingCanceledShort=Anulat
-DocumentModelMerou=Merou modelul A5
-DateDeliveryPlanned=geluite data de livrare
-DateReceived=Data de livrare a primit
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:08).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-SendShippingByEMail=Trimite expediere prin e-mail
-SendShippingRef=Trimite %s expediere
-ActionsOnShipping=Evenimente privind transportul
-LinkToTrackYourPackage=Link pentru a urmări pachetul
-ShipmentCreationIsDoneFromOrder=Pentru moment, crearea unui nou transport se face de pe cartela de ordine.
-Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constanta nu este definit
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:54).
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constanta EXPEDITION_ADDON_NUMBER nu este definită
+SumOfProductVolumes=Volumul total al produselor
+SumOfProductWeights=Greutatea totală a produselor

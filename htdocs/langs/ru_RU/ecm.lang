@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=Документы
 DocsMine=Мои документы
 DocsGenerated=Сгенерирована документы
@@ -29,15 +19,14 @@ ECMSections=Каталоги
 ECMRoot=Корневая
 ECMNewSection=Новый каталог
 ECMAddSection=Добавить руководства каталог
-ECMNewSection=Новое руководство каталога
 ECMNewDocument=Новый документ
 ECMCreationDate=Дата создания
 ECMNbOfFilesInDir=Количество файлов в каталоге
 ECMNbOfSubDir=Количество суб-директории
-ECMNbOfFilesInSubDir=Nunber в Иль в суб-директории
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creator
-ECMArea=ECM области
-ECMAreaDesc=ECM (Электронный контент-менеджмент) области позволяет сохранять, обмениваться и быстрого поиска любых документов в Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Автоматическая справочники заполняются автоматически при добавлении документов с карточкой элемента. <br> * Руководство каталогов можно использовать для сохранения документов, не связанных с конкретным элементом.
 ECMSectionWasRemoved=<b>Каталог %s</b> удален.
 ECMDocumentsSection=Документ каталога
@@ -46,12 +35,14 @@ ECMSearchByEntity=Поиск объекта
 ECMSectionOfDocuments=Справочные документы
 ECMTypeManual=Руководство
 ECMTypeAuto=Автоматическая
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Документы, связанные с третьими сторонами
 ECMDocsByProposals=Документы, связанные с предложениями
 ECMDocsByOrders=Документы, связанные с заказчиками заказов
 ECMDocsByContracts=Документы, связанные с контрактами
 ECMDocsByInvoices=Документы, связанные с заказчиками счетами
 ECMDocsByProducts=Документы, связанные с продуктами
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Нет создали каталог
 ShowECMSection=Показать каталог
 DeleteSection=Удаление директории
@@ -60,5 +51,5 @@ ECMDirectoryForFiles=Относительная каталог файлов
 CannotRemoveDirectoryContainsFiles=Удалена не представляется возможным, поскольку в нем содержатся некоторые файлы
 ECMFileManager=Файловый менеджер
 ECMSelectASection=Выберите каталог на левом дереве ...
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

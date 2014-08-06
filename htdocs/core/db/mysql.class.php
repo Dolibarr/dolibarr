@@ -24,11 +24,12 @@
  *	\brief      	Class file to manage Dolibarr database access for a Mysql database
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to manage Dolibarr database access for a Mysql database
  */
-class DoliDBMysql
+class DoliDBMysql extends DoliDB
 {
 	//! Database handler
 	var $db;
@@ -255,6 +256,16 @@ class DoliDBMysql
 	function getVersionArray()
 	{
 		return explode('.',$this->getVersion());
+	}
+
+	/**
+	 *	Return version of database client driver
+	 *
+	 *	@return	        string      Version string
+	 */
+	function getDriverInfo()
+	{
+		return mysqli_get_client_info();
 	}
 
 
@@ -640,6 +651,7 @@ class DoliDBMysql
 			1006 => 'DB_ERROR_CANNOT_CREATE',
 			1007 => 'DB_ERROR_ALREADY_EXISTS',
 			1008 => 'DB_ERROR_CANNOT_DROP',
+            1022 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
 			1044 => 'DB_ERROR_ACCESSDENIED',
 			1046 => 'DB_ERROR_NODBSELECTED',
@@ -974,7 +986,7 @@ class DoliDBMysql
     {
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
         // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-        $sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+        $sql= "ALTER TABLE ".$table." ADD `".$field_name."` ";
         $sql.= $field_desc['type'];
         if(preg_match("/^[^\s]/i",$field_desc['value']))
         if (! in_array($field_desc['type'],array('date','datetime')))
@@ -1067,8 +1079,16 @@ class DoliDBMysql
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
-            return -1;
+            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') 
+            {
+        		dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
+	            return -1;
+            }
+            else 
+            {
+            	// If user already exists, we continue to set permissions
+            	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
+            }
         }
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log

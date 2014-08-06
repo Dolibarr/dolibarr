@@ -2,9 +2,9 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013      Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,11 @@ if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
 	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER", GETPOST('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER','alpha'),'chaine',0,'',$conf->entity);
 }
 
+if($action == 'USE_VIRTUAL_STOCK') {
+    $db->begin();
+    $res = dolibarr_set_const($db, "USE_VIRTUAL_STOCK", GETPOST('USE_VIRTUAL_STOCK','alpha'),'chaine',0,'',$conf->entity);
+}
+
 if($action)
 {
 	if (! $res > 0) $error++;
@@ -80,14 +85,15 @@ if($action)
  	if (! $error)
     {
     	$db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
     	$db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
+
 
 /*
  * View
@@ -243,7 +249,25 @@ if (! empty($conf->fournisseur->enabled))
 
 print '</table>';
 
-dol_htmloutput_mesg($mesg);
+print '<br>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("RuleForStockReplenishment")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print '</tr>'."\n";
+$var = !$var;
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("UseVirtualStock").'</td>';
+print '<td width="160" align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"USE_VIRTUAL_STOCK\">";
+print $form->selectyesno("USE_VIRTUAL_STOCK",$conf->global->USE_VIRTUAL_STOCK,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+print '</table>';
 
 $db->close();
 

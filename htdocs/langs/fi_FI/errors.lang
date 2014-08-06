@@ -1,16 +1,19 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Errors
+Error=Virhe
+Errors=Virheet
+# ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorBadEMail=EMail %s on väärä
+ErrorBadUrl=Url %s on väärä
 ErrorLoginAlreadyExists=Kirjaudu %s on jo olemassa.
 ErrorGroupAlreadyExists=Ryhmän %s on jo olemassa.
+ErrorRecordNotFound=Levykauppa ei löytynyt.
+ErrorFailToCopyFile=Epäonnistui kopioida tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
+ErrorFailToRenameFile=Epäonnistui nimetä tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
 ErrorFailToDeleteFile=Epäonnistui poistaa tiedoston <b>' %s'.</b>
 ErrorFailToCreateFile=Luominen epäonnistui file <b>' %s'.</b>
 ErrorFailToRenameDir=Epäonnistui nimetä directory <b>' %s' osaksi' %s'.</b>
@@ -21,14 +24,19 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Tämä yhteys on jo määritelty yhte
 ErrorCashAccountAcceptsOnlyCashMoney=Tämä pankkitili on käteistä huomioon, joten se hyväksyy maksujen tyypin käteisellä vain.
 ErrorFromToAccountsMustDiffers=Lähde ja tavoitteet pankkitilit on erilainen.
 ErrorBadThirdPartyName=Bad arvo kolmannen osapuolen nimi
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntaksi asiakas-koodi
 ErrorCustomerCodeRequired=Asiakas-koodi tarvitaan
 ErrorCustomerCodeAlreadyUsed=Asiakas-koodi on jo käytetty
 ErrorPrefixRequired=Etunumero tarvitaan
+ErrorUrlNotValid=Www-sivuston osoite on virheellinen
 ErrorBadSupplierCodeSyntax=Bad syntaksi toimittajan koodi
 ErrorSupplierCodeRequired=Toimittaja-koodi tarvitaan
 ErrorSupplierCodeAlreadyUsed=Toimittaja koodi jo käytössä
 ErrorBadParameters=Bad parametrit
+ErrorBadValueForParameter=Väärä arvo &quot;%s&quot; parametrien väärä &quot;%s&quot;
+ErrorBadImageFormat=Image-tiedosto ei ole tuettu formaatti
+ErrorBadDateFormat=Arvo &quot;%s&quot; on väärä päivämäärä muoto
 ErrorFailedToWriteInDir=Epäonnistui kirjoittaa hakemistoon %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Löytyi virheellinen sähköposti syntaksi %s rivit tiedoston (esimerkiksi rivi %s email= %s)
 ErrorUserCannotBeDelete=Käyttäjä ei voi poistaa. Voi olla se liittyy annetun Dolibarr yhteisöjä.
@@ -39,13 +47,21 @@ ErrorFeatureNeedJavascript=Tätä ominaisuutta tarvitaan JavaScript on aktivoitu
 ErrorTopMenuMustHaveAParentWithId0=A-valikosta tyyppi "Alkuun" ei voi olla emo-valikosta. Laita 0 vanhemman valikosta tai valita valikosta tyyppi "vasemmisto".
 ErrorLeftMenuMustHaveAParentId=A-valikosta tyyppi "vasemmisto" on oltava vanhemman id.
 ErrorFileNotFound=Tiedostoa ei löydy (Bad polku väärä oikeudet tai pääsy evätty openbasedir parametri)
+ErrorDirNotFound=Directory <b>%s</b> ei löytynyt (Bad polku, väärä oikeudet tai pääsyn lennolle PHP openbasedir tai safe_mode parametri)
 ErrorFunctionNotAvailableInPHP=<b>Tehtävä %s</b> tarvitaan tätä ominaisuutta, mutta ei ole käytettävissä tässä versiossa / setup PHP.
 ErrorDirAlreadyExists=A-hakemisto on jo olemassa.
+ErrorFileAlreadyExists=Tämän niminen tiedosto on jo olemassa.
+ErrorPartialFile=Tiedosto ei saanut kokonaan palvelimelta.
+ErrorNoTmpDir=Tilapäinen directy %s ei ole.
+ErrorUploadBlockedByAddon=Lähetä estetty PHP / Apache plugin.
+ErrorFileSizeTooLarge=Tiedoston koko on liian suuri.
+ErrorSizeTooLongForIntType=Koko liian pitkä int tyyppi (%s merkkiä maksimi)
+ErrorSizeTooLongForVarcharType=Koko liian pitkä jono tyyppi (%s merkkiä maksimi)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Kenttä %s</b> ei saa sisältää erikoismerkkejä.
-WarningAllowUrlFopenMustBeOn=Parametri <b>allow_url_fopen</b> on <b>käytössä</b> vuonna Filer <b>php.ini</b> siitä tässä moduulissa työskentelee täysin. Sinun täytyy muuttaa tämän tiedoston manuaalisesti.
-WarningBuildScriptNotRunned=<b>Script %s</b> ei ole vielä juoksi rakentaa grafiikkaa, tai ei ole tietoja, jotka osoittavat.
-WarningBookmarkAlreadyExists=Kirjanmerkki tämän otsikon tai tämän tavoitteen (URL) on jo olemassa.
-WarningPassIsEmpty=Varoitus, tietokannan salasana on tyhjä. Tämä on turvallisuus reikään. Sinun tulisi lisätä salasanan tietokantaan ja muuttaa conf.php tiedosto vastaavasti.
 ErrorNoAccountancyModuleLoaded=O kirjanpito moduuli aktivoitu
 ErrorExportDuplicateProfil=Tämä profiilin nimi on jo olemassa tämän vienti asetettu.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP yhteensovitus ei ole täydellinen.
@@ -54,38 +70,28 @@ ErrorCantSaveADoneUserWithZeroPercentage=Ei voi tallentaa toimia "statut ole kä
 ErrorRefAlreadyExists=Ref käytetään luomista jo olemassa.
 ErrorPleaseTypeBankTransactionReportName=Kirjoita pankki vastaanottamisesta nimi, jos liiketoimi on raportoitu (Format VVVVKK tai VVVVKKPP)
 ErrorRecordHasChildren=Poistaminen ei onnistunut kirjaa, koska se on noin lapsen.
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-ErrorUrlNotValid=Www-sivuston osoite on virheellinen
-Error=Virhe
-Errors=Virheet
-ErrorBadEMail=EMail %s on väärä
-ErrorBadUrl=Url %s on väärä
-ErrorRecordNotFound=Levykauppa ei löytynyt.
-ErrorDirNotFound=Directory <b>%s</b> ei löytynyt (Bad polku, väärä oikeudet tai pääsyn lennolle PHP openbasedir tai safe_mode parametri)
-ErrorFileAlreadyExists=Tämän niminen tiedosto on jo olemassa.
-ErrorPartialFile=Tiedosto ei saanut kokonaan palvelimelta.
-ErrorNoTmpDir=Tilapäinen directy %s ei ole.
-ErrorUploadBlockedByAddon=Lähetä estetty PHP / Apache plugin.
-ErrorFileSizeTooLarge=Tiedoston koko on liian suuri.
-WarningSafeModeOnCheckExecDir=Varoitus, PHP vaihtoehto <b>safe_mode</b> on niin komento on tallennettu hakemistoon ilmoittama php parametri <b>safe_mode_exec_dir.</b>
-WarningConfFileMustBeReadOnly=Varoitus, config tiedosto <b>(htdocs / conf / conf.php)</b> voidaan korvata jonka web-palvelin. Tämä on vakava tietoturva-aukko. Muokkaa käyttöoikeuksia tiedoston luettavaksi vain tila-käyttöjärjestelmän käyttäjä käyttää Web-palvelimeen. Jos käytät Windows ja FAT oman levy, sinun täytyy tietää, että tämä tiedostojärjestelmä ei mahdollista lisätä käyttöoikeuksia tiedostoon, joten ei voi olla täysin turvallista.
 ErrorModuleRequireJavascript=Javascript ei saa keskeytyä, on tämä ominaisuus toimii. Ottaa käyttöön / poistaa Javascript, mene menu Koti-> Asetukset-> Näyttö.
 ErrorPasswordsMustMatch=Molemmat kirjoittaa salasanat on vastattava toisiaan
+ErrorContactEMail=Tekninen virhe. Ota yhteys järjestelmänvalvojaan jälkeen sähköpostin <b>%s</b> en antaa virhekoodi <b>%s</b> viesti, tai jopa paremmin lisäämällä näytön kopion tästä sivusta.
 ErrorWrongValueForField=Väärä arvo kentän numero <b>%s</b> (arvo <b>"%s"</b> ei vastaa regex sääntö <b>%s)</b>
+ErrorFieldValueNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei ole arvoa käytettävissä tulee kenttään <b>%s</b> taulukon <b>%s)</b>
+ErrorFieldRefNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei <b>%s</b> olemassa ref)
 ErrorsOnXLines=Virheet <b>%s</b> lähde linjat
-WarningsOnXLines=Varoitukset <b>%s</b> lähde linjat
 ErrorFileIsInfectedWithAVirus=Virustentorjuntaohjelma ei voinut tarkistaa tiedoston (tiedosto saattaa olla tartunnan virus)
 ErrorSpecialCharNotAllowedForField=Erikoismerkkejä ei sallita kentän "%s"
-WarningNoDocumentModelActivated=Ei mallia, dokumenttien tuotanto, on aktivoitu. Mallia valitsi oletuksena kunnes olet tarkistanut moduuli setup.
 ErrorDatabaseParameterWrong=Tietokannan asetukset parametri <b>"%s"</b> on arvo ei ole yhteensopiva käyttää Dolibarr (on arvo <b>"%s).</b>
 ErrorNumRefModel=Viittaus olemassa otetaan tietokantaan (%s) ja ei ole yhteensopiva tämän numeroinnin sääntöä. Poista levy tai nimen viittaus aktivoida tämän moduulin.
 ErrorQtyTooLowForThisSupplier=Määrä liian alhainen tämän toimittaja tai ei hinta määritellään tämän tuotteen tavarantoimittaja
+ErrorModuleSetupNotComplete=Setup moduulin näyttää olevan epätäydellisiä. Mene Setup - Moduulit loppuun.
+ErrorBadMask=Virhe naamio
+ErrorBadMaskFailedToLocatePosOfSequence=Virhe, maski ilman järjestysnumeroa
+ErrorBadMaskBadRazMonth=Virhe, huono palautus arvo
+ErrorSelectAtLeastOne=Error. Valitse ainakin yksi merkintä.
+ErrorProductWithRefNotExist=Tuotteen viitaten <i>&quot;%s&quot;</i> ei ole olemassa
+ErrorDeleteNotPossibleLineIsConsolidated=Poistaminen ei ole mahdollista, koska levy on sidottu pankin transation joka sovitelleet
+ErrorProdIdAlreadyExist=%s on siirretty toiseen kolmanteen
 ErrorFailedToSendPassword=Epäonnistui lähettää salasana
+ErrorFailedToLoadRSSFile=Ei saada RSS-syötteen. Yritä lisätä jatkuvasti MAIN_SIMPLEXMLLOAD_DEBUG jos virheilmoituksia ei ole tarpeeksi tietoa.
 ErrorPasswordDiffers=Salasanat vaihtelee, kirjoita ne uudelleen.
 ErrorForbidden=Pääsy kielletty. <br> Yrität saada sivun, alue tai ominaisuus ilman oikeaksi todistettu istunnon tai että ei saa käyttäjän.
 ErrorForbidden2=Lupa tämän sisäänkirjoittautumissivuksesi voidaan määritellä oma Dolibarr järjestelmänvalvoja valikkopalkki %s-> %s.
@@ -102,32 +108,39 @@ ErrorFailedToChangePassword=Ei vaihda salasana
 ErrorLoginDoesNotExists=Käyttäjälle <b>sisäänkirjoittautumissivuksesi %s</b> ei löydy.
 ErrorLoginHasNoEmail=Tämä käyttäjä ei ole sähköpostiosoitetta. Process aborted.
 ErrorBadValueForCode=Bad arvotyypeillä koodin. Yritä uudelleen uuteen arvoon ...
-ErrorFileIsInfectedWith=Tämä tiedosto on tartunnan %s
-WarningInstallDirExists=Varoitus, asentaa hakemistoon ( %s) on yhä olemassa. Tämä on vakava turvallisuuteen reikään. Sinun tulisi poistaa niin pian kuin mahdollista.
-WarningUntilDirRemoved=Tämä varoitus pysyy aktiivisena niin kauan kuin tähän hakemistoon on läsnä (Näkyy vain admin-käyttäjät).
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-ErrorFailToCopyFile=Epäonnistui kopioida tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
-ErrorFailToRenameFile=Epäonnistui nimetä tiedoston <b>%s</b> ilmaisuksi <b>%s</b> &quot;.
-ErrorBadValueForParameter=Väärä arvo &quot;%s&quot; parametrien väärä &quot;%s&quot;
-ErrorBadImageFormat=Image-tiedosto ei ole tuettu formaatti
-ErrorBadDateFormat=Arvo &quot;%s&quot; on väärä päivämäärä muoto
-ErrorSizeTooLongForIntType=Koko liian pitkä int tyyppi (%s merkkiä maksimi)
-ErrorSizeTooLongForVarcharType=Koko liian pitkä jono tyyppi (%s merkkiä maksimi)
-ErrorContactEMail=Tekninen virhe. Ota yhteys järjestelmänvalvojaan jälkeen sähköpostin <b>%s</b> en antaa virhekoodi <b>%s</b> viesti, tai jopa paremmin lisäämällä näytön kopion tästä sivusta.
-ErrorFieldValueNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei ole arvoa käytettävissä tulee kenttään <b>%s</b> taulukon <b>%s)</b>
-ErrorFieldRefNotIn=Väärä arvo kentän numero <b>%s</b> (arvo <b>&quot;%s&quot;</b> ei <b>%s</b> olemassa ref)
-ErrorModuleSetupNotComplete=Setup moduulin näyttää olevan epätäydellisiä. Mene Setup - Moduulit loppuun.
-ErrorBadMask=Virhe naamio
-ErrorBadMaskFailedToLocatePosOfSequence=Virhe, maski ilman järjestysnumeroa
-ErrorBadMaskBadRazMonth=Virhe, huono palautus arvo
-ErrorSelectAtLeastOne=Error. Valitse ainakin yksi merkintä.
-ErrorProductWithRefNotExist=Tuotteen viitaten <i>&quot;%s&quot;</i> ei ole olemassa
-ErrorDeleteNotPossibleLineIsConsolidated=Poistaminen ei ole mahdollista, koska levy on sidottu pankin transation joka sovitelleet
-ErrorProdIdAlreadyExist=%s on siirretty toiseen kolmanteen
-ErrorFailedToLoadRSSFile=Ei saada RSS-syötteen. Yritä lisätä jatkuvasti MAIN_SIMPLEXMLLOAD_DEBUG jos virheilmoituksia ei ole tarpeeksi tietoa.
 ErrorBothFieldCantBeNegative=Kentät %s ja %s voi olla sekä kielteisiä
 ErrorWebServerUserHasNotPermission=Käyttäjätili <b>%s</b> käyttää myös toteuttaa web-palvelimella ei ole lupaa, että
 ErrorNoActivatedBarcode=Ei viivakoodin tyyppi aktivoitu
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:02).
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningSafeModeOnCheckExecDir=Varoitus, PHP vaihtoehto <b>safe_mode</b> on niin komento on tallennettu hakemistoon ilmoittama php parametri <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn=Parametri <b>allow_url_fopen</b> on <b>käytössä</b> vuonna Filer <b>php.ini</b> siitä tässä moduulissa työskentelee täysin. Sinun täytyy muuttaa tämän tiedoston manuaalisesti.
+WarningBuildScriptNotRunned=<b>Script %s</b> ei ole vielä juoksi rakentaa grafiikkaa, tai ei ole tietoja, jotka osoittavat.
+WarningBookmarkAlreadyExists=Kirjanmerkki tämän otsikon tai tämän tavoitteen (URL) on jo olemassa.
+WarningPassIsEmpty=Varoitus, tietokannan salasana on tyhjä. Tämä on turvallisuus reikään. Sinun tulisi lisätä salasanan tietokantaan ja muuttaa conf.php tiedosto vastaavasti.
+WarningConfFileMustBeReadOnly=Varoitus, config tiedosto <b>(htdocs / conf / conf.php)</b> voidaan korvata jonka web-palvelin. Tämä on vakava tietoturva-aukko. Muokkaa käyttöoikeuksia tiedoston luettavaksi vain tila-käyttöjärjestelmän käyttäjä käyttää Web-palvelimeen. Jos käytät Windows ja FAT oman levy, sinun täytyy tietää, että tämä tiedostojärjestelmä ei mahdollista lisätä käyttöoikeuksia tiedostoon, joten ei voi olla täysin turvallista.
+WarningsOnXLines=Varoitukset <b>%s</b> lähde linjat
+WarningNoDocumentModelActivated=Ei mallia, dokumenttien tuotanto, on aktivoitu. Mallia valitsi oletuksena kunnes olet tarkistanut moduuli setup.
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningUntilDirRemoved=Tämä varoitus pysyy aktiivisena niin kauan kuin tähän hakemistoon on läsnä (Näkyy vain admin-käyttäjät).
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

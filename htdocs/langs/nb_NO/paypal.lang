@@ -1,31 +1,22 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> nb_NO
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modul oppsett
+PaypalDesc=Denne modulen tilbyr sider for å tillate betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Dette kan brukes til en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
+PaypalOrCBDoPayment=Betal med kredittkort eller Paypal
+PaypalDoPayment=Betal med Paypal
 PaypalCBDoPayment=Betal med kredittkort
 PAYPAL_API_SANDBOX=Mode test / sandkasse
 PAYPAL_API_USER=API brukernavn
 PAYPAL_API_PASSWORD=API passord
 PAYPAL_API_SIGNATURE=API signatur
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer betaling &quot;integrert&quot; (Kredittkort + Paypal) eller &quot;Paypal&quot; bare
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal Url av CSS-stilark på betaling side
 ThisIsTransactionId=Dette er id av transaksjonen: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Legg til url av Paypal betaling når du sender et dokument i posten
 PAYPAL_IPN_MAIL_ADDRESS=E-post adressen for øyeblikkelig varsling av betaling (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:52:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-PaypalSetup=PayPal modul oppsett
-PaypalDesc=Denne modulen tilbyr sider for å tillate betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Dette kan brukes til en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
-PaypalOrCBDoPayment=Betal med kredittkort eller Paypal
-PaypalDoPayment=Betal med Paypal
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Du er for øyeblikket i &quot;sandbox&quot;-modus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:57).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

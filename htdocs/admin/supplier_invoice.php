@@ -61,14 +61,14 @@ if ($action == 'updateMask')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	if (! $error)
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 if ($action == 'specimen')  // For invoices
@@ -106,13 +106,13 @@ if ($action == 'specimen')  // For invoices
     	}
     	else
     	{
-    		$mesg='<font class="error">'.$module->error.'</font>';
+    		setEventMessage($module->error,'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
     }
     else
     {
-    	$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+    	setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -172,14 +172,14 @@ if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 
     if (! $res > 0) $error++;
 
-    if (! $error)
-    {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-    }
-    else
-    {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-    }
+	if (! $error)
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 
@@ -213,7 +213,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -346,7 +346,8 @@ print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
 print '<td>'.$langs->trans("Description").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>'."\n";
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>'."\n";
-print '<td align="center" width="40" colspan="2">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="40">'.$langs->trans("Preview").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -371,9 +372,14 @@ foreach ($dirmodels as $reldir)
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
+	                require_once $dir.'/'.$file;
+	                $module = new $classname($db, new FactureFournisseur($db));
+
                     $var=!$var;
                     print "<tr ".$bc[$var].">\n";
-                    print "<td>".$name."</td>\n";
+                    print "<td>";
+	                print (empty($module->name)?$name:$module->name);
+	                print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);
@@ -457,16 +463,14 @@ print "</tr>\n";
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_SUPPLIER_ORDER_FREE_TEXT">';
+print '<input type="hidden" name="action" value="set_SUPPLIER_INVOICE_FREE_TEXT">';
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
-print '<textarea name="SUPPLIER_ORDER_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_ORDER_FREE_TEXT.'</textarea>';
+print '<textarea name="SUPPLIER_INVOICE_FREE_TEXT" class="flat" cols="120">'.$conf->global->SUPPLIER_INVOICE_FREE_TEXT.'</textarea>';
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
 print '</form>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 llxFooter();

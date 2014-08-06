@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Поставщики
 Supplier=Поставщик
 AddSupplier=Добавить поставщиком
@@ -20,17 +10,24 @@ ListOfSuppliers=Список поставщиков
 ShowSupplier=Показать поставщиком
 OrderDate=Дата заказа
 BuyingPrice=Покупка цене
+BuyingPriceMin=Минимальная цена покупки
+BuyingPriceMinShort=Цена Мин покупке
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Добавить поставщиком цены
 ChangeSupplierPrice=Изменение цен поставщиков
 ErrorQtyTooLowForThisSupplier=Количество слишком низкий для данного поставщика или не определена цена на этот продукт для этого поставщика
 ErrorSupplierCountryIsNotDefined=Страна для данного поставщика не определен. Исправить это первое.
 ProductHasAlreadyReferenceInThisSupplier=Этот продукт уже ссылку на этот поставщик
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Эта ссылка поставщиком уже связан с ссылкой: %s
 NoRecordedSuppliers=Нет зарегистрированных поставщиков
 SupplierPayment=Поставщик оплаты
 SuppliersArea=Поставщики области
 RefSupplierShort=Ref. Поставщик
+Availability=Доступность
 ExportDataset_fournisseur_1=Поставщик списка счетов и счетов-фактур линий
 ExportDataset_fournisseur_2=Поставщиком счета-фактуры и платежи
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Утвердить этот порядок
 ConfirmApproveThisOrder=Вы уверены, что хотите утвердить этот порядок?
 DenyingThisOrder=Отказ в таком порядке
@@ -41,26 +38,5 @@ AddCustomerInvoice=Создать счет-фактуру заказчику
 AddSupplierOrder=Создать поставщиком порядка
 AddSupplierInvoice=Создать поставщику счет-фактуру
 ListOfSupplierProductForSupplier=Перечень продукции и цен для <b>поставщиков %s</b>
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
 NoneOrBatchFileNeverRan=Ни одна партия <b>или% не</b> побежал в последнее время
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Эта ссылка поставщиком уже связан с ссылкой: %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:34).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-BuyingPriceMin=Минимальная цена покупки
-BuyingPriceMinShort=Цена Мин покупке
-Availability=Доступность
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:33).
+# SentToSuppliers=Sent to suppliers

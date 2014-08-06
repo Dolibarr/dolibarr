@@ -1,33 +1,21 @@
-# Dolibarr language file - nl_NL - trips = 
-CHARSET = UTF-8
-Trip = Reis
-Trips = Reizen
-TripsAndExpenses = Reizen en uitgaven
-TripsAndExpensesStatistics = Reizen en uitgaven statistieken
-TripId = Reis-ID
-TripCard = Reizenkaart
-AddTrip = Reis toevoegen
-ListOfTrips = Reizenlijst
-ListOfFees = Vergoedingenlijst
-NewTrip = Nieuwe reis
-CompanyVisited = Bedrijf / stichting bezocht
-Kilometers = Kilometers
-FeesKilometersOrAmout = Kilometerskosten
-DeleteTrip = Verwijder reis
-ConfirmDeleteTrip = Weet u zeker dat u deze reis wilt verwijderen?
-TF_OTHER = Ander
-TF_LUNCH = Lunch
-TF_TRIP = Reis
-ListTripsAndExpenses = Lijst van de reis- en onkosten
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:37:25).
-// Reference language: en_US -> nl_NL
-SearchATripAndExpense=Zoek een reis en kosten
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 01:41:40).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:11:50).
-// Reference language: en_US -> nl_NL
+# Dolibarr language file - Source file is en_US - trips
+Trip=Reis
+Trips=Reizen
+TripsAndExpenses=Reizen en uitgaven
+TripsAndExpensesStatistics=Reizen en uitgaven statistieken
+TripCard=Reizenkaart
+AddTrip=Reis toevoegen
+ListOfTrips=Reizenlijst
+ListOfFees=Vergoedingenlijst
+NewTrip=Nieuwe reis
+CompanyVisited=Bedrijf / stichting bezocht
+Kilometers=Kilometers
+FeesKilometersOrAmout=Kilometerskosten
+DeleteTrip=Verwijder reis
+ConfirmDeleteTrip=Weet u zeker dat u deze reis wilt verwijderen?
+TF_OTHER=Ander
+TF_LUNCH=Lunch
+TF_TRIP=Reis
+ListTripsAndExpenses=Lijst van de reis- en onkosten
 ExpensesArea=Trips en uitgaven gebied
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:12:02).
+SearchATripAndExpense=Zoek een reis en kosten

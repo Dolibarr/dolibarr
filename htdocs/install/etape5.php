@@ -145,7 +145,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     // Create the global $hookmanager object
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
-        
+
     $ok = 0;
 
     // If first install
@@ -225,7 +225,6 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                 if (! empty($force_install_module))
                 {
                     if (! defined('DOL_DOCUMENT_ROOT') && ! empty($dolibarr_main_document_root)) define('DOL_DOCUMENT_ROOT',$dolibarr_main_document_root);
-                    if (! defined('DOL_DOCUMENT_ROOT_ALT') && ! empty($dolibarr_main_document_root_alt)) define('DOL_DOCUMENT_ROOT_ALT',$dolibarr_main_document_root_alt);
 
                     $tmparray=explode(',',$force_install_module);
                     foreach ($tmparray as $modtoactivate)

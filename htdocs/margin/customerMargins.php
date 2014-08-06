@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,9 +50,9 @@ $pagenext = $page + 1;
 $startdate=$enddate='';
 
 if (!empty($_POST['startdatemonth']))
-  $startdate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']));
+  $startdate  = dol_mktime(12, 0, 0, $_POST['startdatemonth'],  $_POST['startdateday'],  $_POST['startdateyear']);
 if (!empty($_POST['enddatemonth']))
-  $enddate  = date('Y-m-d', dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']));
+  $enddate  = dol_mktime(12, 0, 0, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']);
 
 /*
  * View
@@ -119,33 +120,39 @@ if (! $sortfield)
 }
 
 // Start date
-print '<td>'.$langs->trans('StartDate').'</td>';
+print '<td>'.$langs->trans('StartDate').' ('.$langs->trans("DateValidation").')</td>';
 print '<td width="20%">';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
 print '</td>';
-print '<td width="20%">'.$langs->trans('EndDate').'</td>';
+print '<td width="20%">'.$langs->trans('EndDate').' ('.$langs->trans("DateValidation").')</td>';
 print '<td width="20%">';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" class="button" value="'.$langs->trans('Launch').'" />';
+print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Launch')).'" />';
 print '</td></tr>';
 
+print "</table>";
+
+print '<br>';
+
+print '<table class="border" width="100%">';
+
 // Total Margin
-print '<tr style="font-weight: bold"><td>'.$langs->trans("TotalMargin").'</td><td colspan="4">';
+print '<tr><td width="20%">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
 print '<span id="totalMargin"></span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
 if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-	print '<tr style="font-weight: bold"><td>'.$langs->trans("MarginRate").'</td><td colspan="4">';
+	print '<tr><td width="20%">'.$langs->trans("MarginRate").'</td><td colspan="4">';
 	print '<span id="marginRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 // Mark Rate
 if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-	print '<tr style="font-weight: bold"><td>'.$langs->trans("MarkRate").'</td><td colspan="4">';
+	print '<tr><td width="20%">'.$langs->trans("MarkRate").'</td><td colspan="4">';
 	print '<span id="markRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
@@ -153,12 +160,12 @@ if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 print "</table>";
 print '</form>';
 
-$sql = "SELECT s.nom, s.rowid as socid, s.code_client, s.client,";
-$sql.= " f.facnumber, f.total as total_ht,";
+$sql = "SELECT";
+$sql.= " s.rowid as socid, s.nom, s.code_client, s.client,";
+if ($client) $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht, f.datef, f.paye, f.fk_statut as statut,";
 $sql.= " sum(d.total_ht) as selling_price,";
-$sql.= "sum(".$db->ifsql('d.total_ht <=0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
-$sql.= "sum(".$db->ifsql('d.total_ht <=0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge," ;
-$sql.= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid";
+$sql.= " sum(".$db->ifsql('d.total_ht <=0','d.qty * d.buy_price_ht * -1','d.qty * d.buy_price_ht').") as buying_price,";
+$sql.= " sum(".$db->ifsql('d.total_ht <=0','-1 * (abs(d.total_ht) - (d.buy_price_ht * d.qty))','d.total_ht - (d.buy_price_ht * d.qty)').") as marge";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."facture as f";
 $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
@@ -167,19 +174,17 @@ $sql.= " AND f.fk_statut > 0";
 $sql.= " AND s.entity = ".$conf->entity;
 $sql.= " AND d.fk_facture = f.rowid";
 if ($client)
-  $sql.= " AND f.fk_soc = $socid";
+  $sql.= " AND f.fk_soc = ".$socid;
 if (!empty($startdate))
-  $sql.= " AND f.datef >= '".$startdate."'";
+  $sql.= " AND f.datef >= '".$db->idate($startdate)."'";
 if (!empty($enddate))
-  $sql.= " AND f.datef <= '".$enddate."'";
+  $sql.= " AND f.datef <= '".$db->idate($enddate)."'";
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 if (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)
 	$sql .= " AND d.buy_price_ht <> 0";
-if ($client)
-  $sql.= " GROUP BY f.rowid, s.rowid";
-else
-  $sql.= " GROUP BY s.rowid";
-$sql.= " ORDER BY $sortfield $sortorder ";
+if ($client) $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client, f.rowid, f.facnumber, f.total, f.datef, f.paye, f.fk_statut";
+else $sql.= " GROUP BY s.rowid, s.nom, s.code_client, s.client";
+$sql.=$db->order($sortfield,$sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
@@ -213,7 +218,7 @@ if ($result)
 
 	$cumul_achat = 0;
 	$cumul_vente = 0;
-	
+
 	$rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
 	if ($num > 0)
@@ -287,7 +292,7 @@ if ($result)
 		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
 	}
 
-	print '<tr '.$bc[$var].' style="border-top: 1px solid #ccc; font-weight: bold">';
+	print '<tr class="liste_total">';
 	if ($client)
 	    print '<td colspan=2>';
   	else
@@ -319,11 +324,9 @@ $db->close();
 <script type="text/javascript">
 $(document).ready(function() {
 
-  $("div.fiche form input.button[type=submit]").hide();
-
-  $("#socid").change(function() {
-     $("div.fiche form").submit();
-  });
+	$("#socid").change(function() {
+    	$("div.fiche form").submit();
+	});
 
 	$("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
 	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");

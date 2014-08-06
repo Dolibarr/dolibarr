@@ -1,16 +1,8 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=客户订单面积
 SuppliersOrdersArea=供应商的订单面积
 OrderCard=订购卡
+OrderId=订单编号
 Order=订单
 Orders=订单
 OrderLine=在线订单
@@ -31,12 +23,16 @@ OrdersToValid=常规验证
 OrdersToBill=比尔订单
 OrdersInProcess=订单流程
 OrdersToProcess=订单处理
+SuppliersOrdersToProcess=供应商的订单处理
 StatusOrderCanceledShort=取消
 StatusOrderDraftShort=草案
 StatusOrderValidatedShort=验证
+StatusOrderSentShort=在过程
+StatusOrderSent=出货过程中
 StatusOrderOnProcessShort=论过程
 StatusOrderProcessedShort=加工
 StatusOrderToBillShort=为了法案
+StatusOrderToBill2Short=为了法案
 StatusOrderApprovedShort=核准
 StatusOrderRefusedShort=拒绝
 StatusOrderToProcessShort=要处理
@@ -48,30 +44,34 @@ StatusOrderValidated=验证
 StatusOrderOnProcess=论过程
 StatusOrderProcessed=加工
 StatusOrderToBill=为了法案
+StatusOrderToBill2=为了法案
 StatusOrderApproved=核准
 StatusOrderRefused=拒绝
 StatusOrderReceivedPartially=部分接受
 StatusOrderReceivedAll=一切都收到
+ShippingExist=A货存在
 DraftOrWaitingApproved=草案尚未下令或批准
 DraftOrWaitingShipped=草案或审定尚未运
 MenuOrdersToBill=比尔订单
+MenuOrdersToBill2=订单票据
 SearchOrder=搜索顺序
-Sending=发出
-Sendings=Sendings
 ShipProduct=船舶产品
 Discount=折扣
 CreateOrder=创建订单
 RefuseOrder=垃圾秩序
 ApproveOrder=接受命令
 ValidateOrder=为了验证
+UnvalidateOrder=Unvalidate秩序
 DeleteOrder=删除订单
 CancelOrder=取消订单
 AddOrder=添加顺序
 AddToMyOrders=添加到我的订单
 AddToOtherOrders=添加到其他命令
+AddToDraftOrders=添加订单草案
 ShowOrder=显示顺序
 NoOpenedOrders=没有打开订单
 NoOtherOpenedOrders=没有其他打开的订单
+NoDraftOrders=没有订单草案
 OtherOrders=其他命令
 LastOrders=上次%s的订单
 LastModifiedOrders=最后修改%s的订单
@@ -81,16 +81,18 @@ NbOfOrders=订单号码
 OrdersStatistics=为了统计
 OrdersStatisticsSuppliers=供应商的订单统计
 NumberOfOrdersByMonth=按月份订单数
-AmountOfOrdersByMonthHT=按月份订单金额（税后）
+AmountOfOrdersByMonthHT=每月订单金额（税后）
 ListOfOrders=名单的订单
 CloseOrder=关闭命令
 ConfirmCloseOrder=您确定要关闭这个秩序？一旦订单是封闭的，它只能产生帐单。
 ConfirmCloseOrderIfSending=您确定要关闭这个秩序？你必须关闭，只有当所有航运完成的顺序。
 ConfirmDeleteOrder=你确定要删除这个秩序？
 ConfirmValidateOrder=你确定要验证这个原则下，根据名称<b>%s吗</b> ？
+ConfirmUnvalidateOrder=你是否确定要恢复秩序<b>%s</b>草案状态？
 ConfirmCancelOrder=您确定要取消此订单？
 ConfirmMakeOrder=你一定要确认你这对<b>%的</b>命令？
 GenerateBill=生成发票
+ClassifyShipped=分类交付
 ClassifyBilled=分类“帐单”
 ComptaCard=会计证
 DraftOrders=命令草案
@@ -111,6 +113,8 @@ UserWithApproveOrderGrant=用户授予“批准令”的权限。
 PaymentOrderRef=清缴秩序%
 CloneOrder=为了克隆
 ConfirmCloneOrder=你确定要克隆这项命令<b>%s吗</b> ？
+DispatchSupplierOrder=接收供应商的订单%s
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=代表随访客户订单
 TypeContact_commande_internal_SHIPPING=代表随访航运
 TypeContact_commande_external_BILLING=客户发票接触
@@ -121,10 +125,15 @@ TypeContact_order_supplier_internal_SHIPPING=代表随访航运
 TypeContact_order_supplier_external_BILLING=供应商发票接触
 TypeContact_order_supplier_external_SHIPPING=航运供应商联系
 TypeContact_order_supplier_external_CUSTOMER=供应商联系随访秩序
+
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=常COMMANDE_SUPPLIER_ADDON没有定义
 Error_COMMANDE_ADDON_NotDefined=常COMMANDE_ADDON没有定义
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=无法加载模块文件'%s'的
 Error_FailedToLoad_COMMANDE_ADDON_File=无法加载模块文件'%s'的
+Error_OrderNotChecked=没有订单发票选择
+
+
+# Sources
 OrderSource0=商业建议
 OrderSource1=因特网
 OrderSource2=邮件活动
@@ -134,27 +143,24 @@ OrderSource5=商业
 OrderSource6=商店
 QtyOrdered=订购数量
 AddDeliveryCostLine=添加交货成本线，显示该命令的重量
+
+# Documents models
 PDFEinsteinDescription=一个完整的命令模式（logo. ..）
 PDFEdisonDescription=一份简单的订购模式
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-DispatchSupplierOrder=接收供应商的订单%s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:42).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-SuppliersOrdersToProcess=供应商的订单处理
-StatusOrderSentShort=在过程
-ShippingExist=A货存在
-UnvalidateOrder=Unvalidate秩序
-ConfirmUnvalidateOrder=你是否确定要恢复秩序<b>%s</b>草案状态？
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=邮件
 OrderByFax=传真
 OrderByEMail=电子邮件
 OrderByWWW=在线
 OrderByPhone=电话
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:37).
+
+CreateInvoiceForThisCustomer=计费订单
+NoOrdersToInvoice=没有订单计费
+CloseProcessedOrdersAutomatically=分类“处理”所有选定的订单。
+MenuOrdersToBill2=订单票据
+OrderCreation=创建订单
+Ordered=有序
+OrderCreated=您的订单已创建
+OrderFail=您的订单创建期间发生了错误
+CreateOrders=创建订单

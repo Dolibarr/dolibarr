@@ -1,26 +1,22 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-PaypalSetup=PayPal moodul setup
-PaypalDesc=See moodul pakkumise leheküljed, mis võimaldab makse <a href="http://www.paypal.com" target="_blank">PayPal</a> kliendid. Seda saab kasutada tasuta makse või makse teatud Dolibarr objekti (arve, et ...)
-PaypalOrCBDoPayment=Maksta krediitkaardiga või Paypal
-PaypalDoPayment=Maksa Paypal
-PaypalCBDoPayment=Maksa krediitkaardi
-PAYPAL_API_SANDBOX=Režiim test / liivakast
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal mooduli seadistamine
+PaypalDesc=See moodul pakub lehti, mis võimaldavad <a href="http://www.paypal.com" target="_blank">PayPali</a> abil maksmist. Seda võib kasutada nii suvalise maksena kui maksena teatud Dolibarri objekti jaoks (arve, tellimus jne)
+PaypalOrCBDoPayment=Maksa krediitkaardiga või Paypaliga
+PaypalDoPayment=Maksa Paypaliga
+PaypalCBDoPayment=Maksa krediitkaardiga
+PAYPAL_API_SANDBOX=Testimise/liivakasti režii
 PAYPAL_API_USER=API kasutajanimi
-PAYPAL_API_PASSWORD=API parooli
-PAYPAL_API_SIGNATURE=API allkiri
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku makse &quot;lahutamatu&quot; (krediitkaart + Paypal) või &quot;Paypal&quot; ainult
-PAYPAL_CSS_URL=Optionnal Url CSS style sheet tasumise lehele
-ThisIsTransactionId=See on id tehing: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Lisa URL Paypal makse, kui saadate dokumendi mail
-PAYPAL_IPN_MAIL_ADDRESS=E-posti aadress instant tasumise teate (IPN)
-YouAreCurrentlyInSandboxMode=Sa oled praegu &quot;liivakasti&quot; režiimis
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:21:09).
+PAYPAL_API_PASSWORD=API parool
+PAYPAL_API_SIGNATURE=API signatuur
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku "terviklik" (krediitkaart + Paypal) või ainult "Paypal" makseviisi
+PaypalModeIntegral=Terviklik
+PaypalModeOnlyPaypal=Ainult PayPal
+PAYPAL_CSS_URL=Maksmise lehel kasutatava CSS stiili valikuline URL
+ThisIsTransactionId=See on tehingu ID: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Lisa PayPali makse URL, kui dokument saadetakse postiga
+PAYPAL_IPN_MAIL_ADDRESS=E-posti aadress koheseks tasumise teateks (IPN)
+PredefinedMailContentLink=Kui makset ei ole veel sooritatud, võid klõpsata allpool asuval lingil makse sooritamiseks (PayPal).\n\n%s\n\n
+YouAreCurrentlyInSandboxMode=Kasutad hetkel "liivakasti" režiimi.
+NewPaypalPaymentReceived=Uus PayPali makse vastu võetud
+NewPaypalPaymentFailed=Üritati uut PayPali makset, kuid see ebaõnnestus
+PAYPAL_PAYONLINE_SENDEMAIL=E-posti aadress pärast makset hoiatuse saatmiseks (õnnestus või mitte)

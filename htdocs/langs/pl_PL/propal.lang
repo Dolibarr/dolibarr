@@ -1,24 +1,14 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Commercial propozycje
 Proposal=Commercial wniosku
+ProposalShort=Wniosek
 ProposalsDraft=Projekt propozycji
 ProposalDraft=Projekt wniosku handlowych
 ProposalsOpened=Czynny propozycji
 Prop=Commercial propozycje
 CommercialProposal=Commercial wniosku
 CommercialProposals=Commercial propozycje
+ProposalCard=Karta Wniosek
 NewProp=Nowy wniosek handlowych
 NewProposal=Nowy wniosek handlowych
 NewPropal=Nowa propozycja
@@ -31,6 +21,7 @@ ConfirmDeleteProp=Czy na pewno chcesz usunąć tę propozycję handlową?
 ConfirmValidateProp=Czy na pewno chcesz, aby potwierdzić tę propozycję handlową?
 LastPropals=Ostatnia %s propozycje
 LastClosedProposals=Ostatnia %s zamknięte propozycje
+LastModifiedProposals=Ostatnia %s zmodyfikowane propozycje
 AllPropals=Wszystkie propozycje
 LastProposals=Ostatnie propozycje
 SearchAProposal=Szukaj projektu
@@ -68,58 +59,44 @@ FileNotUploaded=Plik nie został wysłany
 FileUploaded=Plik został pomyślnie przesłany
 AssociatedDocuments=Dokumenty związane z projektem:
 ErrorCantOpenDir=Nie można otworzyć katalogu
+DatePropal=Data wniosku
 DateEndPropal=Data końca obowiązywania
 DateEndPropalShort=Data zakończenia
 ValidityDuration=Ważność czas
 CloseAs=Zamknij ze statusu
 ClassifyBilled=Klasyfikacja billed
 BuildBill=Zbuduj faktury
-RelatedBill=Podobne faktury
-RelatedBills=Podobne faktur
 ErrorPropalNotFound=Propal %s nie znaleziono
 Estimate=Prognoza:
 EstimateShort=Prognoza
 OtherPropals=Inne propozycje
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Tworzenie komercyjnych wniosek kopiowanie istniejących wniosku
 CreateEmptyPropal=Utwórz pusty propozycji Vierge lub z wykazu produktów / usług
 DefaultProposalDurationValidity=Domyślny czas ważności wniosku handlowych (w dniach)
 UseCustomerContactAsPropalRecipientIfExist=Użyj klienta adres, jeśli określone zamiast trzeciej adres wniosku adres odbiorcy
 ClonePropal=Clone handlowych wniosku
 ConfirmClonePropal=Czy na pewno chcesz klon tej propozycji <b>komercyjnych %s?</b>
-DocModelAzurDescription=Kompletny wniosek modelu (logo. ..)
-DocModelJauneDescription=Jaune propozycję modelu
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ProposalShort=Wniosek
-LastModifiedProposals=Ostatnia %s zmodyfikowane propozycje
-DatePropal=Data wniosku
+ConfirmReOpenProp=Czy na pewno chcesz otworzyć z powrotem handlowe <b>%s</b> propozycję?
 ProposalsAndProposalsLines=Commercial wniosku i linie
 ProposalLine=Wniosek linii
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
-TypeContact_propal_external_BILLING=kontakt faktury klienta
-TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:42:25).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-ProposalCard=Karta Wniosek
-ConfirmReOpenProp=Czy na pewno chcesz otworzyć z powrotem handlowe <b>%s</b> propozycję?
 AvailabilityPeriod=Opóźnienie dostępność
 SetAvailability=Ustaw opóźnienie dostępność
 AfterOrder=od zamówienia
+##### Availability #####
 AvailabilityTypeAV_NOW=Natychmiastowy
 AvailabilityTypeAV_1W=1 tydzień
 AvailabilityTypeAV_2W=2 tygodnie
 AvailabilityTypeAV_3W=3 tygodnie
 AvailabilityTypeAV_1M=1 miesiąc
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:21:02).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
+TypeContact_propal_external_BILLING=kontakt faktury klienta
+TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
+# Document models
+DocModelAzurDescription=Kompletny wniosek modelu (logo. ..)
+DocModelJauneDescription=Jaune propozycję modelu
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

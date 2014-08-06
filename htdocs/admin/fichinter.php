@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier               <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("admin");
@@ -59,11 +60,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -101,13 +102,13 @@ else if ($action == 'specimen') // For fiche inter
 		}
 		else
 		{
-			$mesg='<font class="error">'.$obj->error.'</font>';
+			setEventMessage($obj->error,'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -162,11 +163,11 @@ else if ($action == 'set_FICHINTER_FREE_TEXT')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -180,11 +181,28 @@ else if ($action == 'set_FICHINTER_DRAFT_WATERMARK')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
+    }
+}
+
+elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
+{
+	$val = GETPOST('FICHINTER_PRINT_PRODUCTS','alpha');
+	$res = dolibarr_set_const($db, "FICHINTER_PRINT_PRODUCTS",($val == 'on'),'bool',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+ 	if (! $error)
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -202,17 +220,10 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'setup');
 
-print "<br>";
 
-$h = 0;
+$head=fichinter_admin_prepare_head();
 
-$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
-$head[$h][1] = $langs->trans("Interventions");
-$head[$h][2] = 'Ficheinter';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'ficheinter', $langs->trans("Interventions"), 0, 'intervention');
 
 // Interventions numbering model
 
@@ -224,7 +235,7 @@ print '<td width="100">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -345,7 +356,8 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -364,13 +376,16 @@ foreach ($dirmodels as $reldir)
 		    {
 		    	if (substr($file, dol_strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
 		    	{
+				    $var=!$var;
+
 		    		$name = substr($file, 4, dol_strlen($file) -16);
 		    		$classname = substr($file, 0, dol_strlen($file) -12);
 
-		    		$var=!$var;
+				    require_once $dir.'/'.$file;
+				    $module = new $classname($db);
 
 		    		print '<tr '.$bc[$var].'><td>';
-		    		echo "$name";
+				    print (empty($module->name)?$name:$module->name);
 		    		print "</td><td>\n";
 		    		require_once $dir.$file;
 		    		$module = new $classname($db);
@@ -416,8 +431,13 @@ foreach ($dirmodels as $reldir)
 		    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
 		    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 		    		print '<td align="center">';
+		    		print $form->textwithpicto('',$htmltooltip,-1,0);
+		    		print '</td>';
+		    		
+		    		// Preview
 		    		$link='<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'intervention').'</a>';
-		    		print $form->textwithpicto(' &nbsp; &nbsp; '.$link,$htmltooltip,-1,0);
+		    		print '<td align="center">';
+		    		print $link;
 		    		print '</td>';
 
 		    		print '</tr>';
@@ -468,14 +488,28 @@ print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
+
+// print products on fichinter
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_FICHINTER_PRINT_PRODUCTS">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("PrintProductsOnFichinter").' ('.$langs->trans("PrintProductsOnFichinterDetails").')</td>';
+print '<td align="center"><input type="checkbox" name="FICHINTER_PRINT_PRODUCTS" ';
+if ($conf->global->FICHINTER_PRINT_PRODUCTS)
+	print 'checked="checked" ';
+print '/>';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+
 print '</form>';
 
 
 print '</table>';
 
 print '<br>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

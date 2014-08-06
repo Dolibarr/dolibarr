@@ -57,7 +57,7 @@ class modContrat extends DolibarrModules
 		$this->picto='contract';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/contracts/temp");
+		$this->dirs = array("/contract/temp");
 
 		// Dependances
 		$this->depends = array("modSociete","modService");

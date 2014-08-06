@@ -69,7 +69,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchPropal").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input type="text" class="flat" name="sref" size=18></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
 print '</tr>';
 print "</form></table><br>\n";
 
@@ -180,7 +180,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				$propalstatic->id=$obj->rowid;
 				$propalstatic->ref=$obj->ref;
@@ -241,7 +241,7 @@ if ($resql)
 			$var=!$var;
 			$obj = $db->fetch_object($resql);
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td width="20%" class="nowrap">';
 
 			$propalstatic->id=$obj->rowid;
@@ -315,7 +315,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1">('.$num.')</a></td></tr>';
 
-			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?1000:$conf->global->MAIN_MAXLIST_OVERLOAD));
+			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
@@ -409,7 +409,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;
@@ -481,7 +481,7 @@ if (! empty($conf->propal->enabled))
 			{
 				$var=!$var;
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td width="20%" class="nowrap">';
 
 				$propalstatic->id=$obj->rowid;

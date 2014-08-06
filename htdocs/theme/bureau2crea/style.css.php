@@ -17,6 +17,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * FIXME: This is a bugged theme:
+ * No wrapping of top menu entries when window not large enough
+ * Not compatible with jmobile
  */
 
 /**
@@ -72,7 +76,7 @@ $dol_optimize_smallscreen=$conf->dol_optimize_smallscreen;
 $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 $dol_use_jmobile=$conf->dol_use_jmobile;
 
-
+$colorshadowtitle='000';
 ?>
 
 /* ============================================================================== */
@@ -157,6 +161,7 @@ textarea:disabled {
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=text]     { min-width: 20px; }
 input:-webkit-autofill {
 	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
 	background-image:none !important;
@@ -246,9 +251,13 @@ div.inline-block
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-/*.dolibarrcombobox {
-	height: 22px;
-}*/
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -258,6 +267,7 @@ div.inline-block
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor: pointer; }
 
@@ -273,6 +283,7 @@ td.showDragHandle {
 }
 .tdlineupdown {
 	white-space: nowrap;
+	min-width: 10px;
 }
 
 
@@ -358,6 +369,12 @@ else
 }
 ?>
 
+/* This theme is bugged. If width not large enough, menu are not wrapped on next line
+div#tmenu_tooltip {
+	padding-right: 100px;
+}
+*/
+
 div.tmenu {
 <?php if (GETPOST("optioncss") == 'print') {  ?>
 	display:none;
@@ -390,63 +407,8 @@ div.mainmenu {
 }
 */
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+<?php if (empty($conf->dol_optimize_smallscreen)) {
 
-/*
-div.mainmenu.home{
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1); ?>);
-}
-
-div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1); ?>);
-}
-
-div.mainmenu.products {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/products.png',1); ?>);
-	margin-left: 10px;
-}
-
-div.mainmenu.commercial {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/commercial.png',1); ?>);
-}
-
-div.mainmenu.accountancy {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1); ?>);
-}
-
-div.mainmenu.bank {
-    background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/bank.png',1); ?>);
-}
-
-div.mainmenu.project {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1); ?>);
-}
-
-div.mainmenu.tools {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1); ?>);
-}
-
-div.mainmenu.members {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1); ?>);
-}
-
-div.mainmenu.shop {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/shop.png',1); ?>);
-}
-
-div.mainmenu.agenda {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/agenda.png',1); ?>);
-}
-
-div.mainmenu.ecm {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ecm.png',1); ?>);
-}
-
-div.mainmenu.cashdesk {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/pointofsale.png',1); ?>);
-}
-*/
-<?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
@@ -517,7 +479,6 @@ ul.tmenu {
 
 li.tmenu, li.tmenusel {
 	float: <?php print $left; ?>;
-	height: 22px;
 	position:relative;
 	display: block;
 	padding: 0px;
@@ -536,10 +497,9 @@ li.tmenu span, li.tmenusel span {
 li.tmenu a, li.tmenusel a {
 	position: relative;
 	display: block;
-    height: 22px;
     font-size: 12px;
     font-family: Geneva, Verdana, sans-serif;
-    line-height: 22px;
+    line-height: 20px;
     color: #FFF;
     font-weight: normal;
     float: <?php print $left; ?>;
@@ -582,7 +542,7 @@ li.tmenu a.tmenudisabled {
 /* Login */
 
 form#login {
-	margin-top: 70px;
+	margin-top: <?php echo $dol_optimize_smallscreen?'30':'60' ?>px;
 	margin-bottom: 30px;
 	font-size: 13px;
 }
@@ -623,9 +583,11 @@ form#login {
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {
+    width: 180px;
 	position: absolute;
 	<?php print $right; ?>: 5px;
 	top: 2px;
@@ -660,6 +622,14 @@ div.login a:hover {
 	color: black;
 	text-decoration:underline;
 }
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 8px 0px 0px 4px !important;
+}
 
 .alogin, .alogin:hover {
 	color: #888 !important;
@@ -671,7 +641,7 @@ div.login a:hover {
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
 	margin: 0px 0px 0px 8px;
 	text-decoration: none;
 	color: white;
@@ -1401,43 +1371,53 @@ margin: 0px 0px 0px 0px;
 }
 
 
-table.border {
--webkit-box-shadow: #CCCCCC 2px 4px 2px;
-border: 2px solid #BBBBBB;
-border-collapse: collapse;
-padding: 10px;
-border-spacing: 2px;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+	border-collapse: collapse;
+	padding: 10px;
+	border-spacing: 2px;
+	border: 1px solid #EFEFEF;
 }
-
+table.border, table.dataTable, .table-border {
+	-webkit-box-shadow: #CCCCCC 2px 4px 2px;
+	border: 2px solid #BBBBBB;
+}
 table.border.formdoc {
-padding: 0px;
-border-collapse: collapse;
-border: 1px solid #666;
+	padding: 0px;
+	border-collapse: collapse;
+	border: 1px solid #666;
 }
 
 table.border.formdoc td {
-margin: 0px;
-padding: 0px;
-border: none;
+	margin: 0px;
+	padding: 0px;
+	border: none;
 }
 
-table.border td {
-padding: 4px;
-border: 1px solid #EFEFEF;
-border-spacing: 0px;
-/*border-collapse: collapse;*/
-margin: 0px;
+table.border td, div.border div div.tagtd {
+	padding: 4px;
+	border: 1px solid #EFEFEF;
+	border-spacing: 0px;
+	/*border-collapse: collapse;*/
+	margin: 0px;
 }
 
 table.border table td {
-border: none;
+	border: none;
 }
 
-td.border {
-border-top: 1px solid #000000;
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-border-left: 1px solid #000000;
+td.border, div.tagtable div div.border {
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	border-left: 1px solid #000000;
+}
+
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
+}
+.table-val-border-col {
+	width:auto;
 }
 
 /* Main boxes */
@@ -1490,11 +1470,9 @@ table.noborder {
     vertical-align: text-top;
 }
 
-.tagtable { display: table; }
-.tagtable form { display: table-row; }
-.tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
 tr.liste_titre, form.liste_titre {
     height: 25px;
@@ -1572,7 +1550,6 @@ input.liste_titre {
 tr.liste_total td, form.liste_total div {
 	border-top: 1px solid #DDDDDD;
 	background: #F0F0F0;
-	/* background-image: url(<?php echo dol_buildpath($path.'/theme/login_background.png',1); ?>); */
 	background-repeat: repeat-x;
 	color: #332266;
 	font-weight: normal;
@@ -1625,6 +1602,19 @@ tr.pair td.nohover {
  *  Boxes
  */
 
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
+
 .box {
 	padding-right: 0px;
 	padding-left: 0px;
@@ -1660,10 +1650,15 @@ background: #f4f4f4;
 font-family: <?php print $fontlist ?>;
 }
 
-tr.fiche {
-font-family: <?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
+	margin-bottom: 6px;
 }
-
+.formboxfilter input[type=image]
+{
+	top: 3px;
+	position: relative;
+}
 
 
 
@@ -1739,6 +1734,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_too_low { color: #664400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
 
 .photo {
 border: 0px;
@@ -2209,36 +2207,6 @@ a.cke_dialog_ui_button
 
 
 /* ============================================================================== */
-/*  Table with div                                                                */
-/* ============================================================================== */
-
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #9CACBB;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #9CACBB;
-	border-collapse: collapse;
-}
-
-
-/* ============================================================================== */
 /*  Login                                                                   */
 /* ============================================================================== */
 
@@ -2478,6 +2446,27 @@ div.ecmjqft {
 
 
 /* ============================================================================== */
+/*  Maps                                                                          */
+/* ============================================================================== */
+
+.divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, google-visualization-geomap-embed-2 {
+    -moz-box-shadow: 0px 0px 10px #AAA;
+    -webkit-box-shadow: 0px 0px 10px #AAA;
+    box-shadow: 0px 0px 10px #AAA;
+}
+
+
+/* ============================================================================== */
+/*  Datatable                                                                     */
+/* ============================================================================== */
+
+.sorting_asc  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc.png',1); ?>') no-repeat center right; }
+.sorting_desc { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc.png',1); ?>') no-repeat center right; }
+.sorting_asc_disabled  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc_disabled',1); ?>') no-repeat center right; }
+.sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
+
+
+/* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
@@ -2571,6 +2560,32 @@ div.ui-checkbox label+input, div.ui-radio label+input {
 ul.ulmenu {
 	border-radius: 0;
 	-webkit-border-radius: 0;
+}
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
+}
+
+/* Style for first level menu with jmobile */
+.ui-bar-b, .lilevel0 {
+    background: rgb(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/bg_centerBlock-title2.jpg',1); ?>);
+    background-repeat: repeat-x;
+    color: #<?php echo $colortexttitle; ?> !important;
+}
+.alilevel0 {
+    color: #<?php echo $colortexttitle; ?> !important;
+	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.alilevel1 {
+    color: #<?php echo $colortexttitle; ?> !important;
+	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.lilevel1 {
+	background-image: -webkit-gradient(linear,left top,left bottom,from( #eee ),to( #e1e1e1 )) !important;
+	background-image: -webkit-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -moz-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -ms-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
 }
 
 

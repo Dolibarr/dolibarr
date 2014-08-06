@@ -1,5 +1,4 @@
-# Dolibarr language file - hu_HU - commercial
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Kereskedelem
 CommercialArea=Kereskedelemi terület
 CommercialCard=Kereskedelemi kártya
@@ -24,6 +23,7 @@ TaskRDVWith=Találkozó %s -al
 ShowTask=Feladat mutatása
 ShowAction=Cselekvés mutatása
 ActionsReport=Cselekvés jelentés
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Értékesítő
 SalesRepresentatives=Értékesítők
 SalesRepresentativeFollowUp=Értékesítő (utólagos)
@@ -46,6 +46,7 @@ ToDoActions=Befejezetlen cselekvések
 ToDoActionsFor=Befejezetlen cselekvések %s részére
 SendPropalRef=Ajánlat küldése %s
 SendOrderRef=Megrendelés küldése %s
+StatusNotApplicable=Nem alkalmazható
 StatusActionToDo=Végrehajtani
 StatusActionDone=Kész
 MyActionsAsked=Általam jegyzett cselekvések
@@ -75,15 +76,20 @@ ActionAC_REL=Számla küldése ügyfélnek levélben (emlékeztető)
 ActionAC_CLO=Bezár
 ActionAC_EMAILING=Tömeges email küldés
 ActionAC_COM=Ügyfél rendelése elküldése levélben
+ActionAC_SHIP=Küldje hajózás mail
 ActionAC_SUP_ORD=Beszállítói rendelés elküldése levélben
 ActionAC_SUP_INV=Beszállítói számla elküldése levélben
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-StatusNotApplicable=Nem alkalmazható
-ActionAC_SHIP=Küldje hajózás mail
 ActionAC_OTH=Más
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect állapot
 DraftPropals=Készítsen üzleti ajánlatot
 SearchPropal=Keressen egy kereskedelmi javaslatot
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:22).
+# CommercialDashboard=Commercial summary

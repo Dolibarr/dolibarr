@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=立って受注エリア
 CustomersStandingOrdersArea=受注エリアに立ってお客さま
 StandingOrders=立っている受注
@@ -56,7 +47,7 @@ RefusedData=拒絶反応の日付
 RefusedReason=拒否理由
 RefusedInvoicing=拒絶反応を請求
 NoInvoiceRefused=拒絶反応を充電しないでください
-InvoiceRefused=顧客への拒絶反応を充電
+InvoiceRefused=請求書が拒否されました
 Status=ステータス
 StatusUnknown=未知の
 StatusWaiting=待っている
@@ -89,6 +80,11 @@ WithdrawalFileNotCapable=あなたの国のために撤退領収書ファイル�
 ShowWithdraw=引き出しを表示
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=請求書は、まだ少なくとも一つの引き出しの支払いを処理していない場合、前に撤退を管理できるようにするために支払ったとして、しかし、それが設定されません。
 DoStandingOrdersBeforePayments=このタブでは、立っている順序のために要求することができます。それが終了されますしたら、請求書を閉じるには、支払を入力することができます。
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=銀行によって立っている順序%sの支払い
 InfoCreditMessage=立っている順序%sは、銀行によって支払われた<br>支払いのデータ：%s
 InfoTransSubject=銀行に立っている注文%sの送信
@@ -96,6 +92,5 @@ InfoTransMessage=スタンディングオーダー%s %s %sは、銀行にtransmi
 InfoTransData=金額：%s <br> Metode：%s <br>日付：%s
 InfoFoot=これはDolibarrによって送信される自動化されたメッセージです。
 InfoRejectSubject=拒否したため、立ち
-InfoRejectMessage=こんにちは、 <br><br> %sの量と、会社%sに関連した請求書%sのstandig順序は、銀行が拒否されました。 <br><br> - <br> %s
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=リアルモードのオプションが設定されていない、我々は、このシミュレーションの後に停止
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:46:35).

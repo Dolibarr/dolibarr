@@ -1,0 +1,3 @@
+----- jquery.tablednd -----
+- New versions are found into directory js of https://github.com/isocra/TableDnD
+- Version 0.7, 0.8 seems to be not compatible.

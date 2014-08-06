@@ -1,20 +1,12 @@
-# Dolibarr language file - hu_HU - errors
-CHARSET=UTF-8
-ErrorForbidden=A hozzáférés megtagadva. <br> Ha megpróbál hozzáférni egy oldalra, terület vagy szolgáltatás, anélkül, hogy hiteles ülésen, vagy, hogy nem szabad a felhasználó számára.
-ErrorForbidden2=Engedély e be lehet meghatározni a Dolibarr rendszergazda menüből %s-> %s.
-ErrorForbidden3=Úgy tűnik, hogy Dolibarr nem használt keresztül hitelesített ülésén. Vessen egy pillantást Dolibarr üzembe helyezési dokumentációban tudni, hogyan kell kezelni hitelesítések (htaccess, mod_auth vagy más ...).
-ErrorNoImagickReadimage=Osztály imagick nem található ebben a PHP. Nem előnézet elérhető. A rendszergazdák letilthatják ezt a lapot menüből Setup - Display.
-ErrorRecordAlreadyExists=Felvétel már létezik
-ErrorCantReadFile=Nem sikerült olvasni file "%s"
-ErrorCantReadDir=Nem sikerült olvasni könyvtár "%s"
-ErrorFailedToFindEntity=Nem sikerült olvasni környezet "%s"
-ErrorBadLoginPassword=Rossz érték be vagy jelszó
-ErrorLoginDisabled=A fiók le van tiltva
+# Dolibarr language file - Source file is en_US - errors
 
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
+# No errors
+# NoErrorCommitIsDone=No error, we commit
+
+# Errors
 Error=Hiba
 Errors=Hibák
+# ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=E-mail %s rossz
 ErrorBadUrl=Url %s rossz
 ErrorLoginAlreadyExists=Bejelentkezés %s már létezik.
@@ -32,6 +24,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Ez a kapcsolat már definiálva van, 
 ErrorCashAccountAcceptsOnlyCashMoney=Ez egy bankszámlán pénzszámlájának, ezért fizetést elfogadó típus csak készpénzes.
 ErrorFromToAccountsMustDiffers=Forrás és célok bankszámlák különbözőnek kell lennie.
 ErrorBadThirdPartyName=Rossz érték a harmadik fél nevében
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Rossz a szintaxisa az ügyfél kód
 ErrorCustomerCodeRequired=Ügyfél kód szükséges
 ErrorCustomerCodeAlreadyUsed=Ügyfél kód már használatban
@@ -64,6 +57,10 @@ ErrorUploadBlockedByAddon=Töltsd blokkolja PHP / Apache plugin.
 ErrorFileSizeTooLarge=A fájl mérete túl nagy.
 ErrorSizeTooLongForIntType=Méret túl hosszú int típusú (maximum %s számjegy)
 ErrorSizeTooLongForVarcharType=Méret túl hosszú a string típusú (%s karakter maximum)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>%s</b> mező nem tartalmaz speciális karaktereket.
 ErrorNoAccountancyModuleLoaded=Nem számviteli modul aktiválódik
 ErrorExportDuplicateProfil=Ez a profil név már létezik ez a kivitel készlet.
@@ -96,6 +93,16 @@ ErrorProdIdAlreadyExist=%s van rendelve egy másik harmadik
 ErrorFailedToSendPassword=Nem sikerült elküldeni a jelszót
 ErrorFailedToLoadRSSFile=Nem kap RSS feed. Próbálja felvenni, ha állandó MAIN_SIMPLEXMLLOAD_DEBUG hibaüzenetek nem nyújt elegendő információt.
 ErrorPasswordDiffers=Jelszavak eltér, kérjük, írja be őket újra.
+ErrorForbidden=A hozzáférés megtagadva. <br> Ha megpróbál hozzáférni egy oldalra, terület vagy szolgáltatás, anélkül, hogy hiteles ülésen, vagy, hogy nem szabad a felhasználó számára.
+ErrorForbidden2=Engedély e be lehet meghatározni a Dolibarr rendszergazda menüből %s-> %s.
+ErrorForbidden3=Úgy tűnik, hogy Dolibarr nem használt keresztül hitelesített ülésén. Vessen egy pillantást Dolibarr üzembe helyezési dokumentációban tudni, hogyan kell kezelni hitelesítések (htaccess, mod_auth vagy más ...).
+ErrorNoImagickReadimage=Osztály imagick nem található ebben a PHP. Nem előnézet elérhető. A rendszergazdák letilthatják ezt a lapot menüből Setup - Display.
+ErrorRecordAlreadyExists=Felvétel már létezik
+ErrorCantReadFile=Nem sikerült olvasni file "%s"
+ErrorCantReadDir=Nem sikerült olvasni könyvtár "%s"
+ErrorFailedToFindEntity=Nem sikerült olvasni környezet "%s"
+ErrorBadLoginPassword=Rossz érték be vagy jelszó
+ErrorLoginDisabled=A fiók le van tiltva
 ErrorFailedToRunExternalCommand=Nem sikerült futtatni külső parancsot. Ellenőrizze, hogy elérhető és futtatható a PHP szerver. Ha a PHP <b>Safe Mode</b> be van kapcsolva, ellenőrizze, hogy a parancs belsejében egy könyvtár által meghatározott paraméter <b>safe_mode_exec_dir.</b>
 ErrorFailedToChangePassword=Nem sikerült megváltoztatni a jelszót
 ErrorLoginDoesNotExists=Felhasználó bejelentkezési <b>%s</b> nem található.
@@ -104,6 +111,25 @@ ErrorBadValueForCode=Rossz érték a biztonsági kódot. Próbálja újra, az ú
 ErrorBothFieldCantBeNegative=Fields %s %s és nem lehet egyszerre negatív
 ErrorWebServerUserHasNotPermission=Felhasználói fiók <b>%s</b> végrehajtására használnak web szerver nincs engedélye az adott
 ErrorNoActivatedBarcode=Nem vonalkód típus aktivált
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=Figyelem, a PHP <b>safe_mode</b> beállítás be van kapcsolva, így parancsot kell tárolni benne egy könyvtár által bejelentett PHP paraméter <b>safe_mode_exec_dir.</b>
 WarningAllowUrlFopenMustBeOn=Paraméter <b>allow_url_fopen</b> kell állítani <b>a php.ini-ben</b> Filer, amiért ez a modul működése teljesen. Módosítania kell ezt a fájlt kézzel.
 WarningBuildScriptNotRunned=Script <b>%s</b> még nem futott építeni grafika, vagy nincs adat megjelenítéséhez.
@@ -112,6 +138,9 @@ WarningPassIsEmpty=Figyelem, az adatbázis jelszó üres. Ez egy biztonsági lyu
 WarningConfFileMustBeReadOnly=Figyelem, a config file <b>(htdocs / conf / conf.php)</b> át lehet írni a webszerver. Ez egy komoly biztonsági rést. Jogosultságát módosítani a fájlt, hogy a csak olvasható módban az operációs rendszer felhasználói által használt webszerver. Ha Windows FAT és az a lemez, akkor tudnia kell, hogy ez a fájl rendszer nem engedi hozzáadni file jogosultságokat, így nem lehet teljesen biztonságos.
 WarningsOnXLines=Figyelmeztetések <b>%s</b> forrás vonalak
 WarningNoDocumentModelActivated=Nem modell, a dokumentum generáció, be van kapcsolva. A modell kerül választottunk alapértelmezés szerint amíg ellenőrizze a modul beállításait.
-WarningInstallDirExists=Figyelem, könyvtára <b>(htdocs / install)</b> továbbra is fennáll. Ez egy komoly biztonsági rést. Meg kell szüntetni azt a lehető leghamarabb.
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
 WarningUntilDirRemoved=Minden biztonsági figyelmeztetések (látható: admin felhasználó esetén) továbbra is aktív marad, amíg a biztonsági rés van jelen (vagy állandó MAIN_REMOVE_INSTALL_WARNING egészül ki a Setup-> Egyéb beállítás).
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:16:06).
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

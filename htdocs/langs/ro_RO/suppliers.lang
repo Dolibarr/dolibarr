@@ -1,65 +1,42 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Furnizori
 Supplier=Furnizor
-AddSupplier=Adauga un furnizor
-SupplierRemoved=Furnizor eliminat
-SuppliersInvoice=Furnizori de factură
-NewSupplier=New furnizor
-History=Istorie
-ListOfSuppliers=Lista de furnizori
-ShowSupplier=Arata furnizor
-OrderDate=Ordinul data
-BuyingPrice=Cumpararea de preţ
-AddSupplierPrice=Adăugare furnizor de preţ
-ChangeSupplierPrice=Schimbarea furnizorului de preţ
-ErrorQtyTooLowForThisSupplier=Cantitate prea mici pentru această furnizor sau de preţ nu este definit la acest produs pentru acest furnizor
-ErrorSupplierCountryIsNotDefined=Ţara pentru acest furnizor nu este definit. Corectaţi această primă.
-ProductHasAlreadyReferenceInThisSupplier=Acest produs a fost deja o trimitere în acest furnizor
-NoRecordedSuppliers=Nu furnizori înregistrate
-SupplierPayment=Furnizor de plată
-SuppliersArea=Furnizori zona
-RefSupplierShort=Ref. furnizor
-ExportDataset_fournisseur_1=Furnizor lista de facturi si facturi "linii
-ExportDataset_fournisseur_2=Furnizor de facturi şi plăţi
-ApproveThisOrder=Aprobaţi această ordine
-ConfirmApproveThisOrder=Sunteţi sigur că doriţi să aprobe acest ordin?
-DenyingThisOrder=Negarea acest ordin
-ConfirmDenyingThisOrder=Sunteţi sigur că doriţi să nege acest ordin?
-ConfirmCancelThisOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
-AddCustomerOrder=Creaţi client pentru
-AddCustomerInvoice=Creaţi client factură
-AddSupplierOrder=Creaţi furnizor pentru
-AddSupplierInvoice=Creaţi furnizor factura
-ListOfSupplierProductForSupplier=Lista de produse şi a preţurilor pentru <b>furnizor %s</b>
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-NoneOrBatchFileNeverRan=Nici unul sau <b>lot %s</b> nu a fugit recent
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Acest furnizor de referinţă este deja asociat cu o referinţă: %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:38).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
+AddSupplier=Adaugă  furnizor
+SupplierRemoved=Furnizor şters
+SuppliersInvoice=Factură furnizor
+NewSupplier=Furnizor nou
+History=Istoric
+ListOfSuppliers=Lista  furnizori
+ShowSupplier=Afişează furnizor
+OrderDate=Data comandă
+BuyingPrice=Preţ de achiziţie
 BuyingPriceMin=Preţul minim de achiziţie
-BuyingPriceMinShort=Min preţul de cumpărare
+BuyingPriceMinShort=Preţ min. de achiziţie
+TotalBuyingPriceMin=Total prețuri de cumpărare  subproduse 
+SomeSubProductHaveNoPrices=Unele sub-produse nu au un preț definit
+AddSupplierPrice=Adaugă preţ furnizor
+ChangeSupplierPrice=Modifică preţ furnizor
+ErrorQtyTooLowForThisSupplier=Cantitate prea mică pentru această furnizor sau de preţul nu este definit la acest produs pentru acest furnizor
+ErrorSupplierCountryIsNotDefined=Ţara pentru acest furnizor nu este definită. Corectaţi  pe fişa lui.
+ProductHasAlreadyReferenceInThisSupplier=Acest produs are deja o referinţă la acest furnizor
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Acest furnizor este deja asociat cu referinta: % s
+NoRecordedSuppliers=Nici un furnizor înregistrat
+SupplierPayment=Plată Furnizor
+SuppliersArea=Zona Furnizori
+RefSupplierShort=Ref. furnizor
 Availability=Disponibilitate
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:57).
+ExportDataset_fournisseur_1=Facturi furnizori şi linii facturi
+ExportDataset_fournisseur_2=Facturi Furnizor  şi plăţi
+ExportDataset_fournisseur_3=Comenzi furnizori si lini comenzi
+ApproveThisOrder=Aprobă  această comandă
+ConfirmApproveThisOrder=Sigur doriţi să aprobaţi această comandă   <b>%s</b>?
+DenyingThisOrder=Refuză comanda
+ConfirmDenyingThisOrder=Sigur doriţi să refuzaţi această comandă   <b>%s</b>?
+ConfirmCancelThisOrder=Sigur doriţi să anulaţi această comandă   <b>%s</b>?
+AddCustomerOrder=Crează comandă client
+AddCustomerInvoice=Crează factură client
+AddSupplierOrder=Crează comandă furnizor
+AddSupplierInvoice=Crează  factură furnizor
+ListOfSupplierProductForSupplier=Lista  produse şi preţuri pentru furnizorul  <b>%s</b>
+NoneOrBatchFileNeverRan=Nici una sau tratate <b>%s</b> ne executate recent
+SentToSuppliers=Trimite la furnizori

@@ -35,7 +35,7 @@ class box_supplier_orders extends ModeleBoxes
     var $boximg = "object_order";
     var $boxlabel="BoxLatestSupplierOrders";
     var $depends = array("fournisseur");
-    
+
     var $db;
     var $param;
     var $info_box_head = array();
@@ -85,7 +85,7 @@ class box_supplier_orders extends ModeleBoxes
                 {
                     $objp = $db->fetch_object($result);
                     $datem=$db->jdate($objp->tms);
-                    
+
                     $urlo = DOL_URL_ROOT."/fourn/commande/fiche.php?id=".$objp->rowid;
                     $urls = DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid;
 
@@ -117,6 +117,8 @@ class box_supplier_orders extends ModeleBoxes
 
                 if ($num == 0)
                     $this->info_box_contents[$i][0] = array('td' => 'align="center"', 'text' => $langs->trans("NoSupplierOrder"));
+
+				$db->free($result);
             }
             else
             {

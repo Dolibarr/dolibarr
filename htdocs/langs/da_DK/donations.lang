@@ -1,22 +1,12 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Donation
-Donationss=Donationer
+Donations=Donationer
+# DonationRef=Donation ref.
 Donor=Donor
 Donors=Donorer
 AddDonation=Tilføj en donation
 NewDonation=Ny donation
+# ShowDonation=Show donation
 DonationPromise=Gave løfte
 PromisesNotValid=Ikke valideret løfter
 PromisesValid=Valideret løfter
@@ -31,27 +21,12 @@ DonationStatusPaid=Donationen er modtaget
 DonationStatusPromiseNotValidatedShort=Udkast
 DonationStatusPromiseValidatedShort=Valideret
 DonationStatusPaidShort=Modtaget
-ValidPromise=Valider løfte
+ValidPromess=Validér løfte
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Build modtagelse
 DonationsModels=Dokumenter modeller for donation kvitteringer
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-Donations=Donationer
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-ValidPromess=Validér løfte
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
 LastModifiedDonations=Sidste %s ændret donationer
 SearchADonation=Søg en donation
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:50).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

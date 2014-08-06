@@ -1,110 +1,112 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-WarehouseCard=Depozit carte
-Warehouse=Warehouse
-NewWarehouse=Nou depozit / zona de stoc
-MenuNewWarehouse=Nou depozit
-WarehouseOpened=Warehouse deschis
+# Dolibarr language file - Source file is en_US - stocks
+WarehouseCard=Fişă Depozit
+Warehouse=Depozit
+Warehouses=Depozite
+NewWarehouse=Depozit  nou
+WarehouseEdit=Modifică depozit
+MenuNewWarehouse=Depozit nou
+WarehouseOpened=Depozit deschis
 WarehouseClosed=Depozit închis
-WarehouseSource=Sursa de depozit
-WarehouseTarget=Target antrepozit
-ValidateSending=Ştergere trimiterea
-CancelSending=Anulare expediere
-DeleteSending=Ştergere trimiterea
+WarehouseSource=Depozit Sursa
+WarehouseSourceNotDefined=Nici un depozit definit,
+AddOne=Adaugă unul
+WarehouseTarget=Depozit ţintă
+ValidateSending=Şterge expedierea
+CancelSending=Anulează expediere
+DeleteSending=Şterge expediere
 Stock=Stoc
 Stocks=Stocuri
-Movement=Mişcarea
-Movements=Mişcările
-ErrorWarehouseRefRequired=Warehouse nume de referinţă este necesară
-ErrorWarehouseLabelRequired=Warehouse etichetei este necesară
-CorrectStock=Corect stoc
-ListOfWarehouses=Lista de depozite
-ListOfStockMovements=Lista de stoc mişcările
-StocksArea=Stocuri zona
-Location=Lieu
+Movement=Mişcare
+Movements=Mişcări
+ErrorWarehouseRefRequired=Referința  Depozit este obligatorie
+ErrorWarehouseLabelRequired=Eticheta Depozit este obligatorie
+CorrectStock=Corectează stoc
+ListOfWarehouses=Lista  depozite
+ListOfStockMovements=Lista mişcări de stoc
+StocksArea=Zona Stocuri
+Location=Locație
 LocationSummary=Nume scurt locaţie
-NumberOfProducts=Numărul total de produse
-LastMovement=Ultima circulaţie
-LastMovements=Ultima mişcările
+NumberOfDifferentProducts=Numărul de produse diferite
+NumberOfProducts=Număr total produse
+LastMovement=Ultima mişcare
+LastMovements=Ultimele mişcări
 Units=Unităţi
-Unit=Unitatea de
-StockCorrection=Corect stoc
-StockMovement=Transfer
-StockMovements=Transferuri de stoc
-NumberOfUnit=Numărul de unităţi
+Unit=Unitate
+StockCorrection=Corectează stoc
+StockTransfer=Transfer  stoc
+StockMovement=Transferă
+StockMovements=Transferuri  stoc
+LabelMovement=Etichetă transfer
+NumberOfUnit=Număr  unităţi
+UnitPurchaseValue=Preţ unitar cumpărare
 TotalStock=Total în stoc
-StockTooLow=Stoc prea mică
-EnhancedValue=Valoare
-PMPValue=Valoare
-EnhancedValueOfWarehouses=Depozite valoare
+StockTooLow=Stoc insuficient
+StockLowerThanLimit=Stoc mai mic decat alerta limita
+EnhancedValue=Valoric
+PMPValue=Valoric PMP
+PMPValueShort=WAP
+EnhancedValueOfWarehouses=Stoc valoric
 UserWarehouseAutoCreate=Creaţi un stoc în mod automat atunci când se creează un utilizator
-QtyDispatched=Cantitate expediate
-OrderDispatch=Ordinul de expediţie
-RuleForStockManagementDecrease=Norma de management al stocurilor scădere
-RuleForStockManagementIncrease=Norma de management al stocurilor creştere
-DeStockOnBill=Reducerea real stocurile de pe facturi / note de credit
-DeStockOnValidateOrder=Reducerea real stocurile de pe ordinele de note
-ReStockOnBill=Creşterea reală stocurile de pe facturi / note de credit
-ReStockOnValidateOrder=Creşterea reală stocurile de pe ordinele de note
-StockLimitShort=Limita de
+QtyDispatched=Cantitate dipecerizată
+OrderDispatch=Dispecerizare Stoc
+RuleForStockManagementDecrease=Regulă de gestionare a scăderilor de stoc
+RuleForStockManagementIncrease=Regulă de gestionare a creşterilor de stoc
+DeStockOnBill=Descreşterea stocului fizic bazată pe validarea facturilor / note de credit
+DeStockOnValidateOrder=Descreşterea stocului fizic  bazată pe validarea comenzilor client
+DeStockOnShipment=Descreşterea stocului fizic  bazată pe  validarea notelor de livrare
+ReStockOnBill=Creşterea stocului fizic  bazată pe validarea facturilor / note de credit
+ReStockOnValidateOrder=Creşterea stocului fizic  bazată pe aprobarea comenzilor furnizor
+ReStockOnDispatchOrder=Creşterea stocului fizic  bazată pe dispecerizarea manuală , dupa recepţia comenzii
+ReStockOnDeleteInvoice=Creşterea stocului fizic  bazată pe  stergerea facturilor
+OrderStatusNotReadyToDispatch=Comanda nu mai este sau nu mai are  un statut care să permită dipecerizarea produselor în depozit
+StockDiffPhysicTeoric=Motivul pentru diferenţa dintre stocurile fizice şicele  teoretice
+NoPredefinedProductToDispatch=Nu sunt produse predefinite pentru acest obiect. Deci, nici o dispecerizare  în stoc necesară.
+DispatchVerb=Dispecerizează
+StockLimitShort=Limita
 StockLimit=Stoc limită pentru alerte
-PhysicalStock=Stocul fizic
-RealStock=Real de stoc
-TheoreticalStock=Therocial stoc
-VirtualStock=Virtual stoc
-MininumStock=Minim stoc
-StockUp=Stoc sus
+PhysicalStock=Stoc  Fizic
+RealStock=Stoc Real
+VirtualStock=Stoc Virtual
+MininumStock=Stoc min
+StockUp=Stoc maxim
 MininumStockShort=Stoc min
-StockUpShort=Stoc sus
-IdWarehouse=Id-ul antrepozit
-DescWareHouse=Descriere antrepozit
+StockUpShort=Stoc max
+IdWarehouse=ID depozit
+DescWareHouse=Descriere depozit
 LieuWareHouse=Localizare depozit
 WarehousesAndProducts=Depozite şi produse
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-PMPValueShort=WAP
-AverageUnitPricePMPShort=Preţul mediu de intrare
-AverageUnitPricePMP=Preţul mediu de intrare
-EstimatedStockValueShort=Valoare estimată de stoc
-EstimatedStockValue=Valoare estimată de stoc
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-WarehouseEdit=Modificare depozit
-DeStockOnShipment=Scăderea stocurilor reale privind transferurile de validare
-ReStockOnDispatchOrder=Creşterea stocurilor real pe manualul de expediere în depozite, după ce furnizorul pentru primirea
-OrderStatusNotReadyToDispatch=Ordinul nu a fost încă sau nu mai mult de un statut care permite trimiterea produselor în depozite stoc.
-StockDiffPhysicTeoric=Motivul pentru stocul diferenţa fizice şi teoretice
-NoPredefinedProductToDispatch=Nu exista produse predefinite pentru acest obiect. Deci, nu de expediere în stoc este necesară.
-DispatchVerb=Expediere
-DeleteAWarehouse=Ştergeţi-un antrepozit
-ConfirmDeleteWarehouse=Sunteţi sigur că doriţi să ştergeţi <b>%s</b> depozit?
-PersonalStock=%s personale stoc
-ThisWarehouseIsPersonalStock=Acest depozit reprezinta stocul personale ale %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:57).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-SellPriceMin=Preţul de vânzare unitatii
-EstimatedStockValueSellShort=Valoarea de a vinde
-EstimatedStockValueSell=Valoarea de a vinde
-SelectWarehouseForStockDecrease=Alege depozit utilizat pentru scăderea stocului
-SelectWarehouseForStockIncrease=Alege depozit utilizat pentru creşterea stocului
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:31).
+AverageUnitPricePMPShort=Preţul mediu ponderat de intrare
+AverageUnitPricePMP=Preţul mediu ponderat de intrare
+SellPriceMin=Preţ vânzare unitar
+EstimatedStockValueSellShort=Valoarea ieşire
+EstimatedStockValueSell=Valoarea ieşire
+EstimatedStockValueShort=Valoarea de intrare a stocului
+EstimatedStockValue=Valoarea de intrare a stocului PMP
+DeleteAWarehouse=Şterge un depozit
+ConfirmDeleteWarehouse=Sigur doriţi să ştergeţi   depozitul <b>%s</b>  ?
+PersonalStock=Stoc  Personal %s
+ThisWarehouseIsPersonalStock=Acest depozit reprezinta stocul personal al lui  %s %s
+SelectWarehouseForStockDecrease=Alege depozitul  pentru scăderea stocului
+SelectWarehouseForStockIncrease=Alege depozitul  pentru creşterea stocului
+NoStockAction=Nici o actiune pe stoc
+LastWaitingSupplierOrders=Comenzi nereceptionate
+DesiredStock=Stoc dorit
+StockToBuy=De  comandat
+Replenishment=Reaprovizionare
+ReplenishmentOrders=Comenzi reaprovizionare
+UseVirtualStock=Utilizaţi stocul virtual in locul stocului fizic
+RuleForStockReplenishment=Reguli pentru reaprovizionarea stocului
+SelectProductWithNotNullQty=Selectați cel puțin un produs cu cantitatea nenulă și un furnizor
+AlertOnly= Numai Alerte
+WarehouseForStockDecrease=Depozitul <b>%s</b> va fi utilizat pentru scăderea stocului
+WarehouseForStockIncrease=Depozitul <b>%s</b> va fi utilizat pentru creşterea stocului
+ForThisWarehouse=Pentru acest depozit
+ReplenishmentStatusDesc=Aceasta este lista cu toate produsele având stocul fizic mai mic decât stocul dorit (sau valoarea de alertă dacă  casuţa "doar alertă " este bifată) și sugerăm să vă creaţi comenzi furnizor pentru a umple diferența.
+ReplenishmentOrdersDesc=Aceasta este lista cu toate comenzile furnizor deschise
+Replenishments=Reaprovizionări
+NbOfProductBeforePeriod=Cantitatea de produs %s în stoc înainte de perioada selectată  (< %s)
+NbOfProductAfterPeriod=Cantitatea de produs %s în stoc după perioada selectată (> %s)
+MassStockMovement=Transfer stoc în masă
+SelectProductInAndOutWareHouse=Selectați un produs, o cantitate, un depozit sursă și un depozit țintă, apoi faceți clic pe"%s". Odată făcut acest lucru pentru toate transferurile cerute, faceți clic pe "%s".
+RecordMovement=Înregistrare transfer
+ReceivingForSameOrder=Recepţii pentru această comandă

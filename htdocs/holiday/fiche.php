@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011	Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013	Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +46,9 @@ $user_id = $user->id;
 $now=dol_now();
 
 
-/*******************************************************************
+/*
  * Actions
-********************************************************************/
+ */
 
 // Si création de la demande
 if ($action == 'create')
@@ -232,26 +232,40 @@ if ($action == 'update')
 }
 
 // Si suppression de la demande
-if ($action == 'confirm_delete'  && $_GET['confirm'] == 'yes')
+if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes')
 {
     if($user->rights->holiday->delete)
     {
+    	$error=0;
+
+    	$db->begin();
+
         $cp = new Holiday($db);
         $cp->fetch($id);
 
         // Si c'est bien un brouillon
-        if ($cp->statut == 1)
+        if ($cp->statut == 1 || $cp->statut == 3)
         {
             // Si l'utilisateur à le droit de lire cette demande, il peut la supprimer
             if ($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
             {
-                $cp->delete($id);
-                header('Location: index.php');
-                exit;
+                $result=$cp->delete($id);
             }
-            else {
+            else
+            {
                 $error = $langs->trans('ErrorCantDeleteCP');
             }
+        }
+
+       	if (! $error)
+        {
+          	$db->commit();
+           	header('Location: index.php');
+           	exit;
+        }
+        else
+        {
+        	$db->rollback();
         }
     }
 }
@@ -315,9 +329,9 @@ if ($action == 'confirm_send')
             }
 
             // Si l'option pour avertir le valideur en cas de solde inférieur à la demande
-            if($cp->getConfCP('AlertValidatorSolde'))
+            if ($cp->getConfCP('AlertValidatorSolde'))
             {
-            	$nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
+            	$nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1,$cp->halfday);
                 if ($nbopenedday > $cp->getCPforUser($cp->fk_user))
                 {
                     $message.= "\n";
@@ -361,9 +375,8 @@ if($action == 'confirm_valid')
     $cp->fetch($id);
 
     // Si statut en attente de validation et valideur = utilisateur
-    if($cp->statut == 2 && $user->id == $cp->fk_validator)
+    if ($cp->statut == 2 && $user->id == $cp->fk_validator)
     {
-
         $cp->date_valid = dol_now();
         $cp->fk_user_valid = $user->id;
         $cp->statut = 3;
@@ -371,19 +384,19 @@ if($action == 'confirm_valid')
         $verif = $cp->update($user->id);
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
-        if($verif > 0) {
-
-            // Retrait du nombre de jours prit
-            $nbJour = $nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
+        if ($verif > 0)
+        {
+            // Calculcate number of days consummed
+            $nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1);
 
             $soldeActuel = $cp->getCpforUser($cp->fk_user);
-            $newSolde = $soldeActuel - ($nbJour*$cp->getConfCP('nbHolidayDeducted'));
+            $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $cp->addLogCP($user->id,$cp->fk_user, $langs->trans('Event').': '.$langs->transnoentitiesnoconv("Holidays"),$newSolde);
+            $cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde);
 
             // Mise à jour du solde
-            $cp->updateSoldeCP($cp->fk_user,$newSolde);
+            $cp->updateSoldeCP($cp->fk_user, $newSolde);
 
             // To
             $destinataire = new User($db);
@@ -441,13 +454,13 @@ if($action == 'confirm_valid')
 
 if ($action == 'confirm_refuse')
 {
-    if(!empty($_POST['detail_refuse']))
+    if (!empty($_POST['detail_refuse']))
     {
         $cp = new Holiday($db);
         $cp->fetch($_GET['id']);
 
         // Si statut en attente de validation et valideur = utilisateur
-        if($cp->statut == 2 && $user->id == $cp->fk_validator)
+        if ($cp->statut == 2 && $user->id == $cp->fk_validator)
         {
             $cp->date_refuse = date('Y-m-d H:i:s', time());
             $cp->fk_user_refuse = $user->id;
@@ -457,8 +470,8 @@ if ($action == 'confirm_refuse')
             $verif = $cp->update($user->id);
 
             // Si pas d'erreur SQL on redirige vers la fiche de la demande
-            if($verif > 0) {
-
+            if ($verif > 0)
+            {
                 // To
                 $destinataire = new User($db);
                 $destinataire->fetch($cp->fk_user);
@@ -525,16 +538,48 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
     $cp->fetch($_GET['id']);
 
     // Si statut en attente de validation et valideur = utilisateur
-    if ($cp->statut == 2 && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
+    if (($cp->statut == 2 || $cp->statut == 3) && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
     {
+    	$db->begin();
+
+    	$oldstatus = $cp->statut;
         $cp->date_cancel = dol_now();
         $cp->fk_user_cancel = $user->id;
         $cp->statut = 4;
 
-        $verif = $cp->update($user->id);
+        $result = $cp->update($user->id);
+
+        if ($result >= 0 && $oldstatus == 3)	// holiday was already validated, status 3, so we must increase back sold
+        {
+        	// Calculcate number of days consummed
+        	$nbopenedday=num_open_day($cp->date_debut,$cp->date_fin,0,1,$cp->halfday);
+
+        	$soldeActuel = $cp->getCpforUser($cp->fk_user);
+        	$newSolde = $soldeActuel + ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
+
+        	// On ajoute la modification dans le LOG
+        	$result1=$cp->addLogCP($user->id, $cp->fk_user, $langs->transnoentitiesnoconv("HolidaysCancelation"), $newSolde);
+
+        	// Mise à jour du solde
+        	$result2=$cp->updateSoldeCP($cp->fk_user, $newSolde);
+
+        	if ($result1 < 0 || $result2 < 0)
+        	{
+        		$error = $langs->trans('ErrorCantDeleteCP');
+        	}
+        }
+
+        if (! $error)
+        {
+        	$db->commit();
+        }
+        else
+        {
+        	$db->rollback();
+        }
 
         // Si pas d'erreur SQL on redirige vers la fiche de la demande
-        if($verif > 0)
+        if (! $error && $result > 0)
         {
             // To
             $destinataire = new User($db);
@@ -638,7 +683,7 @@ if (empty($id) || $action == 'add' || $action == 'request')
                 case 'nodatedebut' :
                     $errors[] = $langs->trans('NoDateDebut');
                     break;
-                case 'nodatedebut' :
+                case 'nodatefin' :
                     $errors[] = $langs->trans('NoDateFin');
                     break;
                 case 'DureeHoliday' :
@@ -808,7 +853,7 @@ else
                     case 'nodatedebut' :
                         $errors[] = $langs->transnoentitiesnoconv('NoDateDebut');
                         break;
-                    case 'nodatedebut' :
+                    case 'nodatefin' :
                         $errors[] = $langs->transnoentitiesnoconv('NoDateFin');
                         break;
                     case 'DureeHoliday' :
@@ -829,41 +874,37 @@ else
             if($user->id == $cp->fk_user || $user->rights->holiday->lire_tous)
             {
 
-                if ($action == 'delete' && $cp->statut == 1) {
+                if ($action == 'delete')
+                {
                     if($user->rights->holiday->delete)
                     {
-                        $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
-                        if ($ret == 'html') print '<br />';
+                        print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
                     }
                 }
 
                 // Si envoi en validation
                 if ($action == 'sendToValidate' && $cp->statut == 1 && $user->id == $cp->fk_user)
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
-                    if ($ret == 'html') print '<br />';
+                    print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
 
                 // Si validation de la demande
-                if ($action == 'valid' && $cp->statut == 2 && $user->id == $cp->fk_validator)
+                if ($action == 'valid')
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
-                    if ($ret == 'html') print '<br />';
+                    print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
                 }
 
                 // Si refus de la demande
-                if ($action == 'refuse' && $cp->statut == 2 && $user->id == $cp->fk_validator)
+                if ($action == 'refuse')
                 {
                     $array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    $ret=$form->form_confirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
-                    if ($ret == 'html') print '<br />';
+                    print $form->formconfirm("fiche.php?id=".$id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
                 }
 
                 // Si annulation de la demande
-                if ($action == 'cancel' && $cp->statut == 2 && ($user->id == $cp->fk_validator || $user->id == $cp->fk_user))
+                if ($action == 'cancel')
                 {
-                    $ret=$form->form_confirm("fiche.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
-                    if ($ret == 'html') print '<br />';
+                    print $form->formconfirm("fiche.php?id=".$id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                 }
 
                 $head=holiday_prepare_head($cp);
@@ -893,7 +934,8 @@ else
 			    $starthalfday=($cp->halfday == -1 || $cp->halfday == 2)?'afternoon':'morning';
 			    $endhalfday=($cp->halfday == 1 || $cp->halfday == 2)?'morning':'afternoon';
 
-                if(!$edit) {
+                if(!$edit)
+                {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>'.dol_print_date($cp->date_debut,'day');
@@ -901,7 +943,9 @@ else
                     print $langs->trans($listhalfday[$starthalfday]);
                     print '</td>';
                     print '</tr>';
-                } else {
+                }
+                else
+                {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
@@ -921,7 +965,9 @@ else
                     print $langs->trans($listhalfday[$endhalfday]);
                     print '</td>';
                     print '</tr>';
-                } else {
+                }
+                else
+                {
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
@@ -993,7 +1039,7 @@ else
                     $idGroupValid = $cp->getConfCP('userGroup');
 
                     $validator = new UserGroup($db,$idGroupValid);
-                    $valideur = $validator->listUsersForGroup();
+                    $valideur = $validator->listUsersForGroup('',1);
 
                     print '<td>';
                     $form->select_users($cp->fk_validator,"valideur",1,"",0,$valideur,'');
@@ -1053,7 +1099,7 @@ else
                     {
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
-                    if($user->rights->holiday->delete && $cp->statut == 1)
+                    if ($user->rights->holiday->delete && $cp->statut == 1)	// If draft
                     {
                     	print '<a href="fiche.php?id='.$_GET['id'].'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
@@ -1064,7 +1110,7 @@ else
                         print '<a href="fiche.php?id='.$_GET['id'].'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
                     }
 
-                    if (($user->id == $cp->fk_validator || $user->id == $cp->fk_user) && $cp->statut == 2)
+                    if (($user->id == $cp->fk_validator || $user->id == $cp->fk_user) && ($cp->statut == 2 || $cp->statut == 3))	// Status validated or approved
                     {
                     	if (($cp->date_debut > dol_now()) || $user->admin) print '<a href="fiche.php?id='.$_GET['id'].'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';

@@ -1,21 +1,21 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2006-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/projet/tasks/task.php
@@ -23,12 +23,19 @@
  *	\brief      Page of a project task
  */
 
+
 require ("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
+
+$langs->load("projects");
+$langs->load("companies");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -36,6 +43,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
 $project_ref=GETPOST('project_ref','alpha');
+$planned_workload=GETPOST('planned_workloadhour')*3600+GETPOST('planned_workloadmin')*60;
 
 // Security check
 $socid=0;
@@ -66,7 +74,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	}
 	if (! $error)
 	{
-		$object->fetch($id);
+		$object->fetch($id,$ref);
 
 		$tmparray=explode('_',$_POST['task_parent']);
 		$task_parent=$tmparray[1];
@@ -75,6 +83,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
+		$object->planned_workload = $planned_workload;
 		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
 		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
 		$object->progress = $_POST['progress'];
@@ -92,7 +101,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 
 if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->supprimer)
 {
-	if ($object->fetch($id) >= 0 )
+	if ($object->fetch($id,$ref) >= 0 )
 	{
 		$result=$projectstatic->fetch($object->fk_projet);
 		if (! empty($projectstatic->socid))
@@ -131,25 +140,66 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
+// Build doc
+if ($action == 'builddoc' && $user->rights->projet->creer)
+{
+	$object->fetch($id,$ref);
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+	$outputlangs = $langs;
+	if (GETPOST('lang_id'))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang(GETPOST('lang_id'));
+	}
+	$result=task_pdf_create($db, $object, $object->modelpdf, $outputlangs);
+	if ($result <= 0)
+	{
+		dol_print_error($db,$result);
+		exit;
+	}
+}
+
+// Delete file in doc form
+if ($action == 'remove_file' && $user->rights->projet->creer)
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	if ($object->fetch($id,$ref) >= 0 )
+	{
+		$langs->load("other");
+		$upload_dir =	$conf->projet->dir_output;
+		$file =	$upload_dir	. '/' .	GETPOST('file');
+
+		$ret=dol_delete_file($file);
+		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
+		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
+	}
+}
+
 /*
  * View
 */
 
-$langs->load('projects');
 
 llxHeader('', $langs->trans("Task"));
 
 $form = new Form($db);
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 if ($id > 0 || ! empty($ref))
 {
-	if ($object->fetch($id) > 0)
+	if ($object->fetch($id,$ref) > 0)
 	{
 		$res=$object->fetch_optionals($object->id,$extralabels);
 
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
+
+		$object->project = dol_clone($projectstatic);
 
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
@@ -179,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Company").'</td><td>';
+			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
@@ -219,7 +269,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 		}
 
 		print '</div>';
@@ -262,7 +312,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 
 				// Third party
-				print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+				print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 				if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 				else print '&nbsp;';
 				print '</td></tr>';
@@ -270,7 +320,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-			print $formother->selectProjectTasks($object->fk_task_parent,$projectstatic->id, 'task_parent', $user->admin?0:1, 0);
+			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
 			// Date start
@@ -281,6 +331,11 @@ if ($id > 0 || ! empty($ref))
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
+			print '</td></tr>';
+
+			// Planned workload
+			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td>';
+			print $form->select_duration('planned_workload',$object->planned_workload,0,'text');
 			print '</td></tr>';
 
 			// Progress
@@ -321,8 +376,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($action == 'delete')
 			{
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
-				if ($ret == 'html') print '<br>';
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
 			print '<table class="border" width="100%">';
@@ -337,7 +391,7 @@ if ($id > 0 || ! empty($ref))
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-			print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 			print '</td>';
 			print '</tr>';
 
@@ -352,7 +406,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 
 				// Third party
-				print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+				print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 				if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 				else print '&nbsp;';
 				print '</td></tr>';
@@ -366,6 +420,11 @@ if ($id > 0 || ! empty($ref))
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 			print dol_print_date($object->date_end,'day');
+			print '</td></tr>';
+
+			// Planned workload
+			print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">';
+			print convertSecondToTime($object->planned_workload,'allhourmin');
 			print '</td></tr>';
 
 			// Progress
@@ -385,7 +444,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				print $object->showOptionals($extrafields);
 			}
-			
+
 			print '</table>';
 
 		}
@@ -421,6 +480,26 @@ if ($id > 0 || ! empty($ref))
 			}
 
 			print '</div>';
+
+			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			/*
+			 * Documents generes
+			*/
+			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
+			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed=($user->rights->projet->lire);
+			$delallowed=($user->rights->projet->creer);
+
+			$var=true;
+
+			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+
+
+
+			print '</td></tr></table>';
 		}
 	}
 }

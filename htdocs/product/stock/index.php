@@ -88,7 +88,7 @@ if ($result)
         {
             $objp = $db->fetch_object($result);
             $var=!$var;
-            print "<tr $bc[$var]>";
+            print "<tr ".$bc[$var].">";
             print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowStock"),"stock")." ".$objp->label."</a></td>\n";
             print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
             print "</tr>\n";
@@ -144,7 +144,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
 		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;

@@ -1,5 +1,4 @@
 # Dolibarr language file - en_GB - main
-CHARSET=UTF-8
 ValidateCheckReceipt=Validate this cheque receipt ?
 ConfirmValidateCheckReceipt=Are you sure you want to validate this cheque receipt, no change will be possible once this is done ?
 DeleteCheckReceipt=Delete this cheque receipt ?

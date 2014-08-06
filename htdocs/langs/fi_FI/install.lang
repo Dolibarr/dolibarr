@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - install
 InstallEasy=Me yritimme tehdä Dolibarr setup mahdollisimman helppoa. Seuraa ohjeita vaihe vaiheelta.
 MiscellaneousChecks=Esitiedot tarkistaa
 DolibarrWelcome=Tervetuloa Dolibarr
@@ -18,6 +8,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration <b>file %s</b> ei ole ol
 ConfFileCouldBeCreated=Configuration <b>file %s</b> voitaisiin luoda.
 ConfFileIsNotWritable=Kokoonpano <b>tiedostoa %s</b> ei ole kirjoitettavissa. Tarkista käyttöoikeudet. Ensimmäistä kertaa asentaa, verkkopalvelimesi on myönnettävä voi kirjoittaa tämä tiedosto aikana asennusprosessi ( "chmod 666" esimerkiksi Unix kuten OS).
 ConfFileIsWritable=Configuration <b>file %s</b> on kirjoitettavissa.
+ConfFileReload=Päivitä kaikki tiedot asetustiedosto.
 PHPSupportSessions=Tämä PHP tukee istunnoissa.
 PHPSupportPOSTGETOk=Tämä PHP tukee muuttujat POST ja GET.
 PHPSupportPOSTGETKo=On mahdollista, sinun PHP asennusohjelma ei tue muuttujat POST tai GET. Tarkista parametri <b>variables_order</b> vuonna php.ini.
@@ -34,11 +25,14 @@ ErrorGoBackAndCorrectParameters=Siirry taaksepäin ja korjata väärin parametri
 ErrorWrongValueForParameter=Olet ehkä kirjoittanut väärän arvon parametri ' %s'.
 ErrorFailedToCreateDatabase=Luominen epäonnistui tietokanta ' %s'.
 ErrorFailedToConnectToDatabase=Epäonnistui muodostaa tietokanta ' %s'.
+# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP versio liian vanha. Versio %s on tarpeen.
+WarningPHPVersionTooLow=PHP version liian vanha. Versio %s tai enemmän odotetaan. Tämä versio pitäisi mahdollistaa asentaa mutta ei tueta.
 ErrorConnectedButDatabaseNotFound=Yhteys palvelimeen onnistunut mutta tietokantaan %s ei löydy.
 ErrorDatabaseAlreadyExists=Database ' %s' on jo olemassa.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Jos tietokanta ei ole, palaa takaisin ja tarkistaa vaihtoehto "Luo tietokanta".
 IfDatabaseExistsGoBackAndCheckCreate=Jos tietokanta on jo olemassa, mene takaisin ja poista "Luo tietokanta" vaihtoehto.
+# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Voit jatkaa ...
 PleaseBePatient=Ole kärsivällinen ...
@@ -47,6 +41,8 @@ ConfigurationFile=Configuration file
 WebPagesDirectory=Directory jossa www-sivut on tallennettu
 DocumentsDirectory=Directory tallentaa ladataan ja se tuotti asiakirjat
 URLRoot=URL juuri
+ForceHttps=Force suojatut yhteydet (https)
+CheckToForceHttps=Valitse tämä asetus pakottaa suojattuja yhteyksiä (https). <br> Tämä edellyttää, että www-palvelin on määritetty SSL-varmenne.
 DolibarrDatabase=Dolibarr Database
 DatabaseChoice=Tietokannan valinta
 DatabaseType=Tietokannan tyyppi
@@ -56,6 +52,7 @@ ServerAddressDescription=Nimi tai IP-osoite tietokanta palvelimelle, yleensä "l
 ServerPortDescription=Tietokanta-palvelimen portti. Pidä tyhjä, jos tuntematon.
 DatabaseServer=Database Server
 DatabaseName=Tietokannan nimi
+DatabasePrefix=Tietokanta etuliite pöytä
 Login=Kirjautuminen
 AdminLogin=Kirjautumistunnuksen Dolibarr tietokannan ylläpitäjä. Pidä tyhjä jos kytket nimettömässä
 Password=Salasana
@@ -66,6 +63,7 @@ CreateUser=Luo käyttäjä
 DatabaseSuperUserAccess=Tietokanta - SuperUser pääsy
 CheckToCreateDatabase=Valintaruutu, jos tietokanta ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
 CheckToCreateUser=Valintaruutu, jos kirjautuminen ei ole olemassa, ja ne on luotu. <br> Tässä tapauksessa sinun täytyy täyttää tunnus / salasana SuperUser huomioon alareunassa tällä sivulla.
+Experimental=(kokeellinen, ei käytössä)
 DatabaseRootLoginDescription=Kirjaudu että käyttäjä voi luoda uusia tietokantoja tai uusia käyttäjiä, hyödytön, jos tietokanta ja tietokanta on jo olemassa (kuten silloin, kun olet isännöi Web hosting-palvelujen tarjoaja).
 KeepEmptyIfNoPassword=Jätä tyhjä, jos käyttäjä ei ole salasanaa (välttää)
 SaveConfigurationFile=Tallenna arvot
@@ -90,9 +88,13 @@ SystemIsInstalled=Tämä asennus on valmis.
 SystemIsUpgraded=Dolibarr on päivitetty onnistuneesti.
 YouNeedToPersonalizeSetup=You need to configure Dolibarr vastaamaan tarpeisiin (ulkonäkö, ominaisuudet, ...). Voit tehdä tämän alla olevasta linkistä:
 AdminLoginCreatedSuccessfuly=Dolibarr ylläpitäjä sisäänkirjoittautumissivuksesi <b>' %s'</b> on luotu onnistui.
+GoToDolibarr=Siirry Dolibarr
 GoToSetupArea=Siirry Dolibarr (setup-alue)
+MigrationNotFinished=Version tietokanta ei ole täysin ajan tasalla, joten sinun täytyy suorittaa päivityksen uudelleen.
+GoToUpgradePage=Siirry päivittää sivu uudelleen
 Examples=Esimerkkejä
 WithNoSlashAtTheEnd=Ilman kauttaviivalla "/" lopussa
+DirectoryRecommendation=On recommanded käyttää hakemiston ulkopuolella teidän hakemistoon verkkosivuja.
 LoginAlreadyExists=On jo olemassa
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr järjestelmänvalvojan tili <b>' %s'</b> on jo olemassa.
@@ -131,75 +133,15 @@ BecauseConnectionFailedParametersMayBeWrong=Kuten yhteys epäonnistui, isännän
 OrphelinsPaymentsDetectedByMethod=Orphelins maksu havaittu menetelmä %s
 RemoveItManuallyAndPressF5ToContinue=Poistaa sen manuaalisesti ja paina F5 jatkaa.
 KeepDefaultValuesWamp=Voit käyttää DoliWamp ohjattua, joten arvojen suhteen täällä on jo optimoitu. Muuttaa vain, jos tiedät mitä teet.
+KeepDefaultValuesDeb=Voit käyttää Dolibarr ohjatun peräisin Ubuntu tai Debian-pakettien, joten ehdottamat arvot tässä on jo optimoitu. Vain salasanan tietokannan omistajan luoda on täytettävä. Muuta muut parametrit vain, jos tiedät mitä teet.
 KeepDefaultValuesMamp=Voit käyttää DoliMamp ohjattua, joten arvojen suhteen täällä on jo optimoitu. Muuttaa vain, jos tiedät mitä teet.
+KeepDefaultValuesProxmox=Käytät Dolibarr ohjatun päässä Proxmox virtuaalinen laite, joten ehdotetut arvot tässä on jo optimoitu. Muuta niitä vain, jos tiedät mitä teet.
 FieldRenamed=Kenttä uudelleennimetty
 IfLoginDoesNotExistsCheckCreateUser=Jos kirjautuminen ei ole vielä, sinun täytyy tarkistaa vaihtoehto "Luo käyttäjä"
 ErrorConnection=Server <b>" %s"</b> Tietokannan nimi <b>" %s",</b> login <b>" %s",</b> tai tietokannan salasana olla väärässä tai PHP asiakkaan versio voi olla liian vanha verrattuna tietokannan versiota.
-MigrationOrder=Tietojen siirtäminen asiakkaiden tilauksia
-MigrationSupplierOrder=Tietojen siirtäminen toimittajille tilausten
-MigrationProposal=Tietojen siirtäminen kaupallisiin ehdotuksia
-MigrationInvoice=Tietojen siirtäminen asiakkaiden laskut
-MigrationContract=Tietojen siirtäminen sopimusten
-MigrationSuccessfullUpdate=Päivitys onnistunut
-MigrationPaymentsUpdate=Maksu tietojen korjaus
-MigrationPaymentsNumberToUpdate= %s maksu (t) päivitys
-MigrationProcessPaymentUpdate=Päivitä maksutiedot (s) %s
-MigrationPaymentsNothingToUpdate=Ei enää Muistettavaa
-MigrationPaymentsNothingUpdatable=Ei enempää maksuja, jotka voidaan korjata
-MigrationContractsUpdate=Sopimus tietojen korjaus
-MigrationContractsNumberToUpdate= %s sopimuksen (t) päivitys
-MigrationContractsLineCreation=Luo sopimus linja sopimustavaroiden ref %s
-MigrationContractsNothingToUpdate=Ei enää Muistettavaa
-MigrationContractsFieldDontExist=Kenttä fk_facture ei ole enää. Mitään ei tehdä.
-MigrationContractsEmptyDatesUpdate=Sopimus tyhjä päivämäärä korjaus
-MigrationContractsEmptyDatesUpdateSuccess=Sopimus emtpy päivämäärä korjaus tehdään onnistui
-MigrationContractsEmptyDatesNothingToUpdate=Mitään sopimusta ei tyhjä päivämäärä korjata
-MigrationContractsEmptyCreationDatesNothingToUpdate=Mitään sopimusta ei luontipäivämäärä korjata
-MigrationContractsInvalidDatesUpdate=Bad arvopäivä sopimuksen korjaus
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Oikea sopimuksen %s (Sopimussuhteiset date= %s, Lähtölista palvelun päivämäärä min= %s)
-MigrationContractsInvalidDatesNumber= %s sopimusten muuntamattomat
-MigrationContractsInvalidDatesNothingToUpdate=N: o päivämäärän mukaisessa huono arvo korjata
-MigrationContractsIncoherentCreationDateUpdate=Bad arvo sopimuksen luontipäivämäärä korjaus
-MigrationContractsIncoherentCreationDateUpdateSuccess=Bad arvo sopimuksen luontipäivämäärä korjaus tehdään onnistuneesti
-MigrationContractsIncoherentCreationDateNothingToUpdate=Ei huono arvo sopimustavaroiden luontipäivämäärä korjata
-MigrationReopeningContracts=Avoinna sopimuksen suljettu virhe
-MigrationReopenThisContract=Uudelleen sopimuksen %s
-MigrationReopenedContractsNumber= %s sopimusten muuntamattomat
-MigrationReopeningContractsNothingToUpdate=N: o suljettu sopimuksen auki
-MigrationBankTransfertsNothingToUpdate=Kaikki linkit ovat ajan tasalla
-MigrationShipmentOrderMatching=Sendings vastaanottamisesta päivitys
-MigrationDeliveryOrderMatching=Toimitus vastaanottamisesta päivitys
-MigrationDeliveryDetail=Toimitus päivitys
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-GoToDolibarr=Siirry Dolibarr
-GoToUpgradePage=Siirry päivittää sivu uudelleen
-InstallChoiceSuggested=<b>Asenna valinta ehdotti installer.</b>
-MigrationStockDetail=Päivitä varastossa tuotteiden arvosta
-MigrationMenusDetail=Päivitä dynaaminen valikot taulukot
-MigrationDeliveryAddress=Päivitä toimitusosoite kuljetusta
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-Experimental=(kokeellinen, ei käytössä)
-MigrationUpdateFailed=Epäonnistui päivitysprosessi
-MigrationBankTransfertsUpdate=Päivitä välisiä pankkitoimiin ja pankkisiirtoa
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-ForceHttps=Force suojatut yhteydet (https)
-CheckToForceHttps=Valitse tämä asetus pakottaa suojattuja yhteyksiä (https). <br> Tämä edellyttää, että www-palvelin on määritetty SSL-varmenne.
-DirectoryRecommendation=On recommanded käyttää hakemiston ulkopuolella teidän hakemistoon verkkosivuja.
-KeepDefaultValuesDeb=Voit käyttää Dolibarr ohjatun peräisin Ubuntu tai Debian-pakettien, joten ehdottamat arvot tässä on jo optimoitu. Vain salasanan tietokannan omistajan luoda on täytettävä. Muuta muut parametrit vain, jos tiedät mitä teet.
 InstallChoiceRecommanded=Suositeltava valinta asentaa version <b>%s</b> nykyisestä versiosta <b>%s</b>
+InstallChoiceSuggested=<b>Asenna valinta ehdotti installer.</b>
+MigrateIsDoneStepByStep=Kohdistettu versio (%s) on rako useita versioita, joten ohjatun asennuksen palaa ehdottaa ensi muuttoliikkeen kerran tämä valmistuu.
 CheckThatDatabasenameIsCorrect=Tarkista, että tietokannan nimi <b>"%s"</b> on oikea.
 IfAlreadyExistsCheckOption=Jos tämä nimi on oikea ja että tietokanta ei ole vielä olemassa, sinun täytyy tarkistaa vaihtoehto "Luo tietokanta".
 OpenBaseDir=PHP openbasedir parametri
@@ -209,35 +151,59 @@ NextStepMightLastALongTime=Nykyinen vaihe saattaa kestää useita minuutteja. Od
 MigrationCustomerOrderShipping=Siirrä toimituskuluja asiakastilausten varastointi
 MigrationShippingDelivery=Päivitä varastointi merenkulun
 MigrationShippingDelivery2=Päivitä varastointi merenkulun 2
+MigrationFinished=Muuttoliike valmis
+LastStepDesc=<strong>Viimeinen askel:</strong> Määritä tässä käyttäjätunnuksen ja salasanan aiot käyttää yhteyden ohjelmisto. Älä löysä tämä on tilin hallinnoida kaikkia muita.
+ActivateModule=Aktivoi moduuli %s
+# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+
+#########
+# upgrade
+#########
 MigrationFixData=Korjaus denormalized tiedot
+MigrationOrder=Tietojen siirtäminen asiakkaiden tilauksia
+MigrationSupplierOrder=Tietojen siirtäminen toimittajille tilausten
+MigrationProposal=Tietojen siirtäminen kaupallisiin ehdotuksia
+MigrationInvoice=Tietojen siirtäminen asiakkaiden laskut
+MigrationContract=Tietojen siirtäminen sopimusten
+MigrationSuccessfullUpdate=Päivitys onnistunut
+MigrationUpdateFailed=Epäonnistui päivitysprosessi
 MigrationRelationshipTables=Tiedot maahanmuuton suhteen taulukot (%s)
+MigrationPaymentsUpdate=Maksu tietojen korjaus
+MigrationPaymentsNumberToUpdate=%s maksu (t) päivitys
+MigrationProcessPaymentUpdate=Päivitä maksutiedot (s) %s
+MigrationPaymentsNothingToUpdate=Ei enää Muistettavaa
+MigrationPaymentsNothingUpdatable=Ei enempää maksuja, jotka voidaan korjata
+MigrationContractsUpdate=Sopimus tietojen korjaus
+MigrationContractsNumberToUpdate=%s sopimuksen (t) päivitys
+MigrationContractsLineCreation=Luo sopimus linja sopimustavaroiden ref %s
+MigrationContractsNothingToUpdate=Ei enää Muistettavaa
+MigrationContractsFieldDontExist=Kenttä fk_facture ei ole enää. Mitään ei tehdä.
+MigrationContractsEmptyDatesUpdate=Sopimus tyhjä päivämäärä korjaus
+MigrationContractsEmptyDatesUpdateSuccess=Sopimus emtpy päivämäärä korjaus tehdään onnistui
+MigrationContractsEmptyDatesNothingToUpdate=Mitään sopimusta ei tyhjä päivämäärä korjata
+MigrationContractsEmptyCreationDatesNothingToUpdate=Mitään sopimusta ei luontipäivämäärä korjata
+MigrationContractsInvalidDatesUpdate=Bad arvopäivä sopimuksen korjaus
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Oikea sopimuksen %s (Sopimussuhteiset date= %s, Lähtölista palvelun päivämäärä min= %s)
+MigrationContractsInvalidDatesNumber=%s sopimusten muuntamattomat
+MigrationContractsInvalidDatesNothingToUpdate=N: o päivämäärän mukaisessa huono arvo korjata
+MigrationContractsIncoherentCreationDateUpdate=Bad arvo sopimuksen luontipäivämäärä korjaus
+MigrationContractsIncoherentCreationDateUpdateSuccess=Bad arvo sopimuksen luontipäivämäärä korjaus tehdään onnistuneesti
+MigrationContractsIncoherentCreationDateNothingToUpdate=Ei huono arvo sopimustavaroiden luontipäivämäärä korjata
+MigrationReopeningContracts=Avoinna sopimuksen suljettu virhe
+MigrationReopenThisContract=Uudelleen sopimuksen %s
+MigrationReopenedContractsNumber=%s sopimusten muuntamattomat
+MigrationReopeningContractsNothingToUpdate=N: o suljettu sopimuksen auki
+MigrationBankTransfertsUpdate=Päivitä välisiä pankkitoimiin ja pankkisiirtoa
+MigrationBankTransfertsNothingToUpdate=Kaikki linkit ovat ajan tasalla
+MigrationShipmentOrderMatching=Sendings vastaanottamisesta päivitys
+MigrationDeliveryOrderMatching=Toimitus vastaanottamisesta päivitys
+MigrationDeliveryDetail=Toimitus päivitys
+MigrationStockDetail=Päivitä varastossa tuotteiden arvosta
+MigrationMenusDetail=Päivitä dynaaminen valikot taulukot
+MigrationDeliveryAddress=Päivitä toimitusosoite kuljetusta
 MigrationProjectTaskActors=Tiedot maahanmuuton llx_projet_task_actors taulukko
 MigrationProjectUserResp=Tietojen siirtäminen alalla fk_user_resp ja llx_projet on llx_element_contact
 MigrationProjectTaskTime=Päivitä aika sekunneissa
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:47).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> fi_FI
-MigrationNotFinished=Version tietokanta ei ole täysin ajan tasalla, joten sinun täytyy suorittaa päivityksen uudelleen.
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:24).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fi_FI
-ConfFileReload=Päivitä kaikki tiedot asetustiedosto.
-WarningPHPVersionTooLow=PHP version liian vanha. Versio %s tai enemmän odotetaan. Tämä versio pitäisi mahdollistaa asentaa mutta ei tueta.
-KeepDefaultValuesProxmox=Käytät Dolibarr ohjatun päässä Proxmox virtuaalinen laite, joten ehdotetut arvot tässä on jo optimoitu. Muuta niitä vain, jos tiedät mitä teet.
-MigrateIsDoneStepByStep=Kohdistettu versio (%s) on rako useita versioita, joten ohjatun asennuksen palaa ehdottaa ensi muuttoliikkeen kerran tämä valmistuu.
-MigrationFinished=Muuttoliike valmis
-LastStepDesc=<strong>Viimeinen askel:</strong> Määritä tässä käyttäjätunnuksen ja salasanan aiot käyttää yhteyden ohjelmisto. Älä löysä tämä on tilin hallinnoida kaikkia muita.
 MigrationActioncommElement=Päivitä tiedot toimista
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:42:43).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-DatabasePrefix=Tietokanta etuliite pöytä
-ActivateModule=Aktivoi moduuli %s
 MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:36).
+# MigrationCategorieAssociation=Migration of categories

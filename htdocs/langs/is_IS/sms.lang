@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:26:19
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms skipulag
 SmsDesc=Þessi síða leyfir þér að skilgreina globals möguleika á SMS lögun
@@ -56,7 +47,7 @@ NbOfSms=Nbre af phon tölum
 ThisIsATestMessage=Þetta er próf skilaboð
 SendSms=Senda SMS
 SmsInfoCharRemain=Nb af Stafir
-SmsInfoNumero=(Snið International þ.e.: 33899701761)
+SmsInfoNumero= (Snið International þ.e.: 33899701761)
 DelayBeforeSending=Töf áður en þú sendir (mínútur)
 SmsNoPossibleRecipientFound=Engin markmið í boði. Athugaðu uppsetningu SMS gefur.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:19).
+

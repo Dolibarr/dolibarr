@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=密碼域
 YouMustChangePassNextLogon=<b>%</b>用戶密碼<b>%之S</b>必須改變對域。
 UserMustChangePassNextLogon=用戶必須更改密碼的域%s
@@ -36,4 +27,3 @@ MemberSynchronized=會員同步
 ContactSynchronized=聯系同步
 ForceSynchronize=力同步Dolibarr - &gt;的LDAP
 ErrorFailedToReadLDAP=無法讀取LDAP數據庫。檢查的LDAP模塊設置和數據庫獲取。
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).

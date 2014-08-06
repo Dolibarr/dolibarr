@@ -94,6 +94,7 @@ if ($object->id)
 	elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 	elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 	elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
+	elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
 
 	$head = categories_prepare_head($object,$type);
 	dol_fiche_head($head, 'photos', $title, 0, 'category');
@@ -103,8 +104,7 @@ if ($object->id)
 	*/
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&type='.$type.'&file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete', '', 0, 1);
 	}
 
 	print($mesg);
@@ -209,7 +209,7 @@ if ($object->id)
 	{
 		// Affiche formulaire upload
 		$formfile=new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type,$langs->trans("AddPhoto"),1);
+		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, '', $user->rights->categorie->creer, 50, $object, '', false, '', 0);
 	}
 
 	// Affiche photos

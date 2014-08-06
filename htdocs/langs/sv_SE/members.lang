@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Medlemmar område
 PublicMembersArea=Offentlig medlemmar område
 MemberCard=Medlem kort
@@ -17,6 +8,7 @@ Members=Medlemmar
 MemberAccount=Medlemsinloggning
 ShowMember=Visa medlemskort
 UserNotLinkedToMember=Användare länkade inte till en medlem
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Medlemmar biljetter
 FundationMembers=Stiftelsen medlemmar
 Attributs=Egenskaper
@@ -43,6 +35,7 @@ MenuMembersValidated=Validerad medlemmar
 MenuMembersUpToDate=Hittills medlemmar
 MenuMembersNotUpToDate=Föråldrad medlemmar
 MenuMembersResiliated=Resiliated medlemmar
+MembersWithSubscriptionToReceive=Medlemmar med abonnemang för att ta emot
 DateAbonment=Teckningsdag
 DateSubscription=Teckningsdag
 DateNextSubscription=Nästa prenumeration
@@ -81,11 +74,9 @@ NewCotisation=Nya bidrag
 PaymentSubscription=Nya bidrag betalning
 EditMember=Redigera medlem
 SubscriptionEndDate=Prenumeration slutdatum
-NewAttribute=Nya attribut
-AttributeCode=Attribut kod
-OptionalFieldsSetup=Valfria fält setup
 MembersTypeSetup=Medlemmar typ setup
 NewSubscription=Ny prenumeration
+NewSubscriptionDesc=Denna blankett kan du spela in din prenumeration som en ny medlem i stiftelsen. Om du vill förnya din prenumeration (om du redan är medlem), kontakta styrelsen för stiftelsen i stället av e %s.
 Subscription=Teckning
 Subscriptions=Abonnemang
 SubscriptionLate=Sent
@@ -119,13 +110,15 @@ ConfirmValidateMember=Är du säker på att du vill godkänna denna medlem?
 FollowingLinksArePublic=Följande länkar är öppna sidor som inte skyddas av någon Dolibarr tillstånd. De är inte formaterad sidor, ges som exempel som visar hur man kan lista medlemmar databasen.
 PublicMemberList=Offentliga medlemslista
 BlankSubscriptionForm=Anmälningssedel
+BlankSubscriptionFormDesc=Dolibarr kan ge dig en offentlig URL till tillåta externa besökare att be att prenumerera på stiftelsen. Om en online-betalning modulen är aktiverad, kommer en inbetalningskort även lämnas ut automatiskt.
+EnablePublicSubscriptionForm=Aktivera offentliga auto-anmälningssedel
 MemberPublicLinks=Offentliga länkar / sidor
 ExportDataset_member_1=Medlemmar och prenumerationer
+ImportDataset_member_1=Medlemmar
 LastMembers=Senaste %s medlemmar
 LastMembersModified=Senast %s uppdaterad medlemmar
+LastSubscriptionsModified=Sista %s modifierad abonnemang
 AttributeName=Attributnamn
-FieldEdition=Fält utgåva %s
-AlphaNumOnlyCharsAndNoSpace=bara alphanumericals tecken utan mellanslag
 String=String
 Text=Text
 Int=Int
@@ -137,6 +130,8 @@ AddSubscription=Lägg till prenumeration
 ShowSubscription=Visa prenumeration
 MemberModifiedInDolibarr=Medlem ändrats Dolibarr
 SendAnEMailToMember=Skicka information e-post till medlem
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-post ämne för medlem autosubscription
 DescADHERENT_AUTOREGISTER_MAIL=E-post för medlem autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=E-post ämne för medlem validering
@@ -147,23 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=E-post ämne för medlem resiliation
 DescADHERENT_MAIL_RESIL=E-post för ledamot resiliation
 DescADHERENT_MAIL_FROM=Avsändare E-post för automatisk e-post
 DescADHERENT_ETIQUETTE_TYPE=Utformning av etiketter sida
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=Format för kort sida
 DescADHERENT_CARD_HEADER_TEXT=Text trycks ovanpå medlem kort
 DescADHERENT_CARD_TEXT=Text tryckt på medlemskort (Anpassning till vänster)
 DescADHERENT_CARD_TEXT_RIGHT=Text tryckt på medlemskort (Anpassning till höger)
 DescADHERENT_CARD_FOOTER_TEXT=Text tryckt på undersidan av medlemskort
-DescADHERENT_MAILMAN_LISTS=Förteckning (ar) för automatisk insription av nya medlemmar (separerade med ett kommatecken)
+GlobalConfigUsedIfNotDefined=Text som anges i stiftelsen modulen installationen kommer att användas om inte definieras här
+MayBeOverwrited=Denna text kan overwrited i värde definieras för medlemmens typ
 ShowTypeCard=Visa typ &quot;%s&quot;
 HTPasswordExport=htpassword fil generation
 NoThirdPartyAssociatedToMember=Ingen tredje part som är associerade till denna medlem
 ThirdPartyDolibarr=Dolibarr tredje part
-MembersAndSubscriptions=Medlemmar och Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:51:26).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:29:02).
-// Reference language: en_US -> sv_SV
+MembersAndSubscriptions= Medlemmar och Subscriptions
 MoreActions=Kompletterande åtgärder för inspelning
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Skapa en direkt transaktionsregister på grund
 MoreActionBankViaInvoice=Skapa en faktura och delbetalning
 MoreActionInvoiceOnly=Skapa en faktura utan betalning
@@ -172,19 +165,6 @@ LinkToGeneratedPagesDesc=Den här skärmen kan du skapa PDF-filer med visitkort 
 DocForAllMembersCards=Generera visitkort för alla medlemmar (Format för utgång faktiskt setup: <b>%s)</b>
 DocForOneMemberCards=Generera visitkort för en viss medlem (Format för utgång faktiskt setup: <b>%s)</b>
 DocForLabels=Generera adress ark (Format för utgång faktiskt setup: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:29:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-MembersWithSubscriptionToReceive=Medlemmar med abonnemang för att ta emot
-NewSubscriptionDesc=Denna blankett kan du spela in din prenumeration som en ny medlem i stiftelsen. Om du vill förnya din prenumeration (om du redan är medlem), kontakta styrelsen för stiftelsen i stället av e %s.
-BlankSubscriptionFormDesc=Dolibarr kan ge dig en offentlig URL till tillåta externa besökare att be att prenumerera på stiftelsen. Om en online-betalning modulen är aktiverad, kommer en inbetalningskort även lämnas ut automatiskt.
-EnablePublicSubscriptionForm=Aktivera offentliga auto-anmälningssedel
-ImportDataset_member_1=Medlemmar
-LastSubscriptionsModified=Sista %s modifierad abonnemang
-GlobalConfigUsedIfNotDefined=Text som anges i stiftelsen modulen installationen kommer att användas om inte definieras här
-MayBeOverwrited=Denna text kan overwrited i värde definieras för medlemmens typ
 SubscriptionPayment=Teckning betalning
 LastSubscriptionDate=Senast teckningsdag
 LastSubscriptionAmount=Senast teckningsbelopp
@@ -216,4 +196,9 @@ Collectivités=Organisationer
 Particuliers=Personlig
 Entreprises=Företag
 DOLIBARRFOUNDATION_PAYMENT_FORM=För att göra din prenumeration betalning via en banköverföring, se sidan <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Att betala med kreditkort eller Paypal, klicka på knappen längst ner på denna sida. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:34:04).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

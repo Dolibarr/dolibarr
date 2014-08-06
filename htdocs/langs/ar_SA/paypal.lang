@@ -1,31 +1,22 @@
-/*
- * Language code: ar_SA
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ar_SA
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=بايبال حدة الإعداد
 PaypalDesc=صفحات تقدم هذه الوحدة للسماح للدفع على <a href="http://www.paypal.com" target="_blank">بال</a> من قبل العملاء. ويمكن استخدام هذا لدفع مجانا أو مقابل دفع Dolibarr على كائن معين (الفاتورة ، والنظام ،...)
 PaypalOrCBDoPayment=الدفع بواسطة بطاقة الائتمان او باي بال
 PaypalDoPayment=مع دفع بايبال
 PaypalCBDoPayment=تدفع بواسطة بطاقة ائتمان
 PAYPAL_API_SANDBOX=وضع الاختبار / رمل
-PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
-PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخطار لحظة الدفع (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:37:06).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
 PAYPAL_API_USER=API المستخدم
 PAYPAL_API_PASSWORD=API كلمة السر
 PAYPAL_API_SIGNATURE=API توقيع
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=تقدم الدفع &quot;لا يتجزأ&quot; (بطاقة الائتمان + باي بال) أو &quot;باي بال&quot; فقط
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal عنوان الموقع من ورقة أنماط CSS في صفحة الدفع
 ThisIsTransactionId=هذا هو معرف من الصفقة: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
+PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخطار لحظة الدفع (IPN)
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=أنت حاليا في وضع &quot;رمل&quot;
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:40).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

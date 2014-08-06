@@ -6,7 +6,6 @@
 
 
 
-CHARSET=UTF-8
 FTPClientSetup=FTP-Verbindungseinstellungen
 NewFTPClient=Neue FTP-Verbindung
 FTPArea=FTP-Übersicht

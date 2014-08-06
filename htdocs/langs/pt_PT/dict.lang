@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - dict
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=França
 CountryBE=Belgica
 CountryIT=Italia
@@ -7,6 +6,7 @@ CountryES=Espanha
 CountryDE=Alemanha
 CountryCH=Suiça
 CountryGB=Grã-Bretanha
+# CountryUK=United Kingdom
 CountryIE=Irlanda
 CountryCN=China
 CountryTN=Tunísia
@@ -246,64 +246,84 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+
+##### Civilities #####
 CivilityMME=Sra.
 CivilityMR=Sr.
 CivilityMLE=Dr.
 CivilityMTRE=Eng.
+# CivilityDR=Doctor
+
+##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólar UA
-CurrencyCAD=Dólar CAN
-CurrencyCHF=Francos suíços
-CurrencyEUR=Euros
-CurrencyFRF=Francos Franceses
-CurrencyMAD=Dirham
-CurrencyMGA=Ariary
-CurrencyGBP=GB Pounds
-CurrencyTND=TND
-CurrencyUSD=Dólar E.U.
-CurrencyXAF=Francos CFA BEAC
-CurrencyXOF=Francos CFA BCEAO
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
 CurrencySingAUD=AU Dollar
+CurrencyCAD=Dólar CAN
 CurrencySingCAD=CAN dólar
+CurrencyCHF=Francos suíços
 CurrencySingCHF=Franco Suíço
+CurrencyEUR=Euros
 CurrencySingEUR=Euro
+CurrencyFRF=Francos Franceses
 CurrencySingFRF=Franco francês
+CurrencyGBP=GB Pounds
 CurrencySingGBP=GB Pound
 CurrencyINR=Rupias
 CurrencySingINR=Rupia indiana
+CurrencyMAD=Dirham
 CurrencySingMAD=Dirham
+CurrencyMGA=Ariary
 CurrencySingMGA=Ariary
 CurrencyMUR=Maurício rupias
 CurrencySingMUR=Rupee Maurícia
 CurrencyNOK=Krones norueguês
 CurrencySingNOK=Coroa Norueguesa
+CurrencyTND=TND
 CurrencySingTND=Dinar tunisino
+CurrencyUSD=Dólar E.U.
 CurrencySingUSD=E.U. dólar
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+CurrencyXAF=Francos CFA BEAC
 CurrencySingXAF=Franco CFA BEAC
+CurrencyXOF=Francos CFA BCEAO
 CurrencySingXOF=Franco CFA BCEAO
 CurrencyXPF=PCP Francos
 CurrencySingXPF=Franco CFP
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:03).
 
+# CurrencyCentSingEUR=cent
+# CurrencyThousandthSingTND=thousandth
 
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pt_PT
-CurrencyUAH=Hryvnia
-CurrencySingUAH=Hryvnia
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Campanha de mala direta
 DemandReasonTypeSRC_CAMP_EMAIL=E-mail da campanha
 DemandReasonTypeSRC_CAMP_PHO=Campanha de telefone
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 08:51:26).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
 DemandReasonTypeSRC_CAMP_FAX=Campanha Fax
 DemandReasonTypeSRC_COMM=Contato comercial
 DemandReasonTypeSRC_SHOP=Loja contato
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:00).
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+DemandReasonTypeSRC_EMPLOYEE=Empregado
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
+
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

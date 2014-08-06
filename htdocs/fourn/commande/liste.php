@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +25,11 @@
  *   \brief      List of suppliers orders
  */
 
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("orders");
 
@@ -65,6 +69,7 @@ if ($socid > 0)
 llxHeader('',$title);
 
 $commandestatic=new CommandeFournisseur($db);
+$formfile = new FormFile($db);
 
 
 if ($sortorder == "") $sortorder="DESC";
@@ -89,11 +94,11 @@ $sql.= " AND cf.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($sref)
 {
-	$sql.= " AND cf.ref LIKE '%".$db->escape($sref)."%'";
+	$sql .= natural_search('cf.ref', $sref);
 }
 if ($snom)
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($snom)."%'";
+	$sql .= natural_search('s.nom', $snom);
 }
 if ($suser)
 {
@@ -105,16 +110,27 @@ if ($sttc)
 }
 if ($sall)
 {
-	$sql.= " AND (cf.ref LIKE '%".$db->escape($sall)."%' OR cf.note_private LIKE '%".$db->escape($sall)."%' OR cf.note_public LIKE '%".$db->escape($sall)."%')";
+	$sql .= natural_search(array('cf.ref', 'cf.note_public', 'cf.note_private'), $sall);
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (GETPOST('statut'))
+//Required triple check because statut=0 means draft filter
+if (GETPOST('statut', 'int') !== '')
 {
 	$sql .= " AND fk_statut =".GETPOST('statut','int');
 }
 
 $sql.= " ORDER BY $sortfield $sortorder ";
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
+
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -129,7 +145,7 @@ if ($resql)
 	if ($search_nom)   $param.="&search_nom=".$search_nom;
 	if ($search_user)  $param.="&search_user=".$search_user;
 	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -148,23 +164,28 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
 	print '<td colspan="2" class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '</tr>';
 
 	$var=true;
 
 	$userstatic = new User($db);
+	$objectstatic=new CommandeFournisseur($db);
 
 	while ($i < min($num,$conf->liste_limit))
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		// Ref
-		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
+		print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a>';
+		$filename=dol_sanitizeFileName($obj->ref);
+		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
+		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+		print '</td>'."\n";
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';

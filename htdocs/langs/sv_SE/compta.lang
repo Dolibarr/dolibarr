@@ -1,29 +1,24 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 09:14:50
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - compta
 Accountancy=Bokföring
 AccountancyCard=Bokföring kort
 Treasury=Treasury
 MenuFinancial=Finansiella
-TaxModuleSetupToModifyRules=Gå till <a href="%s">modulen setup</a> att ändra regler för beräkning
+# TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Alternativ för bokföring
 OptionModeTrue=Alternativ Input-Output
 OptionModeVirtual=Alternativ Credits-Utdebitering
-OptionModeTrueDesc=I detta sammanhang skall omsättningen beräknas över utbetalningar (datum för betalningar). \ NDet giltighet siffror endast kan uppnås om den bokföring granskas genom input / output på konton via fakturor.
+OptionModeTrueDesc=I detta sammanhang skall omsättningen beräknas över utbetalningar (datum för betalningar). \\ NDet giltighet siffror endast kan uppnås om den bokföring granskas genom input / output på konton via fakturor.
 OptionModeVirtualDesc=I detta sammanhang skall omsättningen beräknas på fakturor (datum för godkännandet). När dessa fakturor betalas, om de har betalats eller inte, de är förtecknade i omsättning produktionen.
 FeatureIsSupportedInInOutModeOnly=Funktionen bara tillgänglig i PROV-FORDRINGAR bokförings-läge (Se redovisning modul konfiguration)
 VATReportBuildWithOptionDefinedInModule=Belopp som anges här beräknas enligt regler som fastställts av Skatteverket modul setup.
 Param=Setup
+RemainingAmountPayment=Belopp som skall erläggas resterande:
+AmountToBeCharged=Totalt belopp att betala:
 AccountsGeneral=Konton
 Account=Konto
 Accounts=Konton
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Räkningar för leverantörer
 Income=Inkomst
 Outcome=Expense
@@ -35,6 +30,7 @@ Profit=Resultat
 Balance=Balans
 Debit=Debet
 Credit=Credit
+# Piece=Voucher
 Withdrawal=Återkallande
 Withdrawals=Uttag
 AmountHTVATRealReceived=Net insamlade
@@ -43,7 +39,11 @@ VATToPay=Moms säljer
 VATReceived=Mervärdesskatt som
 VATToCollect=Moms inköp
 VATSummary=Moms Balance
+LT2SummaryES=IRPF Balans
 VATPaid=Mervärdesskatten
+LT2PaidES=IRPF Betald
+LT2CustomerES=IRPF omsättning
+LT2SupplierES=IRPF inköp
 VATCollected=Momsintäkterna
 ToPay=Att betala
 ToGet=För att komma tillbaka
@@ -69,12 +69,10 @@ ListOfCustomerPayments=Förteckning över kundbetalningar
 ListOfSupplierPayments=Förteckning över leverantörsbetalningar
 DatePayment=Betalningsdag
 NewVATPayment=Ny moms betalning
+newLT2PaymentES=Ny IRPF betalning
+LT2PaymentES=IRPF Betalning
+LT2PaymentsES=IRPF betalningar
 VATPayment=Moms Betalning
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:18:38).
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
 VATPayments=Momsbetalningar
 SocialContributionsPayments=Sociala avgifter betalningar
 ShowVatPayment=Visa mervärdesskatteskäl
@@ -82,11 +80,11 @@ TotalToPay=Totalt att betala
 TotalVATReceived=Total moms fått
 CustomerAccountancyCode=Kunden bokföring kod
 SupplierAccountancyCode=Leverantör bokföring kod
-AlreadyPaid=Redan betalats ut
 AccountNumberShort=Kontonummer
 AccountNumber=Kontonummer
 NewAccount=Nytt konto
 SalesTurnover=Omsättningen
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu tredje part
 ByUserAuthorOfInvoice=Mot faktura författare
 AccountancyExport=Bokföring export
@@ -105,37 +103,44 @@ ConfirmPaySocialContribution=Är du säker på att du vill klassificera denna so
 DeleteSocialContribution=Ta bort en social avgift
 ConfirmDeleteSocialContribution=Är du säker på att du vill ta bort denna sociala avgifter?
 ExportDataset_tax_1=Sociala avgifter och betalningar
-AnnualSummaryDueDebtMode=Överskott av intäkter och kostnader, årliga sammanfattningar, mode <b>%sClaims-Debts%s</b> sa <b>Åtagande redovisning.</b>
-AnnualSummaryInputOutputMode=Överskott av intäkter och kostnader, årliga sammanfattningar, mode <b>%sRevenues-Expensens%s</b> sa <b>redovisning enligt kontantmetoden.</b>
+# CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+# CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
+# CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+# CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
+# AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
+# AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
 AnnualByCompaniesDueDebtMode=Överskott av intäkter och kostnader, detalj av tredje part, mode <b>%sClaims-Debts%s</b> sa <b>Åtagande redovisning.</b>
 AnnualByCompaniesInputOutputMode=Överskott av intäkter och kostnader, detalj av tredje part, mode <b>%sRevenues-Expenses%s</b> sa <b>redovisning enligt kontantmetoden.</b>
 SeeReportInInputOutputMode=Se rapporten <b>%sIncomes-Expenses%s</b> sa <b>kontanter står</b> för en beräkning på faktiska betalningar
 SeeReportInDueDebtMode=Se rapporten <b>%sClaims-Debts%s</b> sa <b>åtagande står</b> för en beräkning på utfärdade fakturor
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Belopp som anges är med alla skatter inkluderade <br> - Det omfattar utestående fakturor, utlägg och mervärdesskatt oavsett om de betalas eller inte. <br> - Den bygger på validering datum för fakturor och moms och på förfallodagen för kostnader.
-RulesResultInOut=- Belopp som anges är med alla skatter inkluderade <br> - Den omfattar den verkliga betalningar som gjorts på fakturor, kostnader och moms. <br> - Den bygger på de datum för fakturor, utgifter ANF moms. <br>
+# RulesResultInOut=- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses and VAT.
 RulesCADue=- Det omfattar kundens förfallna fakturor oavsett om de betalas eller inte. <br> - Den bygger på valideringen dagen för dessa fakturor. <br>
 RulesCAIn=- Den innehåller alla faktiska utbetalningar av fakturor från kunder. <br> - Den bygger på betalningsdagen för dessa fakturor <br>
-VATReportByCustomersInInputOutputMode=Rapport från insamlade kunden moms och betalas (moms kvitto)
-VATReportByCustomersInDueDebtMode=Rapport från insamlade kunden moms och betalas (moms)
-VATReportByQuartersInInputOutputMode=Rapport från graden av de insamlade moms och betalas (moms kvitto)
-VATReportByQuartersInDueDebtMode=Rapport från graden av de insamlade moms och betalas (moms)
+DepositsAreNotIncluded=- Deposit fakturor eller ingår
+DepositsAreIncluded=- Deposit fakturor ingår
+LT2ReportByCustomersInInputOutputModeES=Rapport från tredje part IRPF
+# VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
+# VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
+# VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
+# VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
 SeeVATReportInInputOutputMode=Se rapporten <b>%sVAT encasement%s</b> en vanlig beräkning
 SeeVATReportInDueDebtMode=Se rapporten <b>%sVAT om flow%s</b> för en beräkning med en option på flödet
-RulesVATIn=För tjänster, omfattar rapporten moms föreskrifter faktiskt mottogs eller utfärdades på grundval av dagen för betalning. <br> - För materiella tillgångar, inkluderas de mervärdesskattefakturor på grundval av valideringen fakturans datum.
-RulesVATDue=För tjänster, omfattar rapporten mervärdesskattefakturor grund, betald eller inte, baserat på datum för godkännandet av dessa räkningar. <br> - För materiella tillgångar, inkluderas de mervärdesskattefakturor, baserat på datum för godkännandet av fakturan.
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
+RulesVATInProducts=- För materiella tillgångar, innehåller den för mervärdesskatt fakturor på grundval av fakturadatum.
+RulesVATDueServices=- För tjänster inkluderar redovisa moms fakturor på grund, har betalats eller inte, baserat på fakturadatum.
+RulesVATDueProducts=- För materiella tillgångar, innehåller den för mervärdesskatt fakturor, baserat på fakturadatum.
 OptionVatInfoModuleComptabilite=Anmärkning: För materiella tillgångar, bör det använda dagen för leverans att vara mer rättvis.
 PercentOfInvoice=%% / Faktura
 NotUsedForGoods=Inte används på varor
+ProposalStats=Statistik över förslag
+OrderStats=Statistik över order
+InvoiceStats=Statistik över räkningar
 Dispatch=Inmatningsordning
 Dispatched=Sänds
 ToDispatch=Avsändandet
 ThirdPartyMustBeEditAsCustomer=Tredje part skall definieras som en kund
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:37).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sv_SE
-InvoiceStats=Statistik över räkningar
 SellsJournal=Försäljning Journal
 PurchasesJournal=Inköp Journal
 DescSellsJournal=Försäljning Journal
@@ -143,29 +148,31 @@ DescPurchasesJournal=Inköp Journal
 InvoiceRef=Faktura ref.
 CodeNotDef=Inte definierad
 AddRemind=Dispatch tillgängliga beloppet
-RemainToDivide=Återstår att sända:
+RemainToDivide= Återstår att sända:
 WarningDepositsNotIncluded=Insättningar fakturor ingår inte i denna version med denna redovisning modul.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:36:00).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-RemainingAmountPayment=Belopp som skall erläggas resterande:
-AmountToBeCharged=Totalt belopp att betala:
-LT2SummaryES=IRPF Balans
-LT2PaidES=IRPF Betald
-LT2CustomerES=IRPF omsättning
-LT2SupplierES=IRPF inköp
-newLT2PaymentES=Ny IRPF betalning
-LT2PaymentES=IRPF Betalning
-LT2PaymentsES=IRPF betalningar
-DepositsAreNotIncluded=- Deposit fakturor eller ingår
-DepositsAreIncluded=- Deposit fakturor ingår
-LT2ReportByCustomersInInputOutputModeES=Rapport från tredje part IRPF
-RulesVATInServices=- För tjänster innehåller rapporten moms föreskrifter faktiskt mottogs eller utfärdades på grundval av dagen för betalningen. <br> - För materiella tillgångar, innehåller den för mervärdesskatt fakturor på grundval av fakturadatum.
-RulesVATInProducts=- För materiella tillgångar, innehåller den för mervärdesskatt fakturor på grundval av fakturadatum.
-RulesVATDueServices=- För tjänster inkluderar redovisa moms fakturor på grund, har betalats eller inte, baserat på fakturadatum.
-RulesVATDueProducts=- För materiella tillgångar, innehåller den för mervärdesskatt fakturor, baserat på fakturadatum.
-ProposalStats=Statistik över förslag
-OrderStats=Statistik över order
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:12).
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services
+# RefExt=External ref
+# ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+# LinkedOrder=linked to command
+# ReCalculate=Recalculate
+# Mode1=Methode 1
+# Mode2=Method 2
+# CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
+# CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+# TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
+# CalculationMode=Calculation mode
+# COMPTA_PRODUCT_BUY_ACCOUNT=Code comptable par défaut des achats de marchandises
+# COMPTA_PRODUCT_SOLD_ACCOUNT=Code comptable par défaut des ventes de marchandises
+# COMPTA_SERVICE_BUY_ACCOUNT=Code comptable par défaut des achats de services
+# COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut des ventes de services
+# COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
+# COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
+# COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+# COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties

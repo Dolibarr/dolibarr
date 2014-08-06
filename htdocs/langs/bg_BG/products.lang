@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
 ProductRef=Каталог с реф.
 ProductLabel=Етикета на продукта
 ProductServiceCard=Продукти / Услуги карта
@@ -85,6 +76,7 @@ ContractStatusToRun=Mettre EN услуга
 ContractNotRunning=Този договор не се изпълнява
 ErrorProductAlreadyExists=Продукт с позоваване %s вече съществува.
 ErrorProductBadRefOrLabel=Грешна стойност за справка или етикета.
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=Доставчици
 SupplierRef=Продукт доставчик изх.
 ShowProduct=Покажи продукт
@@ -99,14 +91,12 @@ AddToOtherBills=Добави към други сметки
 CorrectStock=Точен състав
 AddPhoto=Добави снимка
 ListOfStockMovements=Списък на движението на стоковите наличности
-NoPhotoYet=Няма достъпни снимки още
 BuyingPrice=Покупната цена
 SupplierCard=Доставчик карта
 CommercialCard=Търговския карта
 AllWays=Път да намерите вашия продукт в наличност
 NoCat=Вашият продукт не е в нито една категория
 PrimaryWay=Основно път
-DeleteFromCat=Махни от категория
 PriceRemoved=Цена отстранени
 BarCode=Баркод
 BarcodeType=Баркод тип
@@ -122,6 +112,8 @@ AssociatedProductsAbility=Активиране на продукти
 AssociatedProducts=Под продукти
 AssociatedProductsNumber=Брой на продуктите, съставящи този продукт
 ParentProductsNumber=Брой на изходния продукт
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Асоциирам
 Translation=Превод
 KeywordFilter=Ключова дума филтър
@@ -150,12 +142,15 @@ NoStockForThisProduct=Липса на доставка на този проду�
 NoStock=Не наличност
 Restock=Презапасявам се
 ProductSpecial=Специален
-QtyMin=Минимално количество
+# QtyMin=Minimum Qty
 PriceQty=Цена за това количество
-PriceQtyMin=Мин. Цена количество.
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=Няма цена / Количество, определени за този доставчик / продукт
 NoSupplierPriceDefinedForThisProduct=Не доставчик цена / Количество, определени за този продукт
 RecordedProducts=Записва продукти
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Продукти / услуги, записани
 GenerateThumb=Генериране на палеца
 ProductCanvasAbility=Използвайте специални &quot;платно&quot; Addons
@@ -169,6 +164,7 @@ CloneProduct=Clone продукт или услуга
 ConfirmCloneProduct=Сигурен ли сте, че искате да клонирате продукт или услуга <b>%s?</b>
 CloneContentProduct=Clone всички основни информации на продукт / услуга
 ClonePricesProduct=Clone главните информация и цени
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=Този продукт се използва
 NewRefForClone=Реф. на нов продукт / услуга
 CustomerPrices=Клиенти цени
@@ -183,4 +179,28 @@ AddThisProductCard=Създаване на картов продукт
 HelpAddThisProductCard=Тази опция ви позволява да създадете или клониране на продукта, ако тя не съществува.
 AddThisServiceCard=Създаване на карта на услугите
 HelpAddThisServiceCard=Тази опция ви позволява да създадете или клониране на услугата, ако тя не съществува.
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:36:10).
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Количество
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

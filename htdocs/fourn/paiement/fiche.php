@@ -101,7 +101,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->fournisse
 	}
 }
 
-if ($action == 'setnum' && ! empty($_POST['num_paiement']))
+if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
     $res = $object->update_num($_POST['num_paiement']);
@@ -115,7 +115,7 @@ if ($action == 'setnum' && ! empty($_POST['num_paiement']))
 	}
 }
 
-if ($action == 'setdate' && ! empty($_POST['datepday']))
+if ($action == 'setdatep' && ! empty($_POST['datepday']))
 {
 	$object->fetch($id);
     $datepaye = dol_mktime(12, 0, 0, $_POST['datepmonth'], $_POST['datepday'], $_POST['datepyear']);
@@ -161,8 +161,8 @@ if ($result > 0)
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+
 	}
 
 	/*
@@ -170,8 +170,8 @@ if ($result > 0)
 	 */
 	if ($action == 'valide')
 	{
-		$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+
 	}
 
 	print '<table class="border" width="100%">';
@@ -195,7 +195,7 @@ if ($result > 0)
     print '</td></tr>';
 
 	// Amount
-	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant).'&nbsp;'.$langs->trans('Currency'.$conf->currency).'</td></tr>';
+	print '<tr><td valign="top" colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
@@ -218,9 +218,19 @@ if ($result > 0)
             print '<tr>';
             print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
             print '<td colspan="3">';
-            print $bankline->getNomUrl(1,0,'showall');
+            print $bankline->getNomUrl(1,0,'showconciliated');
             print '</td>';
             print '</tr>';
+
+	    	print '<tr>';
+	    	print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
+			print '<td colspan="3">';
+			$accountstatic=new Account($db);
+	        $accountstatic->id=$bankline->fk_account;
+	        $accountstatic->label=$bankline->bank_account_ref.' - '.$bankline->bank_account_label;
+	        print $accountstatic->getNomUrl(0);
+	    	print '</td>';
+	    	print '</tr>';
         }
     }
 
@@ -269,7 +279,7 @@ if ($result > 0)
 				print '<tr '.$bc[$var].'>';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
-				print $objp->ref;
+				print ($objp->ref?$objp->ref:$objp->rowid);
 				print "</a></td>\n";
 				// Ref supplier
 				print '<td>'.$objp->ref_supplier."</td>\n";

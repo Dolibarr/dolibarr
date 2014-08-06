@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=配達
 Deliveries=配達
 DeliveryCard=配信カード
@@ -25,10 +16,10 @@ DeleteDeliveryReceiptConfirm=あなたは、配信確認<b>%sを</b>削除し<b>
 DeliveryMethod=配送方法
 TrackingNumber=追跡番号
 DeliveryNotValidated=配信検証されません
+# merou PDF model
 NameAndSignature=名前と署名：
 ToAndDate=To___________________________________ ____ / _____ / __________で
 GoodStatusDeclaration=、良好な状態で上記の品物を受け取っている
 Deliverer=配達：
 Sender=差出人
 Recipient=受信者
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:57:01).

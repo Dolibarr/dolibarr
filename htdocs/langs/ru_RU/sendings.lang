@@ -1,17 +1,9 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. отправка
 Sending=Отправка
 Sendings=Отправок
+Shipment=Отправка
+Shipments=Поставки
 Receivings=Receivings
 SendingsArea=Отправок области
 ListOfSendings=Список отправок
@@ -21,7 +13,8 @@ LastSendings=Последнее %s отправок
 SearchASending=Поиск направления
 StatisticsOfSendings=Статистика отправок
 NbOfSendings=Число отправок
-SendingCard=
+# NumberOfShipmentsByMonth=Number of shipments by month
+# SendingCard=Shipping card
 NewSending=Новые направления
 CreateASending=Создать отправке
 CreateSending=Создать отправке
@@ -36,10 +29,14 @@ DateSendingShort=Дата отправки порядка
 SendingsForSameOrder=Отправок с этой целью
 SendingsAndReceivingForSameOrder=Отправок и receivings в таком порядке
 SendingsToValidate=Отправка на проверку
+StatusSendingCanceled=Отменен
 StatusSendingDraft=Черновик
 StatusSendingValidated=Удостоверенная (продукты для судна или уже отгружен)
+StatusSendingProcessed=Обработано
+StatusSendingCanceledShort=Отменен
 StatusSendingDraftShort=Черновик
 StatusSendingValidatedShort=Подтвержденные
+StatusSendingProcessedShort=Обработано
 SendingSheet=Отправка листа
 Carriers=Перевозчики
 Carrier=Перевозчик
@@ -51,40 +48,29 @@ ConfirmCancelSending=Вы уверены, что хотите отменить �
 GenericTransport=Общие транспорт
 Enlevement=Полученной клиентом
 DocumentModelSimple=Простая модель документа
-WarningNoQtyLeftToSend=Внимание, без продуктов, ожидающих отправки.
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-StatsOnShipmentsOnlyValidated=Статистика проводится на поставки только апробированные
-SendingMethodCATCH=Catch заказчиком
-SendingMethodTRANS=Transporter
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Простая модель документа для доставки квитанций
-DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-Shipments=Поставки
-StatusSendingCanceled=Отменен
-StatusSendingCanceledShort=Отменен
 DocumentModelMerou=Mérou модели A5
+WarningNoQtyLeftToSend=Внимание, без продуктов, ожидающих отправки.
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Планируемая дата поставки
 DateReceived=Дата доставки получили
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:29).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
 SendShippingByEMail=Отправить доставкой по EMail
 SendShippingRef=Отправить доставки %s
 ActionsOnShipping=Acions на судоходство
 LinkToTrackYourPackage=Ссылка на дорожку ваш пакет
 ShipmentCreationIsDoneFromOrder=На данный момент, создание новой партии производится с целью карту.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Catch заказчиком
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Простая модель документа для доставки квитанций
+DocumentModelTyphon=Более полная модель документа для доставки квитанций (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянное EXPEDITION_ADDON_NUMBER не определена
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:56).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

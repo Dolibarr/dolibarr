@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mailmanspip
 MailmanSpipSetup=Пощальон и СПИП модул за настройка
 MailmanTitle=Пощальон система за пощенския списък
 TestSubscribe=За да тествате абонамент за пощальона списъци
@@ -32,4 +23,5 @@ DeleteIntoSpip=Махни от СПИП
 DeleteIntoSpipConfirmation=Сигурен ли сте, че искате да премахнете този потребител от СПИП?
 DeleteIntoSpipError=Неуспешно за подтискане на потребителя от СПИП
 SPIPConnectionFailed=Не може да се свържете с СПИП
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:37).
+# SuccessToAddToMailmanList=Add of %s to mailman list %s or SPIP database done
+# SuccessToRemoveToMailmanList=Removal of %s from mailman list %s or SPIP database done

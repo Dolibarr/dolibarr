@@ -1,28 +1,45 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=Öryggisnúmer
 Calendar=Calendar
 AddTrip=Bæta ferð
 Tools=Verkfæri
+ToolsDesc=Þetta svæði er tileinkað hópi ýmissa verkfærum er ekki í boði í öðrum færslum valmyndinni. <br><br> Þeir verkfæri geta verið náð úr valmyndinni til hliðar.
 Birthday=Afmæli
 BirthdayDate=Afmæli
 DateToBirth=Dags til fæðingu
-BirthdayAlertOn=afmæli viðvörun virk
-BirthdayAlertOff=afmæli viðvörun óvirk
+BirthdayAlertOn= afmæli viðvörun virk
+BirthdayAlertOff= afmæli viðvörun óvirk
 Notify_FICHINTER_VALIDATE=Intervention staðfestar
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Viðskiptavinur Reikningar staðfestar
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
 Notify_ORDER_SUPPLIER_APPROVE=Birgir röð samþykkt
 Notify_ORDER_SUPPLIER_REFUSE=Birgir þess neitaði
 Notify_ORDER_VALIDATE=Viðskiptavinur til setja í gildi
 Notify_PROPAL_VALIDATE=Viðskiptavinur tillögu staðfestar
+Notify_WITHDRAW_TRANSMIT=Gírskipting afturköllun
+Notify_WITHDRAW_CREDIT=Credit afturköllun
+Notify_WITHDRAW_EMIT=Isue afturköllun
+Notify_ORDER_SENTBYMAIL=Viðskiptavinur röð send með pósti
+Notify_COMPANY_CREATE=Þriðja aðila til
+Notify_PROPAL_SENTBYMAIL=Auglýsing tillögu send með pósti
+Notify_ORDER_SENTBYMAIL=Viðskiptavinur röð send með pósti
+Notify_BILL_PAYED=Viðskiptavinur Reikningar borgað
+Notify_BILL_CANCEL=Viðskiptavinur reikning niður
+Notify_BILL_SENTBYMAIL=Viðskiptavinur Reikningar send með pósti
+Notify_ORDER_SUPPLIER_VALIDATE=Birgir röð fullgilt
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Birgir röð send með pósti
+Notify_BILL_SUPPLIER_VALIDATE=Birgir reikning fullgilt
+Notify_BILL_SUPPLIER_PAYED=Birgir reikning borgað
+Notify_BILL_SUPPLIER_SENTBYMAIL=Birgir reikningi send með pósti
+Notify_CONTRACT_VALIDATE=Samningur fullgilt
+Notify_FICHEINTER_VALIDATE=Afskipti fullgilt
+Notify_SHIPPING_VALIDATE=Shipping fullgilt
+Notify_SHIPPING_SENTBYMAIL=Shipping send með pósti
+Notify_MEMBER_VALIDATE=Member fullgilt
+Notify_MEMBER_SUBSCRIPTION=Member áskrift
+Notify_MEMBER_RESILIATE=Member resiliated
+Notify_MEMBER_DELETE=Member eytt
 NbOfAttachedFiles=Fjöldi meðfylgjandi skrá / gögn
 TotalSizeOfAttachedFiles=Heildarstærð meðfylgjandi skrá / gögn
 MaxSize=Hámarks stærð
@@ -30,8 +47,16 @@ AttachANewFile=Hengja nýja skrá / skjal
 LinkedObject=Tengd mótmæla
 Miscellaneous=Ýmislegt
 NbOfActiveNotifications=Fjöldi tilkynninga
-PredefinedMailTest=Þetta er prófun póst. \ NThe tvær línur eru aðskilin með vagn til baka.
+PredefinedMailTest=Þetta er prófun póst. \\ NThe tvær línur eru aðskilin með vagn til baka.
 PredefinedMailTestHtml=Þetta er <b>prófun</b> póstur (orðið próf verður feitletruð). <br> Þessar tvær línur eru aðskilin með vagn til baka.
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Við viljum vara þig á að reikningur __ FACREF__ virðist ekki vera greiddur. Svo er þetta reikningur í viðhengi aftur, sem áminningu. \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Þú vilja finna hér auglýsing propoal __ PROPREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Þú vilja finna hér til __ ORDERREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Þú vilja finna hér til __ORDERREF__ okkar \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Þú vilja finna hér siglinga __ SHIPPINGREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Þú vilja finna hér á afskiptum __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
 DemoDesc=Dolibarr er samningur ERP / CRM samanstendur af nokkrum hagnýtur mát. A kynningu sem inniheldur allar einingar þýðir ekki neitt eins og það gerist aldrei. Svo eru nokkrir snið kynningu í boði.
 ChooseYourDemoProfil=Veldu kynningu profil sem passa við starfsemi þína ...
 DemoFundation=Manage meðlimum úr grunni
@@ -41,17 +66,12 @@ DemoCompanyShopWithCashDesk=Manage búð með reiðufé skrifborðið
 DemoCompanyProductAndStocks=Stjórna litlum eða miðlungs fyrirtæki selja vörur
 DemoCompanyAll=Stjórna litlum eða miðlungs fyrirtæki með marga starfsemi (helstu einingar)
 GoToDemo=Fara til kynningu
-CreatedBy=Búið til af %s 
-ModifiedBy=Breytt af %s 
-ValidatedBy=Staðfestar af %s 
-CanceledBy=Hætt við %s 
-ClosedBy=Lokað eftir %s 
+CreatedBy=Búið til af %s
+ModifiedBy=Breytt af %s
+ValidatedBy=Staðfestar af %s
+CanceledBy=Hætt við %s
+ClosedBy=Lokað eftir %s
 FileWasRemoved=File %s  var eytt
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
 DirWasRemoved=Listinn %s  hefur verið fjarlægt
 FeatureNotYetAvailableShort=Laus í næsta útgáfa
 FeatureNotYetAvailable=Lögun ekki enn til staðar í þessari útgáfu
@@ -61,12 +81,19 @@ FeaturesSupported=Lögun stuðningsmaður
 Width=Breidd
 Height=Hæð
 Depth=Dýpt
+Top=Top
+Bottom=Bottom
+Left=Vinstri
+Right=Hægri
+CalculatedWeight=Reiknað þyngd
+CalculatedVolume=Reiknað magn
 Weight=Þyngd
 TotalWeight=Samtals þyngd
 WeightUnitton=tonn
 WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
+WeightUnitpound=pund
 Length=Lengd
 LengthUnitm=m
 LengthUnitdm=dm
@@ -77,17 +104,27 @@ SurfaceUnitm2=m2
 SurfaceUnitdm2=dm2
 SurfaceUnitcm2=cm2
 SurfaceUnitmm2=mm2
+# SurfaceUnitfoot2=ft2
+# SurfaceUnitinch2=in2
 Volume=Bindi
 TotalVolume=Samtals magn
 VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+# VolumeUnitfoot3=ft3
+# VolumeUnitinch3=in3
+VolumeUnitounce=eyri
+VolumeUnitlitre=l
+VolumeUnitgallon=gálgi
 Size=Stærð
 SizeUnitm=m
 SizeUnitdm=dm
 SizeUnitcm=cm
 SizeUnitmm=mm
+SizeUnitinch=tomma
+SizeUnitfoot=fótur
+# SizeUnitpoint=point
 BugTracker=Bug rekja spor einhvers
 SendNewPasswordDesc=Þetta eyðublað er hægt að biðja um nýtt lykilorð. Það verður sent á netfangið þitt. <br> Breyting verður því aðeins eftir að smella á tengilinn staðfesting inni í þessu bréfi. <br> Kíktu á póstinn lesandi hugbúnaður.
 BackToLoginPage=Til baka innskráningarsíðu
@@ -101,10 +138,12 @@ StatsByNumberOfEntities=Tölfræði í fjölda vísa aðila
 NumberOfProposals=Fjöldi tillögur um síðustu 12 mánuði
 NumberOfCustomerOrders=Fjöldi fyrirmæla viðskiptavina á síðustu 12 mánuði
 NumberOfCustomerInvoices=Fjöldi reikninga viðskiptavina á síðustu 12 mánuði
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Fjöldi reikninga birgir á síðustu 12 mánuði
 NumberOfUnitsProposals=Fjöldi eininga á tillögur um síðustu 12 mánuði
 NumberOfUnitsCustomerOrders=Fjöldi eininga á pöntunum viðskiptavina á síðustu 12 mánuði
 NumberOfUnitsCustomerInvoices=Fjöldi eininga á reikningum viðskiptavina á síðustu 12 mánuði
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Fjöldi eininga í reikningum birgir á síðustu 12 mánuði
 EMailTextInterventionValidated=Á% afskipti s hefur verið staðfest.
 EMailTextInvoiceValidated=Í% reikningi s hefur verið staðfest.
@@ -114,6 +153,7 @@ EMailTextOrderApproved=Á %s kyni s hefur verið samþykkt.
 EMailTextOrderApprovedBy=Á %s kyni s hefur verið samþykkt af %s .
 EMailTextOrderRefused=Á %s kyni s hefur verið hafnað.
 EMailTextOrderRefusedBy=Á %s kyni s hefur verið hafnað af %s .
+# EMailTextExpeditionValidated=The shipping %s has been validated.
 ImportedWithSet=Innflutningur gögnum
 DolibarrNotification=Sjálfvirk tilkynning
 ResizeDesc=Sláðu inn nýja breidd <b>EÐA</b> nýja hæð. Hlutfall verður haldið á resizing ...
@@ -122,12 +162,28 @@ NewHeight=Ný hæð
 NewSizeAfterCropping=Ný stærð eftir cropping
 DefineNewAreaToPick=Skilgreina ný svæði á mynd til að velja (vinstri smella á myndina þá draga þar til þú nærð fjær hornið)
 CurrentInformationOnImage=Upplýsingar um núverandi mynd
+ImageEditor=Image ritstjóri
 YouReceiveMailBecauseOfNotification=Þú færð þessi skilaboð vegna þess að netfangið þitt hefur verið bætt við lista yfir markmið að fá upplýsingar um sérstaka atburði í %s  hugbúnað af %s .
 YouReceiveMailBecauseOfNotification2=Þessi atburður er eftirfarandi:
-LoginWebcal=Innskráning fyrir Webcalendar
-ErrorWebcalLoginNotDefined=The Webcalendar innskráningu félagi til þín Dolibarr <b>innskráningu %s </b> er ekki skilgreind.
-ErrorPhenixLoginNotDefined=The Phenix innskráningu félagi til þín Dolibarr <b>innskráningu %s </b> er ekki skilgreind.
-AddCalendarEntry=Bæta við færslu í dagbók %s 
+ThisIsListOfModules=Þetta er listi yfir einingar forvalinn þessi kynningu uppsetningu (aðeins algengustu einingar eru sýnilegar í þessari kynningu). Breyta þessari að hafa meira einstaklingsmiðuð kynningu og smelltu á &quot;Start&quot;.
+ClickHere=Smelltu hér
+UseAdvancedPerms=Notaðu háþróaður heimildir sum mát
+FileFormat=Skráarsnið
+SelectAColor=Veldu lit
+AddFiles=Bæta við skrár
+StartUpload=Byrja senda
+CancelUpload=Hætta við
+FileIsTooBig=Skrár er of stór
+PleaseBePatient=Vinsamlegast sýnið þolinmæði ...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
+AddCalendarEntry=Bæta við færslu í dagbók %s
 NewCompanyToDolibarr=Fyrirtæki %s  bætt inn Dolibarr
 ContractValidatedInDolibarr=Samningur %s  staðfestar í Dolibarr
 ContractCanceledInDolibarr=Samningur %s  niður í Dolibarr
@@ -145,6 +201,10 @@ MemberValidatedInDolibarr=Aðildarríkin %s  staðfestar í Dolibarr
 MemberResiliatedInDolibarr=Aðildarríkin %s  resiliated í Dolibarr
 MemberDeletedInDolibarr=Aðildarríkin %s  eytt úr Dolibarr
 MemberSubscriptionAddedInDolibarr=Áskrift fyrir aðild %s  bætt í Dolibarr
+ShipmentValidatedInDolibarr=Sendingu %s staðfest í Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
+Export=Útflutningur
 ExportsArea=Útflutningur area
 AvailableFormats=Laus snið
 LibraryUsed=Librairy notaður
@@ -153,80 +213,5 @@ ExportableDatas=Exportable gögn
 NoExportableData=Nei exportable gögn (ekki einingum með exportable gögn hlaðinn eða vantar heimildir)
 ToExport=Útflutningur
 NewExport=New útflutningur
+##### External sites #####
 ExternalSites=Ytri síður
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:20:06).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
-// Reference language: en_US
-CalculatedWeight=Reiknað þyngd
-CalculatedVolume=Reiknað magn
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:13).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> is_IS
-PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Þú vilja finna hér til __ORDERREF__ okkar \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
-WeightUnitpound=pund
-VolumeUnitounce=eyri
-VolumeUnitlitre=l
-VolumeUnitgallon=gálgi
-SizeUnitinch=tomma
-SizeUnitfoot=fótur
-ImageEditor=Image ritstjóri
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:57).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> is_IS
-ToolsDesc=Þetta svæði er tileinkað hópi ýmissa verkfærum er ekki í boði í öðrum færslum valmyndinni. <br><br> Þeir verkfæri geta verið náð úr valmyndinni til hliðar.
-Notify_WITHDRAW_TRANSMIT=Gírskipting afturköllun
-Notify_WITHDRAW_CREDIT=Credit afturköllun
-Notify_WITHDRAW_EMIT=Isue afturköllun
-Notify_ORDER_SENTBYMAIL=Viðskiptavinur röð send með pósti
-Notify_ORDER_SUPPLIER_VALIDATE=Birgir röð fullgilt
-Notify_ORDER_SUPPLIER_SENTBYMAIL=Birgir röð send með pósti
-Notify_BILL_SUPPLIER_VALIDATE=Birgir reikning fullgilt
-Notify_BILL_SUPPLIER_PAYED=Birgir reikning borgað
-Notify_BILL_SUPPLIER_SENTBYMAIL=Birgir reikningi send með pósti
-Notify_CONTRACT_VALIDATE=Samningur fullgilt
-Notify_FICHEINTER_VALIDATE=Afskipti fullgilt
-Notify_SHIPPING_VALIDATE=Shipping fullgilt
-Notify_SHIPPING_SENTBYMAIL=Shipping send með pósti
-Notify_MEMBER_VALIDATE=Member fullgilt
-PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Þú vilja finna hér á afskiptum __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
-Top=Top
-Bottom=Bottom
-Left=Vinstri
-Right=Hægri
-ThisIsListOfModules=Þetta er listi yfir einingar forvalinn þessi kynningu uppsetningu (aðeins algengustu einingar eru sýnilegar í þessari kynningu). Breyta þessari að hafa meira einstaklingsmiðuð kynningu og smelltu á &quot;Start&quot;.
-ClickHere=Smelltu hér
-UseAdvancedPerms=Notaðu háþróaður heimildir sum mát
-FileFormat=Skráarsnið
-SelectAColor=Veldu lit
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:49:52).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-Notify_COMPANY_CREATE=Þriðja aðila til
-Notify_PROPAL_SENTBYMAIL=Auglýsing tillögu send með pósti
-Notify_BILL_PAYED=Viðskiptavinur Reikningar borgað
-Notify_BILL_CANCEL=Viðskiptavinur reikning niður
-Notify_BILL_SENTBYMAIL=Viðskiptavinur Reikningar send með pósti
-Notify_MEMBER_SUBSCRIPTION=Member áskrift
-Notify_MEMBER_RESILIATE=Member resiliated
-Notify_MEMBER_DELETE=Member eytt
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Við viljum vara þig á að reikningur __ FACREF__ virðist ekki vera greiddur. Svo er þetta reikningur í viðhengi aftur, sem áminningu. \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
-PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Þú vilja finna hér auglýsing propoal __ PROPREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
-PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Þú vilja finna hér til __ ORDERREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Þú vilja finna hér á reikningsnúmerið __ FACREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
-PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Þú vilja finna hér siglinga __ SHIPPINGREF__ \n\n__PERSONALIZED__ kveðju \n\n__SIGNATURE__
-AddFiles=Bæta við skrár
-StartUpload=Byrja senda
-CancelUpload=Hætta við
-FileIsTooBig=Skrár er of stór
-ShipmentValidatedInDolibarr=Sendingu %s staðfest í Dolibarr
-Export=Útflutningur
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:24).

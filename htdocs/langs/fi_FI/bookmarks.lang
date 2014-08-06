@@ -1,16 +1,5 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 20:45:19
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=Lisää tämä sivu kirjanmerkkeihin
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
 Bookmark=Lempparit
 Bookmarks=Kirjanmerkit
 NewBookmark=Uusi kirjanmerkki

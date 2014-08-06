@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,35 +36,32 @@ $langs->load("suppliers");
 
 if (!$user->rights->produit->lire && !$user->rights->service->lire) accessforbidden();
 
-$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
-$sRefSupplier=isset($_GET["srefsupplier"])?$_GET["srefsupplier"]:$_POST["srefsupplier"];
-$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+$sref = GETPOST('sref');
+$sRefSupplier = GETPOST('srefsupplier');
+$snom = GETPOST('snom');
+$type = GETPOST('type');
 
-$type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
+$sortfield = GETPOST('sortfield');
+$sortorder = GETPOST('sortorder');
+$page = GETPOST('page');
 if ($page < 0) {
-$page = 0 ; }
+    $page = 0 ;
+}
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if (! $sortfield) $sortfield="p.ref";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield = 'p.ref';
+if (! $sortorder) $sortorder = 'DESC';
 
-if (! empty($_POST["button_removefilter"]))
+if (GETPOST('button_removefilter'))
 {
-	$sref="";
-	$sRefSupplier="";
-	$snom="";
+	$sref = '';
+	$sRefSupplier = '';
+	$snom = '';
 }
 
-if ($_GET["fourn_id"] > 0 || $_POST["fourn_id"] > 0)
-{
-	$fourn_id = isset($_GET["fourn_id"])?$_GET["fourn_id"]:$_POST["fourn_id"];
-}
+$fourn_id = GETPOST('fourn_id', 'int');
 
 if (isset($_REQUEST['catid']))
 {
@@ -96,37 +94,25 @@ if ($catid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.f
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON p.rowid = ppf.fk_product";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ppf.fk_soc = s.rowid";
 $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
-if ($_POST["mode"] == 'search')
+if ($sRefSupplier)
 {
-	$sql .= " AND (p.ref LIKE '%".$_POST["sall"]."%'";
-	$sql .= " OR p.label LIKE '%".$_POST["sall"]."%')";
-	if ($sRefSupplier)
-	{
-		$sql .= " AND ppf.ref_fourn LIKE '%".$sRefSupplier."%'";
-	}
+	$sql .= natural_search('ppf.ref_fourn', $sRefSupplier);
 }
-else
+if (GETPOST('type'))
 {
-	if ($_GET["type"] || $_POST["type"])
-	{
-		$sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
-	}
-	if ($sref)
-	{
-		$sql .= " AND p.ref LIKE '%".$db->escape($sref)."%'";
-	}
-	if ($sRefSupplier)
-	{
-		$sql .= " AND ppf.ref_fourn LIKE '%".$db->escape($sRefSupplier)."%'";
-	}
-	if ($snom)
-	{
-		$sql .= " AND p.label LIKE '%".$db->escape($snom)."%'";
-	}
-	if($catid)
-	{
-		$sql .= " AND cp.fk_categorie = ".$catid;
-	}
+	$sql .= " AND p.fk_product_type = " . GETPOST('type','int');
+}
+if ($sref)
+{
+	$sql .= natural_search('p.ref', $sref);
+}
+if ($snom)
+{
+	$sql .= natural_search('p.label', $snom);
+}
+if($catid)
+{
+	$sql .= " AND cp.fk_categorie = ".$catid;
 }
 if ($fourn_id > 0)
 {
@@ -135,9 +121,7 @@ if ($fourn_id > 0)
 $sql .= " ORDER BY ".$sortfield." ".$sortorder;
 $sql .= $db->plimit($limit + 1, $offset);
 
-
-dol_syslog("fourn/product/liste: sql=".$sql);
-
+dol_syslog("fourn/product/liste.php: sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -145,10 +129,10 @@ if ($resql)
 
 	$i = 0;
 
-	if ($num == 1 && ( isset($_POST["sall"]) || $snom || $sref ) )
+	if ($num == 1 && (GETPOST("mode") == 'search'))
 	{
 		$objp = $db->fetch_object($resql);
-		header("Location: fiche.php?id=".$objp->rowid);
+		header("Location: ".DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
 		exit;
 	}
 
@@ -158,8 +142,8 @@ if ($resql)
 	llxHeader("","",$texte);
 
 
-	$param="&tobuy=$tobuy&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"");
-	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+	$param="&tobuy=".$tobuy."&sref=".$sref."&snom=".$snom."&fourn_id=".$fourn_id.(isset($type)?"&amp;type=".$type:"").(empty($sRefSupplier)?"":"&amp;srefsupplier=".$sRefSupplier);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
 
 	if (isset($catid))
@@ -171,27 +155,27 @@ if ($resql)
 		print "</div><br>";
 	}
 
-
-	print '<table class="liste" width="100%">';
-
-	// Lignes des titres
-	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("RefSupplierShort"),"liste.php", "ppf.ref_fourn",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("QtyMin"),"liste.php", "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("UnitPrice"),"liste.php", "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
-
-	// Lignes des champs de filtre
-	print '<form action="liste.php" method="post">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
+
+	print '<table class="liste" width="100%">';
+
+	// Lignes des titres
+	print "<tr class=\"liste_titre\">";
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefSupplierShort"),$_SERVER["PHP_SELF"], "ppf.ref_fourn",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Supplier"),$_SERVER["PHP_SELF"], "ppf.fk_soc",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"], "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"], "ppf.quantity",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("UnitPrice"),$_SERVER["PHP_SELF"], "ppf.unitprice",$param,"",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+
+	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'" size="12">';
@@ -203,12 +187,11 @@ if ($resql)
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
 	print '</td>';
 	print '<td class="liste_titre" colspan="4" align="right">';
-	print '<input type="image" class="liste_titre" value="button_search" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" value="button_search" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '&nbsp; ';
-	print '<input type="image" class="liste_titre" value="button_removefilter" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	print '<input type="image" class="liste_titre" value="button_removefilter" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
 	print '</tr>';
-	print '</form>';
 
 	$oldid = '';
 	$var=True;
@@ -216,7 +199,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		print '<td>';
 		$productstatic->id=$objp->rowid;
@@ -248,7 +231,7 @@ if ($resql)
 
 	print "</table>";
 
-
+	print '</form>';
 }
 else
 {

@@ -1,12 +1,12 @@
-# Dolibarr language file - nl_NL - ftp = 
-CHARSET = UTF-8
-FTPClientSetup = Instellen van de FTP-client module
-NewFTPClient = Nieuwe FTP-client
-FTPArea = FTP gedeelte
-FTPAreaDesc = Dit scherm toont u een overzicht van FTP-servers
-SetupOfFTPClientModuleNotComplete = De installatie van de module FTP-client lijkt onvolledig. Heeft u servers ingesteld (Home->Instellingen->Modules->Interfacemodules en dan instellingen van ftp module kiezen)?
-FTPFeatureNotSupportedByYourPHP = Uw PHP-installatie ondersteunt niet de juiste FTP-functies
-FailedToConnectToFTPServer = Kon geen verbinding maken met de server (FTP-server: %s, poort: %s)
-FailedToConnectToFTPServerWithCredentials = Inloggen op FTP met ingestelde gebruikernaam / wachtwoord mislukt
-FTPFailedToRemoveFile = Bestand <b>%s</b> kon niet verwijderd worden.
-FTPFailedToRemoveDir = Map <b>%s</b> kon niet verwijderd worden (Controleer de rechten en of de map leeg is).
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=Instellen van de FTP-client module
+NewFTPClient=Nieuwe FTP-client
+FTPArea=FTP gedeelte
+FTPAreaDesc=Dit scherm toont u een overzicht van FTP-servers
+SetupOfFTPClientModuleNotComplete=De installatie van de module FTP-client lijkt onvolledig. Heeft u servers ingesteld (Home->Instellingen->Modules->Interfacemodules en dan instellingen van ftp module kiezen)?
+FTPFeatureNotSupportedByYourPHP=Uw PHP-installatie ondersteunt niet de juiste FTP-functies
+FailedToConnectToFTPServer=Kon geen verbinding maken met de server (FTP-server: %s, poort: %s)
+FailedToConnectToFTPServerWithCredentials=Inloggen op FTP met ingestelde gebruikernaam / wachtwoord mislukt
+FTPFailedToRemoveFile=Bestand <b>%s</b> kon niet verwijderd worden.
+FTPFailedToRemoveDir=Map <b>%s</b> kon niet verwijderd worden (Controleer de rechten en of de map leeg is).
+# FTPPassiveMode=Passive mode

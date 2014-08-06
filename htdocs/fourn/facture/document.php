@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 /**
  *       \file       htdocs/fourn/facture/document.php
  *       \ingroup    facture, fournisseur
- *       \brief      Page de gestion des documents attachees a une facture fournisseur
+ *       \brief      Page de gestion des documents attaches a une facture fournisseur
  */
 
 require '../../main.inc.php';
@@ -39,6 +40,7 @@ $langs->load("companies");
 $id = GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$ref = GETPOST('ref','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -58,7 +60,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 $object = new FactureFournisseur($db);
-if ($object->fetch($id))
+if ($object->fetch($id, $ref))
 {
 	$object->fetch_thirdparty();
 	$ref=dol_sanitizeFileName($object->ref);
@@ -70,28 +72,7 @@ if ($object->fetch($id))
  * Actions
  */
 
-// Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-    if ($object->id > 0) {
-    	dol_add_file_process($upload_dir, 0, 1, 'userfile');
-    }
-}
-
-// Delete
-else if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id > 0)
-	{
-		$langs->load("other");
-		$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-		else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-		exit;
-	}
-}
+include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 /*
@@ -120,17 +101,17 @@ if ($object->id > 0)
 	 */
 	if ($action == 'delete')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		if ($ret == 'html') print '<br>';
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+
 	}
 
 	print '<table class="border" width="100%">';
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td>';
 	print "</tr>\n";
 
@@ -139,7 +120,7 @@ if ($object->id > 0)
 	print "</tr>\n";
 
 	// Thirdparty
-	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Supplier').'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
 
 	// Type
 	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="4">';
@@ -172,7 +153,6 @@ if ($object->id > 0)
 		}
 		print ')';
 	}
-	// FIXME $facidnext is not defined
 	/*
 	if ($facidnext > 0)
 	{
@@ -196,20 +176,14 @@ if ($object->id > 0)
 	print '</table>';
 	print '</div>';
 
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?facid='.$object->id,'',0,0,$user->rights->fournisseur->facture->creer, 50, $object);
-
-
-	// List of document
-	$param='&facid='.$object->id;
-	$ref=dol_sanitizeFileName($object->ref);
-	$formfile->list_of_documents($filearray,$object,'facture_fournisseur',$param,0,get_exdir($object->id,2,0).$ref.'/');
-
+	$modulepart = 'facture_fournisseur';
+	$permission = $user->rights->fournisseur->facture->creer;
+	$param = '&facid=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-    print $langs->trans('UnkownError');
+    print $langs->trans('ErrorUnknown');
 }
 
 

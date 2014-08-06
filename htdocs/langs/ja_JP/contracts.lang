@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=契約面積
 ListOfContracts=契約のリスト
 LastContracts=最後%sは、契約を変更
@@ -18,6 +9,12 @@ ContractStatusNotRunning=実行しない
 ContractStatusRunning=実行
 ContractStatusDraft=ドラフト
 ContractStatusValidated=検証
+ContractStatusClosed=閉じた
+ServiceStatusInitial=実行していない
+ServiceStatusRunning=ランニング
+ServiceStatusNotLate=実行すると、有効期限が切れていない
+ServiceStatusNotLateShort=有効期限が切れていない
+ServiceStatusLate=実行すると、期限切れの
 ServiceStatusLateShort=期限切れの
 ServiceStatusClosed=閉じ
 ServicesLegend=サービス伝説
@@ -27,6 +24,11 @@ NoContracts=いいえ契約なし
 MenuServices=サービス
 MenuInactiveServices=アクティブでないサービス
 MenuRunningServices=実行中のサービス
+MenuExpiredServices=期限切れのサービス
+MenuClosedServices=閉じたサービス
+NewContract=新規契約
+AddContract=契約を追加します。
+SearchAContract=契約を検索
 DeleteAContract=契約を削除する
 CloseAContract=契約を閉じます
 ConfirmDeleteAContract=あなたがこの契約書とそのすべてのサービスを削除してもよろしいですか？
@@ -36,7 +38,14 @@ ConfirmCloseService=あなたは日付の<b>%s</b>でこのサービスを閉じ
 ValidateAContract=契約を検証
 ActivateService=サービスをアクティブに
 ConfirmActivateService=あなたは日付の<b>%s</b>でこのサービスをアクティブにしてもよろしいですか？
+# RefContract=Contract reference
 DateContract=契約日
+DateServiceActivate=サービスのアクティブ化の日付
+DateServiceUnactivate=サービスの非アクティブ化の日付
+DateServiceStart=サービスの開始日付
+DateServiceEnd=サービスの終了の日付
+ShowContract=契約を表示する
+ListOfServices=サービスのリスト
 ListOfInactiveServices=アクティブでないサービスのリスト
 ListOfExpiredServices=期限切れのアクティブなサービスのリスト
 ListOfClosedServices=クローズドサービスのリスト
@@ -44,9 +53,15 @@ ListOfRunningContractsLines=実行中の契約品目のリスト
 ListOfRunningServices=実行中のサービスのリスト
 NotActivatedServices=非アクティブなサービス（検証済みの契約の中で）
 BoardNotActivatedServices=検証済みの契約の中でアクティブにするサービス
-LastContracts=最後の%の契約
+LastContracts=最後%sは、契約を変更
 LastActivatedServices=最後%s活性化サービス
 LastModifiedServices=最後%sは、サービスを変更
+EditServiceLine=編集サービスライン
+ContractStartDate=開始日
+ContractEndDate=終了日
+DateStartPlanned=計画開始日
+DateStartPlannedShort=計画開始日
+DateEndPlanned=計画終了日
 DateEndPlannedShort=計画された終了日
 DateStartReal=実際の開始日
 DateStartRealShort=実際の開始日
@@ -57,51 +72,28 @@ CloseService=サービスを閉じます
 ServicesNomberShort=%sサービス（S）
 RunningServices=実行中のサービス
 BoardRunningServices=期限切れの実行中のサービス
-MoveToAnotherContract=別の契約にサービスを移動します。
-ConfirmMoveToAnotherContract=私は、新しいターゲットの契約を選びましたし、私はこの契約には、このサービスを移動することを確認します。
-ConfirmMoveToAnotherContractQuestion=既存の契約は、（同じサードパーティの）、あなたがこのサービスを移動するに選ぶのか？
-PaymentRenewContractId=契約回線（番号の%s）を​​更新
-ExpiredSince=有効期限の日付
-RelatedContracts=関連する契約
-TypeContact_contrat_internal_SALESREPSIGN=営業担当者の署名の契約
-TypeContact_contrat_internal_SALESREPFOLL=営業担当者には、次のアップ契約
-TypeContact_contrat_external_BILLING=課金顧客の連絡先
-TypeContact_contrat_external_CUSTOMER=フォローアップ顧客との接触
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:16:15).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-ContractStatusClosed=閉じた
-ServiceStatusInitial=実行していない
-ServiceStatusRunning=ランニング
-ServiceStatusNotLate=実行すると、有効期限が切れていない
-ServiceStatusNotLateShort=有効期限が切れていない
-ServiceStatusLate=実行すると、期限切れの
-MenuExpiredServices=期限切れのサービス
-MenuClosedServices=閉じたサービス
-NewContract=新規契約
-AddContract=契約を追加します。
-SearchAContract=契約を検索
-DateServiceActivate=サービスのアクティブ化の日付
-DateServiceUnactivate=サービスの非アクティブ化の日付
-DateServiceStart=サービスの開始日付
-DateServiceEnd=サービスの終了の日付
-ShowContract=契約を表示する
-ListOfServices=サービスのリスト
-EditServiceLine=編集サービスライン
-ContractStartDate=開始日
-ContractEndDate=終了日
-DateStartPlanned=計画開始日
-DateStartPlannedShort=計画開始日
-DateEndPlanned=計画終了日
 ServiceStatus=サービスのステータス
 DraftContracts=ドラフト契約
 CloseRefusedBecauseOneServiceActive=熱は上の少なくとも1つのオープンサービスとして契約が終了することはできません
 CloseAllContracts=すべての契約回線を閉じる
 DeleteContractLine=契約の行を削除します
 ConfirmDeleteContractLine=あなたがこの契約の行を削除してもよろしいですか？
+MoveToAnotherContract=別の契約にサービスを移動します。
+ConfirmMoveToAnotherContract=私は、新しいターゲットの契約を選びましたし、私はこの契約には、このサービスを移動することを確認します。
+ConfirmMoveToAnotherContractQuestion=既存の契約は、（同じサードパーティの）、あなたがこのサービスを移動するに選ぶのか？
+PaymentRenewContractId=契約回線（番号の%s）を​​更新
+ExpiredSince=有効期限の日付
+RelatedContracts=関連する契約
 NoExpiredServices=アクティブなサービスの期限が切れない
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
+TypeContact_contrat_internal_SALESREPSIGN=営業担当者の署名の契約
+TypeContact_contrat_internal_SALESREPFOLL=営業担当者には、次のアップ契約
+TypeContact_contrat_external_BILLING=課金顧客の連絡先
+TypeContact_contrat_external_CUSTOMER=フォローアップ顧客との接触
 TypeContact_contrat_external_SALESREPSIGN=署名契約の顧客の連絡先
 Error_CONTRACT_ADDON_NotDefined=定数CONTRACT_ADDONが定義されていません
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:43:05).

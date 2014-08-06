@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012  Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
@@ -64,7 +64,9 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 
 $form=new Form($db);
 
-llxHeader('',$langs->trans("SellsJournal"),'');
+$morequery='&date_startyear='.$date_startyear.'&date_startmonth='.$date_startmonth.'&date_startday='.$date_startday.'&date_endyear='.$date_endyear.'&date_endmonth='.$date_endmonth.'&date_endday='.$date_endday;
+
+llxHeader('',$langs->trans("SellsJournal"),'','',0,0,'','',$morequery);
 
 
 $year_current = strftime("%Y",dol_now());
@@ -115,6 +117,9 @@ else $sql.= " AND f.type IN (0,1,2,3)";
 $sql.= " AND fd.product_type IN (0,1)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 $sql.= " ORDER BY f.rowid";
+
+// TODO Find a better trick to avoid problem with some mysql installations
+if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
 
 dol_syslog("sql=".$sql);
 $result = $db->query($sql);
@@ -237,7 +242,7 @@ foreach ($tabfac as $key => $val)
 			{
 				print "<tr ".$bc[$var]." >";
 				//print "<td>".$conf->global->COMPTA_JOURNAL_SELL."</td>";
-				print "<td>".$val["date"]."</td>";
+				print "<td>".dol_print_date($val["date"])."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 

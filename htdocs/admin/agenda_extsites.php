@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2014 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-if (!$user->admin)
-    accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $langs->load("agenda");
 $langs->load("admin");
@@ -62,12 +62,12 @@ if ($actionsave)
 	// Save agendas
 	while ($i <= $MAXAGENDA)
 	{
-		$name=trim(GETPOST('agenda_ext_name'.$i),'alpha');
+		$name=trim(GETPOST('agenda_ext_name'.$i,'alpha'));
 		$src=trim(GETPOST('agenda_ext_src'.$i,'alpha'));
 		$color=trim(GETPOST('agenda_ext_color'.$i,'alpha'));
 		if ($color=='-1') $color='';
 
-		if (! empty($src) && ! preg_match('/^(http\s*|ftp\s*):/', $src))
+		if (! empty($src) && ! dol_is_url($src))
 		{
 			setEventMessage($langs->trans("ErrorParamMustBeAnUrl"),'errors');
 			$error++;
@@ -75,7 +75,7 @@ if ($actionsave)
 			break;
 		}
 
-		//print 'color='.$color;
+		//print '-name='.$name.'-color='.$color;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_NAME'.$i,$name,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		$res=dolibarr_set_const($db,'AGENDA_EXT_SRC'.$i,$src,'chaine',0,'',$conf->entity);
@@ -97,12 +97,12 @@ if ($actionsave)
     if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        if (empty($errorsaved)) $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        if (empty($errorsaved))	setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -217,16 +217,12 @@ print '</table>';
 print '<br>';
 
 print '<center>';
-
-print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
+print "<input type=\"submit\" id=\"save\" name=\"save\" class=\"button hideifnotset\" value=\"".$langs->trans("Save")."\">";
 print "</center>";
 
 print "</form>\n";
 
 dol_fiche_end();
-
-dol_htmloutput_mesg($mesg);
-
 
 llxFooter();
 

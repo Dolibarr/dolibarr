@@ -1,24 +1,14 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Kommerciel forslag
 Proposal=Kommerciel forslag
+ProposalShort=Forslag
 ProposalsDraft=Udkast til kommercielle forslag
 ProposalDraft=Udkast til kommercielle forslag
 ProposalsOpened=Åbnet kommercielle forslag
 Prop=Kommerciel forslag
 CommercialProposal=Kommerciel forslag
 CommercialProposals=Kommerciel forslag
+ProposalCard=Forslag kort
 NewProp=Nye kommercielle forslag
 NewProposal=Nye kommercielle forslag
 NewPropal=Nyt forslag
@@ -31,6 +21,7 @@ ConfirmDeleteProp=Er du sikker på du vil slette denne kommercielle forslag?
 ConfirmValidateProp=Er du sikker på at du ønsker at validere denne kommercielle forslag?
 LastPropals=Seneste %s forslag
 LastClosedProposals=Seneste %s lukket forslag
+LastModifiedProposals=Seneste %s ændrede forslag
 AllPropals=Alle forslag
 LastProposals=Seneste forslag
 SearchAProposal=Søg forslag
@@ -68,58 +59,44 @@ FileNotUploaded=Filen blev ikke uploadet
 FileUploaded=Filen blev uploadet
 AssociatedDocuments=Dokumenter i forbindelse med forslaget:
 ErrorCantOpenDir=Kan ikke åbne mappe
+DatePropal=Dato for forslag
 DateEndPropal=Dato udgangen gyldighedens
 DateEndPropalShort=Dato udgangen
 ValidityDuration=Gyldigheden varighed
 CloseAs=Luk med status
 ClassifyBilled=Klassificere faktureret
 BuildBill=Build faktura
-RelatedBill=Relaterede faktura
-RelatedBills=Relaterede fakturaer
 ErrorPropalNotFound=Propal %s blev ikke fundet
 Estimate=Skøn:
 EstimateShort=Skøn
 OtherPropals=Andre forslag
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Opret kommercielle forslag ved at kopiere eksisterende forslag
 CreateEmptyPropal=Opret tom kommercielle forslag vierge eller fra listen over de produkter / ydelser
 DefaultProposalDurationValidity=Default kommercielle forslag gyldighedens løbetid (i dage)
 UseCustomerContactAsPropalRecipientIfExist=Brug kunde kontakt adresse, hvis defineret i stedet for tredjepart adresse som forslag modtagerens adresse
 ClonePropal=Klon kommercielle forslag
 ConfirmClonePropal=Er du sikker på at du vil klone denne kommercielle <b>forslag %s?</b>
-DocModelAzurDescription=En komplet forslag model (logo. ..)
-DocModelJauneDescription=Jaune forslag model
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-ProposalShort=Forslag
-LastModifiedProposals=Seneste %s ændrede forslag
-DatePropal=Dato for forslag
+ConfirmReOpenProp=Er du sikker på du vil åbne tilbage kommercielle forslaget <b>%s?</b>
 ProposalsAndProposalsLines=Kommercielle forslag og linjer
 ProposalLine=Forslag linje
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-TypeContact_propal_internal_SALESREPFOLL=Repræsentant opfølgning forslag
-TypeContact_propal_external_BILLING=Kundefaktura kontakt
-TypeContact_propal_external_CUSTOMER=Kundekontakt opfølgning forslag
-DocModelRoigDescription=Et komplet forslag model med spansk skat RE og IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:22).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-ProposalCard=Forslag kort
-ConfirmReOpenProp=Er du sikker på du vil åbne tilbage kommercielle forslaget <b>%s?</b>
 AvailabilityPeriod=Tilgængelighed forsinkelse
 SetAvailability=Indstil tilgængelighed forsinkelse
 AfterOrder=efter at
+##### Availability #####
 AvailabilityTypeAV_NOW=Øjeblikkelig
 AvailabilityTypeAV_1W=En uge
 AvailabilityTypeAV_2W=2 uger
 AvailabilityTypeAV_3W=3 uger
 AvailabilityTypeAV_1M=1 måned
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:52).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Repræsentant opfølgning forslag
+TypeContact_propal_external_BILLING=Kundefaktura kontakt
+TypeContact_propal_external_CUSTOMER=Kundekontakt opfølgning forslag
+# Document models
+DocModelAzurDescription=En komplet forslag model (logo. ..)
+DocModelJauneDescription=Jaune forslag model
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

@@ -1,14 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - shop
 Shop=Shop
 ShopWeb=Web Shop
 LastOrders=Ultima ordinelor
@@ -18,5 +8,3 @@ LastCustomers=Ultima clienţi
 OSCommerceShop=OSCommerce magazin
 OSCommerce=OSCommerce
 AddProd=Vanzare online
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser

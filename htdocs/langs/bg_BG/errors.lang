@@ -1,15 +1,12 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Errors
 Error=Грешка
 Errors=Грешки
+# ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=EMail %s не е
 ErrorBadUrl=Адреса %s не е
 ErrorLoginAlreadyExists=Вход %s вече съществува.
@@ -27,6 +24,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Този контакт е вече �
 ErrorCashAccountAcceptsOnlyCashMoney=Тази банкова сметка е разплащателна сметка, така че приема плащания пари само от тип.
 ErrorFromToAccountsMustDiffers=Източника и целите на банкови сметки трябва да бъде различен.
 ErrorBadThirdPartyName=Неправилна стойност за името на трета страна
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad синтаксис за код на клиента
 ErrorCustomerCodeRequired=Клиентите изисква код
 ErrorCustomerCodeAlreadyUsed=Клиентът код вече се използва
@@ -59,6 +57,10 @@ ErrorUploadBlockedByAddon=Качи блокиран от PHP / Apache плъги
 ErrorFileSizeTooLarge=Размерът на файла е твърде голям.
 ErrorSizeTooLongForIntType=Размер твърде дълго за Вътрешна (%s цифри максимум)
 ErrorSizeTooLongForVarcharType=Размер твърде дълго за низ тип (%s символа максимум)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Полеви <b>%s,</b> не трябва да съдържа специални знаци.
 ErrorNoAccountancyModuleLoaded=Не е счетоводство модул активира
 ErrorExportDuplicateProfil=Това Profil име вече съществува за този износ набор.
@@ -115,7 +117,18 @@ ErrorFileMustBeADolibarrPackage=Файлове %s трябва да бъде ц�
 ErrorFileRequired=Отнема файла пакет Dolibarr
 ErrorPhpCurlNotInstalled=PHP навийте не е инсталиран, това е от съществено значение, за да разговаря с Paypal
 ErrorFailedToAddToMailmanList=Неуспешно добавяне на запис на пощальона списък или база СПИП
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
 ErrorNewValueCantMatchOldValue=Новата стойност не може да бъде равна на стария
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
 WarningMandatorySetupNotComplete=Задължителни параметри на настройката все още не са определени
 WarningSafeModeOnCheckExecDir=Внимание, PHP опция <b>защитният режим</b> е включен, така че командата трябва да бъдат съхранени в директория, декларирани с параметър PHP <b>safe_mode_exec_dir.</b>
 WarningAllowUrlFopenMustBeOn=Параметър <b>allow_url_fopen</b> трябва да бъде поставен <b>в</b> Filer <b>php.ini</b> за това, че този модул да работи напълно. Трябва да промените този файл ръчно.
@@ -128,4 +141,6 @@ WarningNoDocumentModelActivated=Няма модел, за генериранет
 WarningLockFileDoesNotExists=Внимание, след Настройката е приключена, трябва да изключите инсталиране / мигрират инструменти чрез добавяне на файл <b>install.lock</b> в директорията <b>%s.</b> Липсва този файл е дупка в сигурността.
 WarningUntilDirRemoved=Всички предупреждения относно защитата (видими само от администратори) ще остане активен, докато уязвимост е (или се добавя, че постоянното MAIN_REMOVE_INSTALL_WARNING в Setup-> настройка).
 WarningCloseAlways=Внимание, затваряне се прави, дори ако сумата се различава между източника и целеви елементи. Активирайте тази функция с повишено внимание.
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:41:30).
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

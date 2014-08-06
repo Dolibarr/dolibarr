@@ -1,27 +1,30 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=Faktura
 Bills=Faktury
 BillsCustomers=Klientów faktury
+BillsCustomer=Klienta faktura
 BillsSuppliers=Dostawców faktur
+BillsCustomersUnpaid=Należne wpłaty klientów faktury
+BillsCustomersUnpaidForCompany=Należne wpłaty klientów faktur dla %s
+BillsSuppliersUnpaid=Należne wpłaty dostawców faktur
+BillsSuppliersUnpaidForCompany=Nieodpłatnej dostawcy faktury za %s
+BillsUnpaid=Należne wpłaty
+BillsLate=Opóźnienia w płatnościach
 BillsStatistics=Klientów faktury statystyki
 BillsStatisticsSuppliers=Dostawców faktur statystyki
+DisabledBecauseNotErasable=Wyłączone, ponieważ nie mogą być skasowane
 InvoiceStandard=Standard faktury
 InvoiceStandardAsk=Standard faktury
 InvoiceStandardDesc=Tego rodzaju faktury jest wspólnym faktury.
+InvoiceDeposit=Depozyt faktury
+InvoiceDepositAsk=Depozyt faktury
+InvoiceDepositDesc=Tego rodzaju faktury jest wykonywane wtedy, gdy depozyt została odebrana.
+InvoiceProForma=Proforma faktury
+InvoiceProFormaAsk=Proforma faktury
+InvoiceProFormaDesc=<b>Proforma fakturze</b> jest obraz prawdziwy faktury, ale nie ma wartości księgowych.
 InvoiceReplacement=Zastąpienie faktury
 InvoiceReplacementAsk=Zastąpienie faktury do faktury
+InvoiceReplacementDesc=<b>Zastąpienie faktury</b> stosowany jest zrezygnować i zastąpić całkowicie faktury bez zapłaty już otrzymane. <br><br> Uwaga: Tylko faktury bez zapłaty na nim można zastąpić. Jeśli nie jest zamknięta, to zostanie on automatycznie zamknięty dla "opuszczonych".
 InvoiceAvoir=Nota kredytowa
 InvoiceAvoirAsk=Kredyt notatkę do skorygowania faktury
 InvoiceAvoirDesc=<b>Kredyt notatka</b> jest negatywny faktury wykorzystane do rozwiązania, że na fakturze jest kwota, która różni się od kwoty faktycznie wypłacana (ponieważ klient wypłacana przez pomyłkę zbyt dużo, albo nie będzie wypłacana w całości, ponieważ wrócił niektórych produktów na przykład). <br><br> Uwaga: oryginał faktury musi być już zamknięta ( "wypłata" lub "częściowo wypłacana") w celu umożliwienia stworzenia kredytowej notatkę na jej temat.
@@ -30,8 +33,10 @@ ReplacementInvoice=Zastąpienie faktury
 ReplacedByInvoice=Otrzymuje fakturę %s
 ReplacementByInvoice=Otrzymuje fakturę
 CorrectInvoice=Poprawny faktury %s
-CorrectInvoice=Poprawny faktury %s
 CorrectionInvoice=Korekta faktury
+UsedByInvoice=Służy do zapłaty faktury %s
+ConsumedBy=Zużywanej przez
+NotConsumed=Nie zużywanej
 NoReplacableInvoice=Nr replacable faktur
 NoInvoiceToCorrect=Nr faktury do skorygowania
 InvoiceHasAvoir=Poprawione przez jedną lub kilka faktur
@@ -51,6 +56,7 @@ Payment=Płatność
 PaymentBack=Płatność powrót
 Payments=Płatności
 PaymentsBack=Płatności powrót
+# PaidBack=Paid back
 DatePayment=Data płatności
 DeletePayment=Usuń płatności
 ConfirmDeletePayment=Czy na pewno chcesz usunąć tę płatność?
@@ -62,22 +68,26 @@ ReceivedCustomersPaymentsToValid=Odebrane płatności klientów, aby potwierdzi�
 PaymentsReportsForYear=Płatności raportów dla %s
 PaymentsReports=Płatności raportów
 PaymentsAlreadyDone=Płatności już
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Zasady płatności
 PaymentMode=Typ płatności
 PaymentConditions=Termin płatności
 PaymentConditionsShort=Termin płatności
 PaymentAmount=Kwota płatności
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Płatności wyższe niż upomnienie do zapłaty
+HelpPaymentHigherThanReminderToPay= Uwaga, płatność kwoty jednego lub więcej rachunków jest wyższa niż reszta zapłacić. <br> Edycja wpisu, inaczej potwierdzić i myśleć o tworzeniu kredytowej uwagę nadwyżki otrzymanych dla każdego nadpłaty faktur.
 ClassifyPaid=Klasyfikacja "wypłata"
 ClassifyPaidPartially=Klasyfikacja "paid częściowo"
+ClassifyCanceled=Klasyfikacji &quot;Abandoned&quot;
 ClassifyClosed=Klasyfikacja "zamkniętych"
 CreateBill=Utwórz fakturę
 AddBill=Dodaj faktury lub noty uznaniowej
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=Usuń faktury
 SearchACustomerInvoice=Szukaj klienta faktury
 SearchASupplierInvoice=Szukaj dostawcy fakturę
 CancelBill=Anulowanie faktury
-SendByMail=EMail
 SendRemindByMail=EMail przypomnienie
 DoPayment=Czy płatności
 DoPaymentBack=Czy płatności powrót
@@ -91,13 +101,18 @@ BillStatus=Faktura statusu
 BillStatusDraft=Projekt (musi zostać zatwierdzone)
 BillStatusPaid=Paid
 BillStatusPaidBackOrConverted=Paid lub przekonwertowany do zniżki
+BillStatusConverted=Przeliczone na zniżki
+BillStatusCanceled=Opuszczony
 BillStatusValidated=Zatwierdzona (powinna być wypłacana)
 BillStatusStarted=Rozpoczęcie
 BillStatusNotPaid=Nie paid
+BillStatusClosedUnpaid=Zamknięte (bezpłatne)
 BillStatusClosedPaidPartially=Paid (częściowo)
 BillShortStatusDraft=Szkic
 BillShortStatusPaid=Paid
 BillShortStatusPaidBackOrConverted=Przetworzone
+BillShortStatusConverted=Przetworzone
+BillShortStatusCanceled=Opuszczony
 BillShortStatusValidated=Zatwierdzona
 BillShortStatusStarted=Rozpoczęcie
 BillShortStatusNotPaid=Nie paid
@@ -117,8 +132,8 @@ BillFrom=Od
 BillTo=Bill do
 ActionsOnBill=Działania na fakturze
 NewBill=Nowe faktury
-Pr�l�vements=Zlecenie stałe
-Pr�l�vements=Zlecenia stałe
+Prélèvements=Zlecenie stałe
+Prélèvements=Zlecenie stałe
 LastBills=Ostatnia %s faktur
 LastCustomersBills=Ostatnia %s odbiorców faktur
 LastSuppliersBills=Ostatnia %s dostawców faktur
@@ -127,10 +142,13 @@ OtherBills=Inne faktur
 DraftBills=Projekt faktur
 CustomersDraftInvoices=Klienci projektu faktur
 SuppliersDraftInvoices=Dostawcy projektu faktur
+Unpaid=Należne wpłaty
 ConfirmDeleteBill=Czy na pewno chcesz usunąć tę fakturę?
 ConfirmValidateBill=Czy na pewno chcesz, aby potwierdzić tę fakturę w <b>odniesieniu %s?</b>
+ConfirmUnvalidateBill=Czy na pewno chcesz zmienić status faktury <b>%s</b> do projektu?
 ConfirmClassifyPaidBill=Czy na pewno chcesz zmienić <b>fakturę %s</b> do statusu wypłatę?
 ConfirmCancelBill=Czy na pewno chcesz anulować <b>fakturę %s?</b>
+ConfirmCancelBillQuestion=Dlaczego chcesz zaklasyfikować tę fakturę "opuszczonych"?
 ConfirmClassifyPaidPartially=Czy na pewno chcesz zmienić <b>fakturę %s</b> do statusu wypłatę?
 ConfirmClassifyPaidPartiallyQuestion=Niniejsza faktura nie została całkowicie wypłacana. Jakie są powody, aby zamknąć tę fakturę?
 ConfirmClassifyPaidPartiallyReasonAvoir=Pozostająca do zapłaty <b>( %s %s)</b> jest zniżka przyznane płatności, ponieważ został złożony przed terminem. I uregulowania podatku VAT z kredytu notatkę.
@@ -138,6 +156,8 @@ ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Pozostająca do zapłaty <b>( %s
 ConfirmClassifyPaidPartiallyReasonDiscountVat=Pozostająca do zapłaty <b>( %s %s)</b> jest zniżka przyznane płatności, ponieważ został złożony przed terminem. Odzyskać VAT od tej zniżki bez kredytu notatkę.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Bad klienta
 ConfirmClassifyPaidPartiallyReasonProductReturned=Produkty częściowo zwrócone
+ConfirmClassifyPaidPartiallyReasonOther=Kwota porzucił dla innej przyczyny
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Wybór ten jest możliwe, jeżeli faktury zostały wyposażone w odpowiedni komentarz. (Przykład &quot;Tylko podatku odpowiadającej cenie, które zostały faktycznie zapłacone daje prawa do odliczenia&quot;)
 ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=W niektórych krajach ten wybór może być możliwe tylko wówczas, gdy na fakturze zawiera prawidłowe notatki.
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Użyj tego wyboru, jeśli wszystkie inne nie odpowiadają
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=A <b>zły klient</b> jest klientem odmówić spłaty długu.
@@ -148,31 +168,37 @@ ConfirmClassifyAbandonReasonOtherDesc=Wybór ten będzie używany we wszystkich 
 ConfirmCustomerPayment=Czy to potwierdzić paiement wejściowych <b>dla %s %s?</b>
 ConfirmValidatePayment=Êtes-vous sur de vouloir Valider ce paiment, aucune zmiany n'est możliwe une fois le paiement ważne?
 ValidateBill=Validate faktury
+UnvalidateBill=Unvalidate faktury
 NumberOfBills=Nb faktur
-NumberOfBillsByMonthHT=Nb faktur przez miesiąc (po odliczeniu podatku)
+NumberOfBillsByMonth=Nb faktur przez miesiąc
 AmountOfBills=Kwota faktury
-AmountOfBillsByMonth=Kwota faktur przez miesiąc
+AmountOfBillsByMonthHT=Kwota faktur przez miesiąc (netto)
 ShowSocialContribution=Pokaż społecznego wkładu
 ShowBill=Pokaż fakturę
 ShowInvoice=Pokaż fakturę
 ShowInvoiceReplace=Pokaż zastępująca faktury
 ShowInvoiceAvoir=Pokaż nota kredytowa
+ShowInvoiceDeposit=Pokaż złożeniu faktury
 ShowPayment=Pokaż płatności
 File=Plik
 AlreadyPaid=Już paid
+# AlreadyPaidBack=Already paid back
+AlreadyPaidNoCreditNotesNoDeposits=Już wypłacone (bez not kredytowych i depozytów)
 Abandoned=Porzucone
 RemainderToPay=Pozostająca do zapłaty
 RemainderToTake=Pozostająca do podjęcia
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Kwota twierdził
 ExcessReceived=Trop Peru
 EscompteOffered=Rabat oferowane (płatność przed kadencji)
-CreateDraft=Tworzenie projektu
 SendBillRef=Wyślij faktury %s
 SendReminderBillRef=Wyślij faktury %s (przypomnienie)
 StandingOrders=Zlecenia stałe
 StandingOrder=Zlecenie stałe
 NoDraftBills=Projekt nr faktury
 NoOtherDraftBills=Żaden inny projekt faktur
+# NoDraftInvoices=No draft invoices
 RefBill=Faktura ref
 ToBill=Do rachunku
 RemainderToBill=Pozostająca do rachunku
@@ -185,12 +211,16 @@ DateEcheance=Ze względu terminu
 DateInvoice=Daty wystawienia faktury
 NoInvoice=Nr faktury
 ClassifyBill=Klasyfikacja faktury
+NoSupplierBillsUnpaid=Nr dostawców niezapłaconych faktur
 SupplierBillsToPay=Dostawcy faktur do zapłaty
+CustomerBillsUnpaid=Należne wpłaty klientów faktury
 DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont zrezygnuje de l'arrt en lettres
-DispenseMontantLettres=Pisemne faktury poprzez mecanographic procedur zrezygnować przez kolejność liter
+DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont zrezygnuje de l'arrt en lettres
 NonPercuRecuperable=Niepodlegające zwrotowi
 SetConditions=Ustaw warunki płatności
 SetMode=Ustaw tryb płatności
+SetDate= Ustaw datę
+# SelectDate=Select a date
 Billed=Billed
 RepeatableInvoice=Predefiniowane faktury
 RepeatableInvoices=Predefiniowane faktur
@@ -210,17 +240,28 @@ Reductions=Obniżki
 ReductionsShort=Redukcji.
 Discount=Rabat
 Discounts=Zniżki
+AddDiscount=Dodaj zniżki
+AddRelativeDiscount=Tworzenie względnej zniżki
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=Dodaj zniżki
+EditGlobalDiscounts=Edytuj bezwzględne zniżki
+AddCreditNote=Tworzenie noty kredytowej
 ShowDiscount=Pokaż zniżki
+# ShowReduc=Show the deduction
 RelativeDiscount=Względna zniżki
 GlobalDiscount=Globalne zniżki
 CreditNote=Nota kredytowa
 CreditNotes=Not kredytowych
+Deposit=Depozyt
+Deposits=Depozyty
 DiscountFromCreditNote=Rabat od kredytu pamiętać %s
+DiscountFromDeposit=Płatności z depozytu faktury %s
+AbsoluteDiscountUse=Tego rodzaju kredyt może być użyta na fakturze przed jej zatwierdzeniem
+CreditNoteDepositUse=Faktura musi być zatwierdzone do użytku tego króla punktów
 NewGlobalDiscount=Nowe zniżki
+NewRelativeDiscount=Nowe zniżki w stosunku
 NoteReason=Uwaga / Reason
 ReasonDiscount=Powód
-AddDiscount=Dodaj zniżki
-AddGlobalDiscount=Dodaj zniżki
 DiscountOfferedBy=Przyznane przez
 DiscountStillRemaining=Rabat nadal pozostały
 DiscountAlreadyCounted=Rabat już policzone
@@ -228,6 +269,8 @@ BillAddress=Bill adres
 HelpEscompte=Ta zniżka zniżki przyznawane klienta, ponieważ jego paiement został złożony przed terminem.
 HelpAbandonBadCustomer=Kwota ta została opuszczonych (klient mówi się, że zły klient) i jest uważany za exceptionnal luźne.
 HelpAbandonOther=Kwota ta została opuszczonych, ponieważ był to błąd (zły klient otrzymuje fakturę lub inny na przykład)
+IdSocialContribution=Społeczny wkład id
+PaymentId=Płatność id
 InvoiceId=Faktura id
 InvoiceRef=Faktura nr ref.
 InvoiceDateCreation=Faktura data utworzenia
@@ -237,10 +280,21 @@ InvoicePaid=Faktura paid
 PaymentNumber=Płatność numer
 RemoveDiscount=Usuń zniżki
 WatermarkOnDraftBill=Znak wodny w sprawie projektu faktury (jeśli nie pusty)
+InvoiceNotChecked=Nie wybrano faktura
 CloneInvoice=Clone faktury
-CloneMainAttributes=Clone obiektu z jej głównych atrybutów
 ConfirmCloneInvoice=Czy na pewno chcesz klon tej <b>faktury %s?</b>
 DisabledBecauseReplacedInvoice=Działania wyłączone, ponieważ na fakturze została zastąpiona
+DescTaxAndDividendsArea=Obszar ten stanowi podsumowanie wszystkich płatności podatkowych lub składek na ubezpieczenia społeczne. Tylko rekordy z płatności w ciągu roku ustalana jest włączona.
+NbOfPayments=Nb płatności
+SplitDiscount=Split zniżki w dwóch
+ConfirmSplitDiscount=Czy na pewno chcesz podzielić tym rabat <b>w %s %s</b> na 2 niższe zniżki?
+TypeAmountOfEachNewDiscount=Wejście kwoty dla każdego z dwóch części:
+TotalOfTwoDiscountMustEqualsOriginal=Suma dwóch nowych rabatu musi być równa kwocie pierwotnego zniżki.
+ConfirmRemoveDiscount=Czy na pewno chcesz usunąć ten rabat?
+RelatedBill=Podobne faktury
+RelatedBills=Faktur związanych
+
+# PaymentConditions
 PaymentConditionShortRECEP=Natychmiastowe
 PaymentConditionRECEP=Natychmiastowe
 PaymentConditionShort30D=30 dni
@@ -251,6 +305,16 @@ PaymentConditionShort60D=60 dni
 PaymentCondition60D=60 dni
 PaymentConditionShort60DENDMONTH=60 dni koniec miesiąca
 PaymentCondition60DENDMONTH=60 dni koniec miesiąca
+PaymentConditionShortPT_DELIVERY=Dostawa
+PaymentConditionPT_DELIVERY=Na dostawy
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=Lokat bankowych
 PaymentTypeShortVIR=Lokat bankowych
 PaymentTypePRE=Bank porządku
@@ -299,7 +363,9 @@ LawApplicationPart2=towary pozostają własnością
 LawApplicationPart3=sprzedającego do pełna cashing z
 LawApplicationPart4=ich ceny.
 LimitedLiabilityCompanyCapital=SARL z Stolicy
+# UseLine=Apply
 UseDiscount=Użyj zniżki
+UseCredit=Wykorzystanie kredytu
 UseCreditNoteInInvoicePayment=Zmniejszenie płatności z tego nota kredytowa
 MenuChequeDeposits=Czeki depozytów
 MenuCheques=Czeki
@@ -311,93 +377,9 @@ ChequeDeposits=Czeki depozytów
 Cheques=Czeki
 CreditNoteConvertedIntoDiscount=Ta notatka została kredytu przeliczona na %s
 UsBillingContactAsIncoiveRecipientIfExist=Użyj rozliczeniowe klienta adres kontaktowy zamiast trzeciej adres odbiorcy za faktury
-Of=du
-PDFBerniqueDescription=Faktura modelu Bernique
-PDFBigorneauDescription=Faktura modelu Bigorneau
-PDFBulotDescription=Faktura modelu Bulot
-PDFCrabeDescription=Faktura Crabe modelu. Pełna faktura modelu (VAT Wsparcie opcji, rabaty, warunki płatności, logo, itp. ..)
-PDFHuitreDescription=Faktura modelu Huitre
-PDFOursinDescription=Faktura modelu oursin
-PDFTourteauDescription=Faktura modelu Tourteau
-TerreNumRefModelDesc1=Wróć NUMERO z formatu %syymm-nnnn dla standardowych faktur i %syymm-nnnn do not kredytowych, gdzie rr jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
-TerreNumRefModelError=Rachunek zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
-OrionNumRefModelDesc1=Zwraca numer format FAYYNNNNN gdzie RR to rok i nnnnn przyrost liczby od 1.
-OrionNumRefModelDesc2=Jest rok zwiększa się o 1 bez inicjalizacją do zera na początku roku budżetowego.
-OrionNumRefModelDesc3=Definiowanie zmiennej SOCIETE_FISCAL_MONTH_START z miesiąca na początku roku podatkowego, np.: 9 września.
-OrionNumRefModelDesc4=W tym przykładzie, mamy na 1 września 2006 faktura nazwie FA700354.
-TitanNumRefModelDesc1=Zwraca liczbę z formatu FAYYNNNNN gdzie RR to rok, a nnnnn to przyrost liczby od 1.
-TitanNumRefModelDesc2=Roku zwiększa się o 1 i przyrost liczby jest inicjowany do zera na początku roku budżetowego.
-TitanNumRefModelDesc3=Definiowanie zmiennej SOCIETE_FISCAL_MONTH_START z miesiąca na początku roku podatkowego, np.: 9 września.
-TitanNumRefModelDesc4=W tym przykładzie, mamy na 1 wrzesień 2006 faktura nazwie FA0700001
-PlutonNumRefModelDesc1=Zwrotu dostosowywalne numer faktury zgodnie z definicją maska.
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-InvoiceDeposit=Depozyt faktury
-InvoiceDepositAsk=Depozyt faktury
-InvoiceDepositDesc=Tego rodzaju faktury jest wykonywane wtedy, gdy depozyt została odebrana.
-InvoiceProForma=Proforma faktury
-InvoiceProFormaAsk=Proforma faktury
-InvoiceProFormaDesc=<b>Proforma fakturze</b> jest obraz prawdziwy faktury, ale nie ma wartości księgowych.
-UsedByInvoice=Służy do zapłaty faktury %s
-ConsumedBy=Zużywanej przez
-NotConsumed=Nie zużywanej
-HelpPaymentHigherThanReminderToPay=Uwaga, płatność kwoty jednego lub więcej rachunków jest wyższa niż reszta zapłacić. <br> Edycja wpisu, inaczej potwierdzić i myśleć o tworzeniu kredytowej uwagę nadwyżki otrzymanych dla każdego nadpłaty faktur.
-BillStatusConverted=Przeliczone na zniżki
-BillShortStatusConverted=Przetworzone
-Prélèvements=Zlecenie stałe
-Prélèvements=Zlecenia stałe
-ShowInvoiceDeposit=Pokaż złożeniu faktury
-SetDate=Ustaw datę
-Deposit=Depozyt
-Deposits=Depozyty
-DiscountFromDeposit=Płatności z depozytu faktury %s
-AbsoluteDiscountUse=Tego rodzaju kredyt może być użyta na fakturze przed jej zatwierdzeniem
-CreditNoteDepositUse=Faktura musi być zatwierdzone do użytku tego króla punktów
-NewRelativeDiscount=Nowe zniżki w stosunku
-IdSocialContribution=Społeczny wkład id
-PaymentId=Płatność id
-DescTaxAndDividendsArea=Obszar ten stanowi podsumowanie wszystkich płatności podatkowych lub składek na ubezpieczenia społeczne. Tylko rekordy z płatności w ciągu roku ustalana jest włączona.
-NbOfPayments=Nb płatności
-SplitDiscount=Split zniżki w dwóch
-ConfirmSplitDiscount=Czy na pewno chcesz podzielić tym rabat <b>w %s %s</b> na 2 niższe zniżki?
-TypeAmountOfEachNewDiscount=Wejście kwoty dla każdego z dwóch części:
-TotalOfTwoDiscountMustEqualsOriginal=Suma dwóch nowych rabatu musi być równa kwocie pierwotnego zniżki.
-ConfirmRemoveDiscount=Czy na pewno chcesz usunąć ten rabat?
-UseCredit=Wykorzystanie kredytu
+ShowUnpaidAll=Pokaż wszystkie niezapłacone faktury
 ShowUnpaidLateOnly=Pokaż późno unpaid fakturze tylko
 PaymentInvoiceRef=Płatność faktury %s
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-// Reference language: en_US
-BillsCustomersUnpaid=Należne wpłaty klientów faktury
-BillsCustomersUnpaidForCompany=Należne wpłaty klientów faktur dla %s
-BillsSuppliersUnpaid=Należne wpłaty dostawców faktur
-BillsUnpaid=Należne wpłaty
-InvoiceReplacementDesc=<b>Zastąpienie faktury</b> stosowany jest zrezygnować i zastąpić całkowicie faktury bez zapłaty już otrzymane. <br><br> Uwaga: Tylko faktury bez zapłaty na nim można zastąpić. Jeśli nie jest zamknięta, to zostanie on automatycznie zamknięty dla "opuszczonych".
-BillStatusClosedUnpaid=Zamknięte (bezpłatne)
-Unpaid=Należne wpłaty
-ConfirmCancelBillQuestion=Dlaczego chcesz zaklasyfikować tę fakturę "opuszczonych"?
-ConfirmClassifyPaidPartiallyReasonOther=Kwota porzucił dla innej przyczyny
-NoSupplierBillsUnpaid=Nr dostawców niezapłaconych faktur
-CustomerBillsUnpaid=Należne wpłaty klientów faktury
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-ClassifyCanceled=Klasyfikacji &quot;Abandoned&quot;
-BillStatusCanceled=Opuszczony
-BillShortStatusCanceled=Opuszczony
-ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Wybór ten jest możliwe, jeżeli faktury zostały wyposażone w odpowiedni komentarz. (Przykład &quot;Tylko podatku odpowiadającej cenie, które zostały faktycznie zapłacone daje prawa do odliczenia&quot;)
-AlreadyPaidNoCreditNotesNoDeposits=Już wypłacone (bez not kredytowych i depozytów)
-RelatedBill=Podobne faktury
-RelatedBills=Faktur związanych
 ValidateInvoice=faktura Validate
 Cash=Gotówka
 Reported=Opóźniony
@@ -405,6 +387,15 @@ DisabledBecausePayments=Nie możliwe, ponieważ istnieją pewne płatności
 CantRemovePaymentWithOneInvoicePaid=Nie można usunąć płatności, ponieważ istnieje przynajmniej na fakturze sklasyfikowane płatne
 ExpectedToPay=Oczekuje płatności
 PayedByThisPayment=Wypłacana przez płatność
+ClosePaidInvoicesAutomatically=Klasyfikowanie &quot;Opłacone&quot; wszystkie standardy lub fakturach zastępczych entirely zapłaci.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=Wszystko faktura bez pozostawać do zapłaty zostanie automatycznie zamknięta do statusu &quot;płatny&quot;.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Przedstawiciela w ślad za klienta faktura
 TypeContact_facture_external_BILLING=kontakt faktury klienta
 TypeContact_facture_external_SHIPPING=kontakt koszty klientów
@@ -413,25 +404,12 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=Przedstawiciela w ślad za fa
 TypeContact_invoice_supplier_external_BILLING=kontakt fakturze dostawcy
 TypeContact_invoice_supplier_external_SHIPPING=kontakt koszty dostawcy
 TypeContact_invoice_supplier_external_SERVICE=Dostawca usługi kontakt
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:21).
+# crabe PDF Model
+PDFCrabeDescription=Faktura Crabe modelu. Pełna faktura modelu (VAT Wsparcie opcji, rabaty, warunki płatności, logo, itp. ..)
+# oursin PDF Model
+PDFOursinDescription=Faktura modelu oursin
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-BillsCustomer=Klienta faktura
-BillsSuppliersUnpaidForCompany=Nieodpłatnej dostawcy faktury za %s
-BillsLate=Opóźnienia w płatnościach
-DisabledBecauseNotErasable=Wyłączone, ponieważ nie mogą być skasowane
-ConfirmUnvalidateBill=Czy na pewno chcesz zmienić status faktury <b>%s</b> do projektu?
-UnvalidateBill=Unvalidate faktury
-NumberOfBillsByMonth=Nb faktur przez miesiąc
-AmountOfBillsByMonthHT=Kwota faktur przez miesiąc (netto)
-AddRelativeDiscount=Tworzenie względnej zniżki
-EditRelativelDiscount=Edytuj zniżki relatvie
-EditGlobalDiscounts=Edytuj bezwzględne zniżki
-AddCreditNote=Tworzenie noty kredytowej
-InvoiceNotChecked=Nie wybrano faktura
-ShowUnpaidAll=Pokaż wszystkie niezapłacone faktury
-ClosePaidInvoicesAutomatically=Klasyfikowanie &quot;Opłacone&quot; wszystkie standardy lub fakturach zastępczych entirely zapłaci.
-AllCompletelyPayedInvoiceWillBeClosed=Wszystko faktura bez pozostawać do zapłaty zostanie automatycznie zamknięta do statusu &quot;płatny&quot;.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:17).
+TerreNumRefModelError=Rachunek zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.

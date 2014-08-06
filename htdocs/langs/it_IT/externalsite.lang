@@ -1,6 +1,4 @@
-# Dolibarr language file - it_IT - externalsite        
-# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
-// Reference language: en_US -> it_IT
-CHARSET=UTF-8
-ExternalSiteSetup		=Impostazioni collegamento a sito esterno
-ExternalSiteURL			=URL del sito esterno
+# Dolibarr language file - Source file is en_US - externalsite
+ExternalSiteSetup=Imposta collegamento a sito esterno
+ExternalSiteURL=Indirizzo del sito esterno
+ExternalSiteModuleNotComplete=Il modulo ExternalSite non è configurato correttamente.

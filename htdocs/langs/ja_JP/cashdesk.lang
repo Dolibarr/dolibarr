@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=販売場所
 CashDesk=販売場所
 CashDesks=売上高のポイント
@@ -21,6 +12,7 @@ CashDeskProducts=製品
 CashDeskStock=株式
 CashDeskOn=上の
 CashDeskThirdParty=第三者
+# CashdeskDashboard=Point of sale access
 ShoppingCart=ショッピングカート
 NewSell=新しい販売
 BackOffice=バックオフィス
@@ -28,7 +20,6 @@ AddThisArticle=この記事を追加します。
 RestartSelling=販売に戻る
 SellFinished=完成した販売
 PrintTicket=印刷チケット
-NoResults=結果がありません
 NoProductFound=記事見つかりません
 ProductFound=製品が見つかりました
 ProductsFound=製品が見つかりました
@@ -45,4 +36,4 @@ BankToPay=掛売口座
 ShowCompany=会社を表示
 ShowStock=倉庫を表示
 DeleteArticle=この記事を削除するときにクリックします
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:58:03).
+# FilterRefOrLabelOrBC=Search (Ref/Label)

@@ -1,17 +1,9 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=المرجع. إرسال
 Sending=إرسال
 Sendings=الإرسال
+Shipment=إرسال
+Shipments=شحنات
 Receivings=Receivings
 SendingsArea=منطقة الإرسال
 ListOfSendings=قائمة الإرسال
@@ -21,6 +13,7 @@ LastSendings=ق الماضي ٪ الإرسال
 SearchASending=البحث المرسلة
 StatisticsOfSendings=إحصاءات الإرسال
 NbOfSendings=عدد الإرسال
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=إرسال بطاقة
 NewSending=ارسال جديدة
 CreateASending=خلق إرسال
@@ -36,10 +29,14 @@ DateSendingShort=وحتى الآن من أجل إرسال
 SendingsForSameOrder=الإرسال لهذا النظام
 SendingsAndReceivingForSameOrder=الإرسال وreceivings لهذا النظام
 SendingsToValidate=للمصادقة على إرسال
+StatusSendingCanceled=ألغيت
 StatusSendingDraft=مسودة
 StatusSendingValidated=صادق (لشحن المنتجات أو شحنها بالفعل)
+StatusSendingProcessed=معالجة
+StatusSendingCanceledShort=ألغيت
 StatusSendingDraftShort=مسودة
 StatusSendingValidatedShort=صادق
+StatusSendingProcessedShort=معالجة
 SendingSheet=إرسال ورقة
 Carriers=شركات الطيران
 Carrier=الناقل
@@ -51,23 +48,29 @@ ConfirmCancelSending=هل أنت متأكد من أنك تريد إلغاء إر
 GenericTransport=النقل العام
 Enlevement=حصلت من قبل العميل
 DocumentModelSimple=وثيقة نموذج بسيط
+DocumentModelMerou=Mérou A5 نموذج
 WarningNoQtyLeftToSend=تحذير ، لا تنتظر أن المنتجات المشحونة.
-StatsOnShipmentsOnlyValidated=والإحصاءات التي أجريت على الشحنات فقط المصادق
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=مسطح تاريخ التسليم
+DateReceived=تلقى تاريخ التسليم
+# SendShippingByEMail=Send shipment by EMail
+# SendShippingRef=Send shipment %s
+# ActionsOnShipping=Events on shipment
+# LinkToTrackYourPackage=Link to track your package
+# ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the order card.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=القبض على العملاء
 SendingMethodTRANS=نقل
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=نموذج بسيط لتسليم وثيقة من وثائق وإيصالات
 DocumentModelTyphon=أكمل نموذج لتسليم وثيقة من وثائق الإيصالات (logo...)
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
 
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-Shipments=شحنات
-StatusSendingCanceled=ألغيت
-StatusSendingCanceledShort=ألغيت
-DocumentModelMerou=Mérou A5 نموذج
-DateDeliveryPlanned=مسطح تاريخ التسليم
-DateReceived=تلقى تاريخ التسليم
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:15).
+# Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

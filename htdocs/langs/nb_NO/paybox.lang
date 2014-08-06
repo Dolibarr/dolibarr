@@ -1,13 +1,4 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox modul oppsett
 PayBoxDesc=Denne modulen tilbudet sider å tillate betaling på <a href="http://www.paybox.com" target="_blank">Paybox</a> av kunder. Dette kan brukes for en gratis betaling eller for en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
 FollowingUrlAreAvailableToMakePayments=Følgende nettadresser er klare med en side til en kunde til å foreta en betaling på Dolibarr objekter
@@ -23,6 +14,7 @@ PayBoxDoPayment=Gå på betaling
 YouWillBeRedirectedOnPayBox=Du vil bli omdirigert på sikrede Paybox siden for å inndataene du kredittkortinformasjonen
 PleaseBePatient=Vær, være tålmodig
 Continue=Neste
+ToOfferALinkForOnlinePayment=URL for %s betaling
 ToOfferALinkForOnlinePaymentOnOrder=URL for å tilby en %s online betaling brukergrensesnitt for en bestilling
 ToOfferALinkForOnlinePaymentOnInvoice=URL for å tilby en %s online betaling brukergrensesnitt for en faktura
 ToOfferALinkForOnlinePaymentOnContractLine=URL for å tilby en %s online betaling brukergrensesnitt for en kontrakt linje
@@ -30,25 +22,16 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL for å tilby en %s online betaling 
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL for å tilby en %s online betaling brukergrensesnitt for et medlem abonnement
 YouCanAddTagOnUrl=Du kan også legge til url parameter <b>& tag = <i>verdien</i></b> til noen av disse URL (kreves kun gratis betaling) for å legge til dine egne betalingen kommentar taggen.
 SetupPayBoxToHavePaymentCreatedAutomatically=Oppsettet ditt PayBox med url <b>%s</b> å få betaling opprettes automatisk når validert av paybox.
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:22).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> nb_NO
 YourPaymentHasBeenRecorded=Denne siden bekrefter at din betaling er registrert. Takk.
 YourPaymentHasNotBeenRecorded=Du betaling ikke er registrert og transaksjonen har blitt kansellert. Takk.
 AccountParameter=Konto parametere
 UsageParameter=Parametere for bruk
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:19:35).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-ToOfferALinkForOnlinePayment=URL for %s betaling
 InformationToFindParameters=Hjelp til å finne din %s kontoinformasjon
 PAYBOX_CGI_URL_V2=Url av PAYBOX CGI modul for betaling
 VendorName=Navn på leverandøren
 CSSUrlForPaymentForm=CSS-stilark url for betalingsformen
 MessageOK=Melding på godkjent betaling retur siden
 MessageKO=Melding om avbrutt betaling retur siden
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:01).
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

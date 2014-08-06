@@ -1,43 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 09:14:50
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
-// Reference language: en_US
-CHARSET=UTF-8
-TasksHistoryForThisContact=Aktiviteter för denna kontakt
-LastProspectDoNotContact=Kontakta inte
-LastProspectNeverContacted=Aldrig kontaktat
-LastProspectToContact=För att kontakta
-LastProspectContactInProcess=Kontakta i processen
-LastProspectContactDone=Kontakta gjort
-DateActionPlanned=Datum planerade åtgärder för
-DateActionDone=Datum insatser görs
-ActionAskedBy=Åtgärd bad
-ActionAffectedTo=Åtgärd påverkas
-ActionDoneBy=Åtgärder som utförs av
-ActionUserAsk=Registrerats av
-ErrorStatusCantBeZeroIfStarted=Om fältet <b>&quot;Datum gjort&quot;</b> är fylld, är arbetet igång (eller färdiga), så fältet <b>&quot;Status&quot;</b> kan inte 0%%.
-ActionAC_TEL=Telefonsamtal
-ActionAC_FAX=Skicka fax
-ActionAC_PROP=Skicka förslag via e-post
-ActionAC_EMAIL=Skicka e-post
-ActionAC_RDV=Möten
-ActionAC_FAC=Skicka kundfaktura med post
-ActionAC_REL=Skicka kundfaktura via post (påminnelse)
-ActionAC_CLO=Stäng
-ActionAC_EMAILING=Skicka massa e-post
-ActionAC_COM=Skicka kundorder per post
-ActionAC_SUP_ORD=Skicka leverantör beställning av e-post
-ActionAC_SUP_INV=Skicka leverantörsfaktura med post
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:19:30).
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Kommersiella
 CommercialArea=Kommersiella område
 CommercialCard=Kommersiella kort
@@ -62,6 +23,7 @@ TaskRDVWith=Möte med %s
 ShowTask=Visa uppgift
 ShowAction=Visa åtgärder
 ActionsReport=Åtgärder rapport
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Säljare
 SalesRepresentatives=Säljare
 SalesRepresentativeFollowUp=Försäljare (uppföljning)
@@ -84,21 +46,50 @@ ToDoActions=Ofullständig åtgärder
 ToDoActionsFor=Ofullständiga åtgärder för %s
 SendPropalRef=Skicka kommersiella förslag %s
 SendOrderRef=Skicka beställningen %s
+StatusNotApplicable=Ej tillämpligt
 StatusActionToDo=För att göra
 StatusActionDone=Komplett
 MyActionsAsked=Åtgärderna jag har spelat in
 MyActionsToDo=Åtgärder skall jag göra
 MyActionsDone=Handlande påverkade mig
 StatusActionInProcess=I processen
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:53).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-StatusNotApplicable=Ej tillämpligt
+TasksHistoryForThisContact=Aktiviteter för denna kontakt
+LastProspectDoNotContact=Kontakta inte
+LastProspectNeverContacted=Aldrig kontaktat
+LastProspectToContact=För att kontakta
+LastProspectContactInProcess=Kontakta i processen
+LastProspectContactDone=Kontakta gjort
+DateActionPlanned=Datum planerade åtgärder för
+DateActionDone=Datum insatser görs
+ActionAskedBy=Åtgärd bad
+ActionAffectedTo=Åtgärd påverkas
+ActionDoneBy=Åtgärder som utförs av
+ActionUserAsk=Registrerats av
+ErrorStatusCantBeZeroIfStarted=Om fältet <b>&quot;Datum gjort&quot;</b> är fylld, är arbetet igång (eller färdiga), så fältet <b>&quot;Status&quot;</b> kan inte 0%%.
+ActionAC_TEL=Telefonsamtal
+ActionAC_FAX=Skicka fax
+ActionAC_PROP=Skicka förslag via e-post
+ActionAC_EMAIL=Skicka e-post
+ActionAC_RDV=Möten
+ActionAC_FAC=Skicka kundfaktura med post
+ActionAC_REL=Skicka kundfaktura via post (påminnelse)
+ActionAC_CLO=Stäng
+ActionAC_EMAILING=Skicka massa e-post
+ActionAC_COM=Skicka kundorder per post
 ActionAC_SHIP=Skicka Leverans med e-post
+ActionAC_SUP_ORD=Skicka leverantör beställning av e-post
+ActionAC_SUP_INV=Skicka leverantörsfaktura med post
 ActionAC_OTH=Andra
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect status
 DraftPropals=Utforma kommersiella förslag
 SearchPropal=Sök en kommersiell förslag
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:30).
+# CommercialDashboard=Commercial summary

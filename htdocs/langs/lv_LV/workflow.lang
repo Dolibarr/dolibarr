@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - admin
+WorkflowSetup=Darbplūsmu moduļa iestatīšana
+WorkflowDesc=Šis modulis ir paredzēts, lai mainītu uzvedību automātisko darbību stāšanās spēkā. Pēc noklusējuma, darbplūsma ir atvērta (Jūs varat veikt visu ko vēlaties). Jūs varat automatizēt darbības, kuras Jums ir nepieciešamas
+ThereIsNoWorkflowToModify=Nav darbplūsma kuru Jūs varat mainīt sim modulim.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Izveidot klienta pasūtījumu automātiski pēc komerciālā priekšlikuma parakstīšanas
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Izveidot klienta rēķinu automātiski pēc komerciāla priekšlikuma parakstīšanas
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Izveidot klientu rēķinu automātiski pēc tam, kad līgums ir apstiprināts
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Izveidot klientu rēķinu automātiski pēc klienta pasūtījuma slēgšanas
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasificēt saistīta avota priekšlikumu Jāmaksā, ja klientu rīkojumu ir iestatīts uz apmaksātu
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasificēt saistīts avots klienta pasūtījumu (s) Jāmaksā, ja klients rēķins ir iestatīts uz apmaksātu
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasificēt saistīta avota klienta pasūtījumu (s) Jāmaksā, ja klients rēķins ir apstiprināts

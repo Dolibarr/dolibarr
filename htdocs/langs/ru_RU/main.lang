@@ -1,19 +1,13 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-FONTFORPDF=freemono
-// FONTFORPDF=DejaVuSans
-FONTSIZEFORPDF=8
+# Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
+FONTFORPDF=freemono
+FONTSIZEFORPDF=8
 SeparatorDecimal=,
-SeparatorThousand=
+SeparatorThousand=None
 FormatDateShort=%d.%m.%Y
 FormatDateShortInput=%d.%m.%Y
 FormatDateShortJava=dd.MM.yyyy
@@ -21,12 +15,17 @@ FormatDateShortJavaInput=dd.MM.yyyy
 FormatDateShortJQuery=dd.mm.yy
 FormatDateShortJQueryInput=dd.mm.yy
 FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d.%m.%Y %H:%M
+# FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Подключение к базе данных
+# NoTranslation=No translation
+# NoRecordFound=No record found
+NoError=Ошибок нет
 Error=Ошибка
 ErrorFieldRequired=Поле '%s' обязательно для заполнения
 ErrorFieldFormat=Поле '%s' имеет неверное значение
@@ -57,15 +56,18 @@ ErrorSomeErrorWereFoundRollbackIsDone=Были обнаружены некото
 ErrorConfigParameterNotDefined=Параметр <b>%s</b> не определен внутри конфигурационного файла Dolibarr <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=Не удалось найти пользователя <b>%s</b> в базе данных Dolibarr.
 ErrorNoVATRateDefinedForSellerCountry=Ошибка, ставки НДС не установлены для страны '%s'.
+ErrorNoSocialContributionForSellerCountry=Ошибка, не определен тип социальных взносов для страны %s.
 ErrorFailedToSaveFile=Ошибка, не удалось сохранить файл.
 ErrorOnlyPngJpgSupported=Ошибка, поддерживаются только форматы файлов изображений .PNG и .JPG.
 ErrorImageFormatNotSupported=Ваш PHP не поддерживает функции для преобразования изображений в этом формате.
+# SeeAlso=See also %s
 BackgroundColorByDefault=Цвет фона по умолчанию
 FileWasNotUploaded=Файл выбран как вложение, но пока не загружен. Для этого нажмите "Вложить файл".
 NbOfEntries=Кол-во записей
 GoToWikiHelpPage=Читать он-лайн помощь (нужен доступ к Интернету)
 GoToHelpPage=Читать помощь
 RecordSaved=Запись сохранена
+# RecordDeleted=Record deleted
 LevelOfFeature=Уровень возможностей
 NotDefined=Неопределено
 DefinedAndHasThisValue=Определено и установлено значение
@@ -115,9 +117,11 @@ Activated=Активированный
 Closed=Закрыто
 Closed2=Закрыто
 Enabled=Включено
+# Deprecated=Deprecated
 Disable=Выключить
 Disabled=Выключено
 Add=Добавить
+AddLink=Добавить ссылку
 Update=Обновить
 AddActionToDo=Добавить действие для выполнения
 AddActionDone=Добавить завершенное действий
@@ -137,20 +141,21 @@ Save=Сохранить
 SaveAs=Сохранить как
 TestConnection=Проверка подключения
 ToClone=Дублировать
-CloneEMailing=Дублировать Отправку по e-mail
-CloneContent=Дублировать содержимое
-CloneReceivers=Дублировать получателей
 ConfirmClone=Выберите данные, которые вы хотите дублировать:
-ConfirmCloneEMailing=Вы уверены, что хотите дублировать это сообщение электронной почты?
 NoCloneOptionsSpecified=Данные для дублирования не определены.
+Of=из
+# Go=Go
+# Run=Run
 CopyOf=Копия
 Show=Показать
 ShowCardHere=Показать карточку
 Search=Поиск
+SearchOf=Поиск
 Valid=Действительный
 Approve=Одобрить
 ReOpen=Переоткрыть
 Upload=Отправить файл
+# ToLink=Link
 Select=Выбор
 Choose=Выберите
 ChooseLangage=Пожалуйста, выберите Ваш язык
@@ -165,6 +170,7 @@ Password=Пароль
 PasswordRetype=Повторите ваш пароль
 NoteSomeFeaturesAreDisabled=Обратите внимание, что многие возможности/модули отключены в этой демонстрации.
 Name=Имя
+Person=Персона
 Parameter=Параметр
 Parameters=Параметры
 Value=Значение
@@ -191,6 +197,7 @@ Action=Действие
 About=О
 Number=Номер
 NumberByMonth=Кол-во в месяц
+AmountByMonth=Сумма за месяц
 Numero=Номер
 Limit=Лимит
 Limits=Лимиты
@@ -224,6 +231,7 @@ DateProcess=Дата процесса
 DatePlanShort=Дата план.
 DateRealShort=Дата факт.
 DateBuild=Дата формирования отчета
+DatePayment=Дата оплаты
 DurationYear=год
 DurationMonth=месяц
 DurationWeek=неделя
@@ -253,14 +261,17 @@ Quadri=Квадри
 MonthOfDay=Месяц дня
 HourShort=ч
 Rate=Курс
+# UseLocalTax=Include tax
 Bytes=Байт
 KiloBytes=Килобайт
 MegaBytes=Мегабайт
 GigaBytes=Гигабайт
+TeraBytes=Терабайт
 b=б.
 Kb=Кб
 Mb=Мб
 Gb=Гб
+Tb=Tb
 Cut=Вырезать
 Copy=Копировать
 Paste=Вставить
@@ -282,6 +293,8 @@ AmountTTCShort=Сумма (вкл-я налог)
 AmountHT=Сумма (без налога)
 AmountTTC=Сумма (вкл-я налог)
 AmountVAT=Сумма НДС
+# AmountLT1=Amount tax 2
+# AmountLT2=Amount tax 3
 AmountLT1ES=Сумма RE
 AmountLT2ES=Сумма IRPF
 AmountTotal=Общая сумма
@@ -299,12 +312,16 @@ TotalHT=Всего (без налога)
 TotalTTC=Всего (вкл-я налог)
 TotalTTCToYourCredit=Всего (вкл-я налог) с Вашей кредитной
 TotalVAT=Всего НДС
+# TotalLT1=Total tax 2
+# TotalLT2=Total tax 3
 TotalLT1ES=Всего RE
 TotalLT2ES=Всего IRPF
 IncludedVAT=Включает НДС
 HT=Без налога
 TTC=Вкл-я налог
 VAT=НДС
+LT1ES=Повторно
+LT2ES=IRPF
 VATRate=Ставка НДС
 Average=Среднее
 Sum=Сумма
@@ -314,11 +331,13 @@ Option=Опция
 List=Список
 FullList=Полный список
 Statistics=Статистика
+OtherStatistics=Другие статистические данные
 Status=Статус
+# ShortInfo=Info.
 Ref=Ref.
 RefSupplier=Ref. поставщика
 RefPayment=Ref. оплаты
-CommercialProposals=Коммерческие предложения
+CommercialProposalsShort=Коммерческие предложения
 Comment=Комментарий
 Comments=Комментарии
 ActionsToDo=Действия для выполнения
@@ -326,13 +345,17 @@ ActionsDone=Выполненные Действия
 ActionsToDoShort=Что сделать
 ActionsRunningshort=Начаты
 ActionsDoneShort=Завершены
+ActionNotApplicable=Не применяется
 ActionRunningNotStarted=Не начато
 ActionRunningShort=Начато
 ActionDoneShort=Завершено
 CompanyFoundation=Компания/Организация
 ContactsForCompany=Контакты/адреса контрагента
+# ContactsAddressesForCompany=Contacts/addresses for this third party
+# AddressesForCompany=Addresses for this third party
 ActionsOnCompany=Действия для этого контрагента
-NActions= %s действий
+ActionsOnMember=События об этом члене
+NActions=%s действий
 NActionsLate=% с опозданием
 Filter=Фильтр
 RemoveFilter=Удалить фильтр
@@ -365,7 +388,7 @@ OtherInformations=Другая информация
 Quantity=Количество
 Qty=Кол-во
 ChangedBy=Изменен
-ReCalculate=Перестроить
+# ReCalculate=Recalculate
 ResultOk=Успешно
 ResultKo=Неудачно
 Reporting=Отчет
@@ -412,6 +435,18 @@ September=Сентябрь
 October=Октябрь
 November=Ноябрь
 December=Декабрь
+JanuaryMin=Янв
+FebruaryMin=Фев
+MarchMin=Мар
+AprilMin=Апр
+MayMin=Май
+JuneMin=Июн
+JulyMin=Июл
+AugustMin=Авг
+SeptemberMin=Сен
+OctoberMin=Окт
+NovemberMin=Ноя
+DecemberMin=Дек
 Month01=январь
 Month02=февраль
 Month03=март
@@ -448,6 +483,8 @@ Report=Отчет
 Keyword=Ключевое слово
 Legend=Легенда
 FillTownFromZip=Заполнить город по индексу
+# Fill=Fill
+# Reset=Reset
 ShowLog=Показать журнал
 File=Файл
 Files=Файлы
@@ -496,13 +533,14 @@ Undo=Отмена
 Redo=Повторить
 ExpandAll=Развернуть все
 UndoExpandAll=Отменить 'Развернуть все'
+Reason=Причина
 FeatureNotYetSupported=Функция не поддерживается
 CloseWindow=Закрыть окно
 Question=Вопрос
 Response=Ответ
 Priority=Приоритет
+SendByMail=Отправить по электронной почте
 MailSentBy=Отправлено по Email
-MailSentBy=Email отправлен
 TextUsedInTheMessageBody=Текст Email
 SendAcknowledgementByMail=Отправить Подтверждение по Email
 NoEMail=Нет Email
@@ -515,6 +553,7 @@ GoBack=Назад
 CanBeModifiedIfOk=Может быть изменено, если корректно
 CanBeModifiedIfKo=Может быть изменено, если ненекорректно
 RecordModifiedSuccessfully=Запись успешно изменена
+# RecordsModified=%s records modified
 AutomaticCode=Автоматический код
 NotManaged=Нерегулируемый
 FeatureDisabled=Функция отключена
@@ -545,6 +584,7 @@ ThisLimitIsDefinedInSetup=Лимит Dolibarr (Меню Начало-Настр�
 NoFileFound=Нет документов, сохраненных в этом каталоге
 CurrentUserLanguage=Текущий язык
 CurrentTheme=Текущая тема
+# CurrentMenuManager=Current menu manager
 DisabledModules=Отключенные модули
 For=Для
 ForCustomer=Для клиента
@@ -562,42 +602,8 @@ FreeZone=Свободный текст
 CloneMainAttributes=Клонирование объекта с его основными атрибутами
 PDFMerge=Слияние PDF
 Merge=Слияние
-# Дни недели
-Day1=Понедельник
-Day2=Вторник
-Day3=Среда
-Day4=Четверг
-Day5=Пятница
-Day6=Суббота
-Day0=Воскресенье
-Monday=Понедельник
-Tuesday=Вторник
-Wednesday=Среда
-Thursday=Четверг
-Friday=Пятница
-Saturday=Суббота
-Sunday=Воскресенье
-ShortMonday=Пн
-ShortTuesday=Вт
-ShortWednesday=Ср
-ShortThursday=Чт
-ShortFriday=Пт
-ShortSaturday=Сб
-ShortSunday=Вс
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> ru_RU
-FormatHourShortDuration=%H:%M
-NoError=Ошибок нет
-ErrorNoSocialContributionForSellerCountry=Ошибка, не определен тип социальных взносов для страны %s.
-Available=Доступный
-Examples=Примеры
-Reason=Причина
-SendByMail=Отправить по электронной почте
-DocumentsNb=Связанные файлы (%s)
 PrintContentArea=Показать страницу для печати области основного содержимого
+# MenuManager=Menu manager
 NoMenu=Нет подменю
 WarningYouAreInMaintenanceMode=Внимание, вы находитесь в режиме обслуживания, так что только пользователю <b>%s</b> разрешено использовать приложение в данный момент.
 CoreErrorTitle=Системная ошибка
@@ -620,38 +626,6 @@ Source=Источник
 Prefix=Префикс
 Before=До
 After=После
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:22:10).
-
-
-// START - Lines generated via autotranslator.php tool (2011-07-28 18:04:19).
-// Reference language: en_US -> ru_RU
-ErrorNoRequestInErrorErrorServiceUnavailableTryLater=Услуга не предоставляется на данный момент. Попробуйте еще раз позже.
-Person=Персона
-// STOP - Lines generated via autotranslator.php tool (2011-07-28 18:05:45).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-18 23:26:41).
-// Reference language: en_US -> ru_RU
-AddLink=Добавить ссылку
-Of=из
-AmountByMonth=Сумма за месяц
-DatePayment=Дата оплаты
-TeraBytes=Терабайт
-Tb=Tb
-OtherStatistics=Другие статистические данные
-ActionNotApplicable=Не применяется
-JanuaryMin=Янв
-FebruaryMin=Фев
-MarchMin=Мар
-AprilMin=Апр
-MayMin=Май
-JuneMin=Июн
-JulyMin=Июл
-AugustMin=Авг
-SeptemberMin=Сен
-OctoberMin=Окт
-NovemberMin=Ноя
-DecemberMin=Дек
 IPAddress=IP-адрес
 Frequency=Частота
 IM=Мгновенный обмен сообщениями
@@ -659,29 +633,8 @@ NewAttribute=Новый атрибут
 AttributeCode=Код атрибута
 OptionalFieldsSetup=Дополнительная настройка атрибутов
 URLPhoto=Адрес фотографии/логотипа
-MondayMin=Пн
-TuesdayMin=Вт
-WednesdayMin=Ср
-ThursdayMin=Чт
-FridayMin=Пт
-SaturdayMin=Сб
-SundayMin=Вс
-// STOP - Lines generated via autotranslator.php tool (2011-08-18 23:29:41).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-SearchOf=Поиск
-CreateDraft=Создать проект
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:35).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-LT1ES=Повторно
-LT2ES=IRPF
-ActionsOnMember=События об этом члене
 SetLinkToThirdParty=Ссылка на другой третьей стороне
+CreateDraft=Создать проект
 ClickToEdit=Нажмите, чтобы изменить
 ObjectDeleted=Объект удален %s
 ByCountry=По стране
@@ -692,4 +645,50 @@ ByYear=По годам
 ByMonth=по месяцам
 ByDay=Днем
 BySalesRepresentative=По торговым представителем
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:59).
+# LinkedToSpecificUsers=Linked to a particular user contact
+# DeleteAFile=Delete a file
+# ConfirmDeleteAFile=Are you sure you want to delete file
+# NoResults=No results
+# ModulesSystemTools=Modules tools
+# Test=Test
+# Element=Element
+# NoPhotoYet=No pictures available yet
+# HomeDashboard=Home summary
+# Deductible=Deductible
+# from=from
+# toward=toward
+# Access=Access
+# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
+
+# Week day
+Monday=Понедельник
+Tuesday=Вторник
+Wednesday=Среда
+Thursday=Четверг
+Friday=Пятница
+Saturday=Суббота
+Sunday=Воскресенье
+MondayMin=Пн
+TuesdayMin=Вт
+WednesdayMin=Ср
+ThursdayMin=Чт
+FridayMin=Пт
+SaturdayMin=Сб
+SundayMin=Вс
+Day1=Понедельник
+Day2=Вторник
+Day3=Среда
+Day4=Четверг
+Day5=Пятница
+Day6=Суббота
+Day0=Воскресенье
+ShortMonday=Пн
+ShortTuesday=Вт
+ShortWednesday=Ср
+ShortThursday=Чт
+ShortFriday=Пт
+ShortSaturday=Сб
+ShortSunday=Вс

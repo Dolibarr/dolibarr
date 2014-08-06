@@ -302,6 +302,7 @@ if (! empty($force_install_message))
 		        if (is_readable($dir."/".$file) && preg_match('/^(.*)\.class\.php$/i',$file,$reg))
 		        {
 		            $type=$reg[1];
+                    if ($type === 'DoliDB') continue; // Skip abstract class
                     $class='DoliDB'.ucfirst($type);
                     include_once $dir."/".$file;
 
@@ -456,7 +457,6 @@ if (! empty($force_install_message))
 		 -->
 
 	</tr>
-
 	<tr class="hidesqlite hideroot">
 		<td class="label" valign="top"><b><?php echo $langs->trans("Password"); ?></b>
 		</td>
@@ -464,7 +464,8 @@ if (! empty($force_install_message))
 			id="db_pass_root" name="db_pass_root" class="needroot"
 			value="<?php
 			$autofill=((! empty($db_pass_root))?$db_pass_root:$force_install_databaserootpass);
-			if (! empty($dolibarr_main_prod)) $autofill='';
+			if (! empty($dolibarr_main_prod)) $autofill='';	// Do not autofill password if instance is a production instance
+			if (! empty($_SERVER["SERVER_NAME"]) && ! in_array($_SERVER["SERVER_NAME"], array('127.0.0.1', 'localhost'))) $autofill='';	// Do not autofill password for remote access
 			print dol_escape_htmltag($autofill);
 			?>"></td>
 		<td class="comment"><?php echo $langs->trans("KeepEmptyIfNoPassword"); ?>

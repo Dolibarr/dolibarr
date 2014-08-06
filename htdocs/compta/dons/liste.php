@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,11 +76,11 @@ if (trim($search_ref) != '')
 }
 if (trim($search_company) != '')
 {
-    $sql.= ' AND d.societe LIKE \'%'.$db->escape(trim($search_company)) . '%\'';
+    $sql .= natural_search('d.societe', $search_company);
 }
 if (trim($search_name) != '')
 {
-    $sql.= ' AND d.lastname LIKE \'%'.$db->escape(trim($search_name)) . '%\' OR d.firstname LIKE \'%'.$db->escape(trim($search_name)) . '%\'';
+    $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -143,7 +144,7 @@ if ($resql)
     print '<td class="liste_titre" align="right">';
     print '&nbsp;';
     print '</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print "</td></tr>\n";
 
 	$var=True;

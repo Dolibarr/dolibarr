@@ -1,8 +1,8 @@
-# Dolibarr language file - hu_HU - sendings
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Szállítási Ref.
 Sending=Szállítás
 Sendings=Szállítások
+Shipment=Szállítás
 Shipments=Szállítások
 Receivings=Fogadás
 SendingsArea=Szállítási terület
@@ -13,6 +13,7 @@ LastSendings=%s utolsó szállítás
 SearchASending=Szállítás keresése
 StatisticsOfSendings=Szállítási statisztikák
 NbOfSendings=Szállítások száma
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Szállítási kártya
 NewSending=Új szállítás
 CreateASending=Szállítás létrehozása
@@ -31,9 +32,11 @@ SendingsToValidate=Hitelesítésre váró szállítások
 StatusSendingCanceled=Megszakítva
 StatusSendingDraft=Piszkozat
 StatusSendingValidated=Hitelesítve (már szállítva)
+StatusSendingProcessed=Feldolgozott
 StatusSendingCanceledShort=Megszakítva
 StatusSendingDraftShort=Piszkozat
 StatusSendingValidatedShort=Hitelesítve
+StatusSendingProcessedShort=Feldolgozott
 SendingSheet=Küldési adatlap
 Carriers=Fuvarozók
 Carrier=Fuvarozó
@@ -47,9 +50,17 @@ Enlevement=Ügyfél átvette
 DocumentModelSimple=Egyszerű dokumentum modell
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Figyelem, nincs szállításra váró termék.
-StatsOnShipmentsOnlyValidated=A statisztika csak a hitelesített szállítmányokat veszi figyelembe
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Tervezett szállítási dátum
 DateReceived=Átvétel dátuma
+SendShippingByEMail=Küldés e-mailben szállítás
+SendShippingRef=Küldje szállítás %s
+ActionsOnShipping=Események a szállítás
+LinkToTrackYourPackage=Link követni a csomagot
+ShipmentCreationIsDoneFromOrder=Ebben a pillanatban, létrejön egy új szállítmány kerül sor a sorrendben kártyát.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
 
 # Sending methods
 SendingMethodCATCH=Ügyfél fogád
@@ -60,13 +71,6 @@ SendingMethodCOLSUI=Futár szolgálat
 DocumentModelSirocco=Egyszerű dokumentum modell bizonylatokhoz
 DocumentModelTyphon=Teljesebb dokumentum modell bizonylatokhoz (logo...)
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-SendShippingByEMail=Küldés e-mailben szállítás
-SendShippingRef=Küldje szállítás %s
-ActionsOnShipping=Események a szállítás
-LinkToTrackYourPackage=Link követni a csomagot
-ShipmentCreationIsDoneFromOrder=Ebben a pillanatban, létrejön egy új szállítmány kerül sor a sorrendben kártyát.
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Állandó EXPEDITION_ADDON_NUMBER nincs definiálva
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:25:34).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

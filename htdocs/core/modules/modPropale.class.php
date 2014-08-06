@@ -101,8 +101,10 @@ class modPropale extends DolibarrModules
 		$this->const[$r][4] = 0;
 
 		// Boxes
-		$this->boxes = array();
-		$this->boxes[0][1] = "box_propales.php";
+		$this->boxes = array(
+           	0=>array('file'=>'box_graph_propales_permonth.php','enabledbydefaulton'=>'Home'),
+           	1=>array('file'=>'box_propales.php','enabledbydefaulton'=>'Home'),
+		);
 
 		// Permissions
 		$this->rights = array();

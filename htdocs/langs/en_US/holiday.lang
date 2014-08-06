@@ -1,6 +1,5 @@
-# Dolibarr language file - en_US - holiday
-CHARSET= UTF-8
-
+# Dolibarr language file - Source file is en_US - holiday
+HRM=HRM
 Holidays=Holidays
 CPTitreMenu=Holidays
 MenuReportMonth=Monthly statement
@@ -79,7 +78,6 @@ MenuLogCP=View logs of holidays
 LogCP=Log of updates of holidays
 ActionByCP=Performed by
 UserUpdateCP=For the user
-ActionTypeCP=Type
 PrevSoldeCP=Previous Balance
 NewSoldeCP=New Balance
 alreadyCPexist=A request for holidays has already been done on this period.
@@ -89,6 +87,7 @@ FirstDayOfHoliday=First day of holiday
 LastDayOfHoliday=Last day of holiday
 HolidaysMonthlyUpdate=Monthly update
 ManualUpdate=Manual update
+HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Configuration of holidays module

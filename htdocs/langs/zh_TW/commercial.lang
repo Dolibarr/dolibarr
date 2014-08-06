@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=商業訂單
 CommercialArea=商業領域
 CommercialCard=商務卡
@@ -32,6 +23,7 @@ TaskRDVWith=與%會議上的
 ShowTask=顯示任務
 ShowAction=顯示行動
 ActionsReport=行動的報告
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=業務代表
 SalesRepresentatives=業務代表
 SalesRepresentativeFollowUp=業務代表（後續）
@@ -54,6 +46,7 @@ ToDoActions=不完整的行動
 ToDoActionsFor=不完全對%01-0014-03
 SendPropalRef=%s的發送商業建議
 SendOrderRef=發送訂單 %s
+StatusNotApplicable=不適用
 StatusActionToDo=要做到
 StatusActionDone=完成
 MyActionsAsked=我的行動已經記錄
@@ -83,17 +76,20 @@ ActionAC_REL=通過郵件發送客戶發票（提醒）
 ActionAC_CLO=關閉
 ActionAC_EMAILING=發送大量的電子郵件
 ActionAC_COM=通過郵件發送客戶訂單
+ActionAC_SHIP=發送郵件運輸
 ActionAC_SUP_ORD=郵寄供應商的訂單
 ActionAC_SUP_INV=郵寄發票的供應商
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-StatusNotApplicable=不適用
-ActionAC_SHIP=發送郵件運輸
 ActionAC_OTH=其他
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=潛在狀態
 DraftPropals=起草商業建議
 SearchPropal=搜尋一個商業建議
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:42).
+# CommercialDashboard=Commercial summary

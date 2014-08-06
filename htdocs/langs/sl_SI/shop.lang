@@ -1,11 +1,10 @@
-# Dolibarr language file - en_US - shop = 
-CHARSET = UTF-8
-Shop = Trgovina
-ShopWeb = Spletna trgovina
-LastOrders = Zadnja naročila
-OnStandBy = Na čakanju
-TreatmentInProgress = Obdelava v teku
-LastCustomers = Zadnje stranke
-OSCommerceShop = OSCommerce trgovina
-OSCommerce = OSCommerce
-AddProd = Spletna prodaja
+# Dolibarr language file - Source file is en_US - shop
+Shop=Trgovina
+ShopWeb=Spletna trgovina
+LastOrders=Zadnja naročila
+OnStandBy=Na čakanju
+TreatmentInProgress=Obdelava v teku
+LastCustomers=Zadnje stranke
+OSCommerceShop=OSCommerce trgovina
+OSCommerce=OSCommerce
+AddProd=Spletna prodaja

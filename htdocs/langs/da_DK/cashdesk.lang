@@ -1,13 +1,4 @@
-/*
- * Language code: da_DK
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 15:59:19
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-CHARSET=UTF-8
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=Point of Sale
 CashDesk=Point of Sale
 CashDesks=Point of salg
@@ -21,6 +12,7 @@ CashDeskProducts=Produkter
 CashDeskStock=Stock
 CashDeskOn=om
 CashDeskThirdParty=Tredjemands
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Indkøbskurv
 NewSell=Ny sælge
 BackOffice=Back office
@@ -28,7 +20,6 @@ AddThisArticle=Tilføj denne artikel
 RestartSelling=Gå tilbage til sælger
 SellFinished=Sælg færdig
 PrintTicket=Print billet
-NoResults=Ingen resultater
 NoProductFound=Ingen artiklen fundet
 ProductFound=Produktet findes
 ProductsFound=produkter blev fundet
@@ -45,4 +36,4 @@ BankToPay=Charge konto
 ShowCompany=Vis virksomhed
 ShowStock=Vis lager
 DeleteArticle=Klik for at fjerne denne artikel
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:32).
+# FilterRefOrLabelOrBC=Search (Ref/Label)

@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=بطاقة مستخدم
 ContactCard=بطاقة الاتصال
 GroupCard=مجموعة البطاقات
@@ -53,9 +43,12 @@ ListOfUsers=قائمة المستخدمين
 Administrator=المدير العام
 SuperAdministrator=مدير السوبر
 SuperAdministratorDesc=مدير كل الحقوق
+AdministratorDesc=المسؤول كيان
 DefaultRights=الافتراضي أذونات
 DefaultRightsDesc=التقصير هنا تحديد الاذونات التي تمنح تلقائيا للمستخدم خلق جديد.
 DolibarrUsers=Dolibarr المستخدمين
+LastName=اسم
+FirstName=الاسم الأول
 ListOfGroups=قائمة المجموعات
 NewGroup=مجموعة جديدة
 CreateGroup=إنشاء مجموعة
@@ -95,8 +88,13 @@ DomainUser=النطاق المستخدم ق ٪
 Reactivate=تنشيط
 CreateInternalUserDesc=هذا الشكل يتيح لك يخلق أي مستخدم الداخلي لتسجيل شركة أو مؤسسة. ليخلق خارجي المستخدم (العميل ، المورد ،...)، استخدام زر 'إنشاء مستخدم Dolibarr' من طرف ثالث بطاقة اتصال.
 InternalExternalDesc=<b>داخلي</b> المستخدم المستخدم الذي يشكل جزءا من الشركة / المؤسسة. <br> مستخدم <b>خارجي</b> هو عميل أو مورد أو غيرها. <br><br> وفي كلتا الحالتين ، ويحدد الحقوق على أذونات Dolibarr ، كما يمكن للمستخدم خارجي له قائمة من مدير المستخدم الداخلي (انظر الصفحة الرئيسية -- إعداد -- عرض)
+PermissionInheritedFromAGroup=منح إذن لأن الموروث من واحد من المستخدم.
+Inherited=موروث
+UserWillBeInternalUser=وسوف يكون المستخدم إنشاء مستخدم داخلية (لأنه لا يرتبط طرف ثالث خاص)
+UserWillBeExternalUser=وسوف يكون المستخدم إنشاء مستخدم خارجي (لأنه مرتبط إلى طرف ثالث خاص)
 IdPhoneCaller=رقم تعريف الهاتف المتصل
 UserLogged=ق صلة مستخدم ٪
+UserLogoff=%s المستخدم الخروج
 NewUserCreated=مستخدم ٪ ق خلق
 NewUserPassword=لتغيير كلمة المرور ل ٪
 EventUserModified=مستخدم تعديل ق ٪
@@ -104,49 +102,19 @@ UserDisabled=مستخدم ٪ ق المعوقين
 UserEnabled=مستخدم ٪ ق تفعيلها
 UserDeleted=ق إزالة المستخدم ٪
 NewGroupCreated=أنشأت مجموعة ق ٪
-GroupModified=ق تعديل المجموعة ٪
+GroupModified=تعديل المجموعة بنجاح
 GroupDeleted=فريق ازالة ق ٪
 ConfirmCreateContact=هل أنت متأكد من خلق Dolibarr حساب هذا الاتصال؟
 ConfirmCreateLogin=هل أنت متأكد من خلق Dolibarr حساب هذا؟
 ConfirmCreateThirdParty=هل أنت متأكد من خلق لهذا الطرف الثالث؟
 LoginToCreate=ادخل لخلق
 NameToCreate=اسم طرف ثالث لخلق
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
-// Reference language: en_US
-LastName=اسم
-FirstName=الاسم الأول
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-PermissionInheritedFromAGroup=منح إذن لأن الموروث من واحد من المستخدم.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-Inherited=موروث
 YourRole=الأدوار الخاص
 YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من المستخدمين النشطين!
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:57).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ar_SA
-DontDowngradeSuperAdmin=يمكن فقط superadmin تقليله a superadmin
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:30:07).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-AdministratorDesc=المسؤول كيان
-UserWillBeInternalUser=وسوف يكون المستخدم إنشاء مستخدم داخلية (لأنه لا يرتبط طرف ثالث خاص)
-UserWillBeExternalUser=وسوف يكون المستخدم إنشاء مستخدم خارجي (لأنه مرتبط إلى طرف ثالث خاص)
-UserLogoff=%s المستخدم الخروج
 NbOfUsers=ملحوظة من المستخدمين
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:44).
+DontDowngradeSuperAdmin=يمكن فقط superadmin تقليله a superadmin
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=法國
 CountryBE=比利時
 CountryIT=意大利
@@ -15,6 +6,7 @@ CountryES=西班牙
 CountryDE=德國
 CountryCH=瑞士
 CountryGB=大不列顛
+# CountryUK=United Kingdom
 CountryIE=愛爾蘭
 CountryCN=中國
 CountryTN=突尼斯
@@ -254,10 +246,15 @@ CountryJE=澤西
 CountryME=黑山
 CountryBL=聖巴泰勒米
 CountryMF=聖馬丁
+
+##### Civilities #####
 CivilityMME=夫人
 CivilityMR=先生
 CivilityMLE=女士
 CivilityMTRE=主
+# CivilityDR=Doctor
+
+##### Currencies #####
 Currencyeuros=歐元
 CurrencyAUD=澳元
 CurrencySingAUD=非盟元
@@ -271,6 +268,8 @@ CurrencyFRF=法國法郎
 CurrencySingFRF=法國法郎
 CurrencyGBP=國標磅
 CurrencySingGBP=GB的龐德
+CurrencyINR=印度盧比
+CurrencySingINR=印度盧比
 CurrencyMAD=迪拉姆
 CurrencySingMAD=迪拉姆
 CurrencyMGA=Ariary
@@ -283,36 +282,48 @@ CurrencyTND=突尼斯第納爾
 CurrencySingTND=突尼斯第納爾
 CurrencyUSD=美元
 CurrencySingUSD=美元
+CurrencyUAH=赫夫納
+CurrencySingUAH=赫夫納
 CurrencyXAF=非洲法郎中非國家
 CurrencySingXAF=法郎中非國家
 CurrencyXOF=非洲法郎西非國家中央銀行
 CurrencySingXOF=郎西非國家中央銀行
 CurrencyXPF=CFP法郎
 CurrencySingXPF=太平洋法郎
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
 
+# CurrencyCentSingEUR=cent
+# CurrencyThousandthSingTND=thousandth
 
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-CurrencyINR=印度盧比
-CurrencySingINR=印度盧比
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:19).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> zh_CN
+#### Input reasons #####
+DemandReasonTypeSRC_INTE=因特網
 DemandReasonTypeSRC_CAMP_MAIL=郵寄活動
 DemandReasonTypeSRC_CAMP_EMAIL=通過電子郵件發送運動
 DemandReasonTypeSRC_CAMP_PHO=電話運動
 DemandReasonTypeSRC_CAMP_FAX=傳真運動
 DemandReasonTypeSRC_COMM=商業聯系
 DemandReasonTypeSRC_SHOP=商店聯系
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 09:27:11).
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+# DemandReasonTypeSRC_EMPLOYEE=Employee
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-CurrencyUAH=赫夫納
-CurrencySingUAH=赫夫納
-DemandReasonTypeSRC_INTE=因特網
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:24).
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Sopimukset alueella
 ListOfContracts=Luetteloa sopimuksista
 LastContracts=Viimeisin %s muunnettu sopimukset
@@ -22,7 +12,10 @@ ContractStatusValidated=Validoidut
 ContractStatusClosed=Suljettu
 ServiceStatusInitial=Ole käynnissä
 ServiceStatusRunning=Running
+ServiceStatusNotLate=Juoksu, ei lakkaa
+ServiceStatusNotLateShort=Ei lakkaa
 ServiceStatusLate=Juoksu, lakkaa
+ServiceStatusLateShort=Lakkaa
 ServiceStatusClosed=Suljettu
 ServicesLegend=Palvelut legenda
 Contracts=Sopimukset
@@ -45,6 +38,7 @@ ConfirmCloseService=Oletko varma, että haluat sulkea tämän palvelun <b>päiv�
 ValidateAContract=Vahvista sopimus
 ActivateService=Ota palvelu
 ConfirmActivateService=Oletko varma, että haluat aktivoida tämän palvelun <b>päivämäärä %s?</b>
+# RefContract=Contract reference
 DateContract=Sopimuspäivä
 DateServiceActivate=Tiedoksiantopäivä aktivointi
 DateServiceUnactivate=Tiedoksiantopäivä unactivation
@@ -52,11 +46,14 @@ DateServiceStart=Voimassaolo alkaa palvelun
 DateServiceEnd=Päivämäärä lopussa palvelu
 ShowContract=Näytä sopimus
 ListOfServices=Luettelo palveluista
+ListOfInactiveServices=Luettelo ei ole aktiivinen palvelut
+ListOfExpiredServices=Luettelo lakkaa aktiivinen palvelut
+ListOfClosedServices=Luettelo suljettu palvelut
 ListOfRunningContractsLines=Luettelo käynnissä sopimuksen linjat
 ListOfRunningServices=Luettelo käynnissä olevat palvelut
 NotActivatedServices=Ei aktivoitu palvelut (muun muassa validoitava sopimukset)
 BoardNotActivatedServices=Palvelut aktivoida kesken validoitava sopimukset
-LastContracts=Viimeisin %sopimukset
+LastContracts=Viimeisin %s muunnettu sopimukset
 LastActivatedServices=Viimeisin %s aktivoitu palvelut
 LastModifiedServices=Viimeisin %s muunnettu palvelut
 EditServiceLine=Muokkaa palvelulinja
@@ -72,48 +69,31 @@ DateEndReal=Real lopetuspäivämäärää
 DateEndRealShort=Real lopetuspäivämäärää
 NbOfServices=Nb palvelujen
 CloseService=Sulje palvelu
-ServicesNomberShort= %s service (s)
+ServicesNomberShort=%s service (s)
 RunningServices=Käynnissä olevat palvelut
 BoardRunningServices=Lakkaa käynnissä olevat palvelut
 ServiceStatus=Tila-palvelun
 DraftContracts=Drafts sopimukset
 CloseRefusedBecauseOneServiceActive=Sopimus ei voida sulkea, koska on olemassa vähintään yksi avoin palvelu sitä
 CloseAllContracts=Sulje kaikki sopimukset
+DeleteContractLine=Poista sopimuksen linjan
+ConfirmDeleteContractLine=Oletko varma, että haluat poistaa tämän sopimuksen linja?
 MoveToAnotherContract=Siirrä palvelua toisen sopimuksen.
 ConfirmMoveToAnotherContract=I choosed uusi tavoite sopimuksen ja vahvistaa Haluan siirtää tämän palvelua tämän sopimuksen.
 ConfirmMoveToAnotherContractQuestion=Valitse jossa nykyistä sopimusta (samaa kolmannelle osapuolelle), jonka haluat siirtää tämän palvelun?
+PaymentRenewContractId=Uudista sopimus linja (numero %s)
+ExpiredSince=Vanhenemispäivä
+RelatedContracts=Liittyvien sopimusten
+NoExpiredServices=Ei päättynyt aktiiviset palvelut
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Myyntiedustajaasi allekirjoittamalla sopimuksen
 TypeContact_contrat_internal_SALESREPFOLL=Myyntiedustajaasi seurata sopimuksen
 TypeContact_contrat_external_BILLING=Laskutus asiakkaan yhteystiedot
 TypeContact_contrat_external_CUSTOMER=Seurata asiakkaiden yhteystiedot
 TypeContact_contrat_external_SALESREPSIGN=Kirjautuminen sopimus asiakkaiden yhteystiedot
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-ServiceStatusNotLate=Juoksu, ei lakkaa
-ServiceStatusNotLateShort=Ei lakkaa
-ServiceStatusLateShort=Lakkaa
-ListOfInactiveServices=Luettelo ei ole aktiivinen palvelut
-ListOfExpiredServices=Luettelo lakkaa aktiivinen palvelut
-ListOfClosedServices=Luettelo suljettu palvelut
-DeleteContractLine=Poista sopimuksen linjan
-ConfirmDeleteContractLine=Oletko varma, että haluat poistaa tämän sopimuksen linja?
-PaymentRenewContractId=Uudista sopimus linja (numero %s)
-ExpiredSince=Vanhenemispäivä
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-RelatedContracts=Liittyvien sopimusten
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:44).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-NoExpiredServices=Ei päättynyt aktiiviset palvelut
 Error_CONTRACT_ADDON_NotDefined=Jatkuva CONTRACT_ADDON ei määritelty
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:38).

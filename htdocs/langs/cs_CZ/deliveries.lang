@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Dodání
+Deliveries=Dodávky
+DeliveryCard=Dodávka karet
+DeliveryOrder=Dodávka, aby
+DeliveryOrders=Dodací objednávky
+DeliveryDate=Termín dodání
+DeliveryDateShort=Deliv. datum
+CreateDeliveryOrder=Generovat příkaz k dodání
+QtyDelivered=Množství dodáno
+SetDeliveryDate=Nastavit datem odeslání
+ValidateDeliveryReceipt=Potvrzení o doručení
+ValidateDeliveryReceiptConfirm=Jste si jisti, že chcete ověřit toto potvrzení o doručení?
+DeleteDeliveryReceipt=Odstranit potvrzení o doručení
+DeleteDeliveryReceiptConfirm=Jste si jisti, že chcete smazat <b>%s</b> potvrzení o doručení?
+DeliveryMethod=Způsob doručení
+TrackingNumber=Sledovací číslo
+DeliveryNotValidated=Dodávka není ověřena
+# merou PDF model
+NameAndSignature=Jméno a podpis:
+ToAndDate=To___________________________________ na ____ / _____ / __________
+GoodStatusDeclaration=Už zboží obdržel výše v dobrém stavu,
+Deliverer=Doručovatel:
+Sender=Odesílatel
+Recipient=Příjemce

@@ -1,54 +1,58 @@
-/*
- * Language code: he_IL
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-03-10 15:14:54
- */
+# Dolibarr language file - Source file is en_US - languages
 
-
-// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
-// Reference language: en_US -> he_IL
-CHARSET=UTF-8
-Language_ar_AR=ערבית
-Language_ar_SA=ערבית
-Language_ca_ES=קטלוני
-Language_da_DA=דני
-Language_da_DK=דני
-Language_de_DE=גרמנית
-Language_de_AT=גרמנית (אוסטריה)
-Language_el_GR=יוון
-Language_en_AU=אנגלית (אוסטרליה)
-Language_en_GB=אנגלית (בריטניה)
-Language_en_IN=אנגלית (הודו)
-Language_en_NZ=אנגלית (ניו זילנד)
-Language_en_US=אנגלית (ארצות הברית)
+# Language_ar_AR=Arabic
+# Language_ar_SA=Arabic
+# Language_bg_BG=Bulgarian
+# Language_ca_ES=Catalan
+# Language_cs_CZ=Czech
+# Language_da_DA=Danish
+# Language_da_DK=Danish
+# Language_de_DE=German
+# Language_de_AT=German (Austria)
+# Language_el_GR=Greek
+# Language_en_AU=English (Australia)
+# Language_en_GB=English (United Kingdom)
+# Language_en_IN=English (India)
+# Language_en_NZ=English (New Zealand)
+# Language_en_SA=English (Saudi Arabia)
+# Language_en_US=English (United States)
+# Language_en_ZA=English (South Africa)
 Language_es_ES=ספרדית
-Language_es_AR=ספרדית (ארגנטינה)
-Language_es_HN=ספרדית (הונדורס)
-Language_es_MX=ספרדית (מקסיקו)
-Language_es_PR=ספרדית (פורטו ריקו)
-Language_fa_IR=פרסי
-Language_fi_FI=סנפירים
-Language_fr_BE=צרפתית (בלגיה)
-Language_fr_CA=צרפתית (קנדה)
-Language_fr_CH=צרפתית (שוויץ)
-Language_fr_FR=צרפתית
-Language_hu_HU=הונגרי
-Language_is_IS=איסלנדית
-Language_it_IT=איטלקית
-Language_ja_JP=יפנית
-Language_nb_NO=נורבגית (Bokmål)
-Language_nl_BE=הולנדית (בלגיה)
-Language_nl_NL=הולנד (הולנד)
-Language_pl_PL=פולני
-Language_pt_BR=פורטוגזית (ברזיל)
-Language_pt_PT=פורטוגזית
-Language_ro_RO=רומניה
-Language_ru_RU=רוסי
-Language_ru_UA=הרוסית (אוקראינה)
-Language_tr_TR=טורקית
-Language_sl_SI=סלובניה
-Language_sv_SV=שוודית
-Language_sv_SE=שוודית
-Language_zh_CN=סינית
-Language_is_IS=איסלנדית
-// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:29:27).
+# Language_es_AR=Spanish (Argentina)
+# Language_es_HN=Spanish (Honduras)
+# Language_es_MX=Spanish (Mexico)
+# Language_es_PY=Spanish (Paraguay)
+# Language_es_PE=Spanish (Peru)
+# Language_es_PR=Spanish (Puerto Rico)
+# Language_et_EE=Estonian
+# Language_fa_IR=Persian
+# Language_fi_FI=Fins
+# Language_fr_BE=French (Belgium)
+# Language_fr_CA=French (Canada)
+# Language_fr_CH=French (Switzerland)
+# Language_fr_FR=French
+# Language_fr_NC=French (New Caledonia)
+# Language_he_IL=Hebrew
+# Language_hu_HU=Hungarian
+# Language_is_IS=Icelandic
+# Language_it_IT=Italian
+# Language_ja_JP=Japanese
+# Language_ko_KR=Korean
+# Language_lv_LV=Latvian
+# Language_nb_NO=Norwegian (Bokmål)
+# Language_nl_BE=Dutch (Belgium)
+# Language_nl_NL=Dutch (Netherlands)
+# Language_pl_PL=Polish
+# Language_pt_BR=Portuguese (Brazil)
+# Language_pt_PT=Portuguese
+# Language_ro_RO=Romanian
+# Language_ru_RU=Russian
+# Language_ru_UA=Russian (Ukraine)
+# Language_tr_TR=Turkish
+# Language_sl_SI=Slovenian
+# Language_sv_SV=Swedish
+# Language_sv_SE=Swedish
+# Language_sk_SK=Slovakian
+# Language_vi_VN=Vietnamese
+# Language_zh_CN=Chinese
+# Language_zh_TW=Chinese (Traditional)

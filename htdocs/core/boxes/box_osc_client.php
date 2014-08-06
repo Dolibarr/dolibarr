@@ -80,6 +80,8 @@ class box_osc_clients extends ModeleBoxes
                     'url' => DOL_URL_ROOT."/boutique/client/index.php");
                     $i++;
                 }
+
+				$db->free($resql);
             }
             else {
                 $this->info_box_contents[0][0] = array( 'td' => 'align="left"',

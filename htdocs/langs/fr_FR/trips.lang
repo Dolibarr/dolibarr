@@ -1,16 +1,14 @@
-# Dolibarr language file - fr_FR - trips
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Déplacement
 Trips=Déplacements
 TripsAndExpenses=Note de frais
 TripsAndExpensesStatistics=Statistiques notes de frais
-TripId=Id note frais
 TripCard=Fiche frais
 AddTrip=Créer note de frais
 ListOfTrips=Liste des frais
 ListOfFees=Liste des notes de frais
 NewTrip=Nouvelle note de frais
-CompanyVisited=Société/Institution visitée
+CompanyVisited=Société/institution visitée
 Kilometers=Kilomètres
 FeesKilometersOrAmout=Montant ou kilomètres
 DeleteTrip=Supprimer déplacement
@@ -19,5 +17,5 @@ TF_OTHER=Autre
 TF_LUNCH=Repas
 TF_TRIP=Déplacement
 ListTripsAndExpenses=Liste des notes de frais
-ExpensesArea=Espace Notes de frais
+ExpensesArea=Espace notes de frais
 SearchATripAndExpense=Rechercher une note de frais

@@ -111,7 +111,7 @@ echo $this->control->tpl['ajax_selectcountry'];
 	<td><?php echo $langs->trans("Email"); ?></td>
 	<td><input name="email" type="text" size="50" maxlength="80" value="<?php echo $this->control->tpl['email']; ?>"></td>
 	<?php if ($this->control->tpl['nb_emailing']) { ?>
-	<td nowrap><?php echo $langs->trans("NbOfEMailingsReceived"); ?></td>
+	<td class="nowrap"><?php echo $langs->trans("NbOfEMailingsReceived"); ?></td>
 	<td><?php echo $this->control->tpl['nb_emailing']; ?></td>
 	<?php } else { ?>
 	<td colspan="2">&nbsp;</td>

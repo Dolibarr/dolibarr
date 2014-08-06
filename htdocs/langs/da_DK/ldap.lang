@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Password for domæne
 YouMustChangePassNextLogon=Adgangskode for <b>bruger %s</b> på det <b>domæne %s</b> skal ændres.
 UserMustChangePassNextLogon=Brugeren skal skifte adgangskode på domænet %s
@@ -34,15 +22,8 @@ LDAPFieldLastSubscriptionDate=Seneste abonnement dato
 LDAPFieldLastSubscriptionAmount=Seneste abonnement beløb
 SynchronizeDolibarr2Ldap=Synkronisering bruger (Dolibarr -> LDAP)
 UserSynchronized=Bruger synkroniseres
-ForceSynchronize=Force synkronisering Dolibarr -> LDAP
-ErrorFailedToReadLDAP=Kunne ikke læse LDAP database. Check LDAP modul opsætning og database tilgængelighed.
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
 GroupSynchronized=Gruppen synkroniseres
 MemberSynchronized=Medlem synkroniseres
 ContactSynchronized=Kontakt synkroniseres
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+ForceSynchronize=Force synkronisering Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Kunne ikke læse LDAP database. Check LDAP modul opsætning og database tilgængelighed.

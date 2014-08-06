@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - members
-CHARSET=UTF-8 
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Medlemsområde
 PublicMembersArea=Offentlig medlemsområde
 MemberCard=Medlemskort
@@ -9,38 +8,20 @@ Members=Medlemmer
 MemberAccount=Medlemskonto
 ShowMember=Bis medlemskort
 UserNotLinkedToMember=Brukeren er ikke knyttet til noe medlem
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
+MembersTickets=Medlemmer billetter
 FundationMembers=Stiftelsen medlemmer
+Attributs=Attributter
+ErrorMemberTypeNotDefined=Medlem type ikke definert
+ListOfPublicMembers=Liste over offentlige medlemmer
+ListOfValidatedPublicMembers=Liste over godkjente offentlige medlemmer
+ErrorThisMemberIsNotPublic=Dette medlem er ikke offentlig
 ErrorMemberIsAlreadyLinkedToThisThirdParty=Et annet medlem (navn: <b>%s,</b> innlogging: <b>%s)</b> er allerede koblet til en tredje part <b>%s.</b> Fjern denne linken først fordi en tredjepart ikke kan knyttes til bare ett medlem (og vice versa).
 ErrorUserPermissionAllowsToLinksToItselfOnly=Av sikkerhetsgrunner må du få tilgang til å redigere alle brukere skal kunne knytte et medlem til en bruker som ikke er ditt.
 ThisIsContentOfYourCard=Dette er detaljer på kortet
 CardContent=Innholdet av medlem-kortet
 SetLinkToUser=Link til en Dolibarr bruker
 SetLinkToThirdParty=Link til en Dolibarr tredjepart
-SubscriptionId=Abonnement id
-MemberId=Medlem id
-PaymentSubscription=Nye bidrag betaling
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-post emne for medlem autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-post for medlem autosubscription
-DescADHERENT_CARD_TYPE=Format på kortene siden
-DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på kort medlem (justere på høyre)
-DescADHERENT_MAILMAN_LISTS=Liste (er) for automatisk insription av nye medlemmer (separert med komma)
-NoThirdPartyAssociatedToMember=Ingen tredjepart knyttet til dette medlemmet
-ThirdPartyDolibarr=Dolibarr tredjepart
-MembersAndSubscriptions=Medlemmer og Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:27).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> nb_NO
-MembersTickets=Medlemmer billetter
-Attributs=Attributter
-ErrorMemberTypeNotDefined=Medlem type ikke definert
-ListOfPublicMembers=Liste over offentlige medlemmer
-ListOfValidatedPublicMembers=Liste over godkjente offentlige medlemmer
-ErrorThisMemberIsNotPublic=Dette medlem er ikke offentlig
 MembersCards=Medlemmer visittkort
 MembersList=Liste over medlemmer
 MembersListToValid=Liste over utkast medlemmer (å få den godkjent)
@@ -54,11 +35,14 @@ MenuMembersValidated=Validert medlemmer
 MenuMembersUpToDate=Opp til nå medlemmer
 MenuMembersNotUpToDate=Utdatert medlemmer
 MenuMembersResiliated=Resiliated medlemmer
+MembersWithSubscriptionToReceive=Medlemmer med abonnement for å motta
 DateAbonment=Abonnement dato
 DateSubscription=Abonnement dato
 DateNextSubscription=Neste abonnement
 DateEndSubscription=Abonnement sluttdato
 EndSubscription=Avslutt abonnement
+SubscriptionId=Abonnement id
+MemberId=Medlem id
 NewMember=Nytt medlem
 NewType=Nytt medlem type
 MemberType=Medlem type
@@ -87,13 +71,12 @@ MembersStatusNotPaidShort=Utdatert
 MembersStatusResiliated=Resiliated medlemmer
 MembersStatusResiliatedShort=Resiliated medlemmer
 NewCotisation=Nye bidrag
+PaymentSubscription=Nye bidrag betaling
 EditMember=Rediger medlem
 SubscriptionEndDate=Abonnementet sluttdato
-NewAttribute=Ny attributt
-AttributeCode=Attributt-kode
-OptionalFieldsSetup=Valgfrie felt oppsett
 MembersTypeSetup=Medlemmer type oppsett
 NewSubscription=Nytt abonnement
+NewSubscriptionDesc=Dette skjemaet kan du ta opp abonnementet som nytt medlem av stiftelsen. Hvis du ønsker å fornye abonnementet (hvis allerede er medlem), vennligst kontakt stiftelse styret i stedet ved e %s.
 Subscription=Abonnement
 Subscriptions=Abonnement
 SubscriptionLate=Late
@@ -127,13 +110,15 @@ ConfirmValidateMember=Er du sikker på at du vil godkjenne denne medlem?
 FollowingLinksArePublic=Følgende koblinger er åpne sider ikke beskyttet av noen Dolibarr tillatelse. De er ikke formatert sider, gitt som eksempel for å vise hvordan du listen medlemmer database.
 PublicMemberList=Offentlig medlemslisten
 BlankSubscriptionForm=Tegningsblanketten
+BlankSubscriptionFormDesc=Dolibarr kan gi deg en offentlig URL å la eksterne besøkende å be om å abonnere på fundamentet. Dersom en online betaling modul er aktivert, vil en betalingsformen også automatisk bli gitt.
+EnablePublicSubscriptionForm=Aktiver den offentlige auto-abonnement skjema
 MemberPublicLinks=Offentlig linker / sider
 ExportDataset_member_1=Medlemmer og abonnementer
+ImportDataset_member_1=Medlemmer
 LastMembers=Siste %s medlemmer
 LastMembersModified=Sist endret %s medlemmer
+LastSubscriptionsModified=Siste %s endret abonnement
 AttributeName=Attributtnavn
-FieldEdition=Felt utgave %s
-AlphaNumOnlyCharsAndNoSpace=Kun alphanumericals tegn uten mellomrom
 String=String
 Text=Tekst
 Int=Int
@@ -145,6 +130,10 @@ AddSubscription=Legg abonnement
 ShowSubscription=Vis abonnement
 MemberModifiedInDolibarr=Medlem endret i Dolibarr
 SendAnEMailToMember=Send informasjon epost til medlem
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-post emne for medlem autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=E-post for medlem autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=E-post emne for medlem validering
 DescADHERENT_MAIL_VALID=E-post for validering medlem
 DescADHERENT_MAIL_COTIS_SUBJECT=E-post emne for medlemskontingent
@@ -153,12 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=E-post emne for medlem resiliation
 DescADHERENT_MAIL_RESIL=E-post for medlem resiliation
 DescADHERENT_MAIL_FROM=Sender e-post for automatisk e-post
 DescADHERENT_ETIQUETTE_TYPE=Format med etiketter siden
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=Format på kortene siden
 DescADHERENT_CARD_HEADER_TEXT=Tekst trykt oppå medlem kort
 DescADHERENT_CARD_TEXT=Tekst trykt på kort medlem (align på venstre)
+DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på kort medlem (justere på høyre)
 DescADHERENT_CARD_FOOTER_TEXT=Tekst trykt på undersiden av medlem kort
+GlobalConfigUsedIfNotDefined=Tekst definert i Stiftelsen modul oppsett vil bli brukt hvis ikke definert her
+MayBeOverwrited=Denne teksten kan bli overwrited etter verdi definert for medlemmet typen
 ShowTypeCard=Vis type "%s"
 HTPasswordExport=htpassword fil generasjon
+NoThirdPartyAssociatedToMember=Ingen tredjepart knyttet til dette medlemmet
+ThirdPartyDolibarr=Dolibarr tredjepart
+MembersAndSubscriptions= Medlemmer og Subscriptions
 MoreActions=Komplementære tiltak på innspillingen
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Opprett en direkte transaksjon spille inn på konto
 MoreActionBankViaInvoice=Lag en faktura og betaling på konto
 MoreActionInvoiceOnly=Lag en faktura uten betaling
@@ -167,19 +165,6 @@ LinkToGeneratedPagesDesc=Dette skjermbildet kan du generere PDF-filer med visitt
 DocForAllMembersCards=Generer visittkort for alle medlemmer (Format for produksjon egentlig oppsett: <b>%s)</b>
 DocForOneMemberCards=Generer visittkort for et bestemt medlem (Format for produksjon egentlig oppsett: <b>%s)</b>
 DocForLabels=Generer adresse ark (Format for produksjon egentlig oppsett: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:18).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-MembersWithSubscriptionToReceive=Medlemmer med abonnement for å motta
-NewSubscriptionDesc=Dette skjemaet kan du ta opp abonnementet som nytt medlem av stiftelsen. Hvis du ønsker å fornye abonnementet (hvis allerede er medlem), vennligst kontakt stiftelse styret i stedet ved e %s.
-BlankSubscriptionFormDesc=Dolibarr kan gi deg en offentlig URL å la eksterne besøkende å be om å abonnere på fundamentet. Dersom en online betaling modul er aktivert, vil en betalingsformen også automatisk bli gitt.
-EnablePublicSubscriptionForm=Aktiver den offentlige auto-abonnement skjema
-ImportDataset_member_1=Medlemmer
-LastSubscriptionsModified=Siste %s endret abonnement
-GlobalConfigUsedIfNotDefined=Tekst definert i Stiftelsen modul oppsett vil bli brukt hvis ikke definert her
-MayBeOverwrited=Denne teksten kan bli overwrited etter verdi definert for medlemmet typen
 SubscriptionPayment=Abonnement betaling
 LastSubscriptionDate=Siste abonnement dato
 LastSubscriptionAmount=Siste tegningsbeløp
@@ -211,4 +196,9 @@ Collectivités=Organisasjoner
 Particuliers=Personlig
 Entreprises=Selskaper
 DOLIBARRFOUNDATION_PAYMENT_FORM=For å gjøre abonnementet innbetaling med en bankoverføring, se side <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Å betale med et kredittkort eller Paypal, klikk på knappen nederst på denne siden. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:08:40).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

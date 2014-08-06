@@ -1,13 +1,4 @@
-/*
- * Language code: pl_PL
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:07:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum / Wiki wsparcia
 EMailSupport=E-maile wsparcia
 RemoteControlSupport=Online w czasie rzeczywistym / zdalne wsparcie
@@ -33,4 +24,5 @@ BackToHelpCenter=W innym przypadku, kliknij tutaj, aby przejść <a href="%s">ws
 LinkToGoldMember=Możesz połączyć jedno z trenera wybranej przez Dolibarr dla danego języka ( %s), klikając jego Widget (status i maksymalną cenę są automatycznie uaktualniane):
 PossibleLanguages=Obsługiwane języki
 MakeADonation=Pomoc Dolibarr projektu, dokonać wpłaty
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

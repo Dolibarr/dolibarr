@@ -147,7 +147,7 @@ abstract class ModeleNumRefPropales
  *  Create a document onto disk according to template module.
  *
  * 	@param	    DoliDB		$db  			Database handler
- * 	@param	    Object		$object			Object proposal
+ * 	@param	    object		$object			Object proposal
  * 	@param	    string		$modele			Force model to use ('' to not force)
  * 	@param		Translate	$outputlangs	Object langs to use for output
  *  @param      int			$hidedetails    Hide details of lines

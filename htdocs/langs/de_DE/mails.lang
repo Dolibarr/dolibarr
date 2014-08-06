@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - mails
 Mailing=E-Mail
 EMailing=E-Mail-Kampagne
 Mailings=E-Mail-Kampagnen
@@ -51,6 +43,7 @@ MailingStatusSentCompletely=Vollständig gesendet
 MailingStatusError=Fehler beim Versand
 MailingStatusNotSent=Nicht gesendet
 MailSuccessfulySent=E-Mail-Kampagne erfolgreich versandt (von %s an %s)
+MailingSuccessfullyValidated=E-Mail erfolgreich überprüft
 MailUnsubcribe=Abmelden
 Unsuscribe=Abmelden
 MailingStatusNotContact=Nicht mehr kontaktieren
@@ -82,17 +75,24 @@ SentTo=Versandt an <b>%s</b>
 MailingStatusRead=Lesen
 CheckRead=Lesebestätigung
 YourMailUnsubcribeOK=Die E-Mail-Adresse <b>%s</b> ist korrekt aus der Mailing-Liste ausgetragen.
+MailtoEMail=Verknüpfung zu E-Mail
+ActivateCheckRead=Erlaube den Zugriff auf den "Abmelde"-Link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+EMailSentToNRecipients=E-Mail versandt an %s Empfänger.
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakte aller Partner (Kunden, Leads, Lieferanten, ...)
 MailingModuleDescDolibarrUsers=Alle Systembenutzer mit E-Mail-Adresse
 MailingModuleDescFundationMembers=Alle Stiftungsmitglieder mit E-Mail-Adresse
 MailingModuleDescEmailsFromFile=E-Mail-Adressen aus einer Text-Datei (Format: E-Mail, Vorname, Nachname)
+MailingModuleDescEmailsFromUser=E-Mail-Adressen aus Benutzereingabe (Format: E-Mail;Nachname;Vorname;weitere)
 MailingModuleDescContactsCategories=Partnerkontakte (nach Kategorie)
 MailingModuleDescDolibarrContractsLinesExpired=Partner mit abgelaufenen Vertragspositionen
 MailingModuleDescContactsByCompanyCategory=Kontakt über Partner (durch Kategorie)
+MailingModuleDescContactsByCategory=Kontakte / Adressen von Partnern nach Kategorie
 MailingModuleDescMembersCategories=Mitglieder der Stiftung (durch Kategorie)
 MailingModuleDescContactsByFunction=Kontakt über Partner (durch Position/Funktion)
+
 
 LineInFile=Zeile %s in der Datei
 RecipientSelectionModules=Definiert Empfängerauswahlen
@@ -106,10 +106,10 @@ SearchAMailing=Suche E-Mail Kampagne
 SendMailing=E-Mail Kampagne versenden
 SendMail=E-Mail versenden
 SentBy=Gesendet von
-MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mail Kampagnen von der Kommandozeile aus versandt werden. Bitten Sie Ihren Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
+MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mails von der Kommandozeile aus versandt werden. Bitten Sie Ihren Server Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
 MailingNeedCommand2=Sie können den Versand jedoch auch online starten, indem Sie den Parameter MAILING_LIMIT_SENDBYWEB auf den Wert der pro Sitzung gleichzeitig zu versendenden Mails setzen. Die entsprechenden Einstellungen finden Sie unter Übersicht-Einstellungen-Andere.
-ConfirmSendingEmailing=Möchten Sie diese E-Mail Kampagne wirklich versenden?<br>Aus Sicherheitsgründen ist der gleichzeitige Versand auf <b>%s</b> Empfänger pro Sitzung beschränkt.
-LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versand von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 TargetsReset=Liste leeren
 ToClearAllRecipientsClickHere=Klicken Sie hier, um die Empfängerliste zu leeren
 ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
@@ -117,6 +117,10 @@ NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
 IdRecord=Eintrag-ID
 DeliveryReceipt=Zustellbestätigung
 YouCanUseCommaSeparatorForSeveralRecipients=Trennen Sie mehrere Empfänger mit einem <b>Komma</b>
+# TagCheckMail=Track mail opening
+TagUnsubscribe=Abmelde Link
+TagSignature=Signatur des Absenders
+TagMailtoEmail=E-Mailadresses des Empfängers
 
 # Module Notifications
 Notifications=Benachrichtigungen

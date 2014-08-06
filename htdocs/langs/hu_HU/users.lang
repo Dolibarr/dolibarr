@@ -1,5 +1,4 @@
-# Dolibarr language file - hu_HU - users
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Felhasználó kártya
 ContactCard=Kapcsolat kártya
 GroupCard=Csoport kártya
@@ -44,6 +43,7 @@ ListOfUsers=Felhasználók listája
 Administrator=Adminisztrátor
 SuperAdministrator=Szuper Adminisztrátor
 SuperAdministratorDesc=Adminisztrátor minden joggal
+AdministratorDesc=Rendszergazda személy
 DefaultRights=Alapértelmezett engedélyek
 DefaultRightsDesc=Itt adhatja meg az <u>alapértelmezett</u> jogokat amiket az <u>új felhasználók</u> autómatikusan megkapnak (A meglévő felasználók engedélyeit a felhasználó kártyáján szerkesztheti).
 DolibarrUsers=Dolibarr felhasználók
@@ -90,8 +90,11 @@ CreateInternalUserDesc=Ez az űrlap lehetővé teszi, hogy a cége/alapítványa
 InternalExternalDesc=A <b>belső</b> felhasználó része a cégnek/alapítványnak.<br>A <b>külső</b> felhasználó lehet ügyfél, beszállító vagy bármi egyéb.<br><br>Minden esetben az engedélyek adják a jogokat, és a külső felasználók használhatnak más megjelenésü interfészt
 PermissionInheritedFromAGroup=Engedélyek megadva mert örökölte az egyik csoporttól.
 Inherited=Örökölve
+UserWillBeInternalUser=Létrehozta felhasználó lesz egy belső felhasználó (mivel nem kapcsolódik az adott harmadik fél)
+UserWillBeExternalUser=Létrehozott felhasználó lesz egy külső felhasználó (mivel kapcsolódnak az adott harmadik fél)
 IdPhoneCaller=Telfon hívó azonosító
 UserLogged=Felhasználó %s kapcsolva
+UserLogoff=Felhasználó %s logout
 NewUserCreated=Felhasználó %s létrehozva
 NewUserPassword=Jelszó megváltoztatása %s
 EventUserModified=Felhasználó %s módosítva
@@ -99,7 +102,7 @@ UserDisabled=Felhasználó %s kikapcsolva
 UserEnabled=Felhasználó %s aktiválva
 UserDeleted=Felhasználó %s eltávolítva
 NewGroupCreated=Csoport %s létrehozva
-GroupModified=Csoport %s módosítva
+GroupModified=Csoport sikeresen módosítva
 GroupDeleted=Csoport %s eltávolítva
 ConfirmCreateContact=Biztos szeretne Dolibarr fiókot létrehozni ehhez a kapcsolathoz?
 ConfirmCreateLogin=Biztos szeretne Dolibarr fiókot létrehozni ennek a tagnak?
@@ -108,18 +111,10 @@ LoginToCreate=Létrehozandó bejelentkezés
 NameToCreate=Létrehozandó harmadik fél neve
 YourRole=Szerepkörei
 YourQuotaOfUsersIsReached=Aktív felhasználói kvóta elérve!
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> hu_HU
-AdministratorDesc=Rendszergazda személy
-UserWillBeInternalUser=Létrehozta felhasználó lesz egy belső felhasználó (mivel nem kapcsolódik az adott harmadik fél)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:34:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-UserWillBeExternalUser=Létrehozott felhasználó lesz egy külső felhasználó (mivel kapcsolódnak az adott harmadik fél)
-UserLogoff=Felhasználó %s logout
 NbOfUsers=Nb felhasználók
 DontDowngradeSuperAdmin=Csak egy superadmin lehet downgrade 1 superadmin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:48).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

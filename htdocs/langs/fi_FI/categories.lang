@@ -1,20 +1,11 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Luokka
 Categories=Kategoriat
 Rubrique=Luokka
 Rubriques=Kategoriat
 categories=luokat
 TheCategorie=Luokka
+NoCategoryYet=Luokkaa ei tällaisen luonut
 In=Sisällä
 AddIn=Lisää
 modify=muuttaa
@@ -24,6 +15,8 @@ ProductsCategoriesArea=Tuotteet / Palvelut "luokkiin alue
 SuppliersCategoriesArea=Toimittajien luokkiin alue
 CustomersCategoriesArea=Asiakkaiden kategoriat alueella
 ThirdPartyCategoriesArea=Kolmansien osapuolten luokkiin alue
+MembersCategoriesArea=Jäsenet luokat alue
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Pääryhmään
 SubCats=Alaluokat
 CatStatistics=Tilastot
@@ -56,11 +49,16 @@ ProductIsInCategories=Tuotteen / palvelun omistaa seuraavien luokkien
 SupplierIsInCategories=Kolmas osapuoli omistaa seuraavien toimittajien tuoteryhmät
 CompanyIsInCustomersCategories=Tämä kolmas osapuoli omistaa seuraavien asiakkaat / näkymät tuoteryhmät
 CompanyIsInSuppliersCategories=Tämä kolmas osapuoli omistaa seuraavien toimittajien tuoteryhmät
+MemberIsInCategories=Tämä jäsen omistaa seuraaville jäsenille ryhmiin
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Tämä tuote / palvelu ei ole mitään luokkia
 SupplierHasNoCategory=Tämä toimittaja ei ole mitään luokkia
 CompanyHasNoCategory=Tämä yritys ei ole mitään luokkia
+MemberHasNoCategory=Tämä jäsen ei ole mitään luokkiin
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Luokitella luokkaan
 NoneCategory=Ei mitään
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Tämä luokka on jo olemassa samassa paikassa
 ReturnInProduct=Takaisin tuotteen / palvelun kortti
 ReturnInSupplier=Palaa toimittaja-kortti
@@ -77,38 +75,33 @@ NoCategoriesDefined=N: o luokkaan
 SuppliersCategoryShort=Tavarantoimittajat luokka
 CustomersCategoryShort=Asiakkaat luokka
 ProductsCategoryShort=Tuotteet luokka
+MembersCategoryShort=Jäsenet luokka
 SuppliersCategoriesShort=Tavarantoimittajat tuoteryhmät
 CustomersCategoriesShort=Asiakkaat tuoteryhmät
 CustomersProspectsCategoriesShort=Custo. / prosp. luokat
 ProductsCategoriesShort=Tuotteet Tuoteryhmät
+MembersCategoriesShort=Jäsenet luokat
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Tämä kategoria ei sisällä mitään tuotetta.
 ThisCategoryHasNoSupplier=Tämä kategoria ei sisällä mitään toimittaja.
 ThisCategoryHasNoCustomer=Tämä kategoria ei sisällä asiakkaalle.
+ThisCategoryHasNoMember=Tämä kategoria ei sisällä mitään jäsen.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Annetaan asiakkaalle
 AssignedToTheCustomer=Annetaan asiakkaan
 InternalCategory=Inernal luokka
 CategoryContents=Luokka sisältö
 CategId=Luokka id
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-NoCategoryYet=Luokkaa ei tällaisen luonut
 CatSupList=Luettelo toimittaja tuoteryhmät
 CatCusList=Luettelo asiakas / näköpiirissä tuoteryhmät
 CatProdList=Luettelo tuotteista tuoteryhmät
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-MembersCategoriesArea=Jäsenet luokat alue
-MemberIsInCategories=Tämä jäsen omistaa seuraaville jäsenille ryhmiin
-MemberHasNoCategory=Tämä jäsen ei ole mitään luokkiin
-MembersCategoryShort=Jäsenet luokka
-MembersCategoriesShort=Jäsenet luokat
-ThisCategoryHasNoMember=Tämä kategoria ei sisällä mitään jäsen.
 CatMemberList=Jäsenlista luokkien
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:27).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

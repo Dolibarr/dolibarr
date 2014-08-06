@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - exports
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Área exportación
 ImportArea=Área importación
 NewExport=Nueva exportación
@@ -60,9 +59,9 @@ TypeOfLineServiceOrProduct=Tipo de línea (0=producto, 1=servicio)
 FileWithDataToImport=Archivo que contiene los datos a importar
 FileToImport=Archivo origen a importar
 FileMustHaveOneOfFollowingFormat=El archivo de importación debe tener uno de los siguientes formatos
+DownloadEmptyExample=Descargar archivo de ejemplo vacío
 ChooseFormatOfFileToImport=Elija el formato de archivo que desea importar haciendo en la imagen %s para seleccionarlo...
 ChooseFileToImport=Elija el archivo de importación y haga clic en la imagen %s para seleccionarlo como archivo origen de importación...
-DownloadEmptyExample=Descargar archivo de ejemplo vacío
 SourceFileFormat=Formato del archivo origen
 FieldsInSourceFile=Campos en el archivo origen
 FieldsInTargetDatabase=Campos destino en la base de datos Dolibarr (*=obligatorio)
@@ -96,7 +95,7 @@ TooMuchErrors=Todavía hay <b>%s</b> líneas con error, pero su visualización h
 TooMuchWarnings=Todavía hay <b>%s</b> líneas con warnings, pero su visualización ha sido limitada.
 EmptyLine=Línea en blanco
 CorrectErrorBeforeRunningImport=Debe corregir todos los errores antes de iniciar la importación definitiva.
-FileWasImported=El archivo se ha importado con el número de importación <b>%s</b>. 
+FileWasImported=El archivo se ha importado con el número de importación <b>%s</b>.
 YouCanUseImportIdToFindRecord=Puede encontrar los registros de esta importación en su base de datos filtrando el campo <b>import_key='%s'</b>.
 NbOfLinesOK=Número de líneas sin errores ni warnings: <b>%s</b>.
 NbOfLinesImported=Número de líneas correctamente importadas: <b>%s</b>.
@@ -124,6 +123,10 @@ BankCode=Código banco
 DeskCode=Código oficina
 BankAccountNumber=Número cuenta
 BankAccountNumberKey=Dígito Control
+SpecialCode=Código especial
+ExportStringFilter=%% permite reemplazar uno o más caracteres en el texto
+ExportDateFilter='AAAA' 'AAAAMM' 'AAAAMMJJ': filtra por un año/mes/día<br>'AAAA+AAAA' 'AAAAMM+AAAAMM' 'AAAAMMJJ+AAAAMMJJ': filtra entre un rango de años/meses/días <br>'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ': filtra por los siguientes años/meses/días<br>'&lsaquo;AAAA' '&lsaquo;AAAAMM' '&lsaquo;AAAAMMJJ': filtra por los anteriores años/meses/días
+ExportNumericFilter='NNNNN' filtra por un valor<br>'NNNNN+NNNNN' filtra entre un rango de valores<br>'&lsaquo;NNNNN' filtra por valores inferiores<br>'&gt;NNNNN' filtra por valores superiores
 ## filters
 SelectFilterFields=Si quiere aplicar un filtro sobre algunos valores, introdúzcalos aquí.
 FilterableFields=Campos filtrables

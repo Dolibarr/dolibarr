@@ -1,21 +1,15 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=بطاقة مخزن
 Warehouse=مخزن
+Warehouses=المستودعات
 NewWarehouse=المستودع الجديد / بورصة المنطقة
+WarehouseEdit=تعديل مستودع
 MenuNewWarehouse=مستودع جديد
 WarehouseOpened=فتح مخزن
 WarehouseClosed=مخزن مغلق
 WarehouseSource=مصدر مخزن
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=الهدف مخزن
 ValidateSending=حذف ارسال
 CancelSending=الغاء ارسال
@@ -32,17 +26,22 @@ ListOfStockMovements=قائمة الحركات الأسهم
 StocksArea=مخزون المنطقة
 Location=عوضا عن
 LocationSummary=باختصار اسم الموقع
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=العدد الإجمالي للمنتجات
 LastMovement=الماضي حركة
 LastMovements=التحركات الأخيرة
 Units=الوحدات
 Unit=وحدة
 StockCorrection=تصحيح الأوراق المالية
+# StockTransfer=Stock transfer
 StockMovement=نقل
 StockMovements=تحويلات الأوراق المالية
+# LabelMovement=Movement label
 NumberOfUnit=عدد الوحدات
+# UnitPurchaseValue=Unit purchase price
 TotalStock=إجمالي المخزون
 StockTooLow=الاسهم منخفضة جدا
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=القيمة
 PMPValue=المتوسط المرجح لسعر
 PMPValueShort=الواب
@@ -52,11 +51,21 @@ QtyDispatched=ارسال كمية
 OrderDispatch=ارسال الأسهم
 RuleForStockManagementDecrease=قاعدة لإدارة المخزون النقصان
 RuleForStockManagementIncrease=قاعدة لإدارة المخزون وزيادة
+# DeStockOnBill=Decrease real stocks on customers invoices/credit notes validation
+# DeStockOnValidateOrder=Decrease real stocks on customers orders validation
+DeStockOnShipment=انخفاض الاسهم الحقيقي على شحنة المصادقة (مستحسن)
+# ReStockOnBill=Increase real stocks on suppliers invoices/credit notes validation
+# ReStockOnValidateOrder=Increase real stocks on suppliers orders approbation
+ReStockOnDispatchOrder=زيادة مخزونات دليل حقيقي على إيفاد في المستودعات ، وبعد تلقي أمر المورد
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=أمر لم يتم بعد أو لا أكثر من ذلك الوضع الذي يسمح بإرسال من المنتجات في مخازن المخزون.
+StockDiffPhysicTeoric=والسبب في الاختلاف المخزون المادي والنظرية
+NoPredefinedProductToDispatch=لا توجد منتجات محددة سلفا لهذا الكائن. لذلك لا إرسال في المخزون المطلوب.
+DispatchVerb=إيفاد
 StockLimitShort=الحد
 StockLimit=الأسهم للحد من التنبيهات
 PhysicalStock=المخزون المادي
 RealStock=الحقيقية للاسهم
-TheoreticalStock=Therocial الأسهم
 VirtualStock=الأسهم الافتراضية
 MininumStock=الحد الأدنى للرصيد
 StockUp=تخزين
@@ -68,28 +77,36 @@ LieuWareHouse=المكان مخزن
 WarehousesAndProducts=والمستودعات والمنتجات
 AverageUnitPricePMPShort=متوسط أسعار المدخلات
 AverageUnitPricePMP=متوسط أسعار المدخلات
+# SellPriceMin=Selling Unit Price
+# EstimatedStockValueSellShort=Value to sell
+# EstimatedStockValueSell=Value to Sell
 EstimatedStockValueShort=وتقدر قيمة المخزون
 EstimatedStockValue=وتقدر قيمة المخزون
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
-// Reference language: en_US
-DeStockOnShipment=انخفاض الاسهم الحقيقي على شحنة المصادقة (مستحسن)
-StockDiffPhysicTeoric=والسبب في الاختلاف المخزون المادي والنظرية
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:28:02).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-WarehouseEdit=تعديل مستودع
-ReStockOnDispatchOrder=زيادة مخزونات دليل حقيقي على إيفاد في المستودعات ، وبعد تلقي أمر المورد
-OrderStatusNotReadyToDispatch=أمر لم يتم بعد أو لا أكثر من ذلك الوضع الذي يسمح بإرسال من المنتجات في مخازن المخزون.
-NoPredefinedProductToDispatch=لا توجد منتجات محددة سلفا لهذا الكائن. لذلك لا إرسال في المخزون المطلوب.
-DispatchVerb=إيفاد
 DeleteAWarehouse=حذف مستودع
 ConfirmDeleteWarehouse=هل أنت متأكد أنك تريد حذف <b>%s</b> مستودع؟
 PersonalStock=%s طبيعة الشخصية
 ThisWarehouseIsPersonalStock=هذا يمثل مستودع للطبيعة الشخصية لل%s %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:59).
+# SelectWarehouseForStockDecrease=Choose warehouse to use for stock decrease
+# SelectWarehouseForStockIncrease=Choose warehouse to use for stock increase
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

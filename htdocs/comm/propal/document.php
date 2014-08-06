@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,38 +65,14 @@ $object->fetch($id,$ref);
 if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
+	$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 }
 
 /*
  * Actions
  */
 
-// Envoi fichier
-if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
-{
-	if ($object->id > 0)
-    {
-    	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-    	dol_add_file_process($upload_dir,0,1,'userfile');
-    }
-}
-
-// Delete
-if ($action == 'confirm_deletefile' && $confirm == 'yes')
-{
-	if ($object->id > 0)
-    {
-        $langs->load("other");
-
-        $upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-    	$file = $upload_dir . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
-    	$ret=dol_delete_file($file,0,0,0,$object);
-    	if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
-    	else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
-    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
-    	exit;
-    }
-}
 
 
 /*
@@ -133,7 +110,7 @@ if ($object->id > 0)
 
 	// Ref client
 	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
 	print '</td>';
 	print '</tr></table>';
@@ -153,26 +130,14 @@ if ($object->id > 0)
 
 	print '</div>';
 
-	/*
-	 * Confirmation suppression fichier
-	 */
-	if ($action == 'delete')
-	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-		if ($ret == 'html') print '<br>';
-	}
-
-	// Affiche formulaire upload
-	$formfile=new FormFile($db);
-	$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id,'',0,0,$user->rights->propal->creer,50,$object);
-
-
-	// List of document
-	$formfile->list_of_documents($filearray,$object,'propal');
+	$modulepart = 'propal';
+	$permission = $user->rights->propal->creer;
+	$param = '&id=' . $object->id;
+	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {
-	print $langs->trans("UnkownError");
+	print $langs->trans("ErrorUnknown");
 }
 
 llxFooter();

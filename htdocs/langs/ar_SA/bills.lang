@@ -1,20 +1,18 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=فاتورة
 Bills=فواتير
 BillsCustomers=العملاء والفواتير
+BillsCustomer=الزبون فاتورة
 BillsSuppliers=الموردين
+BillsCustomersUnpaid=غير المدفوعة للعملاء الفواتير
+BillsCustomersUnpaidForCompany=غير المدفوعة للعملاء فواتير ق ٪
+BillsSuppliersUnpaid=غير المدفوعة الموردين
+BillsSuppliersUnpaidForCompany=مورد غير المسددة لفواتير %s
+BillsUnpaid=غير المدفوعة
+BillsLate=في وقت متأخر المدفوعات
 BillsStatistics=العملاء والفواتير والإحصاءات
 BillsStatisticsSuppliers=الموردين إحصاءات
+DisabledBecauseNotErasable=تعطيل لأنه لا يمكن أن تمحى
 InvoiceStandard=فاتورة موحدة
 InvoiceStandardAsk=فاتورة موحدة
 InvoiceStandardDesc=هذا النوع من الفاتورة هي فاتورة عام.
@@ -24,14 +22,16 @@ InvoiceDepositDesc=هذا النوع من الفاتورة يتم فيه ايد�
 InvoiceProForma=Proforma الفاتورة
 InvoiceProFormaAsk=Proforma الفاتورة
 InvoiceProFormaDesc=<b>Proforma الفاتورة</b> هو صورة حقيقية فاتورة المحاسبة ولكن ليس له قيمة.
+InvoiceReplacement=استبدال الفاتورة
 InvoiceReplacementAsk=استبدال فاتورة الفاتورة
+InvoiceReplacementDesc=<b>استبدال الفاتورة</b> يستخدم لالغاء واستبدال تماما مع فاتورة الدفع لا تلقى بالفعل. <br><br> ملاحظة : ليس فقط من فاتورة الدفع على أنه يمكن الاستعاضة عنها. إن لم تكن مغلقة ، سيكون تلقائيا مغلقة 'المهجورة.
 InvoiceAvoir=علما الائتمان
 InvoiceAvoirAsk=علما الائتمان لتصحيح الفاتورة
+InvoiceAvoirDesc=<b>الفضل</b> في <b>المذكرة</b> سلبية الفاتورة تستخدم لحل كون فاتورة بمبلغ قد يختلف عن المبلغ المدفوع فعلا (لأنه دفع الكثير من العملاء عن طريق الخطأ ، أو لن تدفع بالكامل منذ عودته لبعض المنتجات على سبيل المثال).
 ReplaceInvoice=يستعاض عن فاتورة ٪ ق
 ReplacementInvoice=استبدال الفاتورة
 ReplacedByInvoice=بعبارة فاتورة ق ٪
 ReplacementByInvoice=استعيض عن الفاتورة
-CorrectInvoice=تصحيح الفاتورة ٪ ق
 CorrectInvoice=تصحيح الفاتورة ٪ ق
 CorrectionInvoice=تصحيح الفاتورة
 UsedByInvoice=وتستخدم لدفع فاتورة ق ٪
@@ -56,6 +56,7 @@ Payment=الدفع
 PaymentBack=دفع العودة
 Payments=المدفوعات
 PaymentsBack=عودة المدفوعات
+# PaidBack=Paid back
 DatePayment=تاريخ الدفع
 DeletePayment=حذف الدفع
 ConfirmDeletePayment=هل أنت متأكد من أنك تريد حذف هذا المبلغ؟
@@ -67,20 +68,26 @@ ReceivedCustomersPaymentsToValid=تلقى مدفوعات عملاء للمصاد
 PaymentsReportsForYear=تقارير المدفوعات للق ٪
 PaymentsReports=تقارير المدفوعات
 PaymentsAlreadyDone=المدفوعات قد فعلت
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=دفع الحكم
 PaymentMode=نوع الدفع
 PaymentConditions=مدة السداد
 PaymentConditionsShort=مدة السداد
 PaymentAmount=دفع مبلغ
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=دفع أعلى من دفع تذكرة
+HelpPaymentHigherThanReminderToPay= الاهتمام ، على دفع مبلغ واحد أو أكثر من فواتير أعلى من الراحة على الدفع. <br> تعديل الدخول ، تؤكد خلاف ذلك والتفكير في خلق الائتمان علما الزائدة وتلقى كل الفواتير الزائدة.
+ClassifyPaid=تصنيف 'مدفوع'
+ClassifyPaidPartially=تصنيف 'مدفوع جزئيا'
+ClassifyCanceled=تصنيف 'المهجورة'
 ClassifyClosed=تصنيف 'مغلقة'
 CreateBill=إنشاء الفاتورة
 AddBill=تضيف المذكرة الائتمان أو فاتورة
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=شطب فاتورة
 SearchACustomerInvoice=البحث عن زبون فاتورة
 SearchASupplierInvoice=البحث عن مورد فاتورة
 CancelBill=شطب فاتورة
-SendByMail=ترسل عن طريق البريد الإلكتروني
 SendRemindByMail=إرسال تذكرة عن طريق البريد الإلكتروني
 DoPayment=هل لدفع
 DoPaymentBack=هل لدفع الظهر
@@ -92,14 +99,25 @@ Amount=مبلغ
 PriceBase=سعر الأساس
 BillStatus=حالة الفاتورة
 BillStatusDraft=مشروع (لا بد من التحقق من صحة)
+BillStatusPaid=دفع
+BillStatusPaidBackOrConverted=يدفع أو تحويلها إلى الخصم
 BillStatusConverted=وتحول إلى خصم
+BillStatusCanceled=المهجورة
+BillStatusValidated=مصادق عليه (لا بد من دفعها)
 BillStatusStarted=بدأت
+BillStatusNotPaid=لم تدفع
+BillStatusClosedUnpaid=مغلقة (غير مدفوعة الأجر)
+BillStatusClosedPaidPartially=دفعت (جزئيا)
 BillShortStatusDraft=مسودة
+BillShortStatusPaid=دفع
 BillShortStatusPaidBackOrConverted=تجهيز
 BillShortStatusConverted=تجهيز
+BillShortStatusCanceled=المهجورة
 BillShortStatusValidated=صادق
 BillShortStatusStarted=بدأت
+BillShortStatusNotPaid=لم تدفع
 BillShortStatusClosedUnpaid=مغلقة
+BillShortStatusClosedPaidPartially=دفعت (جزئيا)
 PaymentStatusToValidShort=للمصادقة
 ErrorVATIntraNotConfigured=Intracommunautary رقم الضريبة على القيمة المضافة لم تحدد بعد
 ErrorNoPaiementModeConfigured=لا يعرف طريقة الدفع الافتراضية. الذهاب الى الفاتورة وحدة لتحديد هذا الإعداد.
@@ -115,7 +133,7 @@ BillTo=مشروع قانون ل
 ActionsOnBill=الإجراءات على فاتورة
 NewBill=فاتورة جديدة
 Prélèvements=من أجل الوقوف
-Prélèvements=أوامر دائمة
+Prélèvements=من أجل الوقوف
 LastBills=آخر الفواتير ق ٪
 LastCustomersBills=٪ ق الماضي فواتير العملاء
 LastSuppliersBills=٪ ق الماضي فواتير الموردين
@@ -124,16 +142,22 @@ OtherBills=غيرها من الفواتير
 DraftBills=مشروع الفواتير
 CustomersDraftInvoices=مشروع فواتير العملاء
 SuppliersDraftInvoices=مشروع فواتير الموردين
+Unpaid=غير المدفوعة
 ConfirmDeleteBill=هل أنت متأكد من أنك تريد حذف هذه الفاتورة؟
 ConfirmValidateBill=هل أنت متأكد أنك تريد التحقق من صحة هذه الفاتورة مع الإشارة <b>٪ ق؟</b>
+ConfirmUnvalidateBill=هل أنت متأكد أنك تريد تغيير <b>%s</b> فاتورة إلى وضع مشروع؟
 ConfirmClassifyPaidBill=هل أنت متأكد من أنك تريد تغيير فاتورة <b>٪ ق</b> لمركز paid؟
 ConfirmCancelBill=هل أنت متأكد من أنك تريد إلغاء الفاتورة <b>٪ ق؟</b>
+ConfirmCancelBillQuestion=لماذا تريدها لتصنيف هذه الفاتورة 'المهجورة؟
 ConfirmClassifyPaidPartially=هل أنت متأكد من أنك تريد تغيير فاتورة <b>٪ ق</b> لمركز paid؟
+ConfirmClassifyPaidPartiallyQuestion=هذه الفاتورة لم تدفع بالكامل. ما هي أسباب قريبة لك هذه الفاتورة؟
 ConfirmClassifyPaidPartiallyReasonAvoir=دفع ما تبقى <b>(٪ ق ٪)</b> هي الخصم الممنوح لدفع مبلغ من قبل. أنا مع تصحيح وضع ضريبة القيمة المضافة علما ائتمان.
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=دفع ما تبقى <b>(٪ ق ٪)</b> هي الخصم الممنوح لدفع مبلغ من قبل. إنني أقبل أن تفقد ضريبة القيمة المضافة على هذا الخصم.
 ConfirmClassifyPaidPartiallyReasonDiscountVat=دفع ما تبقى <b>(٪ ق ٪)</b> هي الخصم الممنوح لدفع مبلغ من قبل. أنا استرداد ضريبة القيمة المضافة على هذا الائتمان والخصم من دون ملاحظة.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=العملاء سيئة
 ConfirmClassifyPaidPartiallyReasonProductReturned=المنتجات عاد جزئيا
+ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=هذا الخيار ممكن إذا الفاتورة تم تزويد مناسبة. (مثال «فقط الضرائب المقابلة إلى أن الأسعار قد دفعت فعلا تعطي الحقوق لخصم»)
 ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=في بعض البلدان ، وهذا الخيار قد يكون ممكنا إلا إذا الفاتورة صحيحة وتتضمن المذكرة.
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=استخدام هذا الخيار إذا كان كل ما لا يتناسب مع
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=وهناك <b>سوء العميل</b> عميل التي ترفض سداد ديونه.
@@ -141,11 +165,14 @@ ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=ويستخدم هذا ال
 ConfirmClassifyPaidPartiallyReasonOtherDesc=استخدام هذا الخيار إذا كان كل ما لا يتناسب مع غيرها ، على سبيل المثال في الحالة التالية : <br> -- دفع ليست كاملة لأن بعض المنتجات شحنت العودة <br> -- أهم من المبلغ المطالب به لأن الخصم هو نسيان <br> في جميع الحالات ، والمبالغة في المبلغ المطالب به لا بد من تصحيحه في نظام المحاسبة عن طريق خلق الائتمان المذكرة.
 ConfirmClassifyAbandonReasonOther=أخرى
 ConfirmClassifyAbandonReasonOtherDesc=هذا الخيار وسوف يستخدم في جميع الحالات الأخرى. على سبيل المثال لأنك من خطة لإقامة استبدال الفاتورة.
+ConfirmCustomerPayment=هل تؤكد ذلك دفع مساهمات <b>٪</b> ٪ <b>ق</b> ق؟
+ConfirmValidatePayment=هل أنت متأكد أنك تريد التحقق من صحة هذا الدفع؟ لم يطرأ أي تغيير يمكن الدفع مرة واحدة على صحتها.
 ValidateBill=التحقق من صحة الفواتير
+UnvalidateBill=Unvalidate فاتورة
 NumberOfBills=ملاحظة : من الفواتير
-NumberOfBillsByMonthHT=ملاحظة : للفواتير الشهر (بعد خصم الضريبة)
+NumberOfBillsByMonth=ملحوظة من الفواتير من قبل شهر
 AmountOfBills=مبلغ الفواتير
-AmountOfBillsByMonth=مبلغ الفواتير كل شهر
+AmountOfBillsByMonthHT=كمية من الفواتير من قبل شهر (بعد خصم الضرائب)
 ShowSocialContribution=وتظهر مساهمة الاجتماعية
 ShowBill=وتظهر الفاتورة
 ShowInvoice=وتظهر الفاتورة
@@ -154,19 +181,24 @@ ShowInvoiceAvoir=وتظهر المذكرة الائتمان
 ShowInvoiceDeposit=وتبين أن تودع الفاتورة
 ShowPayment=وتظهر الدفع
 File=ملف
+AlreadyPaid=دفعت بالفعل
+# AlreadyPaidBack=Already paid back
+AlreadyPaidNoCreditNotesNoDeposits=دفعت بالفعل (بدون تلاحظ الائتمان والودائع)
 Abandoned=المهجورة
 RemainderToPay=تبقى على الدفع
 RemainderToTake=ما تبقى لاتخاذ
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=المبلغ المطالب به
 ExcessReceived=تلقى الزائدة
 EscompteOffered=عرض الخصم (الدفع قبل الأجل)
-CreateDraft=إنشاء مشروع
 SendBillRef=ارسال الفاتورة ٪ ق
 SendReminderBillRef=ارسال الفاتورة ٪ ق (تذكرة)
 StandingOrders=أوامر دائمة
 StandingOrder=من أجل الوقوف
 NoDraftBills=أي مشروع الفواتير
 NoOtherDraftBills=أي مشروع الفواتير
+# NoDraftInvoices=No draft invoices
 RefBill=فاتورة المرجع
 ToBill=على مشروع قانون
 RemainderToBill=تبقى لمشروع قانون
@@ -179,13 +211,16 @@ DateEcheance=الحد من الموعد المقرر
 DateInvoice=تاريخ الفاتورة
 NoInvoice=لا الفاتورة
 ClassifyBill=تصنيف الفاتورة
+NoSupplierBillsUnpaid=لا الفواتير غير المدفوعة للموردين
 SupplierBillsToPay=دفع فواتير الموردين
+CustomerBillsUnpaid=فواتير غير مدفوعة للعملاء
 DispenseMontantLettres=ليه factures rédigées قدم المساواة طرائق mécanographiques sont l' arrêté dispensées دي én lettres
-DispenseMontantLettres=المكتوب من خلال فواتير mecanographic إجراءات الاستغناء حسب الترتيب رسائل
+DispenseMontantLettres=ليه factures rédigées قدم المساواة طرائق mécanographiques sont l' arrêté dispensées دي én lettres
 NonPercuRecuperable=غير القابلة للاسترداد
 SetConditions=تحدد شروط الدفع
 SetMode=حدد طريقة الدفع
-SetDate=في الموعد المحدد
+SetDate= في الموعد المحدد
+# SelectDate=Select a date
 Billed=فواتير
 RepeatableInvoice=محددة مسبقا فاتورة
 RepeatableInvoices=محددة مسبقا والفواتير
@@ -205,7 +240,14 @@ Reductions=التخفيضات
 ReductionsShort=Reduc.
 Discount=الخصم
 Discounts=خصومات
+AddDiscount=إضافة الخصم
+AddRelativeDiscount=خلق خصم قريب
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=إضافة الخصم
+EditGlobalDiscounts=تعديل الخصومات مطلق
+AddCreditNote=علما خلق الائتمان
 ShowDiscount=وتظهر الخصم
+# ShowReduc=Show the deduction
 RelativeDiscount=الخصم النسبي
 GlobalDiscount=خصم العالمية
 CreditNote=علما الائتمان
@@ -220,12 +262,11 @@ NewGlobalDiscount=تحديد خصم جديد
 NewRelativeDiscount=خصم جديد النسبية
 NoteReason=ملاحظة / السبب
 ReasonDiscount=السبب
-AddDiscount=إضافة الخصم
-AddGlobalDiscount=إضافة الخصم
 DiscountOfferedBy=التي تمنحها
 DiscountStillRemaining=خصم لا يزالون
 DiscountAlreadyCounted=بالفعل خصم أحصى
 BillAddress=مشروع قانون معالجة
+HelpEscompte=هذا الخصم هو الخصم الممنوح للعميل لأن الدفع قبل البعيد.
 HelpAbandonBadCustomer=هذا المبلغ قد تم التخلي عنها (وذكر أن العملاء سيئة العملاء) ، ويعتبر أحد exceptionnal فضفاضة.
 HelpAbandonOther=هذا المبلغ قد تم التخلي عنها لأنها كانت خطأ (خطأ أو فاتورة العميل أي بعبارة أخرى على سبيل المثال)
 IdSocialContribution=المساهمة الاجتماعية معرف
@@ -235,9 +276,11 @@ InvoiceRef=المرجع الفاتورة.
 InvoiceDateCreation=فاتورة تاريخ الإنشاء
 InvoiceStatus=حالة الفاتورة
 InvoiceNote=علما الفاتورة
+InvoicePaid=دفعت الفاتورة
 PaymentNumber=دفع عدد
 RemoveDiscount=إزالة الخصم
 WatermarkOnDraftBill=مشاريع مائية على فواتير (إذا كانت فارغة لا شيء)
+InvoiceNotChecked=لا فاتورة مختارة
 CloneInvoice=استنساخ الفاتورة
 ConfirmCloneInvoice=هل أنت متأكد من استنساخ هذه الفاتورة <b>٪ ق؟</b>
 DisabledBecauseReplacedInvoice=العمل والمعوقين بسبب الفاتورة قد استبدل
@@ -248,6 +291,10 @@ ConfirmSplitDiscount=هل أنت متأكد من أن هذا الانقسام خ
 TypeAmountOfEachNewDiscount=مقدار مساهمة كل من جزأين :
 TotalOfTwoDiscountMustEqualsOriginal=مجموعه جديدتين الخصم يجب أن تكون مساوية للخصم المبلغ الأصلي.
 ConfirmRemoveDiscount=هل أنت متأكد من أنك تريد إزالة هذا الخصم؟
+RelatedBill=الفاتورة ذات الصلة
+RelatedBills=الفواتير ذات الصلة
+
+# PaymentConditions
 PaymentConditionShortRECEP=فورا
 PaymentConditionRECEP=فورا
 PaymentConditionShort30D=30 يوما
@@ -258,6 +305,16 @@ PaymentConditionShort60D=60 يوما
 PaymentCondition60D=60 يوما
 PaymentConditionShort60DENDMONTH=60 يوما من نهاية الشهر
 PaymentCondition60DENDMONTH=60 يوما من نهاية الشهر
+PaymentConditionShortPT_DELIVERY=تسليم
+PaymentConditionPT_DELIVERY=التسليم
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=الودائع المصرفية
 PaymentTypeShortVIR=الودائع المصرفية
 PaymentTypePRE=البنك بغية
@@ -306,6 +363,7 @@ LawApplicationPart2=البضاعة تظل ملكا لل
 LawApplicationPart3=البائع إلى حين استكمال صرف
 LawApplicationPart4=ثمنها.
 LimitedLiabilityCompanyCapital=SARL برأس مال
+# UseLine=Apply
 UseDiscount=استخدام الخصم
 UseCredit=استخدام القروض
 UseCreditNoteInInvoicePayment=تخفيض المبلغ لدفع هذه القروض
@@ -319,79 +377,9 @@ ChequeDeposits=الشيكات الودائع
 Cheques=الشيكات
 CreditNoteConvertedIntoDiscount=هذه المذكرة الائتمان أو إيداع فاتورة تم تحويلها إلى ٪ ق
 UsBillingContactAsIncoiveRecipientIfExist=فواتير العملاء استخدام عنوان الاتصال بدلا من التصدي لطرف ثالث كما المتلقية للفواتير
-PaymentInvoiceRef=دفع فاتورة ٪ ق
-Of=دو
-PDFBerniqueDescription=نموذج فاتورة Bernique
-PDFBigorneauDescription=نموذج فاتورة Bigorneau
-PDFBulotDescription=نموذج فاتورة Bulot
-PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة كاملة (دعم الخيار الضريبة على القيمة المضافة ، والخصومات ، وشروط الدفع ، والشعار ، الخ..)
-PDFHuitreDescription=نموذج فاتورة Huitre
-PDFOursinDescription=نموذج فاتورة oursin
-PDFTourteauDescription=نموذج فاتورة Tourteau
-TerreNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm القياسية للفواتير وnnnn - ٪ syymm للائتمان ويلاحظ فيها السنة هي السنة ، هو شهر ملم وnnnn هو كسر التسلسل وليس هناك عودة لل0
-TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
-OrionNumRefModelDesc1=في ظل عودة عدد FAYYNNNNN حيث الشكل ص ص هي سنة وNNNNN العلاوة بدءا من العدد (1).
-OrionNumRefModelDesc2=هذا العام بنسبة 1 الى initialisation دون الصفر في بداية السنة المالية.
-OrionNumRefModelDesc3=تحديد المتغير SOCIETE_FISCAL_MONTH_START مع الشهر في بداية السنة المالية ، على سبيل المثال : في 9 ايلول / سبتمبر.
-OrionNumRefModelDesc4=في هذا المثال ، يتعين علينا على 1st من سبتمبر 2006 فاتورة FA700354 اسمه.
-TitanNumRefModelDesc1=مع عودة عدد FAYYNNNNN حيث الشكل ص ص هي سنة وNNNNN هو زيادة عدد ابتداء من 1.
-TitanNumRefModelDesc2=يزداد هذا العام من قبل (1) ، وزيادة هذا العدد إلى الصفر تتم تهيئة في بداية السنة المالية.
-TitanNumRefModelDesc3=تحديد المتغير SOCIETE_FISCAL_MONTH_START مع الشهر في بداية السنة المالية ، على سبيل المثال : في 9 ايلول / سبتمبر.
-TitanNumRefModelDesc4=في هذا المثال ، يتعين علينا على 1st سبتمبر 2006 فاتورة اسمه FA0700001
-PlutonNumRefModelDesc1=العودة للتخصيص رقم الفاتورة وفقا لتعريف قناع.
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-BillsCustomersUnpaid=غير المدفوعة للعملاء الفواتير
-BillsCustomersUnpaidForCompany=غير المدفوعة للعملاء فواتير ق ٪
-BillsSuppliersUnpaid=غير المدفوعة الموردين
-BillsUnpaid=غير المدفوعة
-InvoiceReplacementDesc=<b>استبدال الفاتورة</b> يستخدم لالغاء واستبدال تماما مع فاتورة الدفع لا تلقى بالفعل. <br><br> ملاحظة : ليس فقط من فاتورة الدفع على أنه يمكن الاستعاضة عنها. إن لم تكن مغلقة ، سيكون تلقائيا مغلقة 'المهجورة.
-InvoiceAvoirDesc=<b>الفضل</b> في <b>المذكرة</b> سلبية الفاتورة تستخدم لحل كون فاتورة بمبلغ قد يختلف عن المبلغ المدفوع فعلا (لأنه دفع الكثير من العملاء عن طريق الخطأ ، أو لن تدفع بالكامل منذ عودته لبعض المنتجات على سبيل المثال).
-HelpPaymentHigherThanReminderToPay=الاهتمام ، على دفع مبلغ واحد أو أكثر من فواتير أعلى من الراحة على الدفع. <br> تعديل الدخول ، تؤكد خلاف ذلك والتفكير في خلق الائتمان علما الزائدة وتلقى كل الفواتير الزائدة.
-ClassifyPaid=تصنيف 'مدفوع'
-ClassifyPaidPartially=تصنيف 'مدفوع جزئيا'
-BillStatusPaid=دفع
-BillStatusPaidBackOrConverted=يدفع أو تحويلها إلى الخصم
-BillStatusValidated=مصادق عليه (لا بد من دفعها)
-BillStatusNotPaid=لم تدفع
-BillStatusClosedUnpaid=مغلقة (غير مدفوعة الأجر)
-BillStatusClosedPaidPartially=دفعت (جزئيا)
-BillShortStatusPaid=دفع
-BillShortStatusNotPaid=لم تدفع
-BillShortStatusClosedPaidPartially=دفعت (جزئيا)
-ConfirmCancelBillQuestion=لماذا تريدها لتصنيف هذه الفاتورة 'المهجورة؟
-ConfirmClassifyPaidPartiallyQuestion=هذه الفاتورة لم تدفع بالكامل. ما هي أسباب قريبة لك هذه الفاتورة؟
-ConfirmClassifyPaidPartiallyReasonOther=التخلي عن المبلغ لسبب آخر
-AlreadyPaid=دفعت بالفعل
-NoSupplierBillsUnpaid=لا الفواتير غير المدفوعة للموردين
-CustomerBillsUnpaid=فواتير غير مدفوعة للعملاء
-InvoicePaid=دفعت الفاتورة
+ShowUnpaidAll=وتظهر جميع الفواتير غير المسددة
 ShowUnpaidLateOnly=وتبين في وقت متأخر من الفواتير غير المدفوعة فقط
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
-// Reference language: en_US
-ClassifyCanceled=تصنيف 'المهجورة'
-BillStatusCanceled=المهجورة
-BillShortStatusCanceled=المهجورة
-Unpaid=غير المدفوعة
-ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=هذا الخيار ممكن إذا الفاتورة تم تزويد مناسبة. (مثال «فقط الضرائب المقابلة إلى أن الأسعار قد دفعت فعلا تعطي الحقوق لخصم»)
-ConfirmCustomerPayment=هل تؤكد ذلك دفع مساهمات <b>٪</b> ٪ <b>ق</b> ق؟
-ConfirmValidatePayment=هل أنت متأكد أنك تريد التحقق من صحة هذا الدفع؟ لم يطرأ أي تغيير يمكن الدفع مرة واحدة على صحتها.
-HelpEscompte=هذا الخصم هو الخصم الممنوح للعميل لأن الدفع قبل البعيد.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-AlreadyPaidNoCreditNotesNoDeposits=دفعت بالفعل (بدون تلاحظ الائتمان والودائع)
-RelatedBill=الفاتورة ذات الصلة
-RelatedBills=الفواتير ذات الصلة
+PaymentInvoiceRef=دفع فاتورة ٪ ق
 ValidateInvoice=تحقق من صحة الفواتير
 Cash=نقد
 Reported=تأخر
@@ -399,6 +387,15 @@ DisabledBecausePayments=غير ممكن لأن هناك بعض المدفوعا�
 CantRemovePaymentWithOneInvoicePaid=تصنيف لا يمكن إزالة الدفع لأنه ليس هناك على الأقل على الفاتورة سيولي
 ExpectedToPay=من المتوقع الدفع
 PayedByThisPayment=سيولي هذا الدفع
+ClosePaidInvoicesAutomatically=تصنيف &quot;سيولي&quot; كل معيار أو الفواتير استبدال سيولي entirely.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=كل فاتورة مع عدم وجود لا تزال لدفع ستغلق تلقائيا إلى &quot;فياض&quot; الوضع.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=ممثل العميل متابعة فاتورة
 TypeContact_facture_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_facture_external_SHIPPING=العملاء الشحن الاتصال
@@ -407,32 +404,12 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=ممثل المورد متا�
 TypeContact_invoice_supplier_external_BILLING=المورد فاتورة الاتصال
 TypeContact_invoice_supplier_external_SHIPPING=المورد الشحن الاتصال
 TypeContact_invoice_supplier_external_SERVICE=المورد خدمة الاتصال
-PDFLinceDescription=نموذج الفاتورة كاملة مع الطاقة المتجددة الاسبانية وIRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:33).
+# crabe PDF Model
+PDFCrabeDescription=نموذج فاتورة Crabe. نموذج الفاتورة كاملة (دعم الخيار الضريبة على القيمة المضافة ، والخصومات ، وشروط الدفع ، والشعار ، الخ..)
+# oursin PDF Model
+PDFOursinDescription=نموذج فاتورة oursin
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ar_AR
-InvoiceReplacement=استبدال الفاتورة
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:36).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-BillsCustomer=الزبون فاتورة
-BillsSuppliersUnpaidForCompany=مورد غير المسددة لفواتير %s
-BillsLate=في وقت متأخر المدفوعات
-DisabledBecauseNotErasable=تعطيل لأنه لا يمكن أن تمحى
-ConfirmUnvalidateBill=هل أنت متأكد أنك تريد تغيير <b>%s</b> فاتورة إلى وضع مشروع؟
-UnvalidateBill=Unvalidate فاتورة
-NumberOfBillsByMonth=ملحوظة من الفواتير من قبل شهر
-AmountOfBillsByMonthHT=كمية من الفواتير من قبل شهر (بعد خصم الضرائب)
-AddRelativeDiscount=خلق خصم قريب
-EditRelativelDiscount=تحرير relatvie الخصم
-EditGlobalDiscounts=تعديل الخصومات مطلق
-AddCreditNote=علما خلق الائتمان
-InvoiceNotChecked=لا فاتورة مختارة
-ShowUnpaidAll=وتظهر جميع الفواتير غير المسددة
-ClosePaidInvoicesAutomatically=تصنيف &quot;سيولي&quot; كل معيار أو الفواتير استبدال سيولي entirely.
-AllCompletelyPayedInvoiceWillBeClosed=كل فاتورة مع عدم وجود لا تزال لدفع ستغلق تلقائيا إلى &quot;فياض&quot; الوضع.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:17).
+TerreNumRefModelError=وهناك مشروع قانون بدءا من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.

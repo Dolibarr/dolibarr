@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 ErrorCompanyNameAlreadyExists=Firmenname %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorPrefixAlreadyExists=Präfix %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorSetACountryFirst=Wählen sie zuerst das Land
@@ -301,7 +300,7 @@ ProfId1NL=KVK nummer
 ProfId2NL=-
 ProfId3NL=-
 ProfId4NL=-
-ProfId1AR=Prof Id 1 (CUIT / Cuil)
+ProfId1AR=Prof Id 1 (CUIL)
 ProfId2AR=Prof Id 2 (Revenu Bestien)
 ProfId3AR=-
 ProfId4AR=-

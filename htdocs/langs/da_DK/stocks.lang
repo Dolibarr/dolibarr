@@ -1,23 +1,15 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Warehouse kortet
 Warehouse=Warehouse
+Warehouses=Lager
 NewWarehouse=Nyt oplag / Stock område
+WarehouseEdit=Rediger lager
 MenuNewWarehouse=Ny lagerhal
 WarehouseOpened=Warehouse åbnet
 WarehouseClosed=Warehouse lukket
 WarehouseSource=Kilde lagerhal
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Målret lager
 ValidateSending=Slet afsendelse
 CancelSending=Annuller afsendelse
@@ -34,19 +26,25 @@ ListOfStockMovements=Liste over lagerbevægelserne
 StocksArea=Lagre område
 Location=Lieu
 LocationSummary=Kortnavn placering
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Samlet antal produkter
 LastMovement=Seneste bevægelighed
 LastMovements=Seneste bevægelser
 Units=Enheder
 Unit=Enhed
 StockCorrection=Korrekt lager
+# StockTransfer=Stock transfer
 StockMovement=Transfer
 StockMovements=Stock overførsler
+# LabelMovement=Movement label
 NumberOfUnit=Antal enheder
+# UnitPurchaseValue=Unit purchase price
 TotalStock=I alt på lager
 StockTooLow=Stock for lavt
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Værdi
 PMPValue=Værdi
+PMPValueShort=WAP
 EnhancedValueOfWarehouses=Lager værdi
 UserWarehouseAutoCreate=Opret en bestand automatisk, når du opretter en bruger
 QtyDispatched=Afsendte mængde
@@ -55,13 +53,19 @@ RuleForStockManagementDecrease=Reglen for lagerstyring fald
 RuleForStockManagementIncrease=Reglen for lagerstyring stigning
 DeStockOnBill=Fraførsel reelle bestande på fakturaer / kreditnotaer
 DeStockOnValidateOrder=Fraførsel reelle bestande om ordrer noter
+DeStockOnShipment=Formindsk reelle bestande om overførsel validering
 ReStockOnBill=Forhøjelse reelle bestande på fakturaer / kreditnotaer
 ReStockOnValidateOrder=Forhøjelse reelle bestande om ordrer noter
+ReStockOnDispatchOrder=Øge den reelle bestande på manuel ekspedition i pakhuse, efter at leverandøren ordremodtagelse
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Ordren er endnu ikke eller ikke mere en status, der tillader forsendelse af varer på lager lagre.
+StockDiffPhysicTeoric=Årsag til forskel bestand fysisk og teoretisk
+NoPredefinedProductToDispatch=Ingen foruddefinerede produkter for dette objekt. Så ingen ekspedition på lager er påkrævet.
+DispatchVerb=Forsendelse
 StockLimitShort=Limit
 StockLimit=Stock grænse for indberetninger
 PhysicalStock=Fysiske lager
 RealStock=Real Stock
-TheoreticalStock=Therocial lager
 VirtualStock=Virtual lager
 MininumStock=Minimumslager
 StockUp=Stock op
@@ -71,41 +75,38 @@ IdWarehouse=Id lager
 DescWareHouse=Beskrivelse lager
 LieuWareHouse=Lokalisering lager
 WarehousesAndProducts=Lager og produkter
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-PMPValueShort=WAP
 AverageUnitPricePMPShort=Gennemsnitlig input pris
 AverageUnitPricePMP=Gennemsnitlig input pris
+SellPriceMin=Salgsenhed Pris
+EstimatedStockValueSellShort=Value at sælge
+EstimatedStockValueSell=Værdi til Sælg
 EstimatedStockValueShort=Anslåede værdi af materiel
 EstimatedStockValue=Anslåede værdi af materiel
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-WarehouseEdit=Rediger lager
-DeStockOnShipment=Formindsk reelle bestande om overførsel validering
-ReStockOnDispatchOrder=Øge den reelle bestande på manuel ekspedition i pakhuse, efter at leverandøren ordremodtagelse
-OrderStatusNotReadyToDispatch=Ordren er endnu ikke eller ikke mere en status, der tillader forsendelse af varer på lager lagre.
-StockDiffPhysicTeoric=Årsag til forskel bestand fysisk og teoretisk
-NoPredefinedProductToDispatch=Ingen foruddefinerede produkter for dette objekt. Så ingen ekspedition på lager er påkrævet.
-DispatchVerb=Forsendelse
 DeleteAWarehouse=Slet et lager
 ConfirmDeleteWarehouse=Er du sikker på du vil slette lageret <b>%s?</b>
 PersonalStock=Personligt lager %s
 ThisWarehouseIsPersonalStock=Denne lagerhal er personlig status over %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:46).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-SellPriceMin=Salgsenhed Pris
-EstimatedStockValueSellShort=Value at sælge
-EstimatedStockValueSell=Værdi til Sælg
 SelectWarehouseForStockDecrease=Vælg lageret skal bruges til lager fald
 SelectWarehouseForStockIncrease=Vælg lageret skal bruges til lager stigning
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:41).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

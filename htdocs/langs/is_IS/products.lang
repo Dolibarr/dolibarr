@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
 ProductRef=Vara dómari.
 ProductLabel=Merkimiða vöru
 ProductServiceCard=Vörur / Þjónusta kort
@@ -53,12 +44,19 @@ Stock=Stock
 Stocks=Verðbréf
 Movement=Hreyfing
 Movements=Hreyfing
+Sell=Velta
+Buy=Innkaup
 OnSell=Laus
+OnBuy=Keypt
 NotOnSell=Úrelt
 ProductStatusOnSell=Laus
 ProductStatusNotOnSell=Úrelt
 ProductStatusOnSellShort=Laus
 ProductStatusNotOnSellShort=Úrelt
+ProductStatusOnBuy=Laus
+ProductStatusNotOnBuy=Úrelt
+ProductStatusOnBuyShort=Laus
+ProductStatusNotOnBuyShort=Úrelt
 UpdatePrice=Uppfæra verð
 AppliedPricesFrom=Applied verð
 SellingPrice=Söluverð
@@ -78,6 +76,7 @@ ContractStatusToRun=A mettre en þjónusta
 ContractNotRunning=Þessi samningur er ekki í gangi
 ErrorProductAlreadyExists=Vara með% tilvísun s er þegar til.
 ErrorProductBadRefOrLabel=Wrong gildi fyrir tilvísun eða merki.
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=Birgjar
 SupplierRef=Birgir dómari.
 ShowProduct=Sýna vörur
@@ -92,14 +91,12 @@ AddToOtherBills=Bæta við aðrir víxlar
 CorrectStock=Rétt lager
 AddPhoto=Bættu mynd
 ListOfStockMovements=Listi yfir hreyfingar lager
-NoPhotoYet=Engar myndir enn í boði
 BuyingPrice=Kaupverð
 SupplierCard=Birgir kort
 CommercialCard=Auglýsing kort
 AllWays=Slóð að finna vöruna til á lager
 NoCat=vara er ekki í neinum flokki
 PrimaryWay=Primary slóð
-DeleteFromCat=Fjarlægja úr flokknum
 PriceRemoved=Verð fjarri
 BarCode=Strikamerki
 BarcodeType=Strikamerki tegund
@@ -114,6 +111,9 @@ MultiPriceLevelsName=Verð flokkar
 AssociatedProductsAbility=Virkja sub-vörur
 AssociatedProducts=Sub-vörur
 AssociatedProductsNumber=Fjöldi vara að semja þessa vöru
+ParentProductsNumber=Fjöldi vara foreldra
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Félagi
 Translation=Þýðing
 KeywordFilter=Leitarorð sía
@@ -123,6 +123,7 @@ AddDel=Bæta við / Eyða
 Quantity=Magn
 NoMatchFound=Engin samsvörun fannst
 ProductAssociationList=Listi yfir tengdum vörum / þjónustu: nafn á vöru / þjónustu (magn áhrifum)
+ProductParentList=Listi yfir vörur og þjónustu með þessa vöru sem hluti
 ErrorAssociationIsFatherOfThis=Einn af völdum vöru er foreldri með núverandi vöru
 DeleteProduct=Eyða vöru / þjónustu
 ConfirmDeleteProduct=Ertu viss um að þú viljir eyða þessari vöru / þjónustu?
@@ -131,6 +132,8 @@ DeletePicture=Eyða mynd
 ConfirmDeletePicture=Ertu viss um að þú viljir eyða þessari mynd?
 ExportDataset_produit_1=Vörur
 ExportDataset_service_1=Þjónusta
+ImportDataset_produit_1=Vörur
+ImportDataset_service_1=Þjónusta
 DeleteProductLine=Eyða vöru línu
 ConfirmDeleteProductLine=Ertu viss um að þú viljir eyða þessari vöru línu?
 NoProductMatching=Engin vara / þjónusta passa forsendum þínum
@@ -139,16 +142,19 @@ NoStockForThisProduct=Engar birgðir fyrir þessa vöru
 NoStock=Nei lager
 Restock=Restock
 ProductSpecial=Special
-QtyMin=Magn lágmarki
+# QtyMin=Minimum Qty
 PriceQty=Verð fyrir það magn
-PriceQtyMin=Verð magn mín.
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=No price / Magn skilgreind fyrir þessa birgja / vara
 NoSupplierPriceDefinedForThisProduct=Nei birgir price / Magn skilgreind fyrir þessa vöru
 RecordedProducts=Vörur á skrá
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Vörur / Þjónusta skráð
 GenerateThumb=Mynda þumalfingur
 ProductCanvasAbility=Nota "striga" addons
-ServiceNb=Þjónusta # %s 
+ServiceNb=Þjónusta # %s
 ListProductServiceByPopularity=Listi yfir vörur / þjónustu eftir vinsældum
 ListProductByPopularity=Listi yfir vöru vinsældir
 ListServiceByPopularity=Listi yfir þjónustu við vinsældir
@@ -158,32 +164,43 @@ CloneProduct=Klóna vöru eða þjónustu
 ConfirmCloneProduct=Ertu viss um að þú viljir klón vöru eða <b>þjónustu %s ?</b>
 CloneContentProduct=Klóna allar helstu upplýsingar um vöru / þjónustu
 ClonePricesProduct=Klóna helstu upplýsingar og verð
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=Þessi vara er notuð
 NewRefForClone=Tilv. nýrra vara / þjónusta
 CustomerPrices=Viðskiptavinir verð
 SuppliersPrices=Birgjar verð
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> is_IS
-Sell=Velta
-Buy=Innkaup
-OnBuy=Keypt
-ProductStatusOnBuy=Laus
-ProductStatusNotOnBuy=Úrelt
-ProductStatusOnBuyShort=Laus
-ProductStatusNotOnBuyShort=Úrelt
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:13).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-ParentProductsNumber=Fjöldi vara foreldra
-ProductParentList=Listi yfir vörur og þjónustu með þessa vöru sem hluti
-ImportDataset_produit_1=Vörur
-ImportDataset_service_1=Þjónusta
 CustomCode=Tollareglna
 CountryOrigin=Uppruni land
 HiddenIntoCombo=Falinn í að velja lista
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:49).
+Nature=Náttúra
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Magn
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

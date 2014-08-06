@@ -1,18 +1,9 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=منتدى / الدعم ويكي
 EMailSupport=رسائل البريد الإلكتروني لدعم
 RemoteControlSupport=الانترنت في الوقت الحقيقي / النائية الدعم
 OtherSupport=الدعم الأخرى
+ToSeeListOfAvailableRessources=للاتصال / انظر الموارد المتاحة :
 ClickHere=اضغط هنا
 HelpCenter=مركز المساعدة
 DolibarrHelpCenter=Dolibarr مركز المساعدة والدعم
@@ -33,11 +24,5 @@ BackToHelpCenter=Otherwise, click here to go <a href=بخلاف ذلك ، انق
 LinkToGoldMember=تستطيع الاتصال به من قبل المدرب مختار مسبقا لغتك Dolibarr (٪) عن طريق النقر فوق القطعة له (والحد الاعلى لسعر يتم تحديثها تلقائيا) :
 PossibleLanguages=وأيد لغات
 MakeADonation=مساعدة Dolibarr المشروع ، تقديم تبرع
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-ToSeeListOfAvailableRessources=للاتصال / انظر الموارد المتاحة :
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

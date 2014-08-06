@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2010	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012  Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,8 +126,6 @@ print '</table>';
 dol_fiche_end();
 
 print "<br>";
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

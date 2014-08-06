@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Lieferung
 Deliveries=Lieferungen
 DeliveryCard=Lieferkarte
@@ -31,11 +23,3 @@ GoodStatusDeclaration=Wir haben die oben genannten Waren in einwandfreiem Zustan
 Deliverer=Lieferant:
 Sender=Absender
 Recipient=Empfänger
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:03:27).
-// Reference language: en_US -> de_DE
-DeleteDeliveryReceipt=Löschen Lieferschein
-DeleteDeliveryReceiptConfirm=Sind Sie sicher, Sie wollen Lieferschein <b>%s</b> löschen?
-DeliveryNotValidated=Lieferung nicht validiert
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:05:19).

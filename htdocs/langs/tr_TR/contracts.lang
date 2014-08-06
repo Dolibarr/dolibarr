@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - contracts
-CHARSET=UTF-8
 ContractsArea=Sözleşmeler alanı
 ListOfContracts=Sözleşme Listesi
 LastContracts=Değiştirilen son %s sözleşme
@@ -86,9 +85,10 @@ PaymentRenewContractId=Sözleşme satırını yenile (sayı %s)
 ExpiredSince=Süre bitiş tarihi
 RelatedContracts=İlgili sözleşmeler
 NoExpiredServices=Süresi dolmamış etkin hizmetler
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpire=List of Services to expire
-# Service=Service
+ListOfServicesToExpireWithDuration=%s günde süresi dolacak Hizmetler Listesi
+ListOfServicesToExpireWithDurationNeg=%s günden fazla günde süresi dolacak Hizmetler Listesi
+ListOfServicesToExpire=Süresi dolacak hizmetler listesi
+NoteListOfYourExpiredServices=Bu liste yalnızca satış temsilcisi olarak bağlı olduğunuz üçüncü partilere ait hizmet sözleşmelerini içerir.
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sözleşme imzalalayacak satış temsilcisi

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,27 +83,27 @@ else if (preg_match('/del_(.*)/',$action,$reg))
 else if ($action == 'MAIN_SESSION_TIMEOUT')
 {
     if (! dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 else if ($action == 'MAIN_UPLOAD_DOC')
 {
     if (! dolibarr_set_const($db, 'MAIN_UPLOAD_DOC',$_POST["MAIN_UPLOAD_DOC"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 else if ($action == 'MAIN_UMASK')
 {
     if (! dolibarr_set_const($db, "MAIN_UMASK", $_POST["MAIN_UMASK"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 else if ($action == 'MAIN_ANTIVIRUS_COMMAND')
 {
     if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", $_POST["MAIN_ANTIVIRUS_COMMAND"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 else if ($action == 'MAIN_ANTIVIRUS_PARAM')
 {
     if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
-    else $mesg=$langs->trans("RecordModifiedSuccessfully");
+    else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
 // Delete file
@@ -326,7 +327,7 @@ dol_fiche_end();
 // Form to test upload
 print '<br>';
 $formfile=new FormFile($db);
-$formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestFileUploadForm"), 0, 0, 1);
+$formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestFileUploadForm"), 0, 0, 1, 50, '', '', 1, '', 0);
 
 // List of document
 $filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);

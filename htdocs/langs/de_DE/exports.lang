@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Exportübersicht
 ImportArea=Importübersicht
 NewExport=Neuer Export
@@ -38,7 +30,7 @@ FieldsTitle=Feldtitel
 FieldOrder=Feldreihenfolge
 FieldTitle=Feldbezeichnung
 ChooseExportFormat=Wählen Sie das Exportformat
-NowClickToGenerateToBuildExportFile=Wählen Sie das Exportformat aus dem Auswahlfeld und klicken Sie auf "Erstellen" um die Datei zu generieren... 
+NowClickToGenerateToBuildExportFile=Wählen Sie das Exportformat aus dem Auswahlfeld und klicken Sie auf "Erstellen" um die Datei zu generieren...
 AvailableFormats=Verfügbare Formate
 LibraryShort=Bibliothek
 LibraryUsed=Verwendete Bibliothek
@@ -66,13 +58,13 @@ LineTotalVAT=Steuerbetrag der Zeile
 TypeOfLineServiceOrProduct=Art der Zeile (0=Produkt, 1=Service)
 FileWithDataToImport=Datei mit zu importierenden Daten
 FileToImport=Quelldatei für Import
-FileMustHaveOneOfFollowingFormat=Die Importdatei muss in einem der folgenden Formate vorliegen 
+FileMustHaveOneOfFollowingFormat=Die Importdatei muss in einem der folgenden Formate vorliegen
 DownloadEmptyExample=Leere Beispiel-Quelldatei herunterladen
 ChooseFormatOfFileToImport=Wählen Sie das Format der Importdatei durch einen Klick auf das %s Symbol...
 ChooseFileToImport=Wählen Sie zu importierende Datei und klicken Sie anschließend auf das %s Symbol...
 SourceFileFormat=Quelldateiformat
 FieldsInSourceFile=Felder in der Quelldatei
-FieldsInTargetDatabase=Zielfelder in der Systemdatenbank (* erforderlich)
+FieldsInTargetDatabase=Zielfelder in der Systemdatenbank (fett=erforderlich)
 Field=Feld
 NoFields=Keine Felder
 MoveField=Bewege Feld Spaltennummer %s
@@ -119,5 +111,20 @@ SourceExample=Beispiel möglicher Datenwerte
 ExampleAnyRefFoundIntoElement=Ein Referenz für das Element <b>%s</b> gefunden
 ExampleAnyCodeOrIdFoundIntoDictionnary=Ein Code (oder eine ID) wurde im Dictionnary <b>%s</b> gefunden
 CSVFormatDesc=<b>Comma Separated Value</b> Format (.csv). <br> Dies ist ein Textdatei-Format, bei dem einzelne Spalten durch ein Trennzeichen [ %s ] getrennt sind. Wird innerhalb eines Feldes das Trennzeichen gefunden, wird der Wert des entsprechenden Feldes über ein Rundungszeichen [ %s ] gerundet. Das Escape-Zeichen für die Rundung ist [ %s ].
-
-
+Excel95FormatDesc=<b>Excel</b> Dateiformat (.xls)<br>Dies ist das Excel 95 Format (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> Dateiformat (.xlsx)<br>Dies ist das Excel 2007 Format (XML).
+TsvFormatDesc=<b>Tabulator getrennte Werte</b> Dateiformat (.tsv)<br>Dies ist ein Textdatei-Format. Felder werden mit einem Tabulator [tab] getrennt.
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+CsvOptions=CSV Optionen
+Separator=Trennzeichen
+Enclosure=Beilage
+SuppliersProducts=Lieferanten Artikel
+BankCode=Bankleitzahl
+DeskCode=Desk-Code
+BankAccountNumber=Kontonummer
+BankAccountNumberKey=Schlüssel
+## filters
+SelectFilterFields=Wenn Sie nach bestimmten Werten filtern wollen, geben Sie diese Werte hier ein.
+FilterableFields=Filterbare Felder
+FilteredFields=Gefilterte Felder
+FilteredFieldsValues=Filter Wert

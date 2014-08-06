@@ -1,25 +1,45 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=Sikkerhedskode
 Calendar=Kalender
 AddTrip=Tilføj tur
 Tools=Værktøj
+ToolsDesc=Dette område er dedikeret til gruppen diverse værktøjer ikke er tilgængelige til andre menupunkter. <br><br> Disse værktøjer kan nås fra menuen på siden.
 Birthday=Fødselsdag
 BirthdayDate=Fødselsdag
 DateToBirth=Dato for fødsel
+BirthdayAlertOn= fødselsdag alarm aktive
+BirthdayAlertOff= fødselsdag alarm inaktive
 Notify_FICHINTER_VALIDATE=Valider intervention
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Valider regningen
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
+Notify_ORDER_SUPPLIER_APPROVE=Leverandør for godkendt
+Notify_ORDER_SUPPLIER_REFUSE=Leverandør For nægtes
+Notify_ORDER_VALIDATE=Kundeordre valideret
+Notify_PROPAL_VALIDATE=Kunde forslag valideret
+Notify_WITHDRAW_TRANSMIT=Transmission tilbagetrækning
+Notify_WITHDRAW_CREDIT=Credit tilbagetrækning
+Notify_WITHDRAW_EMIT=Isue tilbagetrækning
+Notify_ORDER_SENTBYMAIL=Kundens ordre sendes med posten
+Notify_COMPANY_CREATE=Tredjeparts oprettet
+Notify_PROPAL_SENTBYMAIL=Kommercielle forslaget, som sendes med posten
+Notify_ORDER_SENTBYMAIL=Kundens ordre sendes med posten
+Notify_BILL_PAYED=Kundens faktura betales
+Notify_BILL_CANCEL=Kundefaktura aflyst
+Notify_BILL_SENTBYMAIL=Kundens faktura sendes med posten
+Notify_ORDER_SUPPLIER_VALIDATE=Leverandør valideret orden
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverandør orden sendt med posten
+Notify_BILL_SUPPLIER_VALIDATE=Leverandør faktura valideret
+Notify_BILL_SUPPLIER_PAYED=Leverandør faktura betales
+Notify_BILL_SUPPLIER_SENTBYMAIL=Leverandør faktura tilsendt med posten
+Notify_CONTRACT_VALIDATE=Kontrakt valideret
+Notify_FICHEINTER_VALIDATE=Intervention valideret
+Notify_SHIPPING_VALIDATE=Forsendelse valideret
+Notify_SHIPPING_SENTBYMAIL=Shipping sendes med posten
+Notify_MEMBER_VALIDATE=Medlem valideret
+Notify_MEMBER_SUBSCRIPTION=Medlem abonnerer
+Notify_MEMBER_RESILIATE=Medlem resiliated
+Notify_MEMBER_DELETE=Medlem slettet
 NbOfAttachedFiles=Antal vedhæftede filer / dokumenter
 TotalSizeOfAttachedFiles=Samlede størrelse på vedhæftede filer / dokumenter
 MaxSize=Maksimumstørrelse
@@ -27,7 +47,21 @@ AttachANewFile=Vedhæfte en ny fil / dokument
 LinkedObject=Forbundet objekt
 Miscellaneous=Miscellaneous
 NbOfActiveNotifications=Antal anmeldelser
+PredefinedMailTest=Dette er en test mail. \\ NDen to linjer er adskilt af et linjeskift.
+PredefinedMailTestHtml=Dette er en <b>test</b> mail (ordet test skal være i fed). <br> De to linjer er adskilt af et linjeskift.
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Du vil her finde fakturaen __FACREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Vi vil gerne advare dig om, at fakturaen __FACREF__ synes ikke betales. Så dette er den faktura i vedhæftningen igen, som en påmindelse. \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Du vil her finde den kommercielle propoal __PROPREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Du vil her finde den rækkefølge __ORDERREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Du vil her finde vores ordre __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Du vil her finde fakturaen __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Du vil her finde shipping __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Du vil her finde interventionen __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n
+DemoDesc=Dolibarr er et kompakt ERP / CRM sammensat af flere funktionelle moduler. En demo, som omfatter alle moduler ikke betyder noget, da dette aldrig sker. Så flere demo profiler der er tilgængelige.
 ChooseYourDemoProfil=Vælg den demo profil, der passer til din virksomhed ...
+DemoFundation=Administrer medlemmer af en fond
+DemoFundation2=Administrer medlemmer og bankkonto i en fond
+DemoCompanyServiceOnly=Administrer en freelance virksomhed sælger service kun
 DemoCompanyShopWithCashDesk=Administrer en butik med et kontant desk
 DemoCompanyProductAndStocks=Administrer en lille eller mellemstor virksomhed, der sælger produkter
 DemoCompanyAll=Administrer en lille eller mellemstor virksomhed med flere aktiviteter (alle de vigtigste moduler)
@@ -46,25 +80,53 @@ FeatureDevelopment=Udvikling funktion. Ikke er stabil i denne version
 FeaturesSupported=Funktioner, der understøttes
 Width=Bredde
 Height=Højde
-Weight=Vægt
 Depth=Dybde
+Top=Top
+Bottom=Bund
+Left=Venstre
+Right=Højre
+CalculatedWeight=Beregnet vægt
+CalculatedVolume=Beregnet mængde
+Weight=Vægt
 TotalWeight=Totalvægt
 WeightUnitton=tons
 WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
+WeightUnitpound=pund
+Length=Længde
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Område
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+# SurfaceUnitfoot2=ft2
+# SurfaceUnitinch2=in2
 Volume=Bind
 TotalVolume=Samlet volumen
 VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+# VolumeUnitfoot3=ft3
+# VolumeUnitinch3=in3
+VolumeUnitounce=unse
+VolumeUnitlitre=liter
+VolumeUnitgallon=gallon
 Size=størrelse
 SizeUnitm=m
 SizeUnitdm=dm
 SizeUnitcm=cm
 SizeUnitmm=mm
+SizeUnitinch=tomme
+SizeUnitfoot=mund
+# SizeUnitpoint=point
 BugTracker=Bug tracker
+SendNewPasswordDesc=Denne form giver dig mulighed for at anmode om en ny adgangskode. Det vil blive sendt til din email-adresse. <br> Ændring vil kun være effektiv, når de har klikket på bekræftelse linket i denne e-mail. <br> Tjek din e-mail reader software.
 BackToLoginPage=Tilbage til login-siden
 AuthenticationDoesNotAllowSendNewPassword=Authentication mode <b>er %s.</b> <br> I denne tilstand, Dolibarr ikke kan vide eller ændre din adgangskode. <br> Kontakt din systemadministrator, hvis du ønsker at ændre din adgangskode.
 EnableGDLibraryDesc=Installere eller aktivere GD bibliotek med din PHP til brug af denne mulighed.
@@ -76,17 +138,51 @@ StatsByNumberOfEntities=Statistik i antallet af enheder
 NumberOfProposals=Række forslag på de sidste 12 måneder
 NumberOfCustomerOrders=Antal kunde ordrer på sidste 12 måneders
 NumberOfCustomerInvoices=Antal kunde fakturaer på sidste 12 måneders
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Antal leverandør fakturaer på sidste 12 måneders
+NumberOfUnitsProposals=Antal enheder på forslag om sidste 12 måneder
 NumberOfUnitsCustomerOrders=Antallet af enheder på kundens ordrer om sidste 12 måneders
 NumberOfUnitsCustomerInvoices=Antallet af enheder på kundens fakturaer på sidste 12 måneders
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Antallet af enheder på leverandør fakturaer på sidste 12 måneders
+EMailTextInterventionValidated=Intervention %s valideret
+EMailTextInvoiceValidated=Faktura %s valideret
+EMailTextProposalValidated=Forslaget %s er blevet valideret.
+EMailTextOrderValidated=Ordren %s er blevet valideret.
 EMailTextOrderApproved=Bestil %s godkendt
 EMailTextOrderApprovedBy=Bestil %s er godkendt af %s
 EMailTextOrderRefused=Bestil %s nægtet
 EMailTextOrderRefusedBy=Bestil %s afvises af %s
-LoginWebcal=Log ind for Webcalendar
-ErrorWebcalLoginNotDefined=Den Webcalendar login forbundet til din Dolibarr <b>login %s</b> er ikke defineret.
-ErrorPhenixLoginNotDefined=Den Phenix login forbundet til din Dolibarr <b>login %s</b> er ikke defineret.
+# EMailTextExpeditionValidated=The shipping %s has been validated.
+ImportedWithSet=Indførsel datasæt
+DolibarrNotification=Automatisk anmeldelse
+ResizeDesc=Indtast nye bredde <b>OR</b> ny højde. Ratio vil blive holdt i resizing ...
+NewLength=Ny bredde
+NewHeight=Ny højde
+NewSizeAfterCropping=Ny størrelse efter beskæring
+DefineNewAreaToPick=Definer et nyt område på billedet for at vælge (til venstre klik på billedet og derefter trække, indtil du når det modsatte hjørne)
+CurrentInformationOnImage=Informationer om aktuelle billede
+ImageEditor=Image editor
+YouReceiveMailBecauseOfNotification=Du modtager denne besked fordi din e-mail er blevet føjet til listen over mål, der skal informeres om bestemte begivenheder i %s software %s.
+YouReceiveMailBecauseOfNotification2=Denne begivenhed er følgende:
+ThisIsListOfModules=Dette er en liste over moduler, på forhånd har udvalgt denne demo profil (kun de mest almindelige moduler er synlige i denne demo). Redigere den for at have en mere personlig demo og klik på &quot;Start&quot;.
+ClickHere=Klik her
+UseAdvancedPerms=Brug den avancerede tilladelser af nogle moduler
+FileFormat=Filformat
+SelectAColor=Vælg en farve
+AddFiles=Tilføj filer
+StartUpload=Start upload
+CancelUpload=Annuller upload
+FileIsTooBig=Filer er for store
+PleaseBePatient=Vær tålmodig ...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
 AddCalendarEntry=Tilføj post i kalenderen %s
 NewCompanyToDolibarr=Company %s tilføjede i Dolibarr
 ContractValidatedInDolibarr=Kontrakt %s valideret i Dolibarr
@@ -105,6 +201,10 @@ MemberValidatedInDolibarr=Medlem %s valideret i Dolibarr
 MemberResiliatedInDolibarr=Medlem %s resiliated i Dolibarr
 MemberDeletedInDolibarr=Medlem %s slettet fra Dolibarr
 MemberSubscriptionAddedInDolibarr=Subscription for medlem %s indsættes i Dolibarr
+ShipmentValidatedInDolibarr=__CONTACTCIVNAME__ \n\n Forsendelse %s valideret i Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
+Export=Eksport
 ExportsArea=Eksport område
 AvailableFormats=Tilgængelige formater
 LibraryUsed=Librairy anvendes
@@ -113,130 +213,5 @@ ExportableDatas=Exportable oplysningerne
 NoExportableData=Nr. eksporteres data (ingen moduler med eksporteres data indlæses, eller manglende tilladelser)
 ToExport=Export
 NewExport=Nye eksportmarkeder
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-BirthdayAlertOn=fødselsdag alarm aktive
-BirthdayAlertOff=fødselsdag alarm inaktive
-Notify_ORDER_SUPPLIER_APPROVE=Leverandør for godkendt
-Notify_ORDER_SUPPLIER_REFUSE=Leverandør For nægtes
-DemoDesc=Dolibarr er et kompakt ERP / CRM sammensat af flere funktionelle moduler. En demo, som omfatter alle moduler ikke betyder noget, da dette aldrig sker. Så flere demo profiler der er tilgængelige.
-DemoCompanyServiceOnly=Administrer en freelance virksomhed sælger service kun
-SendNewPasswordDesc=Denne form giver dig mulighed for at anmode om en ny adgangskode. Det vil blive sendt til din email-adresse. <br> Ændring vil kun være effektiv, når de har klikket på bekræftelse linket i denne e-mail. <br> Tjek din e-mail reader software.
-EMailTextInterventionValidated=Intervention %s valideret
-EMailTextInvoiceValidated=Faktura %s valideret
-ImportedWithSet=Indførsel datasæt
-DolibarrNotification=Automatisk anmeldelse
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-DemoFundation=Administrer medlemmer af en fond
-DemoFundation2=Administrer medlemmer og bankkonto i en fond
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-Notify_ORDER_VALIDATE=Kundeordre valideret
-Notify_PROPAL_VALIDATE=Kunde forslag valideret
-PredefinedMailTest=Dette er en test mail. \ NDen to linjer er adskilt af et linjeskift.
-PredefinedMailTestHtml=Dette er en <b>test</b> mail (ordet test skal være i fed). <br> De to linjer er adskilt af et linjeskift.
-CalculatedWeight=Beregnet vægt
-CalculatedVolume=Beregnet mængde
-Length=Længde
-LengthUnitm=m
-LengthUnitdm=dm
-LengthUnitcm=cm
-LengthUnitmm=mm
-Surface=Område
-SurfaceUnitm2=m2
-SurfaceUnitdm2=dm2
-SurfaceUnitcm2=cm2
-SurfaceUnitmm2=mm2
-NumberOfUnitsProposals=Antal enheder på forslag om sidste 12 måneder
-EMailTextProposalValidated=Forslaget %s er blevet valideret.
-EMailTextOrderValidated=Ordren %s er blevet valideret.
-ResizeDesc=Indtast nye bredde <b>OR</b> ny højde. Ratio vil blive holdt i resizing ...
-NewLength=Ny bredde
-NewHeight=Ny højde
-NewSizeAfterCropping=Ny størrelse efter beskæring
-DefineNewAreaToPick=Definer et nyt område på billedet for at vælge (til venstre klik på billedet og derefter trække, indtil du når det modsatte hjørne)
-CurrentInformationOnImage=Informationer om aktuelle billede
-YouReceiveMailBecauseOfNotification=Du modtager denne besked fordi din e-mail er blevet føjet til listen over mål, der skal informeres om bestemte begivenheder i %s software %s.
-YouReceiveMailBecauseOfNotification2=Denne begivenhed er følgende:
+##### External sites #####
 ExternalSites=Eksterne sites
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:22:00).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> da_DA
-PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Du vil her finde vores ordre __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n
-WeightUnitpound=pund
-VolumeUnitounce=unse
-VolumeUnitlitre=liter
-VolumeUnitgallon=gallon
-SizeUnitinch=tomme
-SizeUnitfoot=mund
-ImageEditor=Image editor
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:50).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> da_DK
-ToolsDesc=Dette område er dedikeret til gruppen diverse værktøjer ikke er tilgængelige til andre menupunkter. <br><br> Disse værktøjer kan nås fra menuen på siden.
-Notify_WITHDRAW_TRANSMIT=Transmission tilbagetrækning
-Notify_WITHDRAW_CREDIT=Credit tilbagetrækning
-Notify_WITHDRAW_EMIT=Isue tilbagetrækning
-Notify_ORDER_SENTBYMAIL=Kundens ordre sendes med posten
-Notify_COMPANY_CREATE=Tredjeparts oprettet
-Notify_PROPAL_SENTBYMAIL=Kommercielle forslaget, som sendes med posten
-Notify_ORDER_SENTBYMAIL=Forsendelse pedido por e-mail
-Notify_BILL_PAYED=Kundens faktura betales
-Notify_BILL_CANCEL=Kundefaktura aflyst
-Notify_BILL_SENTBYMAIL=Kundens faktura sendes med posten
-Notify_ORDER_SUPPLIER_VALIDATE=Leverandør valideret orden
-Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverandør orden sendt med posten
-Notify_BILL_SUPPLIER_VALIDATE=Leverandør faktura valideret
-Notify_BILL_SUPPLIER_PAYED=Leverandør faktura betales
-Notify_BILL_SUPPLIER_SENTBYMAIL=Leverandør faktura tilsendt med posten
-Notify_CONTRACT_VALIDATE=Kontrakt valideret
-Notify_FICHEINTER_VALIDATE=Intervention valideret
-Notify_SHIPPING_VALIDATE=Forsendelse valideret
-Notify_SHIPPING_SENTBYMAIL=Shipping sendes med posten
-Notify_MEMBER_VALIDATE=Medlem valideret
-Notify_MEMBER_SUBSCRIPTION=Medlem abonnerer
-Notify_MEMBER_RESILIATE=Medlem resiliated
-Notify_MEMBER_DELETE=Medlem slettet
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Du vil her finde fakturaen __FACREF__ \n\n__PERSONALIZED__Sincerely \n\n
-PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Du vil her finde shipping __SHIPPINGREF__ \n\n__PERSONALIZED__Sincerely \n\n
-PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Du vil her finde interventionen __FICHINTERREF__ \n\n__PERSONALIZED__Sincerely \n\n
-Top=Top
-Bottom=Bund
-Left=Venstre
-Right=Højre
-ThisIsListOfModules=Dette er en liste over moduler, på forhånd har udvalgt denne demo profil (kun de mest almindelige moduler er synlige i denne demo). Redigere den for at have en mere personlig demo og klik på &quot;Start&quot;.
-ClickHere=Klik her
-UseAdvancedPerms=Brug den avancerede tilladelser af nogle moduler
-FileFormat=Filformat
-SelectAColor=Vælg en farve
-AddFiles=Tilføj filer
-StartUpload=Start upload
-CancelUpload=Annuller upload
-FileIsTooBig=Filer er for store
-Export=Eksport
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:54:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Du vil her finde fakturaen __FACREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Vi vil gerne advare dig om, at fakturaen __FACREF__ synes ikke betales. Så dette er den faktura i vedhæftningen igen, som en påmindelse. \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
-PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Du vil her finde den kommercielle propoal __PROPREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
-PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Du vil her finde den rækkefølge __ORDERREF__ \n\n__PERSONALIZED__ venlig hilsen \n\n__SIGNATURE__
-ShipmentValidatedInDolibarr=__CONTACTCIVNAME__ \n\n Forsendelse %s valideret i Dolibarr
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:21).

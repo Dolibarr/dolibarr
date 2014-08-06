@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-09 00:39:24
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-09 00:39:24).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - install
 InstallEasy=只需按照分步说明。
 MiscellaneousChecks=先决条件检查
 DolibarrWelcome=欢迎Dolibarr
@@ -17,6 +8,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=配置文件<b>%s</b>不存在，无�
 ConfFileCouldBeCreated=<b>%s的</b>配置文件可以被创建。
 ConfFileIsNotWritable=配置文件<b>%s</b>不是写。检查权限。对于第一次安装，您的Web服务器必须被授予能够进入这个文件写在配置过程中（“文件模式，例如666”在一个像Unix的操作系统）。
 ConfFileIsWritable=配置文件<b>%s</b>是可写的。
+ConfFileReload=重新载入配置文件的所有信息。
 PHPSupportSessions=这个PHP支持会议。
 PHPSupportPOSTGETOk=这个PHP支持的变量的POST和GET。
 PHPSupportPOSTGETKo=有可能你的PHP安装程序不支持变量POST和/或GET。检查你的php.ini中参数<b>的变数</b> 。
@@ -33,11 +25,14 @@ ErrorGoBackAndCorrectParameters=后退和纠正错误的参数。
 ErrorWrongValueForParameter=您可能输入一个参数的错误值%s'的。
 ErrorFailedToCreateDatabase=无法创建数据库'%s'的。
 ErrorFailedToConnectToDatabase=无法连接到数据库'%s'的。
+ErrorDatabaseVersionTooLow=数据库版本 (%s) 太低了，需要 %s 版或更高版本。
 ErrorPHPVersionTooLow=PHP的版本太旧。版本%s是必需的。
+WarningPHPVersionTooLow=PHP版本太旧。预计或以上版本%s。这个版本应该允许安装，但不支持。
 ErrorConnectedButDatabaseNotFound=连接到数据库服务器的成功，但'%s'不存在。
 ErrorDatabaseAlreadyExists=数据库'%s'已经存在。
 IfDatabaseNotExistsGoBackAndUncheckCreate=如果数据库不存在，请返回并检查选择“创建数据库”。
 IfDatabaseExistsGoBackAndCheckCreate=如果数据库已经存在，请返回并取消选中“创建数据库”选项。
+WarningBrowserTooOld=浏览器的版本太旧，您的浏览器需升级到最新版本，建议使用Firefox，Chrome或Opera浏览器。
 PHPVersion=PHP版本
 YouCanContinue=您可以继续...
 PleaseBePatient=请耐心等待...
@@ -57,6 +52,7 @@ ServerAddressDescription=名称或IP数据库服务器，通常填入'localhost'
 ServerPortDescription=数据库服务器端口。保持空如果不明。
 DatabaseServer=数据库服务器
 DatabaseName=数据库名称
+DatabasePrefix=数据库前缀表
 Login=注册
 AdminLogin=登录为Dolibarr数据库所有者。
 Password=密码
@@ -94,6 +90,7 @@ YouNeedToPersonalizeSetup=您需要配置Dolibarr以满足您的需求（外观�
 AdminLoginCreatedSuccessfuly=Dolibarr管理员登录<b>'%s'</b>的创建successfuly。
 GoToDolibarr=前往Dolibarr
 GoToSetupArea=前往Dolibarr（安装面积）
+MigrationNotFinished=您的数据库的版本是不完全最新的，所以你必须再次运行升级过程。
 GoToUpgradePage=转到页再次升级
 Examples=范例
 WithNoSlashAtTheEnd=没有斜杠“/”在年底
@@ -138,11 +135,13 @@ RemoveItManuallyAndPressF5ToContinue=手动删除它，然后按F5键继续。
 KeepDefaultValuesWamp=您使用从DoliWamp Dolibarr安装向导，所以这里建议值已经进行了优化。他们唯一的变化，如果你知道你做什么。
 KeepDefaultValuesDeb=您使用从Ubuntu或者Debian软件包的Dolibarr安装向导，所以这里建议值已经进行了优化。只有数据库的所有者创建的密码必须完成。其他参数的变化，如果你只知道你做什么。
 KeepDefaultValuesMamp=您使用从DoliMamp Dolibarr安装向导，所以这里建议值已经进行了优化。他们唯一的变化，如果你知道你做什么。
+KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导，因此，这里提出的价值已经优化。改变他们，只有当你知道你做什么。
 FieldRenamed=场更名
 IfLoginDoesNotExistsCheckCreateUser=如果登录不存在，但你必须检查选项“创建用户”
 ErrorConnection=服务器<b>“%s”，</b>数据库名称<b>“%s”，</b>并登录<b>“%的</b> ”，或数据库密码可能是错误或PHP的客户端版本可能太旧版本相比，数据库。
 InstallChoiceRecommanded=推荐选择<b>你</b>的安装版本<b>%%s</b>从当前版本
 InstallChoiceSuggested=<b>选择安装所建议的安装程序</b> 。
+MigrateIsDoneStepByStep=目标版本（%s）有好几个版本的差距，因此，安装向导会回来一次将完成这一个建议未来的迁移。
 CheckThatDatabasenameIsCorrect=检查数据库名称<b>“%s”</b>是正确的。
 IfAlreadyExistsCheckOption=如果此名称是正确的，该数据库尚不存在，你必须检查选项“创建数据库”。
 OpenBaseDir=PHP的openbasedir参数
@@ -152,6 +151,14 @@ NextStepMightLastALongTime=当前步骤可能会持续几分钟。请等待下�
 MigrationCustomerOrderShipping=客户订单出货迁移存储
 MigrationShippingDelivery=升级存储航运
 MigrationShippingDelivery2=升级存储航运2
+MigrationFinished=迁移完成
+LastStepDesc=<strong>最后一步</strong> ：此处定义的登录名和密码，您打算使用连接到软件。不松，因为它是帐户管理所有其他。
+ActivateModule=激活模块%s
+ShowEditTechnicalParameters=点击此处显示/编辑高级参数（专家模式）
+
+#########
+# upgrade
+#########
 MigrationFixData=修正了非规范化数据
 MigrationOrder=数据迁移的客户的订单
 MigrationSupplierOrder=数据迁移对供应商的订单
@@ -197,30 +204,6 @@ MigrationDeliveryAddress=在货物的配送地址更新
 MigrationProjectTaskActors=数据llx_projet_task_actors迁移表
 MigrationProjectUserResp=数据迁移llx_projet领域fk_user_resp到llx_element_contact
 MigrationProjectTaskTime=更新时间花费在几秒钟内
-// STOP - Lines generated via autotranslator.php tool (2010-06-09 00:39:24).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> zh_CN
-MigrationNotFinished=您的数据库的版本是不完全最新的，所以你必须再次运行升级过程。
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:24:09).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> zh_CN
-MigrateIsDoneStepByStep=目标版本（%s）有好几个版本的差距，因此，安装向导会回来一次将完成这一个建议未来的迁移。
-MigrationFinished=迁移完成
-LastStepDesc=<strong>最后一步</strong> ：此处定义的登录名和密码，您打算使用连接到软件。不松，因为它是帐户管理所有其他。
 MigrationActioncommElement=在行动上的更新数据
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:35:24).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-ConfFileReload=重新载入配置文件的所有信息。
-WarningPHPVersionTooLow=PHP版本太旧。预计或以上版本%s。这个版本应该允许安装，但不支持。
-DatabasePrefix=数据库前缀表
-KeepDefaultValuesProxmox=您使用Proxmox的虚拟设备的Dolibarr安装向导，因此，这里提出的价值已经优化。改变他们，只有当你知道你做什么。
-ActivateModule=激活模块%s
 MigrationPaymentMode=付款方式的数据迁移
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:27).
+MigrationCategorieAssociation=迁移类别

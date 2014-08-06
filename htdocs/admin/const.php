@@ -2,6 +2,7 @@
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,10 +42,6 @@ $consts=GETPOST('const');
 $constname=GETPOST('constname','alpha');
 $constvalue=GETPOST('constvalue');
 $constnote=GETPOST('constnote','alpha');
-$consttype=(GETPOST('consttype','alpha')?GETPOST('consttype','alpha'):'chaine');
-
-$typeconst=array('yesno' => 'yesno', 'texte' => 'texte', 'chaine' => 'chaine');
-$mesg='';
 
 
 
@@ -52,26 +49,30 @@ $mesg='';
  * Actions
  */
 
-if ($action == 'add')
+if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 {
 	$error=0;
 
 	if (empty($constname))
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")),'errors');
 		$error++;
 	}
 	if ($constvalue == '')
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")),'errors');
 		$error++;
 	}
 
 	if (! $error)
 	{
-		if (dolibarr_set_const($db, $constname, $constvalue, $typeconst[$consttype], 1, $constnote, $entity) >= 0)
+		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0)
 		{
 			setEventMessage($langs->trans("RecordSaved"));
+			$action="";
+			$constname="";
+			$constvalue="";
+			$constnote="";
 		}
 		else
 		{
@@ -143,6 +144,8 @@ if ($action == 'delete')
  * View
  */
 
+$form = new Form($db);
+
 llxHeader('',$langs->trans("OtherSetup"));
 
 // Add logic to show/hide buttons
@@ -174,7 +177,9 @@ print_fiche_titre($langs->trans("OtherSetup"),'','setup');
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
 
-dol_htmloutput_mesg($mesg);
+print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" id="action" name="action" value="">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -186,21 +191,15 @@ print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
-$form = new Form($db);
-
-
 // Line to add new record
 $var=false;
 print "\n";
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="add">';
 
-print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="constname" value=""></td>'."\n";
+print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
 print '<td>';
-print '<input type="text" class="flat" size="30" name="constvalue" value="">';
+print '<input type="text" class="flat" size="30" name="constvalue" value="'.$constvalue.'">';
 print '</td><td>';
-print '<input type="text" class="flat" size="40" name="constnote" value="">';
+print '<input type="text" class="flat" size="40" name="constnote" value="'.$constnote.'">';
 print '</td>';
 // Limit to superadmin
 if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -208,22 +207,17 @@ if (! empty($conf->multicompany->enabled) && !$user->entity)
 	print '<td>';
 	print '<input type="text" class="flat" size="1" name="entity" value="'.$conf->entity.'">';
 	print '</td>';
+	print '<td align="center">';
 }
 else
 {
+	print '<td align="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 }
-print '<td align="center">';
-print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button">';
+print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="add">';
 print "</td>\n";
 print '</tr>';
 
-print '</form>';
-print "\n";
-
-print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" id="action" name="action" value="">';
 
 // Show constants
 $sql = "SELECT";
@@ -253,21 +247,20 @@ if ($result)
 		$var=!$var;
 
 		print "\n";
-		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
-		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
-		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
 
 		print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';
-		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'"';
-		print '>';
-		print '</td><td>';
+		print '<input type="hidden" name="const['.$i.'][rowid]" value="'.$obj->rowid.'">';
+		print '<input type="hidden" name="const['.$i.'][name]" value="'.$obj->name.'">';
+		print '<input type="hidden" name="const['.$i.'][type]" value="'.$obj->type.'">';
+		print '<input type="text" id="value_'.$i.'" class="flat inputforupdate" size="30" name="const['.$i.'][value]" value="'.htmlspecialchars($obj->value).'">';
+		print '</td>';
 
 		// Note
-		print '<input type="text" id="note_'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'"';
-		print '>';
+		print '<td>';
+		print '<input type="text" id="note_'.$i.'"class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note,1).'">';
 		print '</td>';
 
 		// Entity limit to superadmin
@@ -276,13 +269,14 @@ if ($result)
 			print '<td>';
 			print '<input type="text" class="flat" size="1" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 			print '</td>';
+			print '<td align="center">';
 		}
 		else
 		{
+			print '<td align="center">';
 			print '<input type="hidden" name="const['.$i.'][entity]" value="'.$obj->entity.'">';
 		}
 
-		print '<td align="center">';
 		if ($conf->use_javascript_ajax)
 		{
 			print '<input type="checkbox" class="flat checkboxfordelete" id="check_'.$i.'" name="const['.$i.'][check]" value="1">';

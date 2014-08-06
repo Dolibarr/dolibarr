@@ -1,13 +1,6 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - holiday
+# HRM=HRM
+Holidays=Ваканция
 CPTitreMenu=Ваканция
 MenuReportMonth=Месечно извлечение
 MenuAddCP=Кандидатствайте за празниците
@@ -85,12 +78,18 @@ MenuLogCP=Преглед на извършените административ�
 LogCP=Вход на актуализации на празниците
 ActionByCP=В изпълнение на
 UserUpdateCP=За потребителя
-ActionTypeCP=Тип
 PrevSoldeCP=Предишна баланс
 NewSoldeCP=New Balance
 alreadyCPexist=Искането за почивка вече е направено на този период.
 UserName=Име
 Employee=Служителите
+# FirstDayOfHoliday=First day of holiday
+# LastDayOfHoliday=Last day of holiday
+# HolidaysMonthlyUpdate=Monthly update
+# ManualUpdate=Manual update
+# HolidaysCancelation=Holidays cancelation
+
+## Configuration du Module ##
 ConfCP=Конфигурация празници модул
 DescOptionCP=Описание на опцията
 ValueOptionCP=Стойност
@@ -101,13 +100,14 @@ UpdateConfCPOK=Актуализира се успешно.
 ErrorUpdateConfCP=Възникна грешка по време на актуализацията, моля опитайте отново.
 AddCPforUsers=Моля, добавете баланса на празниците на потребителите, като <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">кликнете тук</a> .
 DelayForSubmitCP=Краен срок да кандидатстват за празниците
+# AlertapprobatortorDelayCP=Prevent the approbator if the holiday request does not match the deadline
 AlertValidatorDelayCP=Валидатора Предотвратяване, ако искането за разрешение да спази срока
 AlertValidorSoldeCP=Валидатора Предотвратяване, ако потребителят искания празници над баланс
 nbUserCP=Брой на потребителите, подкрепена в модула празници
 nbHolidayDeductedCP=Брой на празниците, за да се приспадат на ден вземат почивка
 nbHolidayEveryMonthCP=Брой на празници се добавят всеки месец
-Module27130Name=Управление на празници
-Module27130Desc=Управление на празници
+Module27130Name= Управление на празници
+Module27130Desc= Управление на празници
 TitleOptionMainCP=Основни настройки на празниците
 TitleOptionEventCP=Настройки на празниците, свързана със събития
 ValidEventCP=Проверка на
@@ -130,5 +130,23 @@ ErrorMailNotSend=Възникна грешка при изпращане на е
 NoCPforMonth=Не оставяйте този месец.
 nbJours=Брой дни
 TitleAdminCP=Конфигурация на празници
+
+#Messages
+# Hello=Hello
+# HolidaysToValidate=Validate holidays
+# HolidaysToValidateBody=Below is a request for holidays to validate
+# HolidaysToValidateDelay=This request for holidays will take place within a period of less than %s days.
+# HolidaysToValidateAlertSolde=The user who made this request for holidays do not have enough available days.
+# HolidaysValidated=Validated holidays
+# HolidaysValidatedBody=Your request for holidays for %s to %s has been validated.
+# HolidaysRefused=Denied holidays
+# HolidaysRefusedBody=Your request for holidays for %s to %s has been denied for the following reason :
+# HolidaysCanceled=Canceled holidays
+# HolidaysCanceledBody=Your request for holidays for %s to %s has been canceled.
+
 Permission20001=/ Промяна на всички искания празници
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:37:37).
+# Permission20002=Read/modify all requests of holidays
+# Permission20003=Delete their holidays requests
+# Permission20004=Define users holidays
+# Permission20005=Review log of modified holidays
+# Permission20006=Access holidays monthly report

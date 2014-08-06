@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=類別
 Categories=分類
 Rubrique=類別
@@ -25,6 +16,7 @@ SuppliersCategoriesArea=供應商分類區
 CustomersCategoriesArea=客戶分類區
 ThirdPartyCategoriesArea=第三方分類區
 MembersCategoriesArea=成員類別面積
+# ContactsCategoriesArea=Contacts categories area
 MainCats=主要類別
 SubCats=子類別
 CatStatistics=統計
@@ -58,12 +50,15 @@ SupplierIsInCategories=第三方擁有對以下類別的供應商
 CompanyIsInCustomersCategories=這個客戶擁有下列客戶/潛在分類標籤
 CompanyIsInSuppliersCategories=個供應商擁有下列供應商分類標籤
 MemberIsInCategories=該成員擁有，以下列成員類別
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=此產品/服務是沒有任何類別
 SupplierHasNoCategory=這個供應商是不以任何類別
 CompanyHasNoCategory=這家公司沒有任何分類標籤
 MemberHasNoCategory=該成員沒有任何類別
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=分類類別
 NoneCategory=無
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=此類別已存在此號
 ReturnInProduct=返回產品/服務卡
 ReturnInSupplier=返回供應商卡
@@ -86,10 +81,12 @@ CustomersCategoriesShort=客戶分類標籤
 CustomersProspectsCategoriesShort=客戶/潛在分類標籤
 ProductsCategoriesShort=產品分類標籤
 MembersCategoriesShort=成員分類標籤
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=這個類別不含任何產品。
 ThisCategoryHasNoSupplier=這個類別不含任何供應商。
 ThisCategoryHasNoCustomer=這個類別不含任何客戶。
 ThisCategoryHasNoMember=這個類別不含任何成員。
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=分配給客戶
 AssignedToTheCustomer=分配給客戶
 InternalCategory=內部類
@@ -99,4 +96,12 @@ CatSupList=供應商分類列表
 CatCusList=客戶名單/前景類別
 CatProdList=產品類別列表
 CatMemberList=類別的成員名單
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

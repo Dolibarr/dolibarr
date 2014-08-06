@@ -1,5 +1,4 @@
-# Dolibarr language file - hu_HU - ftp
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP Kliens modul beállítása
 NewFTPClient=Új FTP kapcsolat beállítása
 FTPArea=FTP terület
@@ -10,3 +9,4 @@ FailedToConnectToFTPServer=Nem sikerült csatlakozni az FTP szerverhez (szerver 
 FailedToConnectToFTPServerWithCredentials=Nem sikerült bejelentkezni FTP szerverre a megadott felhasználó névvel/jelszóval.
 FTPFailedToRemoveFile=Nem sikerült eltávolítani: <b>%s</b>.
 FTPFailedToRemoveDir=Nem sikerült eltávolítani <b>%s</b> (Engedélyek? Üres a könyvtár?).
+# FTPPassiveMode=Passive mode

@@ -152,7 +152,7 @@ if ($id > 0 || ! empty($ref))
 				$var=!$var;
 
 				$obj = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				print '<td width="20%">'.dol_print_date($db->jdate($obj->dl),"dayhour")."</td>\n";
 

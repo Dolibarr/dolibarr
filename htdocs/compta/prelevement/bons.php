@@ -88,7 +88,7 @@ if ($result)
   print '<form action="bons.php" method="GET">';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_ligne" value="'. $search_line.'" size="10"></td>';
   print '<td class="liste_titre">&nbsp;</td>';
-  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+  print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
   print '</form>';
   print '</tr>';
 
@@ -99,7 +99,7 @@ if ($result)
       $obj = $db->fetch_object($result);
       $var=!$var;
 
-      print "<tr $bc[$var]><td>";
+      print "<tr ".$bc[$var]."><td>";
 
       print $bon->LibStatut($obj->statut,2);
       print "&nbsp;";

@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 
 /**
- *	\class 	Fournisseur
- *	\brief 	Class to manage suppliers
+ * 	Class to manage suppliers
  */
 class Fournisseur extends Societe
 {
@@ -133,6 +132,7 @@ class Fournisseur extends Societe
 			{
 				$this->nb["suppliers"]=$obj->nb;
 			}
+            $this->db->free($resql);
 			return 1;
 		}
 		else

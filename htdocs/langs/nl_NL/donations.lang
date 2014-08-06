@@ -1,32 +1,32 @@
-# Dolibarr language file - nl_NL - donations = 
-CHARSET = UTF-8
-Donation = Donatie
-Donations = Donaties
-Donor = Donor
-Donors = Donoren
-AddDonation = Een donatie toevoegen
-NewDonation = Nieuwe donatie
-DonationPromise = Donatie toezegging
-PromisesNotValid = Niet gevalideerde toezegging
-PromisesValid = Gevalideerde toezegging
-DonationsPaid = Betaalde donaties
-DonationsReceived = Ontvangen donaties
-PublicDonation = Openbare donatie
-DonationsNumber = Donatienummer
-DonationsArea = Donatiesoverzicht
-DonationStatusPromiseNotValidated = Voorlopige toezegging
-DonationStatusPromiseValidated = Gevalideerde toezegging
-DonationStatusPaid = Donatie ontvangen
-DonationStatusPromiseNotValidatedShort = Voorlopig
-DonationStatusPromiseValidatedShort = Gevalideerd
-DonationStatusPaidShort = Ontvangen
-ValidPromess = Bevestig de toezegging
-BuildDonationReceipt = Creëer donatieontvangstbewijs
-DonationsModels = Documentenmodellen voor donatieontvangsten
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 01:46:39).
-// Reference language: en_US -> nl_NL
+# Dolibarr language file - Source file is en_US - donations
+Donation=Donatie
+Donations=Donaties
+# DonationRef=Donation ref.
+Donor=Donor
+Donors=Donoren
+AddDonation=Een donatie toevoegen
+NewDonation=Nieuwe donatie
+# ShowDonation=Show donation
+DonationPromise=Donatie toezegging
+PromisesNotValid=Niet gevalideerde toezegging
+PromisesValid=Gevalideerde toezegging
+DonationsPaid=Betaalde donaties
+DonationsReceived=Ontvangen donaties
+PublicDonation=Openbare donatie
+DonationsNumber=Donatienummer
+DonationsArea=Donatiesoverzicht
+DonationStatusPromiseNotValidated=Voorlopige toezegging
+DonationStatusPromiseValidated=Gevalideerde toezegging
+DonationStatusPaid=Donatie ontvangen
+DonationStatusPromiseNotValidatedShort=Voorlopig
+DonationStatusPromiseValidatedShort=Gevalideerd
+DonationStatusPaidShort=Ontvangen
+ValidPromess=Bevestig de toezegging
+# DonationReceipt=Donation receipt
+BuildDonationReceipt=Creëer donatieontvangstbewijs
+DonationsModels=Documentenmodellen voor donatieontvangsten
 LastModifiedDonations=Laatst gewijzigd %s donaties
 SearchADonation=Zoek een donatie
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 02:00:11).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

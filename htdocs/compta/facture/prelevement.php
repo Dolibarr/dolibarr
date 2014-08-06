@@ -211,7 +211,6 @@ if ($object->id > 0)
 		}
 		print ')';
 	}
-	// FIXME $facidnext not defined
 	/*
 	if ($facidnext > 0)
 	{
@@ -224,7 +223,7 @@ if ($object->id > 0)
 
 	// Discounts
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-	if ($object->thirdparty->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_client);
+	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
 	if ($absolute_discount > 0)
@@ -429,7 +428,7 @@ if ($object->id > 0)
 
 	/*
 	 * Withdrawal request
-	*/
+	 */
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
 	$sql .= " , pfd.date_traite as date_traite";
@@ -463,12 +462,13 @@ if ($object->id > 0)
 		}
 		else
 		{
-			print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 		}
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		if ($num == 0) print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPayed")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 	}
 
 	print "</div><br>\n";
@@ -546,7 +546,7 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result);
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 

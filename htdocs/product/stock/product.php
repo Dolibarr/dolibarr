@@ -4,6 +4,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
+ * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +42,10 @@ $action=GETPOST("action");
 $cancel=GETPOST('cancel');
 
 // Security check
-$id = GETPOST('id')?GETPOST('id'):GETPOST('ref');
-$ref = GETPOST('ref');
+$id=GETPOST('id', 'int');
+$ref=GETPOST('ref', 'alpha');
 $stocklimit = GETPOST('stocklimit');
+$desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
@@ -66,6 +69,19 @@ if ($action == 'setstocklimit')
     	setEventMessage($product->error, 'errors');
     $action='';
 }
+
+// Set desired stock
+if ($action == 'setdesiredstock')
+{
+    $product = new Product($db);
+    $result=$product->fetch($id);
+    $product->desiredstock=$desiredstock;
+    $result=$product->update($product->id,$user,1,0,1);
+    if ($result < 0)
+    	setEventMessage($product->error, 'errors');
+    $action='';
+}
+
 
 // Correct stock
 if ($action == "correct_stock" && ! $cancel)
@@ -192,9 +208,9 @@ $formproduct=new FormProduct($db);
 if ($id > 0 || $ref)
 {
 	$product = new Product($db);
-	if ($ref) $result = $product->fetch('',$ref);
-	if ($id > 0) $result = $product->fetch($id);
-
+	$result = $product->fetch($id,$ref);
+	$product->load_stock();
+	
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("CardProduct".$product->type),$help_url);
 
@@ -246,6 +262,11 @@ if ($id > 0 || $ref)
         // Stock
         print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer).'</td><td colspan="2">';
         print $form->editfieldval("StockLimit",'stocklimit',$product->seuil_stock_alerte,$product,$user->rights->produit->creer);
+        print '</td></tr>';
+        
+        // Desired stock
+        print '<tr><td>'.$form->editfieldkey("DesiredStock",'desiredstock',$product->desiredstock,$product,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("DesiredStock",'desiredstock',$product->desiredstock,$product,$user->rights->produit->creer);
         print '</td></tr>';
 
         // Real stock
@@ -409,7 +430,7 @@ if ($id > 0 || $ref)
 	 */
 	if ($action == "transfert")
 	{
-		print_titre($langs->trans("Transfer"));
+		print_titre($langs->trans("StockTransfer"));
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
@@ -422,21 +443,21 @@ if ($id > 0 || $ref)
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
 		print $formproduct->selectWarehouses(GETPOST('id_entrepot_destination'),'id_entrepot_destination','',1);
 		print '</td>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
+		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input type="text" class="flat" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
 		print '</tr>';
 
 		// Label
 		print '<tr>';
-		print '<td width="20%">'.$langs->trans("Label").'</td>';
+		print '<td width="20%">'.$langs->trans("LabelMovement").'</td>';
 		print '<td colspan="5">';
-		print '<input type="text" name="label" size="40" value="'.GETPOST("label").'">';
+		print '<input type="text" name="label" size="80" value="'.dol_escape_htmltag(GETPOST("label")).'">';
 		print '</td>';
 		print '</tr>';
 
 		print '</table>';
 
-		print '<center><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+		print '<center><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">&nbsp;';
+		print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'"></center>';
 
 		print '</form>';
 	}

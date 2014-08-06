@@ -1,13 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-08-27 16:56:14
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal модуль установки
 PaypalDesc=Этот модуль предлагает страниц, чтобы выплаты по <a href="http://www.paypal.com" target="_blank">PayPal</a> клиентами. Это может быть использовано для свободного оплаты или оплаты на определенный объект Dolibarr (счет-фактура, заказ, ...)
 PaypalOrCBDoPayment=Оплатить с помощью кредитной карты или Paypal
@@ -18,14 +9,14 @@ PAYPAL_API_USER=API имя пользователя
 PAYPAL_API_PASSWORD=API пароль
 PAYPAL_API_SIGNATURE=API подпись
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предложение платежа &quot;Интеграл&quot; (кредитные карточки + Paypal) или &quot;PayPal&quot;, только
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal адрес таблицы стилей CSS на странице оплаты
 ThisIsTransactionId=Это идентификатор сделки: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Добавить адрес Paypal оплата при отправке документа по почте
 PAYPAL_IPN_MAIL_ADDRESS=Адрес электронной почты для мгновенного уведомления об оплате (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:37).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Вы в настоящее время в &quot;песочнице&quot; режим
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:12).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

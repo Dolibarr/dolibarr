@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=وثائق
 DocsMine=بلدي وثائق
 DocsGenerated=ولدت وثائق
@@ -29,15 +19,14 @@ ECMSections=أدلة
 ECMRoot=جذور
 ECMNewSection=دليل جديد
 ECMAddSection=إضافة دليل دليل
-ECMNewSection=الدليل الجديد ودليل
 ECMNewDocument=وثيقة جديدة
 ECMCreationDate=تاريخ الإنشاء
 ECMNbOfFilesInDir=عدد من الملفات في دليل
 ECMNbOfSubDir=من دون أدلة
-ECMNbOfFilesInSubDir=إيليس في Nunber من دون أدلة
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=مبدع
-ECMArea=مجال إدارة المحتوى في المؤسسة
-ECMAreaDesc=إدارة المحتوى في المؤسسة (إدارة المحتوى الالكتروني) تتيح لك المجال لانقاذ ، والبحث بسرعة حصة كل نوع من أنواع الوثائق في Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* أدلة تلقائية تملأ تلقائيا عند إضافة الوثائق من بطاقة عنصر. <br> * دليل أدلة يمكن استخدامها لانقاذ وثائق ليست مرتبطة بشكل خاص عنصر.
 ECMSectionWasRemoved=دليل <b>٪ ق</b> حذفت.
 ECMDocumentsSection=وثيقة من وثائق ودليل
@@ -46,12 +35,14 @@ ECMSearchByEntity=بحث عن وجوه
 ECMSectionOfDocuments=أدلة وثائق
 ECMTypeManual=دليل
 ECMTypeAuto=التلقائي
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=وثائق مرتبطة أطراف ثالثة
 ECMDocsByProposals=وثائق مرتبطة مقترحات
 ECMDocsByOrders=وثائق مرتبطة أوامر العملاء
 ECMDocsByContracts=وثائق مرتبطة بعقود
 ECMDocsByInvoices=وثائق مرتبطة عملاء الفواتير
 ECMDocsByProducts=الوثائق المرتبطة بالمنتجات
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=لا الدليل
 ShowECMSection=وتظهر الدليل
 DeleteSection=إزالة الدليل
@@ -60,5 +51,5 @@ ECMDirectoryForFiles=دليل النسبي للملفات
 CannotRemoveDirectoryContainsFiles=لا يمكن إزالتها لأنه يحتوي على بعض الملفات
 ECMFileManager=مدير الملفات
 ECMSelectASection=اختر دليل على ترك شجرة...
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

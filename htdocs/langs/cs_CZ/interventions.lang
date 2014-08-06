@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - interventions
+Intervention=Intervence
+Interventions=Intervence
+InterventionCard=Intervence karty
+NewIntervention=Nový zásah
+AddIntervention=Přidat zásah
+ListOfInterventions=Seznam zásahů
+EditIntervention=Upravit zásah
+ActionsOnFicheInter=Akce zaměřené na intervenci
+LastInterventions=Poslední %s zásahy
+AllInterventions=Všechny zásahy
+CreateDraftIntervention=Vytvořte návrh
+CustomerDoesNotHavePrefix=Zákazník nemá předponu
+InterventionContact=Intervence kontakt
+DeleteIntervention=Odstranit zásah
+ValidateIntervention=Ověřit zásah
+ModifyIntervention=Upravit zásah
+DeleteInterventionLine=Odstranit intervenční linku
+ConfirmDeleteIntervention=Jste si jisti, že chcete smazat tento zásah?
+ConfirmValidateIntervention=Jste si jisti, že chcete ověřit tento zásah pod názvem <b>%s?</b>
+ConfirmModifyIntervention=Jste si jisti, že chcete změnit tento zásah?
+ConfirmDeleteInterventionLine=Jste si jisti, že chcete smazat tento řádek intervence?
+NameAndSignatureOfInternalContact=Jméno a podpis intervence:
+NameAndSignatureOfExternalContact=Jméno a podpis objednavatele:
+DocumentModelStandard=Standardní dokument model pro zásahy
+InterventionCardsAndInterventionLines=Intervence a linky intervencí
+ClassifyBilled=Klasifikovat &quot;účtovaný&quot;
+StatusInterInvoiced=Účtováno
+RelatedInterventions=Související zákroky
+ShowIntervention=Zobrazit zásah
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Zástupce následující-up zásah
+TypeContact_fichinter_internal_INTERVENING=Zásah
+TypeContact_fichinter_external_BILLING=Fakturační kontakt se zákazníkem
+TypeContact_fichinter_external_CUSTOMER=V návaznosti kontakt se zákazníkem
+# Modele numérotation
+ArcticNumRefModelDesc1=Generic číslo modelu
+ArcticNumRefModelError=Nepodařilo se aktivovat
+PacificNumRefModelDesc1=Zpět numero ve formátu %syymm-nnnn, kde yy je rok, MM je měsíc a nnnn je sekvence bez přerušení a bez vrátí na 0.
+PacificNumRefModelError=Zásah karta začíná s $ syymm již existuje a není kompatibilní s tímto modelem sekvence. Vyjměte ji nebo přejmenujte jej na aktivaci tohoto modulu.
+PrintProductsOnFichinter=Vytisknout produktů na intervenční karty
+PrintProductsOnFichinterDetails=forinterventions získané z objednávek

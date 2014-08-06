@@ -80,7 +80,10 @@ $workflowcodes=array(
 	'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>'WarningCloseAlways'),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
+	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
+
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))

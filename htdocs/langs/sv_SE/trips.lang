@@ -1,18 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 09:14:50
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
-// Reference language: en_US
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:20:45).
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - trips
 Trip=Trip
 Trips=Resor
 TripsAndExpenses=Resor och kostnader
@@ -31,11 +17,5 @@ TF_OTHER=Andra
 TF_LUNCH=Lunch
 TF_TRIP=Trip
 ListTripsAndExpenses=Förteckning över resor och kostnader
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:11:17).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
 ExpensesArea=Resor och kostnader område
 SearchATripAndExpense=Sök en resa och kostnader
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:38).

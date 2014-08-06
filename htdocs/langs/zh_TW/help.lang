@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=論壇/維基支持
 EMailSupport=電子郵件支持
 RemoteControlSupport=網上實時/遠程支持
@@ -33,4 +24,5 @@ BackToHelpCenter=否則，請點擊這裏進入<a href="%s">返回幫助中心�
 LinkToGoldMember=你可以調用由Dolibarr預選您的語言（%s的按一下他的小工具（狀態和最高價格自動更新））的教練之一：
 PossibleLanguages=支持的語言
 MakeADonation=幫助Dolibarr項目，使捐贈
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

@@ -1,30 +1,19 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-AddThisPageToBookmarks=Lisage see leht järjehoidjad
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:22:13).
-
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Lisa see leht järjehoidjatesse
 Bookmark=Järjehoidja
 Bookmarks=Järjehoidjad
 NewBookmark=Uus järjehoidja
-ShowBookmark=Näita järjehoidja
+ShowBookmark=Näita järjehoidjat
 OpenANewWindow=Ava uues aknas
-ReplaceWindow=Asendada aktiivse akna
-BookmarkTargetNewWindowShort=Uues aknas
-BookmarkTargetReplaceWindowShort=Aktiivse akna
-BookmarkTitle=Järjehoidja tiitel
+ReplaceWindow=Ava samas aknas
+BookmarkTargetNewWindowShort=Uus aken
+BookmarkTargetReplaceWindowShort=Sama aken
+BookmarkTitle=Järjehoidja pealkiri
 UrlOrLink=URL
-BehaviourOnClick=Käitumine kui URL on klõpsatud
+BehaviourOnClick=Käitumine URLil klõpsamise puhul
 CreateBookmark=Loo järjehoidja
-SetHereATitleForLink=Set pealkiri järjehoidja
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Välise http URL ega sugulane Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Vali kui leht avada link peab olema praeguse või uues aknas
-BookmarksManagement=Järjehoidjad juhtimine
+SetHereATitleForLink=Sea järjehoidja pealkiri
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Kasuta välise lehe URLi või Dolibarri sisest linki
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Vali, kas leht avaneb uues või olemasolevas aknas
+BookmarksManagement=Järjehoidjate haldamine
 ListOfBookmarks=Järjehoidjad

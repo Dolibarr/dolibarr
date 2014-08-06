@@ -1,8 +1,7 @@
 Dolibarr language file - es_PR - main
-CHARSET=UTF-8
 DIRECTION=ltr
 SeparatorDecimal=,
-SeparatorThousand=
+SeparatorThousand=None
 AmountVAT=Importe IVU
 TotalVAT=Total IVU
 IncludedVAT=IVU incluido

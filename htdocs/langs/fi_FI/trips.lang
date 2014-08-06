@@ -1,22 +1,14 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Matka
 Trips=Retket
 TripsAndExpenses=Matkat ja kulut
+TripsAndExpensesStatistics=Retket ja kulut tilastot
 TripCard=Trip-kortti
 AddTrip=Lisää matka
 ListOfTrips=Luettelo matkat
 ListOfFees=Luettelo palkkiot
 NewTrip=Uusi matka
+CompanyVisited=Yritys / säätiö vieraili
 Kilometers=Kilometers
 FeesKilometersOrAmout=Määrä tai kilometreinä
 DeleteTrip=Poista matka
@@ -24,30 +16,6 @@ ConfirmDeleteTrip=Oletko varma, että haluat poistaa tämän matkan?
 TF_OTHER=Muu
 TF_LUNCH=Lounas
 TF_TRIP=Matka
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
 ListTripsAndExpenses=Luettelo matkat ja kulut
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-CompanyVisited=Yritys / säätiö vieraili
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-TripsAndExpensesStatistics=Retket ja kulut tilastot
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:17).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
 ExpensesArea=Retket ja kulut alue
 SearchATripAndExpense=Etsi matka-ja kulut
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:57).

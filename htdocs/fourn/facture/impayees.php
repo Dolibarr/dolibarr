@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-if (! $user->rights->facture->lire) accessforbidden();
+if (! $user->rights->fournisseur->facture->lire) accessforbidden();
 
 $langs->load("companies");
 $langs->load("bills");
@@ -146,10 +146,8 @@ if ($user->rights->fournisseur->facture->lire)
 
 	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, s.rowid, s.nom";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql.= " ORDER BY ";
-	$listfield=explode(',',$sortfield);
-	foreach ($listfield as $key => $value) $sql.=$listfield[$key]." ".$sortorder.",";
-	$sql.= " f.ref_supplier DESC";
+	$sql.=$db->order($sortfield,$sortorder);
+	if (! in_array("f.ref_supplier",explode(',',$sortfield))) $sql.= ", f.ref_supplier DESC";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -217,7 +215,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</td><td class="liste_titre" align="right">';
 		print '<input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
 		print '</td><td class="liste_titre" colspan="2" align="right">';
-		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 		print '</td>';
 		print "</tr>\n";
 
@@ -237,16 +235,16 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<tr ".$bc[$var].">";
 				$classname = "impayee";
 
-				print '<td nowrap>';
+				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->ref;
 				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
-				print "<td nowrap>".dol_trunc($objp->ref_supplier,12)."</td>\n";
+				print '<td class="nowrap">'.dol_trunc($objp->ref_supplier,12)."</td>\n";
 
-				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-				print "<td nowrap align=\"center\">".dol_print_date($db->jdate($objp->datelimite),'day');
+				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
+				print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day');
 				if ($objp->datelimite && $db->jdate($objp->datelimite) < ($now - $conf->facture->fournisseur->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
 				print "</td>\n";
 

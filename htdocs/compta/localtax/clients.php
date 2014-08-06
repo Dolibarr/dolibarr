@@ -176,15 +176,15 @@ if (is_array($coll_list))
 				}
 			}
 			print "<tr ".$bc[$var].">";
-			print "<td nowrap>".$i."</td>";
+			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
-			print '<td nowrap>'.$company_static->getNomUrl(1).'</td>';
+			print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
-			print "<td nowrap>".$intra."</td>";
-			print "<td nowrap align=\"right\">".price($coll->amount)."</td>";
-			print "<td nowrap align=\"right\">".price($coll->localtax2)."</td>";
+			print '<td class="nowrap">'.$intra."</td>";
+			print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
+			print "<td class=\"nowrap\" align=\"right\">".price($coll->localtax2)."</td>";
             $totalamount = $totalamount + $coll->amount;
 			$total = $total + $coll->localtax2;
 			print "</tr>\n";
@@ -194,8 +194,8 @@ if (is_array($coll_list))
     $x_coll_sum = $total;
 
 	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-    print '<td nowrap align="right">'.price($totalamount).'</td>';
-	print '<td nowrap align="right">'.price($total).'</td>';
+    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
+	print '<td class="nowrap" align="right">'.price($total).'</td>';
 	print '</tr>';
 }
 else
@@ -244,16 +244,16 @@ if (is_array($coll_list))
 					$intra = '';
 				}
 			}
-			print "<tr $bc[$var]>";
-			print "<td nowrap>".$i."</td>";
+			print "<tr ".$bc[$var].">";
+			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->nom=$coll->nom;
-			print '<td nowrap>'.$company_static->getNomUrl(1).'</td>';
+			print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 			$find = array(' ','.');
 			$replace = array('','');
-			print "<td nowrap>".$intra."</td>";
-			print "<td nowrap align=\"right\">".price($coll->amount)."</td>";
-			print "<td nowrap align=\"right\">".price($coll->localtax2)."</td>";
+			print '<td class="nowrap">'.$intra."</td>";
+			print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
+			print "<td class=\"nowrap\" align=\"right\">".price($coll->localtax2)."</td>";
             $totalamount = $totalamount + $coll->amount;
 			$total = $total + $coll->localtax2;
 			print "</tr>\n";
@@ -263,8 +263,8 @@ if (is_array($coll_list))
     $x_paye_sum = $total;
 
 	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-    print '<td nowrap align="right">'.price($totalamount).'</td>';
-	print '<td nowrap align="right">'.price($total).'</td>';
+    print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
+	print '<td class="nowrap" align="right">'.price($total).'</td>';
 	print '</tr>';
 
 	print '</table>';

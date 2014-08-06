@@ -20,6 +20,7 @@
 create table llx_projet_task
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  ref 					varchar(50),
   fk_projet				integer NOT NULL,
   fk_task_parent		integer DEFAULT 0 NOT NULL,
   datec					datetime,						-- date creation
@@ -30,6 +31,7 @@ create table llx_projet_task
   label					varchar(255) NOT NULL,
   description			text,
   duration_effective	real DEFAULT 0 NOT NULL,
+  planned_workload		real DEFAULT 0 NOT NULL,
   progress				integer	DEFAULT 0,				-- percentage increase
   priority				integer	DEFAULT 0,				-- priority
   fk_user_creat			integer,						-- user who created the task
@@ -37,5 +39,6 @@ create table llx_projet_task
   fk_statut				smallint DEFAULT 0 NOT NULL,
   note_private			text,
   note_public			text,
-  rang                  integer DEFAULT 0
+  rang                  integer DEFAULT 0,
+  model_pdf        		varchar(255)
 )ENGINE=innodb;

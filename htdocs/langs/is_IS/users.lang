@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Notandi kort
 ContactCard=Hafðu kort
 GroupCard=Group kort
@@ -17,7 +8,7 @@ Permissions=Heimildir
 EditPassword=Breyta lykilorði
 SendNewPassword=Endurfæða og senda lykilorð
 ReinitPassword=Endurfæða lykilorð
-PasswordChangedTo=Lykilorð breytt í: %s 
+PasswordChangedTo=Lykilorð breytt í: %s
 SubjectNewPassword=Nýja lykilorðið fyrir Dolibarr
 AvailableRights=Laus leyfi
 OwnedRights=Eigandi heimildir
@@ -52,6 +43,7 @@ ListOfUsers=Notendalisti
 Administrator=Stjórnandi
 SuperAdministrator=Super Administrator
 SuperAdministratorDesc=Stjórnandi með öllum réttindum
+AdministratorDesc=Stjórnandi aðila
 DefaultRights=Default heimildir
 DefaultRightsDesc=Veldu hér <u>sjálfgefið</u> leyfi sem eru sjálfkrafa veitt <u>ný búin</u> notandi (Fara á kortið notandi til breytinga á leyfi núverandi notenda).
 DolibarrUsers=Dolibarr notendur
@@ -92,22 +84,25 @@ GuiLanguage=Viðmótstungumál
 InternalUser=Innri notandi
 MyInformations=gögn mín
 ExportDataset_user_1=notendur Dolibarr og eignir
-DomainUser=Lén notanda %s 
+DomainUser=Lén notanda %s
 Reactivate=Endurvekja
 CreateInternalUserDesc=Þetta form gerir þér kleift að creat notanda innri fyrirtæki þitt / grunni. Til creat ytri notanda (viðskiptavinur, birgir, ...), nota hnappinn 'Stofna Dolibarr notandi' af kort samband þriðja aðila.
 InternalExternalDesc=<b>Innri</b> notandi er notandi sem er hluti af þínu fyrirtæki / stofnun. <br> <b>Ytri</b> notandi er a viðskiptavinur, birgir eða öðrum. <br><br> Í báðum tilfellum, leyfi skilgreinir réttindi á Dolibarr, einnig ytri notendur geta haft mismunandi matseðill framkvæmdastjóri en innri notanda (Sjá Heim - Skipulag - Skoða)
 PermissionInheritedFromAGroup=Heimild veitt vegna þess að arfur frá einni í hópnum notanda.
 Inherited=Arf
+UserWillBeInternalUser=Búið notandi vilja vera innri notanda (vegna þess að ekki tengd við ákveðna þriðja aðila)
+UserWillBeExternalUser=Búið notandi vilja vera ytri notandi (vegna þess að tengjast ákveðnum þriðja aðila)
 IdPhoneCaller=Auðkenni sími sem hringir
 UserLogged=User %s  tengdur
+UserLogoff=Notandi %s Útskráning
 NewUserCreated=User %s  búinn til
-NewUserPassword=Lykilorð breyta fyrir %s 
+NewUserPassword=Lykilorð breyta fyrir %s
 EventUserModified=User %s  breytt
 UserDisabled=User %s  fatlaðra
 UserEnabled=User %s  virkjaður
 UserDeleted=User %s  eytt
 NewGroupCreated=Group %s  búinn til
-GroupModified=Group %s  breytt
+GroupModified=Group breytt hefur verið
 GroupDeleted=Group %s  eytt
 ConfirmCreateContact=Ertu viss um að þú viljir búa til Dolibarr reikning fyrir þennan tengilið?
 ConfirmCreateLogin=Ertu viss um að þú viljir búa til Dolibarr reikning fyrir þennan notanda?
@@ -116,15 +111,10 @@ LoginToCreate=Innskráning til að búa til
 NameToCreate=Nafn þriðja aðila til að stofna
 YourRole=hlutverk þín
 YourQuotaOfUsersIsReached=kvóta þinn af virkum notendum er náð!
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-AdministratorDesc=Stjórnandi aðila
-UserWillBeInternalUser=Búið notandi vilja vera innri notanda (vegna þess að ekki tengd við ákveðna þriðja aðila)
-UserWillBeExternalUser=Búið notandi vilja vera ytri notandi (vegna þess að tengjast ákveðnum þriðja aðila)
-UserLogoff=Notandi %s Útskráning
 NbOfUsers=Nb notendur
 DontDowngradeSuperAdmin=Aðeins superadmin getur lækkunar a superadmin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:40).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

@@ -1,19 +1,11 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Permanent comenzi zona
 CustomersStandingOrdersArea=Clienţii ordine de plată zona
 StandingOrders=Ordine de plată
 StandingOrder=Ordine de plată
 NewStandingOrder=New permanent pentru
+StandingOrderToProcess=Pentru a procesa
+StandingOrderProcessed=Prelucrate
 Withdrawals=Retrageri
 Withdrawal=Retragerea
 WithdrawalsReceipts=Retragerile încasări
@@ -26,7 +18,8 @@ RequestStandingOrderToTreat=Cerere de ordine de plată pentru a trata
 RequestStandingOrderTreated=Cerere de ordine de plată trataţi
 CustomersStandingOrders=Clientul ordine de plată
 CustomerStandingOrder=Client permanent pentru
-NbOfInvoiceToWithdraw=Nb de factură cu retrage cererea
+NbOfInvoiceToWithdraw=Nr factură cu cerere de retrage
+# NbOfInvoiceToWithdrawWithInfo=No. of invoice with withdraw request for customers having defined bank account information
 InvoiceWaitingWithdraw=Factura de aşteptare pentru al retrage
 AmountToWithdraw=Suma de a se retrage
 WithdrawsRefused=Retrage refuzat
@@ -41,21 +34,14 @@ ThirdPartyBankCode=Terţă parte de cod bancar
 ThirdPartyDeskCode=A treia parte birou cod
 NoInvoiceCouldBeWithdrawed=Nu withdrawed factură cu succes. Verificaţi dacă factura sunt pe companii cu un valide BAN.
 ClassCredited=Clasifica creditat
-ClassCreditedConfirm=Sunteţi sigur că doriţi pentru a clasifica această retragere primirea ca creditate pe contul bancar?
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-StandingOrderToProcess=Pentru a procesa
-StandingOrderProcessed=Prelucrate
+# ClassCreditedConfirm=Are you sure you want to classify this withdrawal receipt as credited on your bank account?
 TransData=Data transmiterii
-TransMetod=Metodei de transmisie
+TransMetod=Metoda transmitere
 Send=Trimite
 Lines=Linii
-StandingOrderReject=Emită o respinge
-WithdrawalRefused=Retragerile Refuseds
+# StandingOrderReject=Issue a rejection
+InvoiceRefused=Încărcaţi respingere la client
+WithdrawalRefused=Retragere refuzată
 WithdrawalRefusedConfirm=Sunteţi sigur că doriţi să introduceţi un respingere de retragere pentru societate
 RefusedData=Data respingerii
 RefusedReason=Motivul respingerii
@@ -65,14 +51,15 @@ InvoiceRefused=Încărcaţi respingere la client
 Status=Status
 StatusUnknown=Necunoscut
 StatusWaiting=Aşteptare
+StatusTrans=Trimis
 StatusCredited=Creditate
 StatusRefused=A refuzat
 StatusMotif0=Nespecificat
-StatusMotif1=Furnizarea insuffisante
-StatusMotif2=Tiraj conteste
+StatusMotif1=Fonduri insuficiente
+StatusMotif2=Cerere contestată
 StatusMotif3=Nici o retragere pentru a
 StatusMotif4=Clientul Ordine
-StatusMotif5=RIB inexploitable
+StatusMotif5=RIB inutilizabil
 StatusMotif6=Cont fără echilibru
 StatusMotif7=Hotărâre judecătorească
 StatusMotif8=Alte motive
@@ -84,14 +71,6 @@ NotifyTransmision=Retragerea Transmitere
 NotifyEmision=Retragerea de emisie
 NotifyCredit=Retragerea de credit
 NumeroNationalEmetter=Numărul naţional transmiţător
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:21).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-NbOfInvoiceToWithdrawWithInfo=NB de factură cu retragă cererea pentru clienţii care au definit de informaţii de cont bancar
-StatusTrans=Transmise
 PleaseSelectCustomerBankBANToWithdraw=Selectaţi informaţii despre contul bancar client de a se retrage
 WithBankUsingRIB=Pentru conturile bancare folosind RIB
 WithBankUsingBANBIC=Pentru conturile bancare folosind codul IBAN / BIC / SWIFT
@@ -99,15 +78,19 @@ BankToReceiveWithdraw=Cont bancar pentru a primi retrage
 CreditDate=Credit pe
 WithdrawalFileNotCapable=Imposibil de a genera primirea fişier de retragere pentru ţara dvs.
 ShowWithdraw=Arată Retragere
-IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Cu toate acestea, în cazul în care factura nu a cel puţin o plată de retragere încă prelucrate, aceasta nu va fi setat ca platiti pentru a permite retragerea înainte de a gestiona.
-DoStandingOrdersBeforePayments=Acest file vă permite să solicite pentru un ordin de plată. Odată ce va fi terminat, aveţi posibilitatea să tastaţi de plată pentru a închide factura.
+# IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one withdrawal payment not yet processed, it won't be set as paid to allow prior withdrawal management.
+# DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
+WithdrawalFile=Fişier Retragere
+SetToStatusSent=Setează statusul "Fişier Trimis"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Plata %s comandă în picioare de către bancă
 InfoCreditMessage=%s pentru picioare a fost plătit de către bancă <br> Datele de plata: %s
 InfoTransSubject=Transmiterea %s ordine permanente la banca
-InfoTransMessage=%s pentru picioare a fost transmisa la banca de %s %s. <br><br>
-InfoTransData=Suma: %s <br> Metode: %s <br> Data: %s
+# InfoTransMessage=The standing order %s has been sent to bank by %s %s.<br><br>
+InfoTransData=Suma: %s <br> Metoda: %s <br> Data: %s
 InfoFoot=Acesta este un mesaj automat trimis de Dolibarr
 InfoRejectSubject=Pentru a refuzat permanent
-InfoRejectMessage=Buna ziua, <br><br> standig ordinea de %s factură referitoare la %s companiei, cu o valoare de %s a fost refuzat de banca. <br><br> - <br> % $
+InfoRejectMessage=Bună ziua, <br><br> ordinul de plata al facturii %s de la societatea %s în valoare de %s a fost refuzat de către bancă.<br><br>--<br>%s
 ModeWarning=Opţiunea pentru modul real, nu a fost stabilit, ne oprim după această simulare
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:42).

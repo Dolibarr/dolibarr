@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -82,6 +83,7 @@ $help_url="EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("",$langs->trans("Referers"),$help_url);
 
 $form = new Form($db);
+$formproject=new FormProjets($db);
 
 $userstatic=new User($db);
 
@@ -112,7 +114,7 @@ print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$project->title.'</td></tr>';
 
-print '<tr><td>'.$langs->trans("Company").'</td><td>';
+print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 if (! empty($project->societe->id)) print $project->societe->getNomUrl(1);
 else print '&nbsp;';
 print '</td></tr>';
@@ -140,55 +142,55 @@ $listofreferent=array(
 	'title'=>"ListProposalsAssociatedProject",
 	'class'=>'Propal',
 	'table'=>'propal',
-	'test'=>$conf->propal->enabled),
+	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
 	'title'=>"ListOrdersAssociatedProject",
 	'class'=>'Commande',
 	'table'=>'commande',
-	'test'=>$conf->commande->enabled),
+	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
 	'title'=>"ListInvoicesAssociatedProject",
 	'class'=>'Facture',
 	'table'=>'facture',
-	'test'=>$conf->facture->enabled),
+	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'invoice_predefined'=>array(
 	'title'=>"ListPredefinedInvoicesAssociatedProject",
 	'class'=>'FactureRec',
 	'table'=>'facture_rec',
-	'test'=>$conf->facture->enabled),
+	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'order_supplier'=>array(
 	'title'=>"ListSupplierOrdersAssociatedProject",
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
-	'test'=>$conf->fournisseur->enabled),
+	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire),
 'invoice_supplier'=>array(
 	'title'=>"ListSupplierInvoicesAssociatedProject",
 	'class'=>'FactureFournisseur',
 	'table'=>'facture_fourn',
-	'test'=>$conf->fournisseur->enabled),
+	'test'=>$conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
 	'title'=>"ListContractAssociatedProject",
 	'class'=>'Contrat',
 	'table'=>'contrat',
-	'test'=>$conf->contrat->enabled),
+	'test'=>$conf->contrat->enabled && $user->rights->contrat->lire),
 'intervention'=>array(
 	'title'=>"ListFichinterAssociatedProject",
 	'class'=>'Fichinter',
 	'table'=>'fichinter',
 	'disableamount'=>1,
-	'test'=>$conf->ficheinter->enabled),
+	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
 	'title'=>"ListTripAssociatedProject",
 	'class'=>'Deplacement',
 	'table'=>'deplacement',
 	'disableamount'=>1,
-	'test'=>$conf->deplacement->enabled),
+	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
 'agenda'=>array(
 	'title'=>"ListActionsAssociatedProject",
 	'class'=>'ActionComm',
 	'table'=>'actioncomm',
 	'disableamount'=>1,
-	'test'=>$conf->agenda->enabled)
+	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire)
 );
 
 if ($action=="addelement")
@@ -207,21 +209,24 @@ foreach ($listofreferent as $key => $value)
 	$classname=$value['class'];
 	$tablename=$value['table'];
 	$qualified=$value['test'];
+	
 	if ($qualified)
 	{
 		print '<br>';
 
 		print_titre($langs->trans($title));
 		
-		$selectList=$project->select_element($tablename);
-		if ($selectList)
-		{
+		$selectList=$formproject->select_element($tablename,$project->societe->id);
+
+		if (!$selectList || ($selectList<0)) {
+			setEventMessage($formproject->error,'errors');
+		} else {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 			print '<input type="hidden" name="action" value="addelement">';
 			print '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
 			print '<td>'.$selectList.'</td>';
-			print '<td><input type="submit" class="button" value="'.$langs->trans("AddElement").'"></td>';
+			print '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
 			print '</tr></table>';
 			print '</form>';
 		}
@@ -250,7 +255,7 @@ foreach ($listofreferent as $key => $value)
 				//print $classname;
 
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				// Ref
 				print '<td align="left">';
@@ -312,7 +317,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				if ($key == 'invoice' && ! empty($conf->facture->enabled) && $user->rights->facture->creer)
 				{
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?socid='.$project->societe->id.'&amp;action=create&amp;origin='.$project->element.'&amp;originid='.$project->id.'">'.$langs->trans("AddCustomerInvoice").'</a>';
 				}
 			}
 			if ($project->societe->fournisseur)

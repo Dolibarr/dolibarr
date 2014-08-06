@@ -1,19 +1,12 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=寄付
 Donations=寄付
+# DonationRef=Donation ref.
 Donor=ドナー
 Donors=ドナー
 AddDonation=寄付を追加します。
 NewDonation=新しい寄付
+# ShowDonation=Show donation
 DonationPromise=ギフト約束
 PromisesNotValid=検証されていない約束
 PromisesValid=検証の約束
@@ -29,8 +22,11 @@ DonationStatusPromiseNotValidatedShort=ドラフト
 DonationStatusPromiseValidatedShort=検証
 DonationStatusPaidShort=受信された
 ValidPromess=約束を検証する
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=領収書を構築する
 DonationsModels=寄付金の領収書のドキュメントモデル
 LastModifiedDonations=最後%sは寄付を変更
 SearchADonation=寄付を検索
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:00:20).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

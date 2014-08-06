@@ -54,14 +54,16 @@ function dol_json_encode($elements)
 	//var_dump($num);
 
 	// determine type
-	if (is_numeric(key($elements)))
+	if (is_numeric(key($elements)) && key($elements) == 0)
 	{
 		// indexed (list)
+		$keysofelements=array_keys($elements);	// Elements array mus have key that does not start with 0 and end with num-1, so we will use this later.
 		$output = '[';
-		for ($i = 0, $last = ($num - 1); isset($elements[$i]); ++$i)
+		for ($i = 0, $last = ($num - 1); $i < $num; $i++)
 		{
-			if (is_array($elements[$i]) || is_object($elements[$i])) $output.= json_encode($elements[$i]);
-			else $output .= _val($elements[$i]);
+			if (! isset($elements[$keysofelements[$i]])) continue;
+			if (is_array($elements[$keysofelements[$i]]) || is_object($elements[$keysofelements[$i]])) $output.= json_encode($elements[$keysofelements[$i]]);
+			else $output .= _val($elements[$keysofelements[$i]]);
 			if ($i !== $last) $output.= ',';
 		}
 		$output.= ']';
@@ -283,14 +285,14 @@ function _unval($val)
 }
 
 /**
- * convert a string from one UTF-16 char to one UTF-8 char
+ * Convert a string from one UTF-16 char to one UTF-8 char
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
  * that lack the multibye string extension.
  *
- * @param    string  $utf16  UTF-16 character
- * @return   string  UTF-8 character
+ * @param    string  $utf16		UTF-16 character
+ * @return   string  			UTF-8 character
  */
 function utf162utf8($utf16)
 {
@@ -326,14 +328,14 @@ function utf162utf8($utf16)
 }
 
 /**
- * convert a string from one UTF-8 char to one UTF-16 char
+ * Convert a string from one UTF-8 char to one UTF-16 char
  *
  * Normally should be handled by mb_convert_encoding, but
  * provides a slower PHP-only method for installations
  * that lack the multibye string extension.
  *
- * @param    string  $utf8   UTF-8 character
- * @return   string  UTF-16 character
+ * @param    string  $utf8		UTF-8 character
+ * @return   string  			UTF-16 character
  */
 function utf82utf16($utf8)
 {

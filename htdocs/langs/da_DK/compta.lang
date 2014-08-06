@@ -1,38 +1,36 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - compta
 Accountancy=Regnskabsmæssig
 AccountancyCard=Regnskabsmæssig kortet
 Treasury=Treasury
 MenuFinancial=Finansielle
+# TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Mulighed for regnskabspool
+OptionModeTrue=Mulighed Input-Output
 OptionModeVirtual=Mulighed Credits-automatiske
+OptionModeTrueDesc=I denne sammenhæng, omsætningen er beregnet over betalinger (dato for betalinger). \\ nDen gyldigheden af tallene sikres kun, hvis bogføring er granskes gennem input / output på konti via fakturaer.
 OptionModeVirtualDesc=I denne sammenhæng, omsætningen er beregnet over fakturaer (datoen for bekræftelsen). Når disse fakturaer skyldes, uanset om de er blevet betalt eller ej, de er anført i omsætning output.
 FeatureIsSupportedInInOutModeOnly=Funktionen kun tilgængelig i CREDITS-FORDRINGER regnskabspool mode (Se Regnskabsmæssig modul konfiguration)
+VATReportBuildWithOptionDefinedInModule=Beløb der vises her, beregnes ved hjælp af regler fastlagt af Skat modul setup.
 Param=Setup
+RemainingAmountPayment=Beløb resterende indbetaling:
+AmountToBeCharged=Samlet beløb til at betale:
 AccountsGeneral=Konti
 Account=Konto
 Accounts=Konti
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Regninger for leverandører
 Income=Indkomst
 Outcome=Resultatet
 ReportInOut=Indkomst / resultatfelt
+ReportTurnover=Omsætning
 PaymentsNotLinkedToInvoice=Betalinger ikke er knyttet til en faktura, så der ikke er knyttet til nogen tredjepart
 PaymentsNotLinkedToUser=Betalinger ikke er knyttet til en bruger
 Profit=Profit
 Balance=Balance
 Debit=Debet
 Credit=Credit
+# Piece=Voucher
 Withdrawal=Tilbagetrækning
 Withdrawals=Tilbagekøb
 AmountHTVATRealReceived=HT indsamlet
@@ -41,7 +39,11 @@ VATToPay=Moms til at betale
 VATReceived=Moms modtaget
 VATToCollect=Moms til at indsamle
 VATSummary=Moms Resumé
+LT2SummaryES=IRPF Balance
 VATPaid=Moms betales
+LT2PaidES=IRPF Betalt
+LT2CustomerES=IRPF salg
+LT2SupplierES=IRPF køb
 VATCollected=Moms indsamlet
 ToPay=Til at betale
 ToGet=For at komme tilbage
@@ -67,16 +69,22 @@ ListOfCustomerPayments=Liste over kundebetalinger
 ListOfSupplierPayments=Liste over leverandør betalinger
 DatePayment=Betalingsdato
 NewVATPayment=Ny momsbetaling
+newLT2PaymentES=Ny IRPF betaling
+LT2PaymentES=IRPF Betaling
+LT2PaymentsES=IRPF Betalinger
 VATPayment=Moms Betaling
 VATPayments=Momsbetalinger
+SocialContributionsPayments=Sociale bidrag betalinger
+ShowVatPayment=Vis momsbetaling
 TotalToPay=I alt at betale
 TotalVATReceived=Total moms modtaget
 CustomerAccountancyCode=Kunden regnskabspool kode
-AlreadyPaid=Allerede betales
+SupplierAccountancyCode=Leverandør regnskabspool kode
 AccountNumberShort=Kontonummer
 AccountNumber=Kontonummer
 NewAccount=Ny konto
 SalesTurnover=Omsætning
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu tredjemand
 ByUserAuthorOfInvoice=Ved faktura forfatter
 AccountancyExport=Regnskabsmæssig eksport
@@ -95,91 +103,76 @@ ConfirmPaySocialContribution=Er du sikker på at du vil klassificere denne socia
 DeleteSocialContribution=Slet et socialt bidrag
 ConfirmDeleteSocialContribution=Er du sikker på du vil slette denne sociale bidrag?
 ExportDataset_tax_1=Sociale bidrag og betalinger
-AnnualSummaryDueDebtMode=Bilan des indtægter og dpenses, rsum annuel, da <b>mode %sCrances-Dettes %s</b> DIT <b>comptabilit d'engagement.</b>
-AnnualSummaryInputOutputMode=Bilan des indtægter og dpenses, rsum annuel, da <b>mode %sRecettes-Dpenses %s</b> DIT <b>comptabilit de caisse.</b>
+# CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+# CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
+# CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+# CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
+# AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
+# AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
 AnnualByCompaniesDueDebtMode=Bilan des indtægter og dpenses, dtail par etager, da <b>mode %sCrances-Dettes %s</b> DIT <b>comptabilit d'engagement.</b>
 AnnualByCompaniesInputOutputMode=Bilan des indtægter og dpenses, dtail par etager, da <b>mode %sRecettes-Dpenses %s</b> DIT <b>comptabilit de caisse.</b>
 SeeReportInInputOutputMode=Voir le <b>rapport %sRecettes-Dpenses %s</b> DIT <b>comptabilit de caisse</b> pour un calcul sur les paiements effectivement raliss
 SeeReportInDueDebtMode=Voir le <b>rapport %sCrances-Dettes %s</b> DIT <b>comptabilit d'engagement</b> pour un calcul sur les factures Mises
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Beløbene er inklusive alle skatter og afgifter <br> - Det omfatter udestående fakturaer, udgifter og moms, uanset om de er betalt eller ej. <br> - Det er baseret på validering datoen for fakturaer og moms og på forfaldsdatoen for udgifter.
-RulesResultInOut=- Beløbene er inklusive alle skatter og afgifter <br> - Det omfatter de egentlige betalinger på fakturaer, udgifter og moms. <br> - Det er baseret på forfaldsdatoer af de fakturaer, udgifter ANF moms. <br>
+# RulesResultInOut=- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses and VAT.
 RulesCADue=- Det omfatter kunders grund fakturaer om de er betalt eller ej. <br> - Det er baseret på validering dato med disse fakturaer. <br>
 RulesCAIn=- Den omfatter alle de faktiske betalinger af fakturaer modtaget fra kunder. <br> - Det er baseret på betaling dato med disse fakturaer <br>
-VATReportByCustomersInInputOutputMode=Rapport par klient des TVA collectes et betaler (TVA sur encaissement)
-VATReportByCustomersInDueDebtMode=Rapport par klient des TVA collectes et betaler (TVA sur dbit)
-VATReportByQuartersInInputOutputMode=Rapport par trimestre des TVA collectes et betaler (TVA sur encaissement)
-VATReportByQuartersInDueDebtMode=Rapport par trimestre des TVA collectes et betaler (TVA sur dbit)
-SeeVATReportInInputOutputMode=Voir le <b>rapport %sTVA encaissement %s</b> pour mode de calcul standard
-SeeVATReportInDueDebtMode=Voir le <b>rapport %sTVA sur dbit %s</b> pour mode de calcul avec mulighed sur les dbits
-RulesVATIn=- Pour les tjenester, le rapport inclut les TVA des rglements effectivement Reus ou mis da se basant sur la dato du rglement. <br> - Pour les biens matriels, il inclut les TVA des factures da se basant sur la Date de validering de la fremstilling.
-RulesVATDue=- Pour les tjenester, le rapport inclut les TVA des factures afgifter, payes ou non da se basant sur la Date de validering de ces factures. <br> - Pour les biens matriels, il inclut les TVA des factures da se basant sur la Date de validering de la fremstilling.
-OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait utiliser la Date de livraison pour TRE plus juste.
-PercentOfInvoice=%%/faktura
-Dispatch=Lastfordeling
-Dispatched=Afsendt
-ToDispatch=Afsendelsen
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-ReportTurnover=Omsætning
-NotUsedForGoods=Ikke anvendes på varer
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-OptionModeTrue=Mulighed Input-Output
-OptionModeTrueDesc=I denne sammenhæng, omsætningen er beregnet over betalinger (dato for betalinger). \ nDen gyldigheden af tallene sikres kun, hvis bogføring er granskes gennem input / output på konti via fakturaer.
-ShowVatPayment=Vis momsbetaling
-SupplierAccountancyCode=Leverandør regnskabspool kode
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-TaxModuleSetupToModifyRules=Gå til <a href="%s">modul opsætning</a> til at ændre reglerne for beregning
-VATReportBuildWithOptionDefinedInModule=Beløb der vises her, beregnes ved hjælp af regler fastlagt af Skat modul setup.
-SocialContributionsPayments=Sociale bidrag betalinger
-ThirdPartyMustBeEditAsCustomer=Tredjeparts skal defineres som kunde
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:19).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> da_DK
-RemainingAmountPayment=Beløb resterende indbetaling:
-AmountToBeCharged=Samlet beløb til at betale:
-ProposalStats=Statistik om forslag
-OrderStats=Statistik på ordrer
-InvoiceStats=Statistik om regninger
-SellsJournal=Salg Tidende
-RemainToDivide=Remain til afsendelse:
-WarningDepositsNotIncluded=Indskud fakturaer er ikke inkluderet i denne version med denne bogføring modul.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:36:52).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-LT2SummaryES=IRPF Balance
-LT2PaidES=IRPF Betalt
-LT2CustomerES=IRPF salg
-LT2SupplierES=IRPF køb
-newLT2PaymentES=Ny IRPF betaling
-LT2PaymentES=IRPF Betaling
-LT2PaymentsES=IRPF Betalinger
 DepositsAreNotIncluded=- Depositum fakturaer eller inkluderet
 DepositsAreIncluded=- Depositum fakturaer er inkluderet
 LT2ReportByCustomersInInputOutputModeES=Rapport fra tredjepart IRPF
-RulesVATInServices=- For tjenesteydelser, omfatter rapporten de momsregler faktisk modtaget eller udstedt på grundlag af datoen for betalingen. <br> - For materielle goder, herunder det de momsfakturaer på grundlag af fakturadatoen.
+# VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
+# VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
+# VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
+# VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
+SeeVATReportInInputOutputMode=Voir le <b>rapport %sTVA encaissement %s</b> pour mode de calcul standard
+SeeVATReportInDueDebtMode=Voir le <b>rapport %sTVA sur dbit %s</b> pour mode de calcul avec mulighed sur les dbits
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
 RulesVATInProducts=- For materielle goder, herunder det de momsfakturaer på grundlag af fakturadatoen.
 RulesVATDueServices=- For tjenesteydelser, indeholder rapporten momsfakturaer skyldes, betalte eller ej, er baseret på fakturadatoen.
 RulesVATDueProducts=- For materielle goder, herunder det de momsfakturaer, baseret på fakturadatoen.
+OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait utiliser la Date de livraison pour TRE plus juste.
+PercentOfInvoice=%%/faktura
+NotUsedForGoods=Ikke anvendes på varer
+ProposalStats=Statistik om forslag
+OrderStats=Statistik på ordrer
+InvoiceStats=Statistik om regninger
+Dispatch=Lastfordeling
+Dispatched=Afsendt
+ToDispatch=Afsendelsen
+ThirdPartyMustBeEditAsCustomer=Tredjeparts skal defineres som kunde
+SellsJournal=Salg Tidende
 PurchasesJournal=Køb Journal
 DescSellsJournal=Salg Journal
 DescPurchasesJournal=Køb Journal
 InvoiceRef=Faktura ref.
 CodeNotDef=Ikke defineret
 AddRemind=Forsendelse disponible beløb
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:27).
+RemainToDivide= Remain til afsendelse:
+WarningDepositsNotIncluded=Indskud fakturaer er ikke inkluderet i denne version med denne bogføring modul.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services
+# RefExt=External ref
+# ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+# LinkedOrder=linked to command
+# ReCalculate=Recalculate
+# Mode1=Methode 1
+# Mode2=Method 2
+# CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
+# CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+# TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
+# CalculationMode=Calculation mode
+# COMPTA_PRODUCT_BUY_ACCOUNT=Code comptable par défaut des achats de marchandises
+# COMPTA_PRODUCT_SOLD_ACCOUNT=Code comptable par défaut des ventes de marchandises
+# COMPTA_SERVICE_BUY_ACCOUNT=Code comptable par défaut des achats de services
+# COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut des ventes de services
+# COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
+# COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
+# COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+# COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties

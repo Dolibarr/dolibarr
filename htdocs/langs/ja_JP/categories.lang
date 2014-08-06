@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=カテゴリ
 Categories=カテゴリー
 Rubrique=カテゴリ
@@ -25,6 +16,7 @@ SuppliersCategoriesArea=サプライヤーカテゴリエリア
 CustomersCategoriesArea=お客さまカテゴリエリア
 ThirdPartyCategoriesArea=第三者カテゴリエリア
 MembersCategoriesArea=メンバーカテゴリエリア
+# ContactsCategoriesArea=Contacts categories area
 MainCats=主なカテゴリ
 SubCats=サブカテゴリ
 CatStatistics=統計
@@ -58,12 +50,15 @@ SupplierIsInCategories=サードパーティは、以下の仕入先のカテゴ
 CompanyIsInCustomersCategories=この第三者には、次の顧客/見込み客のカテゴリに所有している
 CompanyIsInSuppliersCategories=この第三者は、以下の仕入先のカテゴリに所有している
 MemberIsInCategories=このメンバは、次のメンバカテゴリに所有している
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=この製品/サービスの任意のカテゴリではありません
 SupplierHasNoCategory=このサプライヤーは、任意のカテゴリではありません
 CompanyHasNoCategory=この会社は、任意のカテゴリではありません
 MemberHasNoCategory=このメンバは、任意のカテゴリではありません
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=カテゴリに分類する
 NoneCategory=なし
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=このカテゴリには、このrefで既に存在している
 ReturnInProduct=戻る製品/サービスカード
 ReturnInSupplier=サプライヤーカードにバックアップする
@@ -86,10 +81,12 @@ CustomersCategoriesShort=お客さまのカテゴリ
 CustomersProspectsCategoriesShort=クスト/ Prosp。カテゴリ
 ProductsCategoriesShort=製品カテゴリ
 MembersCategoriesShort=メンバーカテゴリ
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=このカテゴリにはどの製品も含まれていません。
 ThisCategoryHasNoSupplier=このカテゴリにはすべてのサプライヤーが含まれていません。
 ThisCategoryHasNoCustomer=このカテゴリにはすべての顧客が含まれていません。
 ThisCategoryHasNoMember=このカテゴリには、任意のメンバーが含まれていません。
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=顧客に割り当てられ
 AssignedToTheCustomer=顧客に割り当てられ
 InternalCategory=内部カテゴリ
@@ -99,4 +96,12 @@ CatSupList=サプライヤーカテゴリの一覧
 CatCusList=顧客/見込み客のカテゴリのリスト
 CatProdList=製品カテゴリの一覧
 CatMemberList=メンバーカテゴリの一覧
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:47:01).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

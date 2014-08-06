@@ -1,22 +1,14 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Kaupalliset ehdotuksia
 Proposal=Kaupalliset ehdotus
+ProposalShort=Ehdotus
 ProposalsDraft=Luonnos kaupallinen ehdotuksia
 ProposalDraft=Luonnos kaupallinen ehdotus
 ProposalsOpened=Avoinna kaupallinen ehdotuksia
 Prop=Kaupalliset ehdotuksia
 CommercialProposal=Kaupalliset ehdotus
 CommercialProposals=Kaupalliset ehdotuksia
+ProposalCard=Ehdotus kortti
 NewProp=Uusia kaupallisia ehdotus
 NewProposal=Uusia kaupallisia ehdotus
 NewPropal=Uusi ehdotus
@@ -29,6 +21,7 @@ ConfirmDeleteProp=Oletko varma, että haluat poistaa tämän kaupallisen ehdotus
 ConfirmValidateProp=Oletko varma, että haluat vahvistaa kaupallista ehdotusta?
 LastPropals=Viimeisin %s ehdotuksia
 LastClosedProposals=Viimeisin %s suljettu ehdotuksia
+LastModifiedProposals=Viimeisin %s muutetut ehdotukset
 AllPropals=Kaikki ehdotukset
 LastProposals=Viimeisin ehdotuksia
 SearchAProposal=Haku ehdotuksen
@@ -66,59 +59,44 @@ FileNotUploaded=Tiedosto ei ole ladattu
 FileUploaded=Tiedosto on siirretty onnistuneesti
 AssociatedDocuments=Asiakirjat kanssa assosioituneet ehdotus:
 ErrorCantOpenDir=Ei voi avata hakemistoon
+DatePropal=Päiväys Ehdotuksen
 DateEndPropal=Päiväys loppuun voimassaoloaika
 DateEndPropalShort=Voimassaolo päättyy
 ValidityDuration=Voimassaolo kesto
 CloseAs=Sulje joiden tila
 ClassifyBilled=Luokittele laskutetaan
 BuildBill=Rakenna lasku
-RelatedBill=Liittyvät lasku
-RelatedBills=Liittyvät laskut
 ErrorPropalNotFound=Propal %s ei löydy
 Estimate=Arvio:
 EstimateShort=Arvio
 OtherPropals=Muut ehdotukset
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=Luo kaupallinen ehdotus kopioimalla olemassa olevan ehdotuksen
 CreateEmptyPropal=Luo tyhjä kaupallinen ehdotuksia vierge tai luettelo tuotteet / palvelut
 DefaultProposalDurationValidity=Oletus kaupallinen ehdotus voim. kesto (päivinä)
 UseCustomerContactAsPropalRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite ehdotus vastaanottajan osoite
 ClonePropal=Klooni kaupallinen ehdotus
 ConfirmClonePropal=Oletko varma, että haluat klooni kaupallista <b>ehdotus %s?</b>
-DocModelAzurDescription=Täydellinen ehdotus malli (logo. ..)
-DocModelJauneDescription=Jaune ehdotus malli
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-ProposalShort=Ehdotus
-LastModifiedProposals=Viimeisin %s muutetut ehdotukset
-DatePropal=Päiväys Ehdotuksen
+ConfirmReOpenProp=Oletko varma että haluat avata takaisin kaupallisen ehdotuksen <b>%s?</b>
 ProposalsAndProposalsLines=Kaupalliset ehdotusta ja linjat
 ProposalLine=Ehdotus linja
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-TypeContact_propal_internal_SALESREPFOLL=Edustaja seurantaan ehdotus
-TypeContact_propal_external_BILLING=Asiakkaan lasku yhteystiedot
-TypeContact_propal_external_CUSTOMER=Asiakas ottaa yhteyttä seurantaan ehdotus
-DocModelRoigDescription=Täydellinen ehdotus malli Espanjan vero RE ja IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:27:11).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-ProposalCard=Ehdotus kortti
-ConfirmReOpenProp=Oletko varma että haluat avata takaisin kaupallisen ehdotuksen <b>%s?</b>
 AvailabilityPeriod=Saatavuus viive
 SetAvailability=Aseta saatavuus viive
 AfterOrder=tilauksesta
+##### Availability #####
 AvailabilityTypeAV_NOW=Välitön
 AvailabilityTypeAV_1W=1 viikko
 AvailabilityTypeAV_2W=2 viikkoa
 AvailabilityTypeAV_3W=3 viikkoa
 AvailabilityTypeAV_1M=1 kuukausi
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:48).
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=Edustaja seurantaan ehdotus
+TypeContact_propal_external_BILLING=Asiakkaan lasku yhteystiedot
+TypeContact_propal_external_CUSTOMER=Asiakas ottaa yhteyttä seurantaan ehdotus
+# Document models
+DocModelAzurDescription=Täydellinen ehdotus malli (logo. ..)
+DocModelJauneDescription=Jaune ehdotus malli
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - banks
-CHARSET=UTF-8
 Bank=Bank
 Banks=Banken
 MenuBankCash=Bank / Kas

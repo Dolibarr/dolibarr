@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - help
-CHARSET=UTF-8
 CommunitySupport=Forum/Wiki desteği
 EMailSupport=E-posta desteği
 RemoteControlSupport=Çevrimiçi gerçek zamanlı/uzaktan destek
@@ -26,3 +25,4 @@ LinkToGoldMember=Bo parçaçcığı (widget) tıklayarak Dolibar tarafından siz
 PossibleLanguages=Desteklenen diller
 MakeADonation=Dolibarr projesine bağış yapın
 SubscribeToFoundation=Dolibarr projesine yardım edin, vakıfa abone olun
+SeeOfficalSupport=Kendi dilinizde Dolibarr desteği için: <br><b><a href="%s" target="_blank">%s</a></b>

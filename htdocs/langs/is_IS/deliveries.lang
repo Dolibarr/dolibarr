@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Afhending
 Deliveries=Sendingar
 DeliveryCard=Afhending kort
@@ -20,20 +11,15 @@ QtyDelivered=Magn afhentir
 SetDeliveryDate=Setja skipum dagsetningu
 ValidateDeliveryReceipt=Staðfesta sending berst
 ValidateDeliveryReceiptConfirm=Ertu viss um að þú viljir að sannprófa þetta sending berst?
+DeleteDeliveryReceipt=Eyða afhendingu kvittun
+DeleteDeliveryReceiptConfirm=Ertu viss um að þú viljir eyða pósti móttöku <b>%s?</b>
 DeliveryMethod=Birtingarmáti
 TrackingNumber=Rekja spor númer
+DeliveryNotValidated=Afhending er ekki fullgilt
+# merou PDF model
 NameAndSignature=Nafn og Undirskrift:
 ToAndDate=To___________________________________ á ____ / _____ / __________
 GoodStatusDeclaration=Hafa fengið vöruna hér að ofan í góðu ásigkomulagi,
 Deliverer=Frelsari:
 Sender=Sendandi
 Recipient=Viðtakandi
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-DeleteDeliveryReceipt=Eyða afhendingu kvittun
-DeleteDeliveryReceiptConfirm=Ertu viss um að þú viljir eyða pósti móttöku <b>%s?</b>
-DeliveryNotValidated=Afhending er ekki fullgilt
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:06).

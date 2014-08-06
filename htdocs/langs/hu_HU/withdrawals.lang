@@ -1,10 +1,11 @@
-# Dolibarr language file - hu_HU - withdrawals
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Házszabályok terület
 CustomersStandingOrdersArea=Vásárlói házszabályok terület
 StandingOrders=Házszabályok
 StandingOrder=Házszabály
 NewStandingOrder=Új Házszabály
+StandingOrderToProcess=Feldolgozásához
+StandingOrderProcessed=Feldolgozott
 Withdrawals=Visszavonások
 Withdrawal=Visszavonás
 WithdrawalsReceipts=Visszavonási bizonylatok
@@ -18,6 +19,7 @@ RequestStandingOrderTreated=Request for standing orders treated
 CustomersStandingOrders=Vásárlói házszabályok
 CustomerStandingOrder=Vásárlói házszabály
 NbOfInvoiceToWithdraw=Nb of invoice with withdraw request
+NbOfInvoiceToWithdrawWithInfo=Nb a számlát visszavonja kérelmét rendelkező ügyfelek meghatározott bankszámlára vonatkozó információkat
 InvoiceWaitingWithdraw=Visszavonásra váró bizonylat
 AmountToWithdraw=Visszavonási mennyiség
 WithdrawsRefused=Visszavonás elutasítva
@@ -33,13 +35,6 @@ ThirdPartyDeskCode=Harmadik fél asztal kód
 NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoice are on companies with a valid BAN.
 ClassCredited=Jóváírtan osztályozva
 ClassCreditedConfirm=Biztos, hogy jóvírtan akarja osztályozni a visszavonást a bankszámlájáról?
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-StandingOrderToProcess=Feldolgozásához
-StandingOrderProcessed=Feldolgozott
-NbOfInvoiceToWithdrawWithInfo=Nb a számlát visszavonja kérelmét rendelkező ügyfelek meghatározott bankszámlára vonatkozó információkat
 TransData=Dátum Átviteli
 TransMetod=Átviteli módszer
 Send=Küld
@@ -52,7 +47,7 @@ RefusedData=Elutasításának napjától
 RefusedReason=Az elutasítás indoka
 RefusedInvoicing=Billing elutasítása
 NoInvoiceRefused=Ne töltse az elutasítás
-InvoiceRefused=Töltse fel az elutasítás az ügyfél
+InvoiceRefused=Számla visszautasította
 Status=Állapot
 StatusUnknown=Ismeretlen
 StatusWaiting=Várakozás
@@ -85,6 +80,11 @@ WithdrawalFileNotCapable=Nem sikerült létrehozni visszavonása kézhezvétele 
 ShowWithdraw=Mutasd Kifizetés
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Azonban, ha számlát legalább egy fizetési visszavonása még nem feldolgozott, akkor nem kell beállítani, hogy fizetni kell kezelni visszavonása előtt.
 DoStandingOrdersBeforePayments=Ez a lap lehetővé teszi, hogy kérje a fennálló rendelés. Amint kész lesz, akkor írja be a fizetési zárja be a számlát.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Kifizetése érdekében állt a bank által %s
 InfoCreditMessage=A folyamatos rendelés %s fizettek a bank által <br> Adatok fizetési: %s
 InfoTransSubject=Továbbítása érdekében %s álló banki
@@ -92,6 +92,5 @@ InfoTransMessage=A folyamatos rendelés %s már transmited a bank %s %s. <br><br
 InfoTransData=Összeg: %s <br> Metode: %s <br> Dátum: %s
 InfoFoot=Ez egy automatikus üzenetet küldött Dolibarr
 InfoRejectSubject=Állandó érdekében hajlandó
-InfoRejectMessage=Helló, <br><br> Az állva sorrendben számla %s kapcsolatos %s cég, amelynek összege %s már elutasította a bank. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opció a valós módban nem volt beállítva, akkor hagyja abba ezt követően szimuláció
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:15:38).

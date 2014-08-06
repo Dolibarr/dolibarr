@@ -21,14 +21,11 @@
 
 // in [-]HH:MM format...
 // won't yet work with non-even tzs
-function fetchTimezone() 
-{
-	var localclock = new Date();
-	// returns negative offset from GMT in minutes
-	var tzRaw = localclock.getTimezoneOffset();
-	var tzHour = Math.floor( Math.abs(tzRaw) / 60);
-	var tzMin = Math.abs(tzRaw) % 60;
-	var tzString = ((tzRaw >= 0) ? "-" : "") + ((tzHour < 10) ? "0" : "") + tzHour +
-		":" + ((tzMin < 10) ? "0" : "") + tzMin;
-	return tzString;
+function fetchTimezone() {
+    var localclock = new Date(),
+    // returns negative offset from GMT in minutes
+        tzRaw = localclock.getTimezoneOffset(),
+        tzHour = Math.floor(Math.abs(tzRaw) / 60),
+        tzMin = Math.abs(tzRaw) % 60;
+    return ((tzRaw >= 0) ? "-" : "") + ((tzHour < 10) ? "0" : "") + tzHour + ":" + ((tzMin < 10) ? "0" : "") + tzMin;
 }

@@ -1,15 +1,18 @@
-# Dolibarr language file - pt_PT - bills
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=Factura
 Bills=Facturas
 BillsCustomers=Facturas de Clientes
+BillsCustomer=Fatura do Cliente
 BillsSuppliers=Facturas de Fornecedores
 BillsCustomersUnpaid=Facturas a Clientes Pendentes de Cobrança
 BillsCustomersUnpaidForCompany=Facturas a Clientes Pendentes de Cobrança de %s
 BillsSuppliersUnpaid=Facturas de Fornecedores Pendentes de Pagamento
+BillsSuppliersUnpaidForCompany=Facturas de fornecedores não remunerado para a %s
 BillsUnpaid=Pendentes de Pagamento
+BillsLate=Os pagamentos em atraso
 BillsStatistics=Estatísticas facturas a clientes
 BillsStatisticsSuppliers=Estatísticas facturas de Fornecedores
+DisabledBecauseNotErasable=Desactivada porque não podem ser apagados
 InvoiceStandard=Factura Standard
 InvoiceStandardAsk=Factura Standard
 InvoiceStandardDesc=Este tipo de factura é a factura tradicional. Também conhecida como <b>factura de débito</b> (do verbo dever).
@@ -26,11 +29,14 @@ InvoiceAvoir=Nota de Crédito
 InvoiceAvoirAsk=Nota de Crédito para Corrigir a Factura
 InvoiceAvoirDesc=A <b>Nota de Crédito</b> é uma factura negativa destinada a compensar um montante de uma factura que difere do montante realmente pago (por haver pago de mais ou por devolução de produtos, por Exemplo).<br><br>Nota: Tenha em conta que a factura original a corrigir deve ter sido fechada (' paga' ou ' paga parcialmente ') para poder realizar uma nota de crédito.'
 ReplaceInvoice=Rectificar a Factura %s
-ReplacementInvoice=Substituição da Factura 
+ReplacementInvoice=Substituição da Factura
 ReplacedByInvoice=Substituído por Factura %s
 ReplacementByInvoice=Substituído por Factura
 CorrectInvoice=Correcção de Factura %s
 CorrectionInvoice=Correcção de Factura
+UsedByInvoice=Usado para pagar factura %s
+ConsumedBy=Consumida por
+NotConsumed=Não consumiu
 NoReplacableInvoice=Sem Facturas Rectificáveis
 NoInvoiceToCorrect=Sem Facturas a corrigir
 InvoiceHasAvoir=Corrigida por um ou mais recibos
@@ -50,6 +56,7 @@ Payment=pagamento
 PaymentBack=Reembolso
 Payments=pagamentos
 PaymentsBack=Reembolsos
+# PaidBack=Paid back
 DatePayment=data de pagamento
 DeletePayment=Eliminar o pagamento
 ConfirmDeletePayment=Está seguro de querer eliminar este pagamento?
@@ -61,23 +68,26 @@ ReceivedCustomersPaymentsToValid=Pagamentos recebidos de cliente a Confirmar
 PaymentsReportsForYear=Relatórios de pagamentos de %s
 PaymentsReports=Relatórios de pagamentos
 PaymentsAlreadyDone=Pagamentos efectuados
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Estado do Pagamento
 PaymentMode=Forma de Pagamento
 PaymentConditions=Tipo de Pagamento
 PaymentConditionsShort=Tipo de Pagamento
 PaymentAmount=Montante a Pagar
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Pagamento superior ao resto a pagar
+HelpPaymentHigherThanReminderToPay= Atenção, o montante do pagamento de uma ou mais letras é maior do que o resto a pagar. <br> Edite sua entrada, caso contrário, confirmar e pensar sobre como criar uma nota de crédito do excesso recebido para cada factura paga em excesso.
 ClassifyPaid=Classificar 'Pago'
 ClassifyPaidPartially=Classificar 'Pago Parcialmente'
 ClassifyCanceled=Classificar 'Abandonado'
 ClassifyClosed=Classificar 'Fechado'
 CreateBill=Criar Factura
 AddBill=Criar Factura ou Deposito
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=Eliminar Factura
 SearchACustomerInvoice=Procurar uma factura de cliente
 SearchASupplierInvoice=Procurar uma factura de fornecedor
 CancelBill=Anular uma Factura
-SendByMail=Enviar
 SendRemindByMail=Enviar recordatório
 DoPayment=Emitir pagamento
 DoPaymentBack=Emitir reembolso
@@ -101,6 +111,7 @@ BillStatusClosedPaidPartially=Paga (parcialmente)
 BillShortStatusDraft=Rascunho
 BillShortStatusPaid=Paga
 BillShortStatusPaidBackOrConverted=Processada
+BillShortStatusConverted=Transformados
 BillShortStatusCanceled=Abandonada
 BillShortStatusValidated=Validada
 BillShortStatusStarted=Iniciada
@@ -121,7 +132,7 @@ BillFrom=Emissor
 BillTo=Enviar a
 ActionsOnBill=Acções sobre a factura
 NewBill=Nova factura
-Prélèvement=Pedido Permanente
+Prélèvements=Pedidos Permanentes
 Prélèvements=Pedidos Permanentes
 LastBills=as %s últimas facturas
 LastCustomersBills=as %s últimas facturas a clientes
@@ -134,6 +145,7 @@ SuppliersDraftInvoices=Rascunho de Facturas de Fornecedores
 Unpaid=Pendentes
 ConfirmDeleteBill=Está seguro de querer eliminar esta factura?
 ConfirmValidateBill=Está seguro de querer Confirmar esta factura com a referencia <b>%s</b> ?
+ConfirmUnvalidateBill=Tem certeza de que deseja alterar <b>%s</b> factura ao estatuto de projecto?
 ConfirmClassifyPaidBill=Esta seguro de querer classificar a factura <b>%s</b> como paga?
 ConfirmCancelBill=Está seguro de querer anular a factura <b>%s</b> ?
 ConfirmCancelBillQuestion=Porque Razão quer abandonar a factura?
@@ -156,10 +168,11 @@ ConfirmClassifyAbandonReasonOtherDesc=Esta eleição será para qualquer outro c
 ConfirmCustomerPayment=Confirma o processo  deste pagamento de <b>%s</b> %s ?
 ConfirmValidatePayment=Está seguro de querer confirmar este pagamento (Nenhuma modificação é possível uma vez o pagamento esteja validado)?
 ValidateBill=Confirmar factura
+UnvalidateBill=Factura invalida
 NumberOfBills=Nº de facturas
-NumberOfBillsByMonthHT=Nº de facturas por mês (Sem de Impostos)
+NumberOfBillsByMonth=Nb de facturas por mês
 AmountOfBills=Montante das facturas
-AmountOfBillsByMonth=Quantidade de facturas por mês
+AmountOfBillsByMonthHT=Quantidade de facturas por mês (líquidos de impostos)
 ShowSocialContribution=Mostrar contribuição social
 ShowBill=Ver factura
 ShowInvoice=Ver factura
@@ -169,19 +182,23 @@ ShowInvoiceDeposit=Ver Factura Depositada
 ShowPayment=Ver pagamento
 File=Fichero
 AlreadyPaid=Já e
+# AlreadyPaidBack=Already paid back
+AlreadyPaidNoCreditNotesNoDeposits=Já pagas (sem notas de crédito e depósitos)
 Abandoned=Abandonada
 RemainderToPay=Falta por Pagar
 RemainderToTake=Falta de pagamento
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Montante reclamado
 ExcessReceived=Recebido em excesso
 EscompteOffered=Desconto (Pronto pagamento)
-CreateDraft=Criar Rascunho
 SendBillRef=Enviar factura %s
 SendReminderBillRef=Recordar factura %s
 StandingOrders=Débitos Directos
 StandingOrder=Domiciliação
 NoDraftBills=Nenhuma factura rascunho
 NoOtherDraftBills=Nenhuma outra factura rascunho
+# NoDraftInvoices=No draft invoices
 RefBill=Ref. factura
 ToBill=A facturar
 RemainderToBill=Falta Facturar
@@ -197,11 +214,13 @@ ClassifyBill=Classificar a factura
 NoSupplierBillsUnpaid=Nenhuma factura de fornecedor Pendente de pagamento
 SupplierBillsToPay=Facturas de Fornecedores a pagar
 CustomerBillsUnpaid=Facturas a Clientes Pendentes de Cobrança
-DispenseMontantLettres= Valor Cartas de isenção
-DispenseMontantLettres=As facturas redactactadas por processos mecânicos estão isentas de ordem em letras
+DispenseMontantLettres=Valor Cartas de isenção
+DispenseMontantLettres=Valor Cartas de isenção
 NonPercuRecuperable=Não recuperável
 SetConditions=Definir Condições de pagamento
 SetMode=Definir modo de pagamento
+SetDate= Definir a data
+# SelectDate=Select a date
 Billed=Facturado
 RepeatableInvoice=Factura em Massa
 RepeatableInvoices=Facturas em Massa
@@ -221,18 +240,28 @@ Reductions=Descontos
 ReductionsShort=Dto.
 Discount=Desconto
 Discounts=Descontos
+AddDiscount=Adicionar Desconto
+AddRelativeDiscount=Criar desconto relativo
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=Adicionar Desconto fixo
+EditGlobalDiscounts=Editar descontos absolutos
+AddCreditNote=Criar nota de crédito
 ShowDiscount=Ver o deposito
+# ShowReduc=Show the deduction
 RelativeDiscount=Desconto relativo
 GlobalDiscount=Desconto fixo
 CreditNote=Deposito
 CreditNotes=Recibos
+Deposit=Depósito
+Deposits=Depósitos
 DiscountFromCreditNote=Desconto resultante do deposito %s
 DiscountFromDeposit=Pagamentos a partir de depósito na factura %s
+AbsoluteDiscountUse=Este tipo de crédito pode ser usado na factura antes da sua validação
+CreditNoteDepositUse=Factura deve ser validado para utilizar este rei de créditos
 NewGlobalDiscount=Novo Desconto fixo
+NewRelativeDiscount=Nova parente desconto
 NoteReason=Nota/Motivo
 ReasonDiscount=Motivo
-AddDiscount=Adicionar Desconto
-AddGlobalDiscount=Adicionar Desconto fixo
 DiscountOfferedBy=Acordado por
 DiscountStillRemaining=Descontos fixos Pendentes
 DiscountAlreadyCounted=Descontos fixos já aplicados
@@ -240,6 +269,8 @@ BillAddress=Morada de facturação
 HelpEscompte=Um <b>Desconto</b> é um desconto acordado sobre uma factura dada, a um cliente que realizou o seu pagamento muito antes do vencimento.
 HelpAbandonBadCustomer=Este Montante é deixado (cliente julgado como devedor) e se considera como uma perda excepcional.
 HelpAbandonOther=Este Montante é deixado,já que se tratava de um erro de facturação (má introdução de dados, factura substituída por outra).
+IdSocialContribution=Contribuição Social id
+PaymentId=Pagamento id
 InvoiceId=Id factura
 InvoiceRef=Ref. factura
 InvoiceDateCreation=Data de Criação da Factura
@@ -249,10 +280,20 @@ InvoicePaid=Factura paga
 PaymentNumber=Número de pagamento
 RemoveDiscount=Eliminar Desconto
 WatermarkOnDraftBill=Marca de agua em facturas rascunho (nada sem está vazia)
+InvoiceNotChecked=Factura não seleccionada
 CloneInvoice=Clonar factura
-CloneMainAttributes=Clonar o objecto com os seus atributos principais
 ConfirmCloneInvoice=Está seguro de querer clonar esta factura?
 DisabledBecauseReplacedInvoice=Acção desactivada porque é uma factura substituída
+DescTaxAndDividendsArea=Esta área apresenta um resumo de todos os pagamentos de impostos ou contribuições sociais. Somente registros com pagamento fixo durante o ano são incluídas aqui.
+NbOfPayments=Nb de pagamentos
+SplitDiscount=Dividido em duas desconto
+ConfirmSplitDiscount=Tem certeza de que quer dividir este desconto <b>de %s %s</b> em 2 menores descontos?
+TypeAmountOfEachNewDiscount=Entrada montante para cada uma das duas partes:
+TotalOfTwoDiscountMustEqualsOriginal=Total de dois novos desconto deve ser igual ao montante original de desconto.
+ConfirmRemoveDiscount=Tem certeza de que deseja remover este desconto?
+RelatedBill=factura relacionados
+RelatedBills=facturas relacionadas
+
 # PaymentConditions
 PaymentConditionShortRECEP=Pronto Pagamento
 PaymentConditionRECEP=Pronto Pagamento
@@ -264,6 +305,15 @@ PaymentConditionShort60D=60 dias
 PaymentCondition60D=pagamento a os 60 dias
 PaymentConditionShort60DENDMONTH=60 dias a fim de mês
 PaymentCondition60DENDMONTH=pagamento a os 60 dias a fim de mês
+PaymentConditionShortPT_DELIVERY=Envio
+PaymentConditionPT_DELIVERY=Na entrega
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
 # PaymentType
 PaymentTypeVIR=Transferência bancaria
 PaymentTypeShortVIR=Transferência
@@ -313,7 +363,9 @@ LawApplicationPart2=As mercadorias permanecem em propriedade de
 LawApplicationPart3=Vendedor até o completo cobrança de
 LawApplicationPart4=As suas preços
 LimitedLiabilityCompanyCapital=SRL com capital de
+# UseLine=Apply
 UseDiscount=Aplicar Desconto
+UseCredit=Uso de crédito
 UseCreditNoteInInvoicePayment=Reduzir o pagamento com este deposito
 MenuChequeDeposits=Depósito de Cheques
 MenuCheques=Gestão cheques
@@ -325,72 +377,9 @@ ChequeDeposits=Depósito de cheques
 Cheques=Cheques
 CreditNoteConvertedIntoDiscount=Este deposito converteu-se em %s
 UsBillingContactAsIncoiveRecipientIfExist=Utilizar a morada do contacto de cliente de facturação da factura em vez da morada do Terceiro como destinatário das facturas
-PaymentInvoiceRef=Pagamento Factura %s
-# oursin PDF model
-Of=de
-# bernique PDF model
-PDFBerniqueDescription=Modelo para as facturas com vários tipos de IVA, incluído também o número de IVA Intracomunitário
-# bigorneau PDF Model
-PDFBigorneauDescription=Modelo de factura sem informações de pago
-# bulot PDF Model
-PDFBulotDescription=Modelo de factura com descontos e informação de pago
-# crabe PDF Model
-PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
-# huitre PDF Model
-PDFHuitreDescription=Modelo de factura com desconto e informação de pago
-# oursin PDF Model
-PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nome do projecto, referencias de orçamento, logotipo...)
-# tourteau PDF Model
-PDFTourteauDescription=Modelo de factura sem desconto
-# NumRef Modules
-TerreNumRefModelDesc1=Devolver o numero com formato %syymm-nnnn para facturas standard e %syymm-nnnn para notas de crédito onde yy é o ano, mm é o mês nnnn é a seuqencia numérica sem quebra e sem devolução de 0 
-TerreNumRefModelError=Uma conta a começar com $syymm já existe e não é compatível com este modelo de sequencia. Remove-o ou renomeia para activar este modulo 
-# Deprecated
-# orion
-OrionNumRefModelDesc1=Devolva o numero com o formato FAYYNNNNN onde YY é o ano e NNNNN o numero incremental começando no 1.
-OrionNumRefModelDesc2=O ano é acrescentado por 1 SEM uma inicialização do zero no inicio do ano fiscal.
-OrionNumRefModelDesc3=Define a variável SOCIETE_FISCAL_MONTH_START com o mês no início do ano fiscal, exemplo: 9 for Setembro.
-OrionNumRefModelDesc4= Neste exemplo, teremos a 01 de Setembro de 2006 uma factura chamada FA700354.
-# titan
-TitanNumRefModelDesc1= Devolva o numero com o formato FAYYNNNNN onde YY é o ano e NNNNN o numero incremental começando no 1
-TitanNumRefModelDesc2= O ano é acrescentado por 1 SEM uma inicialização do zero no inicio do ano fiscal.
-TitanNumRefModelDesc3= Define a variável SOCIETE_FISCAL_MONTH_START com o mês no início do ano fiscal, exemplo: 9 for Setembro.
-TitanNumRefModelDesc4= Neste exemplo, teremos a 01 de Setembro de 2006 uma factura chamada FA700354.
-# pluton
-PlutonNumRefModelDesc1= Devolver um número de factura personalizável de acordo com uma máscara definida.
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-UsedByInvoice=Usado para pagar factura %s
-ConsumedBy=Consumida por
-NotConsumed=Não consumiu
-HelpPaymentHigherThanReminderToPay=Atenção, o montante do pagamento de uma ou mais letras é maior do que o resto a pagar. <br> Edite sua entrada, caso contrário, confirmar e pensar sobre como criar uma nota de crédito do excesso recebido para cada factura paga em excesso.
-BillShortStatusConverted=Transformados
-SetDate=Definir a data
-Deposit=Depósito
-Deposits=Depósitos
-AbsoluteDiscountUse=Este tipo de crédito pode ser usado na factura antes da sua validação
-CreditNoteDepositUse=Factura deve ser validado para utilizar este rei de créditos
-NewRelativeDiscount=Nova parente desconto
-IdSocialContribution=Contribuição Social id
-PaymentId=Pagamento id
-DescTaxAndDividendsArea=Esta área apresenta um resumo de todos os pagamentos de impostos ou contribuições sociais. Somente registros com pagamento fixo durante o ano são incluídas aqui.
-NbOfPayments=Nb de pagamentos
-SplitDiscount=Dividido em duas desconto
-ConfirmSplitDiscount=Tem certeza de que quer dividir este desconto <b>de %s %s</b> em 2 menores descontos?
-TypeAmountOfEachNewDiscount=Entrada montante para cada uma das duas partes:
-TotalOfTwoDiscountMustEqualsOriginal=Total de dois novos desconto deve ser igual ao montante original de desconto.
-ConfirmRemoveDiscount=Tem certeza de que deseja remover este desconto?
-UseCredit=Uso de crédito
+ShowUnpaidAll=Mostrar todas as facturas não pagas
 ShowUnpaidLateOnly=Mostrar tarde factura única por pagar.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-AlreadyPaidNoCreditNotesNoDeposits=Já pagas (sem notas de crédito e depósitos)
-RelatedBill=factura relacionados
-RelatedBills=facturas relacionadas
+PaymentInvoiceRef=Pagamento Factura %s
 ValidateInvoice=Validar a factura
 Cash=Numerário
 Reported=Atrasado
@@ -398,33 +387,29 @@ DisabledBecausePayments=Não é possível, pois há alguns pagamentos
 CantRemovePaymentWithOneInvoicePaid=Não é possível remover o pagamento desde há pelo menos na factura paga classificados
 ExpectedToPay=Pagamento esperado
 PayedByThisPayment=Pago por esse pagamento
+ClosePaidInvoicesAutomatically=Classificar &quot;Pago&quot; padrão tudo ou facturas de substituição inteiramente pagas.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=Tudo sem nota fiscal continuam a pagar será automaticamente fechada ao status de &quot;payed&quot;.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Representante factura do cliente seguimento
 TypeContact_facture_external_BILLING=Contacto na factura do Cliente
 TypeContact_facture_external_SHIPPING=Contacto com o transporte do cliente
 TypeContact_facture_external_SERVICE=Contactar o serviço ao cliente
-TypeContact_facture_fourn_internal_SALESREPFOLL=Representante factura do fornecedor seguimento
-TypeContact_facture_fourn_external_BILLING=Fornecedor Contactar com factura
-TypeContact_facture_fourn_external_SHIPPING=Fornecedor Contactar com transporte
-TypeContact_facture_fourn_external_SERVICE=Fornecedor contactar o serviço de
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:28).
+# TypeContact_invoice_supplier_internal_SALESREPFOLL=Representative following-up supplier invoice
+TypeContact_invoice_supplier_external_BILLING=Fornecedor Contactar com factura
+TypeContact_invoice_supplier_external_SHIPPING=Fornecedor Contactar com transporte
+# TypeContact_invoice_supplier_external_SERVICE=Supplier service contact
+# crabe PDF Model
+PDFCrabeDescription=Modelo de factura completo (IVA,  método de pago a mostrar, logotipo...)
+# oursin PDF Model
+PDFOursinDescription=Modelo de factura completo (IVA, métodos de pago, entregas, nome do projecto, referencias de orçamento, logotipo...)
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-BillsCustomer=Fatura do Cliente
-BillsSuppliersUnpaidForCompany=Facturas de fornecedores não remunerado para a %s
-BillsLate=Os pagamentos em atraso
-DisabledBecauseNotErasable=Desactivada porque não podem ser apagados
-ConfirmUnvalidateBill=Tem certeza de que deseja alterar <b>%s</b> factura ao estatuto de projecto?
-UnvalidateBill= Factura invalida
-NumberOfBillsByMonth=Nb de facturas por mês
-AmountOfBillsByMonthHT=Quantidade de facturas por mês (líquidos de impostos)
-AddRelativeDiscount=Criar desconto relativo
-EditRelativelDiscount=Editar desconto relativo
-EditGlobalDiscounts=Editar descontos absolutos
-AddCreditNote=Criar nota de crédito
-InvoiceNotChecked=Factura não seleccionada
-ShowUnpaidAll=Mostrar todas as facturas não pagas
-ClosePaidInvoicesAutomatically=Classificar &quot;Pago&quot; padrão tudo ou facturas de substituição inteiramente pagas.
-AllCompletelyPayedInvoiceWillBeClosed=Tudo sem nota fiscal continuam a pagar será automaticamente fechada ao status de &quot;payed&quot;.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:35).
+TerreNumRefModelError=Uma conta a começar com $syymm já existe e não é compatível com este modelo de sequencia. Remove-o ou renomeia para activar este modulo

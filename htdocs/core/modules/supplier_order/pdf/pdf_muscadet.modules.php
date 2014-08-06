@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,13 +104,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		// Defini position des colonnes
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=111;
+		$this->posxtva=112;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
+		//if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
+			$this->posxpicture-=20;
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
@@ -230,6 +233,15 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$this->atleastonediscount++;
 					}
 				}
+				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
+				}
 
 				// New page
 				$pdf->AddPage();
@@ -304,7 +316,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pagenb+1);
+								$pdf->setPage($pageposafter+1);
 							}
 						}
 						else
@@ -341,11 +353,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 					// Unit price before discount
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, price($object->lines[$i]->subprice), 0, 'R', 0);
 
 					// Quantity
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $object->lines[$i]->qty, 0, 'R');
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $object->lines[$i]->qty, 0, 'R');
 
 					// Discount on line
 					$pdf->SetXY($this->posxdiscount, $curY);
@@ -374,19 +386,20 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if (! empty($object->remise_percent)) $localtax2ligne-=($localtax2ligne*$object->remise_percent)/100;
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
-					// TODO : store local taxes types into object lines and remove this
-					$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
-					if ((! isset($localtax1_type)) || $localtax1_type=='') $localtax1_type = $localtaxtmp_array[0];
-					if ((! isset($localtax2_type)) || $localtax2_type=='') $localtax2_type = $localtaxtmp_array[2];
-					//end TODO
+
+					// Retrieve type from database for backward compatibility with old records
+					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
+					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
+					{
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtax1_type = $localtaxtmp_array[0];
+						$localtax2_type = $localtaxtmp_array[2];
+					}
 
 				    // retrieve global local tax
-					if ($localtax1_type == '7') $localtax1_rate = $localtaxtmp_array[1];
-					if ($localtax2_type == '7') $localtax2_rate = $localtaxtmp_array[3];
-
-					if ($localtax1_type && ($localtax1ligne != 0 || $localtax1_type == '7'))
+					if ($localtax1_type && $localtax1ligne != 0)
 						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
-					if ($localtax2_type && ($localtax2ligne != 0 || $localtax2_type == '7'))
+					if ($localtax2_type && $localtax2ligne != 0)
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
@@ -397,6 +410,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -553,7 +567,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 			$pdf->SetFont('','', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement_doc);
+			$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code)!=('PaymentCondition'.$object->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code):$outputlangs->convToOutputCharset($object->cond_reglement);
 			$lib_condition_paiement=str_replace('\n',"\n",$lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement,0,'L');
 
@@ -895,6 +909,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$outputlangs->load("bills");
 		$outputlangs->load("orders");
 		$outputlangs->load("companies");
+		$outputlangs->load("sendings");
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -952,24 +967,34 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $outputlangs->convToOutputCharset($object->ref), '', 'R');
 
+		if ($object->ref_supplier)
+		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefSupplier")." : " . $outputlangs->convToOutputCharset($object->ref_supplier), '', 'R');
+		}
+
 		$posy+=2;
 		$pdf->SetFont('','', $default_font_size -1);
 
         $posy+=5;
 		$pdf->SetXY($posx,$posy);
-		if ($object->date_commande)
+		if (! empty($object->date_commande))
 		{
 			$pdf->SetTextColor(0,0,60);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
-			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
 			$pdf->SetTextColor(255,0,0);
-			$pdf->MultiCell(100, 3, strtolower($outputlangs->transnoentities("OrderToProcess")), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderToProcess"), '', 'R');
 		}
 
-		$posy+=2;
+		$pdf->SetTextColor(0,0,60);
+		if (! empty($object->date_livraison)) $pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : " . dol_print_date($object->date_livraison,"day",false,$outputlangs,true), '', 'R');
+
+		$posy+=5;
 		$pdf->SetTextColor(0,0,60);
 
 		// Show list of linked objects
@@ -1070,7 +1095,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext=0)
 	{
-		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'SUPPLIER_ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,0,$hidefreetext);
 	}
 
 }

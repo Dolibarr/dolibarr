@@ -1,5 +1,4 @@
 # Dolibarr language file - es_PR - bills
-CHARSET=UTF-8
 ErrorVATIntraNotConfigured=Número de IVU intracomunitario aún no configurado
 ConfirmClassifyPaidPartiallyReasonDiscountNoVat=El resto a pagar <b>(%s %s)</b> es un descuento acordado después de la factura. Acepto perder el IVU de este descuento
 AmountOfBillsByMonthHT=Importe de las facturas por mes (Sin IVU)

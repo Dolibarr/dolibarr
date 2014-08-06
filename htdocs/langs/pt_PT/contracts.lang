@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - contracts
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área contractos
 ListOfContracts=Lista de contractos
 LastContracts=Os Ultimos %s Contractos Modificados
@@ -13,6 +12,8 @@ ContractStatusValidated=Validado
 ContractStatusClosed=Fechado
 ServiceStatusInitial=Inactivo
 ServiceStatusRunning=Em serviço
+ServiceStatusNotLate=Correndo, não terminou
+ServiceStatusNotLateShort=Não terminou
 ServiceStatusLate=Em serviço, expirado
 ServiceStatusLateShort=Expirado
 ServiceStatusClosed=Fechado
@@ -37,6 +38,7 @@ ConfirmCloseService=Está seguro de querer Fechar este serviço?
 ValidateAContract=Confirmar um contrato
 ActivateService=Activar o serviço
 ConfirmActivateService=Está seguro de querer activar este serviço em data %s?
+RefContract=referência de contrato
 DateContract=Data contrato
 DateServiceActivate=Data Activação do serviço
 DateServiceUnactivate=Data desactivação do serviço
@@ -44,11 +46,14 @@ DateServiceStart=Data inicio do serviço
 DateServiceEnd=Data finalização do serviço
 ShowContract=Mostrar contrato
 ListOfServices=Lista de serviços
+ListOfInactiveServices=Lista de serviços não activa
+ListOfExpiredServices=Lista de serviços activos expirados
+ListOfClosedServices=Lista de serviços fechados
 ListOfRunningContractsLines=Lista de linhas de contractos em serviço
 ListOfRunningServices=Lista de serviços activos
 NotActivatedServices=Serviços não activados (com os contractos validados)
 BoardNotActivatedServices=Serviços a activar com os contractos validados
-LastContracts=Os % últimos contractos
+LastContracts=Os Ultimos %s Contractos Modificados
 LastActivatedServices=Os %s últimos serviços activados
 LastModifiedServices=Os %s últimos sevicios modificados
 EditServiceLine=Edição linha do serviço
@@ -71,39 +76,24 @@ ServiceStatus=Estado do serviço
 DraftContracts=Contractos rascunho
 CloseRefusedBecauseOneServiceActive=O contrato não pode ser fechado já que contem ao menos um serviço aberto.
 CloseAllContracts=Fechar todos os contractos
+DeleteContractLine=Apagar uma linha contrato
+ConfirmDeleteContractLine=Tem certeza de que deseja excluir este contrato linha?
 MoveToAnotherContract=Mover o serviço a outro contrato deste Terceiro.
 ConfirmMoveToAnotherContract=Escolhi o contrato e confirmo o alterar de serviço ao presente contrato.
 ConfirmMoveToAnotherContractQuestion=Escolha qualquer outro contrato do mesmo Terceiro, deseja mover este serviço?
 PaymentRenewContractId=Renovação do Serviço (Numero %s)
 ExpiredSince=Expirado desde
+RelatedContracts=Contractos relacionados
+NoExpiredServices=Nenhum serviço activo expirou
+ListOfServicesToExpireWithDuration=Lista de Serviços para expirar em% s dias
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=Lista de Serviços para expirar
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial assinante do contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimento do contrato
 TypeContact_contrat_external_BILLING=Contacto cliente de facturação do contrato
 TypeContact_contrat_external_CUSTOMER=Contacto cliente seguimento do contrato
 TypeContact_contrat_external_SALESREPSIGN=Contacto cliente assinante do contrato
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-ServiceStatusNotLate=Correndo, não terminou
-ServiceStatusNotLateShort=Não terminou
-ListOfInactiveServices=Lista de serviços não activa
-ListOfExpiredServices=Lista de serviços activos expirados
-ListOfClosedServices=Lista de serviços fechados
-DeleteContractLine=Apagar uma linha contrato
-ConfirmDeleteContractLine=Tem certeza de que deseja excluir este contrato linha?
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-RelatedContracts=Contractos relacionados
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:50).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-NoExpiredServices=Nenhum serviço activo expirou 
 Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constante não definida
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:04).

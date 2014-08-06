@@ -1,31 +1,22 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> is_IS
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal mát skipulag
-PAYPAL_API_PASSWORD=API lykilorð
-PAYPAL_API_SIGNATURE=API undirskrift
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilboð greiðslu &quot;órjúfanlegur&quot; (Kreditkort + Paypal) eða &quot;Paypal&quot; aðeins
-PAYPAL_CSS_URL=Optionnal Url CSS stíll lak á bls greiðslu
-ThisIsTransactionId=Þetta er id viðskipta: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Bæta við slóð Paypal greiðslu þegar þú sendir skjal með pósti
-PAYPAL_IPN_MAIL_ADDRESS=E-mail fyrir augnablik tilkynningu um greiðslu (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:49:20).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
 PaypalDesc=Þessi eining bjóða síður að leyfa greiðslu á <a href="http://www.paypal.com" target="_blank">PayPal</a> við viðskiptavini. Þetta er hægt að nota fyrir a frjáls greiðslu eða greiðslu á tilteknu Dolibarr hlut (Reikningar, til þess, ...)
 PaypalOrCBDoPayment=Borga með kreditkorti eða Paypal
 PaypalDoPayment=Borga með Paypal
 PaypalCBDoPayment=Borga með kreditkorti
 PAYPAL_API_SANDBOX=Ham próf / sandkassi
 PAYPAL_API_USER=API notandanafn
+PAYPAL_API_PASSWORD=API lykilorð
+PAYPAL_API_SIGNATURE=API undirskrift
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilboð greiðslu &quot;órjúfanlegur&quot; (Kreditkort + Paypal) eða &quot;Paypal&quot; aðeins
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
+PAYPAL_CSS_URL=Optionnal Url CSS stíll lak á bls greiðslu
+ThisIsTransactionId=Þetta er id viðskipta: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Bæta við slóð Paypal greiðslu þegar þú sendir skjal með pósti
+PAYPAL_IPN_MAIL_ADDRESS=E-mail fyrir augnablik tilkynningu um greiðslu (IPN)
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Þú ert nú í &quot;sandkassi&quot; háttur
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:35).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - members
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Área Membros
 PublicMembersArea=Área pública dos Membros
 MemberCard=Ficha membro
@@ -9,14 +8,20 @@ Members=Membros
 MemberAccount=Login membro
 ShowMember=Mostrar ficha membro
 UserNotLinkedToMember=Utilizador não vinculado a um membro
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Etiquetas Membros
 FundationMembers=Membros da associação
 Attributs=Atributos
-Person=Pessoa
 ErrorMemberTypeNotDefined=Não foi indicado o tipo de membro
 ListOfPublicMembers=Lista de Membros públicos
 ListOfValidatedPublicMembers=Lista de Membros públicos validados
 ErrorThisMemberIsNotPublic=Este membro não é público
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Outro membro <b>(nome: %s, login: %s)</b> já está associada a um <b>terceiro %s.</b> Remover este link em primeiro lugar porque um terceiro não pode ser ligada a apenas um membro (e vice-versa).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Por motivos de segurança, você deve ser concedido permissões para editar todos os usuários para poder ligar um membro de um usuário que não é seu.
+ThisIsContentOfYourCard=Trata-se pormenores do seu cartão
+CardContent=Conteúdo do seu cartão de membro
+SetLinkToUser=Link para um usuário Dolibarr
+SetLinkToThirdParty=Link para uma Dolibarr terceiro
 MembersCards=Cartões de Membros
 MembersList=Lista de Membros
 MembersListToValid=Lista de Membros rascunho (a Confirmar)
@@ -30,11 +35,14 @@ MenuMembersValidated=Membros validados
 MenuMembersUpToDate=Membros actualizados
 MenuMembersNotUpToDate=Membros não actualizados
 MenuMembersResiliated=Membros dados de baixa
+MembersWithSubscriptionToReceive=Membros com assinatura para receber
 DateAbonment=Data filiação
 DateSubscription=Data filiação
 DateNextSubscription=Data próxima filiação
 DateEndSubscription=Data fim filiação
 EndSubscription=Fim filiação
+SubscriptionId=Assinaturas id
+MemberId=Estados-id
 NewMember=Novo membro
 NewType=Novo tipo de membro
 MemberType=Tipo de Membro
@@ -63,13 +71,12 @@ MembersStatusNotPaidShort=Não em día
 MembersStatusResiliated=Membros dados de baixa
 MembersStatusResiliatedShort=Membros dados de baixa
 NewCotisation=Nova filiação
+PaymentSubscription=Nova contribuição pagamento
 EditMember=Edição membro
 SubscriptionEndDate=Data fim filiação
-NewAttribute=Novo atributo
-AttributeCode=Código atributo
-OptionalFieldsSetup=Configuração dos campos opcionais
 MembersTypeSetup=configuração dos tipos de Membros
 NewSubscription=Nova filiação
+NewSubscriptionDesc=Este formulário permite-lhe gravar sua inscrição como um novo membro da fundação. Se você deseja renovar a sua assinatura (se já for membro), entre em contato com Conselho da Fundação vez por %s e-mail.
 Subscription=Filiação
 Subscriptions=Filicações
 SubscriptionLate=Em atraso
@@ -79,7 +86,7 @@ SubscriptionNotReceivedShort=Não recebida
 ListOfSubscriptions=Lista de Filicações
 SendCardByMail=Enviar ficha
 AddMember=Adicionar membro
-MemberType=Tipo de membro
+MemberType=Tipo de Membro
 NoTypeDefinedGoToSetup=Nenhum tipo de membro definido. ir a configuração -> Tipos de Membros
 NewMemberType=Novo tipo de membro
 WelcomeEMail=E-mail
@@ -103,13 +110,15 @@ ConfirmValidateMember=Está seguro de querer Confirmar este membro?
 FollowingLinksArePublic=Os vínculos seguintes são páginas acessiveis a todos e não protegidas por Nenhuma habilitação Dolibarr.
 PublicMemberList=Lista pública de Membros
 BlankSubscriptionForm=Formulario de incrição
+BlankSubscriptionFormDesc=Dolibarr pode fornecer uma URL pública para permitir que os visitantes externos para pedir para se inscrever na fundação. Se um módulo de pagamento on-line está ativado, uma forma de pagamento também será fornecida automaticamente.
+EnablePublicSubscriptionForm=Habilite o formulário de inscrição auto-público
 MemberPublicLinks=Likns/páginas publicas
 ExportDataset_member_1=Membros e Filicações
+ImportDataset_member_1=Membros
 LastMembers=os %s últimos Membros
 LastMembersModified=os %s últimos Membros modificados
+LastSubscriptionsModified=%s Última modificação assinaturas
 AttributeName=Nome do atributo
-FieldEdition=Edição do campo %s
-AlphaNumOnlyCharsAndNoSpace=Somente carateres alfanuméricos espaços
 String=Cadeia
 Text=Texto largo
 Int=Numérico
@@ -121,6 +130,10 @@ AddSubscription=Adicionar filiação
 ShowSubscription=Mostrar filiação
 MemberModifiedInDolibarr=Membro modificado em Dolibarr
 SendAnEMailToMember=Enviar e-mail de informação à membro (E-mail: <b>%s</b>)
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Assunto do e-mail recebido em caso de auto-inscrição de um convidado
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail recebido em caso de auto-inscrição de um convidado
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=EMail assunto para autosubscription membro
+DescADHERENT_AUTOREGISTER_MAIL=E-mail para autosubscrição membro
 DescADHERENT_MAIL_VALID_SUBJECT=assunto do e-mail  de validação de membro
 DescADHERENT_MAIL_VALID=E-mail de validação de membro
 DescADHERENT_MAIL_COTIS_SUBJECT=assunto do e-mail de validação de cotação
@@ -129,38 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=assunto de e-mail de baixa
 DescADHERENT_MAIL_RESIL=E-mail de baixa
 DescADHERENT_MAIL_FROM=E-mail emissor para os e-mails automáticos
 DescADHERENT_ETIQUETTE_TYPE=Formato etiquetas
+DescADHERENT_ETIQUETTE_TEXT=Texto impresso na folhas de endereços dos membros
+DescADHERENT_CARD_TYPE=Formato de cartões de página
 DescADHERENT_CARD_HEADER_TEXT=Texto a imprimir na parte superior do cartão de membro
 DescADHERENT_CARD_TEXT=Texto a imprimir ao cartão de membro
+DescADHERENT_CARD_TEXT_RIGHT=Texto impresso em cartões de membro (alinhar à direita)
 DescADHERENT_CARD_FOOTER_TEXT=Texto a imprimir na parte inferior do cartão de membro
+GlobalConfigUsedIfNotDefined=Texto definido na configuração  módulo Foundation será usado se não se definir aqui
+MayBeOverwrited=Este texto pode ser subescrito pelo valor definido para o tipo de membro
 ShowTypeCard=Ver tipo '%s'
 HTPasswordExport=geração Ficheiro htpassword
 NoThirdPartyAssociatedToMember=nenhum Terceiro asociado a este membro
 ThirdPartyDolibarr=Terceiros Dolibarr
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Outro membro <b>(nome: %s, login: %s)</b> já está associada a um <b>terceiro %s.</b> Remover este link em primeiro lugar porque um terceiro não pode ser ligada a apenas um membro (e vice-versa).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Por motivos de segurança, você deve ser concedido permissões para editar todos os usuários para poder ligar um membro de um usuário que não é seu.
-ThisIsContentOfYourCard=Trata-se pormenores do seu cartão
-CardContent=Conteúdo do seu cartão de membro
-SetLinkToUser=Link para um usuário Dolibarr
-SetLinkToThirdParty=Link para uma Dolibarr terceiro
-SubscriptionId=Assinaturas id
-MemberId=Estados-id
-PaymentSubscription=Nova contribuição pagamento
-MembersAndSubscriptions=Deputados e Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=EMail assunto para autosubscription membro
-DescADHERENT_AUTOREGISTER_MAIL=E-mail para autosubscrição membro
-DescADHERENT_CARD_TYPE=Formato de cartões de página
-DescADHERENT_CARD_TEXT_RIGHT=Texto impresso em cartões de membro (alinhar à direita)
-DescADHERENT_MAILMAN_LISTS=Lista (s) para inscrição automática de novos membros (separadas por vírgula)
+MembersAndSubscriptions= Deputados e Subscriptions
 MoreActions=Complementares de acção sobre a gravação
+MoreActionsOnSubscription=Ação complementar, sugerido por defeito durante a gravação de uma assinatura
 MoreActionBankDirect=Criar um registro de transação direto na conta
 MoreActionBankViaInvoice=Criar uma fatura e pagamento por conta
 MoreActionInvoiceOnly=Criar uma fatura sem pagamento
@@ -169,19 +165,6 @@ LinkToGeneratedPagesDesc=Esta tela permite gerar arquivos PDF com os cartões de
 DocForAllMembersCards=Gerar cartões de visita para todos os membros (Formato de saída realmente configuração: <b>%s)</b>
 DocForOneMemberCards=Gerar cartões de visita para um determinado membro (Formato de saída realmente configuração: <b>%s)</b>
 DocForLabels=Gerar folhas de endereço (Formato de saída realmente configuração: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-MembersWithSubscriptionToReceive=Membros com assinatura para receber
-NewSubscriptionDesc=Este formulário permite-lhe gravar sua inscrição como um novo membro da fundação. Se você deseja renovar a sua assinatura (se já for membro), entre em contato com Conselho da Fundação vez por %s e-mail.
-BlankSubscriptionFormDesc=Dolibarr pode fornecer uma URL pública para permitir que os visitantes externos para pedir para se inscrever na fundação. Se um módulo de pagamento on-line está ativado, uma forma de pagamento também será fornecida automaticamente.
-EnablePublicSubscriptionForm=Habilite o formulário de inscrição auto-público
-ImportDataset_member_1=Membros
-LastSubscriptionsModified=%s Última modificação assinaturas
-GlobalConfigUsedIfNotDefined=Texto definido na configuração  módulo Foundation será usado se não se definir aqui
-MayBeOverwrited=Este texto pode ser subescrito pelo valor definido para o tipo de membro
 SubscriptionPayment=Pagamento Assinatura
 LastSubscriptionDate=Última data de subscrição
 LastSubscriptionAmount=Montante de subscrição Última
@@ -213,4 +196,9 @@ Collectivités=Organizações
 Particuliers=Pessoal
 Entreprises=Empresas
 DOLIBARRFOUNDATION_PAYMENT_FORM=Para fazer o seu pagamento de inscrição através de transferência bancária, consulte a página <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Para pagar com cartão de crédito ou Paypal, clique no botão na parte inferior desta página. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:57).
+ByProperties=por categorias
+MembersStatisticsByProperties=Estatísticas do utilizador por categorias
+MembersByNature=Membros, por categoria
+VATToUseForSubscriptions=Taxa de IVA a utilizar para assinaturas
+NoVatOnSubscription=Sem TVA para assinaturas
+MEMBER_PAYONLINE_SENDEMAIL=Enviar e-mail para avisar quando Dolibarr receber uma confirmação de pagamento validados por assinatura

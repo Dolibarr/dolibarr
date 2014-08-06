@@ -1,0 +1,51 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Margem
+Margins=Margems
+TotalMargin=Total margem
+MarginOnProducts=Margem / Produtos
+MarginOnServices=Margem / Serviços
+MarginRate=Taxa de margem
+MarkRate=Taxa de marca
+DisplayMarginRates=Visualizar taxas de margem
+DisplayMarkRates=Visualizar taxas de aumento
+InputPrice=Preço entrada
+
+margin=Gestão de margens de lucro
+margesSetup=Configuração das margens de lucro
+
+MarginDetails=Detalhes de margem
+
+ProductMargins=Margem de produtos
+CustomerMargins=Margems de clientes
+AgentMargins=Margems de agentes
+
+ProductService=Produto ou serviço
+AllProducts=Todos os produtos e serviços
+ChooseProduct/Service=Escolher produto ou serviço
+CommercialAgent=Agente comercial
+
+StartDate=Data inicio
+EndDate=Data fim
+Launch=Inicio
+
+ForceBuyingPriceIfNull=Forcar preço de compra se nulo
+ForceBuyingPriceIfNullDetails=Se "ATIVADO" a margem sera zero na linha (preço de compra = preço de venda), se nao ("DESATIVADO"), margem sera igual ao preço de venda (preço de compra = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Metodologia de margem para descontos globais
+UseDiscountAsProduct=Como o produto
+UseDiscountAsService=Como serviço
+UseDiscountOnTotal=Em sub-total
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global e tratado como o produto, serviço, ou somente sob o sub-total na margem.
+
+MARGIN_TYPE=Tipo de margem
+MargeBrute=Margem grosa
+MargeNette=Mergem neta
+MARGIN_TYPE_DETAILS=Margem grosa: Preço de venda - Preço de compra<br/>Margem neta: Preço de venda - Preço de custo 
+
+CostPrice=Preço de custo
+BuyingCost=Preço de custo
+UnitCharges=Taxas unitárias
+Charges=Despesas
+
+AgentContactType=Tipo contato usado para comissoes
+AgentContactTypeDetails=Define qual tipo (ligado as faturas) sera asociado com os agentes comerciais

@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 ContractsArea=Vertragsübersicht
 ListOfContracts=Liste der Verträge
 LastContracts=%s zuletzt geänderte Verträge

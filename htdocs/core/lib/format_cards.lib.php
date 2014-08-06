@@ -27,57 +27,60 @@
 
 global $_Avery_Labels;
 
-
+// Unit of metric are defined into field 'metric' in mm.
+// To get into inch, just /25.4
+// Size of pages available on: http://www.worldlabel.com/Pages/pageaverylabels.htm
+// _PosX = marginLeft+(_COUNTX*(width+SpaceX));
 $_Avery_Labels = array (
-			      '5160'=>array('name'=>'5160 (Letter)',
+			      '5160'=>array('name'=>'Avery-5160, WL-875WX',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
-					    'marginLeft'=>1.762,
-					    'marginTop'=>10.7,
+					    'marginLeft'=>5.58165,	// 0.21975 inch
+					    'marginTop'=>12.7,		// 0.5 inch
 					    'NX'=>3,
 					    'NY'=>10,
-					    'SpaceX'=>3.175,
+					    'SpaceX'=>3.556,	// 0.14 inch
 					    'SpaceY'=>0,
-					    'width'=>66.675,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      '5161'=>array('name'=>'5161 (Letter)',
+					    'width'=>65.8749,	// 2.59350 inch
+					    'height'=>25.4,		// 1 inch
+					    'font-size'=>7),
+			      '5161'=>array('name'=>'Avery-5161, WL-75WX',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
-					    'marginLeft'=>0.967,
-					    'marginTop'=>10.7,
+					    'marginLeft'=>4.445,	// 0.175 inch
+					    'marginTop'=>12.7,
 					    'NX'=>2,
 					    'NY'=>10,
-					    'SpaceX'=>3.967,
+					    'SpaceX'=>3.968,	// 0.15625 inch
 					    'SpaceY'=>0,
-					    'width'=>101.6,
-					    'height'=>25.4,
-					    'font-size'=>8),
-			      '5162'=>array('name'=>'5162 (Letter)',
+					    'width'=>101.6,		// 4 inch
+					    'height'=>25.4,		// 1 inch
+					    'font-size'=>7),
+			      '5162'=>array('name'=>'Avery-5162, WL-100WX',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
-					    'marginLeft'=>0.97,
-					    'marginTop'=>20.224,
+					    'marginLeft'=>3.8735,	// 0.1525 inch
+					    'marginTop'=>22.352,	// 0.88 inch
 					    'NX'=>2,
 					    'NY'=>7,
-					    'SpaceX'=>4.762,
+					    'SpaceX'=>4.954,	// 0.195 inch
 					    'SpaceY'=>0,
-					    'width'=>100.807,
-					    'height'=>35.72,
+					    'width'=>101.6,		// 4 inch
+					    'height'=>33.781,	// 1.33 inch
 					    'font-size'=>8),
-			      '5163'=>array('name'=>'5163 (Letter)',
+			      '5163'=>array('name'=>'Avery-5163, WL-125WX',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
-					    'marginLeft'=>1.762,
-					    'marginTop'=>10.7,
+					    'marginLeft'=>4.572,	// 0.18 inch
+					    'marginTop'=>12.7,	// 0.5 inch
 					    'NX'=>2,
 					    'NY'=>5,
-					    'SpaceX'=>3.175,
+					    'SpaceX'=>3.556,	// 0.14 inch
 					    'SpaceY'=>0,
-					    'width'=>101.6,
-					    'height'=>50.8,
-					    'font-size'=>8),
-			      '5164'=>array('name'=>'5164 (Letter)',
+					    'width'=>101.6,		// 4 inch
+					    'height'=>50.8,		// 2 inch
+					    'font-size'=>10),
+			     /* Bugged '5164'=>array('name'=>'5164 (Letter)',
 					    'paper-size'=>'letter',
 					    'metric'=>'in',
 					    'marginLeft'=>0.148,
@@ -88,8 +91,8 @@ $_Avery_Labels = array (
 					    'SpaceY'=>0,
 					    'width'=>4.0,
 					    'height'=>3.33,
-					    'font-size'=>12),
-			      '8600'=>array('name'=>'8600 (Letter)',
+					    'font-size'=>12), */
+			      '8600'=>array('name'=>'Avery-8600',
 					    'paper-size'=>'letter',
 					    'metric'=>'mm',
 					    'marginLeft'=>7.1,
@@ -100,8 +103,8 @@ $_Avery_Labels = array (
 					    'SpaceY'=>3.1,
 					    'width'=>66.6,
 					    'height'=>25.4,
-					    'font-size'=>8),
-			      'L7163'=>array('name'=>'L7163 (A4)',
+					    'font-size'=>7),
+			      'L7163'=>array('name'=>'Avery-L7163',
 					     'paper-size'=>'A4',
 					     'metric'=>'mm',
 					     'marginLeft'=>5,
@@ -112,8 +115,9 @@ $_Avery_Labels = array (
 					     'SpaceY'=>0,
 					     'width'=>99.1,
 					     'height'=>38.1,
-					     'font-size'=>10),
-			      'AVERYC32010'=>array('name'=>'AVERY-C32010 (A4)',
+					     'font-size'=>8),
+					// 85.0 x 54.0 mm
+			      'AVERYC32010'=>array('name'=>'Avery-C32010',
 					     'paper-size'=>'A4',
 					     'metric'=>'mm',
 					     'marginLeft'=>15,
@@ -125,7 +129,7 @@ $_Avery_Labels = array (
 					     'width'=>85,
 					     'height'=>54,
 					     'font-size'=>10),
-					'CARD'=>array('name'=>'Dolibarr Business cards (A4)',
+					'CARD'=>array('name'=>'Dolibarr Business cards',
 					    'paper-size'=>'A4',
 					    'metric'=>'mm',
 					    'marginLeft'=>15,
@@ -139,5 +143,9 @@ $_Avery_Labels = array (
 					    'font-size'=>10)
 		);
 
+foreach($_Avery_Labels as $key => $val)
+{
+	$_Avery_Labels[$key]['name'].=' ('.$_Avery_Labels[$key]['paper-size'].' - '.$_Avery_Labels[$key]['NX'].'x'.$_Avery_Labels[$key]['NY'].')';
+}
 
 ?>

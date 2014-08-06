@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Bariley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,25 +85,26 @@ if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$pro
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-if ($_GET["search_ref"])
+if ($search_ref)
 {
-	$sql.= " AND p.ref LIKE '%".$db->escape($search_ref)."%'";
+	$sql .= natural_search('p.ref', $search_ref);
 }
-if ($_GET["search_label"])
+if ($search_label)
 {
-	$sql.= " AND p.title LIKE '%".$db->escape($search_label)."%'";
+	$sql .= natural_search('p.title', $search_label);
 }
-if ($_GET["search_societe"])
+if ($search_societe)
 {
-	$sql.= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+	$sql .= natural_search('s.nom', $search_societe);
 }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-$var=true;
+dol_syslog("list allowed project sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
+	$var=true;
 	$num = $db->num_rows($resql);
 	$i = 0;
 
@@ -124,7 +126,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.ref","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"p.title","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Visibility"),$_SERVER["PHP_SELF"],"p.public","","","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],'p.fk_statut',"","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
@@ -140,7 +142,7 @@ if ($resql)
 	print '<input type="text" class="flat" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
 	while ($i < $num)

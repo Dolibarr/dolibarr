@@ -1,47 +1,42 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Sekkumine
-Interventions=Sekkumine
-InterventionCard=Sekkumine kaart
-NewIntervention=Uus meede
+Interventions=Sekkumised
+InterventionCard=Sekkumise kaart
+NewIntervention=Uus sekkumine
 AddIntervention=Lisa sekkumine
-ListOfInterventions=List sekkumiste
-EditIntervention=Muuda sekkumine
-ActionsOnFicheInter=Meetmete sekkumise
-LastInterventions=Last %s sekkumiste
+ListOfInterventions=Sekkumiste nimekiri
+EditIntervention=Muuda sekkumist
+ActionsOnFicheInter=Sekkumise tegevused
+LastInterventions=Viimased %s sekkumist
 AllInterventions=Kõik sekkumised
-CreateDraftIntervention=Loo eelnõu
-CustomerDoesNotHavePrefix=Kliendil ei ole prefix
-InterventionContact=Sekkumine kontakt
+CreateDraftIntervention=Loo mustand
+CustomerDoesNotHavePrefix=Kliendil ei ole prefiksit
+InterventionContact=Sekkumise kontakt
 DeleteIntervention=Kustuta sekkumine
-ValidateIntervention=Kinnitada sekkumine
-ModifyIntervention=Muuda sekkumine
-DeleteInterventionLine=Kustuta sekkumine rida
-ConfirmDeleteIntervention=Oled sa kindel, et soovite kustutada selle sekkumine?
-ConfirmValidateIntervention=Oled sa kindel, et soovid, et kinnitada see sekkumine?
-ConfirmModifyIntervention=Oled sa kindel, et tahad muuta see sekkumine?
-ConfirmDeleteInterventionLine=Oled sa kindel, et soovite kustutada selle sekkumise piiri?
-NameAndSignatureOfInternalContact=Nimi ja allkiri astunud:
-NameAndSignatureOfExternalContact=Nimi ja allkiri klient:
-DocumentModelStandard=Tüüpvormi mudel sekkumiste
-ClassifyBilled=Liigitada &quot;Arvelduse&quot;
-StatusInterInvoiced=Arve
-RelatedInterventions=Seotud sekkumiste
-ShowIntervention=Näita sekkumine
-TypeContact_fichinter_internal_INTERREPFOLL=Esindaja järelmeetmeid sekkumine
-TypeContact_fichinter_internal_INTERVENING=Astunud
-TypeContact_fichinter_external_BILLING=Arved kliendi kontaktandmed
-TypeContact_fichinter_external_CUSTOMER=Järelmeetmeid kliendikontakti
-ArcticNumRefModelDesc1=Generic number mudel
-ArcticNumRefModelError=Suutnud aktiveerida
-PacificNumRefModelDesc1=Tagasi numero koos formaadis %syymm-nnnn kus YY aastat, KK kuud ja nnnn on jada, millel ei ole katki ja ei ole tagasi 0
-PacificNumRefModelError=Sekkumine kaart alustades $ syymm juba olemas ja ei sobi see mudel jada. Eemaldada või ümber nimetada aktiveerimiseks mooduli.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:16:50).
+ValidateIntervention=Kinnita sekkumine
+ModifyIntervention=Muuda sekkumist
+DeleteInterventionLine=Kustuta sekkumise rida
+ConfirmDeleteIntervention=Kas oled täiesti kindel, et soovid selle sekkumise kustutada?
+ConfirmValidateIntervention=Kas oled täiesti kindel, et soovid kinnitada selle sekkumise nimega <b>%s</b> ?
+ConfirmModifyIntervention=Kas oled täiesti kindel, et soovid seda sekkumist muuta?
+ConfirmDeleteInterventionLine=Kas oled täiesti kindel, et soovid antud sekkumise rea kustutada?
+NameAndSignatureOfInternalContact=Sekkuja nimi ja allkiri:
+NameAndSignatureOfExternalContact=Kliendi nimi ja allkiri:
+DocumentModelStandard=Sekkumiste tüüpvormi mudel
+InterventionCardsAndInterventionLines=Sekkumised ja sekkumiste read
+ClassifyBilled=Liigita "Arve esitatud"
+StatusInterInvoiced=Arve esitatud
+RelatedInterventions=Seotud sekkumised
+ShowIntervention=Näita sekkumist
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Sekkumise järelkontrolliga tegelev müügiesindaja
+TypeContact_fichinter_internal_INTERVENING=Sekkuv
+TypeContact_fichinter_external_BILLING=Kliendi kontakt arveldamiseks
+TypeContact_fichinter_external_CUSTOMER=Kliendi kontakt järelkajaks
+# Modele numérotation
+ArcticNumRefModelDesc1=Üldine numeratsiooni mudel
+ArcticNumRefModelError=Aktiveerimine ebaõnnestus
+PacificNumRefModelDesc1=Tagastab numbri formaadiga %syymm-nnnn kus yy on aasta, mm on kuu ja nnnn on katkestusteta jada, mis ei lähe kunagi tagasi 0
+PacificNumRefModelError=$syymm algusega sekkumise kaart on juba olemas ja too ei sobi kokku sellise mudeliga jadaga. Kustuta või nimeta too kaart ümber selle mooduli aktiveerimiseks.
+PrintProductsOnFichinter=Trüki tooted sekkumise kaardile
+PrintProductsOnFichinterDetails=sekkumiste jaoks, mis on automaatselt loodud tellimustest

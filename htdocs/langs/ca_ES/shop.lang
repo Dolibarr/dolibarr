@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - shop
-CHARSET= UTF-8
+# Dolibarr language file - Source file is en_US - shop
 Shop=Tenda
 ShopWeb=Tenda web
 LastOrders=Ultimes comandes

@@ -1,27 +1,45 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=رمز الحماية
 Calendar=التقويم
 AddTrip=إضافة رحلة
 Tools=أدوات
+# ToolsDesc=This area is dedicated to group miscellaneous tools not available into other menu entries.<br><br>Those tools can be reached from menu on the side.
 Birthday=عيد ميلاد
 BirthdayDate=عيد ميلاد
 DateToBirth=تاريخ الميلاد
-BirthdayAlertOn=عيد ميلاد النشطة في حالة تأهب
-BirthdayAlertOff=عيد الميلاد فى حالة تأهب الخاملة
+BirthdayAlertOn= عيد ميلاد النشطة في حالة تأهب
+BirthdayAlertOff= عيد الميلاد فى حالة تأهب الخاملة
 Notify_FICHINTER_VALIDATE=تدخل المصادق
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=فاتورة مصادق
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
 Notify_ORDER_SUPPLIER_APPROVE=من أجل الموافقة على المورد
 Notify_ORDER_SUPPLIER_REFUSE=من أجل رفض الموردين
+Notify_ORDER_VALIDATE=التحقق من صحة النظام العميل
+Notify_PROPAL_VALIDATE=التحقق من صحة اقتراح العملاء
+# Notify_WITHDRAW_TRANSMIT=Transmission withdrawal
+# Notify_WITHDRAW_CREDIT=Credit withdrawal
+# Notify_WITHDRAW_EMIT=Perform withdrawal
+Notify_ORDER_SENTBYMAIL=Envío pedido POR پست الکترونیک
+Notify_COMPANY_CREATE=شخص ثالث آفریده شده
+Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری فرستاده شده توسط پست الکترونیکی
+Notify_ORDER_SENTBYMAIL=Envío pedido POR پست الکترونیک
+Notify_BILL_PAYED=صورتحساب مشتری payed
+Notify_BILL_CANCEL=صورتحساب مشتری لغو شد
+Notify_BILL_SENTBYMAIL=صورتحساب مشتری از طریق پست فرستاده
+Notify_ORDER_SUPPLIER_VALIDATE=منظور تامین کننده اعتبار
+Notify_ORDER_SUPPLIER_SENTBYMAIL=منظور تامین کننده فرستاده شده توسط پست الکترونیکی
+Notify_BILL_SUPPLIER_VALIDATE=صورتحساب تامین کننده اعتبار
+Notify_BILL_SUPPLIER_PAYED=صورتحساب تامین کننده payed
+# Notify_BILL_SUPPLIER_SENTBYMAIL=Supplier invoice sent by mail
+# Notify_CONTRACT_VALIDATE=Contract validated
+# Notify_FICHEINTER_VALIDATE=Intervention validated
+# Notify_SHIPPING_VALIDATE=Shipping validated
+# Notify_SHIPPING_SENTBYMAIL=Shipping sent by mail
+# Notify_MEMBER_VALIDATE=Member validated
+Notify_MEMBER_SUBSCRIPTION=عضو مشترک
+Notify_MEMBER_RESILIATE=عضو resiliated
+Notify_MEMBER_DELETE=اعضا حذف
 NbOfAttachedFiles=عدد الملفات المرفقة / وثائق
 TotalSizeOfAttachedFiles=اجمالى حجم الملفات المرفقة / وثائق
 MaxSize=الحجم الأقصى
@@ -29,9 +47,21 @@ AttachANewFile=إرفاق ملف جديد / وثيقة
 LinkedObject=ربط وجوه
 Miscellaneous=متفرقات
 NbOfActiveNotifications=عدد الإخطارات
+PredefinedMailTest=هذا هو الاختبار الإلكتروني. تكون مفصولة \\ nThe سطرين من قبل حرف إرجاع.
+PredefinedMailTestHtml=هذا هو البريد <b>الاختبار</b> (الاختبار يجب أن تكون في كلمة جريئة). <br> وتفصل بين الخطين من قبل حرف إرجاع.
+# PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n You will find here the invoice __FACREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n We would like to warn you that the invoice  __FACREF__ seems to not being payed. So this is the invoice in attachment again, as a reminder.\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n You will find here the commercial proposal __PROPREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n You will find here the order __ORDERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n You will find here our order __ORDERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n You will find here the invoice __FACREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n You will find here the shipping __SHIPPINGREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+# PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n You will find here the intervention __FICHINTERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+DemoDesc=Dolibarr الاتفاق هو تخطيط موارد المؤسسات وإدارة علاقات العملاء وتتكون من عدة وحدات وظيفية. وقال ان العرض يشمل جميع وحدات لا يعني اي شيء يحدث هذا أبدا. بذلك ، عرض عدة ملامح المتاحة.
 ChooseYourDemoProfil=اختيار عرض ملف المباراة التي أنشطتك...
 DemoFundation=أعضاء في إدارة مؤسسة
 DemoFundation2=إدارة وأعضاء في الحساب المصرفي للمؤسسة
+DemoCompanyServiceOnly=إدارة نشاط بيع الخدمة لحسابهم الخاص فقط
 DemoCompanyShopWithCashDesk=تدير متجر مع مكتب النقدية
 DemoCompanyProductAndStocks=إدارة شركة صغيرة أو متوسطة بيع المنتجات
 DemoCompanyAll=إدارة شركة صغيرة أو متوسطة متعددة الأنشطة الرئيسية لجميع وحدات)
@@ -50,25 +80,53 @@ FeatureDevelopment=تنمية الميزة. غير مستقر في هذه الن
 FeaturesSupported=المزايا
 Width=عرض
 Height=ارتفاع
-Weight=وزن
 Depth=متعمق
+Top=بالا
+Bottom=پایین
+Left=چپ
+Right=حق
+CalculatedWeight=يحسب الوزن
+CalculatedVolume=يحسب حجم
+Weight=وزن
 TotalWeight=الوزن الإجمالي
 WeightUnitton=طن
 WeightUnitkg=كجم
 WeightUnitg=ز
 WeightUnitmg=مغلم
+WeightUnitpound=جنيه
+Length=طول
+LengthUnitm=م
+LengthUnitdm=مارك ألماني
+LengthUnitcm=الطول
+LengthUnitmm=مم
+Surface=منطقة
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+# SurfaceUnitfoot2=ft2
+# SurfaceUnitinch2=in2
 Volume=حجم
 TotalVolume=الحجم الإجمالي
 VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+# VolumeUnitfoot3=ft3
+# VolumeUnitinch3=in3
+VolumeUnitounce=أوقية
+VolumeUnitlitre=لتر
+VolumeUnitgallon=غالون
 Size=حجم
 SizeUnitm=م
 SizeUnitdm=مارك ألماني
 SizeUnitcm=سم
 SizeUnitmm=مم
+SizeUnitinch=بوصة
+SizeUnitfoot=قدم
+# SizeUnitpoint=point
 BugTracker=علة تعقب
+SendNewPasswordDesc=هذا الشكل يتيح لك طلب كلمة مرور جديدة. سيكون من إرسالها إلى عنوان البريد الإلكتروني الخاص بك. <br> التغيير لن تكون فعالة إلا بعد النقر على تأكيد الصلة داخل هذه الرسالة. <br> تحقق من بريدك الالكتروني القارئ البرمجيات.
 BackToLoginPage=عودة إلى صفحة تسجيل الدخول
 AuthenticationDoesNotAllowSendNewPassword=طريقة التوثيق <b>٪ ق.</b> <br> في هذا الوضع ، لا يمكن معرفة Dolibarr أو تغيير كلمة السر الخاصة بك. <br> اتصل بمسؤول النظام إذا كنت تريد تغيير كلمة السر الخاصة بك.
 EnableGDLibraryDesc=تثبيت أو تمكين ش ج مكتبة لديكم PHP لاستخدام هذا الخيار.
@@ -80,22 +138,51 @@ StatsByNumberOfEntities=إحصاءات في عدد من الكيانات في ا
 NumberOfProposals=عددا من المقترحات بشأن 12 الشهر الماضي
 NumberOfCustomerOrders=عدد طلبات الزبائن على 12 في الشهر الماضي
 NumberOfCustomerInvoices=عدد من العملاء والفواتير على 12 الشهر الماضي
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=عدد من فواتير الموردين على 12 الشهر الماضي
+NumberOfUnitsProposals=عدد من الوحدات على مقترحات بشأن 12 الشهر الماضي
 NumberOfUnitsCustomerOrders=عدد من الوحدات على طلبات الزبائن على 12 في الشهر الماضي
 NumberOfUnitsCustomerInvoices=عدد من الوحدات على فواتير العملاء على 12 الشهر الماضي
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=عدد من الوحدات على فواتير الموردين على 12 الشهر الماضي
 EMailTextInterventionValidated=التدخل ٪ ق المصادق
 EMailTextInvoiceValidated=فاتورة ٪ ق المصادق
+EMailTextProposalValidated=وقد تم اقتراح %s التحقق من صحة.
+EMailTextOrderValidated=وقد تم التحقق من صحة %s النظام.
 EMailTextOrderApproved=من أجل الموافقة على ق ٪
 EMailTextOrderApprovedBy=من أجل ٪ ق ق ٪ وافقت عليها
 EMailTextOrderRefused=من أجل رفض ق ٪
 EMailTextOrderRefusedBy=من أجل أن ترفض ٪ ق ق ٪
+# EMailTextExpeditionValidated=The shipping %s has been validated.
 ImportedWithSet=استيراد مجموعة البيانات
 DolibarrNotification=إشعار تلقائي
+ResizeDesc=أدخل عرض جديدة <b>أو</b> ارتفاع جديد. وستبقى نسبة خلال تغيير حجم...
+NewLength=عرض جديد
+NewHeight=ارتفاع جديد
+NewSizeAfterCropping=حجم جديد بعد الاقتصاص
+DefineNewAreaToPick=تحديد منطقة جديدة على الصورة لاختيار (اليسار انقر على الصورة ثم اسحب حتى تصل إلى الزاوية المقابلة)
+CurrentInformationOnImage=معلومات عن الصورة الحالية
+ImageEditor=صورة المحرر
+YouReceiveMailBecauseOfNotification=تلقيت هذه الرسالة لأنه قد تم إضافة البريد الإلكتروني الخاص بك إلى قائمة الأهداف التي يتعين على علم الأحداث ولا سيما في صناعة البرمجيات من %s %s.
+YouReceiveMailBecauseOfNotification2=هذا الحدث هو ما يلي :
+# ThisIsListOfModules=This is a list of modules preselected by this demo profile (only most common modules are visible in this demo). Edit this to have a more personalized demo and click on "Start".
+ClickHere=اضغط هنا
+# UseAdvancedPerms=Use the advanced permissions of some modules
+# FileFormat=File format
+# SelectAColor=Choose a color
+AddFiles=اضافه کردن فایلها
+StartUpload=شروع آپلود
+CancelUpload=لغو بارگذاری
+FileIsTooBig=فایلها خیلی بزرگ
+PleaseBePatient=يرجى التحلي بالصبر...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 
-LoginWebcal=ادخل لWebcalendar
-ErrorWebcalLoginNotDefined=وقد ادخل Webcalendar المنتسبة إلى حسابك في Dolibarr ادخل <b>ق ٪</b> غير محدد.
-ErrorPhenixLoginNotDefined=وقد يرتبط Phenix ادخل الى حسابك Dolibarr ادخل <b>ق ٪</b> غير محدد.
+##### Calendar common #####
 AddCalendarEntry=إضافة الدخول في التقويم ق ٪
 NewCompanyToDolibarr=وأضافت الشركة ل ٪ الى Dolibarr
 ContractValidatedInDolibarr=ق ٪ العقد المصادق عليه في Dolibarr
@@ -105,6 +192,7 @@ PropalClosedSignedInDolibarr=اقتراح ٪ ق الذي وقع في Dolibarr
 PropalClosedRefusedInDolibarr=ق رفض الاقتراح ٪ في Dolibarr
 PropalValidatedInDolibarr=اقتراح ٪ في التحقق من صحة المستندات Dolibarr
 InvoiceValidatedInDolibarr=فاتورة ٪ في التحقق من صحة المستندات Dolibarr
+InvoicePaidInDolibarr=ق ٪ الفاتورة المدفوعة في تغيير Dolibarr
 InvoiceCanceledInDolibarr=فاتورة ٪ ق الغى في Dolibarr
 PaymentDoneInDolibarr=ق ٪ الدفع به في Dolibarr
 CustomerPaymentDoneInDolibarr=العميل بدفع ٪ ق عمله في Dolibarr
@@ -113,6 +201,10 @@ MemberValidatedInDolibarr=عضو ٪ في التحقق من صحة المستند
 MemberResiliatedInDolibarr=عضو في resiliated ٪ ق Dolibarr
 MemberDeletedInDolibarr=عضو ٪ ق حذفها من Dolibarr
 MemberSubscriptionAddedInDolibarr=الاكتتاب عضو ق ٪ وأضاف في Dolibarr
+# ShipmentValidatedInDolibarr=Shipment %s validated in Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
+Export=صادرات
 ExportsArea=صادرات المنطقة
 AvailableFormats=الأشكال المتاحة
 LibraryUsed=وتستخدم Librairy
@@ -121,96 +213,5 @@ ExportableDatas=تصدير datas
 NoExportableData=ليس للتصدير البيانات (أي وحدات للتصدير مع تحميل البيانات ، ومفقود أذونات)
 ToExport=الصادرات
 NewExport=تصديرية جديدة
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).
-// Reference language: en_US
-DemoDesc=Dolibarr الاتفاق هو تخطيط موارد المؤسسات وإدارة علاقات العملاء وتتكون من عدة وحدات وظيفية. وقال ان العرض يشمل جميع وحدات لا يعني اي شيء يحدث هذا أبدا. بذلك ، عرض عدة ملامح المتاحة.
-DemoCompanyServiceOnly=إدارة نشاط بيع الخدمة لحسابهم الخاص فقط
-SendNewPasswordDesc=هذا الشكل يتيح لك طلب كلمة مرور جديدة. سيكون من إرسالها إلى عنوان البريد الإلكتروني الخاص بك. <br> التغيير لن تكون فعالة إلا بعد النقر على تأكيد الصلة داخل هذه الرسالة. <br> تحقق من بريدك الالكتروني القارئ البرمجيات.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:15:10).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-InvoicePaidInDolibarr=ق ٪ الفاتورة المدفوعة في تغيير Dolibarr
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
-// Reference language: en_US
-NumberOfUnitsProposals=عدد من الوحدات على مقترحات بشأن 12 الشهر الماضي
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:36:45).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-Notify_ORDER_VALIDATE=التحقق من صحة النظام العميل
-Notify_PROPAL_VALIDATE=التحقق من صحة اقتراح العملاء
-PredefinedMailTest=هذا هو الاختبار الإلكتروني. تكون مفصولة \ nThe سطرين من قبل حرف إرجاع.
-PredefinedMailTestHtml=هذا هو البريد <b>الاختبار</b> (الاختبار يجب أن تكون في كلمة جريئة). <br> وتفصل بين الخطين من قبل حرف إرجاع.
-CalculatedWeight=يحسب الوزن
-CalculatedVolume=يحسب حجم
-Length=طول
-LengthUnitm=م
-LengthUnitdm=مارك ألماني
-LengthUnitcm=الطول
-LengthUnitmm=مم
-Surface=منطقة
-SurfaceUnitm2=m2
-SurfaceUnitdm2=dm2
-SurfaceUnitcm2=cm2
-SurfaceUnitmm2=mm2
-EMailTextProposalValidated=وقد تم اقتراح %s التحقق من صحة.
-EMailTextOrderValidated=وقد تم التحقق من صحة %s النظام.
-ResizeDesc=أدخل عرض جديدة <b>أو</b> ارتفاع جديد. وستبقى نسبة خلال تغيير حجم...
-NewLength=عرض جديد
-NewHeight=ارتفاع جديد
-NewSizeAfterCropping=حجم جديد بعد الاقتصاص
-DefineNewAreaToPick=تحديد منطقة جديدة على الصورة لاختيار (اليسار انقر على الصورة ثم اسحب حتى تصل إلى الزاوية المقابلة)
-CurrentInformationOnImage=معلومات عن الصورة الحالية
-YouReceiveMailBecauseOfNotification=تلقيت هذه الرسالة لأنه قد تم إضافة البريد الإلكتروني الخاص بك إلى قائمة الأهداف التي يتعين على علم الأحداث ولا سيما في صناعة البرمجيات من %s %s.
-YouReceiveMailBecauseOfNotification2=هذا الحدث هو ما يلي :
+##### External sites #####
 ExternalSites=المواقع الخارجية
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:13).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ar_AR
-WeightUnitpound=جنيه
-VolumeUnitounce=أوقية
-VolumeUnitlitre=لتر
-VolumeUnitgallon=غالون
-SizeUnitinch=بوصة
-SizeUnitfoot=قدم
-ImageEditor=صورة المحرر
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:48).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fa_IR
-Notify_COMPANY_CREATE=شخص ثالث آفریده شده
-Notify_PROPAL_SENTBYMAIL=پیشنهاد تجاری فرستاده شده توسط پست الکترونیکی
-Notify_ORDER_SENTBYMAIL=Envío pedido POR پست الکترونیک
-Notify_BILL_PAYED=صورتحساب مشتری payed
-Notify_BILL_CANCEL=صورتحساب مشتری لغو شد
-Notify_BILL_SENTBYMAIL=صورتحساب مشتری از طریق پست فرستاده
-Notify_ORDER_SUPPLIER_VALIDATE=منظور تامین کننده اعتبار
-Notify_ORDER_SUPPLIER_SENTBYMAIL=منظور تامین کننده فرستاده شده توسط پست الکترونیکی
-Notify_BILL_SUPPLIER_VALIDATE=صورتحساب تامین کننده اعتبار
-Notify_BILL_SUPPLIER_PAYED=صورتحساب تامین کننده payed
-Notify_MEMBER_SUBSCRIPTION=عضو مشترک
-Notify_MEMBER_RESILIATE=عضو resiliated
-Notify_MEMBER_DELETE=اعضا حذف
-Top=بالا
-Bottom=پایین
-Left=چپ
-Right=حق
-AddFiles=اضافه کردن فایلها
-StartUpload=شروع آپلود
-CancelUpload=لغو بارگذاری
-FileIsTooBig=فایلها خیلی بزرگ
-Export=صادرات
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:17:05).

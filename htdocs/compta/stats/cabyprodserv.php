@@ -143,7 +143,8 @@ $formother = new FormOther($db);
 $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
 
 if ($modecompta=="CREANCES-DETTES") {
-    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeDebt");
+    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 
@@ -156,7 +157,8 @@ if ($modecompta=="CREANCES-DETTES") {
 
     $builddate=time();
 } else {
-    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeEngagement");
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 
@@ -166,7 +168,7 @@ if ($modecompta=="CREANCES-DETTES") {
     $builddate=time();
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
 
 // SQL request
@@ -250,7 +252,7 @@ if ($modecompta == 'CREANCES-DETTES')
     }
     print '></td>';
     print '<td colspan="3" align="right">';
-    print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '</td></tr>';
 	    // Array header
     print "<tr class=\"liste_titre\">";
@@ -331,7 +333,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		    $var=!$var;
 		    print "<tr ".$bc[$var].">";
 
-		    // Third party
+		    // Product
 		     $fullname=$name[$key];
 		    if ($key >= 0) {
 			$linkname='<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
@@ -343,23 +345,24 @@ if ($modecompta == 'CREANCES-DETTES')
 
 		// Amount w/o VAT
 		print '<td align="right">';
-		if ($key > 0) {
+		/*if ($key > 0) {
 		    print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 		} else {
 		    print '<a href="#">';
-		}
+		}*/
 		print price($amount_ht[$key]);
+		//print '</a>';
 		print '</td>';
 
 		// Amount with VAT
 		print '<td align="right">';
-		if ($key > 0) {
+		/*if ($key > 0) {
 		    print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?productid='.$key.'">';
 		} else {
 		    print '<a href="#">';
-		}
+		}*/
 		print price($amount[$key]);
-		print '</a>';
+		//print '</a>';
 		print '</td>';
 
 		// Percent;
@@ -385,11 +388,10 @@ if ($modecompta == 'CREANCES-DETTES')
     print '</form>';
 } else {
     // $modecompta != 'CREANCES-DETTES'
-    // TODO: better message, for example:
     // "Calculation of part of each product for accountancy in this mode is not possible. When a partial payment (for example 5 euros) is done on an
     // invoice with 2 product (product A for 10 euros and product B for 20 euros), what is part of paiment for product A and part of paiment for product B ?
     // Because there is no way to know this, this report is not relevant.  
-    print '<div class="warning">' . $langs->trans("WarningNotRelevant") . '</div>';
+	print '<br>'.$langs->trans("TurnoverPerProductInCommitmentAccountingNotRelevant") . '<br>';
 }
 
 llxFooter();

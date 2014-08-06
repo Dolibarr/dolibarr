@@ -1,0 +1,51 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Robeža
+Margins=Malas
+TotalMargin=Kopējais Maržinālā
+MarginOnProducts=Maržinālā / Produkti
+MarginOnServices=Maržinālā / Pakalpojumi
+MarginRate=Maržinālā likme
+MarkRate=Mark likme
+DisplayMarginRates=Displeja maržinālās
+DisplayMarkRates=Displeja zīmju cenas
+InputPrice=Ieejas cena
+
+margin=Peļņas norma vadība
+margesSetup=Peļņa vadības iestatīšanas
+
+MarginDetails=Maržinālā detaļas
+
+ProductMargins=Produktu rezerves
+CustomerMargins=Klientu robežas
+AgentMargins=Aģents robežas
+
+ProductService=Produkts vai pakalpojums
+AllProducts=Visi produkti un pakalpojumi
+ChooseProduct/Service=Izvēlies preci vai pakalpojumu
+CommercialAgent=Tirdzniecības pārstāvis
+
+StartDate=Sākuma datums
+EndDate=Beigu datums
+Launch=Sākt
+
+ForceBuyingPriceIfNull=Force iepirkuma cena, ja null
+ForceBuyingPriceIfNullDetails=ja &quot;ON&quot;, starpība būs nulle tiešsaistē (pirkšanas cena = pārdošanas cenu), pretējā gadījumā (&quot;OFF&quot;), Marge būs vienāda ar pārdošanas cenu (pirkšanas cena = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Maržinālā metode pasaules atlaides
+UseDiscountAsProduct=Kā produktu
+UseDiscountAsService=Kā pakalpojums
+UseDiscountOnTotal=Par starpsummu
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Nosaka, ja globālā atlaide tiek uzskatīts par produktu, pakalpojumu, vai tikai starpsumma starpības aprēķinu.
+
+MARGIN_TYPE=Maržinālā veids
+MargeBrute=Raw rezerve
+MargeNette=Neto starpība
+MARGIN_TYPE_DETAILS=Raw rezervi: Pārdošanas cena - Pērk cena <br/> Neto starpība: Pārdošanas cena - Iepirkuma cena
+
+CostPrice=Pašizmaksa
+BuyingCost=Pašizmaksa
+UnitCharges=Vienības izmaksas
+Charges=Maksas
+
+# AgentContactType=Commercial agent contact type
+# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents

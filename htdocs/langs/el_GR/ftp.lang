@@ -1,17 +1,12 @@
-/*  
-* Dolibarr language file - ftp
-* Language code: el_GR
-* Manually translated by technicks.eu
-*/
-CHARSET = UTF-8
-FTPClientSetup = FTP εγκατάσταση μονάδας πελάτη
-NewFTPClient = Νέα ρύθμιση της σύνδεσης FTP
-FTPArea = FTP Περιοχή
-FTPAreaDesc = Αυτή η οθόνη σας δείχνει το περιεχόμενο μιας προβολής του διακομιστή FTP
-SetupOfFTPClientModuleNotComplete = Ρύθμιση της μονάδας-πελάτη FTP φαίνεται να μην είναι πλήρης
-FTPFeatureNotSupportedByYourPHP = Η PHP σας δεν υποστηρίζει FTP λειτουργίες
-FailedToConnectToFTPServer = Αποτυχία σύνδεσης με τον FTP server (server %s, port %s)
-FailedToConnectToFTPServerWithCredentials = Αποτυχία σύνδεσης με τον FTP server login / password
-FTPFailedToRemoveFile = Αποτυχία διαγραφής <b>%s</b> αρχείο.
-FTPFailedToRemoveDir = Αποτυχία διαγραφής <b>%s</b> κατάλογου (ελέγξτε τα δικαιώματα και ότι ο κατάλογος είναι κενός).
-FTPPassiveMode = Passive λειτουργία
+# Dolibarr language file - Source file is en_US - ftp
+FTPClientSetup=FTP εγκατάσταση μονάδας πελάτη
+NewFTPClient=Νέα ρύθμιση της σύνδεσης FTP
+FTPArea=FTP Περιοχή
+FTPAreaDesc=Αυτή η οθόνη σας δείχνει το περιεχόμενο μιας προβολής του διακομιστή FTP
+SetupOfFTPClientModuleNotComplete=Ρύθμιση της μονάδας-πελάτη FTP φαίνεται να μην είναι πλήρης
+FTPFeatureNotSupportedByYourPHP=Η PHP σας δεν υποστηρίζει FTP λειτουργίες
+FailedToConnectToFTPServer=Αποτυχία σύνδεσης με τον FTP server (server %s, port %s)
+FailedToConnectToFTPServerWithCredentials=Αποτυχία σύνδεσης με τον FTP server login / password
+FTPFailedToRemoveFile=Αποτυχία διαγραφής <b>%s</b> αρχείο.
+FTPFailedToRemoveDir=Αποτυχία διαγραφής <b>%s</b> κατάλογου (ελέγξτε τα δικαιώματα και ότι ο κατάλογος είναι κενός).
+FTPPassiveMode=Passive λειτουργία

@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Коммерческие
 CommercialArea=Коммерческие площади
 CommercialCard=Коммерческая карту
@@ -21,6 +11,8 @@ DeleteAction=Удалить действия / задачи
 NewAction=Новые меры / задачи
 AddAction=Добавить действия / задачи
 AddAnAction=Добавить меры / задачи
+AddActionRendezVous=Добавить рандеву задачи
+Rendez-Vous=Свидание
 ConfirmDeleteAction=Вы уверены, что хотите удалить эту задачу?
 CardAction=Действия карточки
 PercentDone=Процент сделали
@@ -31,6 +23,7 @@ TaskRDVWith=Встреча с %s
 ShowTask=Показать задачу
 ShowAction=Показать действий
 ActionsReport=Действия доклад
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Торговый представитель
 SalesRepresentatives=Представители по продажам
 SalesRepresentativeFollowUp=Представитель по продажам (последующих)
@@ -49,9 +42,11 @@ DoneAndToDoActionsFor=Составлено и делать задач %s
 DoneAndToDoActions=Составлено и делать задач
 DoneActions=Совершено действия
 DoneActionsFor=Совершено меры для %s
+ToDoActions=Неполные действия
+ToDoActionsFor=Неполные действия %s
 SendPropalRef=Отправить коммерческое предложение %s
 SendOrderRef=Отправить заказ %s
-NoRecordedProspects=Нет перспективы зарегистрировано
+StatusNotApplicable=Не применяется
 StatusActionToDo=Чтобы сделать
 StatusActionDone=Готово
 MyActionsAsked=Действия Я записала
@@ -81,33 +76,20 @@ ActionAC_REL=Отправить платежную (напоминание)
 ActionAC_CLO=Закрыть
 ActionAC_EMAILING=Отправить по электронной почте масса
 ActionAC_COM=Отправить заказ по почте
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
-AddActionRendezVous=Добавить рандеву задачи
-Rendez-Vous=Свидание
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-ToDoActions=Неполные действия
-ToDoActionsFor=Неполные действия %s
+ActionAC_SHIP=Отправить доставку по почте
 ActionAC_SUP_ORD=Отправить поставщиком заказы по почте
 ActionAC_SUP_INV=Отправить поставщиком счета по почте
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:01).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-StatusNotApplicable=Не применяется
-ActionAC_SHIP=Отправить доставку по почте
 ActionAC_OTH=Другой
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Проспект статус
 DraftPropals=Проект коммерческих предложений
 SearchPropal=Поиск коммерческих предложений
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:28).
+# CommercialDashboard=Commercial summary

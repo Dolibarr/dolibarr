@@ -1,0 +1,114 @@
+# Dolibarr language file - Source file is en_US - cron
+#
+# About page
+#
+About = Info
+CronAbout = Info su Cron
+CronAboutPage = Pagina informativa su Cron
+
+#
+# Right
+#
+Permission23101 = Leggi compito programmato
+Permission23102 = Crea/aggiorna compito programmato
+Permission23103 = Cancella compito programmato
+Permission23104 = Esegui compito programmato
+
+#
+# Admin
+#
+CronSetup= Impostazione delle azioni pianificate
+URLToLaunchCronJobs=URL che lancia i job di cron
+OrToLaunchASpecificJob=O per lanciare un job specifico
+KeyForCronAccess=Chiave di sicurezza per l'URL che lancia i job di cron
+FileToLaunchCronJobs=Comando per lanciare i job di cron
+CronExplainHowToRunUnix=In ambienti Unix dovresti usare crontab per lanciare il comando ogni minuto
+CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows dovresti usare Operazioni Pianificate per lanciare il comando ogni minuto
+
+
+#
+# Menu
+#
+CronJobs=Azioni pianificate
+CronListActive= Lista dei job attivi
+CronListInactive= Lista dei job disabilitati
+CronListActive= Lista dei job attivi
+
+
+#
+# Page list
+#
+CronDateLastRun=Ultimo avvio
+CronLastOutput=Output dell'ultimo avvio
+CronLastResult=Codice del risultato dell'ultima esecuzione
+CronListOfCronJobs=Lista dei job programmati
+CronCommand=Comando
+CronList=Lista dei job
+CronDelete= Cancella job di cron
+CronConfirmDelete= Vuoi davvero cancellare questa azione pianificata?
+CronExecute=Esegui azione
+CronConfirmExecute= Sei sicuro di voler eseguire ora questo job
+CronInfo= I job possono eseguire compiti pianificati
+CronWaitingJobs=Job in attesa
+CronTask=Azione
+CronNone= Nessuno
+CronDtStart=Data di inizio
+CronDtEnd=Data di fine
+CronDtNextLaunch=Prossima esecuzione
+CronDtLastLaunch=Ultima esecuzione
+CronFrequency=Frequenza
+CronClass=Classe
+CronMethod=Metodo
+CronModule=Modulo
+CronAction=Azione
+CronStatus=Stato
+CronStatusActive=Attivo
+CronStatusInactive=Disabilitato
+CronNoJobs=Nessun job registrato
+CronPriority=Priorità
+CronLabel=Descrizione
+CronNbRun=Num. lancio
+CronEach=Ogni
+JobFinished=Azione eseguita e completata
+
+#
+#Page card
+#
+CronAdd= Aggiungi job
+CronHourStart= Ora e data di inizio del compito
+CronEvery= Ed esegui il compito ogni
+CronObject= Istanza/Oggetto da creare
+CronArgs=Parametri
+CronSaveSucess=Salvato con successo
+CronNote=Commento
+CronFieldMandatory=Il campo %s è obbligatorio
+CronErrEndDateStartDt=La data di fine non può essere precedente a quella di inizio
+CronStatusActiveBtn=Abilita
+CronStatusInactiveBtn=Disattiva
+CronTaskInactive=Questa azione è disabilitata
+CronDtLastResult=Data dell'ultimo risultato
+CronId=Id
+CronClassFile=Classi (filename.class.php)
+CronModuleHelp=Nome della directory del modulo di Dolibarr (funziona anche con moduli di Dolibarr esterni). <BR> Per esempio per ottenere il metodo corretto dell'oggetto /htdocs/<u>product</u>/class/product.class.php, il valore da inserire è <i>product</i>
+CronClassFileHelp=Nome del file da caricare.<BR> Per esempio per ottenere il metodo corretto dell'oggetto /htdocs/product/class/<u>product.class.php</u>, il valore del class file name è <i>product.class.php</i>
+CronObjectHelp=Nome dell'oggetto da caricare. <BR>Per esempio per ottenere il metodo corretto dell'oggetto /htdocs/product/class/product.class.php, il valore da inserire è <i>Product</i>
+CronMethodHelp=Nome del metodo dell'oggetto da eseguire. <BR>Per esempio per ottenere il metodo dell'oggetto /htdocs/product/class/product.class.php, il valore da inserire è <i>fetch</i>
+CronArgsHelp=Argomenti del metodo.<br/> Per esempio per ottenere il metodo corretto dell'oggetto /htdocs/product/class/<u>product.class.php</u>, il valore dei parametri può essere <i>0, ProductRef</i>
+CronCommandHelp=Il comando da eseguire sul sistema
+
+#
+# Info
+#
+CronInfoPage=Informazioni
+
+
+#
+# Common
+#
+CronType=Tipo di compito
+CronType_method=Metodo di chiamata di una classe Dolibarr
+CronType_command=Comando da shell
+CronMenu=Cron
+CronCannotLoadClass=Non posso caricare la classe %s o l'oggetto %s
+
+UseMenuModuleToolsToAddCronJobs=Andare nel menu "Home - Modules tools - Job list" per vedere e modificare le azioni pianificate.

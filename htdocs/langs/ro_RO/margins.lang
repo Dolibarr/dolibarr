@@ -1,0 +1,51 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marjă
+Margins=Marje
+TotalMargin=Total Marjă
+MarginOnProducts=Marjă / Produse
+MarginOnServices=Marjă / Servicii
+MarginRate=Rată Marjă
+MarkRate=Rată marcă
+DisplayMarginRates=Afişează ratele marjă
+DisplayMarkRates=Afişează rate marcă
+InputPrice=Preţ intrare
+
+margin=Managementul marje profit
+margesSetup=Setare Management marje profit
+
+MarginDetails=Detalii Marjă
+
+ProductMargins=Marjă Produs
+CustomerMargins=Marje Client
+AgentMargins=Marje Agent
+
+ProductService=Produs sau serviciu
+AllProducts=Toate produsele şi serviciile
+ChooseProduct/Service=Alege produs sau serviciu
+CommercialAgent=Agent comercial
+
+StartDate=Dată început
+EndDate=Dată sfîrşit
+Launch=Start
+
+ForceBuyingPriceIfNull=Forţează preţul de cumpărare dacă e null
+ForceBuyingPriceIfNullDetails=daca "ON", marja va fi zero pe linie (pret cumparare= pret vanzare), altfel("OFF"), marja va fi egala cu pretul de vanzare pentru aceasta linie (pret cumparare = 0).
+MARGIN_METHODE_FOR_DISCOUNT=Metoda marje pentru discounturi globale
+UseDiscountAsProduct=Ca produs
+UseDiscountAsService=Ca serviciu
+UseDiscountOnTotal=Pe subtotal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definiti daca discontul global e tratat ca un produs, serviciu, sau numai pe total la calcularea marjei.
+
+MARGIN_TYPE=Tip Marjă
+MargeBrute=Marja brută
+MargeNette=Marja netă
+MARGIN_TYPE_DETAILS=Marja brută: Preţ vânzare - Preţ cumpărare<br/> Marja netă : Preţ vânzare - Cost de preţ
+
+CostPrice=Preţ de cost
+BuyingCost=Preţ de cost
+UnitCharges=Cheluieli unitare
+Charges=Cheltuieli
+
+AgentContactType=Tip contact agent comercial 
+AgentContactTypeDetails=Defineşte ce tip de contact ( legat pe factură) va fi utilizat pentru raportul marjei pe agenţi comerciali

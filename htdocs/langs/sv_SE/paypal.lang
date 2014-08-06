@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SE
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sv_SE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal-modul installation
 PaypalDesc=Denna modul erbjuder sidor för att möjliggöra betalning på <a href="http://www.paypal.com" target="_blank">PayPal</a> av kunder. Detta kan användas för en fri betalning eller en betalning på en viss Dolibarr objekt (faktura, beställning, ...)
 PaypalOrCBDoPayment=Betala med kreditkort eller Paypal
@@ -17,15 +8,15 @@ PAYPAL_API_SANDBOX=Läge test / sandlåda
 PAYPAL_API_USER=API användarnamn
 PAYPAL_API_PASSWORD=API-lösenord
 PAYPAL_API_SIGNATURE=API signatur
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:01:48).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Erbjuder betalning &quot;integrerad&quot; (Kreditkort + Paypal) eller &quot;Paypal&quot; endast
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal Url av CSS-formatmall om betalning sidan
 ThisIsTransactionId=Detta är id transaktion: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lägg till URL Paypal betalning när du skickar ett dokument per post
 PAYPAL_IPN_MAIL_ADDRESS=E-postadress att omedelbart anmälan av betalning (IPN)
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Du är för närvarande i &quot;sandlåda&quot;-läget
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:19).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

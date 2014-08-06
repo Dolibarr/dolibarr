@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Auglýsing
 CommercialArea=Eiðsvík
 CommercialCard=Auglýsing kort
@@ -28,10 +19,11 @@ PercentDone=Hlutfall lokið
 ActionOnCompany=Verkefni um fyrirtæki
 ActionOnContact=Verkefni um tengilið
 TaskRDV=Fundir
-TaskRDVWith=Fundur með %s 
+TaskRDVWith=Fundur með %s
 ShowTask=Sýna verkefni
 ShowAction=Sýna aðgerðir
 ActionsReport=Actions skýrslu
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Sölufulltrúi
 SalesRepresentatives=Sölufulltrúi
 SalesRepresentativeFollowUp=Sölufulltrúi (eftirfylgni)
@@ -46,14 +38,15 @@ ListOfCustomers=Listi yfir viðskiptavini
 LastDoneTasks=Last %s  lokið verkefni
 LastRecordedTasks=Síðast skráð verkefni
 LastActionsToDo=Last %s  elstu aðgerðir ekki lokið
-DoneAndToDoActionsFor=Lokið og til að gera verkefni fyrir %s 
+DoneAndToDoActionsFor=Lokið og til að gera verkefni fyrir %s
 DoneAndToDoActions=Lokið og til að gera verkefni
 DoneActions=Lauk aðgerðum
-DoneActionsFor=Lauk aðgerðum á %s 
+DoneActionsFor=Lauk aðgerðum á %s
 ToDoActions=Ófullnægjandi aðgerðir
-ToDoActionsFor=Ófullnægjandi aðgerðir til %s 
-SendPropalRef=Senda auglýsing tillögu %s 
-SendOrderRef=Senda til %s 
+ToDoActionsFor=Ófullnægjandi aðgerðir til %s
+SendPropalRef=Senda auglýsing tillögu %s
+SendOrderRef=Senda til %s
+StatusNotApplicable=Á ekki við
 StatusActionToDo=Til að gera
 StatusActionDone=Complete
 MyActionsAsked=Aðgerðir sem ég hef skráð
@@ -83,17 +76,20 @@ ActionAC_REL=Senda viðskiptavinur reikning í pósti (áminning)
 ActionAC_CLO=Loka
 ActionAC_EMAILING=Senda massi tölvupósti
 ActionAC_COM=Senda viðskiptavina þess með pósti
+ActionAC_SHIP=Senda skipum með pósti
 ActionAC_SUP_ORD=Senda birgir röð í pósti
 ActionAC_SUP_INV=Senda birgir reikning í pósti
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-StatusNotApplicable=Á ekki við
-ActionAC_SHIP=Senda skipum með pósti
 ActionAC_OTH=Annað
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect stöðu
 DraftPropals=Drög auglýsing tillögur
 SearchPropal=Leita að auglýsing tillögu
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:47).
+# CommercialDashboard=Commercial summary

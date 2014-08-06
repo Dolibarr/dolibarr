@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,13 +65,13 @@ if ($action == 'specimen')
         }
         else
         {
-            $mesg='<div class="error">'.$obj->error.'</div>';
+            setEventMessage($obj->error,'errors');
             dol_syslog($obj->error, LOG_ERR);
         }
     }
     else
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+        setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
 }
@@ -160,13 +160,13 @@ else
     dol_print_error($db);
 }
 
-print '<table class="noborder" width=\"100%\">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -206,20 +206,20 @@ if (is_resource($handle))
                     print "<td align=\"center\">\n";
                     if ($conf->global->DON_ADDON_MODEL == $name)
                     {
-                        print img_picto($langs->trans("Enabled"),'on');
+                        print img_picto($langs->trans("Enabled"),'switch_on');
                     }
                     else
                     {
                         print '&nbsp;';
                         print '</td><td align="center">';
-                        print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+                        print '<a href="dons.php?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
                     }
                     print '</td>';
                 }
                 else
                 {
                     print "<td align=\"center\">\n";
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                     print "</td>";
                 }
 

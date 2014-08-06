@@ -1,15 +1,10 @@
-/*  
-* Dolibarr language file - shop
-* Language code: el_GR
-* Manually translated by technicks.eu
-*/
-CHARSET = UTF-8
-Shop = Κατάστημα
-ShopWeb = Web Shop
-LastOrders = Τελευταία παραγγελίες
-OnStandBy = Σε κατάσταση αναμονής
-TreatmentInProgress = Επεξεργασία σε εξέλιξη
-LastCustomers = Τελευταίοι πελάτες
-OSCommerceShop = OsCommerce κατάστημα
-OSCommerce = OsCommerce
-AddProd = Online Πώληση
+# Dolibarr language file - Source file is en_US - shop
+Shop=Κατάστημα
+ShopWeb=Web Shop
+LastOrders=Τελευταία παραγγελίες
+OnStandBy=Σε κατάσταση αναμονής
+TreatmentInProgress=Επεξεργασία σε εξέλιξη
+LastCustomers=Τελευταίοι πελάτες
+OSCommerceShop=OsCommerce κατάστημα
+OSCommerce=OsCommerce
+AddProd=Online Πώληση

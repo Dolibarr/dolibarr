@@ -1,23 +1,45 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=Suojakoodi
 Calendar=Kalenteri
 AddTrip=Lisää matka
 Tools=Työkalut
+ToolsDesc=Tämä alue on omistettu ryhmä sekalaisia ​​työkaluja ole saatavilla muihin valikot. <br><br> Näitä työkaluja pääsee valikosta puolella.
 Birthday=Syntymäpäivä
 BirthdayDate=Syntymäpäivä
 DateToBirth=Päiväys syntyvyyden
+BirthdayAlertOn= syntymäpäivä hälytys aktiivinen
+BirthdayAlertOff= syntymäpäivä varoituskynnysten inaktiivinen
 Notify_FICHINTER_VALIDATE=Validate interventioelimen
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Validate bill
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
+Notify_ORDER_SUPPLIER_APPROVE=Toimittaja jotta hyväksytty
+Notify_ORDER_SUPPLIER_REFUSE=Toimittaja jotta evätty
+Notify_ORDER_VALIDATE=Asiakas tilaa validoitu
+Notify_PROPAL_VALIDATE=Asiakas ehdotus validoidaan
+Notify_WITHDRAW_TRANSMIT=Vaihteisto peruuttaminen
+Notify_WITHDRAW_CREDIT=Luotto peruuttaminen
+Notify_WITHDRAW_EMIT=Isue peruuttaminen
+Notify_ORDER_SENTBYMAIL=Asiakas tilaa postitse
+Notify_COMPANY_CREATE=Kolmannen osapuolen luotu
+Notify_PROPAL_SENTBYMAIL=Kaupallinen ehdotus lähetetään postitse
+Notify_ORDER_SENTBYMAIL=Asiakas tilaa postitse
+Notify_BILL_PAYED=Asiakas laskun maksanut
+Notify_BILL_CANCEL=Asiakas lasku peruutettu
+Notify_BILL_SENTBYMAIL=Asiakkaan lasku lähetetään postitse
+Notify_ORDER_SUPPLIER_VALIDATE=Toimittaja jotta validoitu
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Toimittaja jotta postitse
+Notify_BILL_SUPPLIER_VALIDATE=Toimittaja laskun validoitu
+Notify_BILL_SUPPLIER_PAYED=Toimittaja laskun maksanut
+Notify_BILL_SUPPLIER_SENTBYMAIL=Toimittaja lasku lähetetään postitse
+Notify_CONTRACT_VALIDATE=Sopimus validoitu
+Notify_FICHEINTER_VALIDATE=Intervention validoitu
+Notify_SHIPPING_VALIDATE=Toimitus validoitu
+Notify_SHIPPING_SENTBYMAIL=Toimitus postitse
+Notify_MEMBER_VALIDATE=Jäsen validoitu
+Notify_MEMBER_SUBSCRIPTION=Jäsen merkitty
+Notify_MEMBER_RESILIATE=Jäsen resiliated
+Notify_MEMBER_DELETE=Jäsen poistettu
 NbOfAttachedFiles=Numero liitettyjen tiedostojen / asiakirjat
 TotalSizeOfAttachedFiles=Kokonaiskoosta liitettyjen tiedostojen / asiakirjat
 MaxSize=Enimmäiskoko
@@ -25,7 +47,21 @@ AttachANewFile=Liitä uusi tiedosto / asiakirjan
 LinkedObject=Linkitettyä objektia
 Miscellaneous=Miscellaneous
 NbOfActiveNotifications=Ilmoitusten lukumäärä
+PredefinedMailTest=Tämä on testi postitse. \\ NOsoitteen kaksi riviä välissä rivinvaihto.
+PredefinedMailTestHtml=Tämä on <b>testi</b> postitse (sana testi on lihavoitu). <br> Kaksi riviä välissä rivinvaihto.
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Löydät täältä laskun __ FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Haluamme varoittaa, että lasku __ FACREF__ näyttää ei maksanut. Joten tämä on laskun liitetiedostona uudelleen, kuten muistutuksen. \n\n__PERSONALIZED__ Vilpittömästi \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Löydät täältä kaupallinen propoal __ PROPREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Löydät täältä järjestyksessä __ ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Löydät tästä meidän järjestys __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Löydät täältä laskun __ FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Löydät täältä merenkulku __ SHIPPINGREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Löydät täältä intervention __ FICHINTERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+DemoDesc=Dolibarr on kompakti ERP / CRM säveltänyt useita toiminnallisia moduuleja. A demo, joka sisältää kaikki moduulit eivät merkitse mitään, koska tämä ei koskaan tapahdu. Joten useita demo profiilit ovat saatavilla.
 ChooseYourDemoProfil=Valitse demo profil jotka vastaavat aktiviisuutesi ...
+DemoFundation=Hallitse jäseniä säätiön
+DemoFundation2=Jäsenten hallinta ja pankkitilille säätiön
+DemoCompanyServiceOnly=Hallinnoi freelance toimintaa myymällä palvelua vain
 DemoCompanyShopWithCashDesk=Hallinnoi liikkeen kanssa kassa
 DemoCompanyProductAndStocks=Hallitse pieni tai keskisuuri yritys myy tuotteitaan
 DemoCompanyAll=Hallitse pieni tai keskisuuri yritys, jossa on useita toimintoja (kaikki tärkeimmät moduulit)
@@ -44,24 +80,51 @@ FeatureDevelopment=Kehittäminen ominaisuutta. Ei vakaa tässä versiossa
 FeaturesSupported=Ominaisuudet tuettava
 Width=Leveys
 Height=Korkeus
-Weight=Paino
 Depth=Syvyys
+Top=Top
+Bottom=Pohja
+Left=Vasen
+Right=Oikeus
+CalculatedWeight=Laskettu paino
+CalculatedVolume=Laskettu määrä
+Weight=Paino
 TotalWeight=Kokonaispaino
 WeightUnitton=tonnia
 WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
+WeightUnitpound=punta
+Length=Pituus
+LengthUnitm=m
+LengthUnitdm=dm
+LengthUnitcm=cm
+LengthUnitmm=mm
+Surface=Alue
+SurfaceUnitm2=m2
+SurfaceUnitdm2=dm2
+SurfaceUnitcm2=cm2
+SurfaceUnitmm2=mm2
+# SurfaceUnitfoot2=ft2
+# SurfaceUnitinch2=in2
 Volume=Nide
 TotalVolume=Kokonaismyynti
 VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+# VolumeUnitfoot3=ft3
+# VolumeUnitinch3=in3
+VolumeUnitounce=unssi
+VolumeUnitlitre=litra
+VolumeUnitgallon=gallona
 Size=koko
 SizeUnitm=m
 SizeUnitdm=dm
 SizeUnitcm=cm
 SizeUnitmm=mm
+SizeUnitinch=tuuma
+SizeUnitfoot=jalka
+# SizeUnitpoint=point
 BugTracker=Bug tracker
 SendNewPasswordDesc=Tämän lomakkeen avulla voit pyytää uuden Passord. Se lähettää sähköpostiosoitteesi. <br> Muutos tulee voimaan vasta, kun napsautat vahvistuslinkki sisällä tähän sähköpostiviestiin. <br> Tarkista sähköpostisi Reader-ohjelmisto.
 BackToLoginPage=Takaisin kirjautumissivulle
@@ -75,18 +138,51 @@ StatsByNumberOfEntities=Tilastot määrän yhteisöistä
 NumberOfProposals=Useita ehdotuksia viime 12 kuukauden
 NumberOfCustomerOrders=Numero asiakkaiden tilauksia viimeisten 12 kuukauden
 NumberOfCustomerInvoices=Numero asiakkaiden laskut viimeisen 12 kuukauden
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Lukumäärä toimittajan laskut viimeisen 12 kuukauden
 NumberOfUnitsProposals=Kappalemäärä ehdotusten des 12 derniers mois
 NumberOfUnitsCustomerOrders=Kappalemäärä asiakkaiden tilauksia viimeisten 12 kuukauden
 NumberOfUnitsCustomerInvoices=Kappalemäärä asiakkaiden laskut viimeisen 12 kuukauden
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Lukumäärä yksiköt toimittajan laskut viimeisen 12 kuukauden
+EMailTextInterventionValidated=Väliintulo %s validoitava
+EMailTextInvoiceValidated=Lasku %s validoitava
+EMailTextProposalValidated=Ehdotus %s on hyväksytty.
+EMailTextOrderValidated=Jotta %s on hyväksytty.
 EMailTextOrderApproved=Tilaa %s hyväksytty
 EMailTextOrderApprovedBy=Tilaa %s hyväksynyt %s
 EMailTextOrderRefused=Tilaa %s evätty
 EMailTextOrderRefusedBy=Tilaa %s hylätty %s
-LoginWebcal=Kirjautumistunnuksen webcalendar
-ErrorWebcalLoginNotDefined=The webcalendar sisäänkirjoittautumissivuksesi liittyvät omaan Dolibarr <b>sisäänkirjoittautumissivuksesi %s</b> ei ole määritelty.
-ErrorPhenixLoginNotDefined=The Phenix sisäänkirjoittautumissivuksesi liittyvät omaan Dolibarr <b>sisäänkirjoittautumissivuksesi %s</b> ei ole määritelty.
+# EMailTextExpeditionValidated=The shipping %s has been validated.
+ImportedWithSet=Tuonti tietokokonaisuutta
+DolibarrNotification=Automaattinen ilmoitus
+ResizeDesc=Kirjoita uusi leveys <b>tai</b> uusien korkeus. Suhde pidetään ajan kokoa ...
+NewLength=Uusi leveys
+NewHeight=Uusi korkeus
+NewSizeAfterCropping=Uusi koko jälkeen rajaus
+DefineNewAreaToPick=Määritä uusi alue kuvasta valita (vasemmalla klikkaa kuvaa vetämällä kunnes tulet päinvastainen kulma)
+CurrentInformationOnImage=Tiedot ajankohtaisista kuva
+ImageEditor=Kuvankäsittelyohjelmassa
+YouReceiveMailBecauseOfNotification=Saat tämän viestin koska sähköpostiosoitteesi on lisätty luetteloon tavoitteet ilmoitetaan erityisesti tapahtumien osaksi %s ohjelmisto %s.
+YouReceiveMailBecauseOfNotification2=Tämä tapahtuma on seuraava:
+ThisIsListOfModules=Tämä on luettelo moduuleista Esivalittujen tämän demon profiilia (vain yleisimmät moduulit näkyvät tässä Demo). Muokkaa tätä on enemmän henkilökohtaista demo ja klikkaa &quot;Start&quot;.
+ClickHere=Klikkaa tästä
+UseAdvancedPerms=Käytä Lisäkäyttöoikeudet joidenkin moduulien
+FileFormat=Tiedostomuoto
+SelectAColor=Valitse väri
+AddFiles=Lisää tiedostoja
+StartUpload=Aloita lataaminen
+CancelUpload=Peruuta Lähetä
+FileIsTooBig=Files on liian suuri
+PleaseBePatient=Ole kärsivällinen ...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
 AddCalendarEntry=Lisää merkintä kalenteri %s
 NewCompanyToDolibarr=Yritys %s lisätään Dolibarr
 ContractValidatedInDolibarr=Sopimus %s validoitava Dolibarr
@@ -105,6 +201,10 @@ MemberValidatedInDolibarr=Jäsen %s validoitava Dolibarr
 MemberResiliatedInDolibarr=Jäsen %s resiliated vuonna Dolibarr
 MemberDeletedInDolibarr=Jäsen %s poistettu Dolibarr
 MemberSubscriptionAddedInDolibarr=Tilaus jäsenen %s Lisätään Dolibarr
+ShipmentValidatedInDolibarr=Toimitus %s validoitu Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
+Export=Vienti
 ExportsArea=Vienti alueen
 AvailableFormats=Saatavilla olevat muodot
 LibraryUsed=Librairy käytetään
@@ -113,127 +213,5 @@ ExportableDatas=Exportable datas
 NoExportableData=Ei vietävä tiedot (ei moduulien kanssa vietävä tiedot ladattu tai puuttuvat oikeudet)
 ToExport=Vienti
 NewExport=Uusia vientimahdollisuuksia
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-BirthdayAlertOn=syntymäpäivä hälytys aktiivinen
-BirthdayAlertOff=syntymäpäivä varoituskynnysten inaktiivinen
-Notify_ORDER_SUPPLIER_APPROVE=Toimittaja jotta hyväksytty
-Notify_ORDER_SUPPLIER_REFUSE=Toimittaja jotta evätty
-DemoDesc=Dolibarr on kompakti ERP / CRM säveltänyt useita toiminnallisia moduuleja. A demo, joka sisältää kaikki moduulit eivät merkitse mitään, koska tämä ei koskaan tapahdu. Joten useita demo profiilit ovat saatavilla.
-DemoCompanyServiceOnly=Hallinnoi freelance toimintaa myymällä palvelua vain
-EMailTextInterventionValidated=Väliintulo %s validoitava
-EMailTextInvoiceValidated=Lasku %s validoitava
-ImportedWithSet=Tuonti tietokokonaisuutta
-DolibarrNotification=Automaattinen ilmoitus
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-DemoFundation=Hallitse jäseniä säätiön
-DemoFundation2=Jäsenten hallinta ja pankkitilille säätiön
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-Notify_ORDER_VALIDATE=Asiakas tilaa validoitu
-Notify_PROPAL_VALIDATE=Asiakas ehdotus validoidaan
-PredefinedMailTest=Tämä on testi postitse. \ NOsoitteen kaksi riviä välissä rivinvaihto.
-PredefinedMailTestHtml=Tämä on <b>testi</b> postitse (sana testi on lihavoitu). <br> Kaksi riviä välissä rivinvaihto.
-CalculatedWeight=Laskettu paino
-CalculatedVolume=Laskettu määrä
-Length=Pituus
-LengthUnitm=m
-LengthUnitdm=dm
-LengthUnitcm=cm
-LengthUnitmm=mm
-Surface=Alue
-SurfaceUnitm2=m2
-SurfaceUnitdm2=dm2
-SurfaceUnitcm2=cm2
-SurfaceUnitmm2=mm2
-EMailTextProposalValidated=Ehdotus %s on hyväksytty.
-EMailTextOrderValidated=Jotta %s on hyväksytty.
-ResizeDesc=Kirjoita uusi leveys <b>tai</b> uusien korkeus. Suhde pidetään ajan kokoa ...
-NewLength=Uusi leveys
-NewHeight=Uusi korkeus
-NewSizeAfterCropping=Uusi koko jälkeen rajaus
-DefineNewAreaToPick=Määritä uusi alue kuvasta valita (vasemmalla klikkaa kuvaa vetämällä kunnes tulet päinvastainen kulma)
-CurrentInformationOnImage=Tiedot ajankohtaisista kuva
-YouReceiveMailBecauseOfNotification=Saat tämän viestin koska sähköpostiosoitteesi on lisätty luetteloon tavoitteet ilmoitetaan erityisesti tapahtumien osaksi %s ohjelmisto %s.
-YouReceiveMailBecauseOfNotification2=Tämä tapahtuma on seuraava:
+##### External sites #####
 ExternalSites=Ulkoiset sivustot
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:43).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> fi_FI
-PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Löydät tästä meidän järjestys __ORDERREF__ \n\n__PERSONALIZED__Sincerely \n\n__SIGNATURE__
-WeightUnitpound=punta
-VolumeUnitounce=unssi
-VolumeUnitlitre=litra
-VolumeUnitgallon=gallona
-SizeUnitinch=tuuma
-SizeUnitfoot=jalka
-ImageEditor=Kuvankäsittelyohjelmassa
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:55).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fi_FI
-ToolsDesc=Tämä alue on omistettu ryhmä sekalaisia ​​työkaluja ole saatavilla muihin valikot. <br><br> Näitä työkaluja pääsee valikosta puolella.
-Notify_WITHDRAW_TRANSMIT=Vaihteisto peruuttaminen
-Notify_WITHDRAW_CREDIT=Luotto peruuttaminen
-Notify_WITHDRAW_EMIT=Isue peruuttaminen
-Notify_ORDER_SENTBYMAIL=Asiakas tilaa postitse
-Notify_ORDER_SUPPLIER_VALIDATE=Toimittaja jotta validoitu
-Notify_ORDER_SUPPLIER_SENTBYMAIL=Toimittaja jotta postitse
-Notify_BILL_SUPPLIER_VALIDATE=Toimittaja laskun validoitu
-Notify_BILL_SUPPLIER_PAYED=Toimittaja laskun maksanut
-Notify_BILL_SUPPLIER_SENTBYMAIL=Toimittaja lasku lähetetään postitse
-Notify_CONTRACT_VALIDATE=Sopimus validoitu
-Notify_FICHEINTER_VALIDATE=Intervention validoitu
-Notify_SHIPPING_VALIDATE=Toimitus validoitu
-Notify_SHIPPING_SENTBYMAIL=Toimitus postitse
-Notify_MEMBER_VALIDATE=Jäsen validoitu
-Top=Top
-Bottom=Pohja
-Left=Vasen
-Right=Oikeus
-ThisIsListOfModules=Tämä on luettelo moduuleista Esivalittujen tämän demon profiilia (vain yleisimmät moduulit näkyvät tässä Demo). Muokkaa tätä on enemmän henkilökohtaista demo ja klikkaa &quot;Start&quot;.
-ClickHere=Klikkaa tästä
-UseAdvancedPerms=Käytä Lisäkäyttöoikeudet joidenkin moduulien
-FileFormat=Tiedostomuoto
-SelectAColor=Valitse väri
-AddFiles=Lisää tiedostoja
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 03:21:28).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-Notify_COMPANY_CREATE=Kolmannen osapuolen luotu
-Notify_PROPAL_SENTBYMAIL=Kaupallinen ehdotus lähetetään postitse
-Notify_BILL_PAYED=Asiakas laskun maksanut
-Notify_BILL_CANCEL=Asiakas lasku peruutettu
-Notify_BILL_SENTBYMAIL=Asiakkaan lasku lähetetään postitse
-Notify_MEMBER_SUBSCRIPTION=Jäsen merkitty
-Notify_MEMBER_RESILIATE=Jäsen resiliated
-Notify_MEMBER_DELETE=Jäsen poistettu
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Löydät täältä laskun __ FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Haluamme varoittaa, että lasku __ FACREF__ näyttää ei maksanut. Joten tämä on laskun liitetiedostona uudelleen, kuten muistutuksen. \n\n__PERSONALIZED__ Vilpittömästi \n\n__SIGNATURE__
-PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Löydät täältä kaupallinen propoal __ PROPREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Löydät täältä järjestyksessä __ ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Löydät täältä laskun __ FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Löydät täältä merenkulku __ SHIPPINGREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Löydät täältä intervention __ FICHINTERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-StartUpload=Aloita lataaminen
-CancelUpload=Peruuta Lähetä
-FileIsTooBig=Files on liian suuri
-ShipmentValidatedInDolibarr=Toimitus %s validoitu Dolibarr
-Export=Vienti
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:28).

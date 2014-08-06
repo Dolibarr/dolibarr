@@ -122,10 +122,66 @@ class Odf
 			throw new OdfException("var $key not found in the document");
 			//}
 		}
+
+		$value=$this->htmlToUTFAndPreOdf($value);
+
 		$value = $encode ? htmlspecialchars($value) : $value;
 		$value = ($charset == 'ISO-8859') ? utf8_encode($value) : $value;
-		$this->vars[$tag] = str_replace("\n", "<text:line-break/>", $value);
+
+		$value=$this->preOdfToOdf($value);
+
+		$this->vars[$tag] = $value;
 		return $this;
+	}
+
+
+	/**
+	 * Function to convert a HTML string into an ODT string
+	 *
+	 * @param	string	$value	String to convert
+	 */
+	public function htmlToUTFAndPreOdf($value)
+	{
+		// We decode into utf8, entities
+		$value=dol_html_entity_decode($value, ENT_QUOTES);
+
+		// We convert html tags
+		$ishtml=dol_textishtml($value);
+		if ($ishtml)
+		{
+	        // If string is "MYPODUCT - Desc <strong>bold</strong> with &eacute; accent<br />\n<br />\nUn texto en espa&ntilde;ol ?"
+    	    // Result after clean must be "MYPODUCT - Desc bold with é accent\n\nUn texto en espa&ntilde;ol ?"
+
+			// We want to ignore \n and we want all <br> to be \n
+			$value=preg_replace('/(\r\n|\r|\n)/i','',$value);
+			$value=preg_replace('/<br>/i',"\n",$value);
+			$value=preg_replace('/<br\s+[^<>\/]*>/i',"\n",$value);
+			$value=preg_replace('/<br\s+[^<>\/]*\/>/i',"\n",$value);
+
+			//$value=preg_replace('/<strong>/','__lt__text:p text:style-name=__quot__bold__quot____gt__',$value);
+			//$value=preg_replace('/<\/strong>/','__lt__/text:p__gt__',$value);
+
+			$value=dol_string_nohtmltag($value, 0);
+		}
+
+		return $value;
+	}
+
+
+	/**
+	 * Function to convert a HTML string into an ODT string
+	 *
+	 * @param	string	$value	String to convert
+	 */
+	public function preOdfToOdf($value)
+	{
+		$value = str_replace("\n", "<text:line-break/>", $value);
+
+		//$value = str_replace("__lt__", "<", $value);
+		//$value = str_replace("__gt__", ">", $value);
+		//$value = str_replace("__quot__", '"', $value);
+
+		return $value;
 	}
 
 	/**
@@ -422,25 +478,25 @@ IMG;
 	public function exportAsAttachedPDF($name="")
 	{
 		global $conf;
-		 
+
 		if( $name == "" ) $name = md5(uniqid());
 
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
 		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-		
+
 		$name=str_replace('.odt', '', $name);
 		if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT)) {
 			$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.$name;
 		}else {
 			$command = '../../scripts/odt2pdf/odt2pdf.sh '.$name;
 		}
-		
-		
+
+
 		//$dirname=dirname($name);
 		//$command = DOL_DOCUMENT_ROOT.'/includes/odtphp/odt2pdf.sh '.$name.' '.$dirname;
-		
+
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $execmethod='.$execmethod.' Run command='.$command,LOG_DEBUG);
 		if ($execmethod == 1)
 		{
@@ -482,7 +538,7 @@ IMG;
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);
-			
+
 			if ($retval==126) {
 				throw new OdfException('Permission execute convert script : ' . $command);
 			}

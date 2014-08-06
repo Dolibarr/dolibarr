@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
@@ -51,7 +51,7 @@ $object = new Product($db);
 if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$result = $object->fetch($id);
-	
+
 	// MultiPrix
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
@@ -88,7 +88,7 @@ if ($action == 'update_price' && ! $_POST["cancel"] && ($user->rights->produit->
 		$newpsq = empty($newpsq) ? 0 : $newpsq;
 	}
 
-	if ($object->updatePrice($object->id, $newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
+	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0)
 	{
 		$action = '';
 		$mesg = '<div class="ok">'.$langs->trans("RecordSaved").'</div>';
@@ -112,8 +112,8 @@ $error=0;
 if ($action == 'activate_price_by_qty') { // Activating product price by quantity add a new price, specified as by quantity
 	$result = $object->fetch($id);
 	$level=GETPOST('level');
-	
-	$object->updatePrice($object->id, 0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
+
+	$object->updatePrice(0, $object->price_base_type, $user, $object->tva_tx, 0, $level, $object->tva_npr, 1);
 }
 
 if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
@@ -131,7 +131,7 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 	$quantity=GETPOST('quantity');
 	$remise_percent=price2num(GETPOST('remise_percent'));
 	$remise=0; // TODO : allow dicsount by amount when available on documents
-	
+
 	if (empty($quantity))
 	{
 		$error++;
@@ -148,10 +148,10 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 		{
 			$price = price2num($newprice) / (1 + ($object->tva_tx / 100));
 		}
-		
+
 		$price = price2num($newprice,'MU');
 		$unitPrice = price2num($price/$quantity,'MU');
-	
+
 		// Ajout / mise à jour
 		if($rowid > 0) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product_price_by_qty SET";
@@ -161,12 +161,12 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 			$sql.= " remise_percent=".$remise_percent.",";
 			$sql.= " remise=".$remise;
 			$sql.= " WHERE rowid = ".GETPOST('rowid');
-			
+
 			$result = $db->query($sql);
 		} else {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price_by_qty (fk_product_price,price,unitprice,quantity,remise_percent,remise) values (";
 			$sql.= $priceid.','.$price.','.$unitPrice.','.$quantity.','.$remise_percent.','.$remise.')';
-	
+
 			$result = $db->query($sql);
 		}
 	}
@@ -174,19 +174,19 @@ if ($action == 'update_price_by_qty') { // Ajout / Mise à jour d'un prix par qu
 
 if ($action == 'delete_price_by_qty') {
 	$rowid = GETPOST('rowid');
-	
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 	$sql.= " WHERE rowid = ".GETPOST('rowid');
-	
+
 	$result = $db->query($sql);
 }
 
 if ($action == 'delete_all_price_by_qty') {
 	$priceid=GETPOST('priceid');
-	
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
 	$sql.= " WHERE fk_product_price = ".$priceid;
-	
+
 	$result = $db->query($sql);
 }
 
@@ -325,10 +325,10 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 			if($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
 				print '<tr><td>'.$langs->trans("PriceByQuantity").' '.$i;
 				print '</td><td>';
-				
+
 				if($object->prices_by_qty[$i] == 1) {
 					print '<table width="50%" class="noborder">';
-		
+
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans("PriceByQuantityRange").' '.$i.'</td>';
 					print '<td align="right">'.$langs->trans("HT").'</td>';
@@ -383,7 +383,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 						print '</tr>';
 						print '</form>';
 					}
-		
+
 					print '</table>';
 				} else {
 					print $langs->trans("No");
@@ -422,16 +422,18 @@ else
 		print price($object->price_min).' '.$langs->trans($object->price_base_type);
 	}
 	print '</td></tr>';
-	
+
 	// Price by quantity
-	if($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) {
+	if($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)
+	{
 		print '<tr><td>'.$langs->trans("PriceByQuantity");
 		if($object->prices_by_qty[0] == 0) {
 			print '&nbsp;<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level=1">'.$langs->trans("Activate");
 		}
 		print '</td><td>';
-		
-		if($object->prices_by_qty[0] == 1) {
+
+		if ($object->prices_by_qty[0] == 1)
+		{
 			print '<table width="50%" class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("PriceByQuantityRange").'</td>';
@@ -440,7 +442,8 @@ else
 			print '<td align="right">'.$langs->trans("Discount").'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-			foreach ($object->prices_by_qty_list[0] as $ii=> $prices) {
+			foreach ($object->prices_by_qty_list[0] as $ii=> $prices)
+			{
 				if($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 					print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
 					print '<input type="hidden" name="action" value="update_price_by_qty">';
@@ -668,8 +671,8 @@ $sql.= " AND p.entity IN (".getEntity('productprice', 1).")";
 $sql.= " AND p.fk_user_author = u.rowid";
 if (! empty($socid) && ! empty($conf->global->PRODUIT_MULTIPRICES)) $sql.= " AND p.price_level = ".$soc->price_level;
 $sql.= " ORDER BY p.date_price DESC, p.price_level ASC";
-//$sql .= $db->plimit();
 
+dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {
@@ -681,7 +684,7 @@ if ($result)
 
 		// Il doit au moins y avoir la ligne de prix initial.
 		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
-		$object->updatePrice($object->id, $object->price, $object->price_base_type, $user, $newprice_min);
+		$object->updatePrice($object->price, $object->price_base_type, $user, $newprice_min);
 
 		$result = $db->query($sql);
 		$num = $db->num_rows($result);
@@ -721,7 +724,7 @@ if ($result)
 		{
 			$objp = $db->fetch_object($result);
 			$var=!$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			// Date
 			print "<td>".dol_print_date($db->jdate($objp->dp),"dayhour")."</td>";
 

@@ -3,8 +3,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -203,8 +203,8 @@ class Expedition extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'(PROV)'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".($this->ref_customer?"'".$this->ref_customer."'":"null");
-		$sql.= ", ".($this->ref_int?"'".$this->ref_int."'":"null");
+		$sql.= ", ".($this->ref_customer?"'".$this->db->escape($this->ref_customer)."'":"null");
+		$sql.= ", ".($this->ref_int?"'".$this->db->escape($this->ref_int)."'":"null");
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->date_expedition>0?"'".$this->db->idate($this->date_expedition)."'":"null");
@@ -272,8 +272,22 @@ class Expedition extends CommonObject
 					if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// Fin appel triggers
 
-					$this->db->commit();
-					return $this->id;
+					if (! $error)
+					{
+						$this->db->commit();
+						return $this->id;
+					}
+					else
+					{
+						foreach($this->errors as $errmsg)
+						{
+							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+							$this->error.=($this->error?', '.$errmsg:$errmsg);
+						}
+						$this->db->rollback();
+						return -1*$error;
+					}
+
 				}
 				else
 				{
@@ -569,7 +583,7 @@ class Expedition extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// On renomme repertoire ($this->ref = ancienne ref, $numfa = nouvelle ref)
-				// In order not to loose attached files
+				// in order not to lose the attached files
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($numref);
 				$dirsource = $conf->expedition->dir_output.'/sending/'.$oldref;
@@ -785,9 +799,10 @@ class Expedition extends CommonObject
     }
 
     /**
-	 * 	Delete shipment
+	 * 	Delete shipment.
+	 *  Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
-	 * 	@return	int		>0 if OK otherwise if KO
+	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	function delete()
 	{
@@ -796,79 +811,145 @@ class Expedition extends CommonObject
 
 		$error=0;
 
+		// Add a protection to refuse deleting if shipment has at least one delivery
+		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
+		if (count($this->linkedObjectsIds) > 0)
+		{
+			$this->error='ErrorThereIsSomeDeliveries';
+			return -1;
+		}
+
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
-		$sql.= " WHERE fk_expedition = ".$this->id;
-
-		if ( $this->db->query($sql) )
+		// Stock control
+		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
-			// Delete linked object
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) $error++;
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
-			if (! $error)
+			$langs->load("agenda");
+
+			// Loop on each product line to add a stock movement
+			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+			$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql.= " WHERE ed.fk_expedition = ".$this->id;
+			$sql.= " AND cd.rowid = ed.fk_origin_line";
+
+			dol_syslog(get_class($this)."::delete select details sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
 			{
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
-				$sql.= " WHERE rowid = ".$this->id;
-
-				if ($this->db->query($sql))
+				$cpt = $this->db->num_rows($resql);
+				for ($i = 0; $i < $cpt; $i++)
 				{
-					$this->db->commit();
+					dol_syslog(get_class($this)."::delete movement index ".$i);
+					$obj = $this->db->fetch_object($resql);
 
-					// On efface le repertoire de pdf provisoire
-					$ref = dol_sanitizeFileName($this->ref);
-					if (! empty($conf->expedition->dir_output))
+					//var_dump($this->lines[$i]);
+					$mouvS = new MouvementStock($this->db);
+					// We decrement stock of product (and sub-products)
+					// We use warehouse selected for each line
+					$result=$mouvS->reception($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, $obj->subprice, $langs->trans("ShipmentDeletedInDolibarr",$this->ref));
+					if ($result < 0)
 					{
-						$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
-						$file = $dir . '/' . $ref . '.pdf';
-						if (file_exists($file))
-						{
-							if (! dol_delete_file($file))
+						$error++;
+						break;
+					}
+				}
+			}
+			else
+			{
+				$error++;
+			}
+		}
+
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql.= " WHERE fk_expedition = ".$this->id;
+
+			if ( $this->db->query($sql) )
+			{
+				// Delete linked object
+				$res = $this->deleteObjectLinked();
+				if ($res < 0) $error++;
+
+				if (! $error)
+				{
+					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
+					$sql.= " WHERE rowid = ".$this->id;
+
+					if ($this->db->query($sql))
+					{
+						// Call triggers
+			            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+			            $interface=new Interfaces($this->db);
+			            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
+			            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			            // End call triggers
+
+			            if (! $error)
+			            {
+							$this->db->commit();
+
+							// We delete PDFs
+							$ref = dol_sanitizeFileName($this->ref);
+							if (! empty($conf->expedition->dir_output))
 							{
-								return 0;
+								$dir = $conf->expedition->dir_output . '/sending/' . $ref ;
+								$file = $dir . '/' . $ref . '.pdf';
+								if (file_exists($file))
+								{
+									if (! dol_delete_file($file))
+									{
+										return 0;
+									}
+								}
+								if (file_exists($dir))
+								{
+									if (!dol_delete_dir($dir))
+									{
+										$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+										return 0;
+									}
+								}
 							}
-						}
-						if (file_exists($dir))
+
+							return 1;
+			            }
+			            else
 						{
-							if (!dol_delete_dir($dir))
-							{
-								$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-								return 0;
-							}
+							$this->db->rollback();
+							return -1;
 						}
 					}
-
-					// Call triggers
-		            include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		            $interface=new Interfaces($this->db);
-		            $result=$interface->run_triggers('SHIPPING_DELETE',$this,$user,$langs,$conf);
-		            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		            // End call triggers
-
-					// TODO il faut incrementer le stock si on supprime une expedition validee
-					return 1;
+					else
+					{
+						$this->error=$this->db->lasterror()." - sql=$sql";
+						$this->db->rollback();
+						return -3;
+					}
 				}
 				else
 				{
 					$this->error=$this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
-					return -3;
+					return -2;
 				}
 			}
 			else
 			{
 				$this->error=$this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
-				return -2;
+				return -1;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
 		}
+
 	}
 
 	/**
@@ -935,13 +1016,14 @@ class Expedition extends CommonObject
 				$line->volume_units   	= $obj->volume_units;
 
 				// For invoicing
+				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
 				$line->qty 				= $obj->qty_shipped;
-				$line->total_ht			= $obj->total_ht;
-				$line->total_localtax1 	= $obj->total_localtax1;
-				$line->total_localtax2 	= $obj->total_localtax2;
-				$line->total_ttc	 	= $obj->total_ttc;
-				$line->total_tva	 	= $obj->total_tva;
+				$line->total_ht			= $tabprice[0];
+				$line->total_localtax1 	= $tabprice[9];
+				$line->total_localtax2 	= $tabprice[10];
+				$line->total_ttc	 	= $tabprice[2];
+				$line->total_tva	 	= $tabprice[1];
 				$line->tva_tx 		 	= $obj->tva_tx;
 				$line->localtax1_tx 	= $obj->localtax1_tx;
 				$line->localtax2_tx 	= $obj->localtax2_tx;
@@ -949,7 +1031,6 @@ class Expedition extends CommonObject
 				$line->subprice			= $obj->subprice;
 				$line->remise_percent	= $obj->remise_percent;
 
-				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $info_bits, $obj->fk_product_type);	// We force type to 0
 				$this->total_ht+= $tabprice[0];
 				$this->total_tva+= $tabprice[1];
 				$this->total_ttc+= $tabprice[2];

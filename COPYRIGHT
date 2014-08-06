@@ -38,7 +38,7 @@ jQuery jqueryFileTree 1.0.1	    GPL and MIT	Licence			Yes				JS library for colo
 jQuery jquerytreeview 1.4.1	    MIT	Licence			 		Yes				JS library for color picker with not defined list of colors
 jQuery Layout         1.3.0		GPL and MIT Licence			Yes				JS library plugin Layout (RC-29.15)
 jQuery Mobile	      1.3		GPL and MIT Licence			Yes				JS library for smartphone (not used)
-jQuery TableDnD       0.5		GPL and MIT Licence			Yes				JS library plugin TableDnD (to reorder table rows)
+jQuery TableDnD       0.6		GPL and MIT Licence			Yes				JS library plugin TableDnD (to reorder table rows)
 jQuery Timepicker     1.1.0		GPL and MIT Licence			Yes				JS library Timepicker addon for Datepicker
 jQuery Tiptip         1.3		GPL and MIT Licence			Yes				JS library for tooltips
 JSGantt               1.2		BSD Licence					Yes				JS library (to build Gantt reports)

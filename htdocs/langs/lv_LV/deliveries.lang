@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Piegāde
+Deliveries=Piegādes
+DeliveryCard=Piegādes karte
+DeliveryOrder=Piegādes pasūtījums
+DeliveryOrders=Piegādes rīkojumi
+DeliveryDate=Piegādes datums
+DeliveryDateShort=Ie. datums
+CreateDeliveryOrder=Izveidot piegādes kārtību
+QtyDelivered=Piegādātais daudz
+SetDeliveryDate=Uzstādīt piegādes datumu
+ValidateDeliveryReceipt=Apstiprināt piegādes saņemšanu
+ValidateDeliveryReceiptConfirm=Vai jūs tiešām vēlaties, lai apstiprinātu šo piegādes saņemšanu?
+DeleteDeliveryReceipt=Dzēst piegādes saņemšanu
+DeleteDeliveryReceiptConfirm=Vai tiešām vēlaties dzēst piegādes kvīts <b>%s?</b>
+DeliveryMethod=Piegādes metode
+TrackingNumber=Sekošanas numuru
+DeliveryNotValidated=Piegāde nav apstiprināta
+# merou PDF model
+NameAndSignature=Vārds, uzvārds un paraksts:
+ToAndDate=To___________________________________ uz ____ / _____ / __________
+GoodStatusDeclaration=Ir saņēmuši preces iepriekš labā stāvoklī,
+Deliverer=Piegādātājs:
+Sender=Nosūtītājs
+Recipient=Saņēmējs

@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - shop
 Shop=Sklep
 ShopWeb=Web Shop
 LastOrders=Ostatnie zlecenia
@@ -20,5 +8,3 @@ LastCustomers=Ostatnia klientów
 OSCommerceShop=Sklep osCommerce
 OSCommerce=OsCommerce
 AddProd=Sprzedaż online
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser

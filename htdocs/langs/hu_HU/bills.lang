@@ -1,13 +1,4 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:13:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=Számla
 Bills=Számlák
 BillsCustomers=Ügyfél számlák
@@ -42,7 +33,6 @@ ReplacementInvoice=Csere számla
 ReplacedByInvoice=Helyébe számla %s
 ReplacementByInvoice=Helyébe számla
 CorrectInvoice=Helyes számla %s
-CorrectInvoice=Helyes számla %s
 CorrectionInvoice=Javítás számla
 UsedByInvoice=Használt fizetni számla %s
 ConsumedBy=Által elfogyasztott
@@ -66,6 +56,7 @@ Payment=Fizetés
 PaymentBack=Fizetési vissza
 Payments=Kifizetések
 PaymentsBack=Kifizetések vissza
+# PaidBack=Paid back
 DatePayment=A kifizetés napja
 DeletePayment=Törlés fizetés
 ConfirmDeletePayment=Biztosan törölni kívánja ezt a kifizetést?
@@ -77,19 +68,22 @@ ReceivedCustomersPaymentsToValid=Fogadott, hogy érvényesítse az ügyfelek fiz
 PaymentsReportsForYear=Kifizetések jelentések %s
 PaymentsReports=Kifizetések jelentések
 PaymentsAlreadyDone=Kifizetések már megtette
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Fizetési szabály
 PaymentMode=Fizetési típus
 PaymentConditions=Fizetési határidő
 PaymentConditionsShort=Fizetési határidő
 PaymentAmount=Fizetés összege
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Fizetési magasabb emlékeztető fizetni
-HelpPaymentHigherThanReminderToPay=Figyelem, a kifizetett összeg egy vagy több számla magasabb, mint a többi fizetni. <br> Bejegyzés szerkesztése, különben megerősítik és gondolom létrehozásáról a jóváírást a felesleges kapott minden túlfizetett számlák.
+HelpPaymentHigherThanReminderToPay= Figyelem, a kifizetett összeg egy vagy több számla magasabb, mint a többi fizetni. <br> Bejegyzés szerkesztése, különben megerősítik és gondolom létrehozásáról a jóváírást a felesleges kapott minden túlfizetett számlák.
 ClassifyPaid=Classify &quot;fizetni&quot;
 ClassifyPaidPartially=Osztályozása &quot;részben fizetett&quot;
 ClassifyCanceled=Classify &quot;elhagyott&quot;
 ClassifyClosed=Classify &quot;zárt&quot;
 CreateBill=Számla létrehozása
 AddBill=Add számla vagy jóváírás
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=Törlés számla
 SearchACustomerInvoice=Keressen, ha az ügyfél számla
 SearchASupplierInvoice=Keresés a szállító számla
@@ -139,7 +133,7 @@ BillTo=Bill a
 ActionsOnBill=Műveletek a számlán
 NewBill=Új számla
 Prélèvements=Állandó érvényű parancs
-Prélèvements=Állandó megbízás
+Prélèvements=Állandó érvényű parancs
 LastBills=Utolsó %s számlák
 LastCustomersBills=Utolsó %s ügyfelek számláit
 LastSuppliersBills=Utolsó %s beszállítói számlák
@@ -188,10 +182,13 @@ ShowInvoiceDeposit=Mutasd letéti számla
 ShowPayment=Mutasd fizetés
 File=Fájl
 AlreadyPaid=Már kifizetett
+# AlreadyPaidBack=Already paid back
 AlreadyPaidNoCreditNotesNoDeposits=Már kifizetett (hitel nélkül jegyzetek és betétek)
 Abandoned=Elhagyatott
 RemainderToPay=Fennmaradó fizetni
 RemainderToTake=Fennmaradó részt venni
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Követelt összeget
 ExcessReceived=A felesleges kapott
 EscompteOffered=Árengedmény (kifizetés előtt tartó)
@@ -201,6 +198,7 @@ StandingOrders=Állandó megbízás
 StandingOrder=Állandó érvényű parancs
 NoDraftBills=Nincs tervezet számlák
 NoOtherDraftBills=Nincs más tervezet számlák
+# NoDraftInvoices=No draft invoices
 RefBill=Számla ref
 ToBill=Bill
 RemainderToBill=Fennmaradó Bill
@@ -217,11 +215,12 @@ NoSupplierBillsUnpaid=Nincs kifizetetlen számlák beszállítók
 SupplierBillsToPay=Beszállítók számlákat fizetni
 CustomerBillsUnpaid=Kifizetetlen számlák ügyfeleknek
 DispenseMontantLettres=A törvényjavaslat által kidolgozott mechanográfiai mentesek a betűk sorrendjét
-DispenseMontantLettres=Az írásbeli számlák segítségével mecanographic eljárások adagolni a betűk sorrendjét
+DispenseMontantLettres=A törvényjavaslat által kidolgozott mechanográfiai mentesek a betűk sorrendjét
 NonPercuRecuperable=Nem javítható
 SetConditions=Állítsa fizetési feltételek
 SetMode=Állítsa fizetési mód
-SetDate=A dátum
+SetDate= A dátum
+# SelectDate=Select a date
 Billed=Kiszámlázott
 RepeatableInvoice=Előre meghatározott számla
 RepeatableInvoices=Előre definiált számlák
@@ -243,11 +242,12 @@ Discount=Kedvezmény
 Discounts=Kedvezmények
 AddDiscount=Létrehozása kedvezmény
 AddRelativeDiscount=Létrehozása relatív kedvezmény
-EditRelativelDiscount=Szerkesztés relatvie kedvezmény
+# EditRelativeDiscount=Edit relative discount
 AddGlobalDiscount=Létrehozása abszolút kedvezmény
 EditGlobalDiscounts=Szerkesztés abszolút kedvezmények
 AddCreditNote=Létrehozása jóváírást
 ShowDiscount=Mutasd kedvezmény
+# ShowReduc=Show the deduction
 RelativeDiscount=Relatív kedvezmény
 GlobalDiscount=Globális kedvezmény
 CreditNote=Jóváírást
@@ -293,6 +293,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Összesen két új kedvezményt meg kell eg
 ConfirmRemoveDiscount=Biztosan el akarja távolítani ezt a kedvezményt?
 RelatedBill=Kapcsolódó számla
 RelatedBills=Kapcsolódó számlák
+
+# PaymentConditions
 PaymentConditionShortRECEP=Azonnali
 PaymentConditionRECEP=Azonnali
 PaymentConditionShort30D=30 nap
@@ -303,6 +305,16 @@ PaymentConditionShort60D=60 nap
 PaymentCondition60D=60 nap
 PaymentConditionShort60DENDMONTH=60 nappal a hónap végén
 PaymentCondition60DENDMONTH=60 nappal a hónap végén
+PaymentConditionShortPT_DELIVERY=Kézbesítés
+PaymentConditionPT_DELIVERY=A szállítási
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=Bankbetét
 PaymentTypeShortVIR=Bankbetét
 PaymentTypePRE=Bank érdekében
@@ -351,6 +363,7 @@ LawApplicationPart2=az áru tulajdonában marad
 LawApplicationPart3=az eladó, míg a teljes beváltás
 LawApplicationPart4=azok árát.
 LimitedLiabilityCompanyCapital=SARL a főváros
+# UseLine=Apply
 UseDiscount=Használja kedvezmény
 UseCredit=Használja hitel
 UseCreditNoteInInvoicePayment=Csökkentse összeget fizetni ez a hitelkockázati
@@ -375,7 +388,14 @@ CantRemovePaymentWithOneInvoicePaid=Nem lehet eltávolítani a fizetési hiszen 
 ExpectedToPay=Várható fizetés
 PayedByThisPayment=Megfizetni ezt a fizetési
 ClosePaidInvoicesAutomatically=Classify &quot;fizetni&quot; minden szabványos vagy csere számlák entirely fizetni.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=Minden számla nélkül is fizetni fogják automatikusan bezárja az állapota &quot;fizetni&quot;.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Reprezentatív nyomon követése vevőszámla
 TypeContact_facture_external_BILLING=Ügyfél számla Kapcsolat
 TypeContact_facture_external_SHIPPING=Megrendelő szállítási kapcsolattartó
@@ -384,8 +404,12 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=Reprezentatív nyomon követ�
 TypeContact_invoice_supplier_external_BILLING=Szállító számlát Kapcsolat
 TypeContact_invoice_supplier_external_SHIPPING=Szállító szállítási kapcsolat
 TypeContact_invoice_supplier_external_SERVICE=Szállító szolgálat Kapcsolat
+# crabe PDF Model
 PDFCrabeDescription=Számla PDF sablon Crabe. A teljes számla sablon (Template ajánlott)
+# oursin PDF Model
 PDFOursinDescription=Számla PDF sablon Oursin. A teljes számla sablon (Template alternatív)
-TerreNumRefModelDesc1=Vissza a numero formátumban %syymm-nnnn szabványos számlák és %syymm-nnnn a jóváírási ahol yy év, hónap és mm nnnn sorozata szünet nélkül, és nincs visszaút 0
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=A törvényjavaslat kezdődő $ syymm már létezik, és nem kompatibilis ezzel a modellel a sorozatot. Töröld le vagy nevezd át, hogy aktiválja ezt a modult.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:17:25).

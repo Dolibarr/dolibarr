@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - propal
-CHARSET=UTF-8
 Proposals=Teklifler
 Proposal=Teklif
 ProposalShort=Teklif
@@ -34,7 +33,7 @@ ShowPropal=Teklif göster
 PropalsDraft=Taslaklar
 PropalsOpened=Açık
 PropalsNotBilled=Kapalı faturalanmamış
-PropalStatusDraft=Taslak (doğrulama gerektiriyor)
+PropalStatusDraft=Taslak (doğrulanması gerekir)
 PropalStatusValidated=Onaylı (teklif açık)
 PropalStatusOpened=Onaylı (teklif açık)
 PropalStatusClosed=Kapalı
@@ -71,6 +70,8 @@ ErrorPropalNotFound=%s teklifi bulunamadı
 Estimate=Tahmin:
 EstimateShort=Tahmin
 OtherPropals=Diğer teklifler
+AddToDraftProposals=Taslak teklife ekle
+NoDraftProposals=Taslak teklif yok
 CopyPropalFrom=Varolan teklifi kopyalayarak teklif oluştur
 CreateEmptyPropal=Boş teklif oluştur veya ürünler/hizmetler listesinden oluştur
 DefaultProposalDurationValidity=Varsayılan teklif geçerlilik süresi (gün olarak)
@@ -96,6 +97,6 @@ TypeContact_propal_external_CUSTOMER=Müşteri teklif izleme ilgilisi
 # Document models
 DocModelAzurDescription=Eksiksiz bir teklif modeli (logo. ..)
 DocModelJauneDescription=Jaune teklif modeli
-# DefaultModelPropalCreate=Default model creation
-# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
-# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
+DefaultModelPropalCreate=Varsayılan model oluşturma
+DefaultModelPropalToBill=Bir iş teklifi kapatma sırasında varsayılan şablon (faturalanacak)
+DefaultModelPropalClosed=Bir iş teklifi kapatma sırasında varsayılan şablon (faturalanmamış)

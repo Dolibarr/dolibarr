@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
@@ -66,6 +66,14 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
 
+$socid=0;
+if ($user->societe_id > 0) $socid = $user->societe_id;
+
+// For some module part, dir may be privates
+if (in_array($modulepart,array('facture_paiement','unpaid')))
+{
+	if (! $user->rights->societe->client->voir || $socid) $original_file='private/'.$user->id.'/'.$original_file;	// If user has no permission to see all, output dir is specific to user
+}
 
 /*
  * Action
@@ -97,7 +105,7 @@ $refname=basename(dirname($original_file)."/");
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
-$check_access = dol_check_secure_access_document($modulepart,$original_file,$entity);
+$check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $original_file              = $check_access['original_file'];
@@ -160,7 +168,7 @@ if (! file_exists($original_file_osencoded))
 	exit;
 }
 
-// Les drois sont ok et fichier trouve, on l'envoie
+// Permissions are ok and file found, so we return it
 
 header('Content-Description: File Transfer');
 if ($encoding)   header('Content-Encoding: '.$encoding);
@@ -178,4 +186,4 @@ header('Pragma: public');
 
 readfile($original_file_osencoded);
 
-?>
+if (is_object($db)) $db->close();

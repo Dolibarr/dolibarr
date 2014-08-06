@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=منطقة الأعضاء
 PublicMembersArea=أعضاء منطقة العامة
 MemberCard=بطاقة عضو
@@ -18,7 +8,9 @@ Members=أعضاء
 MemberAccount=دخول الأعضاء
 ShowMember=وتظهر بطاقة عضو
 UserNotLinkedToMember=المستخدم لا ترتبط عضو
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=أعضاء التذاكر
+FundationMembers=أعضاء المؤسسة
 Attributs=الصفات
 ErrorMemberTypeNotDefined=عضو نوع غير معرف
 ListOfPublicMembers=قائمة بأسماء أعضاء العمومية
@@ -43,6 +35,7 @@ MenuMembersValidated=صادق أعضاء
 MenuMembersUpToDate=حتى الآن من أعضاء
 MenuMembersNotUpToDate=وحتى الآن من أصل أعضاء
 MenuMembersResiliated=أعضاء Resiliated
+# MembersWithSubscriptionToReceive=Members with subscription to receive
 DateAbonment=تاريخ الاكتتاب
 DateSubscription=تاريخ الاكتتاب
 DateNextSubscription=الاكتتاب القادم
@@ -81,11 +74,9 @@ NewCotisation=مساهمة جديدة
 PaymentSubscription=دفع مساهمة جديدة
 EditMember=عضو تحرير
 SubscriptionEndDate=تاريخ انتهاء الاكتتاب
-NewAttribute=attribut جديدة
-AttributeCode=السمة مدونة
-OptionalFieldsSetup=الحقول الاختيارية الإعداد
 MembersTypeSetup=أعضاء نوع الإعداد
 NewSubscription=إشتراك جديد
+# NewSubscriptionDesc=This form allows you to record your subscription as a new member of the foundation. If you want to renew your subscription (if already a member), please contact foundation board instead by email %s.
 Subscription=الاكتتاب
 Subscriptions=الاشتراكات
 SubscriptionLate=متأخر
@@ -119,13 +110,15 @@ ConfirmValidateMember=هل أنت متأكد أنك تريد التحقق من �
 FollowingLinksArePublic=الارتباطات التالية تفتح صفحة لا يحمي أي Dolibarr تصريح. فهي ليست formated صفحة ، تقدم مثالا على الكيفية التي تظهر في قائمة الأعضاء في قاعدة البيانات.
 PublicMemberList=عضو في لائحة عامة
 BlankSubscriptionForm=استمارة الاشتراك
+# BlankSubscriptionFormDesc=Dolibarr can provide you a public URL to allow external visitors to ask to subscribe to the foundation. If an online payment module is enabled, a payment form will also be automatically provided.
+# EnablePublicSubscriptionForm=Enable the public auto-subscription form
 MemberPublicLinks=الروابط العامة / صفحات
 ExportDataset_member_1=واشتراكات الأعضاء
+ImportDataset_member_1=أعضاء
 LastMembers=ق أعضاء الماضي ٪
 LastMembersModified=آخر تعديل اعضاء ق ٪
+# LastSubscriptionsModified=Last %s modified subscriptions
 AttributeName=اسم السمة
-FieldEdition=الطبعة مجال ٪s
-AlphaNumOnlyCharsAndNoSpace=إلا alphanumericals حرفا دون الفضاء
 String=سلسلة
 Text=النص
 Int=Int
@@ -137,6 +130,10 @@ AddSubscription=إضافة اشتراك
 ShowSubscription=وتظهر اكتتاب
 MemberModifiedInDolibarr=عضو في تعديل Dolibarr
 SendAnEMailToMember=البريد الإلكتروني لإرسال معلومات العضو
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
+DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=البريد الإلكتروني لعضو في موضوع المصادقة
 DescADHERENT_MAIL_VALID=البريد الإلكتروني لعضو المصادقة
 DescADHERENT_MAIL_COTIS_SUBJECT=موضوع البريد الالكتروني للاكتتاب
@@ -145,37 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=موضوع البريد الإلكتروني ل�
 DescADHERENT_MAIL_RESIL=البريد الإلكتروني لعضو resiliation
 DescADHERENT_MAIL_FROM=البريد الإلكتروني للمرسل البريد الإلكتروني التلقائي
 DescADHERENT_ETIQUETTE_TYPE=علامات الشكل
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
 DescADHERENT_CARD_HEADER_TEXT=نص مطبوع على رأس عضو البطاقات
 DescADHERENT_CARD_TEXT=نص مطبوع على بطاقات الأعضاء
+DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأعضاء (في محاذاة اليمين)
 DescADHERENT_CARD_FOOTER_TEXT=نص مطبوع على أسفل بطاقات الأعضاء
+# GlobalConfigUsedIfNotDefined=Text defined in Foundation module setup will be used if not defined here
+# MayBeOverwrited=This text can be overwrited by value defined for member's type
 ShowTypeCard=وتبين من نوع '٪ ق'
 HTPasswordExport=الملف htpassword جيل
 NoThirdPartyAssociatedToMember=لم يرتبط بها من طرف ثالث لهذا العضو
 ThirdPartyDolibarr=Dolibarr طرف ثالث
-MembersAndSubscriptions=وأعضاء Subscriptions
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-FundationMembers=أعضاء المؤسسة
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
-DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
-DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
-DescADHERENT_CARD_TEXT_RIGHT=النص المطبوع على بطاقات الأعضاء (في محاذاة اليمين)
-DescADHERENT_MAILMAN_LISTS=قائمة (ق) للinsription التلقائي للأعضاء الجدد (مفصولة بفاصلة)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:17).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ar_AR
+MembersAndSubscriptions= وأعضاء Subscriptions
 MoreActions=تكميلية العمل على تسجيل
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=إنشاء سجل المعاملات مباشرة على حساب
 MoreActionBankViaInvoice=إنشاء الفاتورة والدفع على حساب
 MoreActionInvoiceOnly=إنشاء فاتورة مع دفع أي مبلغ
@@ -184,4 +165,40 @@ LinkToGeneratedPagesDesc=هذه الشاشة تسمح لك لإنشاء ملفا
 DocForAllMembersCards=إنشاء بطاقات العمل لجميع أعضاء (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
 DocForOneMemberCards=إنشاء بطاقات العمل لعضو معين (تنسيق الإعداد للإخراج في الواقع : <b>%s)</b>
 DocForLabels=أوراق عنوان انتج (تنسيق الإعداد للإخراج فعلا : <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:46).
+# SubscriptionPayment=Subscription payment
+LastSubscriptionDate=آخر موعد الاكتتاب
+LastSubscriptionAmount=الاكتتاب المبلغ الأخير
+# MembersStatisticsByCountries=Members statistics by country
+# MembersStatisticsByState=Members statistics by state/province
+# MembersStatisticsByTown=Members statistics by town
+# NbOfMembers=Number of members
+# NoValidatedMemberYet=No validated members found
+# MembersByCountryDesc=This screen show you statistics on members by countries. Graphic depends however on Google online graph service and is available only if an internet connection is is working.
+# MembersByStateDesc=This screen show you statistics on members by state/provinces/canton.
+# MembersByTownDesc=This screen show you statistics on members by town.
+# MembersStatisticsDesc=Choose statistics you want to read...
+MenuMembersStats=احصاءات
+# LastMemberDate=Last member date
+# Nature=Nature
+# Public=Information are public
+# Exports=Exports
+# NewMemberbyWeb=New member added. Awaiting approval
+# NewMemberForm=New member form
+# SubscriptionsStatistics=Statistics on subscriptions
+# NbOfSubscriptions=Number of subscriptions
+# AmountOfSubscriptions=Amount of subscriptions
+# TurnoverOrBudget=Turnover (for a company) or Budget (for a foundation)
+# DefaultAmount=Default amount of subscription
+# CanEditAmount=Visitor can choose/edit amount of its subscription
+# MEMBER_NEWFORM_PAYONLINE=Jump on integrated online payment page
+# Associations=Foundations
+# Collectivités=Organizations
+# Particuliers=Personal
+Entreprises=الشركات
+# DOLIBARRFOUNDATION_PAYMENT_FORM=To make your subscription payment using a bank transfer, see page <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a>.<br>To pay using a Credit Card or Paypal, click on button at bottom of this page.<br>
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-20113	Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ if (GETPOST('save','alpha'))
 {
     $res=dolibarr_set_const($db, "FCKEDITOR_TEST", GETPOST('formtestfield'),'chaine',0,'',$conf->entity);
 
-    if ($res > 0) $mesg=$langs->trans("RecordModifiedSuccessfully");
+    if ($res > 0) setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
 
@@ -150,8 +150,6 @@ else
     }
 
     print '</table>'."\n";
-
-    dol_htmloutput_mesg($mesg);
 
     print '<br>'."\n";
     print_fiche_titre($langs->trans("TestSubmitForm"),'','');

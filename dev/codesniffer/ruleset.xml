@@ -5,7 +5,11 @@
 
 	<!-- List of all tests -->
 
-    <rule ref="Generic.CodeAnalysis.EmptyStatement" />
+	<rule ref="Internal.NoCodeFound">
+		<severity>0</severity>
+	</rule>
+
+	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
  
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
 		<severity>0</severity>
@@ -211,10 +215,14 @@
         <severity>0</severity>
 	</rule>
 	
+	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCapital">
+        <severity>0</severity>
+	</rule>
+	<!-- some phpcs have a typo error in rule, so we add it too -->
 	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCaptial">
         <severity>0</severity>
 	</rule>
-
+	
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
         <severity>0</severity>

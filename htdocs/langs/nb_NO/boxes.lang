@@ -1,7 +1,7 @@
-# Dolibarr language file - no_NB - boxes
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=Rss informasjon
 BoxLastProducts=Siste produkter/tjenester
+# BoxProductsAlertStock=Products in stock alert
 BoxLastProductsInContract=Siste kontraktsinngåtte produkter/tjenester
 BoxLastSupplierBills=Siste leverandørfakturaer
 BoxLastCustomerBills=Siste kundefakturaer
@@ -10,10 +10,14 @@ BoxOldestUnpaidSupplierBills=Eldste ubetalte leverandørfakturaer
 BoxLastProposals=Siste tilbuder
 BoxLastProspects=Siste prospekter
 BoxLastCustomers=Siste kunder
-BoxLastCustomerOrders=Siste kundeordre
 BoxLastSuppliers=Siste leverandører
+BoxLastCustomerOrders=Siste kundeordre
 BoxLastBooks=Siste bøker
 BoxLastActions=Siste handlinger
+BoxLastContracts=Siste kontrakter
+BoxLastContacts=Siste kontakter / adresser
+BoxLastMembers=Siste medlemmer
+# BoxFicheInter=Last interventions
 BoxCurrentAccounts=Gjeldende kontosaldo
 BoxSalesTurnover=Omsetning
 BoxTotalUnpaidCustomerBills=Totalt utestående kunder
@@ -22,26 +26,42 @@ BoxTitleLastBooks=Siste %s registrerte bøker
 BoxTitleNbOfCustomers=Antall kunder
 BoxTitleLastRssInfos=Siste %s nyheter fra %s
 BoxTitleLastProducts=Siste %s endrede produkter/tjenester
+# BoxTitleProductsAlertStock=Products in stock alert
 BoxTitleLastCustomerOrders=Siste %s endrede kundeordre
 BoxTitleLastSuppliers=Siste %s registrerte leverandører
 BoxTitleLastCustomers=Siste %s registrerte kunder
+BoxTitleLastModifiedSuppliers=Sist endret %s leverandører
+BoxTitleLastModifiedCustomers=Sist endret %s kunder
 BoxTitleLastCustomersOrProspects=Siste %s registrerte kunder eller prospekter
 BoxTitleLastPropals=Siste %s registrerte tilbud
 BoxTitleLastCustomerBills=Siste %s kundefakturaer
 BoxTitleLastSupplierBills=Siste %s leverandørfakturaer
 BoxTitleLastProspects=Siste %s registrerte prospekter
+BoxTitleLastModifiedProspects=Sist %s endret utsiktene
 BoxTitleLastProductsInContract=Siste %s produkter/tjenerster i kontraketer
+BoxTitleLastModifiedMembers=Siste %s endret medlemmer
+# BoxTitleLastFicheInter=Last %s modified intervention
 BoxTitleOldestUnpaidCustomerBills=Eldste %s ubetalte kundefakturaer
 BoxTitleOldestUnpaidSupplierBills=Eldste %s ubetalte leverandørfakturaer
 BoxTitleCurrentAccounts=Gjeldende kontosaldo
 BoxTitleSalesTurnover=Omsetning
 BoxTitleTotalUnpaidCustomerBills=Ubetalte kundefakturaer
 BoxTitleTotalUnpaidSuppliersBills=Ubetalte leverandørfakturaer
+BoxTitleLastModifiedContacts=Siste %s endret kontakter / adresser
 BoxMyLastBookmarks=Mine siste %s bokmerker
-FailedToRefreshDataInfoNotUpToDate=Klarte ikke å oppdatere RSS-strøm. Siste vellykkede oppdatering: %s
-NoRecordedBookmarks=Ingen bokmerker definert. Trykk <a href="%s">her</a> for å legge til bokmerker.
-NoRecordedCustomers=Ingen registrerte kunder
+BoxOldestExpiredServices=Eldste aktive utløpte tjenester
+BoxLastExpiredServices=Siste %s eldste kontakter med aktive utløpte tjenester
 BoxTitleLastActionsToDo=Siste %s åpne handlinger
+BoxTitleLastContracts=Siste %s kontrakter
+BoxTitleLastModifiedDonations=Siste %s endret donasjoner
+BoxTitleLastModifiedExpenses=Siste %s endret utgifter
+# BoxGlobalActivity=Global activity (invoices, proposals, orders)
+FailedToRefreshDataInfoNotUpToDate=Klarte ikke å oppdatere RSS-strøm. Siste vellykkede oppdatering: %s
+LastRefreshDate=Siste oppdatering dato
+NoRecordedBookmarks=Ingen bokmerker definert. Trykk <a href="%s">her</a> for å legge til bokmerker.
+ClickToAdd=Klikk her for å legge til.
+NoRecordedCustomers=Ingen registrerte kunder
+NoRecordedContacts=Ingen registrerte kontakter
 NoActionsToDo=Ingen åpne handlinger
 NoRecordedOrders=Ingen registrerte kunderordre
 NoRecordedProposals=Ingen registrerte tilbud
@@ -49,39 +69,23 @@ NoRecordedInvoices=Ingen registrerte kundefakturaer
 NoUnpaidCustomerBills=Ingen ubetalte kundefakturaer
 NoRecordedSupplierInvoices=Ingen registrte leverandørfakturaer
 NoUnpaidSupplierBills=Ingen ubetalte leverandørfakturaer
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
-// Reference language: en_US
-BoxLastContracts=Siste kontrakter
-LastRefreshDate=Siste oppdatering dato
-BoxTitleLastContracts=Siste %s kontrakter
 NoModifiedSupplierBills=Ingen registrert leverandørens faktura
 NoRecordedProducts=Ingen registrert produkter / tjenester
 NoRecordedProspects=Ingen registrert utsikter
 NoContractedProducts=Ingen produkter / tjenester innleide
 NoRecordedContracts=Ingen registrert kontrakter
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:20).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> nb_NO
-BoxTitleLastModifiedSuppliers=Sist endret %s leverandører
-BoxTitleLastModifiedCustomers=Sist endret %s kunder
-BoxTitleLastModifiedProspects=Sist %s endret utsiktene
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:37).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-BoxLastContacts=Siste kontakter / adresser
-BoxLastMembers=Siste medlemmer
-BoxTitleLastModifiedMembers=Siste %s endret medlemmer
-BoxTitleLastModifiedContacts=Siste %s endret kontakter / adresser
-BoxOldestExpiredServices=Eldste aktive utløpte tjenester
-BoxLastExpiredServices=Siste %s eldste kontakter med aktive utløpte tjenester
-BoxTitleLastModifiedDonations=Siste %s endret donasjoner
-BoxTitleLastModifiedExpenses=Siste %s endret utgifter
-ClickToAdd=Klikk her for å legge til.
-NoRecordedContacts=Ingen registrerte kontakter
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:07).
+# NoRecordedInterventions=No recorded interventions
+# BoxLatestSupplierOrders=Latest supplier orders
+# BoxTitleLatestSupplierOrders=%s latest supplier orders
+# NoSupplierOrder=No recorded supplier order
+# BoxCustomersInvoicesPerMonth=Customer invoices per month
+# BoxSuppliersInvoicesPerMonth=Supplier invoices per month
+# BoxCustomersOrdersPerMonth=Customer orders per month
+# BoxSuppliersOrdersPerMonth=Supplier orders per month
+# BoxProposalsPerMonth=Proposals per month
+# NoTooLowStockProducts=No product under the low stock limit
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=Kundens fakturaer
+# ForCustomersOrders=Customers orders
+ForProposals=Tilbud

@@ -69,7 +69,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAUser").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_user" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
+print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
 print "</table><br>\n";
 print '</form>';
 
@@ -83,7 +83,7 @@ if ($canreadperms)
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAGroup").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
 	print $langs->trans("Ref").':</td><td><input class="flat" type="text" name="search_group" size="18"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
+	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td></tr>';
 	print "</table><br>\n";
 	print '</form>';
 }
@@ -128,7 +128,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($obj->firstname,$obj->lastname).'</a>';
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
@@ -148,26 +148,30 @@ if ($resql)
             $companystatic->canvas=$obj->canvas;
             print $companystatic->getNomUrl(1);
 		}
-		else if (! empty($conf->multicompany->enabled))
-        {
-        	if ($obj->admin && ! $obj->entity)
-        	{
-        		print $langs->trans("AllEntities");
-        	}
-        	else
-        	{
-        		$mc->getInfo($obj->entity);
-        		print $mc->label;
-        	}
-        }
-		else if ($obj->ldap_sid)
-		{
-			print $langs->trans("DomainUser");
-		}
 		else
 		{
 			print $langs->trans("InternalUser");
 		}
+		if ($obj->ldap_sid)
+		{
+			print ' ('.$langs->trans("DomainUser").')';
+		}
+        // TODO This should be done with a hook
+        if (is_object($mc))
+        {
+			if (! empty($conf->multicompany->enabled))
+	        {
+	        	if ($obj->admin && ! $obj->entity)
+	        	{
+	        		print ' ('.$langs->trans("AllEntities").')';
+	        	}
+	        	else
+	        	{
+	        		$mc->getInfo($obj->entity);
+	        		print ' ('.$mc->label.')';
+	        	}
+	        }
+        }
 		print '</td>';
 		print '<td align="right">'.dol_print_date($db->jdate($obj->datec),'dayhour').'</td>';
         print '<td align="right">';
@@ -225,7 +229,7 @@ if ($canreadperms)
 			$obj = $db->fetch_object($resql);
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td><a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
 			if (! $obj->entity)
 			{

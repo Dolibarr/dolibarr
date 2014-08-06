@@ -1,18 +1,11 @@
-/*
- * Language code: ar_SA
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 15:55:27
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=سير العمل وحدة الإعداد
-WorkflowDesc=وdesinged هذه الوحدة لتعديل السلوك من الإجراءات التلقائي في التطبيق. افتراضيا، يتم فتح سير العمل (جعل لكم شيء في النظام الذي تريده). يمكنك تمكين الإجراءات التلقائية التي كنت مهتما فيها.
+WorkflowDesc=وdesigned هذه الوحدة لتعديل السلوك من الإجراءات التلقائي في التطبيق. افتراضيا، يتم فتح سير العمل (جعل لكم شيء في النظام الذي تريده). يمكنك تمكين الإجراءات التلقائية التي كنت مهتما فيها.
 ThereIsNoWorkflowToModify=لا يوجد سير العمل الذي يمكن تعديل وحدة لكنت قد قمت بتنشيط.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=إنشاء النظام العميل تلقائيا بعد التوقيع على اقتراح تجارية
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد التوقيع على اقتراح تجارية
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد التحقق من صحة العقد
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=إنشاء فاتورة العميل تلقائيا بعد إغلاق النظام العميل
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:19).
+# descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

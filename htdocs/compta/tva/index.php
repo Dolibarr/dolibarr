@@ -33,8 +33,8 @@ $langs->load("compta");
 $langs->load("banks");
 $langs->load("bills");
 
-$year=$_GET["year"];
-if ($year == 0 )
+$year=GETPOST("year","int");
+if ($year == 0)
 {
     $year_current = strftime("%Y",time());
     $year_start = $year_current;
@@ -54,7 +54,14 @@ $modetax = $conf->global->TAX_MODE;
 if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 
-
+/**
+ * pt
+ *
+ * @param 	DoliDB	$db		Database handler
+ * @param 	string	$sql	SQL Request
+ * @param 	date		$date	Date
+ * @return	void
+ */
 function pt ($db, $sql, $date)
 {
     global $conf, $bc,$langs;
@@ -91,7 +98,7 @@ function pt ($db, $sql, $date)
         $db->free($result);
     }
     else {
-        dolibar_print_error($db);
+        dol_print_error($db);
     }
 }
 
@@ -160,8 +167,8 @@ for ($m = 1 ; $m < 13 ; $m++ )
     }
 
     $var=!$var;
-    print "<tr $bc[$var]>";
-    print '<td nowrap><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
+    print "<tr ".$bc[$var].">";
+    print '<td class="nowrap"><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
     $x_coll = 0;
     foreach($coll_listsell as $vatrate=>$val)
@@ -169,7 +176,7 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $x_coll+=$val['vat'];
     }
     $subtotalcoll = $subtotalcoll + $x_coll;
-    print "<td nowrap align=\"right\">".price($x_coll)."</td>";
+    print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td>";
 
     $x_paye = 0;
     foreach($coll_listbuy as $vatrate=>$val)
@@ -177,13 +184,13 @@ for ($m = 1 ; $m < 13 ; $m++ )
         $x_paye+=$val['vat'];
     }
     $subtotalpaye = $subtotalpaye + $x_paye;
-    print "<td nowrap align=\"right\">".price($x_paye)."</td>";
+    print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td>";
 
     $diff = $x_coll - $x_paye;
     $total = $total + $diff;
     $subtotal = $subtotal + $diff;
 
-    print "<td nowrap align=\"right\">".price($diff)."</td>\n";
+    print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 
@@ -225,7 +232,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 $sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
-$sql.= " GROUP BY dm ASC";
+$sql.= " GROUP BY dm  ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 

@@ -1,0 +1,9 @@
+# Dolibarr language file - tr_TR - printipp
+PrintIPPSetup=Doğrudan Yazdırma modülü kurulumu
+PrintIPPDesc=Bu modül, yazıcıya doğrudan belge yazdırma düğmesi ekler. Bu bir Cups içeren bir Linux sistemi gerektirir.
+PRINTIPP_ENABLED=Belge listesinde "Doğrudan yazdır" resim ikonunu göster
+PRINTIPP_HOST=Yazdırma sunucusu
+PRINTIPP_PORT=Port
+PRINTIPP_USER=Giriş
+PRINTIPP_PASSWORD=Parola
+NoPrinterFound=Yazıcı bulnamadı (Cups ayarını denetleyin)

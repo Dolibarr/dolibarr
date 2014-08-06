@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=合同區
 ListOfContracts=合約名單
 LastContracts=最後%s的修改過的合同
@@ -47,6 +38,7 @@ ConfirmCloseService=您確定要關閉這項服務與日期<b>%s嗎</b> ？
 ValidateAContract=驗證合同
 ActivateService=激活服務
 ConfirmActivateService=你確定要激活這項服務的日期<b>%s嗎</b> ？
+# RefContract=Contract reference
 DateContract=合同日期
 DateServiceActivate=服務激活日期
 DateServiceUnactivate=服務停用日期
@@ -61,7 +53,7 @@ ListOfRunningContractsLines=名單合同線運行
 ListOfRunningServices=運行服務的列表
 NotActivatedServices=不活躍的服務（除驗證合同）
 BoardNotActivatedServices=服務激活驗證合同之間
-LastContracts=上次%合同
+LastContracts=最後%s的修改過的合同
 LastActivatedServices=上次%s的激活服務
 LastModifiedServices=最後%S修飾服務
 EditServiceLine=編輯服務項目
@@ -92,21 +84,16 @@ ConfirmMoveToAnotherContractQuestion=選擇了現有合同（同第三方），�
 PaymentRenewContractId=續訂合同線（%s的數目）
 ExpiredSince=失效日期
 RelatedContracts=有關合同
+NoExpiredServices=沒有過期的主動服務
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=銷售代表簽訂合同
 TypeContact_contrat_internal_SALESREPFOLL=銷售代表隨訪合同
 TypeContact_contrat_external_BILLING=結算客戶聯系
 TypeContact_contrat_external_CUSTOMER=後續的客戶聯系
 TypeContact_contrat_external_SALESREPSIGN=簽約客戶的聯系
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> zh_CN
 Error_CONTRACT_ADDON_NotDefined=恒CONTRACT_ADDON沒有定義
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-NoExpiredServices=沒有過期的主動服務
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:30).

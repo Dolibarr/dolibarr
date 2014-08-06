@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Medlemsområde
 PublicMembersArea=Offentlige medlemmer område
 MemberCard=Medlem kortet
@@ -20,13 +8,20 @@ Members=Medlemmer
 MemberAccount=Medlem login
 ShowMember=Vis medlem kortet
 UserNotLinkedToMember=Brugeren ikke er knyttet til et medlem
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Medlemmer Billetter
+FundationMembers=Instituttets medlemmer
 Attributs=Attributter
-Person=Person
 ErrorMemberTypeNotDefined=Medlem type ikke defineret
 ListOfPublicMembers=Liste over offentlige medlemmer
 ListOfValidatedPublicMembers=Liste over validerede offentlige medlemmer
 ErrorThisMemberIsNotPublic=Dette medlem er ikke offentlige
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn: %s, login: %s)</b> er allerede knyttet til en <b>tredjepart %s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Af sikkerhedsmæssige grunde skal du være tildelt tilladelser til at redigere alle brugere til at kunne knytte et medlem til en bruger, der ikke er dit.
+ThisIsContentOfYourCard=Dette er nærmere oplysninger om dit kort
+CardContent=Indholdet af din medlem kortet
+SetLinkToUser=Link til en Dolibarr bruger
+SetLinkToThirdParty=Link til en Dolibarr tredjepart
 MembersCards=Medlemmer udskrive kort
 MembersList=Liste over medlemmer
 MembersListToValid=Liste over udkast til medlemmer (der skal bekræftes)
@@ -40,11 +35,14 @@ MenuMembersValidated=Valideret medlemmer
 MenuMembersUpToDate=Ajour medlemmer
 MenuMembersNotUpToDate=Uaktuel medlemmer
 MenuMembersResiliated=Resiliated medlemmer
+MembersWithSubscriptionToReceive=Medlemmer med abonnement for at modtage
 DateAbonment=Subscription dato
 DateSubscription=Subscription dato
 DateNextSubscription=Næste abonnement
 DateEndSubscription=Subscription slutdato
 EndSubscription=End abonnement
+SubscriptionId=Abonnements-id
+MemberId=Medlem id
 NewMember=Nyt medlem
 NewType=Nyt medlem type
 MemberType=Medlem type
@@ -73,13 +71,12 @@ MembersStatusNotPaidShort=Uaktuel
 MembersStatusResiliated=Resiliated medlemmer
 MembersStatusResiliatedShort=Resiliated medlemmer
 NewCotisation=Nye bidrag
+PaymentSubscription=Nye bidrag betaling
 EditMember=Rediger medlem
 SubscriptionEndDate=Subscription slutdato
-NewAttribute=Ny henføres
-AttributeCode=Attribut kode
-OptionalFieldsSetup=Valgfrie felter setup
 MembersTypeSetup=Medlemmer type setup
 NewSubscription=Nyt abonnement
+NewSubscriptionDesc=Denne form giver dig mulighed for at registrere dit abonnement som nyt medlem af fundamentet. Hvis du ønsker at forny dit abonnement (hvis der allerede er medlem), bedes du kontakte fundament bord i stedet via e-mail %s.
 Subscription=Subscription
 Subscriptions=Abonnementer
 SubscriptionLate=Sen
@@ -113,13 +110,15 @@ ConfirmValidateMember=Er du sikker på at du ønsker at validere dette medlem?
 FollowingLinksArePublic=De følgende links er åbne sider ikke er beskyttet af nogen Dolibarr tilladelse. De er ikke formated sider, gives som eksempel for at vise, hvordan man listen medlemmer database.
 PublicMemberList=Offentlige medlem liste
 BlankSubscriptionForm=Subscription form
+BlankSubscriptionFormDesc=Dolibarr kan give dig en offentlig webadresse for at give eksterne besøgende til at anmode om abonnere på fundamentet. Hvis en online betaling modulet er aktiveret, vil en betaling form også udleveres automatisk.
+EnablePublicSubscriptionForm=Aktiver offentlige auto-tegningsblanket
 MemberPublicLinks=Offentlige links / sider
 ExportDataset_member_1=Medlemmer og abonnementer
+ImportDataset_member_1=Medlemmer
 LastMembers=Seneste %s medlemmer
 LastMembersModified=Seneste %s modificerede medlemmer
+LastSubscriptionsModified=Sidste %s ændret abonnementer
 AttributeName=Attribut navn
-FieldEdition=Område udgave %s
-AlphaNumOnlyCharsAndNoSpace=kun alphanumericals tegn uden mellemrum
 String=String
 Text=Tekst
 Int=Int
@@ -131,6 +130,10 @@ AddSubscription=Tilføj abonnement
 ShowSubscription=Vis tegning
 MemberModifiedInDolibarr=Medlem ændret i Dolibarr
 SendAnEMailToMember=Send information email til medlem
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-mail emne til medlem autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=EMail for medlem autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=E-mail emne til medlem validering
 DescADHERENT_MAIL_VALID=E-mail for medlem validering
 DescADHERENT_MAIL_COTIS_SUBJECT=E-mail emne for tegning
@@ -139,51 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=E-mail emne til medlem resiliation
 DescADHERENT_MAIL_RESIL=E-mail for medlem resiliation
 DescADHERENT_MAIL_FROM=Sender e-mail for automatiske e-mails
 DescADHERENT_ETIQUETTE_TYPE=Etiketter format
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=Format af kort side
 DescADHERENT_CARD_HEADER_TEXT=Tekst trykt på toppen af medlem-kort
 DescADHERENT_CARD_TEXT=Tekst påtrykt medlem kort
+DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på medlem-kort (tilpasning til højre)
 DescADHERENT_CARD_FOOTER_TEXT=Tekst trykt på bunden af medlem-kort
+GlobalConfigUsedIfNotDefined=Tekst defineret i instituttets modul opsætning vil blive brugt, hvis der ikke er defineret her
+MayBeOverwrited=Denne tekst kan overwrited ved værdien defineret for medlems-type
 ShowTypeCard=Vis type ' %s'
 HTPasswordExport=htpassword fil generation
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Et andet medlem <b>(navn: %s, login: %s)</b> er allerede knyttet til en <b>tredjepart %s.</b> Fjern dette link første fordi en tredjepart ikke kan forbindes med kun et medlem (og omvendt).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Af sikkerhedsmæssige grunde skal du være tildelt tilladelser til at redigere alle brugere til at kunne knytte et medlem til en bruger, der ikke er dit.
-ThisIsContentOfYourCard=Dette er nærmere oplysninger om dit kort
-CardContent=Indholdet af din medlem kortet
-SetLinkToUser=Link til en Dolibarr bruger
-SetLinkToThirdParty=Link til en Dolibarr tredjepart
-SubscriptionId=Abonnements-id
-MemberId=Medlem id
-PaymentSubscription=Nye bidrag betaling
 NoThirdPartyAssociatedToMember=Nr. tredjepart forbundet til dette medlem
 ThirdPartyDolibarr=Dolibarr tredjepart
-MembersAndSubscriptions=Medlemmer og Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-FundationMembers=Instituttets medlemmer
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-mail emne til medlem autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=EMail for medlem autosubscription
-DescADHERENT_CARD_TYPE=Format af kort side
-DescADHERENT_CARD_TEXT_RIGHT=Tekst trykt på medlem-kort (tilpasning til højre)
-DescADHERENT_MAILMAN_LISTS=Liste (r) for automatisk insription af nye medlemmer (adskilt af et komma)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:58).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> da_DA
+MembersAndSubscriptions= Medlemmer og Subscriptions
 MoreActions=Supplerende aktion om kontrolapparatet
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Opret en direkte transaktion record på grund
 MoreActionBankViaInvoice=Opret en faktura og acontobeløb
 MoreActionInvoiceOnly=Opret en faktura uden betaling
@@ -192,19 +165,6 @@ LinkToGeneratedPagesDesc=Denne skærm giver dig mulighed for at generere PDF-fil
 DocForAllMembersCards=Generer visitkort for alle medlemmer (Format for output faktisk setup: <b>%s)</b>
 DocForOneMemberCards=Generer visitkort for et bestemt medlem (Format for output faktisk setup: <b>%s)</b>
 DocForLabels=Generer adresse ark (Format for output faktisk setup: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:48).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-MembersWithSubscriptionToReceive=Medlemmer med abonnement for at modtage
-NewSubscriptionDesc=Denne form giver dig mulighed for at registrere dit abonnement som nyt medlem af fundamentet. Hvis du ønsker at forny dit abonnement (hvis der allerede er medlem), bedes du kontakte fundament bord i stedet via e-mail %s.
-BlankSubscriptionFormDesc=Dolibarr kan give dig en offentlig webadresse for at give eksterne besøgende til at anmode om abonnere på fundamentet. Hvis en online betaling modulet er aktiveret, vil en betaling form også udleveres automatisk.
-EnablePublicSubscriptionForm=Aktiver offentlige auto-tegningsblanket
-ImportDataset_member_1=Medlemmer
-LastSubscriptionsModified=Sidste %s ændret abonnementer
-GlobalConfigUsedIfNotDefined=Tekst defineret i instituttets modul opsætning vil blive brugt, hvis der ikke er defineret her
-MayBeOverwrited=Denne tekst kan overwrited ved værdien defineret for medlems-type
 SubscriptionPayment=Abonnement betaling
 LastSubscriptionDate=Sidste abonnement dato
 LastSubscriptionAmount=Sidste tegningsbeløbet
@@ -236,4 +196,9 @@ Collectivités=Organisationer
 Particuliers=Personlig
 Entreprises=Virksomheder
 DOLIBARRFOUNDATION_PAYMENT_FORM=For at gøre dit abonnement betaling med en bankoverførsel, se side <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> At betale med kreditkort eller Paypal, klik på knappen nederst på denne side. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:24).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

@@ -91,7 +91,11 @@ $entitytolang = array(
 	'other'        => 'Other',
     'trip'         => 'TripsAndExpenses',
     'shipment'     => 'Shipments',
-    'shipment_line'=> 'ShipmentLine'
+    'shipment_line'=> 'ShipmentLine',
+    'project'      => 'Projects',
+    'projecttask'  => 'Tasks',
+    'task_time'    => 'TaskTimeSpent',
+	'action'       => 'Action'
 );
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
@@ -225,7 +229,7 @@ if ($step == 1 || $action == 'cleanselect')
 if ($action == 'builddoc')
 {
     // Build export file
-	$result=$objexport->build_file($user, $_POST['model'], $datatoexport, $array_selected, $array_filtervalue);
+	$result=$objexport->build_file($user, GETPOST('model','alpha'), $datatoexport, $array_selected, $array_filtervalue);
 	if ($result < 0)
 	{
 		setEventMessage($objexport->error, 'errors');
@@ -506,9 +510,9 @@ if ($step == 2 && $datatoexport)
 	print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportableFields").'</td>';
     print '<td width="100" align="center">';
-    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
+    print '<a class="liste_titre" title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field=all">'.$langs->trans("All")."</a>";
     print '/';
-    print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
+    print '<a class="liste_titre" title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field=all">'.$langs->trans("None")."</a>";
     print '</td>';
     print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
     print '</tr>';
@@ -532,7 +536,7 @@ if ($step == 2 && $datatoexport)
     foreach($fieldsarray as $code=>$label)
     {
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         $i++;
 
@@ -865,7 +869,7 @@ if ($step == 4 && $datatoexport)
     foreach($array_selected as $code=>$value)
     {
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         $entity=(! empty($objexport->array_export_entities[0][$code])?$objexport->array_export_entities[0][$code]:$objexport->array_export_icon[0]);
         $entityicon=(! empty($entitytoicon[$entity])?$entitytoicon[$entity]:$entity);
@@ -1025,8 +1029,8 @@ if ($step == 5 && $datatoexport)
      */
     if ($action == 'remove_file')
     {
-    	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
-    	if ($ret == 'html') print '<br>';
+    	print $form->formconfirm($_SERVER["PHP_SELF"].'?step=5&datatoexport='.$datatoexport.'&file='.urlencode(GETPOST("file")), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+
     }
 
     print '<table width="100%" class="border">';
@@ -1090,13 +1094,21 @@ if ($step == 5 && $datatoexport)
     print '</tr>'."\n";
 
     $liste=$objmodelexport->liste_modeles($db);
-    foreach($liste as $key => $val)
+    $listeall=$liste;
+    foreach($listeall as $key => $val)
     {
+    	if (preg_match('/__\(Disabled\)__/',$listeall[$key]))
+    	{
+    		$listeall[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$listeall[$key]);
+    		unset($liste[$key]);
+    	}
+
         $var=!$var;
         print '<tr '.$bc[$var].'>';
         print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
 	    $text=$objmodelexport->getDriverDescForKey($key);
-    	print '<td>'.$form->textwithpicto($objmodelexport->getDriverLabelForKey($key),$text).'</td>';
+	    $label=$listeall[$key];
+	    print '<td>'.$form->textwithpicto($label,$text).'</td>';
         print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td><td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td></tr>'."\n";
     }
     print '</table>';

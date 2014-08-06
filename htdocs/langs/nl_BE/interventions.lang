@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - interventions
-CHARSET=UTF-8
 Intervention=Interventie
 Interventions=Interventies
 InterventionCard=Interventie-kaart
@@ -19,7 +18,7 @@ ConfirmDeleteIntervention=Weet u zeker dat u deze interventie wilt verwijderen?
 ConfirmValidateIntervention=Weet u zeker dat u deze interventie wilt valideren?
 ConfirmModifyIntervention=Weet u zeker dat u deze interventie wilt wijzigen?
 ConfirmDeleteInterventionLine=Weet u zeker dat u deze interventie wilt verwijderen?
-NameAndSignatureOfInternalContact=Naam en handtekening van de tussenliggende:
+NameAndSignatureOfInternalContact=Naam en handtekening van de uitvoerder:
 NameAndSignatureOfExternalContact=Naam en handtekening van de klant:
 DocumentModelStandard=Standaard document model voor interventies
 TypeContact_fichinter_internal_INTERREPFOLL=Vertegenwoordiger van de opvolging van de interventie

@@ -30,7 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/dons/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 $langs->load("companies");
 $langs->load("donations");
@@ -215,33 +217,26 @@ if ($action == 'set_encaisse')
  */
 if ($action == 'builddoc')
 {
-	$donation = new Don($db);
-	$donation->fetch($id);
+	$object = new Don($db);
+	$object->fetch($id);
 
-	if ($_REQUEST['model'])
-	{
-		$donation->setDocModel($user, $_REQUEST['model']);
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$donation->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
 		$outputlangs->setDefaultLang($newlang);
 	}
-	$result=don_create($db, $donation->id, '', $donation->modelpdf, $outputlangs);
+	$result=don_create($db, $object->id, '', $object->modelpdf, $outputlangs);
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$donation->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -317,9 +312,12 @@ if ($action == 'create')
 
 	if (! empty($conf->projet->enabled))
     {
+    	
+    	$formproject=new FormProjets($db);
+    	
         // Si module projet actif
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        select_projects('',$_POST["projectid"],"projectid");
+        $formproject->select_projects('',$_POST["projectid"],"projectid");
         print "</td></tr>\n";
     }
 
@@ -414,9 +412,11 @@ if (! empty($id) && $action == 'edit')
     // Project
     if (! empty($conf->projet->enabled))
     {
+    	$formproject=new FormProjets($db);
+    	
         $langs->load('projects');
         print '<tr><td>'.$langs->trans('Project').'</td><td>';
-        select_projects(-1, (isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project), 'projectid');
+        $formproject->select_projects(-1, (isset($_POST["projectid"])?$_POST["projectid"]:$don->fk_project), 'projectid');
         print '</td></tr>';
     }
 
@@ -475,7 +475,7 @@ if (! empty($id) && $action != 'edit')
     print '<td rowspan="'.$nbrows.'" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
 	print nl2br($don->note_private).'</td></tr>';
 
-    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+    print "<tr>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount,0,$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 	print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
 	print yn($don->public);

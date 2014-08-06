@@ -1,202 +1,206 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-ProductServiceCard=Produse / Servicii de carte
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Ref. Produs
+ProductLabel=Etichetă produs
+ProductServiceCard=Fişe Produse / Servicii
 Products=Produse
 Services=Servicii
 Product=Produs
-Service=Service
-ProductId=Produs / serviciu id
-Create=Creaţi
+Service=Serviciu
+ProductId=ID produs / serviciu
+Create=Crează
 Reference=Referinţă
 NewProduct=Produs nou
-NewService=Nou serviciu de
-ProductCode=Codul de produs
-ServiceCode=Serviciul de cod
+NewService=Serviciu nou
+ProductCode=Cod produs
+ServiceCode=Cod serviciu
+ProductAccountancyBuyCode=Cont Contabilitate (cumpărare)
+ProductAccountancySellCode=Cont Contabilitate (vânzare)
 ProductOrService=Produs sau serviciu
 ProductsAndServices=Produse si Servicii
 ProductsOrServices=Produse sau servicii
-ProductsAndServicesOnSell=Produse si Servicii vinde pe
-ProductsAndServicesNotOnSell=Produse si Servicii din vinde
-ProductsAndServicesStatistics=Produse si Servicii statistici
-ProductsStatistics=Produse statistici
-ProductsOnSell=Produse pe vinde
-ProductsNotOnSell=Produse din vinde
-ServicesOnSell=Servicii vinde pe
-ServicesNotOnSell=Servicii din vinde
-InternalRef=Interne de referinţă
-LastRecorded=Ultimele produse / servicii pe vinde înregistrate
-LastRecordedProductsAndServices=Ultima %s precorded roduse / servicii
-LastModifiedProductsAndServices=Ultima %s modificate produse / servicii
-LastRecordedProducts=Ultima %s produse înregistrate
-LastRecordedServices=Ultima %s servicii înregistrate
+ProductsAndServicesOnSell=Produse si Servicii disponibile
+ProductsAndServicesNotOnSell=Produse si Servicii  fără miscare
+ProductsAndServicesStatistics=Statistici Produse si Servicii
+ProductsStatistics=Statistici Produse
+ProductsOnSell=Produse disponibile
+ProductsNotOnSell=Produse fără mişcare
+ServicesOnSell=Servicii disponibile
+ServicesNotOnSell=Servicii fără miscare
+InternalRef=Referinţă internă
+LastRecorded=Ultimele produse / servicii disponibile înregistrate
+LastRecordedProductsAndServices=Ultimele  %s produse / servicii  înregistrate
+LastModifiedProductsAndServices=Ultimele  %s produse / servicii  modificate
+LastRecordedProducts=Ultimele  %s produse înregistrate
+LastRecordedServices=Ultimele  %s  servicii înregistrate
 LastProducts=Ultimele produse
-CardProduct0=Produsul carte
-CardProduct1=Serviciul de carte
-CardContract=Contract de carte
-Warehouse=Warehouse
+CardProduct0=Fişă Produs
+CardProduct1=Fişă  Serviciul
+CardContract=Fişă  Contract
+Warehouse=Depozit
 Warehouses=Depozite
-WarehouseOpened=Warehouse deschis
+WarehouseOpened=Depozit deschis
 WarehouseClosed=Depozit închis
 Stock=Stoc
 Stocks=Stocuri
-Movement=Mişcarea
-Movements=Mişcările
-OnSell=Pe vinde
-NotOnSell=Afară de Vanzare
-ProductStatusOnSell=Pe vinde
-ProductStatusNotOnSell=Din vinde
-ProductStatusOnSellShort=Pe vinde
-ProductStatusNotOnSellShort=Din vinde
-UpdatePrice=Actualizare de preţ
-AppliedPricesFrom=Aplicata de la preţurile de
+Movement=Transfer
+Movements=Transferuri
+Sell=Vânzări
+Buy=Achiziţii
+OnSell=Pentru desfacere
+OnBuy=Pentru achiziţionare
+NotOnSell=Nu pentru desfacere
+ProductStatusOnSell=Pentru desfacere
+ProductStatusNotOnSell=Nu pentru desfacere
+ProductStatusOnSellShort=Pentru desfacere
+ProductStatusNotOnSellShort=Nu pentru desfacere
+ProductStatusOnBuy=Pentru achiziţionare
+ProductStatusNotOnBuy=Nu pentru achiziţionare
+ProductStatusOnBuyShort=Pentru achiziţionare
+ProductStatusNotOnBuyShort=Nu pentru achiziţionare
+UpdatePrice=Schimbă  preţul
+AppliedPricesFrom=Preţ de vânzare practicat de la
 SellingPrice=Preţul de vânzare
-PublicPrice=Public preţ
+SellingPriceHT=Preţul de vânzare (net)
+SellingPriceTTC=Preţul de vânzare (incl. taxe)
+PublicPrice=Preţ Public
 CurrentPrice=Preţ curent
-NewPrice=New preţ
-ContractStatus=Contractul de stare
+NewPrice=Preţ nou
+MinPrice=Preţ min.  vânzare
+CantBeLessThanMinPrice=Prețul de vânzare nu poate fi mai mic decât minimul permis pentru acest produs (% s fără taxe). Acest mesaj poate apărea, de asemenea, dacă tastați o reducere prea important.
+ContractStatus=Status Contract
 ContractStatusClosed=Închis
-ContractStatusRunning=Rularea
+ContractStatusRunning=În service
 ContractStatusExpired=expirat
-ContractStatusOnHold=Nu rulează
-ContractStatusToRun=Un serviciu de mettre en
+ContractStatusOnHold=Fără service
+ContractStatusToRun=De pus în service
 ContractNotRunning=Acest contract nu este în execuţie
-ErrorProductAlreadyExists=Un produs cu referire %s există deja.
-ErrorProductBadRefOrLabel=Greşit valoarea de referinţă sau eticheta.
+ErrorProductAlreadyExists=Un produs cu referinţa %s există deja.
+ErrorProductBadRefOrLabel=Valoare greșită pentru referință sau eticheta.
+ErrorProductClone=A apărut o problemă în timp ce sw încerca clonarea produsului sau a serviciului.
 Suppliers=Furnizori
-SupplierRef=Furnizor ref.
-ShowProduct=Arata produs
-ShowService=Arata serviciu
-ProductsAndServicesArea=Produse şi servicii zona
-ProductsArea=Produs zonei
-ServicesArea=Domeniul serviciilor
-AddToMyProposals=Adauga la propunerile mele
-AddToOtherProposals=Adauga la alte propuneri
-AddToMyBills=Adăugare pentru a-mi facturile
-AddToOtherBills=Adauga la alte proiecte de lege
-CorrectStock=Corect stoc
-AddPhoto=Adăugaţi fotografie
-ListOfStockMovements=Lista de stoc mişcările
-NoPhotoYet=Nici o fotografie disponibilă încă
+SupplierRef=Ref. produs furnizor
+ShowProduct=Afişează  produs
+ShowService=Afişează serviciu
+ProductsAndServicesArea=Zona Produse şi Servicii
+ProductsArea=Zona Produse
+ServicesArea=Zona Servicii
+AddToMyProposals=Adaugă la propunerile mele
+AddToOtherProposals=Adaugă la alte propuneri
+AddToMyBills=Adăugă la facturile mele
+AddToOtherBills=Adaugă la alte facturi
+CorrectStock=Corectează Stocul
+AddPhoto=Adaugă foto
+ListOfStockMovements=Lista mişcări stoc
 BuyingPrice=Cumpararea de preţ
-SupplierCard=Furnizor cartela
-CommercialCard=Comerciale carte
-AllWays=Cale, pentru a vă găsi produsul în stoc
-NoCat=Produsul nu este în orice categorie
-PrimaryWay=Primar calea
-DeleteFromCat=Eliminaţi din categoria
-PriceRemoved=Pret eliminat
+SupplierCard=Fişă furnizor
+CommercialCard=Fişă Comercial
+AllWays=Calea pentru a vă găsi produsul în stoc
+NoCat=Produsul nu este în nici o  categorie
+PrimaryWay=Calea Primară:
+PriceRemoved=Preţ şters
 BarCode=Coduri de bare
-BarcodeType=Coduri de bare de tip
-SetDefaultBarcodeType=Set cod de bare de tip
-BarcodeValue=Coduri de bare valoare
-NoteNotVisibleOnBill=Notă (nu este vizibil de pe facturi, propuneri ...)
-CreateCopy=Creaţi o copie
+BarcodeType=Tip Coduri de bare
+SetDefaultBarcodeType=Setări tip cod de bare
+BarcodeValue=Valoarea coduri de bare
+NoteNotVisibleOnBill=Notă (nevizibilă pe facturi, propuneri ...)
+CreateCopy=Crează o copie
 ServiceLimitedDuration=Dacă produsul este un serviciu cu durată limitată:
-MultiPricesAbility=Activaţi multi-preturi
+MultiPricesAbility=Activează preturi multiple
 MultiPricesNumPrices=Numărul de preţ
-MultiPriceLevelsName=Pret categorii
-AssociatedProductsAbility=Activaţi asociate produselor
-AssociatedProducts=Asociat produse
-AssociatedProductsNumber=Numărul de produse asociate
-EditAssociate=Asociat
+MultiPriceLevelsName=Categorii Preţ
+AssociatedProductsAbility=Activează  produse virtuale
+AssociatedProducts=Produse virtuale
+AssociatedProductsNumber=Număr produse  ce compun produsul virtual
+ParentProductsNumber=Numărul  produselor virtuale părinte
+IfZeroItIsNotAVirtualProduct=Dacă 0, acest produs nu este un produs virtual
+IfZeroItIsNotUsedByVirtualProduct=Dacă 0, acest produs nu este folosit de niciun produs virtual
+EditAssociate=Compus ca produs virtual
 Translation=Traduceri
 KeywordFilter=Filtru de cuvinte cheie
 CategoryFilter=Categorie filtru
-ProductToAddSearch=Cauta produse pentru a adăuga
-AddDel=Adăugare / Ştergere
+ProductToAddSearch=Cauta produse de adăugat
+AddDel=Adăugare / Retrage
 Quantity=Cantitate
 NoMatchFound=Nici un rezultat găsit
 ProductAssociationList=Lista de legate de produse / servicii: nume de produse / servicii (cantitatea afectate)
+ProductParentList=Lista de produse / servicii cu acest produs, ca o componentă
 ErrorAssociationIsFatherOfThis=Un produs este selectat de părinte cu curent produs
 DeleteProduct=A şterge un produs / serviciu
 ConfirmDeleteProduct=Sunteţi sigur că doriţi să ştergeţi acest produs / serviciu?
 ProductDeleted=Produse / servicii " %s" şterse din baza de date.
 DeletePicture=Ştergeţi o imagine
 ConfirmDeletePicture=Sunteţi sigur că doriţi să ştergeţi această imagine?
-ExportDataset_produit_1=Produse si servicii
+ExportDataset_produit_1=Produse
+ExportDataset_service_1=Servicii
+ImportDataset_produit_1=Produse
+ImportDataset_service_1=Servicii
 DeleteProductLine=Ştergeţi linia de produse
 ConfirmDeleteProductLine=Sunteţi sigur că doriţi să ştergeţi această linie de produse?
 NoProductMatching=Nici un produs / serviciu se potrivesc cu criteriile
 MatchingProducts=Potrivire a produselor / serviciilor
-NoStockForThisProduct=Nu stoc pentru acest produs
-NoStock=Nu de stoc
-Restock=Repopula
+NoStockForThisProduct=Nici un stoc pentru acest produs
+NoStock=Nici un stoc
+Restock=Reaprovizionează
 ProductSpecial=Special
-QtyMin=Cantitate minimă
+QtyMin=Cantitatea minimă
 PriceQty=Preţul pentru această cantitate
-PriceQtyMin=Pret cantitate min.
+PriceQtyMin=Pretul pentru această cant. min (w / o reducere)
+VATRateForSupplierProduct=Cota TVA( pentru acest furnizor/produs)
+DiscountQtyMin=Reducerea implicită pentru cant
 NoPriceDefinedForThisSupplier=Nu Pret / Cantitate definite pentru acest furnizor / produs
 NoSupplierPriceDefinedForThisProduct=Nu furnizor preţ / Cantitate definite pentru acest produs
 RecordedProducts=Produse înregistrate
+RecordedServices=Servicii înregistrate
 RecordedProductsAndServices=Produse / servicii înregistrate
 GenerateThumb=Generaţi thumb
 ProductCanvasAbility=Utilizaţi speciale "panza" addons
 ServiceNb=Service # %s
+ListProductServiceByPopularity=Lista de produse / servicii de popularitate
 ListProductByPopularity=Lista de produse / servicii de popularitate
+ListServiceByPopularity=Lista de servicii de către popularitate
 Finished=Produs fabricat
-RowMaterial=Primul material
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ProductRef=Produsul ref.
-ProductLabel=Eticheta produsului
-MinPrice=Minim. preţul de vânzare
-CantBeLessThanMinPrice=Preţul de vânzare nu poate fi mai mică decât minimă permisă pentru acest produs ( %s, fără taxe)
-ExportDataset_service_1=Servicii
+RowMaterial=Materie primă
 CloneProduct=Clone produs sau un serviciu
-ConfirmCloneProduct=Sunteţi sigur că doriţi să clona produsul sau <b>serviciul %s?</b>
+ConfirmCloneProduct=Sigur doriţi să clonaţi produsul sau serviciul <b>%s</b> ?
 CloneContentProduct=Clone toate principalele informatii de produs / serviciu
 ClonePricesProduct=Clone principalele informatii si preturi
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-ProductAccountancyBuyCode=Codul de Contabilitate (cumpăra)
-ProductAccountancySellCode=Codul de Contabilitate (vinde)
-SellingPriceHT=Preţul de vânzare (nete de impozit)
-SellingPriceTTC=Preţul de vânzare (inclusiv taxe)
-ListProductServiceByPopularity=Lista de produse / servicii de popularitate
-ListServiceByPopularity=Lista de servicii de către popularitate
+CloneCompositionProduct=Clonează  compoziţia produs/serviciu
 ProductIsUsed=Acest produs este utilizat
 NewRefForClone=Ref. de produs / serviciu nou
-CustomerPrices=Clienţii preţurile
-SuppliersPrices=Furnizori preţurile
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:00).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ro_RO
-Sell=Vânzări
-Buy=Achiziţii
-OnBuy=Achiziţionat
-ProductStatusOnBuy=Disponibil
-ProductStatusNotOnBuy=Învechit
-ProductStatusOnBuyShort=Disponibil
-ProductStatusNotOnBuyShort=Învechit
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:28).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-ParentProductsNumber=Numărul de produs mamă
-ProductParentList=Lista de produse / servicii cu acest produs, ca o componentă
-ImportDataset_produit_1=Produse
-ImportDataset_service_1=Servicii
+CustomerPrices=Preţuri Clienţii
+SuppliersPrices=Preţuri Furnizori
 CustomCode=Codul vamal
 CountryOrigin=Ţara de origine
 HiddenIntoCombo=Ascuns în liste selectaţi
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:36).
+Nature=Natura
+ProductCodeModel=Template cod produs
+ServiceCodeModel=Template cod serviciu
+AddThisProductCard=Crează Fişă produs
+HelpAddThisProductCard=Această opţiune vă permite să creaţi sau clonaţi un produs  dacă acesta nu există
+AddThisServiceCard=Crează Fişă Serviciu
+HelpAddThisServiceCard=Această opţiune vă permite să creaţi sau clonaţi un serviciu dacă acesta  nu există
+CurrentProductPrice=Preţ curent
+AlwaysUseNewPrice=Întotdeauna foloseşte preţul curent al produsului/serviciului
+AlwaysUseFixedPrice=Foloseşte preţul fix
+PriceByQuantity=Preţ pe cantitate
+PriceByQuantityRange=Interval cantitate
+ProductsDashboard=Sumar Produse/Servicii
+UpdateOriginalProductLabel=Modifică eticheta originală
+HelpUpdateOriginalProductLabel=Permite editarea numelui produsului
+### composition fabrication
+Building=Producţia si elementele expediate
+Build=Produce
+BuildIt=Produse & Expediere
+BuildindListInfo=Cantitatea disponibilă pentru producţie pe depozit( setat la 0 pentru nu alte acţiuni)
+QtyNeed=Cant
+UnitPmp=Net unit VWAP
+CostPmpHT=Net total VWAP
+ProductUsedForBuild=Autoconsum de producție
+ProductBuilded=Producţie completată
+ProductsMultiPrice=Produse preţ multiplu
+ProductSellByQuarterHT=Cifra de afaceri trimestrială a produselor VWAP
+ServiceSellByQuarterHT=Cifra de afaceri trimestrială servicii VWAP
+Quarter1=Trimestru 1.
+Quarter2=Trimestru 2.
+Quarter3=Trimestru 3.
+Quarter4=Trimestru 4.

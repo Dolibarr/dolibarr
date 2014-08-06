@@ -1,47 +1,42 @@
-/*
- * Language code: he_IL
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-03-10 15:14:54
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-03-10 15:14:54).
-// Reference language: en_US -> he_IL
-CHARSET=UTF-8
-Intervention=התערבות
+# Dolibarr language file - Source file is en_US - interventions
+# Intervention=Intervention
 Interventions=התערבויות
-InterventionCard=התערבות כרטיס
-NewIntervention=חדש התערבות
-AddIntervention=הוסף התערבות
-ListOfInterventions=רשימה של התערבויות
-EditIntervention=עריכת התערבות
-ActionsOnFicheInter=פעולות על התערבות
-LastInterventions=%s ההתערבויות האחרונות
-AllInterventions=כל ההתערבויות
-CreateDraftIntervention=יצירת טיוטה
-CustomerDoesNotHavePrefix=לקוחות אין קידומת
-InterventionContact=התערבות קשר
-DeleteIntervention=מחק את התערבות
-ValidateIntervention=תוקף ההתערבות
-ModifyIntervention=שנה התערבות
-DeleteInterventionLine=מחק את השורה התערבות
-ConfirmDeleteIntervention=האם אתה בטוח שברצונך למחוק זאת התערבות?
-ConfirmValidateIntervention=האם אתה בטוח שאתה רוצה לאמת את זה התערבות?
-ConfirmModifyIntervention=האם אתה בטוח שאתה רוצה לשנות את ההתערבות?
-ConfirmDeleteInterventionLine=האם אתה בטוח שברצונך למחוק את הקו הזה התערבות?
-NameAndSignatureOfInternalContact=שם וחתימה של התערבות:
-NameAndSignatureOfExternalContact=שם וחתימה של הלקוח:
-DocumentModelStandard=מסמך המודל הסטנדרטי של התערבויות
-ClassifyBilled=לסווג &quot;המחויב&quot;
-StatusInterInvoiced=מחויב
-RelatedInterventions=בנושא התערבויות
-ShowIntervention=הצג התערבות
-TypeContact_fichinter_internal_INTERREPFOLL=התערבות נציג הבאה למעלה
-TypeContact_fichinter_internal_INTERVENING=להתערב
-TypeContact_fichinter_external_BILLING=חיוב הלקוח קשר
-TypeContact_fichinter_external_CUSTOMER=בעקבות מעקב לקוחות קשר
-ArcticNumRefModelDesc1=מספר מודל גנרי
-ArcticNumRefModelError=נכשל נסיון להפעיל
-PacificNumRefModelDesc1=חזור נומרו עם פורמט %syymm-nnnn שם yy הוא שנה, מ&quot;מ הוא חודש nnnn הוא רצף ללא הפסקה וללא חזרה 0
-PacificNumRefModelError=כרטיס התערבות החל $ syymm כבר קיים, והוא אינו תואם מודל זה של הרצף. להסיר אותה או לשנות אותה כדי להפעיל את מודול זה.
-// STOP - Lines generated via autotranslator.php tool (2012-03-10 15:15:44).
+# InterventionCard=Intervention card
+# NewIntervention=New intervention
+# AddIntervention=Add intervention
+# ListOfInterventions=List of interventions
+# EditIntervention=Edit intervention
+# ActionsOnFicheInter=Actions on intervention
+# LastInterventions=Last %s interventions
+# AllInterventions=All interventions
+# CreateDraftIntervention=Create draft
+# CustomerDoesNotHavePrefix=Customer does not have a prefix
+# InterventionContact=Intervention contact
+# DeleteIntervention=Delete intervention
+# ValidateIntervention=Validate intervention
+# ModifyIntervention=Modify intervention
+# DeleteInterventionLine=Delete intervention line
+# ConfirmDeleteIntervention=Are you sure you want to delete this intervention ?
+# ConfirmValidateIntervention=Are you sure you want to validate this intervention under name <b>%s</b> ?
+# ConfirmModifyIntervention=Are you sure you want to modify this intervention ?
+# ConfirmDeleteInterventionLine=Are you sure you want to delete this intervention line ?
+# NameAndSignatureOfInternalContact=Name and signature of intervening :
+# NameAndSignatureOfExternalContact=Name and signature of customer :
+# DocumentModelStandard=Standard document model for interventions
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
+# ClassifyBilled=Classify "Billed"
+# StatusInterInvoiced=Billed
+# RelatedInterventions=Related interventions
+# ShowIntervention=Show intervention
+##### Types de contacts #####
+# TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
+# TypeContact_fichinter_internal_INTERVENING=Intervening
+# TypeContact_fichinter_external_BILLING=Billing customer contact
+# TypeContact_fichinter_external_CUSTOMER=Following-up customer contact
+# Modele numérotation
+# ArcticNumRefModelDesc1=Generic number model
+# ArcticNumRefModelError=Failed to activate
+# PacificNumRefModelDesc1=Return numero with format %syymm-nnnn where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# PacificNumRefModelError=An intervention card starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

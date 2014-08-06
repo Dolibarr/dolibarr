@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Wywóz obszarze
 ImportArea=Import obszarze
 NewExport=Nowy eksport
@@ -18,20 +6,33 @@ NewImport=Nowe importu
 ExportableDatas=Eksport danych
 ImportableDatas=Przywozowe danych
 SelectExportDataSet=Wybierz dane, które chcesz wyeksportować ...
+SelectImportDataSet=Wybierz dane, które chcesz zaimportować ...
 SelectExportFields=Wybierz pola, które chcesz wyeksportować, lub wybrać predefiniowany profil eksportu
+SelectImportFields=Wybierz pola, które chcesz zaimportować, lub wybrać predefiniowany profil importu
+NotImportedFields=Obszary plik przywożonych źródła nie
 SaveExportModel=Zapisz ten wywóz profil jeśli masz zamiar ponownego użycia go później ...
+SaveImportModel=Zapisz ten przywóz profil jeśli masz zamiar ponownego użycia go później ...
 ExportModelName=Eksport nazwę profilu
 ExportModelSaved=Eksport profil zapisany pod <b>nazwą %s.</b>
 ExportableFields=Wywóz pola
 ExportedFields=Eksportowane pola
+ImportModelName=Importuj nazwę profilu
+ImportModelSaved=Import profilu zapisany pod <b>nazwą %s.</b>
+ImportableFields=Przywozowe pola
+ImportedFields=Przywożone pola
 DatasetToExport=Dataset do wywozu
+DatasetToImport=Dataset importować
+NoDiscardedFields=Nie pól w pliku źródłowym są odrzucane
 Dataset=Dataset
 ChooseFieldsOrdersAndTitle=Wybierz pola porządku ...
 FieldsOrder=Obszary celu
 FieldsTitle=Obszary tytuł
+FieldOrder=Aby Field
+FieldTitle=pole tytuł
 ChooseExportFormat=Wybierz format eksportu
 NowClickToGenerateToBuildExportFile=Teraz kliknij na "Generuj" budować pliku eksportu ...
 AvailableFormats=Formaty disponibles
+LibraryShort=Biblioteka
 LibraryUsed=Librairie
 LibraryVersion=Wersja
 Step=Krok
@@ -45,21 +46,6 @@ FormatedExportDesc3=Po danych na wywóz są wybierane, można określić format 
 Sheet=Arkusz
 NoImportableData=Nr przywozowe danych (bez modułu z definicji pozwalają na import danych)
 FileSuccessfullyBuilt=Eksport plików generowanych
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-SelectImportDataSet=Wybierz dane, które chcesz zaimportować ...
-SelectImportFields=Wybierz pola, które chcesz zaimportować, lub wybrać predefiniowany profil importu
-SaveImportModel=Zapisz ten przywóz profil jeśli masz zamiar ponownego użycia go później ...
-ImportModelName=Importuj nazwę profilu
-ImportModelSaved=Import profilu zapisany pod <b>nazwą %s.</b>
-ImportableFields=Przywozowe pola
-ImportedFields=Przywożone pola
-DatasetToImport=Dataset importować
-LibraryShort=Biblioteka
 SQLUsedForExport=Zapytanie SQL wykorzystywane do budowania pliku eksportu
 LineId=Identyfikator linii
 LineDescription=Opis linii
@@ -73,22 +59,12 @@ TypeOfLineServiceOrProduct=Rodzaj linii (0= produkt, usługa 1=)
 FileWithDataToImport=Plik z danymi do importu
 FileToImport=Źródło plik do zaimportowania
 FileMustHaveOneOfFollowingFormat=Plik do importu musi mieć jeden z następującego formatu
-ChooseFileToImport=Wybierz plik do zaimportowania, a następnie kliknij przycisk picto %s ...
-FieldsInSourceFile=Obszary w pliku źródłowym
-FieldsInTargetDatabase=Docelowe Dolibarr pól w bazie danych
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-NotImportedFields=Obszary plik przywożonych źródła nie
-NoDiscardedFields=Nie pól w pliku źródłowym są odrzucane
-FieldOrder=Aby Field
-FieldTitle=pole tytuł
 DownloadEmptyExample=Pobierz przykład pusty plik źródłowy
 ChooseFormatOfFileToImport=Wybierz format pliku do wykorzystania jako format pliku importu, klikając na picto %s, aby je wybrać ...
+ChooseFileToImport=Wybierz plik do zaimportowania, a następnie kliknij przycisk picto %s ...
 SourceFileFormat=format pliku źródłowego
+FieldsInSourceFile=Obszary w pliku źródłowym
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Pole
 NoFields=Nie pól
 MoveField=Przenieś %s kolumnie polu numeru
@@ -119,25 +95,36 @@ TooMuchErrors=Nadal <b>%s</b> inne linie z błędami, ale wyjście jest niewielk
 TooMuchWarnings=Nadal <b>%s</b> inne linie z ostrzeżeniami, ale wyjście jest niewielki.
 EmptyLine=Pusty wiersz (zostanie odrzucona)
 CorrectErrorBeforeRunningImport=Najpierw trzeba poprawić wszystkie błędy przed uruchomieniem ostateczne na przywóz.
+FileWasImported=Plik został przywieziony z <b>%s</b> numerycznych.
 YouCanUseImportIdToFindRecord=Możesz znaleźć wszystkie importowane rekordy w bazie danych przez filtrowanie <b>import_key</b> pole <b>= &quot;%s&quot;.</b>
 NbOfLinesOK=Liczba linii bez błędów i żadnych ostrzeżeń: <b>%s.</b>
 NbOfLinesImported=Liczba linii zaimportowany: <b>%s.</b>
 DataComeFromNoWhere=Wartości, aby dodać pochodzi z nigdzie w pliku źródłowym.
 DataComeFromFileFieldNb=Wartości, aby dodać pochodzi z <b>%s</b> numer pola w pliku źródłowym.
 DataComeFromIdFoundFromRef=Wartość, która pochodzi z <b>%s</b> numer dziedzinie pliku źródłowego zostaną wykorzystane w celu znalezienia id rodzica obiektu do użytkowania (So <b>%s</b> objet że ma ref. Od pliku źródłowego musi istnieć w Dolibarr).
+DataComeFromIdFoundFromCodeId=Kod, który pochodzi z <b>%s</b> liczba terenowych pliku źródłowego zostaną użyte, by znaleźć identyfikator obiektu nadrzędnego do korzystania (So kod z pliku źródłowego musi istnieje w dictionnary <b>%s).</b> Zauważ, że jeśli wiesz, id, można też użyć go do pliku źródłowego zamiast kodu. Import powinien działać w obu przypadkach.
 DataIsInsertedInto=Danych pochodzących z pliku źródłowego zostanie wstawiony w pole następujące brzmienie:
 DataIDSourceIsInsertedInto=Id rodzica znalezionego obiektu na podstawie danych w pliku źródłowym, zostaną włączone do następujących dziedzinach:
+DataCodeIDSourceIsInsertedInto=Id linii macierzystej znaleźć z kodem, zostaną włączone do następnego pola:
 SourceRequired=Wartość danych jest obowiązkowe
 SourceExample=Przykład możliwych wartości danych
-CSVFormatDesc=Format pliku <b>oddzielonych przecinkami jakości</b> (. Csv). <br> Jest to format pliku tekstowego, gdzie pola oddzielone są separatorem [%s]. Jeśli wewnątrz znajduje się separator zawartości pola, jest zaokrąglona przez cały charakter [%s]. Ucieczka do charakteru uciec charakter rundy [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:25).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-FileWasImported=Plik został przywieziony z <b>%s</b> numerycznych.
-DataComeFromIdFoundFromCodeId=Kod, który pochodzi z <b>%s</b> liczba terenowych pliku źródłowego zostaną użyte, by znaleźć identyfikator obiektu nadrzędnego do korzystania (So kod z pliku źródłowego musi istnieje w dictionnary <b>%s).</b> Zauważ, że jeśli wiesz, id, można też użyć go do pliku źródłowego zamiast kodu. Import powinien działać w obu przypadkach.
-DataCodeIDSourceIsInsertedInto=Id linii macierzystej znaleźć z kodem, zostaną włączone do następnego pola:
 ExampleAnyRefFoundIntoElement=Wszelkie ref dla <b>%s</b> elementów
 ExampleAnyCodeOrIdFoundIntoDictionnary=Każdy kod (lub id) stwierdzono w dictionnary <b>%s</b>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:22).
+CSVFormatDesc=Format pliku <b>oddzielonych przecinkami jakości</b> (. Csv). <br> Jest to format pliku tekstowego, gdzie pola oddzielone są separatorem [%s]. Jeśli wewnątrz znajduje się separator zawartości pola, jest zaokrąglona przez cały charakter [%s]. Ucieczka do charakteru uciec charakter rundy [%s].
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=Kod banku
+DeskCode=Recepcja kod
+BankAccountNumber=Numer konta
+BankAccountNumberKey=Klucz
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

@@ -16,8 +16,8 @@
  */
 
 /**
- *  \file       	/cron/cron/info.php
- *  \brief      	Page fiche d'une operation
+ *  \file       	htdocs/cron/info.php
+ *  \brief      	Page of info of a cron job
  */
 
 require '../main.inc.php';

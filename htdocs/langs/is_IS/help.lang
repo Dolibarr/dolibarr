@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum / Wiki stuðning
 EMailSupport=Tölvupóst stuðning
 RemoteControlSupport=Online rauntíma / fjarlægur styðja
@@ -33,4 +24,5 @@ BackToHelpCenter=Annars skaltu smella hér til að fara <a href="%s">til baka ti
 LinkToGoldMember=Þú getur hringt í einn þjálfara preselected eftir Dolibarr fyrir þitt tungumál ( %s ) með því að smella Búnaður hans (staða og hámarksverð eru sjálfkrafa uppfærðar):
 PossibleLanguages=Styður tungumálum
 MakeADonation=Hjálp Dolibarr verkefni, gera a framlag
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

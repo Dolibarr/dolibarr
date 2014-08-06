@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=عقود منطقة
 ListOfContracts=قائمة العقود
 LastContracts=آخر تعديل العقود ق ٪
@@ -48,6 +38,7 @@ ConfirmCloseService=هل أنت متأكد من أن وثيقة مع هذه ال
 ValidateAContract=مصادقة على العقود
 ActivateService=تفعيل الخدمة
 ConfirmActivateService=هل أنت متأكد من تفعيل هذه الخدمة في تاريخ <b>٪ ق؟</b>
+# RefContract=Contract reference
 DateContract=تاريخ العقد
 DateServiceActivate=تاريخ تفعيل الخدمة
 DateServiceUnactivate=تاريخ خدمة unactivation
@@ -62,7 +53,7 @@ ListOfRunningContractsLines=قائمة تشغيل خطوط العقد
 ListOfRunningServices=لائحة ادارة الخدمات
 NotActivatedServices=لا تنشيط الخدمات) بين مصدق العقود)
 BoardNotActivatedServices=خدمات لتفعيل العقود بين مصدق
-LastContracts=العقود الماضية ٪
+LastContracts=آخر تعديل العقود ق ٪
 LastActivatedServices=ق الماضي ٪ تنشيط الخدمات
 LastModifiedServices=آخر تعديل ٪ ق الخدمات
 EditServiceLine=تعديل خط الخدمات
@@ -92,28 +83,17 @@ ConfirmMoveToAnotherContract=الهدف الأول choosed جديدة العقد
 ConfirmMoveToAnotherContractQuestion=اختيار القائمة التي العقد (من نفس الطرف الثالث) ، وترغب في نقل هذه الخدمة؟
 PaymentRenewContractId=تجديد العقد الخط (رقم ٪)
 ExpiredSince=تاريخ الانتهاء
+RelatedContracts=العقود ذات الصلة
+NoExpiredServices=أي نوع من الخدمات انتهت نشط
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=ممثل مبيعات توقيع العقد
 TypeContact_contrat_internal_SALESREPFOLL=ممثل مبيعات متابعة العقد
 TypeContact_contrat_external_BILLING=فواتير العملاء الاتصال
 TypeContact_contrat_external_CUSTOMER=متابعة العملاء الاتصال
 TypeContact_contrat_external_SALESREPSIGN=توقيع عقد خدمات العملاء
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-RelatedContracts=العقود ذات الصلة
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:14:18).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ar_SA
 Error_CONTRACT_ADDON_NotDefined=لم يتم تعريف ثابت CONTRACT_ADDON
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:05:19).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-NoExpiredServices=أي نوع من الخدمات انتهت نشط
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:40).

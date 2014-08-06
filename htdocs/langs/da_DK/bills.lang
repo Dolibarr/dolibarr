@@ -1,27 +1,30 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=Faktura
 Bills=Fakturaer
 BillsCustomers=Kundernes fakturaer
+BillsCustomer=Kundens faktura
 BillsSuppliers=Leverandørernes fakturaer
+BillsCustomersUnpaid=Ulønnet kundernes fakturaer
+BillsCustomersUnpaidForCompany=Ulønnet kundernes fakturaer for %s
+BillsSuppliersUnpaid=Ulønnet leverandørernes fakturaer
+BillsSuppliersUnpaidForCompany=Ulønnet leverandørens fakturaer for %s
+BillsUnpaid=Ulønnet
+BillsLate=Forsinkede betalinger
 BillsStatistics=Kundernes fakturaer statistik
 BillsStatisticsSuppliers=Leverandørernes fakturaer statistik
+DisabledBecauseNotErasable=Deaktiveret, fordi kan ikke slettes
 InvoiceStandard=Standard faktura
 InvoiceStandardAsk=Standard faktura
 InvoiceStandardDesc=Denne form for faktura er den fælles faktura.
+InvoiceDeposit=Indbetaling faktura
+InvoiceDepositAsk=Indbetaling faktura
+InvoiceDepositDesc=Denne form for fakturaen er gjort, når en indbetaling er modtaget.
+InvoiceProForma=Proforma faktura
+InvoiceProFormaAsk=Proforma faktura
+InvoiceProFormaDesc=<b>Proforma fakturaen</b> er et billede af en ægte faktura, men har ingen regnskabspool værdi.
 InvoiceReplacement=Erstatning faktura.
 InvoiceReplacementAsk=Erstatning faktura til faktura
+InvoiceReplacementDesc=<b>Erstatning fakturaen</b> er anvendt til at annullere og erstatter fuldstændigt en faktura uden betaling allerede modtaget. <br><br> Bemærk: Kun faktura uden betaling på det kan udskiftes. Hvis det ikke er lukket, vil det automatisk blive lukket for "opgivet".
 InvoiceAvoir=Credit note
 InvoiceAvoirAsk=Credit note til korrekt faktura
 InvoiceAvoirDesc=<b>Kreditformidleren note</b> er et negativt faktura anvendes til at løse forhold, at en faktura er et beløb, der adskiller sig end beløbet reelt betales (fordi kunden betalt for meget ved en fejl, eller vil ikke betales helt, da han vendte tilbage nogle varer, for eksempel). <br><br> Bemærk: Original faktura skal allerede være lukket ( »betalt« eller »betales delvist) at tillade oprettelsen af en kreditnota på det.
@@ -30,8 +33,10 @@ ReplacementInvoice=Erstatning faktura
 ReplacedByInvoice=Erstattes af faktura %s
 ReplacementByInvoice=Erstattes af faktura
 CorrectInvoice=Korrekt faktura %s
-CorrectInvoice=Korrekt faktura %s
 CorrectionInvoice=Rettelse faktura
+UsedByInvoice=Anvendes til at betale fakturaen %s
+ConsumedBy=Forbruges af
+NotConsumed=Ikke forbruges
 NoReplacableInvoice=Nr. replacable fakturaer
 NoInvoiceToCorrect=Nr. faktura til at korrigere
 InvoiceHasAvoir=Berigtiget af en eller flere fakturaer
@@ -51,6 +56,7 @@ Payment=Betaling
 PaymentBack=Betaling tilbage
 Payments=Betalinger
 PaymentsBack=Betalinger tilbage
+# PaidBack=Paid back
 DatePayment=Betalingsdato
 DeletePayment=Slet betaling
 ConfirmDeletePayment=Er du sikker på du vil slette denne betaling?
@@ -62,22 +68,26 @@ ReceivedCustomersPaymentsToValid=Modtaget kunder betalinger for at validere
 PaymentsReportsForYear=Betalinger rapporter for %s
 PaymentsReports=Betalinger rapporter
 PaymentsAlreadyDone=Betalinger allerede gjort
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=Betaling regel
 PaymentMode=Betalingstype
 PaymentConditions=Betaling sigt
 PaymentConditionsShort=Betaling sigt
 PaymentAmount=Indbetalingsbeløb
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=Betaling højere end påmindelse om at betale
+HelpPaymentHigherThanReminderToPay= Opmærksomhed, de indbetalingsbeløb af en eller flere regninger er højere end resten til at betale. <br> Rediger din indrejse, ellers bekræfte og tænke på at oprette en kreditnota af den overskydende modtaget for hver overpaid fakturaer.
 ClassifyPaid=Klassificere "betales"
 ClassifyPaidPartially=Klassificere 'betales delvist'
+ClassifyCanceled=Klassificere 'Abandoned "
 ClassifyClosed=Klassificere "lukket"
 CreateBill=Opret Faktura
 AddBill=Tilføj faktura eller kreditnota
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=Slet faktura
 SearchACustomerInvoice=Søg en kunde faktura
 SearchASupplierInvoice=Søg en leverandør faktura
 CancelBill=Annullere en faktura
-SendByMail=E-Mail
 SendRemindByMail=E-mail-påmindelse
 DoPayment=Må betaling
 DoPaymentBack=Må betale tilbage
@@ -91,16 +101,22 @@ BillStatus=Faktura status
 BillStatusDraft=Udkast (skal valideres)
 BillStatusPaid=Betales
 BillStatusPaidBackOrConverted=Betales eller omdannes til discount
+BillStatusConverted=Omdannes til discount
+BillStatusCanceled=Abandoned
 BillStatusValidated=Valideret (der skal betales)
 BillStatusStarted=Started
 BillStatusNotPaid=Ikke betales
+BillStatusClosedUnpaid=Lukket (ubetalte)
 BillStatusClosedPaidPartially=Betales (delvis)
 BillShortStatusDraft=Udkast
 BillShortStatusPaid=Betales
 BillShortStatusPaidBackOrConverted=Forarbejdede
+BillShortStatusConverted=Forarbejdede
+BillShortStatusCanceled=Abandoned
 BillShortStatusValidated=Valideret
 BillShortStatusStarted=Started
 BillShortStatusNotPaid=Ikke betales
+BillShortStatusClosedUnpaid=Lukket
 BillShortStatusClosedPaidPartially=Betales (delvis)
 PaymentStatusToValidShort=At validere
 ErrorVATIntraNotConfigured=Intracommunautary Momsregistreringsnummer endnu ikke defineret
@@ -116,8 +132,8 @@ BillFrom=Fra
 BillTo=Bill til
 ActionsOnBill=Aktioner på faktura
 NewBill=Ny faktura
-Pr�l�vements=Stående ordre
-Pr�l�vements=Stående ordrer
+Prélèvements=Stående ordre
+Prélèvements=Stående ordre
 LastBills=Seneste %s fakturaer
 LastCustomersBills=Seneste %s kunder fakturaer
 LastSuppliersBills=Seneste %s leverandører fakturaer
@@ -126,10 +142,13 @@ OtherBills=Andre fakturaer
 DraftBills=Udkast til fakturaer
 CustomersDraftInvoices=Kunder udkast til fakturaer
 SuppliersDraftInvoices=Leverandører udkast til fakturaer
+Unpaid=Ulønnet
 ConfirmDeleteBill=Er du sikker på du vil slette denne faktura?
 ConfirmValidateBill=Er du sikker på at du ønsker at validere denne faktura med <b>henvisning %s?</b>
+ConfirmUnvalidateBill=Er du sikker på at du vil ændre fakturere <b>%s</b> at udarbejde status?
 ConfirmClassifyPaidBill=Er du sikker på du vil ændre <b>faktura %s</b> til status betales?
 ConfirmCancelBill=Er du sikker på du vil annullere <b>faktura %s?</b>
+ConfirmCancelBillQuestion=hvorfor har du lyst til at klassificere denne faktura 'opgivet'?
 ConfirmClassifyPaidPartially=Er du sikker på du vil ændre <b>faktura %s</b> til status betales?
 ConfirmClassifyPaidPartiallyQuestion=Denne faktura er ikke blevet betalt fuldt ud. Hvad er årsagerne til dig for at lukke denne faktura?
 ConfirmClassifyPaidPartiallyReasonAvoir=Restbeløb til at betale <b>( %s %s)</b> er en rabat, der ydes, fordi betalingen var foretaget før sigt. Jeg legalisere moms med en kreditnota.
@@ -137,6 +156,8 @@ ConfirmClassifyPaidPartiallyReasonDiscountNoVat=Restbeløb til at betale <b>( %s
 ConfirmClassifyPaidPartiallyReasonDiscountVat=Restbeløb til at betale <b>( %s %s)</b> er en rabat, der ydes, fordi betalingen var foretaget før sigt. Jeg inddrive moms på denne rabat uden en kreditnota.
 ConfirmClassifyPaidPartiallyReasonBadCustomer=Bad kunde
 ConfirmClassifyPaidPartiallyReasonProductReturned=Produkter delvist tilbage
+ConfirmClassifyPaidPartiallyReasonOther=Beløb opgives for andre grunde
+ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Dette valg er muligt, hvis din faktura er blevet forsynet med passende kommentar. (Eksempel «Kun den afgift, der svarer til den pris, der rent faktisk var blevet betalt giver ret til fradrag»)
 ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=I nogle lande, dette valg kan kun mulig, hvis din faktura indeholder korrekte note.
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Brug dette valg, hvis alle andre ikke passer
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=En <b>dårlig kunde</b> er en kunde, der nægter at betale sin gæld.
@@ -147,31 +168,37 @@ ConfirmClassifyAbandonReasonOtherDesc=Dette valg vil blive anvendt i alle andre 
 ConfirmCustomerPayment=Kan du bekræfte dette paiement input <b>for %s%</b> s?
 ConfirmValidatePayment=Etes-vous sur de vouloir Godkend ce paiment, aucune modifikation n'est muligt une fois le paiement gyldig?
 ValidateBill=Godkend fakturaen
+UnvalidateBill=Unvalidate faktura
 NumberOfBills=Nb af fakturaer
-NumberOfBillsByMonthHT=Nb af fakturaer måned (efter skat)
+NumberOfBillsByMonth=Nb af fakturaer efter måned
 AmountOfBills=Mængden af fakturaer
-AmountOfBillsByMonth=Beløb af fakturaer måned
+AmountOfBillsByMonthHT=Mængden af ​​fakturaer efter måned (efter skat)
 ShowSocialContribution=Vis sociale bidrag
 ShowBill=Vis faktura
 ShowInvoice=Vis faktura
 ShowInvoiceReplace=Vis erstatning faktura
 ShowInvoiceAvoir=Vis kreditnota
+ShowInvoiceDeposit=Vis depositum faktura
 ShowPayment=Vis betaling
 File=Fil
 AlreadyPaid=Allerede betales
+# AlreadyPaidBack=Already paid back
+AlreadyPaidNoCreditNotesNoDeposits=Allerede betalt (uden kreditter og indlån)
 Abandoned=Opgives
 RemainderToPay=Restbeløb til at betale
 RemainderToTake=Restbeløb at tage
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=Beløb hævdede
 ExcessReceived=Trop Peru
 EscompteOffered=Rabat (betaling før sigt)
-CreateDraft=Opret udkast
 SendBillRef=Send faktura %s
 SendReminderBillRef=Send faktura %s (påmindelse)
 StandingOrders=Stående ordrer
 StandingOrder=Stående ordre
 NoDraftBills=Nr. udkast til fakturaer
 NoOtherDraftBills=Ingen andre forslag til fakturaer
+# NoDraftInvoices=No draft invoices
 RefBill=Faktura ref
 ToBill=Til lovforslag
 RemainderToBill=Restbeløb, der regningen
@@ -184,12 +211,16 @@ DateEcheance=Forfaldsdag grænse
 DateInvoice=Fakturadato
 NoInvoice=Nr. faktura
 ClassifyBill=Klassificere faktura
+NoSupplierBillsUnpaid=Nr. leverandører fakturaer vederlagsfri
 SupplierBillsToPay=Leverandører fakturaer til at betale
+CustomerBillsUnpaid=Vederlagsfri kunder fakturaer
 DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont dispenserer de l'arrt da lettres
-DispenseMontantLettres=Den skriftlige fakturaer gennem mecanographic procedurer udleveres ved kendelsen i breve
+DispenseMontantLettres=Les factures rdiges par procdsmcanographiques sont dispenserer de l'arrt da lettres
 NonPercuRecuperable=Ikke-refunderbar
 SetConditions=Indstil aflønningsvilkår
 SetMode=Indstil betaling mode
+SetDate= Indstil dato
+# SelectDate=Select a date
 Billed=Billed
 RepeatableInvoice=Prædefinerede faktura
 RepeatableInvoices=Prædefinerede fakturaer
@@ -209,17 +240,28 @@ Reductions=Nedsættelser
 ReductionsShort=Nedsættelse.
 Discount=Discount
 Discounts=Rabatter
+AddDiscount=Tilføj rabat
+AddRelativeDiscount=Opret relative rabat
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=Tilføj rabat
+EditGlobalDiscounts=Rediger absolutte rabatter
+AddCreditNote=Opret kreditnota
 ShowDiscount=Vis rabat
+# ShowReduc=Show the deduction
 RelativeDiscount=Relativ rabat
 GlobalDiscount=Global rabat
 CreditNote=Credit note
 CreditNotes=Credit noter
+Deposit=Indbetaling
+Deposits=Indlån
 DiscountFromCreditNote=Discount fra kreditnota %s
+DiscountFromDeposit=Betalinger fra depositum faktura %s
+AbsoluteDiscountUse=Denne form for kredit kan bruges på faktura før dens validering
+CreditNoteDepositUse=Fakturaen skal valideres for at bruge denne konge af kreditter
 NewGlobalDiscount=Ny discount
+NewRelativeDiscount=Ny relativ discount
 NoteReason=Bemærk / Grund
 ReasonDiscount=Årsag
-AddDiscount=Tilføj rabat
-AddGlobalDiscount=Tilføj rabat
 DiscountOfferedBy=Ydet af
 DiscountStillRemaining=Discount stadig resterende
 DiscountAlreadyCounted=Discount allerede tælles
@@ -227,6 +269,8 @@ BillAddress=Bill adresse
 HelpEscompte=Denne rabat er en rabat, der ydes til kunden, fordi dens paiement blev foretaget før sigt.
 HelpAbandonBadCustomer=Dette beløb er blevet opgivet (kunde siges at være en dårlig kunde) og betragtes som en exceptionnal løs.
 HelpAbandonOther=Dette beløb er blevet opgivet, da det var en fejl (forkert kunde eller faktura erstattes af en anden for eksempel)
+IdSocialContribution=Sociale bidrag id
+PaymentId=Betaling id
 InvoiceId=Faktura id
 InvoiceRef=Faktura ref.
 InvoiceDateCreation=Faktura oprettelsesdato
@@ -236,10 +280,21 @@ InvoicePaid=Faktura betales
 PaymentNumber=Betaling antal
 RemoveDiscount=Fjern rabat
 WatermarkOnDraftBill=Vandmærke on draft fakturaer (ingenting hvis tom)
+InvoiceNotChecked=Ingen valgt faktura
 CloneInvoice=Klon faktura
-CloneMainAttributes=Klon formål med sine vigtigste attributter
 ConfirmCloneInvoice=Er du sikker på at du vil klone denne <b>faktura %s?</b>
 DisabledBecauseReplacedInvoice=Aktion handicappede, fordi fakturaen er blevet erstattet
+DescTaxAndDividendsArea=Dette område giver en oversigt over alle betalinger, der foretages af skattemæssige eller sociale bidrag. Registrerer kun med betaling i løbet af de faste år er medtaget her.
+NbOfPayments=Nb af betalinger
+SplitDiscount=Split rabat i to
+ConfirmSplitDiscount=Er du sikker på at du ønsker at opsplitte denne rabat <b>på %s%</b> s til 2 lavere rabatter?
+TypeAmountOfEachNewDiscount=Input beløb for hver af to dele:
+TotalOfTwoDiscountMustEqualsOriginal=Total af to nye rabatten skal svare til de oprindelige discount beløb.
+ConfirmRemoveDiscount=Er du sikker på du vil fjerne denne rabat?
+RelatedBill=Relaterede faktura
+RelatedBills=Relaterede fakturaer
+
+# PaymentConditions
 PaymentConditionShortRECEP=Omgående
 PaymentConditionRECEP=Omgående
 PaymentConditionShort30D=30 dage
@@ -250,6 +305,16 @@ PaymentConditionShort60D=60 dage
 PaymentCondition60D=60 dage
 PaymentConditionShort60DENDMONTH=60 dage efter udgangen af måneden
 PaymentCondition60DENDMONTH=60 dage efter udgangen af måneden
+PaymentConditionShortPT_DELIVERY=Aflevering
+PaymentConditionPT_DELIVERY=Om levering
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=Bankindskud
 PaymentTypeShortVIR=Bankindskud
 PaymentTypePRE=Bankens orden
@@ -298,7 +363,9 @@ LawApplicationPart2=varerne forbliver ejendom
 LawApplicationPart3=sælgeren, indtil den fuldstændige indkassere af
 LawApplicationPart4=deres pris.
 LimitedLiabilityCompanyCapital=SARL med Capital af
+# UseLine=Apply
 UseDiscount=Brug rabatten
+UseCredit=Brug kredit
 UseCreditNoteInInvoicePayment=Reducere betalingen med denne kreditnota
 MenuChequeDeposits=Checks indskud
 MenuCheques=Checks
@@ -310,94 +377,9 @@ ChequeDeposits=Checks indskud
 Cheques=Checks
 CreditNoteConvertedIntoDiscount=Denne kreditnota er blevet konverteret til %s
 UsBillingContactAsIncoiveRecipientIfExist=Brug kunde faktureringsoplysninger kontakt-adresse i stedet for tredjepart adresse som modtager for fakturaer
-Of=DU
-PDFBerniqueDescription=Faktura model Bernique
-PDFBigorneauDescription=Faktura model Bigorneau
-PDFBulotDescription=Faktura model Bulot
-PDFCrabeDescription=Faktura model Crabe. En fuldstændig faktura model (Support moms option, rabatter, betalinger betingelser, logo, etc. ..)
-PDFHuitreDescription=Faktura model Huitre
-PDFOursinDescription=Faktura model oursin
-PDFTourteauDescription=Faktura model Tourteau
-TerreNumRefModelDesc1=Retur numero med format %syymm-nnnn for standard fakturaer og %syymm-nnnn for kreditnotaer hvor ÅÅ er årstal, MM er måneden og nnnn er en sekvens uden pause, og ikke vende tilbage til 0
-TerreNumRefModelError=Et lovforslag, der begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.
-OrionNumRefModelDesc1=Retur antallet under det format FAYYNNNNN hvor ÅÅ er året og nnnnn steget nummer begynder med 1.
-OrionNumRefModelDesc2=I år er steget med 1 Uden en initialiseringsprocedurerne til nul ved starten af regnskabsåret.
-OrionNumRefModelDesc3=Definere de variable SOCIETE_FISCAL_MONTH_START med måneden i begyndelsen af det regnskabsår, eksempelvis: 9 for september.
-OrionNumRefModelDesc4=I dette eksempel, så har vi den 1. september 2006 en faktura opkaldt FA700354.
-TitanNumRefModelDesc1=Retur antallet med format FAYYNNNNN hvor ÅÅ er året og nnnnn er tilvækst antal startende fra 1.
-TitanNumRefModelDesc2=Året er der stiger med 1 og tilvækst antal initialiseres til nul ved starten af regnskabsåret.
-TitanNumRefModelDesc3=Definere de variable SOCIETE_FISCAL_MONTH_START med måneden i begyndelsen af det regnskabsår, eksempelvis: 9 for september.
-TitanNumRefModelDesc4=I dette eksempel, så har vi den 1. september 2006 en faktura opkaldt FA0700001
-PlutonNumRefModelDesc1=Retur en tilpasselig faktura i henhold til en defineret maske.
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-InvoiceDeposit=Indbetaling faktura
-InvoiceDepositAsk=Indbetaling faktura
-InvoiceDepositDesc=Denne form for fakturaen er gjort, når en indbetaling er modtaget.
-InvoiceProForma=Proforma faktura
-InvoiceProFormaAsk=Proforma faktura
-InvoiceProFormaDesc=<b>Proforma fakturaen</b> er et billede af en ægte faktura, men har ingen regnskabspool værdi.
-UsedByInvoice=Anvendes til at betale fakturaen %s
-ConsumedBy=Forbruges af
-NotConsumed=Ikke forbruges
-HelpPaymentHigherThanReminderToPay=Opmærksomhed, de indbetalingsbeløb af en eller flere regninger er højere end resten til at betale. <br> Rediger din indrejse, ellers bekræfte og tænke på at oprette en kreditnota af den overskydende modtaget for hver overpaid fakturaer.
-BillStatusConverted=Omdannes til discount
-BillShortStatusConverted=Forarbejdede
-Prélèvements=Stående ordre
-Prélèvements=Stående ordrer
-ShowInvoiceDeposit=Vis depositum faktura
-SetDate=Indstil dato
-Deposit=Indbetaling
-Deposits=Indlån
-DiscountFromDeposit=Betalinger fra depositum faktura %s
-AbsoluteDiscountUse=Denne form for kredit kan bruges på faktura før dens validering
-CreditNoteDepositUse=Fakturaen skal valideres for at bruge denne konge af kreditter
-NewRelativeDiscount=Ny relativ discount
-IdSocialContribution=Sociale bidrag id
-PaymentId=Betaling id
-DescTaxAndDividendsArea=Dette område giver en oversigt over alle betalinger, der foretages af skattemæssige eller sociale bidrag. Registrerer kun med betaling i løbet af de faste år er medtaget her.
-NbOfPayments=Nb af betalinger
-SplitDiscount=Split rabat i to
-ConfirmSplitDiscount=Er du sikker på at du ønsker at opsplitte denne rabat <b>på %s%</b> s til 2 lavere rabatter?
-TypeAmountOfEachNewDiscount=Input beløb for hver af to dele:
-TotalOfTwoDiscountMustEqualsOriginal=Total af to nye rabatten skal svare til de oprindelige discount beløb.
-ConfirmRemoveDiscount=Er du sikker på du vil fjerne denne rabat?
-UseCredit=Brug kredit
+ShowUnpaidAll=Vis alle ubetalte fakturaer
 ShowUnpaidLateOnly=Vis sent unpaid faktura kun
 PaymentInvoiceRef=Betaling faktura %s
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-BillsCustomersUnpaid=Ulønnet kundernes fakturaer
-BillsCustomersUnpaidForCompany=Ulønnet kundernes fakturaer for %s
-BillsSuppliersUnpaid=Ulønnet leverandørernes fakturaer
-BillsUnpaid=Ulønnet
-InvoiceReplacementDesc=<b>Erstatning fakturaen</b> er anvendt til at annullere og erstatter fuldstændigt en faktura uden betaling allerede modtaget. <br><br> Bemærk: Kun faktura uden betaling på det kan udskiftes. Hvis det ikke er lukket, vil det automatisk blive lukket for "opgivet".
-BillStatusClosedUnpaid=Lukket (ubetalte)
-BillShortStatusClosedUnpaid=Lukket
-Unpaid=Ulønnet
-ConfirmCancelBillQuestion=hvorfor har du lyst til at klassificere denne faktura 'opgivet'?
-ConfirmClassifyPaidPartiallyReasonOther=Beløb opgives for andre grunde
-NoSupplierBillsUnpaid=Nr. leverandører fakturaer vederlagsfri
-CustomerBillsUnpaid=Vederlagsfri kunder fakturaer
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-ClassifyCanceled=Klassificere 'Abandoned "
-BillStatusCanceled=Abandoned
-BillShortStatusCanceled=Abandoned
-ConfirmClassifyPaidPartiallyReasonDiscountNoVatDesc=Dette valg er muligt, hvis din faktura er blevet forsynet med passende kommentar. (Eksempel «Kun den afgift, der svarer til den pris, der rent faktisk var blevet betalt giver ret til fradrag»)
-AlreadyPaidNoCreditNotesNoDeposits=Allerede betalt (uden kreditter og indlån)
-RelatedBill=Relaterede faktura
-RelatedBills=Relaterede fakturaer
 ValidateInvoice=Validér faktura
 Cash=Kontanter
 Reported=Forsinket
@@ -405,6 +387,15 @@ DisabledBecausePayments=Ikke muligt da der er nogle betalinger
 CantRemovePaymentWithOneInvoicePaid=Kan ikke fjerne betaling, da der er mindst på faktura, der er klassificeret betales
 ExpectedToPay=Forventet betaling
 PayedByThisPayment=Betales af denne betaling
+ClosePaidInvoicesAutomatically=Klassificere &quot;betales&quot; hele standarden eller udskiftning af fakturaer entirely betales.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=Alle faktura uden mangler at betale, vil automatisk blive lukket for status &quot;betales&quot;.
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Repræsentant opfølgning kundefaktura
 TypeContact_facture_external_BILLING=Kundefaktura kontakt
 TypeContact_facture_external_SHIPPING=Kunde shipping kontakt
@@ -413,26 +404,12 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=Repræsentant opfølgning lev
 TypeContact_invoice_supplier_external_BILLING=Leverandør faktura kontakt
 TypeContact_invoice_supplier_external_SHIPPING=Leverandør shipping kontakt
 TypeContact_invoice_supplier_external_SERVICE=Leverandør service kontakt
-PDFLinceDescription=En komplet faktura model med spanske RE og IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:16).
+# crabe PDF Model
+PDFCrabeDescription=Faktura model Crabe. En fuldstændig faktura model (Support moms option, rabatter, betalinger betingelser, logo, etc. ..)
+# oursin PDF Model
+PDFOursinDescription=Faktura model oursin
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-BillsCustomer=Kundens faktura
-BillsSuppliersUnpaidForCompany=Ulønnet leverandørens fakturaer for %s
-BillsLate=Forsinkede betalinger
-DisabledBecauseNotErasable=Deaktiveret, fordi kan ikke slettes
-ConfirmUnvalidateBill=Er du sikker på at du vil ændre fakturere <b>%s</b> at udarbejde status?
-UnvalidateBill=Unvalidate faktura
-NumberOfBillsByMonth=Nb af fakturaer efter måned
-AmountOfBillsByMonthHT=Mængden af ​​fakturaer efter måned (efter skat)
-AddRelativeDiscount=Opret relative rabat
-EditRelativelDiscount=Rediger relatvie rabat
-EditGlobalDiscounts=Rediger absolutte rabatter
-AddCreditNote=Opret kreditnota
-InvoiceNotChecked=Ingen valgt faktura
-ShowUnpaidAll=Vis alle ubetalte fakturaer
-ClosePaidInvoicesAutomatically=Klassificere &quot;betales&quot; hele standarden eller udskiftning af fakturaer entirely betales.
-AllCompletelyPayedInvoiceWillBeClosed=Alle faktura uden mangler at betale, vil automatisk blive lukket for status &quot;betales&quot;.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:06).
+TerreNumRefModelError=Et lovforslag, der begynder med $ syymm allerede eksisterer og er ikke kompatible med denne model af sekvensinformation. Fjern den eller omdøbe den til at aktivere dette modul.

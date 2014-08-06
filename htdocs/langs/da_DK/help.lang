@@ -1,13 +1,4 @@
-/*
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 20:39:59
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum / Wiki støtte
 EMailSupport=Emails støtte
 RemoteControlSupport=Online realtid / fjernsupport
@@ -33,4 +24,5 @@ BackToHelpCenter=Ellers klik her for at gå <a href="%s">tilbage til Hjælp star
 LinkToGoldMember=Du kan ringe til en af de coach forudvalgt ved Dolibarr for dit sprog ( %s) ved at klikke på hans Widget (status og maksimale pris er opdateres automatisk):
 PossibleLanguages=Understøttede sprog
 MakeADonation=Hjælp Dolibarr projekt, en donation
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

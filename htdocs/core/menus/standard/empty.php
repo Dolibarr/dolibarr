@@ -91,6 +91,10 @@ class MenuManager
 			if (empty($noout)) print_end_menu_entry_empty($showmode);
 			$this->menu->add(dol_buildpath('/index.php',1), $langs->trans("Home"), 0, $showmode, $this->atarget, 'home', '');
 
+			$showmode=1;
+			if (empty($noout)) print_start_menu_entry_empty('','class="tmenuend"',$showmode);
+			if (empty($noout)) print_end_menu_entry_empty($showmode);
+
 			if (empty($noout)) print_end_menu_array_empty();
 
 			if ($mode == 'jmobile')
@@ -199,7 +203,7 @@ class MenuManager
 			foreach($this->topmenu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 			{
 				print '<ul class="ulmenu" data-role="listview" data-inset="true">';
-				print '<li data-role="list-divider">';
+				print '<li data-role="list-dividerxxx" class="lilevel0">';
 				if ($val['enabled'] == 1)
 				{
 					$relurl=dol_buildpath($val['url'],1);
@@ -223,7 +227,7 @@ class MenuManager
         			if ($canonrelurl != $canonnexturl && ! in_array($val['mainmenu'],array('home','tools')))
 					{
 						// We add sub entry
-						print '<li data-role="list-divider"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
+						print '<li data-role="list-dividerxxx"><a href="'.$relurl.'">'.$langs->trans("MainArea").'-'.$val['titre'].'</a></li>'."\n";
 					}
 					foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
 					{
@@ -231,7 +235,7 @@ class MenuManager
 						$relurl2=preg_replace('/__LOGIN__/',$user->login,$relurl2);
 						$relurl2=preg_replace('/__USERID__/',$user->id,$relurl2);
 						//var_dump($val2);
-						print '<li'.($val2['level']==0?' data-role="list-divider"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
+						print '<li'.($val2['level']==0?' data-role="list-dividerxxx"':'').'><a href="'.$relurl2.'">'.$val2['titre'].'</a></li>'."\n";
 					}
 					//var_dump($submenu);
 					print '</ul>';
@@ -311,7 +315,7 @@ function print_text_menu_entry_empty($text, $showmode, $url, $id, $idsel, $class
 	}
 	if ($showmode == 2)
 	{
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 	}
 }

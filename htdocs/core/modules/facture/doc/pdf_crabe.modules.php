@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2012	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,13 +103,16 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=111;
+		$this->posxtva=112;
 		$this->posxup=126;
 		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
+		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) $this->posxtva=$this->posxup;
+		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?16:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
+			$this->posxpicture-=20;
 			$this->posxtva-=20;
 			$this->posxup-=20;
 			$this->posxqty-=20;
@@ -225,6 +228,15 @@ class pdf_crabe extends ModelePDFFactures
 						$this->atleastonediscount++;
 					}
 				}
+				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
+				}
 
 				// New page
 				$pdf->AddPage();
@@ -303,7 +315,7 @@ class pdf_crabe extends ModelePDFFactures
 								$pdf->AddPage('','',true);
 								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pagenb+1);
+								$pdf->setPage($pageposafter+1);
 							}
 						}
 						else
@@ -335,18 +347,18 @@ class pdf_crabe extends ModelePDFFactures
 					{
 						$vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 						$pdf->SetXY($this->posxtva, $curY);
-						$pdf->MultiCell($this->posxup-$this->posxtva-1, 3, $vat_rate, 0, 'R');
+						$pdf->MultiCell($this->posxup-$this->posxtva-0.8, 3, $vat_rate, 0, 'R');
 					}
 
 					// Unit price before discount
 					$up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxup, $curY);
-					$pdf->MultiCell($this->posxqty-$this->posxup-1, 3, $up_excl_tax, 0, 'R', 0);
+					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-1, 3, $qty, 0, 'R');	// Enough for 6 chars
+					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
 
 					// Discount on line
 					if ($object->lines[$i]->remise_percent)
@@ -376,19 +388,19 @@ class pdf_crabe extends ModelePDFFactures
 
 					$vatrate=(string) $object->lines[$i]->tva_tx;
 
-					// TODO : store local taxes types into object lines and remove this
-					$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
-					if ((! isset($localtax1_type)) || $localtax1_type=='') $localtax1_type = $localtaxtmp_array[0];
-					if ((! isset($localtax2_type)) || $localtax2_type=='') $localtax2_type = $localtaxtmp_array[2];
-					//end TODO
+					// Retrieve type from database for backward compatibility with old records
+					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
+					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
+					{
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtax1_type = $localtaxtmp_array[0];
+						$localtax2_type = $localtaxtmp_array[2];
+					}
 
 				    // retrieve global local tax
-					if ($localtax1_type == '7') $localtax1_rate = $localtaxtmp_array[1];
-					if ($localtax2_type == '7') $localtax2_rate = $localtaxtmp_array[3];
-
-					if ($localtax1_type && ($localtax1ligne != 0 || $localtax1_type == '7'))
+					if ($localtax1_type && $localtax1ligne != 0)
 						$this->localtax1[$localtax1_type][$localtax1_rate]+=$localtax1ligne;
-					if ($localtax2_type && ($localtax2ligne != 0 || $localtax2_type == '7'))
+					if ($localtax2_type && $localtax2ligne != 0)
 						$this->localtax2[$localtax2_type][$localtax2_rate]+=$localtax2ligne;
 
 					if (($object->lines[$i]->info_bits & 0x01) == 0x01) $vatrate.='*';
@@ -398,6 +410,7 @@ class pdf_crabe extends ModelePDFFactures
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -695,13 +708,22 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			// Check a payment mode is defined
 			if (empty($object->mode_reglement_code)
-			&& ! $conf->global->FACTURE_CHQ_NUMBER
-			&& ! $conf->global->FACTURE_RIB_NUMBER)
+			&& empty($conf->global->FACTURE_CHQ_NUMBER)
+			&& empty($conf->global->FACTURE_RIB_NUMBER))
 			{
+				$this->error = $outputlangs->transnoentities("ErrorNoPaiementModeConfigured");
+			}
+			// Avoid having any valid PDF with setup that is not complete
+			elseif (($object->mode_reglement_code == 'CHQ' && empty($conf->global->FACTURE_CHQ_NUMBER))
+				|| ($object->mode_reglement_code == 'VIR' && empty($conf->global->FACTURE_RIB_NUMBER)))
+			{
+				$outputlangs->load("errors");
+
 				$pdf->SetXY($this->marge_gauche, $posy);
 				$pdf->SetTextColor(200,0,0);
 				$pdf->SetFont('','B', $default_font_size - 2);
-				$pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+				$this->error = $outputlangs->transnoentities("ErrorPaymentModeDefinedToWithoutSetup",$object->mode_reglement_code);
+				$pdf->MultiCell(80, 3, $this->error,0,'L',0);
 				$pdf->SetTextColor(0,0,0);
 
 				$posy=$pdf->GetY()+1;
@@ -962,19 +984,11 @@ class pdf_crabe extends ModelePDFFactures
 									$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 								}
 								$totalvat = $outputlangs->transcountrynoentities("TotalLT1",$mysoc->country_code).' ';
-								if ($localtax_type == '7') {  // amount on order
-									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
 
-									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey, 0, $outputlangs), 0, 'R', 1);
-								}
-								else
-								{
-									$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
-									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-								}
+								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 							}
 						}
 					}
@@ -1004,19 +1018,11 @@ class pdf_crabe extends ModelePDFFactures
 								}
 								$totalvat = $outputlangs->transcountrynoentities("TotalLT2",$mysoc->country_code).' ';
 
-								if ($localtax_type == '7') {  // amount on order
-									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
-									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvakey, 0, $outputlangs), 0, 'R', 1);
-								}
-								else
-								{
-									$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
-									$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
+								$totalvat.=vatrate(abs($tvakey),1).$tvacompl;
+								$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
-									$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-									$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
-								}
+								$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+								$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 							}
 						}
 					//}

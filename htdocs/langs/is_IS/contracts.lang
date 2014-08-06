@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Samningar area
 ListOfContracts=Listi yfir samninga
 LastContracts=Last %s  breytt samninga
@@ -47,6 +38,7 @@ ConfirmCloseService=Ertu viss um að þú viljir loka þessum þjónustu <b>með
 ValidateAContract=Staðfesta samning
 ActivateService=Virkja þjónusta
 ConfirmActivateService=Ertu viss um að þú viljir virkja þessa þjónustu <b>með%</b> dagsetning <b>s?</b>
+# RefContract=Contract reference
 DateContract=Samningur dagsetningu
 DateServiceActivate=Þjónusta Virkjunardagsetning
 DateServiceUnactivate=Þjónusta deactivation dagsetningu
@@ -61,7 +53,7 @@ ListOfRunningContractsLines=Listi yfir gangi samningur línur
 ListOfRunningServices=Listi af hlaupandi þjónusta
 NotActivatedServices=Óvirkur þjónustu (meðal gildi samninga)
 BoardNotActivatedServices=Þjónusta til virkja meðal gildi samninga
-LastContracts=Síðasta %s amninga
+LastContracts=Last %s  breytt samninga
 LastActivatedServices=Last %s  virkt þjónusta
 LastModifiedServices=Last %s  breytt þjónusta
 EditServiceLine=Breyta þjónustu línu
@@ -77,7 +69,7 @@ DateEndReal=Real lokadagur
 DateEndRealShort=Real lokadagur
 NbOfServices=ATH þjónusta
 CloseService=Loka þjónusta
-ServicesNomberShort= %s  þjónustu (s)
+ServicesNomberShort=%s  þjónustu (s)
 RunningServices=Running þjónusta
 BoardRunningServices=Útrunnið hlaupandi þjónusta
 ServiceStatus=Staða þjónustu
@@ -92,16 +84,16 @@ ConfirmMoveToAnotherContractQuestion=Veldu hér fyrirliggjandi samning (af sama 
 PaymentRenewContractId=Endurnýja samning línu (númer %s )
 ExpiredSince=Gildistími
 RelatedContracts=Svipaðir samningar
+NoExpiredServices=Engar útrunnin virk þjónusta
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sölufulltrúi undirrita samning
 TypeContact_contrat_internal_SALESREPFOLL=Sölufulltrúi eftirfarandi upp samningi
 TypeContact_contrat_external_BILLING=Innheimta viðskiptavina samband
 TypeContact_contrat_external_CUSTOMER=Eftirfylgni viðskiptavina samband
 TypeContact_contrat_external_SALESREPSIGN=Undirritun samnings viðskiptavina samband
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-NoExpiredServices=Engar útrunnin virk þjónusta
 Error_CONTRACT_ADDON_NotDefined=Constant CONTRACT_ADDON skilgreind ekki
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:36).

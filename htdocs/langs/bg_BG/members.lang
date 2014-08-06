@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=За участници
 PublicMembersArea=Обществени членовете област
 MemberCard=Членска карта
@@ -17,6 +8,7 @@ Members=Потребители
 MemberAccount=Вход
 ShowMember=Покажи карта потребител
 UserNotLinkedToMember=Потребителят не е свързана с държава
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Потребители Билети
 FundationMembers=Фондация членове
 Attributs=Атрибути
@@ -127,7 +119,6 @@ LastMembers=Последните членове %s
 LastMembersModified=Последните %s модифицирани членове
 LastSubscriptionsModified=Последно %s промяна абонаменти
 AttributeName=Име на атрибута
-FieldEdition=Edition на полските %s
 String=Низ
 Text=Текст
 Int=Int
@@ -163,8 +154,9 @@ ShowTypeCard=Покажи тип &quot;%s&quot;
 HTPasswordExport=htpassword файл поколение
 NoThirdPartyAssociatedToMember=Никоя трета страна, свързана с този потребител
 ThirdPartyDolibarr=Dolibarr трета страна
-MembersAndSubscriptions=Членове и Subscriptions
+MembersAndSubscriptions= Членове и Subscriptions
 MoreActions=Допълнително действие на запис
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Създаване на директен запис на сделката по сметка
 MoreActionBankViaInvoice=Създаване на фактура и плащане по сметка
 MoreActionInvoiceOnly=Създаване на фактура без заплащане
@@ -204,4 +196,9 @@ Collectivités=Организации
 Particuliers=Личен
 Entreprises=Фирми
 DOLIBARRFOUNDATION_PAYMENT_FORM=За да направите абонамент на плащане чрез банков превод, вижте стр. <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> За да платите чрез кредитна карта или Paypal, кликнете върху бутона в долната част на тази страница. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:34:59).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

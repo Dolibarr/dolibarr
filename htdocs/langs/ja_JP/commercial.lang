@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=コマーシャル
 CommercialArea=商業地域
 CommercialCard=コマーシャルカード
@@ -32,6 +23,7 @@ TaskRDVWith=%sとの会談
 ShowTask=タスクを表示する
 ShowAction=イベントを表示
 ActionsReport=イベントレポート
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=営業担当者
 SalesRepresentatives=営業担当者
 SalesRepresentativeFollowUp=営業担当者（フォローアップ）
@@ -88,7 +80,16 @@ ActionAC_SHIP=メールでの発送を送る
 ActionAC_SUP_ORD=メールでのサプライヤーの順序を送る
 ActionAC_SUP_INV=メールでのサプライヤの請求書を送る
 ActionAC_OTH=その他
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=見通しの状態
 DraftPropals=ドラフト商業の提案
 SearchPropal=商業的提案を検索
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:45:29).
+# CommercialDashboard=Commercial summary

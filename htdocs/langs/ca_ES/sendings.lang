@@ -1,8 +1,8 @@
-# Dolibarr language file - ca_ES - sendings
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref enviament
 Sending=Enviament
 Sendings=Enviaments
+Shipment=Enviament
 Shipments=Enviaments
 Receivings=Recepcions
 SendingsArea=Àrea enviaments
@@ -13,6 +13,7 @@ LastSendings=Els %s darrers enviaments
 SearchASending=Cerca enviament
 StatisticsOfSendings=Estadístiques d'enviaments
 NbOfSendings=Nombre d'enviaments
+NumberOfShipmentsByMonth=Nombre d'enviaments per mes
 SendingCard=Fitxa enviament
 NewSending=Nuevo envío
 CreateASending=Crear un enviament
@@ -65,7 +66,11 @@ CarrierList=Llistat de transportistes
 SendingMethodCATCH=Recollit pel client
 SendingMethodTRANS=Transportista
 SendingMethodCOLSUI=Colissimo
+
 # ModelDocument
 DocumentModelSirocco=Model simple nota de lliurament
 DocumentModelTyphon=Model complet de nota de lliurament (logo...)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER no definida
+SumOfProductVolumes=Suma del volum dels productes
+SumOfProductWeights=Suma del pes dels productes

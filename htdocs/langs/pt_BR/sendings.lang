@@ -1,9 +1,9 @@
-# Dolibarr language file - pt_BR rev. 0.0 - sendings
-# 2012      Vinícius Nogueira        <viniciusvgn@gmail.com>
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. Envio
 Sending=Envio
 Sendings=Envios
+Shipment=Envio
+Shipments=Envios
 Receivings=Recepções
 SendingsArea=Área Envios
 ListOfSendings=Lista de Envios
@@ -13,6 +13,7 @@ LastSendings=Os %s últimos Envios
 SearchASending=Procurar Envio
 StatisticsOfSendings=Estatísticas de Envios
 NbOfSendings=Número de Envios
+NumberOfShipmentsByMonth=Número de envios por mês
 SendingCard=Ficha de Envio
 NewSending=Novo Envio
 CreateASending=Criar um Envio
@@ -28,10 +29,14 @@ DateSendingShort=Data de Expedição
 SendingsForSameOrder=Expedições deste Pedido
 SendingsAndReceivingForSameOrder=Envios e Recepções deste pedido
 SendingsToValidate=Envios a Confirmar
+StatusSendingCanceled=Cancelado
 StatusSendingDraft=Rascunho
 StatusSendingValidated=Validado (produtos a enviar o enviados)
+StatusSendingProcessed=Processado
+StatusSendingCanceledShort=Cancelado
 StatusSendingDraftShort=Rascunho
 StatusSendingValidatedShort=Validado
+StatusSendingProcessedShort=Processado
 SendingSheet=Ficha de envio
 Carriers=Transportadoras
 Carrier=Transportadora
@@ -43,8 +48,19 @@ ConfirmCancelSending=Tem certeza que quer anular esta expedição?
 GenericTransport=Transporte Genérico
 Enlevement=Pick-up por o Cliente
 DocumentModelSimple=Modelo Simples
+DocumentModelMerou=Modelo A5 Merou
 WarningNoQtyLeftToSend=Atenção, nenhum produto à espera de ser enviado.
-StatsOnShipmentsOnlyValidated=Estatísticas sobre as transferências realizadas apenas validadas.
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=Data de entrega planejada
+DateReceived=Data de entrega recebida
+SendShippingByEMail=Envio enviado por e-mail
+SendShippingRef=Enviar envio %s
+ActionsOnShipping=Eventos no envio
+LinkToTrackYourPackage=Atalho para rastreamento do pacote
+ShipmentCreationIsDoneFromOrder=No momento a criaçao de um novo envio e feito da ficha de pedido.
+RelatedShippings=Envios relativos
+ShipmentLine=Linha de envio
+CarrierList=Lista de transportadoras
 
 # Sending methods
 SendingMethodCATCH=Remoção pelo cliente
@@ -54,3 +70,7 @@ SendingMethodCOLSUI=Acompanhamento
 # ModelDocument
 DocumentModelSirocco=Modelo de Documento Sirocco
 DocumentModelTyphon=Modelo de Documento Typhon
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constante EXPEDITION_ADDON_NUMBER nao definida
+SumOfProductVolumes=Soma do volume dos pedidos
+SumOfProductWeights=Soma do peso dos produtos

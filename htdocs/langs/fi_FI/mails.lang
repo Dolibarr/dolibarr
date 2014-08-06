@@ -1,18 +1,9 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=Sähköpostituksen
 EMailing=Sähköpostituksen
 Mailings=EMailings
 EMailings=EMailings
+AllEMailings=Kaikki eMailings
 MailCard=Sähköpostituksen kortti
 MailTargets=Tavoitteet
 MailRecipients=Vastaanottajat
@@ -32,6 +23,7 @@ ShowEMailing=Näytä sähköpostia
 ListOfEMailings=Luettelo emailings
 NewMailing=Uusi sähköpostia
 EditMailing=Muokkaa sähköpostia
+ResetMailing=Uudelleen sähköpostitse
 DeleteMailing=Poista sähköpostia
 DeleteAMailing=Poistaa sähköpostia
 PreviewMailing=Esikatselu sähköpostia
@@ -51,9 +43,14 @@ MailingStatusSentCompletely=Lähetetyt täysin
 MailingStatusError=Virhe
 MailingStatusNotSent=Ei lähetetty
 MailSuccessfulySent=Sähköposti onnistui lähetettävä (kohteesta %s %s)
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=Sähköposti vastaanottaja on tyhjä
 WarningNoEMailsAdded=Ei uusia Email lisätä vastaanottajan luetteloon.
 ConfirmValidMailing=Oletko varma, että haluat vahvistaa tämän sähköpostitse?
+ConfirmResetMailing=Varoitus, jonka reinitializing <b>sähköpostitse %s,</b> te sallitte tehdä massa lähettäminen tähän sähköpostiviestiin toisella kertaa. Oletko varma, että tämä on, mitä haluat tehdä?
 ConfirmDeleteMailing=Oletko varma, että haluat poistaa tämän emailling?
 NbOfRecipients=Määrälle vastaanottajia
 NbOfUniqueEMails=Nb ainutlaatuisia sähköpostit
@@ -67,10 +64,36 @@ YouCanAddYourOwnPredefindedListHere=Voit luoda sähköpostisi Valitsimen moduuli
 EMailTestSubstitutionReplacedByGenericValues=Kun käytät testi tilassa, vaihtumisista muuttujat korvataan yleisnimi arvot
 MailingAddFile=Liitä tämä kuva
 NoAttachedFiles=Ei liitetiedostoja
+BadEMail=Bad arvo EMail
+CloneEMailing=Klooni Sähköpostituksen
+ConfirmCloneEMailing=Oletko varma, että haluat klooni tämän sähköpostitse?
+CloneContent=Klooni viesti
+CloneReceivers=Cloner vastaanottajat
+DateLastSend=Viimeisen lähettäminen
+DateSending=Päivämäärä lähettää
+SentTo=Lähetetään <b>%s</b>
+MailingStatusRead=Luettu
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Yhteystiedot kaikista kolmansien osapuolten (asiakas, näkymä, toimittaja, ...)
 MailingModuleDescDolibarrUsers=Kaikki Dolibarr käyttäjien sähköpostit
+MailingModuleDescFundationMembers=Säätiön jäsenten sähköpostit
 MailingModuleDescEmailsFromFile=Sähköpostit tekstitiedosto (sähköposti, nimi, sukunimi)
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Yhteystiedot kaikista kolmansien osapuolten (luokittain)
+MailingModuleDescDolibarrContractsLinesExpired=Kolmannen osapuolen kanssa lakkaa sopimuksen linjat
+MailingModuleDescContactsByCompanyCategory=Yhteydet kolmansien osapuolten (kolmansien osapuolten ryhmä)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescMembersCategories=Säätiön jäsenet (kategoria)
+MailingModuleDescContactsByFunction=Yhteydet kolmansien osapuolten (sijainnin / toiminto)
+
+
 LineInFile=Rivi %s tiedosto
 RecipientSelectionModules=Määritelty pyynnöt vastaanottajien valinta
 MailSelectedRecipients=Valitut vastaanottajat
@@ -83,60 +106,27 @@ SearchAMailing=Haku mailing
 SendMailing=Lähetä sähköpostia
 SendMail=Lähetä sähköpostia
 SentBy=Lähettänyt
-MailingNeedCommand=Arvopapereita syystä lähettämällä sähköpostia voidaan hoitaa komentorivillä. Kysy ylläpitäjältä käynnistää seuraava komento lähettää sähköpostitse kaikille vastaanottajille:
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Voit kuitenkin lähettää ne online lisäämällä parametri MAILING_LIMIT_SENDBYWEB kanssa arvo max määrä sähköpostit haluat lähettää istunnossa.
-ConfirmSendingEmailing=Oletko varma, että haluat lähettää sähköpostilistalle? <br> Rivillä lähettämisen emailings on rajoitettu turvallisuussyistä <b>syytä %s</b> vastaanottajille lähettämistä istuntoon.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=Tyhjennä lista
 ToClearAllRecipientsClickHere=Voit tyhjentää vastaanottajien luetteloon tässä sähköpostitse napsauttamalla painiketta
 ToAddRecipientsChooseHere=Jos haluat lisätä vastaanottajia, valitse niissä luetellaan
 NbOfEMailingsReceived=Massa emailings saanut
 IdRecord=ID kirjaa
 DeliveryReceipt=Toimitus Kuitti
+YouCanUseCommaSeparatorForSeveralRecipients=Voit käyttää <b>comma</b> separator määritellä usealle vastaanottajalle.
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=Ilmoitukset
 NoNotificationsWillBeSent=Ei sähköposti-ilmoituksia on suunniteltu tähän tapahtumaan ja yritys
 ANotificationsWillBeSent=1 ilmoituksesta lähetetään sähköpostitse
-SomeNotificationsWillBeSent= %s ilmoitukset lähetetään sähköpostitse
+SomeNotificationsWillBeSent=%s ilmoitukset lähetetään sähköpostitse
 AddNewNotification=Ota uusi ilmoitus pyynnöstä
 ListOfActiveNotifications=Listaa kaikki aktiiviset ilmoitukset pyynnöt
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-AllEMailings=Kaikki eMailings
-ResetMailing=Uudelleen sähköpostitse
-ConfirmResetMailing=Varoitus, jonka reinitializing <b>sähköpostitse %s,</b> te sallitte tehdä massa lähettäminen tähän sähköpostiviestiin toisella kertaa. Oletko varma, että tämä on, mitä haluat tehdä?
-BadEMail=Bad arvo EMail
-CloneEMailing=Klooni Sähköpostituksen
-ConfirmCloneEMailing=Oletko varma, että haluat klooni tämän sähköpostitse?
-CloneContent=Klooni viesti
-CloneReceivers=Cloner vastaanottajat
-DateLastSend=Viimeisen lähettäminen
-MailingModuleDescDolibarrContractsLinesExpired=Kolmannen osapuolen kanssa lakkaa sopimuksen linjat
-YouCanUseCommaSeparatorForSeveralRecipients=Voit käyttää <b>comma</b> separator määritellä usealle vastaanottajalle.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-MailingModuleDescFundationMembers=Säätiön jäsenten sähköpostit
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-DateSending=Päivämäärä lähettää
-SentTo=Lähetetään <b>%s</b>
-LimitSendingEmailing=On-line lähettämistä emailings on rajoitettu turvallisuussyistä ja aika syistä <b>%s</b> vastaanottajille lähettämällä istunto.
 ListOfNotificationsDone=Listaa kaikki sähköposti-ilmoitukset lähetetään
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:26).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-MailingStatusRead=Luettu
-MailingModuleDescContactsByCompanyCategory=Yhteydet kolmansien osapuolten (kolmansien osapuolten ryhmä)
-MailingModuleDescMembersCategories=Säätiön jäsenet (kategoria)
-MailingModuleDescContactsByFunction=Yhteydet kolmansien osapuolten (sijainnin / toiminto)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:39).

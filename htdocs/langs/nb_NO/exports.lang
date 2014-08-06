@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - exports
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Eksportområde
 ImportArea=Importområde
 NewExport=Ny eksport
@@ -7,50 +6,46 @@ NewImport=Ny import
 ExportableDatas=Eksporterbart datasett
 ImportableDatas=Importerbart datasett
 SelectExportDataSet=Velg det datasett du vil eksportere...
+SelectImportDataSet=Velg dataset du vil importere ...
 SelectExportFields=Velg felter for eksport, eller velg en forhåndsdefinert eksportprofil
+SelectImportFields=Velg kildefil feltene du ønsker å importere og et felt i databasen ved å flytte dem opp og ned med anker %s, eller velg en forhåndsdefinert import profil:
+NotImportedFields=Felt av kildefilen ikke importert
 SaveExportModel=Lagre denne eksportprofilen hvis du har tenkt å bruke den senere ...
+SaveImportModel=Lagre denne importen profilen hvis du har tenkt å bruke den senere ...
 ExportModelName=Navn på eksportprofil
 ExportModelSaved=Eksportprofilen er lagret med navnet <b>%s</b>.
 ExportableFields=Eksporterbare felt
 ExportedFields=Eksporterte felt
+ImportModelName=Import profilnavn
+ImportModelSaved=Importer profilen lagret under navnet <b>%s.</b>
+ImportableFields=Importable felt
+ImportedFields=Importerte felt
 DatasetToExport=Datasett til eksport
+DatasetToImport=Import-filen til datasettet
+NoDiscardedFields=Ingen felt i kildefilen forkastes
 Dataset=Datasett
 ChooseFieldsOrdersAndTitle=Velg feltrekkefølge...
 FieldsOrder=Feltrekkefølge
 FieldsTitle=Felttittel
+FieldOrder=Field bestilling
+FieldTitle=Felt tittel
 ChooseExportFormat=Velg ekportformat
 NowClickToGenerateToBuildExportFile=Trykk på "Opprett" for å lage eksportfilen...
 AvailableFormats=Tilgjengelige formater
+LibraryShort=Bibliotek
 LibraryUsed=Bibliotek
 LibraryVersion=Versjon
 Step=Trinn
 FormatedImport=Importassistent
 FormatedImportDesc1=I dette området kan du uten teknisk kunnskap importere egne data ved hjelp av en assistent.
 FormatedImportDesc2=Første trinn er å velge type data du vil importere, deretter hvilken fil du vil importere og til slutt hvilke felt du vil importere.
+FormatedExport=Export assistant
 FormatedExportDesc1=I denne området kan du uten teknisk kunnskap eksportere egne data ved hjelp av en assistent.
 FormatedExportDesc2=Første trinn er å velge et forhåndsdefinert datasett, deretter hvilke felt du ønsker å eksportere og i hvilken rekkefølge du vil ha dem.
 FormatedExportDesc3=Når du har valgt hva du vil eksportere velger du hvilket filformat du vil eksportere til.
 Sheet=Ark
 NoImportableData=Ingen importerbare data (ingen modul tillater dataimport)
 FileSuccessfullyBuilt=Eksportfil er opprettet
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-SelectImportDataSet=Velg dataset du vil importere ...
-SelectImportFields=Velg kildefil feltene du ønsker å importere og et felt i databasen ved å flytte dem opp og ned med anker %s, eller velg en forhåndsdefinert import profil:
-NotImportedFields=Felt av kildefilen ikke importert
-SaveImportModel=Lagre denne importen profilen hvis du har tenkt å bruke den senere ...
-ImportModelName=Import profilnavn
-ImportModelSaved=Importer profilen lagret under navnet <b>%s.</b>
-ImportableFields=Importable felt
-ImportedFields=Importerte felt
-DatasetToImport=Import-filen til datasettet
-NoDiscardedFields=Ingen felt i kildefilen forkastes
-FieldOrder=Field bestilling
-FieldTitle=Felt tittel
-LibraryShort=Bibliotek
-FormatedExport=Export assistant
 SQLUsedForExport=SQL Be brukes til å bygge eksportfilen
 LineId=ID av linje
 LineDescription=Beskrivelse av line
@@ -69,7 +64,7 @@ ChooseFormatOfFileToImport=Velg filformatet du vil bruke som importere filformat
 ChooseFileToImport=Last opp fil klikk picto %s å velge filen som kilde importfil ...
 SourceFileFormat=Kilde filformat
 FieldsInSourceFile=Felt i kildefilen
-FieldsInTargetDatabase=Mål feltene i Dolibarr database (*= obligatorisk)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Field
 NoFields=Ingen felt
 MoveField=Flytt feltet kolonnenummer %s
@@ -100,30 +95,36 @@ TooMuchErrors=Det er fortsatt <b>%s</b> annen kilde linjer med feil, men produks
 TooMuchWarnings=Det er fortsatt <b>%s</b> annen kilde linjer med advarsler, men produksjonen har vært begrenset.
 EmptyLine=Tom linje (vil bli forkastet)
 CorrectErrorBeforeRunningImport=Du må først rette alle feil før du kjører definitive import.
+FileWasImported=Filen ble importert med nummer <b>%s.</b>
 YouCanUseImportIdToFindRecord=Du kan finne alle importerte poster i databasen ved å filtrere på feltet <b>import_key = '%s'.</b>
 NbOfLinesOK=Antall linjer uten feil og ingen advarsler: <b>%s.</b>
 NbOfLinesImported=Antall linjer importert: <b>%s.</b>
 DataComeFromNoWhere=Verdi for å sette inn kommer fra ingensteds i kildefilen.
 DataComeFromFileFieldNb=Verdi for å sette inn kommer fra felt nummer <b>%s</b> i kildefilen.
 DataComeFromIdFoundFromRef=Verdi som kommer fra feltet antall <b>%s</b> av kildefilen vil bli brukt til å finne id av overordnede objektet som skal brukes (Så Objet <b>%s</b> som har dommeren. Fra kildefilen må finnes i Dolibarr).
+DataComeFromIdFoundFromCodeId=Kode som kommer fra feltnummer <b>%s</b> av kildefilen vil bli brukt til å finne id overordnede objektet til å bruke (Så koden fra kildefilen må finnes i dictionnary <b>%s).</b> Merk at hvis du vet id, kan du også bruke den til kildefilen istedenfor kode. Import bør arbeide i begge tilfeller.
 DataIsInsertedInto=Data kommer fra kildefil blir satt inn på følgende felt:
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:03:47).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> nb_NO
 DataIDSourceIsInsertedInto=IDen til overordnede objektet ble funnet ved hjelp av dataene i kildefilen, vil bli satt inn på følgende felt:
+DataCodeIDSourceIsInsertedInto=Id av foreldrene linje funnet fra kode, vil bli satt inn i følgende felt:
 SourceRequired=Dataverdi er obligatorisk
 SourceExample=Eksempel på mulige dataverdi
-CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:08).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-FileWasImported=Filen ble importert med nummer <b>%s.</b>
-DataComeFromIdFoundFromCodeId=Kode som kommer fra feltnummer <b>%s</b> av kildefilen vil bli brukt til å finne id overordnede objektet til å bruke (Så koden fra kildefilen må finnes i dictionnary <b>%s).</b> Merk at hvis du vet id, kan du også bruke den til kildefilen istedenfor kode. Import bør arbeide i begge tilfeller.
-DataCodeIDSourceIsInsertedInto=Id av foreldrene linje funnet fra kode, vil bli satt inn i følgende felt:
 ExampleAnyRefFoundIntoElement=Enhver ref funnet for element <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=Enhver kode (eller id) funnet i dictionnary <b>%s</b>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:32).
+CSVFormatDesc=<b>Kommadelte Verdi</b> filformatet (. CSV). <br> Dette er en tekstfil format der feltene er atskilt med skilletegn [%s]. Hvis separatoren blir funnet inne i et felt innhold, er felt omgitt av runde tegn [%s]. Escape karakter å unnslippe runde tegn er [%s].
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=Bank code (ikke i Norge)
+DeskCode=Desk code (ikke i Norge)
+BankAccountNumber=Kontonummer
+BankAccountNumberKey=Nøkkel
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

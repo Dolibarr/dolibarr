@@ -1,13 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-08-27 16:56:14
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms установки
 SmsDesc=Эта страница позволяет задать глобальные параметры на SMS функциями
@@ -56,7 +47,7 @@ NbOfSms=Nbre чисел фононов
 ThisIsATestMessage=Это тест сообщение
 SendSms=Отправить SMS
 SmsInfoCharRemain=Кол-во оставшихся символов
-SmsInfoNumero=(Международном формате, т.е.: +33899701761)
+SmsInfoNumero= (Международном формате, т.е.: +33899701761)
 DelayBeforeSending=Задержка перед отправкой (в минутах)
 SmsNoPossibleRecipientFound=Нет целевой доступны. Проверьте настройки вашего провайдера SMS.
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:29).
+

@@ -81,7 +81,7 @@ if ($resql)
   {
     $objp = $dbosc->fetch_object($resql);
     $var=!$var;
-    print "<TR $bc[$var]>";
+    print "<tr ".$bc[$var].">";
     print "<TD>$objp->products_id</TD>\n";
     print "<TD>$objp->products_model</TD>\n";
     print "<TD>$objp->products_name</TD>\n";

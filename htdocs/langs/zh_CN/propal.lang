@@ -1,110 +1,102 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
-Proposals=商业建议
-Proposal=商业建议
-ProposalShort=建议
-ProposalsDraft=商业建议草案
-ProposalDraft=商业建议草案
-ProposalsOpened=新开张的商业建议
-Prop=商业建议
-CommercialProposal=商业建议
-CommercialProposals=商业建议
-NewProp=新的商业建议
-NewProposal=新的商业建议
-NewPropal=新建议
-Prospect=展望
-ProspectList=展望名单
-DeleteProp=商业建议删除
-ValidateProp=验证的商业建议
-AddProp=新增提案
-ConfirmDeleteProp=你确定要删除这个商业建议？
-ConfirmValidateProp=你确定要验证这个商业建议？
-LastPropals=最后%的提议
-LastClosedProposals=最后%的封闭式建议
-LastModifiedProposals=最后%s的修订建议
-AllPropals=所有提案
-LastProposals=最后建议
-SearchAProposal=搜索建议
-ProposalsStatistics=商业建议的统计数字
-NumberOfProposalsByMonth=按月份数
-AmountOfProposalsByMonthHT=按月份金额（税后）
-NbOfProposals=商业建议数
-ShowPropal=显示建议
+# Dolibarr language file - Source file is en_US - propal
+Proposals=报价单
+Proposal=报价单
+ProposalShort=报价
+ProposalsDraft=起草报价单
+ProposalDraft=起草报价单
+ProposalsOpened=未关闭的报价单
+Prop=报价单
+CommercialProposal=报价单
+CommercialProposals=报价单
+ProposalCard=报价 信息卡
+NewProp=新建报价单
+NewProposal=新建报价单
+NewPropal=新建报价单
+Prospect=潜在客户
+ProspectList=潜在客户列表
+DeleteProp=删除报价单
+ValidateProp=确定报价单
+AddProp=添加报价
+ConfirmDeleteProp=您确定要删除此报价单吗？
+ConfirmValidateProp=您确定要制定报价<b>%s</b>吗？
+LastPropals=最近的 %s 个报价单
+LastClosedProposals=最近关闭的 %s 个报价单
+LastModifiedProposals=最近更新的 %s 个报价单
+AllPropals=全部报价单
+LastProposals=最近的报价单
+SearchAProposal=搜索报价单
+ProposalsStatistics=报价单统计
+NumberOfProposalsByMonth=月数量
+AmountOfProposalsByMonthHT=金额 (税前)/每月
+NbOfProposals=报价单数量
+ShowPropal=显示报价
 PropalsDraft=草稿
-PropalsOpened=开业
-PropalsNotBilled=闭不计费
+PropalsOpened=已打开
+PropalsNotBilled=已关闭未付款
 PropalStatusDraft=草案（需要验证）
-PropalStatusValidated=验证（建议打开）
-PropalStatusOpened=验证（建议打开）
-PropalStatusClosed=关闭
-PropalStatusSigned=签名（需要收费）
-PropalStatusNotSigned=不签署（非公开）
-PropalStatusBilled=帐单
-PropalStatusDraftShort=草案
-PropalStatusValidatedShort=验证
-PropalStatusOpenedShort=开业
-PropalStatusClosedShort=关闭
-PropalStatusSignedShort=签名
+PropalStatusValidated=已确定(打开的报价单)
+PropalStatusOpened=已确定(打开的报价单)
+PropalStatusClosed=已关闭
+PropalStatusSigned=已签署(待付款)
+PropalStatusNotSigned=未签署(已关闭)
+PropalStatusBilled=已到账
+PropalStatusDraftShort=草稿
+PropalStatusValidatedShort=已确定
+PropalStatusOpenedShort=已打开
+PropalStatusClosedShort=已关闭
+PropalStatusSignedShort=已签署
 PropalStatusNotSignedShort=未签署
-PropalStatusBilledShort=帐单
-PropalsToClose=商业建议关闭
-PropalsToBill=到法案签署商业建议
-ListOfProposals=商业建议名单
-ActionsOnPropal=行动上的建议
-NoOpenedPropals=没有开放的商业建议
-NoOtherOpenedPropals=没有其他打开的商业建议
-RefProposal=商业建议参考
-SendPropalByMail=通过邮件发送的商业建议
-FileNotUploaded=该文件没有上载
-FileUploaded=该文件被成功上传
-AssociatedDocuments=相关文件的建议：
+PropalStatusBilledShort=已到账
+PropalsToClose=待关闭的报价单
+PropalsToBill=待支付的已签订报价
+ListOfProposals=报价列表
+ActionsOnPropal=报价相关事件
+NoOpenedPropals=无未关闭的报价单
+NoOtherOpenedPropals=无其他未关闭的报价单
+RefProposal=报价单编号
+SendPropalByMail=通过电邮发送报价单
+FileNotUploaded=文件上传失败
+FileUploaded=文件上传成功
+AssociatedDocuments=报价单关联的文档：
 ErrorCantOpenDir=无法打开目录
-DatePropal=日期的建议
-DateEndPropal=有效期结束日期
-DateEndPropalShort=结束日期
-ValidityDuration=有效期
-CloseAs=密切与地位
-ClassifyBilled=分类计费
-BuildBill=建立发票
-ErrorPropalNotFound=Propal%s不符合
-Estimate=估计：
+DatePropal=报价日期
+DateEndPropal=有效期截至日期
+DateEndPropalShort=截至日期
+ValidityDuration=有效时间
+CloseAs=关闭时的状态
+ClassifyBilled=归为已付款
+BuildBill=建立账单
+ErrorPropalNotFound=未发现报价单 %s
+Estimate=估计:
 EstimateShort=估计
-OtherPropals=其他建议
-CopyPropalFrom=通过复制现有的商业建议提案
-CreateEmptyPropal=创建空的商业建议维耶热或从产品/服务列表
-DefaultProposalDurationValidity=默认的商业建议有效期（天数）
-UseCustomerContactAsPropalRecipientIfExist=使用客户联系地址，如果定义的，而不是作为提案的第三党的地址收件人地址
-ClonePropal=克隆的商业建议
-ConfirmClonePropal=你确定要克隆这种商业建议<b>%s吗</b> ？
-ProposalsAndProposalsLines=商业建议和行
-ProposalLine=建议行
-TypeContact_propal_internal_SALESREPFOLL=代表随访的建议
-TypeContact_propal_external_BILLING=客户发票接触
-TypeContact_propal_external_CUSTOMER=客户联系随访的建议
-DocModelAzurDescription=一个完整的方案模型（logo. ..）
-DocModelJauneDescription=特贾恩方案模型
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-ProposalCard=建议卡
-ConfirmReOpenProp=你确定你要打开商业建议<b>%s</b>吗？
-AvailabilityPeriod=可用性延迟
-SetAvailability=设置可用性延迟
-AfterOrder=订单后
-AvailabilityTypeAV_NOW=即时
-AvailabilityTypeAV_1W=1个星期
-AvailabilityTypeAV_2W=2个星期
-AvailabilityTypeAV_3W=3个星期
-AvailabilityTypeAV_1M=1个月
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:40:01).
+OtherPropals=其他报价单
+AddToDraftProposals=添加至提议草案
+NoDraftProposals=没有提议草案
+CopyPropalFrom=通过复制(并修改)现有报价单创建新报价单
+CreateEmptyPropal=新建空白报价单
+DefaultProposalDurationValidity=默认报价单有效期(按日)
+UseCustomerContactAsPropalRecipientIfExist=报价单中使用客户联系人信息中的地址，不使用客户公司的办公地址是。
+ClonePropal=复制报价单
+ConfirmClonePropal=您确定要复制并修改报价单<b>%s</b>吗？
+ConfirmReOpenProp=您确定要重新打开报价单<b>%s</b>吗?
+ProposalsAndProposalsLines=报价单和报价项目
+ProposalLine=报价项目
+AvailabilityPeriod=允许交货延迟
+SetAvailability=设置交货延迟期
+AfterOrder=下单后
+##### Availability #####
+AvailabilityTypeAV_NOW=立即
+AvailabilityTypeAV_1W=1 周
+AvailabilityTypeAV_2W=2 周
+AvailabilityTypeAV_3W=3 周
+AvailabilityTypeAV_1M=1 个月
+##### Types de contacts #####
+TypeContact_propal_internal_SALESREPFOLL=跟进报价的销售代表
+TypeContact_propal_external_BILLING=客户账单联系人
+TypeContact_propal_external_CUSTOMER=跟进报价的客户联系人
+# Document models
+DocModelAzurDescription=完整的订单模版 (标志...)
+DocModelJauneDescription=Jaune 报价模板
+DefaultModelPropalCreate=设置默认模板
+DefaultModelPropalToBill=关闭订单时使用的默认模板(待生成账单)
+DefaultModelPropalClosed=关闭订单时使用的默认模板(待付款)

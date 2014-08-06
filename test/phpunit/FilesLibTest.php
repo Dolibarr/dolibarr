@@ -162,7 +162,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 		$file=dirname(__FILE__).'/Example_import_company_1.csv';
 		$result=dol_count_nb_of_line($file);
     	print __METHOD__." result=".$result."\n";
-		$this->assertEquals(2,$result);
+		$this->assertEquals(3,$result);
 
 		return $result;
     }
@@ -316,7 +316,7 @@ class FilesLibTest extends PHPUnit_Framework_TestCase
 
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1,$result, 'copy into a dir that exists');    // Should be 1
+        $this->assertGreaterThanOrEqual(1,$result, 'copy file ('.$file.') into a dir that exists ('.$conf->admin->dir_temp.'/file.csv'.')');    // Should be 1
 
         // Again to test with overwriting=0
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv',0,0);

@@ -1,5 +1,4 @@
-# Dolibarr language file - fr_FR - donations
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Don
 Donations=Dons
 DonationRef=Réf. donation
@@ -25,7 +24,7 @@ DonationStatusPaidShort=Payé
 ValidPromess=Valider promesse
 DonationReceipt=Reçu de dons
 BuildDonationReceipt=Créer reçu
-DonationsModels=Modèle de document de bon de réception de dons
+DonationsModels=Modèles de documents de bon de réception de dons
 LastModifiedDonations=Les %s derniers dons modifiés
 SearchADonation=Rechercher un don
 DonationRecipient=Bénéficiaire des versements

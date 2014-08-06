@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Andre Cianfarani             <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
- * Copyright (C) 2011-2012 Juanjo Menent			    <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2013 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  *
@@ -64,11 +64,11 @@ if ($action == 'updateMask')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -106,19 +106,19 @@ else if ($action == 'specimen')
 		}
 		else
 		{
-			$mesg='<font class="error">'.$module->error.'</font>';
+			setEventMessage($module->error,'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		$mesg='<font class="error">'.$langs->trans("ErrorModuleNotFound").'</font>';
+		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
 
 // Activate a model
-else if ($action == 'set')
+if ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 }
@@ -167,11 +167,11 @@ else if ($action == 'set_COMMANDE_DRAFT_WATERMARK')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -185,20 +185,12 @@ else if ($action == 'set_COMMANDE_FREE_TEXT')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+        setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
-}
-else if ($action=='setModuleOptions') {
-	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
-	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->COMMANDE_ADDON_PDF_ODT_PATH = GETPOST('value1');
-	}
 }
 else if ($action=='setModuleOptions') {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF_ODT_PATH",GETPOST('value1'),'chaine',0,'',$conf->entity))
@@ -240,7 +232,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 print '</tr>'."\n";
 
 clearstatcache();
@@ -264,14 +256,14 @@ foreach ($dirmodels as $reldir)
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file($db);
+
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
 					{
-						// Show modules according to features level
-						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
 						print $module->info();
@@ -323,7 +315,7 @@ foreach ($dirmodels as $reldir)
 						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
-						print '</tr>';
+						print "</tr>\n";
 					}
 				}
 			}
@@ -331,17 +323,16 @@ foreach ($dirmodels as $reldir)
 		}
 	}
 }
-
-print '</table><br>';
+print "</table><br>\n";
 
 
 /*
  * Document templates generators
  */
+
 print_titre($langs->trans("OrdersModelModule"));
 
 // Load array def with activated templates
-$type='order';
 $def = array();
 $sql = "SELECT nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."document_model";
@@ -371,7 +362,8 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status")."</td>\n";
 print '<td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print '<td align="center" width="38" colspan="2">'.$langs->trans("Infos").'</td>';
+print '<td align="center" width="38">'.$langs->trans("ShortInfo").'</td>';
+print '<td align="center" width="38">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -538,8 +530,6 @@ print '</form>';
 print '</table>';
 
 print '<br>';
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

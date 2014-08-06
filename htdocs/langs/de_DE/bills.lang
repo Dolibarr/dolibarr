@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - bills
 Bill=Rechnung
 Bills=Rechnungen
 BillsCustomers=Kundenrechnungen
@@ -41,7 +33,6 @@ ReplacementInvoice=Ersatzrechnung
 ReplacedByInvoice=Ersetzt durch Rechnung %s
 ReplacementByInvoice=Ersetzt durch Rechnung
 CorrectInvoice=Korrigiere Rechnung %s
-CorrectInvoice=Korrigiere Rechnung %s
 CorrectionInvoice=Rechungskorrektur
 UsedByInvoice=Zur Bezahlung der Rechnung %s
 ConsumedBy=Verbraucht von
@@ -65,6 +56,7 @@ Payment=Zahlung
 PaymentBack=Rückzahlung
 Payments=Zahlungen
 PaymentsBack=Rückzahlungen
+PaidBack=Zurück bezahlt
 DatePayment=Zahlungsdatum
 DeletePayment=Lösche Zahlung
 ConfirmDeletePayment=Möchten Sie diese Zahlung wirklich löschen?
@@ -76,19 +68,22 @@ ReceivedCustomersPaymentsToValid=Erhaltene Kundenzahlungen zur Freigabe
 PaymentsReportsForYear=Zahlungsbericht für %s
 PaymentsReports=Zahlungsberichte
 PaymentsAlreadyDone=Bereits getätigte Zahlungen
+PaymentsBackAlreadyDone=Rückzahlungen bereits erledigt
 PaymentRule=Zahlungsregel
 PaymentMode=Zahlungsart
 PaymentConditions=Zahlungskonditionen
 PaymentConditionsShort=Konditionen
 PaymentAmount=Zahlungsbetrag
+ValidatePayment=Zahlung freigeben
 PaymentHigherThanReminderToPay=Zahlungsbetrag übersteigt Zahlungserinnerung
-HelpPaymentHigherThanReminderToPay=Achtung, die Zahlung eines oder mehrerer Rechnungen ist höher als der Rest zu zahlen. <br> Bearbeiten Sie Ihre Eingabe, sonst bestätigen und denken über die Schaffung einer Gutschrift von mehr als der für jede overpaid Rechnungen.
+HelpPaymentHigherThanReminderToPay= Achtung, die Zahlung eines oder mehrerer Rechnungen ist höher als der Rest zu zahlen. <br> Bearbeiten Sie Ihre Eingabe, sonst bestätigen und denken über die Schaffung einer Gutschrift von mehr als der für jede overpaid Rechnungen.
 ClassifyPaid=Als 'bezahlt' markieren
 ClassifyPaidPartially=Als 'teilweise bezahlt' markieren
 ClassifyCanceled=Als 'storniert' markieren
 ClassifyClosed=Als 'geschlossen' markieren
 CreateBill=Erstelle Rechnung
 AddBill=Rechnung/Gutschrift erstellen
+AddToDraftInvoices=Zu Rechnungsentwurf hinzufügen
 DeleteBill=Lösche Rechnung
 SearchACustomerInvoice=Suche Kundenrechnung
 SearchASupplierInvoice=Suche Lieferantenrechnung
@@ -138,7 +133,7 @@ BillTo=An
 ActionsOnBill=Maßnahmen zu dieser Rechnung
 NewBill=Neue Rechnung
 Prélèvements=Dauerauftrag
-Prélèvements=Daueraufträge
+Prélèvements=Dauerauftrag
 LastBills=%s neueste Rechnungen
 LastCustomersBills=%s neueste Kundenrechnungen
 LastSuppliersBills=Letzte %s Lieferantenrechnungen
@@ -187,10 +182,13 @@ ShowInvoiceDeposit=Show Anzahlung Rechnung
 ShowPayment=Zeige Zahlung
 File=Datei
 AlreadyPaid=Bereits bezahlt
+AlreadyPaidBack=Bereits zurückbezahlt
 AlreadyPaidNoCreditNotesNoDeposits=Bereits bezahlte (ohne Gutschriften und Einlagen)
-Abandoned=Weggefallen                     
+Abandoned=Weggefallen
 RemainderToPay=Zu zahlender Restbetrag
 RemainderToTake=Einzuhebender Restbetrag
+# RemainderToPayBack=Remainder to pay back
+Rest=Pendent
 AmountExpected=Höhe der Forderung
 ExcessReceived=Erhaltener Überschuss
 EscompteOffered=Rabatt angeboten (Skonto)
@@ -200,6 +198,7 @@ StandingOrders=Daueraufträge
 StandingOrder=Dauerauftrag
 NoDraftBills=Keine Rechnungsentwürfe
 NoOtherDraftBills=Keine Rechnungsentwürfe Anderer
+NoDraftInvoices=Keine Rechnungsentwürfe
 RefBill=Rechnungs Nr.
 ToBill=Zu verrechnen
 RemainderToBill=Zu verrechnender Restbetrag
@@ -220,7 +219,8 @@ DispenseMontantLettres=Automatisch generierte Dokumente unterliegen nicht den Fo
 NonPercuRecuperable=Nicht erstattungsfähig
 SetConditions=Zahlungskonditionen einstellen
 SetMode=Definiere Zahlungsart
-SetDate=Datum
+SetDate= Datum
+SelectDate=Wählen Sie ein Datum
 Billed=In Rechnung gestellt
 RepeatableInvoice=Rechnungsvorlage
 RepeatableInvoices=Rechnungsvorlagen
@@ -228,7 +228,7 @@ Repeatable=Vorlage
 Repeatables=Vorlagen
 ChangeIntoRepeatableInvoice=In Rechnungsvorlage umwandeln
 CreateRepeatableInvoice=Erstelle Rechnungsvorlage
-CreateFromRepeatableInvoice=Aus Rechnungsvorlage erstellen 
+CreateFromRepeatableInvoice=Aus Rechnungsvorlage erstellen
 CustomersInvoicesAndInvoiceLines=Kundenrechnungen und -positionen
 CustomersInvoicesAndPayments=Kundenrechnungen und -zahlungen
 ExportDataset_invoice_1=Kundenrechnungen und -positionen
@@ -247,6 +247,7 @@ AddGlobalDiscount=Rabattregel hinzufügen
 EditGlobalDiscounts=Absolute Rabatte bearbeiten
 AddCreditNote=Gutschrift erstellen
 ShowDiscount=Zeige Rabatt
+ShowReduc=Abzug anzeigen
 RelativeDiscount=Relativer Rabatt
 GlobalDiscount=Rabattregel
 CreditNote=Gutschrift
@@ -304,6 +305,15 @@ PaymentConditionShort60D=60 Tage
 PaymentCondition60D=60 Tage
 PaymentConditionShort60DENDMONTH=60 Tage ab Monatsende
 PaymentCondition60DENDMONTH=60 Tage ab Ende des Monats
+PaymentConditionShortPT_DELIVERY=Lieferung
+PaymentConditionPT_DELIVERY=Bei Lieferung
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+PaymentConditionShortPT_5050=50-50
+PaymentConditionPT_5050=50%% im Voraus, 50%% bei Lieferung
+FixAmount=Fester Betrag
+VarAmount=Variabler Betrag (%% tot.)
+
 # PaymentType
 PaymentTypeVIR=Banküberweisung
 PaymentTypeShortVIR=Banküberweisung
@@ -353,6 +363,7 @@ LawApplicationPart2=Die Ware bleibt Eigentum der
 LawApplicationPart3=der Verkäufer bis zur vollständigen Einlösung des
 LawApplicationPart4=ihren Preis.
 LimitedLiabilityCompanyCapital=SARL mit einem Kapital von
+UseLine=Übernehmen
 UseDiscount=Verwenden
 UseCredit=Verwenden Sie diese Gutschrift
 UseCreditNoteInInvoicePayment=Reduzieren Sie die Zahlung mit dieser Gutschrift
@@ -372,12 +383,18 @@ PaymentInvoiceRef=Die Zahlung der Rechnung %s
 ValidateInvoice=Rechnung freigeben
 Cash=Bargeld
 Reported=Verspätet
-DisabledBecausePayments=Nicht möglich, da gibt es einige Zahlungen
-CantRemovePaymentWithOneInvoicePaid=Kann die Zahlung nicht entfernen, da es zumindest auf der Rechnung bezahlt klassifiziert
+# DisabledBecausePayments=Not possible since there are some payments
+# CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
 ExpectedToPay=Erwartete Zahlung
-PayedByThisPayment=Bezahlt durch diese Zahlung
-ClosePaidInvoicesAutomatically=Makiert alle Standard- oder Ersatzrechnungen als "bezahlt" wenn diese vollständig beglichen sind.
-AllCompletelyPayedInvoiceWillBeClosed=Alle Rechnungen ohne ausstehende Zahlungen werden automatisch geschlossen und als "bezahlt" makiert.
+# PayedByThisPayment=Paid by this payment
+# ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid.
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+# AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
+ToMakePayment=Bezahlen
+ToMakePaymentBack=Rückzahlung
+ListOfYourUnpaidInvoices=Liste aller unbezahlten Rechnungen
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
 ##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=Repräsentative Follow-up Kundenrechnung
 TypeContact_facture_external_BILLING=Kundenrechnung Kontakt
@@ -388,9 +405,11 @@ TypeContact_invoice_supplier_external_BILLING=Lieferantenrechnung Kontakt
 TypeContact_invoice_supplier_external_SHIPPING=Lieferantenversand Kontakt
 TypeContact_invoice_supplier_external_SERVICE=Lieferantenservice Kontakt
 # crabe PDF Model
-PDFCrabeDescription=Rechnung Modell Crabe. Eine vollständige Rechnung Modell (Empfohlene Vorlage)
+# PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
 # oursin PDF Model
-PDFOursinDescription=Rechnung Modell oursin. Eine vollständige Rechnung Modell (Alternative Vorlage)
+# PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
 # NumRef Modules
-TerreNumRefModelDesc1=Zurück NUMERO mit Format %syymm-nnnn für Standardrechnungen und syymm%-nnnn für Gutschriften, wo ist JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und keine Rückkehr auf 0
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=Eine Rechnung, beginnend mit $ syymm existiert bereits und ist nicht kompatibel mit diesem Modell der Reihe. Entfernen oder umbenennen, um dieses Modul.

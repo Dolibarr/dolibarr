@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - deliveries
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Envío
 Deliveries=Envíos
 DeliveryCard=Ficha recepción
@@ -20,7 +19,7 @@ DeliveryNotValidated=Nota de recepción no validada
 # merou PDF model
 NameAndSignature=Nombre y firma :
 ToAndDate=En___________________________________ a ____/_____/__________
-GoodStatusDeclaration=He recibido la mercancía en buen estado, 
+GoodStatusDeclaration=He recibido la mercancía en buen estado,
 Deliverer=Destinatario :
 Sender=Origen
 Recipient=Destinatario

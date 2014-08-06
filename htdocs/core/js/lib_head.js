@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 // Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -190,9 +190,8 @@ function dpClickDay(year,month,day,format)
 	closeDPBox();
 }
 
-function dpHighlightDay(year,month,day,tradMonths){
+function dpHighlightDay(year,month,day,months){
 	var displayinfo=getObjectFromID("dpExp");
-	var months = tradMonths;
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
@@ -215,7 +214,7 @@ function getTop(theitem){
 		offsetTrail = offsetTrail.offsetParent;
 	}
 	if (navigator.userAgent.indexOf("Mac") != -1 && typeof document.body.leftMargin != "undefined") 
-		offsetLeft += document.body.TopMargin;
+		offsetTop += document.body.TopMargin;
 	return offsetTop;
 }
 
@@ -291,8 +290,10 @@ function loadXMLDoc(url,readyStateFunction,async)
 	return req;
 }
 
-// To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
-// not put popup completely on the front)
+/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+ * not put popup completely on the front)
+ * Used only bu popup calendar
+ */
 function hideSelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
@@ -305,6 +306,10 @@ function hideSelectBoxes() {
 		}
 	}
 }
+/* To hide/show select Boxes with IE6 (and only IE6 because IE6 has a bug and
+ * not put popup completely on the front)
+ * Used only bu popup calendar
+ */
 function displaySelectBoxes() {
 	var brsVersion = parseInt(window.navigator.appVersion.charAt(0), 10);
 	if (brsVersion <= 6 && window.navigator.userAgent.indexOf("MSIE 6") > -1) 
@@ -355,9 +360,7 @@ function formatDate(date,format)
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
 		{
 			substr += format.charAt(j++);
 		}
@@ -478,9 +481,7 @@ function getDateFromFormat(val,format)
 	if (seconde==null||(seconde<0)||(seconde>60)) { return 0; }
 		
 	// alert(year+' '+month+' '+day+' '+hour+' '+minute+' '+seconde);
-	var newdate=new Date(year,month-1,day,hour,minute,seconde);
-
-	return newdate;
+	return new Date(year,month-1,day,hour,minute,seconde);
 }
 
 /*
@@ -588,8 +589,7 @@ function cleanSerialize(expr) {
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
-	var liste = liste1.replace(reg2, "");
-	return liste;
+	return liste1.replace(reg2, "");
 }
 
 
@@ -627,8 +627,9 @@ function hideMessage(fieldId,message) {
 	if (textbox.value == message) textbox.value = '';
 }
 
+
 /*
- * 
+ * TODO Used by admin page only ? 
  */
 function setConstant(url, code, input, entity) {
 	$.get( url, {
@@ -683,7 +684,7 @@ function setConstant(url, code, input, entity) {
 }
 
 /*
- * 
+ * TODO Used by admin page only ? 
  */
 function delConstant(url, code, input, entity) {
 	$.get( url, {
@@ -737,7 +738,7 @@ function delConstant(url, code, input, entity) {
 }
 
 /*
- * 
+ * TODO Used by admin page only ? 
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton) {
 	var boxConfirm = box;
@@ -788,13 +789,15 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /* 
  * ================================================================= 
  * This is to allow to transform all select box into ajax autocomplete box
- * with just one line: $(function() { $( "#idofmylist" ).combobox(); });
+ * with just one line: 
+ * $(function() { $( "#idofmylist" ).combobox(); });
+ * Do not use it on large combo boxes 
  * ================================================================= 
  */
 (function( $ ) {
 	$.widget( "ui.combobox", {
 		options: {
-			minLengthToAutocomplete: 0,
+			minLengthToAutocomplete: 0
 		},
         _create: function() {
         	var savMinLengthToAutocomplete = this.options.minLengthToAutocomplete;
@@ -805,6 +808,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
             var input = this.input = $( "<input>" )
                 .insertAfter( select )
                 .val( value )
+                .attr('id', 'inputautocomplete'+select.attr('id'))
                 .autocomplete({
                     delay: 0,
                     minLength: this.options.minLengthToAutocomplete,
@@ -898,6 +902,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 
 /* 
  * Timer for delayed keyup function
+ * 
+ * TODO Who use this ?
  */
 (function($){
 	$.widget("ui.onDelayedKeyup", {

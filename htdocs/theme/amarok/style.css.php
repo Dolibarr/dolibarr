@@ -70,7 +70,6 @@ if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global-
 $fontlist='helvetica,arial,tahoma,verdana';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
 //'/theme/auguria/img/menus/trtitle.png';
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
-$img_head=dol_buildpath($path.'/theme/'.$theme.'/img/headbg2.jpg',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
 $dol_hide_leftmenu=$conf->dol_hide_leftmenu;
@@ -144,6 +143,7 @@ if ((! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) && empty($user->conf->
 	$colorbacklinepairhover='';
 }
 
+
 // Set text color to black or white
 $tmppart=explode(',',$colorback1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '');
@@ -152,6 +152,8 @@ $tmpval+=(! empty($tmppart[3]) ? $tmppart[3] : '');
 //print $tmpval;
 if ($tmpval < 340) $colortextmain='FFFFFF';
 else $colortextmain='101010';
+if ($tmpval <= 360) { $colortexttitle='FFF'; $colorshadowtitle='000'; }
+else { $colortexttitle='444'; $colorshadowtitle='FFF'; }
 
 $usecss3=true;
 if ($conf->browser->name == 'ie' && round($conf->browser->version,2) < 10) $usecss3=false;
@@ -244,7 +246,6 @@ input.flat {
     border:solid 1px rgba(0,0,0,.3);
     border-top:solid 1px rgba(0,0,0,.4);
     border-bottom:solid 1px rgba(0,0,0,.2);
-    box-shadow:1px 1px 2px rgba(0,0,0,.2) inset;
 }
 
 input:disabled {background:#b6b6b6;}
@@ -252,6 +253,7 @@ input:disabled {background:#b6b6b6;}
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
+input[type=text]     { min-width: 20px; }
 input:-webkit-autofill {
 	background-color: <?php echo empty($dol_use_jmobile)?'#FBFFEA':'#FFFFFF' ?> !important;
 	background-image:none !important;
@@ -333,7 +335,12 @@ th .button {
 .nowrap {
 	white-space: <?php print ($dol_optimize_smallscreen?'normal':'nowrap'); ?>;
 }
-
+.nobold {
+	font-weight: normal !important;
+}
+.nounderline {
+    text-decoration: none;
+}
 
 .blockvmenubookmarks .menu_contenu {
 	background-color: transparent;
@@ -352,6 +359,7 @@ center .error { padding:8px !important; padding-left:26px !important; padding-ri
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
 .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+.maxwidthonsmartphone { max-width: 100px; }
 <?php } ?>
 .linkobject { cursor:pointer; }
 
@@ -368,6 +376,7 @@ td.showDragHandle {
 }
 .tdlineupdown {
 	white-space: nowrap;
+	min-width: 10px;
 }
 
 /* ============================================================================== */
@@ -462,6 +471,7 @@ form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
 	width:190px;
 	max-width:190px;
+	max-height:100px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
@@ -547,13 +557,14 @@ table.login_table .vmenu {
 
 div.login_block {
 	position:absolute;
-	top:5px;
-	right:10px;
+	top:0px;
+	right:8px;
 	z-index:100;
 	<?php if (GETPOST("optioncss") == 'print') {?>
 	display:none;
 	<?php } ?>
 }
+div.login_block_user, div.login_block_other { clear: both; }
 
 div.login_block a {color:rgba(255,255,255,.6);}
 div.login_block a:hover {color:#ffffff}
@@ -564,14 +575,24 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	/* margin:0px 0px 0px 8px; */
 	font-weight:bold;
+	float: right;
+}
+.login_block_user {
+	float: right;
+}
+.login_block_elem {
+	float: right;
+	vertical-align: top;
+	padding: 0px 0px 0px 8px !important;
+	height: 16px;
 }
 
 img.login, img.printer, img.entity {
-	padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px;
-	margin:0px 0px 0px 8px;
+	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
+	margin:2px 0px 0px 0px;
 	text-decoration:none;
 	color: white;
 	font-weight:bold;
@@ -1138,23 +1159,27 @@ table.notopnoleftnoright {
 	margin:0px;
 }
 
-table.border {
-	border:1px solid #bbbbbb;
+table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+	border:1px solid #dddddd;
 	border-collapse:collapse;
+	padding:1px 0px;
+	padding-left:2px;
 }
 
-table.border td {
+table.border td, div.border div div.tagtd {
 	padding:1px 0px;
 	border:1px solid #dddddd;
 	border-collapse:collapse;
 	padding-left:2px;
 }
 
-/*
-td.border {
-	border:1px solid #000000;
+.table-key-border-col {
+	width: 25%;
+	vertical-align:top;
 }
-*/
+.table-val-border-col {
+	width:auto;
+}
 
 /* Main boxes */
 
@@ -1224,11 +1249,9 @@ table.liste {
 
 table.liste td {padding:1px 2px 1px 0px;}
 
-.tagtable { display: table; }
-.tagtable form { display: table-row; }
-.tagtable form div { display: table-cell; }
-.tagtr { display: table-row; }
-.tagtd { display: table-cell; }
+.tagtable, .table-border { display: table; }
+.tagtr, .table-border-row  { display: table-row; }
+.tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel
 {
@@ -1259,7 +1282,6 @@ tr.box_titre td.boxclose {
 tr.liste_titre td, tr.liste_titre th, form.liste_titre div {
 	padding:2px;
 	padding-left:2px !important;
-	white-space:nowrap;
 	text-shadow:1px 1px 1px #ffffff;
 }
 
@@ -1298,6 +1320,19 @@ tr.impair table.nobordernopadding td, tr.pair table.nobordernopadding td { paddi
  *  Boxes
  */
 
+.boxstats {
+    <?php print "float: ".$left.";\n"; ?>
+    margin: 4px;
+    padding: 4px;
+	/*-moz-box-shadow: 4px 4px 4px #DDD;
+    -webkit-box-shadow: 4px 4px 4px #DDD;
+    box-shadow: 4px 4px 4px #DDD;
+    margin-bottom: 8px !important;*/
+    border: 1px solid #AAA;
+    text-align: center;
+    border-radius: 5px;
+}
+
 .boxtable {
 	-moz-box-shadow: 2px 2px 2px #cccccc;
 	-webkit-box-shadow: 2px 2px 2px #cccccc;
@@ -1321,9 +1356,16 @@ tr.box_pair {
 	font-family:<?php print $fontlist ?>;
 }
 
-tr.fiche {
-	font-family:<?php print $fontlist ?>;
+.formboxfilter {
+	vertical-align: middle;
+	margin-bottom: 6px;
 }
+.formboxfilter input[type=image]
+{
+	top: 5px;
+	position: relative;
+}
+
 
 /*
  *   Ok, Warning, Error
@@ -1390,6 +1432,9 @@ div.error {
 	color:#333333;
 }
 
+.dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
+.dolgraphtitlecssboxes { margin: 0px; }
+
 #pictotitle {
 	padding-left:5px;
 	padding-right:1px;
@@ -1415,30 +1460,6 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
-div.table-border {
-	display:table;
-    width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #DDD;
-}
-div.table-border-row {
-	display:table-row;
-}
-div.table-key-border-col {
-	display:table-cell;
-	width: 25%;
-	vertical-align:top;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
-div.table-val-border-col {
-	display:table-cell;
-	width:auto;
-	padding: 1px 2px 1px 1px;
-	border: 1px solid #DDD;
-	border-collapse: collapse;
-}
 
 
 /* ============================================================================== */
@@ -1494,6 +1515,8 @@ table.valid {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-title {
     margin:0 !important;
@@ -2069,6 +2092,27 @@ div.jnotify-background {
 
 
 /* ============================================================================== */
+/*  Maps                                                                          */
+/* ============================================================================== */
+
+.divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, google-visualization-geomap-embed-2 {
+    -moz-box-shadow: 0px 0px 10px #AAA;
+    -webkit-box-shadow: 0px 0px 10px #AAA;
+    box-shadow: 0px 0px 10px #AAA;
+}
+
+
+/* ============================================================================== */
+/*  Datatable                                                                     */
+/* ============================================================================== */
+
+.sorting_asc  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc.png',1); ?>') no-repeat center right; }
+.sorting_desc { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc.png',1); ?>') no-repeat center right; }
+.sorting_asc_disabled  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc_disabled',1); ?>') no-repeat center right; }
+.sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
+
+
+/* ============================================================================== */
 /*  JMobile                                                                       */
 /* ============================================================================== */
 
@@ -2181,6 +2225,41 @@ ul.ulmenu {
 .ui-mobile fieldset {
 	border-bottom: none !important;
 }
+.ui-body-c, .ui-btn-up-c, .ui-btn-hover-c {
+	border: none !important;
+}
+
+/* Style for first level menu with jmobile */
+.ui-bar-b, .lilevel0  {
+    background: rgb(<?php echo $colorbacktitle1; ?>);
+    background-repeat: repeat-x;
+	<?php if ($usecss3) { ?>
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+    font-weight: bold;
+	<?php } ?>
+    color: #<?php echo $colortexttitle; ?> !important;
+}
+.alilevel0 {
+    color: #<?php echo $colortexttitle; ?> !important;
+	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.alilevel1 {
+    color: #<?php echo $colortexttitle; ?> !important;
+	text-shadow: 1px 0px 1px #<?php echo $colorshadowtitle; ?>;
+}
+.lilevel1 {
+	background-image: -webkit-gradient(linear,left top,left bottom,from( #eee ),to( #e1e1e1 )) !important;
+	background-image: -webkit-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -moz-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -ms-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: -o-linear-gradient( #eee,#e1e1e1 ) !important;
+	background-image: linear-gradient( #eee,#e1e1e1 ) !important;
+}
+
 
 <?php
 if (is_object($db)) $db->close();

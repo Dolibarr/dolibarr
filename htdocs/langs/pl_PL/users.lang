@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Użytkownik karty
 ContactCard=Kontakt karty
 GroupCard=Grupa karty
@@ -53,9 +41,14 @@ LoginNotDefined=Logowanie nie zostało zdefiniowane.
 NameNotDefined=Nazwa nie jest zdefiniowane.
 ListOfUsers=Lista użytkowników
 Administrator=Administrator
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator ze wszystkich praw
+AdministratorDesc=Administratora podmiot
 DefaultRights=Domyślne uprawnienia
 DefaultRightsDesc=Określ tutaj domyślne uprawnienia, które są przyznawane automatycznie utworzony nowy użytkownik.
 DolibarrUsers=Dolibarr użytkowników
+LastName=Imię
+FirstName=Imię
 ListOfGroups=Lista grup
 NewGroup=Nowa grupa
 CreateGroup=Tworzenie grupy
@@ -77,7 +70,12 @@ ListOfGroupsForUser=Lista grup dla tego użytkownika
 UsersToAdd=Użytkownicy będą mogli dodać do tej grupy
 GroupsToAdd=Grupy, które można dodać do tego użytkownika
 NoLogin=Brak logowania
+LinkToCompanyContact=Link do strony trzeciej / kontakt
+LinkedToDolibarrMember=Link do członka
+LinkedToDolibarrUser=Link do Dolibarr użytkownika
+LinkedToDolibarrThirdParty=Link do Dolibarr trzeciej
 CreateDolibarrLogin=Utwórz konto Dolibarr
+CreateDolibarrThirdParty=Tworzenie stron trzecich
 LoginAccountDisable=Konto wyłączone, położyć nowy login uaktywnić.
 LoginAccountDisableInDolibarr=Konto wyłączone w Dolibarr.
 LoginAccountDisableInLdap=Wyłączone konto w domenie.
@@ -90,8 +88,13 @@ DomainUser=Domena użytkownika %s
 Reactivate=Przywraca
 CreateInternalUserDesc=Ta forma pozwala na utworzenie jeden użytkownik wewnętrzną Twojej firmy / fundacji. Aby creat zewnętrznego użytkownika (klienta, dostawcy, ...), użyć przycisku "Utwórz Dolibarr użytkownika" od osoby trzeciej karcie kontaktu.
 InternalExternalDesc=<b>Wewnętrzny</b> użytkownik jest użytkownikiem, który jest częścią firmy / fundacji. <br> <b>Zewnętrzna</b> użytkownika klienta, dostawcy lub innym. <br><br> W obu przypadkach uprawnienia określa prawa Dolibarr, także zewnętrznych użytkownik może mieć różne menu menedżera niż użytkownika wewnętrznego (patrz strona główna - Instalator - Display)
+PermissionInheritedFromAGroup=Zezwolenie udzielone ponieważ odziedziczył od jednego z użytkowników grupy.
+Inherited=Odziedziczone
+UserWillBeInternalUser=Utworzony użytkownik będzie wewnętrzny użytkownik (ponieważ nie związane z konkretnym trzeciej)
+UserWillBeExternalUser=Utworzony użytkownik będzie zewnętrzny użytkownik (ponieważ związana z konkretnym trzeciej)
 IdPhoneCaller=ID dzwoniącego telefonu
 UserLogged=Użytkownik %s podłączony
+UserLogoff=%s użytkownika wylogować
 NewUserCreated=Użytkownik %s tworzone
 NewUserPassword=Zmiana hasła dla %s
 EventUserModified=Użytkownik %s zmodyfikowane
@@ -99,56 +102,19 @@ UserDisabled=Użytkownik %s osób niepełnosprawnych
 UserEnabled=Użytkownik %s aktywowany
 UserDeleted=Użytkownik %s usunięto
 NewGroupCreated=Grupa %s tworzone
-GroupModified=Grupa %s zmodyfikowane
+GroupModified=Grupa zmodyfikowano pomyślnie
 GroupDeleted=Grupa %s usunięto
 ConfirmCreateContact=Czy na pewno chcesz yu Dolibarr utworzyć konto dla tego kontaktu?
-LoginToCreate=Zaloguj się, aby utworzyć
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Administrator ze wszystkich praw
-LastName=Imię
-FirstName=Imię
-LinkToCompanyContact=Link do strony trzeciej / kontakt
-LinkedToDolibarrMember=Link do członka
-LinkedToDolibarrUser=Link do Dolibarr użytkownika
-LinkedToDolibarrThirdParty=Link do Dolibarr trzeciej
-CreateDolibarrThirdParty=Tworzenie stron trzecich
 ConfirmCreateLogin=Czy na pewno chcesz, aby utworzyć konto dla tego Dolibarr członkiem?
 ConfirmCreateThirdParty=Czy na pewno chcesz, aby utworzyć trzecią dla tego członka?
+LoginToCreate=Zaloguj się, aby utworzyć
 NameToCreate=Nazwisko osoby trzeciej w celu stworzenia
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-// Reference language: en_US
-PermissionInheritedFromAGroup=Zezwolenie udzielone ponieważ odziedziczył od jednego z użytkowników grupy.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-Inherited=Odziedziczone
 YourRole=Swoje role
 YourQuotaOfUsersIsReached=Limitu aktywnych użytkowników został osiągnięty!
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:32).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pl_PL
 NbOfUsers=Nb użytkowników
 DontDowngradeSuperAdmin=Tylko superadmin niższej wersji superadmin
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:48:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-AdministratorDesc=Administratora podmiot
-UserWillBeInternalUser=Utworzony użytkownik będzie wewnętrzny użytkownik (ponieważ nie związane z konkretnym trzeciej)
-UserWillBeExternalUser=Utworzony użytkownik będzie zewnętrzny użytkownik (ponieważ związana z konkretnym trzeciej)
-UserLogoff=%s użytkownika wylogować
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:50).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

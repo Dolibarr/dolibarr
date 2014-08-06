@@ -1,13 +1,4 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=SMS
 SmsSetup=Sms setup
 SmsDesc=Sellel leheküljel saab määratleda globals võimalusi SMS funktsioonid
@@ -56,7 +47,7 @@ NbOfSms=Nbre of phon numbrid
 ThisIsATestMessage=See on test sõnum
 SendSms=Saada SMS
 SmsInfoCharRemain=Nb järelejäänud tähemärki
-SmsInfoNumero=(Formaat rahvusvaheline st: 33899701761)
+SmsInfoNumero= (Formaat rahvusvaheline st: 33899701761)
 DelayBeforeSending=Viivitus enne saatmist (minutites)
 SmsNoPossibleRecipientFound=Ei siht olemas. Vaata setup oma SMS teenust.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:30:18).
+

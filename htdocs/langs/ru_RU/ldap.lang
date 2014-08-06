@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Пароль домена
 YouMustChangePassNextLogon=Пароль <b>пользователя %s</b> на <b>домене %s</b> должен быть изменен.
 UserMustChangePassNextLogon=Пользователь должен изменить пароль на домене %s
@@ -32,15 +22,8 @@ LDAPFieldLastSubscriptionDate=Дата последней подписки
 LDAPFieldLastSubscriptionAmount=Размер последней подписки
 SynchronizeDolibarr2Ldap=Синхронизация пользователя (Dolibarr -> LDAP)
 UserSynchronized=Пользователь синхронизирован
-ForceSynchronize=Принудительная синхронизация Dolibarr -> LDAP
-ErrorFailedToReadLDAP=Не удалось прочитать базу данных LDAP. Проверьте настройку модуля LDAP  и доступность базы данных.
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
 GroupSynchronized=Группа синхронизирована
 MemberSynchronized=Участник синхронизирован
 ContactSynchronized=Контакт синхронизирован
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
+ForceSynchronize=Принудительная синхронизация Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Не удалось прочитать базу данных LDAP. Проверьте настройку модуля LDAP  и доступность базы данных.

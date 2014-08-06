@@ -1,14 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Exporturi zona
 ImportArea=Import zona
 NewExport=New export
@@ -16,20 +6,33 @@ NewImport=New import
 ExportableDatas=Exportabil de date
 ImportableDatas=Importable de date
 SelectExportDataSet=Alegeţi de date pe care doriţi să le export ...
+SelectImportDataSet=Alegeţi de date pe care doriţi să o import ...
 SelectExportFields=Alegeţi câmpurile pe care doriţi să le de export, sau selectaţi un profil predefinit de export
+SelectImportFields=Alegeţi câmpurile pe care doriţi să le import, sau a selecta un profil predefinit de import
+NotImportedFields=Domenii de fişier sursă nu importate
 SaveExportModel=Salvaţi acest profil de export dacă aveţi de gând să-l refolosire mai târziu ...
+SaveImportModel=Salvaţi acest profil de import dacă aveţi de gând să-l refolosire mai târziu ...
 ExportModelName=Export profil nume
 ExportModelSaved=Export profil salvat sub <b>numele %s.</b>
 ExportableFields=Exportabil domenii
 ExportedFields=Exportate domenii
+ImportModelName=Import profil nume
+ImportModelSaved=Import profil salvat sub <b>numele %s.</b>
+ImportableFields=Importable domenii
+ImportedFields=Importate domenii
 DatasetToExport=De date la export
+DatasetToImport=De date pentru a importa
+NoDiscardedFields=Nici un câmp în fişierul sursă sunt aruncate
 Dataset=De date
 ChooseFieldsOrdersAndTitle=Alegeţi câmpurile pentru ...
 FieldsOrder=Domenii pentru
 FieldsTitle=Domenii titlu
+FieldOrder=Pentru domeniul
+FieldTitle=Domeniul titlu
 ChooseExportFormat=Alegeţi formatul de export
 NowClickToGenerateToBuildExportFile=Acum, dati click pe "Generează" fişier de export pentru a construi ...
 AvailableFormats=Formate disponibile
+LibraryShort=Biblioteca
 LibraryUsed=Librairie
 LibraryVersion=Version
 Step=Pasul
@@ -43,21 +46,6 @@ FormatedExportDesc3=Când de date la export sunt selectate, puteţi defini ieşi
 Sheet=Foaie
 NoImportableData=Nu importable de date (nu cu modul de definiţii, pentru a permite importul de date)
 FileSuccessfullyBuilt=Export fişier generat
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-SelectImportDataSet=Alegeţi de date pe care doriţi să o import ...
-SelectImportFields=Alegeţi câmpurile pe care doriţi să le import, sau a selecta un profil predefinit de import
-SaveImportModel=Salvaţi acest profil de import dacă aveţi de gând să-l refolosire mai târziu ...
-ImportModelName=Import profil nume
-ImportModelSaved=Import profil salvat sub <b>numele %s.</b>
-ImportableFields=Importable domenii
-ImportedFields=Importate domenii
-DatasetToImport=De date pentru a importa
-LibraryShort=Biblioteca
 SQLUsedForExport=Cerere SQL folosite pentru a construi export fişier
 LineId=Id-ul de linie
 LineDescription=Descriere de linie
@@ -71,21 +59,12 @@ TypeOfLineServiceOrProduct=Tip de linie (0= produs, 1= serviciu)
 FileWithDataToImport=Fişiere cu date de import
 FileToImport=Fişierul sursă de import
 FileMustHaveOneOfFollowingFormat=Fişier pentru import trebuie să aibă una dintre următoarele format
-ChooseFileToImport=Alegeţi fişier pentru a importa apoi faceţi clic pe picto %s ...
-FieldsInSourceFile=Domenii in fişierul sursă
-FieldsInTargetDatabase=Target Dolibarr domeniile în baza de date
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-NotImportedFields=Domenii de fişier sursă nu importate
-NoDiscardedFields=Nici un câmp în fişierul sursă sunt aruncate
-FieldOrder=Pentru domeniul
-FieldTitle=Domeniul titlu
 DownloadEmptyExample=Descărcaţi exemplu de sursă gol fişier
 ChooseFormatOfFileToImport=Alegeţi formatul de fişier pentru al utiliza ca formatul de fişier de import, făcând clic pe picto %s pentru ao selecta ...
+ChooseFileToImport=Alegeţi fişier pentru a importa apoi faceţi clic pe picto %s ...
 SourceFileFormat=Sursa Format fişier
+FieldsInSourceFile=Domenii in fişierul sursă
+FieldsInTargetDatabase=Câmpuri-țintă în baza de date Dolibarr (bold = obligatoriu)
 Field=Câmp
 NoFields=Nici un câmp
 MoveField=Mutare coloana %s domeniul număr
@@ -93,10 +72,10 @@ ExampleOfImportFile=Example_of_import_file
 SaveImportProfile=Salvaţi acest profil de import
 ErrorImportDuplicateProfil=Nu am putut salva acest profil de import cu acest nume. Un profil existent deja cu acest nume.
 ImportSummary=De import de configurare rezumat
-TablesTarget=tabelele vizate
-FieldsTarget=domeniile vizate
-TableTarget=Vizate de masă
-FieldTarget=Orientate domeniul
+TablesTarget=Tabelele vizate
+FieldsTarget=Câmpuri vizate
+TableTarget=Tabel Vizat
+FieldTarget=Câmp vizat
 FieldSource=Sursa de câmp
 DoNotImportFirstLine=Nu de import prima linie a fişierului sursă
 NbOfSourceLines=Numărul de linii în fişierul sursă
@@ -116,26 +95,36 @@ TooMuchErrors=Nu există încă <b>%s</b> sursă de alte linii cu erori, dar pro
 TooMuchWarnings=Nu există încă <b>%s</b> sursă de alte linii cu avertismente, dar producţia a fost limitată.
 EmptyLine=linie goală (vor fi aruncate)
 CorrectErrorBeforeRunningImport=Trebuie să corecteze primul toate erorile înainte de a rula import definitiv.
+FileWasImported=Dosarul a fost importat cu <b>%s</b> număr.
 YouCanUseImportIdToFindRecord=Puteţi găsi toate înregistrările importate în baza de date prin filtrarea pe <b>import_key</b> domeniul <b>= '%s ".</b>
 NbOfLinesOK=Numărul de linii fără erori şi fără avertismente: <b>%s.</b>
 NbOfLinesImported=Numărul de linii cu succes importate: <b>%s.</b>
 DataComeFromNoWhere=Valoare pentru a introduce vine de nicăieri în fişierul sursă.
 DataComeFromFileFieldNb=Valoare pentru a introduce <b>%s</b> vine de la numărul de câmp în fişierul sursă.
 DataComeFromIdFoundFromRef=Valoare care vine de la <b>%s</b> numărul de câmp de fişier sursă vor fi utilizate pentru a găsi ID-ul de mamă obiectul pentru a utiliza (Deci <b>%s</b> Objet care a ref). Sursă de la dosar trebuie să există în Dolibarr.
+DataComeFromIdFoundFromCodeId=Cod care vine de la <b>%s</b> numărul de câmp de fişier sursă vor fi utilizate pentru a găsi ID-ul obiectului părinte de a utiliza (Deci, codul din fişierul sursă trebuie să există în <b>%s</b> dictionnary). Reţineţi că, dacă ştiţi ID-ul, puteţi utiliza, de asemenea, că în fişierul sursă în loc de cod. De import ar trebui să lucreze în ambele cazuri.
 DataIsInsertedInto=Datele provin din fişierul sursă va fi inserat în câmpul de următoarele:
 DataIDSourceIsInsertedInto=Id-ul de mamă obiect găsit folosind datele din fişierul sursă, vor fi inserate în câmpul următoarele:
+DataCodeIDSourceIsInsertedInto=ID-ul de linie de la mamă găsit codul, va fi introdus în câmpul următorul text:
 SourceRequired=valoarea datelor este obligatorie
 SourceExample=Exemplu de valoare posibilă de date
-CSVFormatDesc=<b>Comma Separated Value</b> formatul de fişier (). Csv. <br> Acesta este un format de fişier text în care câmpurile sunt separate prin separatorul [%s]. În cazul în care se găseşte în interiorul separatorului cu un conţinut de domeniu, domeniu este rotunjit cu caracter rotunde [%s]. caracter Escape pentru a scăpa de caractere rundă este [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:56).
-
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-FileWasImported=Dosarul a fost importat cu <b>%s</b> număr.
-DataComeFromIdFoundFromCodeId=Cod care vine de la <b>%s</b> numărul de câmp de fişier sursă vor fi utilizate pentru a găsi ID-ul obiectului părinte de a utiliza (Deci, codul din fişierul sursă trebuie să există în <b>%s</b> dictionnary). Reţineţi că, dacă ştiţi ID-ul, puteţi utiliza, de asemenea, că în fişierul sursă în loc de cod. De import ar trebui să lucreze în ambele cazuri.
-DataCodeIDSourceIsInsertedInto=ID-ul de linie de la mamă găsit codul, va fi introdus în câmpul următorul text:
 ExampleAnyRefFoundIntoElement=Orice Ref gasit pentru <b>%s</b> element
 ExampleAnyCodeOrIdFoundIntoDictionnary=Orice cod (sau id), a constatat în <b>%s</b> dictionnary
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:59).
+CSVFormatDesc=<b>Comma Separated Value</b> formatul de fişier (). Csv. <br> Acesta este un format de fişier text în care câmpurile sunt separate prin separatorul [%s]. În cazul în care se găseşte în interiorul separatorului cu un conţinut de domeniu, domeniu este rotunjit cu caracter rotunde [%s]. caracter Escape pentru a scăpa de caractere rundă este [%s].
+Excel95FormatDesc=<b>Excel</b> format fişier (.xls) <br>Acesta este format nativ Excel 95 (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> format fişier (.xlsx) <br>Acesta este format nativ Excel 2007 (SpreadsheetML).
+TsvFormatDesc=<b> Tab Separat Valoare </ b> format de fișier (. TSV) <br> Acesta este un format de fișier text în care câmpurile sunt separate printr-un tabulator [tab].
+ExportFieldAutomaticallyAdded=Câmpul <b>%s </ b> a fost adăugat în mod automat. Se va evita ca linii similare să fie tratate ca înregistrări dublate (cu acest câmp adaugat, toate liniile vor avea propriul lor ID și vor diferi).
+CsvOptions=Opţiuni Csv
+Separator=Separator
+Enclosure=Închidere
+SuppliersProducts=Furnizori produse
+BankCode=Cod bancă
+DeskCode=Cod birou
+BankAccountNumber=Număr cont
+BankAccountNumberKey=Cheie
+## filters
+SelectFilterFields=Dacă doriți să filtrați pe anumite valori, doar introduceţi valorile aici.
+FilterableFields=Câmpuri filtrabile
+FilteredFields=Câmpuri filtrate
+FilteredFieldsValues=Valoare pentru filtru

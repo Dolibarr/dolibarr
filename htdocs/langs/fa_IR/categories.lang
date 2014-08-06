@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=الفئة
 Categories=الفئات
 Rubrique=الفئة
@@ -25,6 +15,8 @@ ProductsCategoriesArea=منتجات / خدمات الفئات المنطقة
 SuppliersCategoriesArea=الموردين منطقة الفئات
 CustomersCategoriesArea=العملاء منطقة الفئات
 ThirdPartyCategoriesArea=أطراف ثالثة 'منطقة الفئات
+MembersCategoriesArea=أعضاء فئات المناطق
+# ContactsCategoriesArea=Contacts categories area
 MainCats=الفئات الرئيسية
 SubCats=فرعية
 CatStatistics=احصاءات
@@ -57,11 +49,16 @@ ProductIsInCategories=المنتجات / الخدمات وتملك على الف
 SupplierIsInCategories=لطرف ثالث يملك الموردين الفئات التالية
 CompanyIsInCustomersCategories=هذا الطرف الثالث وتملك ليلي العملاء / آفاق الفئات
 CompanyIsInSuppliersCategories=ويملك هذا الطرف الثالث على الفئات التالية الموردين
+MemberIsInCategories=يملك هذا العضو إلى الفئات التالية الأعضاء
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=هذا المنتج / الخدمة وليس في أي فئات
 SupplierHasNoCategory=هذا المورد ليست في أي فئات
 CompanyHasNoCategory=هذه الشركة ليست في أي فئات
+MemberHasNoCategory=هذا العضو غير موجود في أي فئات
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=تصنف في الفئة
 NoneCategory=بلا
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=هذه الفئة موجودة بالفعل في نفس المكان
 ReturnInProduct=عودة إلى المنتجات / الخدمات بطاقة
 ReturnInSupplier=عودة الى مورد بطاقة
@@ -78,13 +75,18 @@ NoCategoriesDefined=أي فئة محددة
 SuppliersCategoryShort=فئة الموردين
 CustomersCategoryShort=فئة الزبائن
 ProductsCategoryShort=فئة المنتجات
+MembersCategoryShort=أعضاء الفئة
 SuppliersCategoriesShort=فئات الموردين
 CustomersCategoriesShort=فئات العملاء
 CustomersProspectsCategoriesShort=Custo. / Prosp. الفئات
 ProductsCategoriesShort=فئات المنتجات
+MembersCategoriesShort=أعضاء الفئات
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=هذه الفئة لا تحتوي على أي منتج.
 ThisCategoryHasNoSupplier=هذه الفئة لا تحتوي على أي مورد.
 ThisCategoryHasNoCustomer=هذه الفئة لا تحتوي على أي عميل.
+ThisCategoryHasNoMember=هذا التصنيف لا يحتوي على أي عضو.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=المخصصة للعميل
 AssignedToTheCustomer=يكلف العميل
 InternalCategory=فئة Inernal
@@ -93,17 +95,13 @@ CategId=معرف الفئة
 CatSupList=قائمة الموردين الفئات
 CatCusList=قائمة العملاء / احتمال الفئات
 CatProdList=قائمة المنتجات فئات
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-MembersCategoriesArea=أعضاء فئات المناطق
-MemberIsInCategories=يملك هذا العضو إلى الفئات التالية الأعضاء
-MemberHasNoCategory=هذا العضو غير موجود في أي فئات
-MembersCategoryShort=أعضاء الفئة
-MembersCategoriesShort=أعضاء الفئات
-ThisCategoryHasNoMember=هذا التصنيف لا يحتوي على أي عضو.
 CatMemberList=قائمة بأسماء أعضاء الفئات
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:56).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

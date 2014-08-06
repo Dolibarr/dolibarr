@@ -1,21 +1,15 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=倉庫カード
 Warehouse=倉庫
+Warehouses=倉庫
 NewWarehouse=新倉庫/ストックエリア
 WarehouseEdit=倉庫を変更する
 MenuNewWarehouse=新倉庫
 WarehouseOpened=倉庫をオープン
 WarehouseClosed=倉庫は閉じた
 WarehouseSource=ソースの倉庫
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=ターゲット·ウェアハウス
 ValidateSending=送信削除
 CancelSending=送信キャンセル
@@ -32,17 +26,22 @@ ListOfStockMovements=在庫変動のリスト
 StocksArea=株式エリア
 Location=場所
 LocationSummary=短い名前の場所
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=商品の合計数
 LastMovement=最後の動き
 LastMovements=最後の動き
 Units=ユニット
 Unit=ユニット
 StockCorrection=正しい株式
+# StockTransfer=Stock transfer
 StockMovement=転送
 StockMovements=株式移転
+# LabelMovement=Movement label
 NumberOfUnit=ユニット数
+# UnitPurchaseValue=Unit purchase price
 TotalStock=株式の総
 StockTooLow=低すぎると株式
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=値
 PMPValue=加重平均価格
 PMPValueShort=WAP
@@ -58,6 +57,7 @@ DeStockOnShipment=出荷の検証を実際の株式を減少させる
 ReStockOnBill=仕入先請求書/クレジットメモの検証で本物の株式を増加させる
 ReStockOnValidateOrder=サプライヤの注文賛同上の実際の株式を増加させる
 ReStockOnDispatchOrder=サプライヤーの順序が受信した後、倉庫に派遣マニュアルに本物の株式を増加させる
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=ご注文はまだないか、またはこれ以上の在庫倉庫の製品の派遣ができますステータスを持っていません。
 StockDiffPhysicTeoric=物理的および理論的な違いはストックの理由
 NoPredefinedProductToDispatch=このオブジェクト用に事前定義された製品がありません。そうは在庫に派遣する必要はありません。
@@ -66,7 +66,6 @@ StockLimitShort=制限
 StockLimit=アラートの在庫限り
 PhysicalStock=物理的な株式
 RealStock=リアルタイム株価
-TheoreticalStock=Therocial株式
 VirtualStock=バーチャル株式
 MininumStock=最小在庫
 StockUp=買いだめする
@@ -89,4 +88,25 @@ PersonalStock=個人の株式%s
 ThisWarehouseIsPersonalStock=この倉庫は%s %sの個人的な株式を表す
 SelectWarehouseForStockDecrease=株式の減少のために使用するために倉庫を選択します。
 SelectWarehouseForStockIncrease=在庫の増加に使用する倉庫を選択します。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:44:51).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

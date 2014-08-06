@@ -1,83 +1,51 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - agenda
+# IdAgenda=ID event
 Actions=Toimet
 ActionsArea=Toimien alueella (tapahtumat ja tehtävät)
-Agenda=Agenda
-Agendas=Esityslistat
-Calendar=Kalenteri
-Calendars=Kalenterit
-AffectedTo=Vaikuttaa
-DoneBy=Tekemiäni
-Events=Tapahtumat
+Agenda= Agenda
+Agendas= Esityslistat
+Calendar= Kalenteri
+Calendars= Kalenterit
+LocalAgenda=Paikallinen kalenteri
+AffectedTo= Vaikuttaa
+DoneBy= Tekemiäni
+Events= Tapahtumat
+# EventsNb=Number of events
+MyEvents=My tapahtumia
+OtherEvents=Muut tapahtumat
 ListOfActions=Luettelo tapahtumista
 Location=Sijainti
-SearchAnAction=Haku toimintasuunnitelma / tehtävä
-MenuDoneActions=Kaikki irti toimia
-MenuToDoMyActions=Oma puutteellisia toimia
-MenuDoneMyActions=Oma irtisanotaan toimia
-ListOfEvents=Luettelo Dolibarr tapahtumat
+EventOnFullDay=Tapahtuma on koko päivä
+SearchAnAction= Haku toimintasuunnitelma / tehtävä
+MenuToDoActions= Kaikki puutteelliset toimet
+MenuDoneActions= Kaikki irti toimia
+MenuToDoMyActions= Oma puutteellisia toimia
+MenuDoneMyActions= Oma irtisanotaan toimia
+ListOfEvents= Luettelo Dolibarr tapahtumat
 ActionsAskedBy=Toimet kirjattava
 ActionsToDoBy=Toimet vaikuttaa
 ActionsDoneBy=Toimet tehdään
-AllMyActions=Kaikki toimet / tehtävät
-AllActions=Toutes les actions / tehtävät
+AllMyActions= Kaikki toimet / tehtävät
+AllActions= Toutes les actions / tehtävät
 ViewList=Näytä lista
 ViewCal=Näytä kalenteri
-ViewWithPredefinedFilters=Näytä ennalta suodattimet
-AutoActions=Automaattinen täyttö Esityslistan
-AgendaAutoActionDesc=Määritä tässä tapahtumia joihin haluat Dolibarr luoda automaattisesti toimia asialistalla. Jos mitään ei tarkastettu (oletuksena), vain ruumiillisen toimien on oltava mukana esityslistalla.
-AgendaSetupOtherDesc=Tämän sivun avulla määrittää muita muuttujia Esityslistan moduuli.
-ActionsEvents=Tapahtumat, joista Dolibarr luo toimia esityslistan automaattisesti
-PropalValidatedInDolibarr=Ehdotus validoitava
-InvoiceValidatedInDolibarr=Laskun validoitava
-OrderValidatedInDolibarr=Tilaa validoitava
-NewCompanyToDolibarr=Kolmannen osapuolen luonut
-DateActionPlannedStart=SUUNNITELTU ALKAMISPÄIVÄ
-DateActionPlannedEnd=Suunniteltu lopetuspäivämäärää
-DateActionDoneStart=Real Aloituspäivästä
-DateActionDoneEnd=Real lopetuspäivämäärää
-DateActionStart=Aloituspäivämäärä
-DateActionEnd=Lopetuspäivä
-AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
-AgendaUrlOptions2=<b>login=<b>login= %s</b> rajoittaa tuotannon toimiin luotu, vaikuttaa tavalla tai tehdä <b>käyttäjä %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina= %s</b> rajoittaa tuotannon toimiin luotu <b>käyttäjän %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint= %s</b> rajoittaa tuotannon toimet vaikuttavat <b>käyttäjän %s.</b>
-AgendaUrlOptions5=<b>logind=<b>sisäänkirj= %s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän %s.</b>
-AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
-AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-MenuToDoActions=Kaikki puutteelliset toimet
-InterventionValidatedInDolibarr=Intervention %s validoitu
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:40).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-LocalAgenda=Paikallinen kalenteri
-MyEvents=My tapahtumia
-OtherEvents=Muut tapahtumat
-EventOnFullDay=Tapahtuma on koko päivä
 ViewDay=Päivä näkymä
 ViewWeek=Viikkonäkymä
+ViewWithPredefinedFilters= Näytä ennalta suodattimet
+AutoActions= Automaattinen täyttö Esityslistan
+AgendaAutoActionDesc= Määritä tässä tapahtumia joihin haluat Dolibarr luoda automaattisesti toimia asialistalla. Jos mitään ei tarkastettu (oletuksena), vain ruumiillisen toimien on oltava mukana esityslistalla.
+AgendaSetupOtherDesc= Tämän sivun avulla määrittää muita muuttujia Esityslistan moduuli.
 AgendaExtSitesDesc=Tällä sivulla voit ilmoittaa ulkoisten kalenterien näkemään tapahtumiin otetaan Dolibarr asialistalle.
+ActionsEvents= Tapahtumat, joista Dolibarr luo toimia esityslistan automaattisesti
+PropalValidatedInDolibarr= Ehdotus validoitava
+InvoiceValidatedInDolibarr= Laskun validoitava
 InvoiceBackToDraftInDolibarr=Laskun %s palata luonnos tila
+# InvoiceDeleteDolibarr=Invoice %s deleted
+OrderValidatedInDolibarr= Tilaa validoitava
 OrderApprovedInDolibarr=Tilaa %s hyväksytty
 OrderBackToDraftInDolibarr=Tilaa %s palata luonnos tila
 OrderCanceledInDolibarr=Tilaus %s peruutettu
+InterventionValidatedInDolibarr=Intervention %s validoitu
 ProposalSentByEMail=Liiketoimintaehdotukset %s lähetetään sähköpostilla
 OrderSentByEMail=Asiakas tilaa %s lähetetään sähköpostilla
 InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
@@ -85,6 +53,24 @@ SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
 SupplierInvoiceSentByEMail=Toimittaja lasku %s lähetetään sähköpostilla
 ShippingSentByEMail=Toimitus %s lähetetään sähköpostilla
 InterventionSentByEMail=Intervention %s lähetetään sähköpostilla
+NewCompanyToDolibarr= Kolmannen osapuolen luonut
+DateActionPlannedStart= SUUNNITELTU ALKAMISPÄIVÄ
+DateActionPlannedEnd= Suunniteltu lopetuspäivämäärää
+DateActionDoneStart= Real Aloituspäivästä
+DateActionDoneEnd= Real lopetuspäivämäärää
+DateActionStart= Aloituspäivämäärä
+DateActionEnd= Lopetuspäivä
+AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
+AgendaUrlOptions2=<b>login=<b>login= %s</b> rajoittaa tuotannon toimiin luotu, vaikuttaa tavalla tai tehdä <b>käyttäjä %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina= %s</b> rajoittaa tuotannon toimiin luotu <b>käyttäjän %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint= %s</b> rajoittaa tuotannon toimet vaikuttavat <b>käyttäjän %s.</b>
+AgendaUrlOptions5=<b>logind=<b>sisäänkirj= %s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän %s.</b>
+AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
+AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
+# Busy=Busy
+# ExportDataset_event1=List of agenda events
+
+# External Sites ical
 ExportCal=Vie kalenteri
 ExtSites=Tuo ulkoinen kalenterit
 ExtSitesEnableThisTool=Näytä ulkoinen kalenterit otetaan asialistalle
@@ -92,4 +78,3 @@ ExtSitesNbOfAgenda=Määrä kalenterit
 AgendaExtNb=Kalenteri nb %s
 ExtSiteUrlAgenda=URL päästä. ICal-tiedostona
 ExtSiteNoLabel=Ei kuvausta
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:54).

@@ -1,23 +1,17 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=Franţa
 CountryBE=Belgia
 CountryIT=Italia
 CountryES=Spania
 CountryDE=Germania
+CountryCH=Eleveţia
 CountryGB=Marea Britanie
+CountryUK=Marea Britanie
+CountryIE=Irlanda
 CountryCN=China
 CountryTN=Tunisia
 CountryUS=Statele Unite
+CountryMA=Maroc
 CountryDZ=Algeria
 CountryCA=Canada
 CountryTG=Togo
@@ -252,63 +246,55 @@ CountryJE=Jersey
 CountryME=Muntenegru
 CountryBL=Saint Barthélemy
 CountryMF=Saint Martin
+
+##### Civilities #####
 CivilityMME=D-na
 CivilityMR=Dl
 CivilityMLE=Doamna
 CivilityMTRE=Maestru
+CivilityDR=Doctor
+
+##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=Dolar AU
-CurrencyCAD=Dolar CAN
-CurrencyCHF=Franci elveţieni
-CurrencyEUR=Euro
-CurrencyFRF=Franceză Franci
-CurrencyMAD=Dirham
-CurrencyMGA=Ariary
-CurrencyGBP=GB Lire
-CurrencyTND=TND
-CurrencyUSD=Dolar SUA
-CurrencyXAF=CFA BEAC Franci
-CurrencyXOF=CFA BCEAO Franci
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-// Reference language: en_US
-CountryCH=Eleveţia
-CountryIE=Irlanda
-CountryMA=Maroc
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
 CurrencySingAUD=UA dolar
+CurrencyCAD=Dolar CAN
 CurrencySingCAD=CAN dolar
+CurrencyCHF=Franci elveţieni
 CurrencySingCHF=Francul elveţian
+CurrencyEUR=Euro
 CurrencySingEUR=Euro
+CurrencyFRF=Franceză Franci
 CurrencySingFRF=Franceză franc
+CurrencyGBP=GB Lire
 CurrencySingGBP=GB Pound
 CurrencyINR=rupii indiene
 CurrencySingINR=Rupie indiană
+CurrencyMAD=Dirham
 CurrencySingMAD=Dirham
+CurrencyMGA=Ariary
 CurrencySingMGA=Ariary
 CurrencyMUR=Mauritius rupii
 CurrencySingMUR=Rupie Mauritius
 CurrencyNOK=Krones norvegiană
 CurrencySingNOK=Coroană norvegiană
+CurrencyTND=TND
 CurrencySingTND=Dinar tunisian
+CurrencyUSD=Dolar SUA
 CurrencySingUSD=Dolari SUA
+CurrencyUAH=Grivna
+CurrencySingUAH=Grivna
+CurrencyXAF=CFA BEAC Franci
 CurrencySingXAF=CFA franc BEAC
+CurrencyXOF=CFA BCEAO Franci
 CurrencySingXOF=CFA franc BCEAO
 CurrencyXPF=PCP franci
 CurrencySingXPF=PCP franc
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:44).
 
+CurrencyCentSingEUR=cent
+CurrencyThousandthSingTND=mii
 
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
-CurrencySingUAH=Grivna
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Mailing campanie
 DemandReasonTypeSRC_CAMP_EMAIL=Corespondenţei campanie
@@ -316,10 +302,28 @@ DemandReasonTypeSRC_CAMP_PHO=Telefon de campanie
 DemandReasonTypeSRC_CAMP_FAX=Fax campanie
 DemandReasonTypeSRC_COMM=Comercială de contact
 DemandReasonTypeSRC_SHOP=Magazin de contact
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 08:52:27).
+DemandReasonTypeSRC_WOM=din gură în gură
+DemandReasonTypeSRC_PARTNER=Partener
+DemandReasonTypeSRC_EMPLOYEE=Angajat
+DemandReasonTypeSRC_SPONSORING=Sponsor
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-CurrencyUAH=Grivna
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:28).
+#### Paper formats ####
+PaperFormatEU4A0=Format 4A0
+PaperFormatEU2A0=Format 2A0
+PaperFormatEUA0=Format A0
+PaperFormatEUA1=Format A1
+PaperFormatEUA2=Format A2
+PaperFormatEUA3=Format A3
+PaperFormatEUA4=Format A4
+PaperFormatEUA5=Format A5
+PaperFormatEUA6=Format A6
+PaperFormatUSLETTER=Format Letter US
+PaperFormatUSLEGAL=Format Legal US
+PaperFormatUSEXECUTIVE=Format Executive US
+PaperFormatUSLEDGER=Format Ledger/Tabloid
+PaperFormatCAP1=Format P1 Canada
+PaperFormatCAP2=Format P2 Canada
+PaperFormatCAP3=Format P3 Canada
+PaperFormatCAP4=Format P4 Canada
+PaperFormatCAP5=Format P5 Canada
+PaperFormatCAP6=Format P6 Canada

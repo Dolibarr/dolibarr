@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - users
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Brukerkort
 ContactCard=Kontaktperson-kort
 GroupCard=Guppekort
@@ -42,6 +41,9 @@ LoginNotDefined=Brukernavn ikke oppgitt.
 NameNotDefined=Navn ikke oppgitt.
 ListOfUsers=Brukeroversikt
 Administrator=Administrator
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator med alle rettigheter
+AdministratorDesc=Administrator er enhet
 DefaultRights=Forvalgte rettigheter
 DefaultRightsDesc=Her kan du angi hvilke rettigheter som automatisk skal gis til nye brukere.
 DolibarrUsers=Dolibarrbrukere
@@ -68,7 +70,12 @@ ListOfGroupsForUser=Oversikt over grupper for denne brukeren
 UsersToAdd=Brukere å legge til i denne gruppen
 GroupsToAdd=Grupper å legge til denne brukeren
 NoLogin=Ingen innlogging
+LinkToCompanyContact=Lenke til tredjepart / kontakt
+LinkedToDolibarrMember=Link til medlem
+LinkedToDolibarrUser=Link til Dolibarr brukeren
+LinkedToDolibarrThirdParty=Link til Dolibarr tredjepart
 CreateDolibarrLogin=Lag Dolibarrkonto
+CreateDolibarrThirdParty=Lag en tredjepart
 LoginAccountDisable=Kontoen er deaktivert, put a new login to activate it.
 LoginAccountDisableInDolibarr=Kontoen er deaktivert i Dolibarr.
 LoginAccountDisableInLdap=Kontoen er deaktivert i domenet.
@@ -79,11 +86,15 @@ MyInformations=Mine data
 ExportDataset_user_1=Dolibarr brukere og egenskaper
 DomainUser=Domenebruker %s
 Reactivate=Reaktiver
-CreateInternalUserDesc=Her kan du opprette interne brukere (ansatte). For å lage en ekstern bruker (kunde, leverandør, ...) bruker du knappen 'Lag Dolibarr bruker' fra tredjepartens kontaktkort. 
+CreateInternalUserDesc=Her kan du opprette interne brukere (ansatte). For å lage en ekstern bruker (kunde, leverandør, ...) bruker du knappen 'Lag Dolibarr bruker' fra tredjepartens kontaktkort.
 InternalExternalDesc=En <b>intern</b> bruker er er en som er en del av firmaet/organisasjonen.<br>En <b>ekstern</b> bruker er en kunde, leverandør eller annen tredjeperson.<br><br>I begge tilfelle styres brukeren av Dolibarr-rettigheter. Dessuten kan eksterne brukere ha en annen menybehandler enn interne brukere (Se Hjem - Instillinger - Visning)
 PermissionInheritedFromAGroup=Rettigheter innvilget fordi de er arvet av en brukegruppe.
+Inherited=Arvet
+UserWillBeInternalUser=Opprettet bruker vil være en intern bruker (fordi ikke knyttet til en bestemt tredjepart)
+UserWillBeExternalUser=Opprettet bruker vil være en ekstern bruker (fordi knyttes til et bestemt tredjepart)
 IdPhoneCaller=ID phone caller
 UserLogged=Brukeren %s er logget inn
+UserLogoff=Bruker %s utlogging
 NewUserCreated=Brukeren %s er opprettet
 NewUserPassword=Passord er endret for %s
 EventUserModified=Brukeren %s er endret
@@ -91,41 +102,19 @@ UserDisabled=Brukeren %s er deaktivert
 UserEnabled=Brukeren %s er aktivert
 UserDeleted=Brukeren %s er fjernet
 NewGroupCreated=Gruppen %s er oprettet
-GroupModified=Gruppen %s er endret
+GroupModified=Gruppen er endret
 GroupDeleted=Gruppen %s er fjernet
 ConfirmCreateContact=Er du sikker på at du vil lage en Dolibarr-konto til denne kontaktpersonen?
-LoginToCreate=Brukernavn å opprette
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Administrator med alle rettigheter
-LinkToCompanyContact=Lenke til tredjepart / kontakt
-LinkedToDolibarrMember=Link til medlem
-LinkedToDolibarrUser=Link til Dolibarr brukeren
-LinkedToDolibarrThirdParty=Link til Dolibarr tredjepart
-CreateDolibarrThirdParty=Lag en tredjepart
-Inherited=Arvet
 ConfirmCreateLogin=Er du sikker på at du vil opprette en Dolibarr konto for medlemmet?
 ConfirmCreateThirdParty=Er du sikker på at du vil opprette en tredje part for medlemmet?
+LoginToCreate=Brukernavn å opprette
 NameToCreate=Navn på tredjepart til å lage
 YourRole=Din roller
 YourQuotaOfUsersIsReached=Din kvote på aktive brukere er nådd!
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:22).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> nb_NO
-AdministratorDesc=Administrator er enhet
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:47:47).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-UserWillBeInternalUser=Opprettet bruker vil være en intern bruker (fordi ikke knyttet til en bestemt tredjepart)
-UserWillBeExternalUser=Opprettet bruker vil være en ekstern bruker (fordi knyttes til et bestemt tredjepart)
-UserLogoff=Bruker %s utlogging
 NbOfUsers=Nb av brukere
 DontDowngradeSuperAdmin=Bare en superadmin kan nedgradere en superadmin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:02).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

@@ -1,11 +1,12 @@
-# Dolibarr language file - hu_HU - donations
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Adomány
 Donations=Adományok
+# DonationRef=Donation ref.
 Donor=Donor
 Donors=Donorok
 AddDonation=Új adomány hozzáadása
 NewDonation=Új adomány
+# ShowDonation=Show donation
 DonationPromise=Ajándék ígéret
 PromisesNotValid=Nem hitelesített ígéretek
 PromisesValid=Hitelesített ígéretek
@@ -20,14 +21,12 @@ DonationStatusPaid=Kapott adomány
 DonationStatusPromiseNotValidatedShort=Vázlat
 DonationStatusPromiseValidatedShort=Hitelesített
 DonationStatusPaidShort=Kapott
-ValidPromise=Ígéret hitelesítése
+ValidPromess=Érvényesítés ígéret
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Nyugta készítése
 DonationsModels=Dokumentum modellek adományok nyugtájához
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-ValidPromess=Érvényesítés ígéret
 LastModifiedDonations=Utolsó módosítás adományok %s
 SearchADonation=Keresés adományt
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:23:59).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

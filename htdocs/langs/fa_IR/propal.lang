@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=مقترحات تجارية
 Proposal=اقتراح التجارية
 ProposalShort=اقتراح
@@ -18,6 +8,7 @@ ProposalsOpened=افتتح مقترحات تجارية
 Prop=مقترحات تجارية
 CommercialProposal=اقتراح التجارية
 CommercialProposals=مقترحات تجارية
+# ProposalCard=Proposal card
 NewProp=التجاري الجديد المقترح
 NewProposal=التجاري الجديد المقترح
 NewPropal=اقتراح جديد
@@ -75,30 +66,37 @@ ValidityDuration=ومدة صلاحيتها
 CloseAs=وثيق مع مركز
 ClassifyBilled=تصنيف الفواتير
 BuildBill=بناء الفاتورة
-RelatedBill=الفاتورة ذات الصلة
-RelatedBills=الفواتير ذات الصلة
 ErrorPropalNotFound=Propal ق لم يتم العثور على ٪
 Estimate=التقدير :
 EstimateShort=التقدير
 OtherPropals=مقترحات أخرى
+# AddToDraftProposals=Add to draft proposal
+# NoDraftProposals=No draft proposals
 CopyPropalFrom=اقتراح إنشاء التجارية عن طريق نسخ وجود اقتراح
 CreateEmptyPropal=خلق خاليا التجارية vierge مقترحات أو من قائمة المنتجات / الخدمات
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
 UseCustomerContactAsPropalRecipientIfExist=استخدام العميل عنوان الاتصال إذا حددت بدلا من التصدي لطرف ثالث حسب الاقتراح المستفيدة معالجة
 ClonePropal=اقتراح استنساخ التجارية
 ConfirmClonePropal=هل أنت متأكد من استنساخ هذا الاقتراح <b>٪ ق</b> التجارية؟
+# ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b> ?
 ProposalsAndProposalsLines=واقتراح الخطوط التجارية
 ProposalLine=اقتراح خط
-DocModelAzurDescription=اقتراح نموذج كامل (logo...)
-DocModelJauneDescription=اقتراح نموذج اليد الصفراء
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
+# AvailabilityPeriod=Availability delay
+# SetAvailability=Set availability delay
+# AfterOrder=after order
+##### Availability #####
+AvailabilityTypeAV_NOW=فورا
+# AvailabilityTypeAV_1W=1 week
+# AvailabilityTypeAV_2W=2 weeks
+# AvailabilityTypeAV_3W=3 weeks
+# AvailabilityTypeAV_1M=1 month
+##### Types de contacts #####
 TypeContact_propal_internal_SALESREPFOLL=اقتراح ممثل متابعة
 TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
-DocModelRoigDescription=نموذج المقترح الكامل مع الطاقة المتجددة من الضرائب الاسبانية وIRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:02).
+# Document models
+DocModelAzurDescription=اقتراح نموذج كامل (logo...)
+DocModelJauneDescription=اقتراح نموذج اليد الصفراء
+# DefaultModelPropalCreate=Default model creation
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

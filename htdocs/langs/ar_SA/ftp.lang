@@ -1,13 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:16:46
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=بروتوكول نقل الملفات العملاء الإعداد وحدة
 NewFTPClient=جديد الإعداد بروتوكول نقل الملفات الصدد
 FTPArea=بروتوكول نقل الملفات المنطقة
@@ -18,4 +9,4 @@ FailedToConnectToFTPServer=فشل الاتصال بخادم بروتوكول ن�
 FailedToConnectToFTPServerWithCredentials=فشل في تسجيل الدخول إلى خادم بروتوكول نقل الملفات مع تعريف الدخول / كلمة المرور
 FTPFailedToRemoveFile=فشل لإزالة <b>%s</b> الملف.
 FTPFailedToRemoveDir=فشل لإزالة <b>%s</b> الدليل (راجع الأذونات وهذا الدليل فارغ).
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:39).
+# FTPPassiveMode=Passive mode

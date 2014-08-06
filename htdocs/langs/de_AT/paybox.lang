@@ -4,7 +4,6 @@
  * Generation date 2010-11-16 12:42:36
  */
 
-CHARSET=UTF-8
 PayBoxSetup=PayBox-Moduleinstellungen
 PayBoxDesc=Dieses Modul erlaubt die Annahme von Zahlungen über <a href="http://www.paybox.com" target="_blank">Paybox</a>. Sie können damit Zahlungen zu Objekten innerhalb des Systems (Rechnungen, Bestellungen, ...) erfassen.
 FollowingUrlAreAvailableToMakePayments=Für Kundenzahlungen stehen Ihnen die folgenden URLs zur Verfügung:

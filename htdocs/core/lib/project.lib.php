@@ -1,28 +1,28 @@
 <?php
-/* Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
-* Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-* or see http://www.gnu.org/
-*/
+ * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
+ */
 
 /**
  *	    \file       htdocs/core/lib/project.lib.php
  *		\brief      Functions used by project module
  *      \ingroup    project
-*/
+ */
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
@@ -49,8 +49,8 @@ function project_prepare_head($object)
 	$h++;
 
 	if (! empty($conf->fournisseur->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->commande->enabled)
-		|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
-		|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
+	|| ! empty($conf->facture->enabled) || ! empty($conf->contrat->enabled)
+	|| ! empty($conf->ficheinter->enabled) || ! empty($conf->agenda->enabled) || ! empty($conf->deplacement->enabled))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/projet/element.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("ProjectReferers");
@@ -64,18 +64,25 @@ function project_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'project');
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
-	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
-	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'document';
-	$h++;
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
+		$head[$h][1] = $langs->trans('Notes');
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		$head[$h][2] = 'notes';
+		$h++;
+    }
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/note.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'notes';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$upload_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files'));
+	$head[$h][0] = DOL_URL_ROOT.'/projet/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+	$head[$h][2] = 'document';
 	$h++;
 
 	// Then tab for sub level of projet, i mean tasks
@@ -135,18 +142,24 @@ function task_prepare_head($object)
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task');
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
-	/*$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
-	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'task_document';
-	$h++;
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+    	$nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+		$head[$h][1] = $langs->trans('Notes');
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+		$head[$h][2] = 'task_notes';
+		$h++;
+    }
 
-	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/note.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
-	$head[$h][1] = $langs->trans('Notes');
-	$head[$h][2] = 'task_notes';
+	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');;
+	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$listoffiles=dol_dir_list($filesdir,'files',1,'','thumbs');
+	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));
+	$head[$h][2] = 'task_document';
 	$h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'task','remove');
@@ -190,111 +203,6 @@ function project_admin_prepare_head()
 }
 
 
-
-/**
- *	Show a combo list with projects qualified for a third party
- *
- *	@param	int		$socid      Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
- *	@param  int		$selected   Id project preselected
- *	@param  string	$htmlname   Nom de la zone html
- *	@param	int		$maxlength	Maximum length of label
- *	@return int         		Nbre of project if OK, <0 if KO
- */
-function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlength=16)
-{
-	global $db,$user,$conf,$langs;
-
-	$hideunselectables = false;
-	if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
-
-	$projectsListId = false;
-	if (empty($user->rights->projet->all->lire))
-	{
-		$projectstatic=new Project($db);
-		$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
-	}
-
-	// Search all projects
-	$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
-	$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-	$sql.= " WHERE p.entity = ".$conf->entity;
-	if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
-	if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-	$sql.= " ORDER BY p.title ASC";
-
-	dol_syslog("project.lib::select_projects sql=".$sql);
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		print '<select class="flat" name="'.$htmlname.'">';
-		print '<option value="0">&nbsp;</option>';
-		$num = $db->num_rows($resql);
-		$i = 0;
-		if ($num)
-		{
-			while ($i < $num)
-			{
-				$obj = $db->fetch_object($resql);
-				// If we ask to filter on a company and user has no permission to see all companies and project is linked to another company, we hide project.
-				if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && ! $user->rights->societe->lire)
-				{
-					// Do nothing
-				}
-				else
-				{
-					$labeltoshow=dol_trunc($obj->ref,18);
-					//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
-					//else $labeltoshow.=' ('.$langs->trans("Private").')';
-					if (!empty($selected) && $selected == $obj->rowid && $obj->fk_statut > 0)
-					{
-						print '<option value="'.$obj->rowid.'" selected="selected">'.$labeltoshow.' - '.dol_trunc($obj->title,$maxlength).'</option>';
-					}
-					else
-					{
-						$disabled=0;
-						if (! $obj->fk_statut > 0)
-						{
-							$disabled=1;
-							$labeltoshow.=' - '.$langs->trans("Draft");
-						}
-						if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
-						{
-							$disabled=1;
-							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
-						}
-
-						if ($hideunselectables && $disabled)
-						{
-							$resultat='';
-						}
-						else
-						{
-							$resultat='<option value="'.$obj->rowid.'"';
-							if ($disabled) $resultat.=' disabled="disabled"';
-							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
-							//else $labeltoshow.=' ('.$langs->trans("Private").')';
-							$resultat.='>'.$labeltoshow;
-							if (! $disabled) $resultat.=' - '.dol_trunc($obj->title,$maxlength);
-							$resultat.='</option>';
-						}
-						print $resultat;
-					}
-				}
-				$i++;
-			}
-		}
-		print '</select>';
-		$db->free($resql);
-		return $num;
-	}
-	else
-	{
-		dol_print_error($db);
-		return -1;
-	}
-}
-
-
 /**
  * Show task lines with a particular parent
  *
@@ -305,7 +213,7 @@ function select_projects($socid=-1, $selected='', $htmlname='projectid', $maxlen
  * @param 	string		$var				Color
  * @param 	int			$showproject		Show project columns
  * @param	int			&$taskrole			Array of roles of user for each tasks
- * @param	int			$projectsListId		List of id of project allowed to user (separated with comma)
+ * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		Add a tick to move task
  * @return	void
  */
@@ -355,6 +263,22 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					}
 				}
 			}
+			else
+			{
+				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
+				// or into all other projects if user has permission to).
+				if (empty($user->rights->projet->all->lire))
+				{
+					// User is not allowed on this project and project is not public, so we hide line
+					if (! in_array($lines[$i]->fk_project, $projectsArrayId))
+					{
+						// Note that having a user assigned to a task into a project user has no permission on, should not be possible
+						// because assignement on task can be done only on contact of project.
+						// If assignement was done and after, was removed from contact of project, then we can hide the line.
+						$showline=0;
+					}
+				}
+			}
 
 			if ($showline)
 			{
@@ -367,7 +291,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 
 				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
 
-				// Project
 				if ($showproject)
 				{
 					print "<td>";
@@ -386,12 +309,12 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td>';
 				if ($showlineingray)
 				{
-					print '<i>'.img_object('','projecttask').' '.$lines[$i]->id.'</i>';
+					print '<i>'.img_object('','projecttask').' '.$lines[$i]->ref.'</i>';
 				}
 				else
 				{
 					$taskstatic->id=$lines[$i]->id;
-					$taskstatic->ref=$lines[$i]->id;
+					$taskstatic->ref=$lines[$i]->ref;
 					$taskstatic->label=($taskrole[$lines[$i]->id]?$langs->trans("YourRole").': '.$taskrole[$lines[$i]->id]:'');
 					print $taskstatic->getNomUrl(1,($showproject?'':'withproject'));
 				}
@@ -420,7 +343,20 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print dol_print_date($lines[$i]->date_end,'day');
 				print '</td>';
 
-				// Progress
+				// Planned Workload (in working hours)
+				print '<td align="center">';
+				$fullhour=convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+				$workingdelay=convertSecondToTime($lines[$i]->planned_workload,'all',86400,7);	// TODO Replace 86400 and 7 to take account working hours per day and working day per weeks
+				if ($lines[$i]->planned_workload)
+				{
+					print $fullhour;
+					// TODO Add delay taking account of working hours per day and working day per week
+					//if ($workingdelay != $fullhour) print '<br>('.$workingdelay.')';
+				}
+				//else print '--:--';
+				print '</td>';
+
+				// Progress declared
 				print '<td align="right">';
 				print $lines[$i]->progress.' %';
 				print '</td>';
@@ -429,10 +365,16 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				print '<td align="right">';
 				if ($showlineingray) print '<i>';
 				else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
-				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
+				if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'allhourmin');
 				else print '--:--';
 				if ($showlineingray) print '</i>';
 				else print '</a>';
+				print '</td>';
+
+				// Progress calculated
+				// Note: ->duration is in fact time spent i think
+				print '<td align="right">';
+				if ($lines[$i]->planned_workload) print round(100 * $lines[$i]->duration / $lines[$i]->planned_workload,2).' %';
 				print '</td>';
 
 				// Tick to drag and drop
@@ -446,7 +388,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if (! $showlineingray) $inc++;
 
 				$level++;
-				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId);
+				if ($lines[$i]->id) projectLinesa($inc, $lines[$i]->id, $lines, $level, $var, $showproject, $taskrole, $projectsListId, $addordertick);
 				$level--;
 				$total += $lines[$i]->duration;
 			}
@@ -457,7 +399,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		}
 	}
 
-	if ($total>0)
+	if ($total>0 && $level==0)
 	{
 		print '<tr class="liste_total">';
 		print '<td class="liste_total">'.$langs->trans("Total").'</td>';
@@ -466,8 +408,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
+		print '<td></td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total, 'allhourmin').'</td>';
+		print '<td></td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td>';
 		print '</tr>';
 	}
 
@@ -549,14 +493,25 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			print dol_print_date($lines[$i]->date_end,'day');
 			print '</td>';
 
-			// Progress
+			// Planned Workload
+			print '<td align="right">';
+			if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
+			else print '--:--';
+			print '</td>';
+
+			// Progress declared %
 			print '<td align="right">';
 			print $lines[$i]->progress.' %';
 			print '</td>';
 
 			// Time spent
 			print '<td align="right">';
-			if ($lines[$i]->duration) print convertSecondToTime($lines[$i]->duration,'all');
+			if ($lines[$i]->duration)
+			{
+				print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
+				print convertSecondToTime($lines[$i]->duration,'allhourmin');
+				print '</a>';
+			}
 			else print '--:--';
 			print "</td>\n";
 
@@ -579,7 +534,7 @@ function projectLinesb(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksr
 			print '<td class="nowrap">';
 			$s =$form->select_date('',$lines[$i]->id,'','','',"addtime",1,0,1,$disabledtask);
 			$s.='&nbsp;&nbsp;&nbsp;';
-			$s.=$form->select_duration($lines[$i]->id,'',$disabledtask);
+			$s.=$form->select_duration($lines[$i]->id,'',$disabledtask,'text');
 			$s.='&nbsp;<input type="submit" class="button"'.($disabledtask?' disabled="disabled"':'').' value="'.$langs->trans("Add").'">';
 			print $s;
 			print '</td>';
@@ -639,64 +594,6 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
 
 	return $inc;
 }
-
-
-/**
- * Clean task not linked to a parent
- *
- * @param	DoliDB	$db     Database handler
- * @return	int				Nb of records deleted
- */
-function clean_orphelins($db)
-{
-	$nb=0;
-
-	// There is orphelins. We clean that
-	$listofid=array();
-
-	// Get list of id in array listofid
-	$sql='SELECT rowid FROM '.MAIN_DB_PREFIX.'projet_task';
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num && $i < 100)
-		{
-			$obj = $db->fetch_object($resql);
-			$listofid[]=$obj->rowid;
-			$i++;
-		}
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-
-	if (count($listofid))
-	{
-		// Removed orphelins records
-		print 'Some orphelins were found and restored to be parents so records are visible again: ';
-		print join(',',$listofid);
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task";
-		$sql.= " SET fk_task_parent = 0";
-		$sql.= " WHERE fk_task_parent NOT IN (".join(',',$listofid).")";
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$nb=$db->affected_rows($sql);
-
-			return $nb;
-		}
-		else
-		{
-			return -1;
-		}
-	}
-}
-
 
 /**
  * Return HTML table with list of projects and number of opened tasks

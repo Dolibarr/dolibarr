@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
@@ -99,7 +99,7 @@ class modCommande extends DolibarrModules
 
 		// Boites
 		$this->boxes = array();
-		$this->boxes[0][1] = "box_commandes.php";
+		$this->boxes = array(0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),2=>array('file'=>'box_graph_orders_permonth.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions
 		$this->rights = array();
@@ -194,7 +194,7 @@ class modCommande extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')
@@ -236,7 +236,7 @@ class modCommande extends DolibarrModules
 	 *      Remove from database constants, boxes and permissions from Dolibarr database.
 	 *		Data directories are not deleted
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+     *      @param      string	$options    Options when enabling module ('', 'newboxdefonly', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
     function remove($options='')

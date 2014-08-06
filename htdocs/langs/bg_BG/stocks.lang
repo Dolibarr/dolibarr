@@ -1,21 +1,15 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Склад карта
 Warehouse=Склад
+Warehouses=Складове
 NewWarehouse=Нов склад / склад
 WarehouseEdit=Промяна на склад
 MenuNewWarehouse=Нов склад
 WarehouseOpened=Склад отвори
 WarehouseClosed=Склад затворени
 WarehouseSource=Източник склад
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Целева склад
 ValidateSending=Изтриване на изпращане
 CancelSending=Отмени изпращане
@@ -32,18 +26,22 @@ ListOfStockMovements=Списък на движението на стокови�
 StocksArea=Запаси област
 Location=Място
 LocationSummary=Кратко наименование място
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Общ брой продукти
 LastMovement=Последно движение
 LastMovements=Последно движения
 Units=Единици
 Unit=Единица
 StockCorrection=Точен състав
+# StockTransfer=Stock transfer
 StockMovement=Прехвърляне
 StockMovements=Борсова трансфери
+# LabelMovement=Movement label
 NumberOfUnit=Брой единици
 UnitPurchaseValue=Единичната покупна цена
 TotalStock=Общо в склад
 StockTooLow=Наличност твърде ниска
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Стойност
 PMPValue=Среднопретеглена цена
 PMPValueShort=WAP
@@ -59,6 +57,7 @@ DeStockOnShipment=Намаляване реалните запаси за про
 ReStockOnBill=Увеличаване на реалните запаси на доставчици фактури / кредитни известия за валидиране
 ReStockOnValidateOrder=Увеличаване на реалните запаси на доставчиците поръчки апробиране
 ReStockOnDispatchOrder=Увеличаване на реалните запаси на ръководство за експедиция в складове, след доставчика за получаване на
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Поръчка все още не е или не повече статут, който позволява изпращането на продукти на склад складове.
 StockDiffPhysicTeoric=Причина за разликата наличност физически и теоретични
 NoPredefinedProductToDispatch=Няма предварително определени продукти за този обект. Така че не се изисква експедиция в състав.
@@ -67,7 +66,6 @@ StockLimitShort=Граница
 StockLimit=Наличност лимит за сигнали
 PhysicalStock=Материален запас
 RealStock=Реал наличност
-TheoreticalStock=Therocial наличност
 VirtualStock=Virtual наличност
 MininumStock=Минимални запаси
 StockUp=Запасявам
@@ -90,5 +88,25 @@ PersonalStock=Лични %s борси
 ThisWarehouseIsPersonalStock=Този склад представлява личен състав на %s %s
 SelectWarehouseForStockDecrease=Изберете склад, да се използва за намаляване на склад
 SelectWarehouseForStockIncrease=Изберете склад, да се използва за увеличение на склад
+# NoStockAction=No stock action
 LastWaitingSupplierOrders=Поръчки чакат за приеми
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:35:30).
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

@@ -1,40 +1,30 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-UserCard=بطاقة مستخدم
-ContactCard=بطاقة الاتصال
-GroupCard=مجموعة البطاقات
+# Dolibarr language file - Source file is en_US - users
+UserCard=کارت کاربر
+ContactCard=کارت دفتر تلفن
+GroupCard=کارت گروه
 NoContactCard=أي بطاقة اتصالات بين
 Permission=إذن
-Permissions=أذونات
-EditPassword=تعديل كلمة السر
-SendNewPassword=تجديد وإرسال كلمة السر
-ReinitPassword=تجديد كلمة المرور
-PasswordChangedTo=تغيير كلمة السر : ٪ ق
-SubjectNewPassword=كلمة المرور الجديدة لDolibarr
-AvailableRights=تتوفر أذونات
-OwnedRights=المملوكة الاذونات
-GroupRights=مجموعة الاذونات
-UserRights=أذونات المستخدم
-UserGUISetup=مستخدم عرض الإعداد
-DisableUser=يعطل
-DisableAUser=تعطيل المستخدم
-DeleteUser=حذف
-DeleteAUser=حذف المستخدم
-DisableGroup=يعطل
-DisableAGroup=تعطيل مجموعة
-EnableAUser=وتمكن المستخدم
-EnableAGroup=وتمكن فريق
-DeleteGroup=حذف
-DeleteAGroup=حذف مجموعة
+Permissions=مجوزها
+EditPassword=ویرایش گذرواژه
+SendNewPassword=دوباره سازی و فرستادن گذرواژه
+ReinitPassword=دوباره سازی گذرواژه
+PasswordChangedTo=گذرواژه تغییر کرد به: %s
+SubjectNewPassword=گذرواژه جدید شما برای Dolibarr
+AvailableRights=مجوزهای اجازه داده شده
+OwnedRights=مالک مجوزها
+GroupRights=مجوزهای گروه
+UserRights=مجوزهای کاربر
+UserGUISetup=پیکربندی نمایش کاربر
+DisableUser=ناپویا کردن
+DisableAUser=ناپویا کردن یک کاربر
+DeleteUser=پاک کردن
+DeleteAUser=پاک کردن یک کاربر
+DisableGroup=ناپویا کردن
+DisableAGroup=ناپویا کردن یک گروه
+EnableAUser=پویا کردن یک کاربر
+EnableAGroup=پویا کردن یک گروه
+DeleteGroup=پاک کردن
+DeleteAGroup=پاک کردن یک گروه
 ConfirmDisableUser=هل أنت متأكد من أنك تريد تعطيل مستخدم <b>٪ ق؟</b>
 ConfirmDisableGroup=هل أنت متأكد من أنك تريد تعطيل فريق <b>٪ ق؟</b>
 ConfirmDeleteUser=هل أنت متأكد من أنك تريد حذف مستخدم <b>٪ ق؟</b>
@@ -43,100 +33,88 @@ ConfirmEnableUser=هل تريد بالتأكيد لتمكين المستخدم <
 ConfirmEnableGroup=هل تريد بالتأكيد لتمكين فريق <b>٪ ق؟</b>
 ConfirmReinitPassword=هل أنت متأكد من أن تولد كلمة سر جديدة للمستخدم <b>٪ ق؟</b>
 ConfirmSendNewPassword=هل تريد بالتأكيد لتوليد وإرسال كلمة مرور جديدة للمستخدم <b>٪ ق؟</b>
-NewUser=مستخدم جديد
-CreateUser=إنشاء مستخدم
-SearchAGroup=فريق البحث
-SearchAUser=بحث المستخدم
+NewUser=کاربر تازه
+CreateUser=ساخت کاربر
+SearchAGroup=جستجوی یک گروه
+SearchAUser=جستجوی یک کاربر
 LoginNotDefined=ادخل ليست محددة.
 NameNotDefined=اسم غير محدد.
-ListOfUsers=قائمة المستخدمين
-Administrator=المدير العام
-SuperAdministrator=مدير السوبر
-SuperAdministratorDesc=مدير كل الحقوق
-DefaultRights=الافتراضي أذونات
+ListOfUsers=لیست کاربران
+Administrator=Administrator
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=administrator  همگانی
+AdministratorDesc=نهاد مدیر
+DefaultRights=مجوزهای پیش پندار
 DefaultRightsDesc=التقصير هنا تحديد الاذونات التي تمنح تلقائيا للمستخدم خلق جديد.
-DolibarrUsers=Dolibarr المستخدمين
-ListOfGroups=قائمة المجموعات
-NewGroup=مجموعة جديدة
-CreateGroup=إنشاء مجموعة
-RemoveFromGroup=إزالة من المجموعة
+DolibarrUsers=Dolibarr کاربران
+LastName=نام
+FirstName=نام اول
+ListOfGroups=لیست گروهها
+NewGroup=گروه تازه
+CreateGroup=ساخت گروه
+RemoveFromGroup=پاک کردن از گروه
 PasswordChangedAndSentTo=تم تغيير كلمة المرور وترسل إلى <b>٪ ق.</b>
 PasswordChangeRequestSent=طلب تغيير كلمة السر لإرسالها إلى <b>٪ ق ٪ ق.</b>
-MenuUsersAndGroups=مجموعات المستخدمين
+MenuUsersAndGroups=کاربران و گروهها
 LastGroupsCreated=ق الماضي خلق مجموعات ٪
 LastUsersCreated=آخر مستخدمين خلق ق ٪
-ShowGroup=وتبين لفريق
-ShowUser=وتظهر للمستخدم
+ShowGroup=نمایش گروه
+ShowUser=نمایش کاربر
 NonAffectedUsers=غير المتأثرة المستخدمين
 UserModified=المعدل المستخدم بنجاح
 GroupModified=تعديل المجموعة بنجاح
-PhotoFile=ملف الصور
+PhotoFile=فایل نگاره
 UserWithDolibarrAccess=مع وصول المستخدمين Dolibarr
 ListOfUsersInGroup=قائمة المستخدمين في هذه المجموعة
 ListOfGroupsForUser=قائمة الجماعات لهذا المستخدم
 UsersToAdd=للمستخدمين إضافة إلى هذه المجموعة
 GroupsToAdd=إضافة إلى مجموعات لهذا المستخدم
-NoLogin=لم ادخل
+NoLogin=وارد نشده اید
 LinkToCompanyContact=ربط طرف ثالث / اتصالات
 LinkedToDolibarrMember=وصلة عضو
 LinkedToDolibarrUser=وصلة مستخدم Dolibarr
 LinkedToDolibarrThirdParty=Dolibarr الارتباط لطرف ثالث
-CreateDolibarrLogin=انشاء مستخدم
+CreateDolibarrLogin=ساختن یک کاربر
 CreateDolibarrThirdParty=إيجاد طرف ثالث
 LoginAccountDisable=حساب والمعوقين ، ووضع جديد ادخل الى تنشيطها.
 LoginAccountDisableInDolibarr=في حساب المعاقين Dolibarr.
 LoginAccountDisableInLdap=الحساب في مجال المعوقين.
 UsePersonalValue=استخدام الشخصي قيمة
 GuiLanguage=لغة الواجهة
-InternalUser=المستخدم الداخلي
-MyInformations=بي البيانات
+InternalUser=کاربر داخلی
+MyInformations=دیتای من
 ExportDataset_user_1=Dolibarr مستخدمي وممتلكاتهم
 DomainUser=النطاق المستخدم ق ٪
 Reactivate=تنشيط
 CreateInternalUserDesc=هذا الشكل يتيح لك يخلق أي مستخدم الداخلي لتسجيل شركة أو مؤسسة. ليخلق خارجي المستخدم (العميل ، المورد ،...)، استخدام زر 'إنشاء مستخدم Dolibarr' من طرف ثالث بطاقة اتصال.
 InternalExternalDesc=<b>داخلي</b> المستخدم المستخدم الذي يشكل جزءا من الشركة / المؤسسة. <br> مستخدم <b>خارجي</b> هو عميل أو مورد أو غيرها. <br><br> وفي كلتا الحالتين ، ويحدد الحقوق على أذونات Dolibarr ، كما يمكن للمستخدم خارجي له قائمة من مدير المستخدم الداخلي (انظر الصفحة الرئيسية -- إعداد -- عرض)
+PermissionInheritedFromAGroup=منح إذن لأن الموروث من واحد من المستخدم.
+Inherited=موروث
+# UserWillBeInternalUser=Created user will be an internal user (because not linked to a particular third party)
+# UserWillBeExternalUser=Created user will be an external user (because linked to a particular third party)
 IdPhoneCaller=رقم تعريف الهاتف المتصل
 UserLogged=ق صلة مستخدم ٪
-NewUserCreated=مستخدم ٪ ق خلق
+UserLogoff=کاربر %s خارج شد
+NewUserCreated=کاربر %s ساخته شد
 NewUserPassword=لتغيير كلمة المرور ل ٪
 EventUserModified=مستخدم تعديل ق ٪
-UserDisabled=مستخدم ٪ ق المعوقين
-UserEnabled=مستخدم ٪ ق تفعيلها
-UserDeleted=ق إزالة المستخدم ٪
-NewGroupCreated=أنشأت مجموعة ق ٪
-GroupModified=ق تعديل المجموعة ٪
+UserDisabled=کاربر %s ناپویا شد
+UserEnabled=کاربر %s پویا شد.
+UserDeleted=کاربر %s پاک کشد
+NewGroupCreated=گروه %s ساخته شد
+GroupModified=تعديل المجموعة بنجاح
 GroupDeleted=فريق ازالة ق ٪
 ConfirmCreateContact=هل أنت متأكد من خلق Dolibarr حساب هذا الاتصال؟
 ConfirmCreateLogin=هل أنت متأكد من خلق Dolibarr حساب هذا؟
 ConfirmCreateThirdParty=هل أنت متأكد من خلق لهذا الطرف الثالث؟
 LoginToCreate=ادخل لخلق
 NameToCreate=اسم طرف ثالث لخلق
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
-// Reference language: en_US
-LastName=اسم
-FirstName=الاسم الأول
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:38:53).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-PermissionInheritedFromAGroup=منح إذن لأن الموروث من واحد من المستخدم.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-Inherited=موروث
-YourRole=الأدوار الخاص
+YourRole=roleهای شما
 YourQuotaOfUsersIsReached=يتم التوصل إلى حصة الخاص بك من المستخدمين النشطين!
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:57).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fa_IR
-AdministratorDesc=نهاد مدیر
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:32:46).
+# NbOfUsers=Nb of users
+# DontDowngradeSuperAdmin=Only a superadmin can downgrade a superadmin
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+OpenIDURL=URL OpenID
+# LoginUsingOpenID=Use OpenID to login

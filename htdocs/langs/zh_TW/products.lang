@@ -1,13 +1,4 @@
-/*
- * Language code: zh_TW
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
 ProductRef=產品編號
 ProductLabel=產品標簽
 ProductServiceCard=產品服務卡
@@ -53,12 +44,19 @@ Stock=庫存
 Stocks=庫存
 Movement=轉讓
 Movements=轉讓
+Sell=可否銷售
+Buy=可否採購
 OnSell=可銷售
+OnBuy=購買
 NotOnSell=不可銷售
 ProductStatusOnSell=可銷售
 ProductStatusNotOnSell=不可銷售
 ProductStatusOnSellShort=可銷售
 ProductStatusNotOnSellShort=不可銷售
+ProductStatusOnBuy=可採購
+ProductStatusNotOnBuy=不可採購
+ProductStatusOnBuyShort=可採購
+ProductStatusNotOnBuyShort=不可採購
 UpdatePrice=更新產品價格
 AppliedPricesFrom=適用時間
 SellingPrice=售價
@@ -78,8 +76,9 @@ ContractStatusToRun=阿mettre恩服務
 ContractNotRunning=該合同未運行
 ErrorProductAlreadyExists=一個產品的參考%s已經存在。
 ErrorProductBadRefOrLabel=錯誤的價值參考或標簽。
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=供應商
-SupplierRef=供應商代號: 
+SupplierRef=供應商代號:
 ShowProduct=顯示產品
 ShowService=顯示服務
 ProductsAndServicesArea=產品和服務領域
@@ -92,14 +91,12 @@ AddToOtherBills=添加到其他法案
 CorrectStock=正確的股票
 AddPhoto=添加照片
 ListOfStockMovements=庫存轉讓清單
-NoPhotoYet=沒有照片尚未
 BuyingPrice=買價
 SupplierCard=供應卡
 CommercialCard=商務卡
 AllWays=路徑找到您的產品庫存
 NoCat=你的產品是沒有任何類別
 PrimaryWay=小學路徑
-DeleteFromCat=從類別中刪除
 PriceRemoved=價格刪除
 BarCode=條碼
 BarcodeType=條碼類型
@@ -114,6 +111,9 @@ MultiPriceLevelsName=價格分類
 AssociatedProductsAbility=啟用子階產品功能
 AssociatedProducts=相關聯的產品
 AssociatedProductsNumber=此產品需要其他子產品(下階)的數量
+ParentProductsNumber=影響上階(母)產品的數量
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=編輯關聯性
 Translation=產品描述翻譯
 KeywordFilter=關鍵字過濾
@@ -123,6 +123,7 @@ AddDel=新增或刪除
 Quantity=數量
 NoMatchFound=沒有找到匹配
 ProductAssociationList=以下為下階子產品(服務)清單，及所需下階數量和庫存數量
+ProductParentList=此產品(服務)是用來組成以下產品(服務)的
 ErrorAssociationIsFatherOfThis=選定的產品之一，是家長與當前的產品
 DeleteProduct=刪除一個產品/服務
 ConfirmDeleteProduct=你確定要刪除這個產品/服務？
@@ -131,6 +132,8 @@ DeletePicture=刪除圖片
 ConfirmDeletePicture=你確定要刪除此圖片嗎？
 ExportDataset_produit_1=產品
 ExportDataset_service_1=服務
+ImportDataset_produit_1=產品
+ImportDataset_service_1=服務
 DeleteProductLine=刪除產品線
 ConfirmDeleteProductLine=你確定要刪除這個產品線？
 NoProductMatching=沒有任何產品/服務符合您的標準
@@ -139,12 +142,15 @@ NoStockForThisProduct=此產品無庫存
 NoStock=無庫存
 Restock=進貨
 ProductSpecial=特別
-QtyMin=最低採購數量
+# QtyMin=Minimum Qty
 PriceQty=這一數量價格
-PriceQtyMin=最低採購價格
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=沒有價格/數量確定了這個供應商/產品
 NoSupplierPriceDefinedForThisProduct=沒有供應商的價格/數量確定了該產品
 RecordedProducts=產品記錄
+# RecordedServices=Services recorded
 RecordedProductsAndServices=產品/服務記錄
 GenerateThumb=生成縮略圖
 ProductCanvasAbility=使用特殊的“畫布”添加物
@@ -158,33 +164,43 @@ CloneProduct=複製產品/服務
 ConfirmCloneProduct=你確定要複製一份 <b>%s</b> 產品/服務單嗎 ？
 CloneContentProduct=複製此產品/服務的所有資訊內容
 ClonePricesProduct=複製此產品/服務的價格資訊
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=該產品是用於
 NewRefForClone=新的產品/服務編號
 CustomerPrices=銷售價格
 SuppliersPrices=採購價格
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-Sell=可否銷售
-Buy=可否採購
-OnBuy=購買
-ProductStatusOnBuy=可採購
-ProductStatusNotOnBuy=不可採購
-ProductStatusOnBuyShort=可採購
-ProductStatusNotOnBuyShort=不可採購
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:40).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-ParentProductsNumber=影響上階(母)產品的數量
-ProductParentList=此產品(服務)是用來組成以下產品(服務)的
-ImportDataset_produit_1=產品
-ImportDataset_service_1=服務
 CustomCode=進出口報關海關代碼
 CountryOrigin=原產地
 HiddenIntoCombo=隱藏選擇列表
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:45).
 Nature=類型
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=數量
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

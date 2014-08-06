@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervention
 Interventions=Íhlutun
 InterventionCard=Intervention kort
@@ -15,6 +6,7 @@ NewIntervention=Nýrri aðferð
 AddIntervention=Bæta við íhlutun
 ListOfInterventions=Listi yfir inngrip
 EditIntervention=Breyta afskipti
+ActionsOnFicheInter=Aðgerðir á íhlutun
 LastInterventions=Last %s  inngrip
 AllInterventions=Öll inngrip
 CreateDraftIntervention=Búa til drög
@@ -31,22 +23,20 @@ ConfirmDeleteInterventionLine=Ertu viss um að þú viljir eyða þessari íhlut
 NameAndSignatureOfInternalContact=Nafn og undirritun íhlutun:
 NameAndSignatureOfExternalContact=Nafn og undirritun viðskiptavinar:
 DocumentModelStandard=Staðlað skjal líkan fyrir afskipti
-TypeContact_fichinter_internal_INTERREPFOLL=Fulltrúi eftirfarandi upp afskipti
-TypeContact_fichinter_internal_INTERVENING=Íhlutun
-TypeContact_fichinter_external_BILLING=Innheimta viðskiptavina samband
-TypeContact_fichinter_external_CUSTOMER=Eftir upp viðskiptavina samband
-ArcticNumRefModelDesc1=Generic tala líkan
-ArcticNumRefModelError=Ekki tókst að virkja
-PacificNumRefModelDesc1=Fara aftur numero með snið %s yymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
-PacificNumRefModelError=Íhlutun kort sem byrjar á $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-ActionsOnFicheInter=Aðgerðir á íhlutun
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
 ClassifyBilled=Flokka &quot;borgað&quot;
 StatusInterInvoiced=Billed
 RelatedInterventions=Tengdar inngrip
 ShowIntervention=Sýna afskipti
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:25).
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Fulltrúi eftirfarandi upp afskipti
+TypeContact_fichinter_internal_INTERVENING=Íhlutun
+TypeContact_fichinter_external_BILLING=Innheimta viðskiptavina samband
+TypeContact_fichinter_external_CUSTOMER=Eftir upp viðskiptavina samband
+# Modele numérotation
+ArcticNumRefModelDesc1=Generic tala líkan
+ArcticNumRefModelError=Ekki tókst að virkja
+PacificNumRefModelDesc1=Fara aftur numero með snið %s yymm-NNNN þar YY er ári, mm er mánuður og NNNN er röð án brot og ekki aftur snúið til 0
+PacificNumRefModelError=Íhlutun kort sem byrjar á $ syymm er til nú þegar og er ekki með þessari tegund af röð. Fjarlægja hana eða gefa henni nýtt heiti þess að virkja þessa einingu.
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

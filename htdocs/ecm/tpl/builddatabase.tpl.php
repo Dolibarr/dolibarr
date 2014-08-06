@@ -13,28 +13,39 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
+ * 
+ * Output javascript for interactions code of ecm module
  */
-
-$openeddir='/';
-
-// TODO: just use ajaxdirtree.php for load database after ajax refresh and not scan directories
-// too slow every page loaded !
-
 ?>
 
-<!-- BEGIN PHP TEMPLATE FOR JQUERY -->
+<!-- BEGIN PHP TEMPLATE ecm/tpl/builddatabase.tpl.php -->
+<!-- Doc of fileTree plugin at http://www.abeautifulsite.net/blog/2008/03/jquery-file-tree/ -->
+
 <script type="text/javascript">
-$(document).ready( function() {
-	$('#filetree').fileTree({ root: '<?php print dol_escape_js($openeddir); ?>',
-			// Called if we click on a file (not a dir)
-			script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
-			folderEvent: 'click',
-			multiFolder: false  },
-			// Called if we click on a file (not a dir)
+
+<?php
+$openeddir='/';
+?>
+
+$(document).ready(function() {
+
+	$('#filetree').fileTree({ 
+		root: '<?php print dol_escape_js($openeddir); ?>',
+		// Ajax called if we click to expand a dir (not a file). Parameter of dir is provided as a POST parameter.
+		script: '<?php echo DOL_URL_ROOT.'/core/ajax/ajaxdirtree.php?modulepart=ecm&openeddir='.urlencode($openeddir); ?>',
+		folderEvent: 'click',	// 'dblclick'
+		multiFolder: false  },
+		// Called if we click on a file (not a dir)
 		function(file) {
 			$("#mesg").hide();
 			loadandshowpreview(file,0);
+		},
+		// Called if we click on a dir (not a file)
+		function(elem) {
+			id=elem.attr('id').substr(12);
+			jQuery("#formuserfile_section_dir").val(elem.attr('rel'));
+   			jQuery("#formuserfile_section_id").val(id);
+			jQuery('#formuserfile').show();
 		}
 	);
 
@@ -76,4 +87,4 @@ function loadandshowpreview(filedirname,section)
 }
 
 </script>
-<!-- END PHP TEMPLATE FOR JQUERY -->
+<!-- END PHP TEMPLATE ecm/tpl/builddatabase.tpl.php -->

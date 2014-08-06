@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <forian.henry@open-cocnept.pro
+ * Copyright (C) 2013      Florian Henry <forian.henry@open-cocnept.pro>
+ * Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- *  \file       cron/public/cron/cron_run_jobs.php
+ *  \file       htdocs/public/cron/cron_run_jobs.php
  *  \ingroup    cron
  *  \brief      Execute pendings jobs
  */
@@ -40,12 +41,24 @@ if (! $res) die("Include of master.inc.php fails");
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
 
-
 global $langs, $conf;
+
+// Language Management
+$langs->load("admin");
+$langs->load("cron");
+
+
+
+
+
+/*
+ * View
+ */
 
 // Check the key, avoid that a stranger starts cron
 $key = GETPOST('securitykey','alpha');
-if (empty($key)) {
+if (empty($key))
+{
 	echo 'securitykey is require';
 	exit;
 }
@@ -56,79 +69,101 @@ if($key != $conf->global->CRON_KEY)
 }
 // Check the key, avoid that a stranger starts cron
 $userlogin = GETPOST('userlogin','alpha');
-if (empty($userlogin)) {
+if (empty($userlogin))
+{
 	echo 'userlogin is require';
 	exit;
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user=new User($db);
 $result=$user->fetch('',$userlogin);
-if ($result<0) {
+if ($result < 0)
+{
 	echo "User Error:".$user->error;
-	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
+	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_WARNING);
 	exit;
-}else {
-	if (empty($user->id)) {
+}
+else
+{
+	if (empty($user->id))
+	{
 		echo " User user login:".$userlogin." do not exists";
-		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
+		dol_syslog(" User user login:".$userlogin." do not exists", LOG_WARNING);
 		exit;
 	}
 }
-$id = GETPOST('id','int');
+$id = GETPOST('id','alpha');	// We accept non numeric id. We will filter later.
 
-// Language Management
-$langs->load("admin");
-$langs->load("cron@cron");
 
 // create a jobs object
 $object = new Cronjob($db);
 
 $filter=array();
-if (empty($id)) {
+if (! empty($id))
+{
+	if (! is_numeric($id))
+	{
+		echo "Error: Bad value for parameter job id";
+		dol_syslog("cron_run_jobs.php Bad value for parameter job id", LOG_WARNING);
+		exit;
+	}
 	$filter=array();
 	$filter['t.rowid']=$id;
 }
 
 $result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
-if ($result<0) {
-	echo "Error:".$cronjob->error;
-	dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+if ($result<0)
+{
+	echo "Error: ".$cronjob->error;
+	dol_syslog("cron_run_jobs.php fetch Error".$cronjob->error, LOG_WARNING);
 	exit;
 }
 
 // current date
 $now=dol_now();
+$nbofjobs=count($object->lines);
+$nbofjobslaunchedok=0;
+$nbofjobslaunchedko=0;
 
-if(is_array($object->lines) && (count($object->lines)>0)){
+if (is_array($object->lines) && (count($object->lines)>0))
+{
 	// Loop over job
-	foreach($object->lines as $line){
-
-		dol_syslog("cron_run_jobs.php:: fetch cronjobid:".$line->id, LOG_ERR);
+	foreach($object->lines as $line)
+	{
+		dol_syslog("cron_run_jobs.php fetch cronjobid: ".$line->id, LOG_WARNING);
 
 		//If date_next_jobs is less of current dat, execute the program, and store the execution time of the next execution in database
 		if ((($line->datenextrun <= $now) && $line->dateend < $now)
-				|| ((empty($line->datenextrun)) && (empty($line->dateend)))){
+				|| ((empty($line->datenextrun)) && (empty($line->dateend))))
+		{
 
-			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'), LOG_ERR);
+			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'));
 
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
-			if ($result<0) {
+			if ($result<0)
+			{
 				echo "Error:".$cronjob->error;
 				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
 				exit;
 			}
-			// execute methode
+			// Execut job
 			$result=$cronjob->run_jobs($userlogin);
-			if ($result<0) {
+			if ($result<0)
+			{
 				echo "Error:".$cronjob->error;
 				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
+				$nbofjobslaunchedko++;
+			}
+			else
+			{
+				$nbofjobslaunchedok++;
 			}
 
-				// we re-program the next execution and stores the last execution time for this job
+			// We re-program the next execution and stores the last execution time for this job
 			$result=$cronjob->reprogram_jobs($userlogin);
-			if ($result<0) {
+			if ($result<0)
+			{
 				echo "Error:".$cronjob->error;
 				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
 				exit;
@@ -136,7 +171,12 @@ if(is_array($object->lines) && (count($object->lines)>0)){
 
 		}
 	}
-	echo "OK";
-} else {
-	echo "No Jobs to run";
+	echo "Result: ".($nbofjobs)." jobs - ".($nbofjobslaunchedok+$nbofjobslaunchedko)." launched = ".$nbofjobslaunchedok." OK + ".$nbofjobslaunchedko." KO";
 }
+else
+{
+	echo "No active jobs found";
+}
+
+$db->close();
+?>

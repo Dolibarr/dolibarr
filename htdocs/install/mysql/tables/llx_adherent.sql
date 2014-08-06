@@ -45,6 +45,7 @@ create table llx_adherent
   state_id         integer,
   country          integer,
   email            varchar(255),
+  skype            varchar(255),
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),

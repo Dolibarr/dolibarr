@@ -1,48 +1,42 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-Suppliers=Tarnijad
-Supplier=Tarnija
-AddSupplier=Lisa tarnija
-SupplierRemoved=Tarnija välja
-SuppliersInvoice=Tarnijate arve
-NewSupplier=New tarnija
+# Dolibarr language file - Source file is en_US - suppliers
+Suppliers=Hankijad
+Supplier=Hankija
+AddSupplier=Lisa hankija
+SupplierRemoved=Hankija kustutatud
+SuppliersInvoice=Ostuarved
+NewSupplier=Uus hankija
 History=Ajalugu
-ListOfSuppliers=Tarnijate
-ShowSupplier=Näita tarnija
-OrderDate=Selleks kuupäevaks
-BuyingPrice=Ostes hind
-BuyingPriceMin=Minimaalne kokkuostuhind hind
-BuyingPriceMinShort=Min ostu hind
-AddSupplierPrice=Lisa tarnija hind
-ChangeSupplierPrice=Tarnijat vahetada hind
-ErrorQtyTooLowForThisSupplier=Kogus liiga madalad selle tarnija või hindu ei määrata selle toote selle tarnija
-ErrorSupplierCountryIsNotDefined=Riik selle tarnija ei ole määratletud. Paranda see esimene.
-ProductHasAlreadyReferenceInThisSupplier=See toode on juba viide selle tarnija
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=See viide tarnija on juba seostatud viide: %s
-NoRecordedSuppliers=Ei tarnijatele kajastatakse
-SupplierPayment=Pakkuja makse
-SuppliersArea=Tarnijad ala
-RefSupplierShort=Ref. tarnija
+ListOfSuppliers=Hankijate nimekiri
+ShowSupplier=Kuva hankija
+OrderDate=Tellimuse kuupäev
+BuyingPrice=Ostuhind
+BuyingPriceMin=Minimaalne ostuhind
+BuyingPriceMinShort=Min ostuhind
+TotalBuyingPriceMin=Alatoodete ostuhindade kogu summa
+SomeSubProductHaveNoPrices=Mõnedel alatoodetel pole määratletud hinda
+AddSupplierPrice=Lisa hankija hind
+ChangeSupplierPrice=Muuda hankija hinda
+ErrorQtyTooLowForThisSupplier=Selle hankija jaoks on kogus liiga madal või ei ole selle hankija jaoks sellele tootele hinda määratletud
+ErrorSupplierCountryIsNotDefined=Selle hankija riiki ei ole määratletud, paranda see esmalt
+ProductHasAlreadyReferenceInThisSupplier=Selle toote jaoks on sellel hankijal juba viide olemas
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=See hankija viide on juba seotud viitega: %s
+NoRecordedSuppliers=Ühtki hankijat pole salvestatud
+SupplierPayment=Hankija makse
+SuppliersArea=Hankijate ala
+RefSupplierShort=Hankija viide
 Availability=Kättesaadavus
-ExportDataset_fournisseur_1=Tarnija arvete nimekirja ja arve oma read
-ExportDataset_fournisseur_2=Tarnija arved ja maksed
-ApproveThisOrder=Kinnitab seda, et
-ConfirmApproveThisOrder=Oled sa kindel, et soovid kinnitab, et <b>%s?</b>
-DenyingThisOrder=Eitada seda, et
-ConfirmDenyingThisOrder=Oled sa kindel, et soovite eitada, et <b>%s?</b>
-ConfirmCancelThisOrder=Oled sa kindel, et soovite tühistada selle tellimuse <b>%s?</b>
-AddCustomerOrder=Loo kliendile, et
-AddCustomerInvoice=Loo kliendile arve
-AddSupplierOrder=Loo tarnija et
-AddSupplierInvoice=Loo tarnija arve
-ListOfSupplierProductForSupplier=Toodete nimekirja ja hinnad tarnija <b>%s</b>
-NoneOrBatchFileNeverRan=Puudub või partii <b>%s</b> ole jooksis hiljuti
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:29:29).
+ExportDataset_fournisseur_1=Ostuarvete nimekiri ja arvete read
+ExportDataset_fournisseur_2=Ostuarved ja maksed
+ExportDataset_fournisseur_3=Ostutellimused ja tellimuste read
+ApproveThisOrder=KIida see tellimuse heaks
+ConfirmApproveThisOrder=Kas oled täiesti kindel, et soovid heaks kiita tellimuse <b>%s</b> ?
+DenyingThisOrder=Lükka tellimus tagasi
+ConfirmDenyingThisOrder=Kas oled täiesti kindel, et soovid tagasi lükata tellimuse <b>%s</b> ?
+ConfirmCancelThisOrder=Kas oled täiesti kindel, et soovid tühistada telllimuse <b>%s</b> ?
+AddCustomerOrder=Loo müügitellimus
+AddCustomerInvoice=Loo müügiarve
+AddSupplierOrder=Loo ostutellimus
+AddSupplierInvoice=Loo ostuarve
+ListOfSupplierProductForSupplier=Hankija <b>%s</b> toodete ja hindade nimekiri
+NoneOrBatchFileNeverRan=Puudub või partiid <b>%s</b> pole hiljuti käivitatud
+SentToSuppliers=Saadetud hankijatele

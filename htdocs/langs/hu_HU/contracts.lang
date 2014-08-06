@@ -1,5 +1,4 @@
-# Dolibarr language file - hu_HU - contracts
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Szerzősdések terólet
 ListOfContracts=Szerződések listája
 LastContracts=Utolsó %s módosított szerződés
@@ -39,6 +38,7 @@ ConfirmCloseService=Biztos le akarja zárni a <b>%s</b> dátummal ellátott szol
 ValidateAContract=Szerződés hitelesítése
 ActivateService=Aktív szolgáltatás
 ConfirmActivateService=Biztos aktiválni akarja a <b>%s</b> dátummal ellátott szolgáltatást?
+# RefContract=Contract reference
 DateContract=Szerződés dátuma
 DateServiceActivate=Szolgáltatás aktiválásának dátuma
 DateServiceUnactivate=Szolgáltatás deaktiválásának dátuma
@@ -53,7 +53,7 @@ ListOfRunningContractsLines=Futó szerződések listája
 ListOfRunningServices=Futó szolgáltatások listája
 NotActivatedServices=Inaktív szolgáltatások (a hitelesített szerződések között)
 BoardNotActivatedServices=Hitelesített szerződésekhez tartozó aktiválandó szolgáltatások
-LastContracts=Utulsó % szerződés
+LastContracts=Utolsó %s módosított szerződés
 LastActivatedServices=Utolós %s aktivált szolgáltatás
 LastModifiedServices=Utolsó %s módosított szolgáltatás
 EditServiceLine=Szolgáltatás sor szerkesztése
@@ -84,16 +84,16 @@ ConfirmMoveToAnotherContractQuestion=Melyik létező szerződéshez (ugyan azon 
 PaymentRenewContractId=Szerződés sor megújítása (%s)
 ExpiredSince=Lejárati dátum
 RelatedContracts=Csatlakozó szerződések
+NoExpiredServices=Nincs lejárt aktív szolgáltatások
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Értékesítési képviselő a szerződés aláírásakor
 TypeContact_contrat_internal_SALESREPFOLL=Értékesítési képviselő a szerződés követésekor
 TypeContact_contrat_external_BILLING=Számlázandó ügyfél
 TypeContact_contrat_external_CUSTOMER=Ügyfél kapcsolat tartó
 TypeContact_contrat_external_SALESREPSIGN=A szerződést aláíró ügyfél
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-NoExpiredServices=Nincs lejárt aktív szolgáltatások
 Error_CONTRACT_ADDON_NotDefined=Állandó CONTRACT_ADDON nincs definiálva
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:40).

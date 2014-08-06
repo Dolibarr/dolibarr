@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +47,12 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$result=dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM",$_POST["email_from"],'chaine',0,'',$conf->entity);
   	if ($result >= 0)
-  	{
-  		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-  	}
-  	else
-  	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    {
+        setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -125,8 +126,6 @@ foreach($listofnotifiedevents as $notifiedevent)
     print '</tr>';
 }
 print '</table>';
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

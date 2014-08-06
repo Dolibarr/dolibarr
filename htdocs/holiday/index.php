@@ -274,7 +274,7 @@ print '</td>';
 // DATE CREATE
 print '<td class="liste_titre" colspan="1" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.$month_create.'">';
-$formother->select_year($year_create,'year_create',1, $min_year, $max_year);
+$formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
 // UTILISATEUR
@@ -326,7 +326,7 @@ print '</td>';
 
 // ACTION
 print '<td align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" alt="'.$langs->trans('Search').'">';
 print '</td>';
 
 print "</tr>\n";

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - sms
-CHARSET=UTF-8
 Sms=Sms
 SmsSetup=Sms kurulums
 SmsDesc=Bu sayfa, SMS özelliklerinin genel seçeneklerini tanımlamanıza olanak tanır
@@ -29,7 +28,7 @@ TestSms=Sms Testi
 ValidSms=Sms Doğrula
 ApproveSms=Sms onayla
 SmsStatusDraft=Taslak
-SmsStatusValidated=Doğrulandı
+SmsStatusValidated=Doğrulanmış
 SmsStatusApproved=Onaylı
 SmsStatusSent=Gönderildi
 SmsStatusSentPartialy=Kısmen gönderildi

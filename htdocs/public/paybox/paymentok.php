@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,12 @@
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+
+// For MultiCompany module.
+// Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
+// TODO This should be useless. Because entity must be retreive from object ref and not from url.
+$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
@@ -94,26 +100,26 @@ dol_syslog("Call newpaymentok with token=".$token." paymentType=".$paymentType."
 */
 
 // Send an email
-if (! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL) && preg_match('/MEM=/',$fulltag))
+if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 {
-	$sendto=$conf->global->MEMBER_PAYONLINE_SENDEMAIL;
+	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$mailfile = new CMailFile(
-		'New subscription payed',
+		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentReceived"),
 		$sendto,
 		$from,
-		'New subscription payed '.$fulltag
+		$langs->transnoentitiesnoconv("NewPayboxPaymentReceived")."\n".$fulltag
 		);
 
 	$result=$mailfile->sendfile();
 	if ($result)
 	{
-		dol_syslog("EMail sent to ".$sendto);
+		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_paybox');
 	}
 	else
 	{
-		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR);
+		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_paybox');
 	}
 }
 

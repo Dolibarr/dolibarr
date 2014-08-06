@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - contracts
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Contracts area
 ListOfContracts=List of contracts
 LastContracts=Last %s modified contracts
@@ -86,6 +85,11 @@ PaymentRenewContractId=Renew contract line (number %s)
 ExpiredSince=Expiration date
 RelatedContracts=Related contracts
 NoExpiredServices=No expired active services
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Sales representative signing contract
 TypeContact_contrat_internal_SALESREPFOLL=Sales representative following-up contract

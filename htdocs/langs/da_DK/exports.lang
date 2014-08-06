@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Eksport område
 ImportArea=Import område
 NewExport=Nye eksportmarkeder
@@ -18,20 +6,33 @@ NewImport=Nye importcertifikater
 ExportableDatas=Exportable datasæt
 ImportableDatas=Indføres datasæt
 SelectExportDataSet=Vælg datasæt, du vil eksportere ...
+SelectImportDataSet=Vælg datasæt, du vil importere ...
 SelectExportFields=Vælg felter, du ønsker at eksportere, eller vælg en foruddefineret eksport profil
+SelectImportFields=Vælg felter, du vil importere, eller vælg en foruddefineret import profil
+NotImportedFields=Områder kildefil ikke importeret
 SaveExportModel=Gem denne eksport profil hvis du planlægger at genbruge det senere ...
+SaveImportModel=Gem denne import profil hvis du planlægger at genbruge det senere ...
 ExportModelName=Eksporter Profilnavn
 ExportModelSaved=Eksporter profil gemt under <b>navnet %s.</b>
 ExportableFields=Exportable felter
 ExportedFields=Eksporteres felter
+ImportModelName=Import Profilnavn
+ImportModelSaved=Import profil gemt under <b>navnet %s.</b>
+ImportableFields=Indføres felter
+ImportedFields=Importerede felter
 DatasetToExport=Datasæt til eksport
+DatasetToImport=Datasæt til at importere
+NoDiscardedFields=Ingen felter i source fil kasseres
 Dataset=Datasæt
 ChooseFieldsOrdersAndTitle=Vælg felter ordre ...
 FieldsOrder=Områder for
 FieldsTitle=Felter titel
+FieldOrder=Field For
+FieldTitle=Field titel
 ChooseExportFormat=Vælg eksportformat
 NowClickToGenerateToBuildExportFile=Nu skal du klikke på "Generer" at opbygge eksport fil ...
 AvailableFormats=Formater disponibles
+LibraryShort=Bibliotek
 LibraryUsed=Librairie
 LibraryVersion=Version
 Step=Trin
@@ -45,21 +46,6 @@ FormatedExportDesc3=Når data for at eksportere er valgt, kan du definere output
 Sheet=Ark
 NoImportableData=Nr. indføres data (ingen modul med definitioner at tillade data import)
 FileSuccessfullyBuilt=Eksporter fil genereret
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-SelectImportDataSet=Vælg datasæt, du vil importere ...
-SelectImportFields=Vælg felter, du vil importere, eller vælg en foruddefineret import profil
-SaveImportModel=Gem denne import profil hvis du planlægger at genbruge det senere ...
-ImportModelName=Import Profilnavn
-ImportModelSaved=Import profil gemt under <b>navnet %s.</b>
-ImportableFields=Indføres felter
-ImportedFields=Importerede felter
-DatasetToImport=Datasæt til at importere
-LibraryShort=Bibliotek
 SQLUsedForExport=SQL Anmodning bruges til at bygge eksport-fil
 LineId=Id for linje
 LineDescription=Beskrivelse af linje
@@ -73,21 +59,12 @@ TypeOfLineServiceOrProduct=Strækningstype (0= produkt, 1= tjeneste)
 FileWithDataToImport=Fil med data til at importere
 FileToImport=Kildefilen til at importere
 FileMustHaveOneOfFollowingFormat=Fil til at importere, skal have en af følgende format
-ChooseFileToImport=Vælg fil for at importere og klik derefter på picto %s ...
-FieldsInSourceFile=Områder i kildefilen
-FieldsInTargetDatabase=Målret felter i Dolibarr database
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-NotImportedFields=Områder kildefil ikke importeret
-NoDiscardedFields=Ingen felter i source fil kasseres
-FieldOrder=Field For
-FieldTitle=Field titel
 DownloadEmptyExample=Download eksempel på tom kildefil
 ChooseFormatOfFileToImport=Vælg fil-format til brug som import filformat ved at klikke på picto %s for at vælge det ...
+ChooseFileToImport=Vælg fil for at importere og klik derefter på picto %s ...
 SourceFileFormat=Kilde filformat
+FieldsInSourceFile=Områder i kildefilen
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Field
 NoFields=Ingen felter
 MoveField=Flyt feltet kolonne nummer %s
@@ -118,25 +95,36 @@ TooMuchErrors=Der er stadig <b>%s</b> anden kilde linjer med fejl, men produktio
 TooMuchWarnings=Der er stadig <b>%s</b> andre kildelinjer med advarsler, men produktionen har været begrænset.
 EmptyLine=Tom linje (vil blive kasseret)
 CorrectErrorBeforeRunningImport=Du skal først korrigere alle fejl, før du kører endelige import.
+FileWasImported=Fil blev indført med nummer <b>%s.</b>
 YouCanUseImportIdToFindRecord=Du kan finde alle importerede poster i din database ved at filtrere på feltet <b>import_key = '%s'.</b>
 NbOfLinesOK=Antallet af linjer uden fejl og ingen advarsler: <b>%s.</b>
 NbOfLinesImported=Antallet af linjer med held importeret: <b>%s.</b>
 DataComeFromNoWhere=Værdi at indsætte kommer fra ingenting i kildefilen.
 DataComeFromFileFieldNb=Værdi at indsætte kommer fra feltnummer <b>%s</b> i kildefilen.
 DataComeFromIdFoundFromRef=Værdi, der kommer fra feltnummer <b>%s</b> af kildefilen vil blive brugt til at finde id af overordnede objekt til brug (Altså den objet <b>%s,</b> der har ref. Fra kildefilen skal findes i Dolibarr).
+DataComeFromIdFoundFromCodeId=Kode, der kommer fra feltnummer <b>%s</b> af kildefilen vil blive brugt til at finde id af overordnede objekt at bruge (Så koden fra kildefilen, skal findes i dictionnary <b>%s).</b> Bemærk, at hvis du kender id, kan du også bruge det i kildefil i stedet for kode. Import skal arbejde i begge tilfælde.
 DataIsInsertedInto=Data kommer fra kildefilen vil blive indsat i følgende felt:
 DataIDSourceIsInsertedInto=Den id af overordnede objekt findes ved brug af data i kildefilen, vil blive indsat i følgende felt:
+DataCodeIDSourceIsInsertedInto=Den id stamlinjen fundet fra kode, vil blive indsat i følgende felt:
 SourceRequired=Data værdi er obligatorisk
 SourceExample=Eksempel på mulige dataværdi
-CSVFormatDesc=<b>Semikolonseparerede Værdi</b> filformat (. Csv). <br> Dette er en tekstfil format, hvor felterne er adskilt af separator [%s]. Hvis separator er fundet inde i et felt indhold, er området afrundet med runde karakter [%s]. Escape character at flygte runde karakter er [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:31).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-FileWasImported=Fil blev indført med nummer <b>%s.</b>
-DataComeFromIdFoundFromCodeId=Kode, der kommer fra feltnummer <b>%s</b> af kildefilen vil blive brugt til at finde id af overordnede objekt at bruge (Så koden fra kildefilen, skal findes i dictionnary <b>%s).</b> Bemærk, at hvis du kender id, kan du også bruge det i kildefil i stedet for kode. Import skal arbejde i begge tilfælde.
-DataCodeIDSourceIsInsertedInto=Den id stamlinjen fundet fra kode, vil blive indsat i følgende felt:
 ExampleAnyRefFoundIntoElement=Enhver ref fundet for element <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=Enhver kode (eller id) fundet i dictionnary <b>%s</b>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:10).
+CSVFormatDesc=<b>Semikolonseparerede Værdi</b> filformat (. Csv). <br> Dette er en tekstfil format, hvor felterne er adskilt af separator [%s]. Hvis separator er fundet inde i et felt indhold, er området afrundet med runde karakter [%s]. Escape character at flygte runde karakter er [%s].
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=Bank-kode
+DeskCode=Skrivebord kode
+BankAccountNumber=Kontonummer
+BankAccountNumberKey=Nøgle
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

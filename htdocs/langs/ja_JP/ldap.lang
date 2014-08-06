@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=ドメインのパスワード
 YouMustChangePassNextLogon=ドメイン<b>%s</b>のユーザー<b>%s</b>のパスワードを変更する必要があります。
 UserMustChangePassNextLogon=ユーザーは、ドメイン%sにパスワードを変更する必要があります。
@@ -36,4 +27,3 @@ MemberSynchronized=メンバーは、同期
 ContactSynchronized=同期に連絡
 ForceSynchronize=Dolibarrを同期させる力 - &gt; LDAP
 ErrorFailedToReadLDAP=LDAPデータベースの読み込みに失敗しました。 LDAPモジュールの設定とデータベースのアクセシビリティをチェックします。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:56:54).

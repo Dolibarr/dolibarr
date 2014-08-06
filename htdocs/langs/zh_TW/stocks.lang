@@ -1,20 +1,15 @@
-/*
- * Language code: zh_TW
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=倉庫/庫存卡
 Warehouse=倉庫
+Warehouses=倉庫
 NewWarehouse=新倉庫/庫存區
+WarehouseEdit=修改倉庫
 MenuNewWarehouse=新倉庫
 WarehouseOpened=打開倉庫
 WarehouseClosed=關閉倉庫
 WarehouseSource=來源倉庫
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=目標倉庫
 ValidateSending=刪除發送
 CancelSending=取消發送
@@ -31,17 +26,22 @@ ListOfStockMovements=庫存轉讓清單
 StocksArea=庫存區
 Location=位置
 LocationSummary=擺放位置
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=產品總數
 LastMovement=最新異動清單
 LastMovements=最新異動清單
 Units=單位
 Unit=單位
 StockCorrection=修正庫存數
+# StockTransfer=Stock transfer
 StockMovement=轉讓
 StockMovements=庫存轉讓
+# LabelMovement=Movement label
 NumberOfUnit=單位數目
+# UnitPurchaseValue=Unit purchase price
 TotalStock=總庫存
 StockTooLow=庫存過低
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=價值
 PMPValue=加權平均價格
 PMPValueShort=的WAP
@@ -57,6 +57,7 @@ DeStockOnShipment=在出貨單驗證後，減少實際庫存量(建議採用此�
 ReStockOnBill=在供應商發票(invoice)或票據(Credit notes)驗證後，增加實際庫存量
 ReStockOnValidateOrder=在供應商訂單批准後，增加實際庫存量
 ReStockOnDispatchOrder=在手動轉讓庫存量或供應商訂單收到後，增加實際庫存量
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=命令還沒有或根本沒有更多的地位，使產品在倉庫庫存調度。
 StockDiffPhysicTeoric=股票差異的原因和理論物理
 NoPredefinedProductToDispatch=此對象沒有預定義的產品。因此，沒有庫存調度是必需的。
@@ -65,7 +66,6 @@ StockLimitShort=限制
 StockLimit=庫存過低提示(數量)
 PhysicalStock=實際庫存量
 RealStock=實際庫存量
-TheoreticalStock=Therocial庫存
 VirtualStock=虛擬庫存
 MininumStock=所需最小庫存量
 StockUp=庫存上升
@@ -77,26 +77,36 @@ LieuWareHouse=本地化倉庫
 WarehousesAndProducts=倉庫和產品
 AverageUnitPricePMPShort=投入品平均價格
 AverageUnitPricePMP=投入品平均價格
+SellPriceMin=銷售單價
+EstimatedStockValueSellShort=庫存已銷售值
+EstimatedStockValueSell=庫存已銷售值
 EstimatedStockValueShort=估計的庫存價值
 EstimatedStockValue=估計的庫存價值
 DeleteAWarehouse=刪除倉庫
 ConfirmDeleteWarehouse=你確定要刪除倉庫<b>%s嗎</b> ？
 PersonalStock=%s的個人股票
 ThisWarehouseIsPersonalStock=這個倉庫代表的%s%的個人股票期權
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-WarehouseEdit=修改倉庫
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-SellPriceMin=銷售單價
-EstimatedStockValueSellShort=庫存已銷售值
-EstimatedStockValueSell=庫存已銷售值
 SelectWarehouseForStockDecrease=選擇倉庫庫存減少使用
 SelectWarehouseForStockIncrease=選擇使用庫存增加的倉庫
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:39).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

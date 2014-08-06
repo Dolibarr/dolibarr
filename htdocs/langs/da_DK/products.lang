@@ -1,16 +1,6 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Produkt ref.
+ProductLabel=Produktmærke
 ProductServiceCard=Produkter / Tjenester kortet
 Products=Produkter
 Services=Services
@@ -23,6 +13,8 @@ NewProduct=Nyt produkt
 NewService=Ny tjeneste
 ProductCode=Produktkode
 ServiceCode=Service-kode
+ProductAccountancyBuyCode=Regnskab kode (købe)
+ProductAccountancySellCode=Regnskab kode (sælge)
 ProductOrService=Produkt eller tjeneste
 ProductsAndServices=Produkter og services
 ProductsOrServices=Produkter eller tjenesteydelser
@@ -52,18 +44,29 @@ Stock=Stock
 Stocks=Lagre
 Movement=Bevægelighed
 Movements=Bevægelser
+Sell=Salg
+Buy=Køb
 OnSell=På sælge
+OnBuy=Købt
 NotOnSell=Out of Sælg
 ProductStatusOnSell=På sælge
 ProductStatusNotOnSell=Ud af sælger
 ProductStatusOnSellShort=På sælge
 ProductStatusNotOnSellShort=Ud af sælger
+ProductStatusOnBuy=Tilgængelig
+ProductStatusNotOnBuy=Forældet
+ProductStatusOnBuyShort=Tilgængelig
+ProductStatusNotOnBuyShort=Forældet
 UpdatePrice=Opdater pris
 AppliedPricesFrom=Anvendt priser fra
 SellingPrice=Salgspris
+SellingPriceHT=Salgspris (efter skat)
+SellingPriceTTC=Salgspris (inkl. skat)
 PublicPrice=Offentlige pris
 CurrentPrice=Nuværende pris
 NewPrice=Ny pris
+MinPrice=Minim. salgspris
+CantBeLessThanMinPrice=Salgsprisen kan ikke være lavere end minimum tilladt for dette produkt ( %s uden skat)
 ContractStatus=Kontrakt status
 ContractStatusClosed=Lukket
 ContractStatusRunning=Kørsel
@@ -73,6 +76,7 @@ ContractStatusToRun=En mettre en service
 ContractNotRunning=Denne kontrakt er ikke kører
 ErrorProductAlreadyExists=Et produkt med henvisning %s eksisterer allerede.
 ErrorProductBadRefOrLabel=Forkert værdi for reference eller etiket.
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=Leverandører
 SupplierRef=Leverandør ref.
 ShowProduct=Vis produkt
@@ -87,14 +91,12 @@ AddToOtherBills=Føj til andre regninger
 CorrectStock=Korrekt lager
 AddPhoto=Tilføj foto
 ListOfStockMovements=Liste over lagerbevægelserne
-NoPhotoYet=Ingen billeder tilgængelige endnu
 BuyingPrice=Koebspris
 SupplierCard=Leverandør-kortet
 CommercialCard=Kommerciel kortet
 AllWays=Vej til at finde dit produkt på lager
 NoCat=Dit produkt ikke er i enhver kategori
 PrimaryWay=Primær vej
-DeleteFromCat=Fjern fra kategori
 PriceRemoved=Pris fjernet
 BarCode=Barcode
 BarcodeType=Barcode type
@@ -109,6 +111,9 @@ MultiPriceLevelsName=Pris kategorier
 AssociatedProductsAbility=Aktiver tilhørende produkter
 AssociatedProducts=Tilhørende produkter
 AssociatedProductsNumber=Antallet af tilknyttede produkter
+ParentProductsNumber=Antal forælder produkt
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Associate
 Translation=Oversættelse
 KeywordFilter=Keyword filter
@@ -118,6 +123,7 @@ AddDel=Tilføj / Slet
 Quantity=Mængde
 NoMatchFound=Ingen match fundet
 ProductAssociationList=Liste over relaterede produkter / tjenesteydelser: navn på produkt / tjeneste (mængde påvirkes)
+ProductParentList=Liste over produkter / services med dette produkt som en komponent
 ErrorAssociationIsFatherOfThis=En af valgte produkt er moderselskab med aktuelle produkt
 DeleteProduct=Slet et produkt / service
 ConfirmDeleteProduct=Er du sikker på du vil slette dette produkt / service?
@@ -125,6 +131,9 @@ ProductDeleted=Produkt / Service " %s" slettet fra databasen.
 DeletePicture=Slet et billede
 ConfirmDeletePicture=Er du sikker på du vil slette dette billede?
 ExportDataset_produit_1=Produkter og tjenester
+ExportDataset_service_1=Services
+ImportDataset_produit_1=Produkter
+ImportDataset_service_1=Services
 DeleteProductLine=Slet produktlinje
 ConfirmDeleteProductLine=Er du sikker på du vil slette denne produktlinje?
 NoProductMatching=Ingen vare / tjeneste stemmer overens med dine kriterier
@@ -133,71 +142,65 @@ NoStockForThisProduct=Nr. materiel til dette produkt
 NoStock=Nr. Stock
 Restock=Genpåfyldning
 ProductSpecial=Særlige
-QtyMin=Mængde minimum
+# QtyMin=Minimum Qty
 PriceQty=Pris for denne mængde
-PriceQtyMin=Pris mængde min.
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=Ingen pris / Qty defineret for denne leverandør / produkt
 NoSupplierPriceDefinedForThisProduct=Ingen leverandoer pris / Qty defineret for dette produkt
 RecordedProducts=Produkter registreres
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Produkter / tjenester registreres
 GenerateThumb=Generer tommelfinger
 ProductCanvasAbility=Brug specielle "lærred" addons
 ServiceNb=Service # %s
+ListProductServiceByPopularity=Liste over produkter / ydelser efter popularitet
 ListProductByPopularity=Liste over produkter / ydelser ved popularitet
+ListServiceByPopularity=Liste over tjenesteydelser efter popularitet
 Finished=Fremstillede produkt
 RowMaterial=Første materiale
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-ProductRef=Produkt ref.
-ProductLabel=Produktmærke
-MinPrice=Minim. salgspris
-CantBeLessThanMinPrice=Salgsprisen kan ikke være lavere end minimum tilladt for dette produkt ( %s uden skat)
-ExportDataset_service_1=Services
 CloneProduct=Klon vare eller tjenesteydelse
 ConfirmCloneProduct=Er du sikker på at du vil klone vare eller <b>tjenesteydelse %s?</b>
 CloneContentProduct=Klon alle de vigtigste informationer af produkt / service
 ClonePricesProduct=Klon vigtigste informationer og priser
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-ProductAccountancyBuyCode=Regnskab kode (købe)
-ProductAccountancySellCode=Regnskab kode (sælge)
-SellingPriceHT=Salgspris (efter skat)
-SellingPriceTTC=Salgspris (inkl. skat)
-ListProductServiceByPopularity=Liste over produkter / ydelser efter popularitet
-ListServiceByPopularity=Liste over tjenesteydelser efter popularitet
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=Dette produkt er brugt
 NewRefForClone=Ref. af nye produkter / ydelser
 CustomerPrices=Kunder priser
 SuppliersPrices=Leverandører priser
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:48).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> da_DA
-Sell=Salg
-Buy=Køb
-OnBuy=Købt
-ProductStatusOnBuy=Tilgængelig
-ProductStatusNotOnBuy=Forældet
-ProductStatusOnBuyShort=Tilgængelig
-ProductStatusNotOnBuyShort=Forældet
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:08).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-ParentProductsNumber=Antal forælder produkt
-ProductParentList=Liste over produkter / services med dette produkt som en komponent
-ImportDataset_produit_1=Produkter
-ImportDataset_service_1=Services
 CustomCode=Toldkodeksen
 CountryOrigin=Oprindelsesland
 HiddenIntoCombo=Skjult i udvalgte lister
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:48).
+Nature=Natur
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Qty
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

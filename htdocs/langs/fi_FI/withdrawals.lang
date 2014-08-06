@@ -1,19 +1,11 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Pysyvän tilaukset alueella
 CustomersStandingOrdersArea=Asiakkaat pysyvän tilaukset alueella
 StandingOrders=Pysyvän tilaukset
 StandingOrder=Pysyvän tilaukset
 NewStandingOrder=Uusi kestotilaus
+StandingOrderToProcess=Jotta prosessi
+StandingOrderProcessed=Jalostettu
 Withdrawals=Nostot
 Withdrawal=Peruuttaminen
 WithdrawalsReceipts=Nostot kuitit
@@ -27,6 +19,7 @@ RequestStandingOrderTreated=Pyyntö seisoville tilaukset käsitellään
 CustomersStandingOrders=Asiakas pysyvän tilaukset
 CustomerStandingOrder=Asiakas kestotilaus
 NbOfInvoiceToWithdraw=Nb laskun kanssa peruuttaa pyynnön
+NbOfInvoiceToWithdrawWithInfo=Nb laskun kanssa peruuttaa pyynnön asiakkaille, joilla määritellään tilitietoja
 InvoiceWaitingWithdraw=Laskun odottaa peruuttaa
 AmountToWithdraw=Määrä peruuttaa
 WithdrawsRefused=Peruuttaa evätty
@@ -42,19 +35,12 @@ ThirdPartyDeskCode=Kolmannen osapuolen desk-koodi
 NoInvoiceCouldBeWithdrawed=N: o laskun withdrawed menestyksekkäästi. Tarkista, että laskussa yrityksiin, joilla on voimassa oleva kielto.
 ClassCredited=Luokittele hyvitetään
 ClassCreditedConfirm=Oletko varma, että haluat luokitella tämän vetäytymisen vastaanottamisesta kuin hyvitetty pankkitilisi?
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-StandingOrderToProcess=Jotta prosessi
-StandingOrderProcessed=Jalostettu
 TransData=Päivämäärä Lähetetty
 TransMetod=Menetelmä Lähetetty
 Send=Lähettää
 Lines=Linjat
 StandingOrderReject=Issue hylätä
+InvoiceRefused=Lataa hylkäämisen asiakkaan
 WithdrawalRefused=Nostot Refuseds
 WithdrawalRefusedConfirm=Oletko varma että haluat kirjoittaa peruuttamisesta hylkäämisen yhteiskunnan
 RefusedData=Päivä hylkäämisestä
@@ -65,6 +51,7 @@ InvoiceRefused=Lataa hylkäämisen asiakkaan
 Status=Tila
 StatusUnknown=Tuntematon
 StatusWaiting=Odotus
+StatusTrans=Toimitettu
 StatusCredited=Hyvitetään
 StatusRefused=Refused
 StatusMotif0=Määrittelemätön
@@ -84,13 +71,6 @@ NotifyTransmision=Irtisanominen Lähetetty
 NotifyEmision=Irtisanominen päästöjen
 NotifyCredit=Irtisanominen Credit
 NumeroNationalEmetter=Kansallinen lähetin määrä
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:38).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-NbOfInvoiceToWithdrawWithInfo=Nb laskun kanssa peruuttaa pyynnön asiakkaille, joilla määritellään tilitietoja
-StatusTrans=Toimitettu
 PleaseSelectCustomerBankBANToWithdraw=Valitse tiedot asiakkaan pankkitilille peruuttaa
 WithBankUsingRIB=Jos pankkitilit käyttäen RIB
 WithBankUsingBANBIC=Jos pankkitilit käyttäen IBAN / BIC / SWIFT
@@ -100,6 +80,11 @@ WithdrawalFileNotCapable=Ei voitu luoda peruuttamiseen kuitti tiedosto maasi
 ShowWithdraw=Näytä Nosta
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Kuitenkin, jos lasku on ainakin yksi poistamista määrä ei kuitenkaan ole vielä käsitelty, sitä ei voida määrittää koska maksoivat sallimaan hallita poistettaviksi.
 DoStandingOrdersBeforePayments=Tällä välilehtien avulla voit pyytää ja kestotilauksena. Kun se on valmis, voit kirjoittaa maksun sulkea laskun.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Maksaminen kestotilaus %s pankin
 InfoCreditMessage=Kestotilaus %s on maksanut pankille <br> Tiedot maksu: %s
 InfoTransSubject=Toimittaminen kestotilaus %s pankkiin
@@ -107,6 +92,5 @@ InfoTransMessage=Kestotilaus %s on transmited sen pankkiin %s %s. <br><br>
 InfoTransData=Määrä: %s <br> Metode: %s <br> Date: %s
 InfoFoot=Tämä on automaattinen viesti lähetetään Dolibarr
 InfoRejectSubject=Pysyvä järjestyksessä kieltäytyi
-InfoRejectMessage=Hei, <br><br> standig järjestys laskun %s liittyviä yrityksen %s, joiden määrä %s on evätty pankin. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Vaihtoehto todellista tilaa ei ole asetettu, pysähdymme jälkeen simulointi
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:56).

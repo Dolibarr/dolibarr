@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - mails 
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=SMS
 SmsSetup=Configuració dels SMS
 SmsDesc=Aquesta pantalla li permet definir les opcions globals de l'ús de les funcions SMS
@@ -48,6 +47,7 @@ NbOfSms=Nº de telèfon
 ThisIsATestMessage=Aquest és un missatge de prova
 SendSms=Enviar SMS
 SmsInfoCharRemain=Nº restant de caràcters
-SmsInfoNumero=(format internacional ex: +33899701761)
+SmsInfoNumero= (format internacional ex: +33899701761)
 DelayBeforeSending=Retard abans d'enviar (en minuts)
 SmsNoPossibleRecipientFound=No hi ha destinataris. Comproveu la configuració del seu proveïdor d'SMS.
+

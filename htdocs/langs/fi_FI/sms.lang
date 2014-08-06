@@ -1,13 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:10:23
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms asetukset
 SmsDesc=Tällä sivulla voit määrittää global vaihtoehtoja SMS ominaisuudet
@@ -56,7 +47,7 @@ NbOfSms=Nbre of phon numeroiden
 ThisIsATestMessage=Tämä on testi viesti
 SendSms=Lähetä tekstiviesti
 SmsInfoCharRemain=Nb jäljellä olevien merkkien
-SmsInfoNumero=(Muoto kansainvälinen eli +33899701761)
+SmsInfoNumero= (Muoto kansainvälinen eli +33899701761)
 DelayBeforeSending=Viive ennen lähettämistä (min)
 SmsNoPossibleRecipientFound=Ei tavoite käytettävissä. Tarkista asetukset oman SMS tarjoaja.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:11:22).
+

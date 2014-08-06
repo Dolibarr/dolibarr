@@ -1,18 +1,9 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - compta
 Accountancy=Счетоводство
 AccountancyCard=Счетоводството карта
 Treasury=Съкровищница
 MenuFinancial=Финансов
-TaxModuleSetupToModifyRules=Отиди на <a href="%s">модул за настройка</a> да променя правилата за изчисляване
+# TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Възможност за счетоводството
 OptionModeTrue=Вариант доходите, Разходи
 OptionModeVirtual=Вариант Вземания Дълговете
@@ -39,6 +30,7 @@ Profit=Печалба
 Balance=Баланс
 Debit=Дебит
 Credit=Кредит
+# Piece=Voucher
 Withdrawal=Оттегляне
 Withdrawals=Тегления
 AmountHTVATRealReceived=Net събраните
@@ -88,11 +80,11 @@ TotalToPay=Всичко за плащане
 TotalVATReceived=Общо ДДС
 CustomerAccountancyCode=Код на клиенти счетоводство
 SupplierAccountancyCode=Код доставчик счетоводство
-AlreadyPaid=Вече е платена
 AccountNumberShort=Номер на сметка
 AccountNumber=Номер на сметка
 NewAccount=Нов акаунт
 SalesTurnover=Продажби оборот
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu трети страни
 ByUserAuthorOfInvoice=С фактура автор
 AccountancyExport=Счетоводството износ
@@ -111,26 +103,31 @@ ConfirmPaySocialContribution=Сигурен ли сте, че искате да 
 DeleteSocialContribution=Изтриване на осигурителната вноска
 ConfirmDeleteSocialContribution=Сигурен ли сте, че искате да изтриете тази осигурителната вноска?
 ExportDataset_tax_1=Социални вноски и плащания
-AnnualSummaryDueDebtMode=Баланс на приходи и разходи, годишно обобщение, каза режим <b>%sClaims Debt%sS ангажимент счетоводство.</b>
-AnnualSummaryInputOutputMode=Баланс на приходи и разходи, годишно обобщение, каза режим <b>%sIncomes Expense%sS отчитане на касова основа.</b>
+# CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+# CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
+# CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+# CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
+# AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
+# AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
 AnnualByCompaniesDueDebtMode=Баланс на приходи и разходи, подробно от трети страни, каза режим <b>%sClaims Debt%sS ангажимент счетоводство.</b>
 AnnualByCompaniesInputOutputMode=Баланс на приходи и разходи, подробно от трети страни, каза режим <b>%sIncomes Expense%sS отчитане на касова основа.</b>
 SeeReportInInputOutputMode=Виж доклада <b>%sIncomes-Expense%sS</b> каза <b>за отчитане на касова основа</b> за изчисляване на действителните плащания
 SeeReportInDueDebtMode=Виж доклада <b>%sClaims-Debt%sS ангажимент счетоводство</b> за изчисляване на издадените фактури
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Показани Сумите са с включени всички такси <br> - Тя включва неплатените фактури, разходи и ДДС, независимо дали са платени или не. <br> - Тя се основава на датата на утвърждаване на фактури и ДДС и на датата на падежа за разходи.
-RulesResultInOut=- Показани Сумите са с включени всички такси <br> - Тя включва реалните плащания по фактури, разходи и ДДС. <br> - Тя се основава на датите на изплащане на фактури, разходи за ДДС ANF. <br>
+# RulesResultInOut=- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses and VAT.
 RulesCADue=- Тя включва дължимите на клиента фактури, независимо дали са платени или не. <br> - Тя се основава на датата на валидиране тези фактури. <br>
 RulesCAIn=- То включва всички ефективни плащания на фактурите, получени от клиенти. <br> - Тя се основава на датата на плащане на тези фактури <br>
 DepositsAreNotIncluded=- Депозит фактури не са включени
 DepositsAreIncluded=- Депозит фактури са включени
 LT2ReportByCustomersInInputOutputModeES=Доклад от трета страна IRPF
-VATReportByCustomersInInputOutputMode=Доклад от клиента ДДС, събрани и изплатени (ДДС получаване)
-VATReportByCustomersInDueDebtMode=Доклад от клиента ДДС, събрани и изплатени (ставка на ДДС)
-VATReportByQuartersInInputOutputMode=Доклад по ставки на ДДС, събрани и изплатени (ДДС получаване)
-VATReportByQuartersInDueDebtMode=Доклад по ставки на ДДС, събрани и изплатени (ставка на ДДС)
+# VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
+# VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
+# VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
+# VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
 SeeVATReportInInputOutputMode=Виж да докладва <b>%sVAT encasement%s</b> за изчислението на стандартната
 SeeVATReportInDueDebtMode=Виж доклада <b>%sVAT за flow%s</b> за изчисление, с опция върху потока
-RulesVATInServices=- По отношение на услугите, докладът включва разпоредби действително са получили или издават въз основа на датата на плащане на ДДС. <br> - Материални активи, включва ДДС фактури въз основа на датата на фактурата.
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
 RulesVATInProducts=- Материални активи, включва ДДС фактури въз основа на датата на фактурата.
 RulesVATDueServices=- Услуги, в доклада се включва ДДС фактури дължи платена или не, въз основа на датата на фактурата.
 RulesVATDueProducts=- Материални активи, включва ДДС фактури, въз основа на датата на фактурата.
@@ -151,9 +148,31 @@ DescPurchasesJournal=Покупките вестник
 InvoiceRef=Фактура с реф.
 CodeNotDef=Не е определена
 AddRemind=Изпращането наличната сума
-RemainToDivide=Останете изпращането:
+RemainToDivide= Останете изпращането:
 WarningDepositsNotIncluded=Депозити фактури не са включени в тази версия с този модул за счетоводството.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
 Pcg_version=PCG версия
 Pcg_type=PCG тип
 Pcg_subtype=PCG подтип
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:05).
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services
+# RefExt=External ref
+# ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+# LinkedOrder=linked to command
+# ReCalculate=Recalculate
+# Mode1=Methode 1
+# Mode2=Method 2
+# CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
+# CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+# TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
+# CalculationMode=Calculation mode
+# COMPTA_PRODUCT_BUY_ACCOUNT=Code comptable par défaut des achats de marchandises
+# COMPTA_PRODUCT_SOLD_ACCOUNT=Code comptable par défaut des ventes de marchandises
+# COMPTA_SERVICE_BUY_ACCOUNT=Code comptable par défaut des achats de services
+# COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut des ventes de services
+# COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
+# COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
+# COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+# COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties

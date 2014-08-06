@@ -1,52 +1,65 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - agenda
+# IdAgenda=ID event
 Actions=الإجراءات
 ActionsArea=الإجراءات منطقة الأحداث والمهام)
-Agenda=جدول الأعمال
-Agendas=جداول الأعمال
-Calendar=التقويم
-Calendars=التقاويم
-AffectedTo=إلى المتضررين
-DoneBy=الذي قام به
-Events=الأحداث
+Agenda= جدول الأعمال
+Agendas= جداول الأعمال
+Calendar= التقويم
+Calendars= التقاويم
+# LocalAgenda=Local calendar
+AffectedTo= إلى المتضررين
+DoneBy= الذي قام به
+Events= الأحداث
+# EventsNb=Number of events
+# MyEvents=My events
+# OtherEvents=Other events
 ListOfActions=قائمة الأحداث
 Location=موقع
-SearchAnAction=البحث عن عمل / المهمة
-MenuDoneActions=أنهت جميع الإجراءات
-MenuToDoMyActions=بلدي مكتمل الإجراءات
-MenuDoneMyActions=بلدي إنهاء الإجراءات
-ListOfEvents=قائمة الأحداث Dolibarr
+# EventOnFullDay=Event on all day(s)
+SearchAnAction= البحث عن عمل / المهمة
+MenuToDoActions= جميع الأعمال غير مكتملة
+MenuDoneActions= أنهت جميع الإجراءات
+MenuToDoMyActions= بلدي مكتمل الإجراءات
+MenuDoneMyActions= بلدي إنهاء الإجراءات
+ListOfEvents= قائمة الأحداث Dolibarr
 ActionsAskedBy=الإجراءات التي سجلتها
 ActionsToDoBy=الإجراءات التي أثرت على
 ActionsDoneBy=الإجراءات التي قامت به
-AllMyActions=كل أفعالي / المهام
-AllActions=Toutes ليه الإجراءات / المهام
+AllMyActions= كل أفعالي / المهام
+AllActions= Toutes ليه الإجراءات / المهام
 ViewList=وبالنظر إلى قائمة
 ViewCal=وبالنظر إلى الجدول الزمني
-ViewWithPredefinedFilters=وترى مسبقا مع الفلاتر
-AutoActions=التلقائي ملء جدول الأعمال
-AgendaAutoActionDesc=هنا تعريف الأحداث التي تريد Dolibarr لخلق عمل تلقائيا في جدول الأعمال. إذا لم فحصها (افتراضي) ، إلا دليل الإجراءات التي ستدرج في جدول الأعمال.
-AgendaSetupOtherDesc=وتسمح هذه الصفحة لتكوين البارامترات الأخرى من جدول الأعمال وحدة.
-ActionsEvents=الأحداث التي ستخلق Dolibarr عمل تلقائيا في جدول الأعمال
-PropalValidatedInDolibarr=المصادقة على اقتراح
-InvoiceValidatedInDolibarr=فاتورة مصادق
-OrderValidatedInDolibarr=من أجل التحقق من صحة
-NewCompanyToDolibarr=طرف ثالث خلق
-DateActionPlannedStart=تاريخ البدء المخطط
-DateActionPlannedEnd=المخطط لها تاريخ انتهاء
-DateActionDoneStart=البداية الحقيقية لتاريخ
-DateActionDoneEnd=نهاية التاريخ الحقيقي
-DateActionStart=تاريخ البدء
-DateActionEnd=نهاية التاريخ
+# ViewDay=Day view
+# ViewWeek=Week view
+ViewWithPredefinedFilters= وترى مسبقا مع الفلاتر
+AutoActions= التلقائي ملء جدول الأعمال
+AgendaAutoActionDesc= هنا تعريف الأحداث التي تريد Dolibarr لخلق عمل تلقائيا في جدول الأعمال. إذا لم فحصها (افتراضي) ، إلا دليل الإجراءات التي ستدرج في جدول الأعمال.
+AgendaSetupOtherDesc= وتسمح هذه الصفحة لتكوين البارامترات الأخرى من جدول الأعمال وحدة.
+# AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
+ActionsEvents= الأحداث التي ستخلق Dolibarr عمل تلقائيا في جدول الأعمال
+PropalValidatedInDolibarr= المصادقة على اقتراح
+InvoiceValidatedInDolibarr= فاتورة مصادق
+# InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status
+# InvoiceDeleteDolibarr=Invoice %s deleted
+OrderValidatedInDolibarr= من أجل التحقق من صحة
+# OrderApprovedInDolibarr=Order %s approved
+# OrderBackToDraftInDolibarr=Order %s go back to draft status
+# OrderCanceledInDolibarr=Order %s canceled
+InterventionValidatedInDolibarr=التحقق من صحة التدخل %s
+# ProposalSentByEMail=Commercial proposal %s sent by EMail
+# OrderSentByEMail=Customer order %s sent by EMail
+# InvoiceSentByEMail=Customer invoice %s sent by EMail
+# SupplierOrderSentByEMail=Supplier order %s sent by EMail
+# SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
+# ShippingSentByEMail=Shipping %s sent by EMail
+# InterventionSentByEMail=Intervention %s sent by EMail
+NewCompanyToDolibarr= طرف ثالث خلق
+DateActionPlannedStart= تاريخ البدء المخطط
+DateActionPlannedEnd= المخطط لها تاريخ انتهاء
+DateActionDoneStart= البداية الحقيقية لتاريخ
+DateActionDoneEnd= نهاية التاريخ الحقيقي
+DateActionStart= تاريخ البدء
+DateActionEnd= نهاية التاريخ
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لترشيح الناتج :
 AgendaUrlOptions2=<b>login=<b>login=%s</b> لتقييد الانتاج لإجراءات التي أوجدتها ، وأثرت على المستخدم الذي قام به أو <b>%s</b>
 AgendaUrlOptions3=<b>logina=<b>logina=%s</b> لتقييد الانتاج لإجراءات التي أنشأها مستخدم <b>%s</b>
@@ -54,12 +67,14 @@ AgendaUrlOptions4=<b>logint=<b>logint=%s</b> لتقييد الانتاج لإج�
 AgendaUrlOptions5=<b>logind=<b>logind=%s</b> لتقييد الانتاج لإجراءات قامت به المستخدم <b>%s</b>
 AgendaShowBirthdayEvents=عيد ميلاد تظهر اتصالات
 AgendaHideBirthdayEvents=عيد ميلاد إخفاء اتصالات
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
+# Busy=Busy
+# ExportDataset_event1=List of agenda events
 
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:11:26).
-// Reference language: en_US
-MenuToDoActions=جميع الأعمال غير مكتملة
-InterventionValidatedInDolibarr=التحقق من صحة التدخل %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:11:26).
+# External Sites ical
+# ExportCal=Export calendar
+# ExtSites=Import external calendars
+# ExtSitesEnableThisTool=Show external calendars into agenda
+# ExtSitesNbOfAgenda=Number of calendars
+# AgendaExtNb=Calendar nb %s
+# ExtSiteUrlAgenda=URL to access .ical file
+# ExtSiteNoLabel=No Description

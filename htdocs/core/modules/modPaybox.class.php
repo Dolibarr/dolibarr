@@ -185,7 +185,7 @@ class modPayBox extends DolibarrModules
     {
         $sql = array();
 
-        $result=$this->load_tables();
+        //$result=$this->_load_tables('');
 
         return $this->_init($sql,$options);
     }
@@ -205,18 +205,6 @@ class modPayBox extends DolibarrModules
 		return $this->_remove($sql,$options);
     }
 
-    /**
-     *		Create tables and keys required by module
-     * 		Files mymodule.sql and mymodule.key.sql with create table and create keys
-     * 		commands must be stored in directory /mymodule/sql/
-     *		This function is called by this->init.
-     *
-     * 		@return		int		<=0 if KO, >0 if OK
-     */
-    function load_tables()
-    {
-        return $this->_load_tables('');
-    }
 }
 
 ?>

@@ -1,17 +1,9 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 20:45:19
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Foorumi / Wiki tukea
 EMailSupport=Sähköpostit tukea
 RemoteControlSupport=Online reaaliajassa / etätuki
 OtherSupport=Muut tuet
+ToSeeListOfAvailableRessources=Voit ottaa yhteyttä / nähdä käytettävissä olevat varat:
 ClickHere=Klikkaa tästä
 HelpCenter=Ohjekeskukseen
 DolibarrHelpCenter=Dolibarr apua ja tukea keskus
@@ -32,10 +24,5 @@ BackToHelpCenter=Muussa tapauksessa, klikkaa tästä ja mennä <a href="%s">taka
 LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your language ( %s) napsauttamalla hänen Widget (status ja enimmäishinta päivittyvät automaattisesti):
 PossibleLanguages=Tuetut kielet
 MakeADonation=Ohje Dolibarr hanke, tee lahjoitus
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-ToSeeListOfAvailableRessources=Voit ottaa yhteyttä / nähdä käytettävissä olevat varat:
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

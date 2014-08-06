@@ -67,7 +67,7 @@ if ($resql)
     {
       $objp = $dbosc->fetch_object($resql);
       $var=!$var;
-      print "<tr $bc[$var]>";
+      print "<tr ".$bc[$var].">";
       print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></td>\n";
       print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></td>\n";
       print "<td>$objp->customers_email_address</td>\n";

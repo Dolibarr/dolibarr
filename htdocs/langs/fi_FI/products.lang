@@ -1,14 +1,6 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Tuote ref.
+ProductLabel=Tuotemerkki
 ProductServiceCard=Tuotteet / Palvelut kortti
 Products=Tuotteet
 Services=Palvelut
@@ -21,6 +13,8 @@ NewProduct=Uusi tuote
 NewService=Uusi palvelu
 ProductCode=Tuotekoodi
 ServiceCode=Service-koodi
+ProductAccountancyBuyCode=Kirjanpidon koodi (osta)
+ProductAccountancySellCode=Kirjanpidon koodi (myydä)
 ProductOrService=Tuote tai palvelu
 ProductsAndServices=Tuotteet ja palvelut
 ProductsOrServices=Tuotteet tai palvelut
@@ -34,6 +28,7 @@ ServicesOnSell=Palvelut myydä
 ServicesNotOnSell=Palvelut pois myydä
 InternalRef=Kertomus
 LastRecorded=Uusimmat tuotteet / palvelut myydä kirjataan
+LastRecordedProductsAndServices=Viimeisin %s kirjataan tuotteet / palvelut
 LastModifiedProductsAndServices=Viimeisin %s muunneltuja tuotteita / palveluita
 LastRecordedProducts=Viimeisin %s tuotteet kirjataan
 LastRecordedServices=Viimeisin %s palvelut kirjataan
@@ -49,18 +44,29 @@ Stock=Kanta
 Stocks=Varastot
 Movement=Movement
 Movements=Liikkeet
+Sell=Myynti
+Buy=Ostot
 OnSell=Käytössä myydä
+OnBuy=Ostettu
 NotOnSell=Out of Myy
 ProductStatusOnSell=Käytössä myydä
 ProductStatusNotOnSell=Out of myydä
 ProductStatusOnSellShort=Käytössä myydä
 ProductStatusNotOnSellShort=Out of myydä
+ProductStatusOnBuy=Saatavissa
+ProductStatusNotOnBuy=Vanhentunut
+ProductStatusOnBuyShort=Saatavissa
+ProductStatusNotOnBuyShort=Vanhentunut
 UpdatePrice=Päivitä hinta
 AppliedPricesFrom=Sovellettu hinnat
 SellingPrice=Myyntihinta
+SellingPriceHT=Myyntihinta (ilman veroja)
+SellingPriceTTC=Myyntihinta (sis. alv)
 PublicPrice=Julkiset hinta
 CurrentPrice=Nykyinen hinta
 NewPrice=Uusi hinta
+MinPrice=Puolinuotti. myyntihinta
+CantBeLessThanMinPrice=Myyntihinta ei voi olla pienempi kuin pienin sallittu tämän tuotteen ( %s ilman veroja)
 ContractStatus=Sopimus asema
 ContractStatusClosed=Suljettu
 ContractStatusRunning=Running
@@ -70,6 +76,7 @@ ContractStatusToRun=A mettre en service
 ContractNotRunning=Tämä sopimus ei ole käynnissä
 ErrorProductAlreadyExists=Tuotteen viitaten %s on jo olemassa.
 ErrorProductBadRefOrLabel=Väärä arvo viite-tai etiketissä.
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=Tavarantoimittajat
 SupplierRef=Toimittaja ref.
 ShowProduct=Näytä tuote
@@ -84,14 +91,12 @@ AddToOtherBills=Lisää muut laskut
 CorrectStock=Oikea varastossa
 AddPhoto=Lisää kuva
 ListOfStockMovements=Luettelo varastojen muutokset
-NoPhotoYet=Ei kuvia saatavilla vielä
 BuyingPrice=Osto
 SupplierCard=Toimittaja-kortti
 CommercialCard=Kaupalliset kortti
 AllWays=Polku löydä tuotetta varastossa
 NoCat=Tuote ei ole missään luokassa
 PrimaryWay=Ensisijainen polku
-DeleteFromCat=Poista luokka
 PriceRemoved=Hinta poistettu
 BarCode=Viivakoodi
 BarcodeType=Viivakoodi tyyppi
@@ -106,6 +111,9 @@ MultiPriceLevelsName=Hintakategorioissa
 AssociatedProductsAbility=Ota niihin liittyvät tuotteet
 AssociatedProducts=Vastaavat tuotteet
 AssociatedProductsNumber=Määrä vastaavat tuotteet
+ParentProductsNumber=Lukumäärä emoyhtiön tuote
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Associate
 Translation=Käännös
 KeywordFilter=Hakusanalla suodatin
@@ -115,6 +123,7 @@ AddDel=Lisää / Poista
 Quantity=Määrä
 NoMatchFound=Ei hakutuloksia löytyi
 ProductAssociationList=Luettelo niihin liittyvät tuotteet / palvelut: nimi tuotteen / palvelun (määrä vaikuta)
+ProductParentList=Luettelo tuotteista / palveluista tämän tuotteen komponentti
 ErrorAssociationIsFatherOfThis=Yksi valittu tuote on vanhempi nykyinen tuote
 DeleteProduct=Poista tuotteen / palvelun
 ConfirmDeleteProduct=Oletko varma, että haluat poistaa tämän tuotteen / palvelun?
@@ -122,6 +131,9 @@ ProductDeleted=Tuote / palvelu " %s" poistettu tietokannasta.
 DeletePicture=Poista kuva
 ConfirmDeletePicture=Oletko varma, että haluat poistaa tämän kuvan?
 ExportDataset_produit_1=Tuotteet ja palvelut
+ExportDataset_service_1=Palvelut
+ImportDataset_produit_1=Tuotteet
+ImportDataset_service_1=Palvelut
 DeleteProductLine=Poista tuote linja
 ConfirmDeleteProductLine=Oletko varma, että haluat poistaa tämän tuotteen linja?
 NoProductMatching=O tuotteen / palvelun vastaavat perusteet
@@ -130,77 +142,65 @@ NoStockForThisProduct=Ei varastossa tämän tuotteen
 NoStock=N: o Stock
 Restock=Uudistamiseen
 ProductSpecial=Special
-QtyMin=Määrä vähintään
+# QtyMin=Minimum Qty
 PriceQty=Hinta tämän määrän
-PriceQtyMin=Hinta määrä min.
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=Ei hinta / kpl määritelty tämän toimittaja / tuote
 NoSupplierPriceDefinedForThisProduct=Toimittaja ei hinta / kpl määritelty tämän tuotteen
 RecordedProducts=Tuotteet kirjataan
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Tuotteet / palvelut kirjataan
 GenerateThumb=Luo peukalon
 ProductCanvasAbility=Käytä erityistä "kankaalle" AddOns
 ServiceNb=Service # %s
+ListProductServiceByPopularity=Luettelo tuotteiden tai palveluiden suosion
 ListProductByPopularity=Luettelo tuotteita / palveluita suosion
+ListServiceByPopularity=Luettelo palvelujen suosio
 Finished=Valmistettua tuotetta
 RowMaterial=Ensimmäinen aineisto
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-ProductRef=Tuote ref.
-ProductLabel=Tuotemerkki
-MinPrice=Puolinuotti. myyntihinta
-CantBeLessThanMinPrice=Myyntihinta ei voi olla pienempi kuin pienin sallittu tämän tuotteen ( %s ilman veroja)
-ExportDataset_service_1=Palvelut
 CloneProduct=Klooni tuotteen tai palvelun
 ConfirmCloneProduct=Oletko varma, että haluat klooni tuotteen tai <b>palvelun %s?</b>
 CloneContentProduct=Klooni kaikki tärkeimmät tiedot tuotteen / palvelun
 ClonePricesProduct=Klooni tärkeimmät tiedot ja hinnat
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-LastRecordedProductsAndServices=Viimeisin %s kirjataan tuotteet / palvelut
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-ProductAccountancyBuyCode=Kirjanpidon koodi (osta)
-ProductAccountancySellCode=Kirjanpidon koodi (myydä)
-SellingPriceHT=Myyntihinta (ilman veroja)
-SellingPriceTTC=Myyntihinta (sis. alv)
-ListProductServiceByPopularity=Luettelo tuotteiden tai palveluiden suosion
-ListServiceByPopularity=Luettelo palvelujen suosio
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=Tämä tuote on käytetty
 NewRefForClone=Ref. uuden tuotteen tai palvelun
 CustomerPrices=Asiakkaat hinnat
 SuppliersPrices=Toimittajat hinnat
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:33).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> fi_FI
-Sell=Myynti
-Buy=Ostot
-OnBuy=Ostettu
-ProductStatusOnBuy=Saatavissa
-ProductStatusNotOnBuy=Vanhentunut
-ProductStatusOnBuyShort=Saatavissa
-ProductStatusNotOnBuyShort=Vanhentunut
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:11).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-ParentProductsNumber=Lukumäärä emoyhtiön tuote
-ProductParentList=Luettelo tuotteista / palveluista tämän tuotteen komponentti
-ImportDataset_produit_1=Tuotteet
-ImportDataset_service_1=Palvelut
 CustomCode=Tullikoodeksi
 CountryOrigin=Alkuperä maa
 HiddenIntoCombo=Piilotettu osaksi valitse listat
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:51).
+Nature=Luonto
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Kpl
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

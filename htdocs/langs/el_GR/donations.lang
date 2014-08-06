@@ -1,37 +1,32 @@
-/*  
-* Dolibarr language file - donations
-* Language code: el_GR
-* Manually translated by technicks.eu
-*/
-CHARSET = UTF-8
-Donation = Δωρεά
-Donations = Δωρεές
-DonationRef = Αναφορά δωρεάς
-Donor = Χορηγός
-Donors = Χορηγοί
-AddDonation = Προσθήκη δωρεάς
-NewDonation = Νέα δωρεά
-ShowDonation = Εμφάνιση δωρεάς
-DonationPromise = Υπόσχεση δώρου
-PromisesNotValid = Μη επικυρωμένες υποσχέσεις
-PromisesValid = Επικυρωμένες υποσχέσεις
-DonationsPaid = Πληρωμένες δωρεές
-DonationsReceived = Ληφθείσες δωρεές
-PublicDonation = Δημόσια δωρεά
-DonationsNumber = Αριθμός δωρεάς
-DonationsArea = Περιοχή δωρεών
-DonationStatusPromiseNotValidated = Προσχέδιο
-DonationStatusPromiseValidated = Επικυρωμένη
-DonationStatusPaid = Η δωρεά παραλήφθηκε
-DonationStatusPromiseNotValidatedShort = Προσχέδιο
-DonationStatusPromiseValidatedShort = Επικυρωμένη
-DonationStatusPaidShort = Ληφθείσα
-ValidPromess = Επικύρωση υπόσχεσης
-DonationReceipt = Απόδειξη δωρεάς
-BuildDonationReceipt = Δημιουργία απόδειξης
-DonationsModels = Πρότυπα για τις αποδείξεις δωρεών
-LastModifiedDonations = Τελευταία %s τροποποιημένες δωρεές
-SearchADonation = Αναζήτηση δωρεάς
-DonationRecipient = Δικαιούχος δωρεάς
-ThankYou = Σας ευχαριστούμε
-IConfirmDonationReception = Ο δικαιούχος δηλώνει αποδοχή, ως δωρεά, το ακόλουθο ποσό
+# Dolibarr language file - Source file is en_US - donations
+Donation=Δωρεά
+Donations=Δωρεές
+DonationRef=Δωρεά ref.
+Donor=Δωρεά
+Donors=Δωρεές
+AddDonation=Προσθήκη δωρεάς
+NewDonation=Νέα δωρεά
+ShowDonation=Εμφάνιση δωρεάς
+DonationPromise=Υπόσχεση δώρου
+PromisesNotValid=Μη επικυρωμένες υποσχέσεις
+PromisesValid=Επικυρωμένες υποσχέσεις
+DonationsPaid=Πληρωμένες δωρεές
+DonationsReceived=Ληφθήσες δωρεές
+PublicDonation=Δημόσια δωρεά
+DonationsNumber=Αριθμός δωρεάς
+DonationsArea=Περιοχή δωρεών
+DonationStatusPromiseNotValidated=Προσχέδιο
+DonationStatusPromiseValidated=Επικυρωμένη
+DonationStatusPaid=Η δωρεά παραλήφθηκε
+DonationStatusPromiseNotValidatedShort=Προσχέδιο
+DonationStatusPromiseValidatedShort=Επικυρωμένη
+DonationStatusPaidShort=Ληφθήσα
+ValidPromess=Επικύρωση υπόσχεσης
+DonationReceipt=Απόδειξη δωρεάς
+BuildDonationReceipt=Δημιουργία απόδειξης
+DonationsModels=Documents models for donation receipts
+LastModifiedDonations=Τελευταία %s τροποποίηση δωρεές
+SearchADonation=Αναζήτηση μια δωρεά
+DonationRecipient=Δικαιούχος δωρεάς
+ThankYou=Σας ευχαριστούμε
+IConfirmDonationReception=Ο δικαιούχος δηλώνει αποδοχή, ως δωρεά, το ακόλουθο ποσό

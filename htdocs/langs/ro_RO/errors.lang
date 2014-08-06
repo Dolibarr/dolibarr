@@ -1,16 +1,19 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+NoErrorCommitIsDone=Ncio eroare, dăm commit
 
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Errors
+Error=Eroare
+Errors=Erori
+ErrorButCommitIsDone=Erori constatate dar încă nevalidate
+ErrorBadEMail=EMail %s este greşit
+ErrorBadUrl=Url-ul %s este greşit
 ErrorLoginAlreadyExists=Login %s există deja.
 ErrorGroupAlreadyExists=Grupul %s există deja.
+ErrorRecordNotFound=Înregistrarea nu a fost găsit.
+ErrorFailToCopyFile=Nu a reuşit să copiaţi fişierul <b>&quot;%s&quot;</b> în <b>&quot;%s&quot;.</b>
+ErrorFailToRenameFile=Nu a reuşit să redenumiţi fişierul <b>&quot;%s&quot;</b> în <b>&quot;%s&quot;.</b>
 ErrorFailToDeleteFile=Nu a reuşit să eliminaţi fişierul <b>" %s".</b>
 ErrorFailToCreateFile=Nu a reuşit să creeze fişierul <b>" %s".</b>
 ErrorFailToRenameDir=Nu a reuşit să redenumiţi directorul <b>" %s"</b> în <b>" %s".</b>
@@ -21,14 +24,19 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Acest contact este deja definit ca pe
 ErrorCashAccountAcceptsOnlyCashMoney=Acest cont bancar este un cont de bani, aşa că acceptă plăţi de tip cash numai.
 ErrorFromToAccountsMustDiffers=Sursa obiective şi conturi bancare trebuie să fie diferite.
 ErrorBadThirdPartyName=Bad valoarea de terţă parte nume
+ErrorProdIdIsMandatory=%s este obligatoriu
 ErrorBadCustomerCodeSyntax=Bad sintaxă pentru codul de client
 ErrorCustomerCodeRequired=Clientul codul necesar
 ErrorCustomerCodeAlreadyUsed=Clientul codul folosit deja
 ErrorPrefixRequired=Prefix necesare
+ErrorUrlNotValid=Site-ul este incorect adresa
 ErrorBadSupplierCodeSyntax=Bad sintaxă pentru furnizor cod
 ErrorSupplierCodeRequired=Furnizor codul necesar
 ErrorSupplierCodeAlreadyUsed=Furnizor de cod folosit deja
 ErrorBadParameters=Bad parametrii
+ErrorBadValueForParameter=Valoarea greşită &quot;%s&quot; incorecte &quot;pentru parametrul de %s
+ErrorBadImageFormat=Fişier de imagine nu are un format acceptat
+ErrorBadDateFormat=&quot;%s&quot; Valoarea are formatul de dată greşit
 ErrorFailedToWriteInDir=Nu a reuşit să scrie în directorul %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Found incorecte de email sintaxă pentru %s linii în fişier (de exemplu linia de e-mail cu %s= %s)
 ErrorUserCannotBeDelete=Utilizatorul nu poate fi şters. Mai fi ce este asociată pe Dolibarr entităţi.
@@ -39,13 +47,21 @@ ErrorFeatureNeedJavascript=Această caracteristică JavaScript trebuie activat p
 ErrorTopMenuMustHaveAParentWithId0=Un meniu de tip "Top" nu poate avea un părinte de meniu. Pune-0 în meniul părinte sau alege un meniu de tip "stânga".
 ErrorLeftMenuMustHaveAParentId=Un meniu de tip "stânga" trebuie să aibă o mamă id.
 ErrorFileNotFound=Fişierul nu a fost găsit (Bad calea, greşit permisiunile de acces refuzat sau de openbasedir parametru)
+ErrorDirNotFound=Director <b>%s</b> nu a fost găsit (calea Bad, permisiuni greşite sau acces refuzat de către openbasedir PHP, sau safe_mode parametru)
 ErrorFunctionNotAvailableInPHP=<b>Funcţia %s</b> este necesar pentru această funcţie, dar nu este disponibil în această versiune / setup de PHP.
 ErrorDirAlreadyExists=Un director cu acest nume există deja.
+ErrorFileAlreadyExists=Un fişier cu acest nume există deja.
+ErrorPartialFile=Fişierul nu a primit complet de server.
+ErrorNoTmpDir=Temporare directy %s nu există.
+ErrorUploadBlockedByAddon=Încărcaţi blocat de un PHP / Apache plug-in.
+ErrorFileSizeTooLarge=Dimensiunea fişierului este prea mare.
+ErrorSizeTooLongForIntType=Prea mult timp pentru tipul int (%s cifre maxim) Dimensiune
+ErrorSizeTooLongForVarcharType=Prea mult timp pentru tipul de coarde (%s de caractere maxim) Dimensiune
+ErrorNoValueForSelectType=Completaţi valorile pentru lista de selecţie
+ErrorNoValueForCheckBoxType=Completaţi valorile pentru lista checkbox
+ErrorNoValueForRadioType=Completaţi valorile pentru lista radio
+ErrorBadFormatValueList=Valorile din lista nu pot aveae mai mult de o virgulă: <b>% s </ b>, dar trebuie să aibă cel puțin una: cheie, valoare
 ErrorFieldCanNotContainSpecialCharacters=<b>Câmp %s</b> trebuie să nu conţine caractere speciale.
-WarningAllowUrlFopenMustBeOn=Parametru <b>allow_url_fopen</b> trebuie să fie setat la filer <b>în php.ini</b> pentru acest modul de lucru complet. Trebuie să modificaţi acest fişier manual.
-WarningBuildScriptNotRunned=<b>Script-ul %s</b> nu a fost alergat de a construi grafice, sau nu există date pentru a arăta.
-WarningBookmarkAlreadyExists=Un marcaj cu acest titlu sau acest obiectiv (URL) există deja.
-WarningPassIsEmpty=Atenţie, parola baza de date este gol. Aceasta este o gaura de securitate. Ar trebui să adăugaţi o parolă pentru a vă baza de date şi să vă schimbaţi conf.php fişier, pentru a reflecta acest lucru.
 ErrorNoAccountancyModuleLoaded=Nu activat modul de contabilitate
 ErrorExportDuplicateProfil=Acest profil nume există deja pentru acest set de export.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
@@ -54,43 +70,28 @@ ErrorCantSaveADoneUserWithZeroPercentage=Nu se poate salva o acţiune cu "statut
 ErrorRefAlreadyExists=Ref utilizate pentru crearea există deja.
 ErrorPleaseTypeBankTransactionReportName=Vă rugăm să scrieţi numele băncii primirea în cazul în care tranzacţia este raportate (Format YYYYMM sau YYYYMMDD)
 ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece acesta are unele Childs.
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ErrorUrlNotValid=Site-ul este incorect adresa
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-Error=Eroare
-Errors=Erori
-ErrorBadEMail=EMail %s este greşit
-ErrorBadUrl=Url-ul %s este greşit
-ErrorRecordNotFound=Înregistrarea nu a fost găsit.
-ErrorDirNotFound=Director <b>%s</b> nu a fost găsit (calea Bad, permisiuni greşite sau acces refuzat de către openbasedir PHP, sau safe_mode parametru)
-ErrorFileAlreadyExists=Un fişier cu acest nume există deja.
-ErrorPartialFile=Fişierul nu a primit complet de server.
-ErrorNoTmpDir=Temporare directy %s nu există.
-ErrorUploadBlockedByAddon=Încărcaţi blocat de un PHP / Apache plug-in.
-ErrorFileSizeTooLarge=Dimensiunea fişierului este prea mare.
-WarningSafeModeOnCheckExecDir=Atenţie, PHP <b>safe_mode</b> opţiune este pe atât de comandă trebuie să fie depozitate într-un director declarate de <b>safe_mode_exec_dir</b> parametru PHP.
-WarningConfFileMustBeReadOnly=Atenţie, fişierul de configurare dvs. <b>(htdocs / conf / conf.php)</b> poate fi suprascrise de către serverul de web. Aceasta este o gaura de securitate grave. Modificare permisiuni pe fişier pentru a fi citit în modul doar pentru utilizatorul sistemului de operare folosit de server Web. Dacă utilizaţi Windows şi formatul FAT pentru discul dvs., vă trebuie să ştiţi că acest sistem de fişier nu se permite to adăuga permisiuni la dosar, deci nu poate fi complet safe.
 ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivate pentru a avea această facilitate de lucru. Pentru a activa / dezactiva Javascript, du-te la meniul Home-> Configurare-> Display.
 ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
+ErrorContactEMail=O eroare de tehnică avut loc. Vă rugăm, contactaţi administratorul de a urma <b>%s</b> de e-mail ro oferi <b>%s</b> cod de eroare în mesajul Dvs., sau chiar mai bine prin adăugarea o copie ecran a acestei pagini.
 ErrorWrongValueForField=Valoarea greşit pentru <b>%s</b> numărul de câmp (valoarea <b>"%s"</b> nu se potriveste cu regula <b>%s</b> regex)
+ErrorFieldValueNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoare nu este o valoare disponibile în <b>%s</b> teren de <b>%s</b> de masă)
+ErrorFieldRefNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoarea nu este o ref <b>%s</b> existente)
 ErrorsOnXLines=Erori pe liniile sursă <b>%s</b>
-WarningsOnXLines=Avertismentele privind sursa <b>%s</b> linii
 ErrorFileIsInfectedWithAVirus=Programul antivirus nu a fost în măsură să valideze dosar (dosar ar putea fi infectat cu un virus)
 ErrorSpecialCharNotAllowedForField=Caractere speciale nu sunt permise pentru domeniul "%s"
-WarningNoDocumentModelActivated=Nici un model, pentru generarea de document, a fost activat. Un model va fi ales în mod implicit, până când a verifica configurarea modulului.
 ErrorDatabaseParameterWrong=parametru de configurare baza de date <b>'%s</b> "are o valoare care nu este compatibil de a folosi Dolibarr (valoarea trebuie să aibă" <b>%s</b> ").
 ErrorNumRefModel=O referire există în baza de date (%s) şi nu este compatibilă cu această regulă de numerotare. înregistra Remove sau redenumite de referinţă pentru a activa acest modul.
 ErrorQtyTooLowForThisSupplier=Cantitatea prea mică pentru acest furnizor sau nu există un preţ definite pe acest produs pentru acest furnizor
+ErrorModuleSetupNotComplete=Configurarea modulului pare a fi uncomplete. Du-te la Setup - Module pentru a finaliza.
+ErrorBadMask=Eroare pe masca
+ErrorBadMaskFailedToLocatePosOfSequence=Eroare, fără a masca numărul de ordine
+ErrorBadMaskBadRazMonth=Eroare, Bad resetare valoarea
+ErrorSelectAtLeastOne=Eroare. Selectaţi cel puţin o intrare.
+ErrorProductWithRefNotExist=Produs cu <i>&quot;%s&quot;</i> de referinţă, nu există
+ErrorDeleteNotPossibleLineIsConsolidated=Ştergeţi nu este posibil, deoarece înregistrarea este legat de o bancă, care este transation conciliate
+ErrorProdIdAlreadyExist=%s se atribuie o altă treime
 ErrorFailedToSendPassword=Nu a reuşit să trimită parola
+ErrorFailedToLoadRSSFile=Nu pentru a obţine RSS feed. Încercaţi să adăugaţi MAIN_SIMPLEXMLLOAD_DEBUG constantă în cazul în care mesajele de eroare nu furnizează suficiente informaţii.
 ErrorPasswordDiffers=Parolele diferă, vă rugăm să le tip din nou.
 ErrorForbidden=Accesul interzis. <br> Va încerca să aibă acces la o pagină, zona sau caracteristică, fără a fi într-o sesiune autentificate sau că nu îi este permis să dvs. de utilizator.
 ErrorForbidden2=Permisiunea pentru acest login poate fi definită de către administratorul dvs. Dolibarr din meniul %s-> %s.
@@ -107,33 +108,39 @@ ErrorFailedToChangePassword=Nu a reuşit să schimbaţi parola
 ErrorLoginDoesNotExists=User login <b>cu %s</b> nu a putut fi găsit.
 ErrorLoginHasNoEmail=Acest utilizator nu are nici o adresa de e-mail. Procesul de anulată.
 ErrorBadValueForCode=Bad valoare tipuri de cod. Încercaţi din nou cu o nouă valoare ...
-ErrorFileIsInfectedWith=Acest fişier este infectat cu %s
-WarningInstallDirExists=Atenţie, directorul de instalare ( %s) încă mai există. Aceasta este o gaura grave de securitate. Ar trebui eliminate cât mai curând posibil.
-WarningUntilDirRemoved=Acest avertisment va rămâne activ, atât timp cât acest director este prezent (afişat numai la admin utilizatori).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-ErrorFailToCopyFile=Nu a reuşit să copiaţi fişierul <b>&quot;%s&quot;</b> în <b>&quot;%s&quot;.</b>
-ErrorFailToRenameFile=Nu a reuşit să redenumiţi fişierul <b>&quot;%s&quot;</b> în <b>&quot;%s&quot;.</b>
-ErrorBadValueForParameter=Valoarea greşită &quot;%s&quot; incorecte &quot;pentru parametrul de %s
-ErrorBadImageFormat=Fişier de imagine nu are un format acceptat
-ErrorBadDateFormat=&quot;%s&quot; Valoarea are formatul de dată greşit
-ErrorSizeTooLongForIntType=Prea mult timp pentru tipul int (%s cifre maxim) Dimensiune
-ErrorSizeTooLongForVarcharType=Prea mult timp pentru tipul de coarde (%s de caractere maxim) Dimensiune
-ErrorContactEMail=O eroare de tehnică avut loc. Vă rugăm, contactaţi administratorul de a urma <b>%s</b> de e-mail ro oferi <b>%s</b> cod de eroare în mesajul Dvs., sau chiar mai bine prin adăugarea o copie ecran a acestei pagini.
-ErrorFieldValueNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoare nu este o valoare disponibile în <b>%s</b> teren de <b>%s</b> de masă)
-ErrorFieldRefNotIn=Valoare greşită pentru <b>%s</b> numărul de câmp <b>(&quot;%s&quot;</b> valoarea nu este o ref <b>%s</b> existente)
-ErrorModuleSetupNotComplete=Configurarea modulului pare a fi uncomplete. Du-te la Setup - Module pentru a finaliza.
-ErrorBadMask=Eroare pe masca
-ErrorBadMaskFailedToLocatePosOfSequence=Eroare, fără a masca numărul de ordine
-ErrorBadMaskBadRazMonth=Eroare, Bad resetare valoarea
-ErrorSelectAtLeastOne=Eroare. Selectaţi cel puţin o intrare.
-ErrorProductWithRefNotExist=Produs cu <i>&quot;%s&quot;</i> de referinţă, nu există
-ErrorDeleteNotPossibleLineIsConsolidated=Ştergeţi nu este posibil, deoarece înregistrarea este legat de o bancă, care este transation conciliate
-ErrorProdIdAlreadyExist=%s se atribuie o altă treime
-ErrorFailedToLoadRSSFile=Nu pentru a obţine RSS feed. Încercaţi să adăugaţi MAIN_SIMPLEXMLLOAD_DEBUG constantă în cazul în care mesajele de eroare nu furnizează suficiente informaţii.
 ErrorBothFieldCantBeNegative=%s Domenii şi %s nu poate fi atât negativ
 ErrorWebServerUserHasNotPermission=Contul de utilizator <b>%s</b> folosite pentru a executa serverul de web nu are permisiunea, pentru că
 ErrorNoActivatedBarcode=Nici un tip de coduri de bare activat
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:49).
+ErrUnzipFails=Eşec la dezarhivarea fişierului %s cu ZipArchive
+ErrNoZipEngine=Niciun motor pentru dezarhivarea fișierului %s în acest PHP
+ErrorFileMustBeADolibarrPackage=Fșierul %s  trebuie să fie un pachet zip Dolibarr
+ErrorFileRequired=Este nevoie de un fișier pachet Dolibarr
+ErrorPhpCurlNotInstalled=PHP CURLnu este instalat, acest lucru este esențial pentru comunicarea cu Paypal
+ErrorFailedToAddToMailmanList=Eşec la adăugarea  %s la lista de Mailman % s sau la baza SPIP
+ErrorFailedToRemoveToMailmanList=Eşec la înlăturarea  %s din lista de Mailman % s sau din baza SPIP
+ErrorNewValueCantMatchOldValue=Noua valoare nu poate fi egală cu cea veche
+ErrorFailedToValidatePasswordReset=Eşec la resetarea parolei. Este posibil săfi fost deja folosit acest link ( acest link poate fi folosit doar o dată). Dacă nu, încercați să reporniți şi reiniţializaţi procesul.
+ErrorToConnectToMysqlCheckInstance=Conectarea la baza de date eșuează. Verifică serverul  MySQL dacă rulează (în cele mai multe cazuri, aveți posibilitatea să-l lansaţi din linia de comandă cu 'sudo /etc/init.d/mysql start').
+ErrorFailedToAddContact=Eşuare la adaugare contact
+ErrorDateMustBeBeforeToday=Data nu poate fi mai mare decât azi
+ErrorPaymentModeDefinedToWithoutSetup=Un modul de plată a fost setat la tipul% s, dar setarea modulului Facturi nu a fost finalizată  a arăta pentru acest mod de plată.
+ErrorPHPNeedModule=Eroare, PHP trebuie să aibă modul <b>%s</b> instalat pentru a utiliza această funcţionalitate.
+ErrorOpenIDSetupNotComplete=Trebuie setat fișier de configurare Dolibarr pentru a permite autentificarea OpenID, dar URL-ul serviciului OpenID nu este definit în constanta %s
+ErrorWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
+
+# Warnings
+WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi
+WarningSafeModeOnCheckExecDir=Atenţie, PHP <b>safe_mode</b> opţiune este pe atât de comandă trebuie să fie depozitate într-un director declarate de <b>safe_mode_exec_dir</b> parametru PHP.
+WarningAllowUrlFopenMustBeOn=Parametru <b>allow_url_fopen</b> trebuie să fie setat la filer <b>în php.ini</b> pentru acest modul de lucru complet. Trebuie să modificaţi acest fişier manual.
+WarningBuildScriptNotRunned=<b>Script-ul %s</b> nu a fost alergat de a construi grafice, sau nu există date pentru a arăta.
+WarningBookmarkAlreadyExists=Un marcaj cu acest titlu sau acest obiectiv (URL) există deja.
+WarningPassIsEmpty=Atenţie, parola baza de date este gol. Aceasta este o gaura de securitate. Ar trebui să adăugaţi o parolă pentru a vă baza de date şi să vă schimbaţi conf.php fişier, pentru a reflecta acest lucru.
+WarningConfFileMustBeReadOnly=Atenţie, fişierul de configurare dvs. <b>(htdocs / conf / conf.php)</b> poate fi suprascrise de către serverul de web. Aceasta este o gaura de securitate grave. Modificare permisiuni pe fişier pentru a fi citit în modul doar pentru utilizatorul sistemului de operare folosit de server Web. Dacă utilizaţi Windows şi formatul FAT pentru discul dvs., vă trebuie să ştiţi că acest sistem de fişier nu se permite to adăuga permisiuni la dosar, deci nu poate fi complet safe.
+WarningsOnXLines=Avertismentele privind sursa <b>%s</b> linii
+WarningNoDocumentModelActivated=Nici un model, pentru generarea de document, a fost activat. Un model va fi ales în mod implicit, până când a verifica configurarea modulului.
+WarningLockFileDoesNotExists=Atenţie, odată terminată instalarea, trebui să dezactivaţi  instrumentele instalare/migrare prin adăugarea unui fișier<b>install.lock</b> în directorul <b> %s </ b>. Absența acestui fișier este o breşă de securitate.
+WarningUntilDirRemoved=Acest avertisment va rămâne activ, atât timp cât acest director este prezent (afişat numai la admin utilizatori).
+WarningCloseAlways=Atenţie, închiderea are loc chiar dacă suma diferă. Nu activati aceasta funcţionalitate decât  în cunoaștinţă de cauză.
+WarningUsingThisBoxSlowDown=Atenție, folosind această casetă încetiniţi serios toate paginile ce arată caseta.
+WarningClickToDialUserSetupNotComplete=Setările informațiilor ClickToDial pentru userul dvs. nu sunt complete (vezi tabul ClickToDial pe fişal dvs. de utilizator).
+WarningNotRelevant=Operaţiuni irelevante pentru acest dataset

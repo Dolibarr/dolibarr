@@ -1,13 +1,4 @@
-/*
- * Language code: ar_SA
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 15:55:27
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-CHARSET=UTF-8
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=نقطة بيع
 CashDesk=نقطة بيع
 CashDesks=نقاط البيع
@@ -21,6 +12,7 @@ CashDeskProducts=المنتجات
 CashDeskStock=الأوراق المالية
 CashDeskOn=في
 CashDeskThirdParty=طرف ثالث
+# CashdeskDashboard=Point of sale access
 ShoppingCart=عربة التسوق
 NewSell=بيع جديد
 BackOffice=المكتب الخلفي
@@ -28,7 +20,6 @@ AddThisArticle=إضافة هذا المقال
 RestartSelling=بالعدول عن بيع
 SellFinished=بيع الانتهاء
 PrintTicket=طباعة تذكرة
-NoResults=لا توجد نتائج
 NoProductFound=لا مادة وجدت
 ProductFound=العثور على المنتج
 ProductsFound=العثور على المنتجات
@@ -45,4 +36,4 @@ BankToPay=تهمة حساب
 ShowCompany=عرض شركة
 ShowStock=عرض مستودع
 DeleteArticle=انقر لإزالة هذه المادة
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:57:41).
+# FilterRefOrLabelOrBC=Search (Ref/Label)

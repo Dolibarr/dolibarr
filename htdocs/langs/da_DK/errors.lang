@@ -1,18 +1,19 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Errors
+Error=Fejl
+Errors=Fejl
+# ErrorButCommitIsDone=Errors found but we validate despite this
+ErrorBadEMail=EMail %s er forkert
+ErrorBadUrl=Url %s er forkert
 ErrorLoginAlreadyExists=Log ind %s eksisterer allerede.
 ErrorGroupAlreadyExists=Gruppe %s eksisterer allerede.
+ErrorRecordNotFound=Optag ikke fundet.
+ErrorFailToCopyFile=Kunne ikke kopiere filen <b>&quot;%s&quot;</b> til <b>&quot;%s&quot;.</b>
+ErrorFailToRenameFile=Kunne ikke omdøbe filen <b>'%s'</b> til <b>'%s'.</b>
 ErrorFailToDeleteFile=Det lykkedes ikke at fjerne filen <b>' %s'.</b>
 ErrorFailToCreateFile=Kunne ikke oprette filen <b>' %s'.</b>
 ErrorFailToRenameDir=Kunne ikke omdøbe mappe <b>' %s' i' %s'.</b>
@@ -23,14 +24,19 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Denne kontaktperson er allerede defin
 ErrorCashAccountAcceptsOnlyCashMoney=Denne bankkonto er et kontant-konto, så det accepterer betaling af type cash only.
 ErrorFromToAccountsMustDiffers=Kilde og mål bankkonti skal være anderledes.
 ErrorBadThirdPartyName=Bad værdi for tredjeparts navn
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad syntaks for kunde-kode
 ErrorCustomerCodeRequired=Kunden kode kræves
 ErrorCustomerCodeAlreadyUsed=Kunden koden allerede anvendes
 ErrorPrefixRequired=Prefix kræves
+ErrorUrlNotValid=Adressen på webstedet er forkert
 ErrorBadSupplierCodeSyntax=Bad syntaks for leverandør-kode
 ErrorSupplierCodeRequired=Leverandør kode kræves
 ErrorSupplierCodeAlreadyUsed=Leverandør koden allerede anvendes
 ErrorBadParameters=Bad parametre
+ErrorBadValueForParameter=Forkert værdi &quot;%s&quot; for parameter forkerte &quot;%s forb.
+ErrorBadImageFormat=Billede fil har ikke et understøttet format
+ErrorBadDateFormat=Værdi '%s' har forkert datoformat
 ErrorFailedToWriteInDir=Det lykkedes ikke at skrive i mappen %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Fundet forkerte e-mail-syntaks for %s linjer i filen (f.eks line %s med email= %s)
 ErrorUserCannotBeDelete=Bruger kan ikke slettes. Kan det er knyttet til den Dolibarr enheder.
@@ -41,13 +47,21 @@ ErrorFeatureNeedJavascript=Denne funktion skal have Javascript skal aktiveres fo
 ErrorTopMenuMustHaveAParentWithId0=En menu af type 'Top' kan ikke have en forælder menuen. Sæt 0 i moderselskabet menu eller vælge en menu af typen »Venstre«.
 ErrorLeftMenuMustHaveAParentId=En menu af typen »Venstre« skal have en forælder id.
 ErrorFileNotFound=Filen blev ikke fundet (Forkert sti, forkerte tilladelser eller adgang nægtet ved openbasedir parameter)
+ErrorDirNotFound=Directory <b>%s</b> ikke fundet (Bad sti, forkerte rettigheder eller adgang nægtet af PHP openbasedir eller safe_mode parameter)
 ErrorFunctionNotAvailableInPHP=<b>Funktion %s</b> er påkrævet for denne funktion, men er ikke tilgængelig i denne version / opsætning af PHP.
 ErrorDirAlreadyExists=En mappe med dette navn findes allerede.
+ErrorFileAlreadyExists=En fil med dette navn findes allerede.
+ErrorPartialFile=Fil ikke modtaget helt af serveren.
+ErrorNoTmpDir=Midlertidig directy %s ikke eksisterer.
+ErrorUploadBlockedByAddon=Upload blokeret af en PHP / Apache plugin.
+ErrorFileSizeTooLarge=Filstørrelse er for stor.
+ErrorSizeTooLongForIntType=Størrelse for lang tid for int type (%s cifre maksimum)
+ErrorSizeTooLongForVarcharType=Størrelse for lang tid for streng type (%s tegn maksimum)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Felt %s</b> må ikke indeholder specialtegn.
-WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> skal være slået <b>til</b> i filer <b>php.ini</b> for at have dette modul arbejder fuldstændigt. Du skal ændre denne fil manuelt.
-WarningBuildScriptNotRunned=<b>Script %s</b> var endnu ikke løb at opbygge grafik, eller der er ingen data at vise.
-WarningBookmarkAlreadyExists=Et bogmærke med denne titel eller dette mål (URL), der allerede eksisterer.
-WarningPassIsEmpty=Advarsel, database password er tomt. Det er en sikkerheds hul. Du skal tilføje en adgangskode til din database og ændre din conf.php fil for at afspejle dette.
 ErrorNoAccountancyModuleLoaded=Nr. regnskabspool modul aktiveret
 ErrorExportDuplicateProfil=Denne profil navn eksisterer allerede for denne eksport sæt.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matchende er ikke komplet.
@@ -56,38 +70,28 @@ ErrorCantSaveADoneUserWithZeroPercentage=Kan ikke gemme en aktion med "vedtægt 
 ErrorRefAlreadyExists=Ref bruges til oprettelse eksisterer allerede.
 ErrorPleaseTypeBankTransactionReportName=Please type bank modtagelsen navn, hvor transaktionen er rapporteret (Format ÅÅÅÅMM eller ÅÅÅÅMMDD)
 ErrorRecordHasChildren=Det lykkedes ikke at slette poster, da det har nogle Childs.
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-ErrorUrlNotValid=Adressen på webstedet er forkert
-Error=Fejl
-Errors=Fejl
-ErrorBadEMail=EMail %s er forkert
-ErrorBadUrl=Url %s er forkert
-ErrorRecordNotFound=Optag ikke fundet.
-ErrorDirNotFound=Directory <b>%s</b> ikke fundet (Bad sti, forkerte rettigheder eller adgang nægtet af PHP openbasedir eller safe_mode parameter)
-ErrorFileAlreadyExists=En fil med dette navn findes allerede.
-ErrorPartialFile=Fil ikke modtaget helt af serveren.
-ErrorNoTmpDir=Midlertidig directy %s ikke eksisterer.
-ErrorUploadBlockedByAddon=Upload blokeret af en PHP / Apache plugin.
-ErrorFileSizeTooLarge=Filstørrelse er for stor.
-WarningSafeModeOnCheckExecDir=Advarsel, PHP option <b>safe_mode</b> er på så kommandoen skal opbevares i en mappe angivet af php parameter <b>safe_mode_exec_dir.</b>
-WarningConfFileMustBeReadOnly=Advarsel, config fil <b>(htdocs / conf / conf.php)</b> kan din blive overskrevet af den web-server. Dette er en alvorlig sikkerhedsrisiko hul. Rediger tilladelserne til filen skal være i read only mode i operativsystemet bruger bruges af web-serveren. Hvis du bruger Windows og FAT format til din disk, skal du vide, at denne fil systemet ikke lader til at tilføje tilladelser på filen, kan så ikke helt sikker.
 ErrorModuleRequireJavascript=Javascript skal ikke være deaktiveret for at have denne funktion virker. For at aktivere / deaktivere Javascript, gå til menu Home-> Setup-> Display.
 ErrorPasswordsMustMatch=Begge har skrevet passwords skal matche hinanden
+ErrorContactEMail=En teknisk fejl opstod. Kontakt venligst administrator til at følge e-mail <b>%s</b> da give fejlkoder <b>%s</b> i din besked, eller endnu bedre ved at tilføje en skærm kopi af denne side.
 ErrorWrongValueForField=Forkert værdi for felt nummer <b>%s</b> (værdi <b>'%s'</b> passer ikke regex regel <b>%s)</b>
+ErrorFieldValueNotIn=Forkert værdi for feltnummer <b>%s</b> (value <b>&quot;%s&quot;</b> er ikke en værdi, der i felt <b>%s</b> af tabel <b>%s)</b>
+ErrorFieldRefNotIn=Forkert værdi for feltnummer <b>%s</b> (værdien <b>'%s'</b> er ikke en <b>%s</b> eksisterende ref)
 ErrorsOnXLines=Fejl på <b>%s</b> kildelinjer
-WarningsOnXLines=Advarsler om <b>%s</b> kildelinjer
 ErrorFileIsInfectedWithAVirus=Det antivirusprogram var ikke i stand til at validere filen (filen kan være inficeret med en virus)
 ErrorSpecialCharNotAllowedForField=Specialtegn er ikke tilladt for feltet "%s"
-WarningNoDocumentModelActivated=Ingen model, for dokument generation, er blevet aktiveret. En model vil være choosed som standard, indtil du tjekke din modul opsætning.
 ErrorDatabaseParameterWrong=Database setup parameter <b>'%s'</b> har en værdi ikke er forenelige at bruge Dolibarr (skal have værdi <b>'%s</b> «).
 ErrorNumRefModel=En henvisning findes i databasen (%s) og er ikke kompatible med denne nummerering regel. Fjern optage eller omdøbt henvisning til aktivere dette modul.
 ErrorQtyTooLowForThisSupplier=Mængde for lav for denne leverandør eller nogen pris fastlagt på denne vare for denne leverandør
+ErrorModuleSetupNotComplete=Opsætning af modulet ser ud til at være uncomplete. Gå på Setup - Moduler til at fuldføre.
+ErrorBadMask=Fejl på maske
+ErrorBadMaskFailedToLocatePosOfSequence=Fejl, maske uden loebenummeret
+ErrorBadMaskBadRazMonth=Fejl, dårlig reset værdi
+ErrorSelectAtLeastOne=Fejl. Vælg mindst én post.
+ErrorProductWithRefNotExist=Produkt med reference <i>'%s'</i> findes ikke
+ErrorDeleteNotPossibleLineIsConsolidated=Slet ikke muligt, fordi record er forbundet med en bank transation der er forsonet
+ErrorProdIdAlreadyExist=%s er tildelt til et andet tredjeland
 ErrorFailedToSendPassword=Det lykkedes ikke at sende password
+ErrorFailedToLoadRSSFile=Ikke formår at få RSS-feed. Prøv at tilføje konstant MAIN_SIMPLEXMLLOAD_DEBUG hvis fejlmeddelelser ikke giver nok information.
 ErrorPasswordDiffers=Passwords er forskellig, skal du skrive dem igen.
 ErrorForbidden=Adgang forbudt. <br> Du forsøger at få adgang til en side, et område eller funktion uden at være i en authenticated samling, eller som ikke er tilladt til din brugerkonto.
 ErrorForbidden2=Tilladelse til dette login kan defineres af din Dolibarr administrator fra menuen %s-> %s.
@@ -104,32 +108,39 @@ ErrorFailedToChangePassword=Det lykkedes ikke at ændre password
 ErrorLoginDoesNotExists=Bruger med <b>login %s</b> kunne ikke findes.
 ErrorLoginHasNoEmail=Denne bruger har ingen e-mail-adresse. Processen afbrydes.
 ErrorBadValueForCode=Bad værdi former for kode. Prøv igen med en ny værdi ...
-ErrorFileIsInfectedWith=Denne fil er inficeret med %s
-WarningInstallDirExists=Advarsel, installere directory ( %s) eksisterer stadig. Dette er en alvorlig sikkerheds-hul. Du bør fjernes så hurtigt som muligt.
-WarningUntilDirRemoved=Denne advarsel vil forblive aktiv, så længe denne mappe er til stede (vises kun til admin-brugere).
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-ErrorFailToCopyFile=Kunne ikke kopiere filen <b>&quot;%s&quot;</b> til <b>&quot;%s&quot;.</b>
-ErrorFailToRenameFile=Kunne ikke omdøbe filen <b>'%s'</b> til <b>'%s'.</b>
-ErrorBadValueForParameter=Forkert værdi &quot;%s&quot; for parameter forkerte &quot;%s forb.
-ErrorBadImageFormat=Billede fil har ikke et understøttet format
-ErrorBadDateFormat=Værdi '%s' har forkert datoformat
-ErrorSizeTooLongForIntType=Størrelse for lang tid for int type (%s cifre maksimum)
-ErrorSizeTooLongForVarcharType=Størrelse for lang tid for streng type (%s tegn maksimum)
-ErrorContactEMail=En teknisk fejl opstod. Kontakt venligst administrator til at følge e-mail <b>%s</b> da give fejlkoder <b>%s</b> i din besked, eller endnu bedre ved at tilføje en skærm kopi af denne side.
-ErrorFieldValueNotIn=Forkert værdi for feltnummer <b>%s</b> (value <b>&quot;%s&quot;</b> er ikke en værdi, der i felt <b>%s</b> af tabel <b>%s)</b>
-ErrorFieldRefNotIn=Forkert værdi for feltnummer <b>%s</b> (værdien <b>'%s'</b> er ikke en <b>%s</b> eksisterende ref)
-ErrorModuleSetupNotComplete=Opsætning af modulet ser ud til at være uncomplete. Gå på Setup - Moduler til at fuldføre.
-ErrorBadMask=Fejl på maske
-ErrorBadMaskFailedToLocatePosOfSequence=Fejl, maske uden loebenummeret
-ErrorBadMaskBadRazMonth=Fejl, dårlig reset værdi
-ErrorSelectAtLeastOne=Fejl. Vælg mindst én post.
-ErrorProductWithRefNotExist=Produkt med reference <i>'%s'</i> findes ikke
-ErrorDeleteNotPossibleLineIsConsolidated=Slet ikke muligt, fordi record er forbundet med en bank transation der er forsonet
-ErrorProdIdAlreadyExist=%s er tildelt til et andet tredjeland
-ErrorFailedToLoadRSSFile=Ikke formår at få RSS-feed. Prøv at tilføje konstant MAIN_SIMPLEXMLLOAD_DEBUG hvis fejlmeddelelser ikke giver nok information.
 ErrorBothFieldCantBeNegative=Fields %s og %s kan ikke være både negative
 ErrorWebServerUserHasNotPermission=Brugerkonto <b>%s</b> anvendes til at udføre web-server har ikke tilladelse til at
 ErrorNoActivatedBarcode=Ingen stregkode aktiveret typen
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:00).
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningSafeModeOnCheckExecDir=Advarsel, PHP option <b>safe_mode</b> er på så kommandoen skal opbevares i en mappe angivet af php parameter <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn=Parameter <b>allow_url_fopen</b> skal være slået <b>til</b> i filer <b>php.ini</b> for at have dette modul arbejder fuldstændigt. Du skal ændre denne fil manuelt.
+WarningBuildScriptNotRunned=<b>Script %s</b> var endnu ikke løb at opbygge grafik, eller der er ingen data at vise.
+WarningBookmarkAlreadyExists=Et bogmærke med denne titel eller dette mål (URL), der allerede eksisterer.
+WarningPassIsEmpty=Advarsel, database password er tomt. Det er en sikkerheds hul. Du skal tilføje en adgangskode til din database og ændre din conf.php fil for at afspejle dette.
+WarningConfFileMustBeReadOnly=Advarsel, config fil <b>(htdocs / conf / conf.php)</b> kan din blive overskrevet af den web-server. Dette er en alvorlig sikkerhedsrisiko hul. Rediger tilladelserne til filen skal være i read only mode i operativsystemet bruger bruges af web-serveren. Hvis du bruger Windows og FAT format til din disk, skal du vide, at denne fil systemet ikke lader til at tilføje tilladelser på filen, kan så ikke helt sikker.
+WarningsOnXLines=Advarsler om <b>%s</b> kildelinjer
+WarningNoDocumentModelActivated=Ingen model, for dokument generation, er blevet aktiveret. En model vil være choosed som standard, indtil du tjekke din modul opsætning.
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningUntilDirRemoved=Denne advarsel vil forblive aktiv, så længe denne mappe er til stede (vises kun til admin-brugere).
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

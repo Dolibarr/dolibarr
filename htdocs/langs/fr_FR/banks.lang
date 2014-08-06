@@ -1,5 +1,4 @@
-# Dolibarr language file - fr_FR - banks
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=Banque
 Banks=Banques
 MenuBankCash=Banques/Caisses
@@ -20,6 +19,8 @@ SavingAccount=Compte épargne
 SavingAccounts=Comptes épargne/placements
 ErrorBankLabelAlreadyExists=Libellé de compte financier déjà existant
 BankBalance=Solde
+BankBalanceBefore=Solde avant
+BankBalanceAfter=Solde après
 BalanceMinimalAllowed=Solde minimum autorisé
 BalanceMinimalDesired=Solde minimum désiré
 InitialBankBalance=Solde initial
@@ -149,3 +150,9 @@ EventualyAddCategory=Eventuellement, saisissez une catégorie dans laquelle clas
 ToConciliate=A rapprocher ?
 ThenCheckLinesAndConciliate=Ensuite, cochez les lignes présentes sur le relevé et cliquez sur
 BankDashboard=Synthèse comptes bancaires
+DefaultRIB=RIB par défaut
+AllRIB=Tous les RIB
+LabelRIB=Nom du RIB
+NoBANRecord=Aucun RIB enregistré
+DeleteARib=Supprimé RIB enregistré
+ConfirmDeleteRib=Etes vous sur de vouloir supprimé ce RIB ?

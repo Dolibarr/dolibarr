@@ -41,6 +41,9 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('productstatssupplyorder'));
+
 $mesg = '';
 
 $sortfield = GETPOST("sortfield",'alpha');
@@ -64,6 +67,10 @@ if ($id > 0 || ! empty($ref))
 {
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
+	
+	$parameters=array('id'=>$id);
+	$reshook=$hookmanager->executeHooks('doActions',$parameters,$product,$action);    // Note that $action and $object may have been modified by some hooks
+	$error=$hookmanager->error; $errors=$hookmanager->errors;
 
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
@@ -73,6 +80,8 @@ if ($id > 0 || ! empty($ref))
 		$titre=$langs->trans("CardProduct".$product->type);
 		$picto=($product->type==1?'service':'product');
 		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 
 		print '<table class="border" width="100%">';
 
@@ -150,13 +159,13 @@ if ($id > 0 || ! empty($ref))
 					$commandestatic->ref=$objp->ref;
 					$commandestatic->statut=$objp->statut;
 
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					print '<td>'.$commandestatic->getNomUrl(1)."</td>\n";
+					print "</a></td>\n";
 					print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,44).'</a></td>';
 					print "<td>".$objp->code_client."</td>\n";
-					print "<td align=\"center\">";
-					print dol_print_date($db->jdate($objp->date_commande))."</td>";
-					print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
+					print '<td align="center">'.dol_print_date($db->jdate($objp->date_commande))."</td>";
+					print '<td align="right">'.price($objp->total_ht)."</td>\n";
 					print '<td align="right">'.$commandestatic->getLibStatut(4).'</td>';
 					print "</tr>\n";
 					$i++;

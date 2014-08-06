@@ -1,0 +1,18 @@
+/*
+ * Language code: lv_LV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2013-11-08 23:35:59
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2013-11-09 12:40:15).
+// Reference language: en_US -> lv_LV
+LinkANewFile=Saite jaunu failu / dokumentu
+LinkedFiles=Saistīts failus un dokumentus
+NoLinkFound=Nav reģistrētu saites
+LinkComplete=Fails ir saistīts veiksmīgi
+ErrorFileNotLinked=Failu nevar saistīt
+LinkRemoved=Saite %s ir noņemta
+ErrorFailedToDeleteLink=Neizdevās noņemt saiti <b>&quot;%s&quot;</b>
+ErrorFailedToUpdateLink=Neizdevās atjaunināt saikne <b>&quot;%s&quot;</b>
+// STOP - Lines generated via autotranslator.php tool (2013-11-09 12:40:57).

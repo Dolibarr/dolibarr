@@ -72,24 +72,31 @@ if ($id > 0 && $removeelem > 0)
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
 	}
-	if ($type==1 && $user->rights->societe->creer)
+	else if ($type==1 && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'fournisseur';
 	}
-	if ($type==2 && $user->rights->societe->creer)
+	else if ($type==2 && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'societe';
 	}
-	if ($type == 3 && $user->rights->adherent->creer)
+	else if ($type == 3 && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
+	}
+	else if ($type == 4 && $user->rights->societe->creer) {
+		
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		$tmpobject = new Contact($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'contact';
 	}
 	
 	$result=$object->del_type($tmpobject,$elementtype);
@@ -125,6 +132,7 @@ if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
 elseif ($type == 2) $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == 3) $title=$langs->trans("MembersCategoryShort");
+elseif ($type == 4) $title=$langs->trans("ContactCategoriesShort");
 else $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -136,8 +144,7 @@ dol_fiche_head($head, 'card', $title, 0, 'category');
  */
 if ($action == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 }
 
 print '<table border="0" width="100%" class="border">';
@@ -358,6 +365,8 @@ if($object->type == 2)
 			$var=true;
 			foreach ($socs as $key => $soc)
 			{
+				if ($user->societe_id > 0 && $soc->id != $user->societe_id)	continue; 	// External user always see only themself
+
 				$i++;
 				$var=!$var;
 				print "\t<tr ".$bc[$var].">\n";
@@ -439,6 +448,59 @@ if ($object->type == 3)
 		else
 		{
 			print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
+		}
+		print "</table>\n";
+	}
+}
+
+//Categorie contact
+if($object->type == 4)
+{
+	$contacts = $object->get_type("socpeople","Contact",'contact',"socpeople");
+	if ($contacts < 0)
+	{
+		dol_print_error();
+	}
+	else
+	{
+		print "<br>";
+		print '<table class="noborder" width="100%">'."\n";
+		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Contact")."</td></tr>\n";
+
+		if (count($contacts) > 0)
+		{
+			$i = 0;
+			$var=true;
+			foreach ($contacts as $key => $contact)
+			{
+				$i++;
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td class="nowrap" valign="top">';
+				print $contact->getNomUrl(1,'category');
+				print "</td>\n";
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == 0) $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 1) $permission=$user->rights->societe->creer;
+				if ($typeid == 2) $permission=$user->rights->societe->creer;
+				if ($typeid == 3) $permission=$user->rights->adherent->creer;
+				if ($typeid == 4) $permission=$user->rights->societe->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$contact->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print '</td>';
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoContact")."</td></tr>";
 		}
 		print "</table>\n";
 	}

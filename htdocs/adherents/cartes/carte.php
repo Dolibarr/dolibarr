@@ -107,8 +107,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
             '%MONTH%'=>$month,
             '%DAY%'=>$day,
             '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
-            '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/",	
-            '%SOCIETE%'=>$objp->company
+            '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/"
             );
             complete_substitutions_array($substitutionarray, $langs);
 
@@ -204,7 +203,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     	dol_print_error($db);
     }
 
-    if (! $mesg) 
+    if (! $mesg)
     {
     	$db->close();
     	exit;

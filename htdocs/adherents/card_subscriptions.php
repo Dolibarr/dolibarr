@@ -368,7 +368,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
                 }
                 //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-                $result=$invoice->addline($invoice->id,$label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
+                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
                 if ($result <= 0)
                 {
                     $errmsg=$invoice->error;
@@ -528,13 +528,16 @@ if ($rowid)
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
     print '</tr>';
 
-    // Name
+    // Lastname
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td>';
     print '</tr>';
 
     // Firstname
     print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->firstname.'&nbsp;</td>';
     print '</tr>';
+
+    // EMail
+    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
 
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$object->getLibStatut(4).'</td></tr>';
@@ -697,7 +700,7 @@ if ($rowid)
             {
                 $objp = $db->fetch_object($result);
                 $var=!$var;
-                print "<tr $bc[$var]>";
+                print "<tr ".$bc[$var].">";
                 $cotisationstatic->ref=$objp->crowid;
                 $cotisationstatic->id=$objp->crowid;
                 print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
@@ -810,7 +813,8 @@ if ($rowid)
 			$name = $object->getFullName($langs);
 			if (! empty($name))
 			{
-				if ($object->societe) $name.=' ('.$object->societe.')';
+				if ($object->morphy == 'mor' && ! empty($object->societe)) $name=$object->societe.' ('.$name.')';
+				else if ($object->societe) $name.=' ('.$object->societe.')';
 			}
 			else
 			{
@@ -820,8 +824,7 @@ if ($rowid)
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
 
 

@@ -55,7 +55,7 @@ $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE ba.rowid = b.fk_account";
-$sql.= " AND ba.entity = ".$conf->entity;
+$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 $sql.= " AND b.fk_type = 'CHQ'";
 $sql.= " AND b.fk_bordereau = 0";
 $sql.= " AND b.amount > 0";
@@ -126,7 +126,7 @@ if ($resql)
 		$accountstatic->label=$objp->label;
 
 		$var=!$var;
-		print "<tr $bc[$var]>\n";
+		print "<tr ".$bc[$var].">\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';

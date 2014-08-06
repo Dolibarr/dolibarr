@@ -441,45 +441,46 @@ class ImportCsv extends ModeleImports
                                 {
                                     if (empty($newval)) $newval='0';
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomercodeifnull')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomercodeifauto')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (strtolower($newval) == 'auto')
                                     {
                                         $this->thirpartyobject->get_codeclient(0,0);
                                         $newval=$this->thirpartyobject->code_client;
-                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_client='.$newval;
                                     }
+                                    if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsuppliercodeifnull')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsuppliercodeifauto')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (strtolower($newval) == 'auto')
                                     {
                                         $newval=$this->thirpartyobject->get_codefournisseur(0,1);
                                         $newval=$this->thirpartyobject->code_fournisseur;
-                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_fournisseur='.$newval;
                                     }
+                                    if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomeraccountancycodeifnull')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getcustomeraccountancycodeifauto')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (strtolower($newval) == 'auto')
                                     {
                                         $this->thirpartyobject->get_codecompta('customer');
                                         $newval=$this->thirpartyobject->code_compta;
-                                        if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_compta='.$newval;
                                     }
+                                    if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsupplieraccountancycodeifnull')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='getsupplieraccountancycodeifauto')
                                 {
-                                    if (empty($newval) || $newval='auto')
+                                    if (strtolower($newval) == 'auto')
                                     {
                                         $this->thirpartyobject->get_codecompta('supplier');
                                         $newval=$this->thirpartyobject->code_compta_fournisseur;
                                         if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                         //print 'code_compta_fournisseur='.$newval;
                                     }
+                                    if (empty($newval)) $arrayrecord[($key-1)]['type']=-1;	// If we get empty value, we will use "null"
                                 }
 
                                 //print 'Val to use as insert is '.$newval.'<br>';

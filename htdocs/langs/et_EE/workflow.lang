@@ -1,18 +1,11 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-WorkflowSetup=Töövoo moodul setup
-WorkflowDesc=See moodul on Projektkiirus muuta käitumist automaatne meetmete jõustumist. Vaikimisi töövoo avatakse (kui teha asi, et sa tahad). Võite lubatud automaatsed toimingud, et teil on huvitav sisse
-ThereIsNoWorkflowToModify=Ei ole töövoogu saate muuta jaoks moodul on aktiveeritud.
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Loo kliendile, et automaatselt pärast äri ettepanek on allkirjastatud
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Loo kliendile arve automaatselt pärast äri ettepanek on allkirjastatud
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Loo kliendile arve automaatselt pärast lepingu sõlmimist kinnitatud
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Loo kliendile arve automaatselt kliendi tellimuse suletud
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:29:18).
+# Dolibarr language file - Source file is en_US - admin
+WorkflowSetup=Töövoo mooduli seaded
+WorkflowDesc=Selle mooduli eesmärgiks on võimaldada rakenduses automaatseid tegevusi. Vaikimisi on töövoog avatud (st et tegevusi võib teha vabalt valitud järjekorras). Soovi korral võib tegevusi seadistada automaatselt toimuma.
+ThereIsNoWorkflowToModify=Hetkel aktiveeritud moodulite jaoks ei ole ühtki muudetavat töövoogu.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Pärast pakkumise allkirjastamast loo automaatselt uus tellimus
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Pärast pakkumise allkirjastamist loo automaatselt uus arve
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Pärast lepingu kinnitamast loo automaatselt uus arve
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Pärast tellimuse sulgemist loo automaatselt uus arve
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Pärast tellimusega seotud makse laekumist määra tellimusega seotud pakkumise staatuseks 'Arve esitatud'
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Kui müügiarve staatuseks on määratud 'Makstud', siis määra seotud tellimus(t)e staatuseks 'Arve esitatud'
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Kui müügiarve on kinnitatud, siis määra seotud tellimus(t)e staatuseks 'Arve esitatud'

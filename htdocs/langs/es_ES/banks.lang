@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - banks
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=Banco
 Banks=Bancos
 MenuBankCash=Bancos/Cajas
@@ -20,6 +19,8 @@ SavingAccount=Cuenta de ahorros
 SavingAccounts=Cuentas de ahorro
 ErrorBankLabelAlreadyExists=Etiqueta de cuenta financiera ya existente
 BankBalance=Saldo
+BankBalanceBefore=Saldo anterior
+BankBalanceAfter=Saldo posterior
 BalanceMinimalAllowed=Saldo mínimo autorizado
 BalanceMinimalDesired=Saldo mínimo deseado
 InitialBankBalance=Saldo inicial
@@ -103,6 +104,7 @@ ConciliatedBy=Conciliado por
 DateConciliating=Fecha conciliación
 BankLineConciliated=Registro conciliado
 CustomerInvoicePayment=Cobro a cliente
+CustomerInvoicePaymentBack=Reembolso a cliente
 SupplierInvoicePayment=Pago a proveedor
 WithdrawalPayment=Cobro de domiciliación
 SocialContributionPayment=Pago carga social
@@ -147,3 +149,10 @@ InputReceiptNumber=Indique el extracto bancario relacionado con la conciliación
 EventualyAddCategory=Eventualmente, indique una categoría en la que clasificar los registros
 ToConciliate=¿A conciliar?
 ThenCheckLinesAndConciliate=A continuación, compruebe las líneas presentes en el extracto bancario y haga clic
+BankDashboard=Resumen cuentas bancarias
+DefaultRIB=IBAN por defecto
+AllRIB=Todos los IBAN
+LabelRIB=Nombre del IBAN
+NoBANRecord=Sin IBAN registrados
+DeleteARib=Eliminar IBAN registrado
+ConfirmDeleteRib=¿Está seguro de querer eliminar este IBAN?

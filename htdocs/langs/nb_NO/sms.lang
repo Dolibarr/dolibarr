@@ -1,13 +1,4 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:06:43
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms oppsett
 SmsDesc=Denne siden lar deg definere globals alternativer på SMS-funksjoner
@@ -56,7 +47,7 @@ NbOfSms=Nbre av Phon tall
 ThisIsATestMessage=Dette er en testmelding
 SendSms=Send SMS
 SmsInfoCharRemain=Nb av gjenværende tegn
-SmsInfoNumero=(Format internasjonal dvs.: 33899701761)
+SmsInfoNumero= (Format internasjonal dvs.: 33899701761)
 DelayBeforeSending=Forsinkelse før sending (minutter)
 SmsNoPossibleRecipientFound=Ingen mål tilgjengelig. Sjekk oppsettet av SMS-leverandør.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:42).
+

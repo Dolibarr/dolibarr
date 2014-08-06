@@ -937,6 +937,8 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
                         if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
                         if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+                        //If module is not activated disqualified
+                        if (empty($conf->global->$const_name)) $modulequalified=0;
 
                         if ($modulequalified)
                         {
@@ -1017,7 +1019,7 @@ function form_constantes($tableau,$strictw3c=0)
     $form = new Form($db);
 
     if (! empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    	
+
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Description").'</td>';
@@ -1082,6 +1084,17 @@ function form_constantes($tableau,$strictw3c=0)
                 print '</div>';
                 //print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
             }
+            if ($const == 'ADHERENT_MAILMAN_LISTS')
+            {
+            	print '. '.$langs->trans("Example").': <a href="#" id="exampleclick3">'.img_down().'</a><br>';
+            	print '<div id="example3" class="hidden">';
+            	print 'mymailmanlist<br>';
+            	print 'mymailmanlist1,mymailmanlist2<br>';
+            	print 'TYPE:Type1:mymailmanlist1,TYPE:Type2:mymailmanlist2<br>';
+            	if ($conf->categorie->enabled) print 'CATEG:Categ1:mymailmanlist1,CATEG:Categ2:mymailmanlist2<br>';
+            	print '</div>';
+            	//print 'http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members/remove?adminpw=%MAILMAN_ADMINPW%&unsubscribees=%EMAIL%';
+            }
 
             print "</td>\n";
 
@@ -1135,14 +1148,14 @@ function form_constantes($tableau,$strictw3c=0)
             	print '<td align="center">';
             	print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 	            print "</td>";
-            }    
+            }
     	    print "</tr>\n";
             if (empty($strictw3c)) print "</form>\n";
         }
     }
     print '</table>';
 
-    if (! empty($strictw3c)) 
+    if (! empty($strictw3c))
     {
     	print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
     	print "</form>\n";

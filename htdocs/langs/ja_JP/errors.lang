@@ -1,22 +1,12 @@
-CHARSET=UTF-8
-ErrorPasswordDiffers=パスワードが異なる、それらを再度入力してください。
-ErrorCantReadFile=ファイル&quot;%s&quot;を読み取ることができませんでした
-ErrorCantReadDir=ディレクトリ&quot;%s&quot;を読み取ることができませんでした
-ErrorFailedToFindEntity=環境&quot;%s&quot;を読み取ることができませんでした
-ErrorBadLoginPassword=ログインまたはパスワードの値が正しくありません
-ErrorLoginDisabled=あなたのアカウントは無効にされています
-ErrorFailedToRunExternalCommand=外部コマンドの実行に失敗しました。それはあなたのPHPサーバで利用可能と実行可能になったのを確認してください。 PHP <b>セーフモードが</b>有効<b>になっ</b>ている場合、コマンドは、パラメータの<b>safe_mode_exec_dirの</b>によって定義されたディレクトリ内にあることを確認してください。
-ErrorFailedToChangePassword=パスワードの変更に失敗しました
-ErrorLoginDoesNotExists=ログイン<b>%s</b>を持つユーザーを見つけることができませんでした。
-ErrorLoginHasNoEmail=このユーザーは電子メールアドレスを持っていません。プロセスが中止されました。
-ErrorBadValueForCode=セキュリティコードの値が正しくありません。新しい値で再試行してください...
-WarningInstallDirExists=警告、インストールディレクトリ<b>（htdocsディレクトリは/インストールするには</b> ）依然として存在する。これは重大なセキュリティホールです。あなたはできるだけ早くそれを削除してください。
-WarningUntilDirRemoved=すべてのセキュリティ警告は、（のみの管理者ユーザでは表示）の脆弱性が存在する（またはその定数MAIN_REMOVE_INSTALL_WARNINGがセットアップ] - &gt; [その他の設定に追加される）である限り、アクティブのままです。
+# Dolibarr language file - Source file is en_US - errors
 
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
+# No errors
+# NoErrorCommitIsDone=No error, we commit
+
+# Errors
 Error=エラー
 Errors=エラー
+# ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=メールして%sが間違っている
 ErrorBadUrl=URLの%sが間違っている
 ErrorLoginAlreadyExists=ログイン%sはすでに存在しています。
@@ -34,6 +24,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=この連絡先は既にこのタイ�
 ErrorCashAccountAcceptsOnlyCashMoney=この銀行口座は現金勘定であるため、それが唯一のタイプの現金の支払を受け入れます。
 ErrorFromToAccountsMustDiffers=ソースとターゲットの銀行口座は異なっている必要があります。
 ErrorBadThirdPartyName=サードパーティの名前の値が正しくありません
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=顧客コードの不正な構文
 ErrorCustomerCodeRequired=顧客コードが必要です
 ErrorCustomerCodeAlreadyUsed=顧客コードは既に使用され
@@ -66,6 +57,10 @@ ErrorUploadBlockedByAddon=PHP / Apacheプラグインによってブロックさ
 ErrorFileSizeTooLarge=ファイルサイズが大きすぎます。
 ErrorSizeTooLongForIntType=（%s桁の最大値）int型に対して長すぎるサイズ
 ErrorSizeTooLongForVarcharType=文字列型（%s文字最大）長すぎるサイズ
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=フィールド<b>%sは、</b>特殊文字が含まれてはいけません。
 ErrorNoAccountancyModuleLoaded=全く会計モジュールが活性化しない
 ErrorExportDuplicateProfil=このプロファイリングの名前は、このエクスポート·セットにすでに存在しています。
@@ -97,14 +92,44 @@ ErrorDeleteNotPossibleLineIsConsolidated=レコードがconciliatedされてい�
 ErrorProdIdAlreadyExist=%sは別の第三者に割り当てられています
 ErrorFailedToSendPassword=パスワードの送信に失敗しました
 ErrorFailedToLoadRSSFile=RSSフィードの取得に失敗した。エラーメッセージが十分な情報を提供していない場合は定数MAIN_SIMPLEXMLLOAD_DEBUGを追加しようとする。
+ErrorPasswordDiffers=パスワードが異なる、それらを再度入力してください。
 ErrorForbidden=アクセスが拒否されました。 <br>あなたがページにアクセスしようとすると、認証されたセッションまたはそのにいない領域や機能は、ユーザーに許可されていません。
 ErrorForbidden2=このログインの許可は、メニュー%s  - &gt; %sからDolibarr管理者によって定義することができます。
 ErrorForbidden3=そのDolibarrが認証セッションを介して使用されていないようです。認証を（htaccessファイルは、mod_authまたは他の...）を管理する方法を知ってDolibarrセットアップドキュメントを見てみましょう。
 ErrorNoImagickReadimage=クラスImagickが、このPHPで発見さ​​れていません。なしプレビューは利用できません。管理者は、メニューのSetupから、このタブを無効にすることができます - 表示します。
 ErrorRecordAlreadyExists=レコードがすでに存在している
+ErrorCantReadFile=ファイル&quot;%s&quot;を読み取ることができませんでした
+ErrorCantReadDir=ディレクトリ&quot;%s&quot;を読み取ることができませんでした
+ErrorFailedToFindEntity=環境&quot;%s&quot;を読み取ることができませんでした
+ErrorBadLoginPassword=ログインまたはパスワードの値が正しくありません
+ErrorLoginDisabled=あなたのアカウントは無効にされています
+ErrorFailedToRunExternalCommand=外部コマンドの実行に失敗しました。それはあなたのPHPサーバで利用可能と実行可能になったのを確認してください。 PHP <b>セーフモードが</b>有効<b>になっ</b>ている場合、コマンドは、パラメータの<b>safe_mode_exec_dirの</b>によって定義されたディレクトリ内にあることを確認してください。
+ErrorFailedToChangePassword=パスワードの変更に失敗しました
+ErrorLoginDoesNotExists=ログイン<b>%s</b>を持つユーザーを見つけることができませんでした。
+ErrorLoginHasNoEmail=このユーザーは電子メールアドレスを持っていません。プロセスが中止されました。
+ErrorBadValueForCode=セキュリティコードの値が正しくありません。新しい値で再試行してください...
 ErrorBothFieldCantBeNegative=フィールド%s %sとは負の両方にすることはできません
 ErrorWebServerUserHasNotPermission=Webサーバを実行するユーザーアカウントを使用<b>%s</b>そのための権限を持っていない
 ErrorNoActivatedBarcode=活性化バーコード·タイプません
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
 WarningSafeModeOnCheckExecDir=警告、PHPのオプション<b>セーフモードは、PHP</b>のパラメータ<b>safe_mode_exec_dirの</b>宣言されたディレクトリ内に格納する必要がありますので、コマンドにあります。
 WarningAllowUrlFopenMustBeOn=パラメータ<b>allow_url_fopenを、</b>完全<b>に</b>仕事は、このモジュールを持つためにファイラ<b>php.ini</b>で<b>onに</b>設定する必要があります。あなたがこのファイルを手動で変更する必要があります。
 WarningBuildScriptNotRunned=スクリプト<b>%sは</b>まだグラフィックスを構築するために走ったり、表示するデータがありませんされていません。
@@ -113,4 +138,9 @@ WarningPassIsEmpty=警告は、データベースのパスワードは空です�
 WarningConfFileMustBeReadOnly=警告は、設定ファイルは<b>（htdocsに/ confに/ conf.php）</b>のWebサーバーによって上書きすることができます。これは重大なセキュリティホールです。 Webサーバーで使用されるオペレーティング·システム·ユーザーのために読み取り専用モードになるようにファイルのパーミッションを変更します。あなたのディスクにWindowsとFATフォーマットを使用すると、このファイルシステムはファイルのパーミッションを追加することはできません知っている必要があり、ので、完全に安全ではないcan。
 WarningsOnXLines=<b>%s</b>ソース行に関する警告
 WarningNoDocumentModelActivated=ドキュメント生成のためのモデルは、活性化されていません。あなたのモジュールのセットアップを確認するまでモデルは、デフォルトで選びましたされます。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:47:46).
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningUntilDirRemoved=すべてのセキュリティ警告は、（のみの管理者ユーザでは表示）の脆弱性が存在する（またはその定数MAIN_REMOVE_INSTALL_WARNINGがセットアップ] - &gt; [その他の設定に追加される）である限り、アクティブのままです。
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

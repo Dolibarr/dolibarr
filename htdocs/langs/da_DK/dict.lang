@@ -1,26 +1,17 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=Frankrig
 CountryBE=Belgien
 CountryIT=Italien
 CountryES=Spanien
 CountryDE=Tyskland
+CountryCH=Schweiz
 CountryGB=Storbritannien
+# CountryUK=United Kingdom
 CountryIE=Dänemark
 CountryCN=Kina
 CountryTN=Tunis
 CountryUS=United States
+CountryMA=Marokko
 CountryDZ=Algeriet
 CountryCA=Canada
 CountryTG=Togo
@@ -255,73 +246,84 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+
+##### Civilities #####
 CivilityMME=Mrs
 CivilityMR=Mr.
 CivilityMLE=Ms
 CivilityMTRE=Mester
+# CivilityDR=Doctor
+
+##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=Dollar AU
-CurrencyCAD=Dollar CAN
-CurrencyCHF=Schweizerfrancs
-CurrencyEUR=Euro
-CurrencyFRF=Franske franc
-CurrencyMAD=Dirham
-CurrencyMGA=Ariary
-CurrencyGBP=GB Pounds
-CurrencyTND=TND
-CurrencyUSD=Dollar i USA
-CurrencyXAF=CFA-franc BEAC
-CurrencyXOF=CFA-franc BCEAO
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-CountryCH=Schweiz
-CountryMA=Marokko
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
 CurrencySingAUD=AU Dollar
+CurrencyCAD=Dollar CAN
 CurrencySingCAD=CAN Dollar
+CurrencyCHF=Schweizerfrancs
 CurrencySingCHF=Schweiziske Franc
+CurrencyEUR=Euro
 CurrencySingEUR=Euro
+CurrencyFRF=Franske franc
 CurrencySingFRF=Franske franc
+CurrencyGBP=GB Pounds
 CurrencySingGBP=GB pund
 CurrencyINR=Indiske rupees
 CurrencySingINR=Indiske rupee
+CurrencyMAD=Dirham
 CurrencySingMAD=Dirham
+CurrencyMGA=Ariary
 CurrencySingMGA=Ariary
 CurrencyMUR=Mauritius rupees
 CurrencySingMUR=Mauritius rupee
 CurrencyNOK=Norske Kroner
 CurrencySingNOK=Norske kroner
+CurrencyTND=TND
 CurrencySingTND=Tunesiske dinar
+CurrencyUSD=Dollar i USA
 CurrencySingUSD=US Dollar
+CurrencyUAH=Hryvnia
+CurrencySingUAH=Hryvnia
+CurrencyXAF=CFA-franc BEAC
 CurrencySingXAF=CFA Franc BEAC
+CurrencyXOF=CFA-franc BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=FFP franc
 CurrencySingXPF=FFP Franc
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:26).
 
+# CurrencyCentSingEUR=cent
+# CurrencyThousandthSingTND=thousandth
 
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> da_DK
-CurrencyUAH=Hryvnia
-CurrencySingUAH=Hryvnia
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
-DemandReasonTypeSRC_SHOP=Shoppe Kontakt
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:40:01).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
 DemandReasonTypeSRC_CAMP_MAIL=Mailing kampagne
 DemandReasonTypeSRC_CAMP_EMAIL=E-mail-kampagne
 DemandReasonTypeSRC_CAMP_PHO=Telefon kampagne
 DemandReasonTypeSRC_CAMP_FAX=Fax-kampagne
 DemandReasonTypeSRC_COMM=Kommerciel kontakt
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:31).
+DemandReasonTypeSRC_SHOP=Shoppe Kontakt
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+# DemandReasonTypeSRC_EMPLOYEE=Employee
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
+
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

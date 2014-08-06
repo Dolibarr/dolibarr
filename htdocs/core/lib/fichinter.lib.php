@@ -67,14 +67,22 @@ function fichinter_prepare_head($object)
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
+    	$nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
     	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$object->id;
     	$head[$h][1] = $langs->trans('Notes');
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
     	$head[$h][2] = 'note';
     	$h++;
     }
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$upload_dir = $conf->ficheinter->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files'));
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
+	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -87,5 +95,43 @@ function fichinter_prepare_head($object)
 
     return $head;
 }
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function fichinter_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$h = 0;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/fichinter.php";
+	$head[$h][1] = $langs->trans("Interventions");
+	$head[$h][2] = 'ficheinter';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin');
+
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin','remove');
+
+		return $head;
+}
+
 
 ?>

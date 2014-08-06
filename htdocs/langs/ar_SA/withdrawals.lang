@@ -1,19 +1,11 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=أوامر دائمة المنطقة
 CustomersStandingOrdersArea=أوامر دائمة منطقة العملاء
 StandingOrders=أوامر دائمة
 StandingOrder=أوامر دائمة
 NewStandingOrder=دائمة جديدة من أجل
+StandingOrderToProcess=لعملية
+StandingOrderProcessed=معالجة
 Withdrawals=انسحابات
 Withdrawal=انسحاب
 WithdrawalsReceipts=إيصالات السحب
@@ -27,6 +19,7 @@ RequestStandingOrderTreated=طلب تعامل أوامر دائمة
 CustomersStandingOrders=الزبون أوامر دائمة
 CustomerStandingOrder=يقف النظام العميل
 NbOfInvoiceToWithdraw=ملاحظة : للفاتورة مع طلب سحب
+NbOfInvoiceToWithdrawWithInfo=ملحوظة من فاتورة مع سحب طلب للعملاء وبعد تحديد معلومات الحساب المصرفي
 InvoiceWaitingWithdraw=فاتورة انتظار الانسحاب
 AmountToWithdraw=سحب المبلغ
 WithdrawsRefused=ورفض سحب
@@ -42,19 +35,12 @@ ThirdPartyDeskCode=طرف ثالث مكتب مدونة
 NoInvoiceCouldBeWithdrawed=أي فاتورة withdrawed بالنجاح. تأكد من أن الفاتورة على الشركات الحظر ساري المفعول.
 ClassCredited=تصنيف حساب
 ClassCreditedConfirm=هل أنت متأكد من أن يصنف هذا الانسحاب كما تلقي على حساب حسابك المصرفي؟
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-StandingOrderToProcess=لعملية
-StandingOrderProcessed=معالجة
 TransData=تاريخ الإرسال
 TransMetod=طريقة البث
 Send=إرسال
 Lines=خطوط
 StandingOrderReject=رفض إصدار
+InvoiceRefused=تهمة الرفض لزبون
 WithdrawalRefused=سحب Refuseds
 WithdrawalRefusedConfirm=هل أنت متأكد أنك تريد الدخول في رفض الانسحاب للمجتمع
 RefusedData=تاريخ الرفض
@@ -65,6 +51,7 @@ InvoiceRefused=تهمة الرفض لزبون
 Status=حالة
 StatusUnknown=غير معروف
 StatusWaiting=انتظار
+StatusTrans=أحال
 StatusCredited=الفضل
 StatusRefused=رفض
 StatusMotif0=غير محدد
@@ -84,13 +71,6 @@ NotifyTransmision=انسحاب البث
 NotifyEmision=انسحاب الانبعاثات
 NotifyCredit=انسحاب الائتمان
 NumeroNationalEmetter=رقم المرسل وطنية
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:07).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-NbOfInvoiceToWithdrawWithInfo=ملحوظة من فاتورة مع سحب طلب للعملاء وبعد تحديد معلومات الحساب المصرفي
-StatusTrans=أحال
 PleaseSelectCustomerBankBANToWithdraw=حدد معلومات عن حساب مصرفي العملاء لسحب
 WithBankUsingRIB=عن الحسابات المصرفية باستخدام RIB
 WithBankUsingBANBIC=عن الحسابات المصرفية باستخدام IBAN / BIC / SWIFT
@@ -100,6 +80,11 @@ WithdrawalFileNotCapable=غير قادر على توليد سحب ملف است�
 ShowWithdraw=وتظهر سحب
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=ومع ذلك، إذا فاتورة واحدة على الأقل دفع انسحاب لا تتم معالجتها حتى الآن، فإنه لن يكون كما سيولي للسماح لإدارة الانسحاب قبل.
 DoStandingOrdersBeforePayments=هذه علامات تسمح لك لطلب لاستصدار أمر دائم. مرة واحدة وسيتم الانتهاء من ذلك، يمكنك كتابة دفع لإغلاق الفاتورة.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=دفع %s النظام الدائمة من قبل البنك
 InfoCreditMessage=تم دفع %s النظام وقوفه الى جانب البنك <br> بيانات الدفع: %s
 InfoTransSubject=انتقال %s ترتيب دائمة للبنك
@@ -107,6 +92,5 @@ InfoTransMessage=وقد transmited في %s أجل الوقوف على البنك
 InfoTransData=المبلغ: %s <br> Metode: %s <br> تاريخ: %s
 InfoFoot=هذه رسالة تلقائية ترسل من قبل Dolibarr
 InfoRejectSubject=ورفض النظام واقفا
-InfoRejectMessage=مرحبا، <br><br> تم رفض الطلب من standig %s فاتورة تتعلق %s شركة، مع مبلغ %s من قبل البنك. <br><br> - <br> ٪ $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=لم يتم تعيين خيار الوضع الحقيقي، ونحن بعد توقف هذه المحاكاة
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:56:00).

@@ -1,6 +1,6 @@
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -37,6 +37,7 @@ insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (4,'ORDER_SUPPLIER_REFUSE','Supplier order request refused','Executed when a supplier order is refused','order_supplier',13);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (5,'ORDER_VALIDATE','Customer order validate','Executed when a customer order is validated','commande',4);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (6,'PROPAL_VALIDATE','Customer proposal validated','Executed when a commercial proposal is validated','propal',2);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (9,'COMPANY_SENTBYMAIL','Mails sent from third party card','Executed when you send email from third party card','societe',1);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (10,'COMPANY_CREATE','Third party created','Executed when a third party is created','societe',1);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (11,'CONTRACT_VALIDATE','Contract validated','Executed when a contract is validated','contrat',18);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (12,'PROPAL_SENTBYMAIL','Commercial proposal sent by mail','Executed when a commercial proposal is sent by mail','propal',3);
@@ -57,3 +58,4 @@ insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (27,'MEMBER_DELETE','Member deleted','Executed when a member is deleted','member',25);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (28,'BILL_UNVALIDATE','Customer invoice unvalidated','Executed when a customer invoice status set back to draft','facture',10);
 insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (29,'FICHINTER_SENTBYMAIL','Intervention sent by mail','Executed when a intervention is sent by mail','ficheinter',29);
+insert into llx_c_action_trigger (rowid,code,label,description,elementtype,rang) values (30,'PROJECT_CREATE','Project creation','Executed when a project is created','project',30);

@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - oscommerce
 OSCommerce=OS Commerce
 OSCommerceSetup=Настройка модуля OS Commerce
 OSCommerceSetupSaved=Настройка OS Commerce сохранена
@@ -16,5 +6,3 @@ OSCommerceServer=Хост/IP сервера OS Commerce
 OSCommerceDatabaseName=Имя базы данных OS Commerce
 OSCommercePrefix=Префикс таблиц OS Commerce
 OSCommerceUser=Имя пользователя базы данных OS Commerce
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser

@@ -20,7 +20,7 @@
 
 .survey_invitation
 {
-	font-color: #445566;
+	color: #445566;
 	font-weight: bold;
 }
 
@@ -141,7 +141,7 @@ div.bandeau{
 	color:white;
 	vertical-align:middle;
 	font-size:35px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	padding:8px; 
 	height:35px;
 	position:static;
@@ -166,7 +166,7 @@ div.bandeautitre{
 	font-weight:bold;
 	text-align:center;
 	vertical-align:middle;
-	font-family:arial;
+	font-family:arial, sans-serif;
  	padding:3px; 
 	position:static;
 	top:57px;
@@ -179,7 +179,7 @@ div.sousbandeau{
 	font-size:11px;
 	color:black;
 	vertical-align:middle;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	padding:3px;
 	position:static;
 	top:80px;
@@ -200,7 +200,7 @@ div.bandeaupied{
 	background-color: #0b419b;
 	color:white;
 	font-size:11px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	padding:6px;
 	position:fixed;
 	bottom:6px;
@@ -221,7 +221,7 @@ div.bandeaupiedmobile{
 	background-color: #0b419b;
 	color:white;
 	font-size:11px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	padding:6px; 
 	position:static; 
 }
@@ -234,7 +234,7 @@ div.sousbandeau a, div.sousbandeau span.sousbandeaulangue a {
 	text-align:center;
 	margin-left:10px;
 	margin-right:10px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	color:white;
 	font-size:10px;
 	text-decoration:none;
@@ -247,18 +247,18 @@ span.sousbandeaulangue {
 /*corps de la page index.php*/
 div.corps{ 
 	font-size:12px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	position:static;
 	padding:15px;
 }
 div.corps  table{
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:12px;	
 	font-weight:bold;
 }
 div.corpscentre{ 
 	font-size:12px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	text-align:center;
 	position:absolute;
 	top:150px;
@@ -280,7 +280,7 @@ div.jourschoisis {
 /*presenation des pages*/
 div.bodydate {
 	padding:10px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:12px;	
 	text-align:center;
 	position:static;
@@ -289,14 +289,14 @@ div.bodydate {
 	right:20px;
 }
 div.bodydate table{
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:12px;	
 	font-weight:bold;
 }
 /*cadre de commentaires*/
 div.presentationdate {
 	width:100%;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	text-align:center;
 	font-size:12px;	
 	border-top:1px solid;
@@ -311,12 +311,11 @@ div.presentationdate {
 div.presentationdatefin {
 	width:40%;
 	padding:10px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	text-align:center;
-	font-size:12px;	
-	border-width:1px;
-	border-style:solid;
-	margin-top: 10px;
+	font-size:12px;
+    border: 1px solid;
+    margin-top: 10px;
 	margin-left: 30%;
     margin-right: 30%; 
 	position:static;
@@ -324,7 +323,7 @@ div.presentationdatefin {
 /*cadre principal de studs.php*/
 div.cadre {
 	padding:10px; 
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:12px;	
 	position:static;
 	top:235px;
@@ -406,7 +405,7 @@ div.calendrier {
 	background-color: #AAA;
 	width:490px;
 	font-size:12px;
-	font-family:arial;
+	font-family:arial, sans-serif;
     margin-left: 30%;
     margin-right: 30%;
 	position:static;
@@ -415,7 +414,7 @@ div.calendrier {
 div.calendrier td.joursemaine {
 	width:65px;
 	text-align: center;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:14px;
 	border: 2px;
 	background-color: white; 
@@ -423,7 +422,7 @@ div.calendrier td.joursemaine {
 div.calendrier td.jourwe {
 	width:65px;
 	text-align: center;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:14px;
 	border: 2px;
 	background-color: #C0C0C0; 
@@ -433,7 +432,7 @@ div.calendrier td.avant {
 	width:65px;
 	text-align: center;
 	border: 2px;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:13px;
 	background-color: #DDDDDD; 
 }
@@ -454,7 +453,7 @@ div.calendrier td.choisi {
 /* Le paragraphe de fin */
 p.affichageresultats{
 	text-align: center;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:13px;
 }
 
@@ -468,7 +467,7 @@ div.comment span.usercomment{
 
 a.affichageexport{
 	text-align: center;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:10px;
 	margin-left:10px;
 	text-decoration: none;
@@ -483,11 +482,11 @@ div.titregestionadmin{
 
 .bouton {
 	width: 65px;
-	border:0px;
-	padding:0px 0 0 0;
-	margin:0px;
+	border:0;
+	padding:0 0 0 0;
+	margin:0;
 	cursor:pointer;
-	font-family:arial;
+	font-family:arial, sans-serif;
 	font-size:13px;
 }
 /*les boutons pour choisir un jour non selectionné*/
@@ -505,7 +504,7 @@ div.nouveau_sondage a {
 }
 div.nouveau_sondage span img {
     vertical-align: middle;
-    border: 0px;
+    border: 0;
 }
 div.nouveau_sondage span {
     margin-left: 20px;
@@ -514,7 +513,7 @@ div.nouveau_sondage span {
 div.error, div.addcomment {
     text-align:center;
     border: 1px;
-    font-family: arial;
+    font-family: arial, sans-serif;
     font-size: 13px;
 }
 ul.exports {

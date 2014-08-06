@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=Dokumenter
 DocsMine=Mine dokumenter
 DocsGenerated=Genereret dokumenter
@@ -31,15 +19,14 @@ ECMSections=Abonnentfortegnelser
 ECMRoot=Rot
 ECMNewSection=Ny mappe
 ECMAddSection=Tilføj en håndbog bibliotek
-ECMNewSection=Ny håndbog bibliotek
 ECMNewDocument=Nyt dokument
 ECMCreationDate=Lavet dato
 ECMNbOfFilesInDir=Antallet af filer i mappen
 ECMNbOfSubDir=Antal sub-mapper
-ECMNbOfFilesInSubDir=Nunber af Iles i sub-mapper
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Creator
-ECMArea=ECM-området
-ECMAreaDesc=ECM (Elektronisk Content Management)-området giver dig mulighed for at gemme, dele og søge hurtigt alle slags dokumenter i Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Automatisk abonnentfortegnelser fyldes automatisk, når tilføjelse af dokumenter fra kort af et element. <br> * Manual mapper kan bruges til at gemme dokumenter, der ikke er knyttet til et bestemt element.
 ECMSectionWasRemoved=<b>Directory %s</b> er blevet slettet.
 ECMDocumentsSection=Dokument fra biblioteket
@@ -48,12 +35,14 @@ ECMSearchByEntity=Søg på objektet
 ECMSectionOfDocuments=Abonnentfortegnelser af dokumenter
 ECMTypeManual=Manual
 ECMTypeAuto=Automatisk
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Dokumenter knyttet til tredjemand
 ECMDocsByProposals=Dokumenter knyttet til forslag
 ECMDocsByOrders=Dokumenter knyttet til kundernes ordrer
 ECMDocsByContracts=Dokumenter i forbindelse med kontrakter
 ECMDocsByInvoices=Dokumenter knyttet til kunder fakturaer
 ECMDocsByProducts=Dokumenter i tilknytning til produkter
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Nr. bibliotek skabt
 ShowECMSection=Vis mappe
 DeleteSection=Fjern mappe
@@ -62,5 +51,5 @@ ECMDirectoryForFiles=Relativ mappe for filer
 CannotRemoveDirectoryContainsFiles=Fjernes ikke muligt, fordi den indeholder nogle filer
 ECMFileManager=Filhåndtering
 ECMSelectASection=Vælg en mappe på venstre-træ ...
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

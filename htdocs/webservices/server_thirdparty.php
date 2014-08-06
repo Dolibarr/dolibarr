@@ -160,7 +160,8 @@ $server->wsdl->addComplexType(
     array(
         //'limit' => array('name'=>'limit','type'=>'xsd:string'),
         'client' => array('name'=>'client','type'=>'xsd:string'),
-        'supplier' => array('name'=>'supplier','type'=>'xsd:string')
+        'supplier' => array('name'=>'supplier','type'=>'xsd:string'),
+    	'category' => array('name'=>'category','type'=>'xsd:string')
     )
 );
 
@@ -311,7 +312,7 @@ function getThirdParty($authentication,$id='',$ref='',$ref_ext='')
 				        'country_id' => $thirdparty->country_id,
 				        'country_code' => $thirdparty->country_code,
 				        'country' => $thirdparty->country,
-			            'phone' => $thirdparty->tel,
+			            'phone' => $thirdparty->phone,
 				        'fax' => $thirdparty->fax,
 				        'email' => $thirdparty->email,
 				        'url' => $thirdparty->url,
@@ -442,6 +443,7 @@ function createThirdParty($authentication,$thirdparty)
         $newobject->tva_intra=$thirdparty['vat_number'];
 
         $newobject->canvas=$thirdparty['canvas'];
+        $newobject->particulier=$thirdparty['individual'];
         
         //Retreive all extrafield for thirdsparty
         // fetch optionals attributes and labels
@@ -456,6 +458,11 @@ function createThirdParty($authentication,$thirdparty)
         $db->begin();
 
         $result=$newobject->create($fuser);
+        if ($newobject->particulier && $result > 0) {
+            $newobject->firstname = $thirdparty['firstname'];
+            $newobject->name_bis = $thirdparty['ref'];
+            $result = $newobject->create_individual($fuser);
+        }
         if ($result <= 0)
         {
             $error++;
@@ -640,14 +647,17 @@ function getListOfThirdParties($authentication,$filterthirdparty)
 
     if (! $error)
     {
-        $sql ="SELECT rowid, nom as ref, ref_ext";
-        $sql.=" FROM ".MAIN_DB_PREFIX."societe";
+        $sql ="SELECT s.rowid, s.nom as ref, s.ref_ext, s.address, s.zip, s.town, p.libelle as country, s.phone, s.fax, s.url";
+        $sql.=" FROM ".MAIN_DB_PREFIX."societe as s";
+        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid';
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterthirdparty as $key => $val)
         {
-            if ($key == 'client'   && $val != '')  $sql.=" AND client = ".$db->escape($val);
-            if ($key == 'supplier' && $val != '')  $sql.=" AND fournisseur = ".$db->escape($val);
+            if ($key == 'client'   && $val != '')  $sql.=" AND s.client = ".$db->escape($val);
+            if ($key == 'supplier' && $val != '')  $sql.=" AND s.fournisseur = ".$db->escape($val);
+            if ($key == 'category'   && $val != '')  $sql.=" AND s.rowid IN (SELECT fk_societe FROM ".MAIN_DB_PREFIX."categorie_societe WHERE fk_categorie=".$db->escape($val).") ";
         }
+        dol_syslog("Function: getListOfThirdParties sql=".$sql);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -657,7 +667,17 @@ function getListOfThirdParties($authentication,$filterthirdparty)
             while ($i < $num)
             {
                 $obj=$db->fetch_object($resql);
-                $arraythirdparties[]=array('id'=>$obj->rowid,'ref'=>$obj->ref,'ref_ext'=>$obj->ref_ext);
+                $arraythirdparties[]=array('id'=>$obj->rowid,
+                			'ref'=>$obj->ref,
+                			'ref_ext'=>$obj->ref_ext,
+                			'adress'=>$obj->adress,
+			                'zip'=>$obj->zip,
+			                'town'=>$obj->town,
+			                'country'=>$obj->country,
+			                'phone'=>$obj->phone,
+			                'fax'=>$obj->fax,
+			                'url'=>$obj->url
+                );
                 $i++;
             }
         }

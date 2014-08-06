@@ -1,8 +1,8 @@
-# Dolibarr language file - en_US - sendings
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. shipment
 Sending=Shipment
 Sendings=Shipments
+Shipment=Shipment
 Shipments=Shipments
 Receivings=Receivings
 SendingsArea=Shipments area
@@ -13,6 +13,7 @@ LastSendings=Last %s shipments
 SearchASending=Search for shipment
 StatisticsOfSendings=Statistics for shipments
 NbOfSendings=Number of shipments
+NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Shipping card
 NewSending=New shipment
 CreateASending=Create a shipment
@@ -49,7 +50,7 @@ Enlevement=Gotten by customer
 DocumentModelSimple=Simple document model
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=Warning, no products waiting to be shipped.
-StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated
+StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Planed date of delivery
 DateReceived=Date delivery received
 SendShippingByEMail=Send shipment by EMail
@@ -71,3 +72,5 @@ DocumentModelSirocco=Simple document model for delivery receipts
 DocumentModelTyphon=More complete document model for delivery receipts (logo...)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Constant EXPEDITION_ADDON_NUMBER not defined
+SumOfProductVolumes=Sum of product volumes
+SumOfProductWeights=Sum of product weights

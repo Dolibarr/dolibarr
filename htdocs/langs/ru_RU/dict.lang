@@ -1,24 +1,17 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - dict
 CountryFR=Франция
 CountryBE=Бельгия
 CountryIT=Италия
 CountryES=Испания
 CountryDE=Германия
+CountryCH=Швейцария
 CountryGB=Великобритания
+# CountryUK=United Kingdom
 CountryIE=Ирландия
 CountryCN=Китай
 CountryTN=Тунис
 CountryUS=Соединенные Штаты Америки
+CountryMA=Марокко
 CountryDZ=Алжир
 CountryCA=Канада
 CountryTG=Того
@@ -253,66 +246,55 @@ CountryJE=Джерси
 CountryME=Черногория
 CountryBL=Сен-Бартельми
 CountryMF=Сен-Мартен
+
+##### Civilities #####
 CivilityMME=Г-жа
 CivilityMR=Г-н
 CivilityMLE=Г-жа
 CivilityMTRE=Хозяин
+# CivilityDR=Doctor
+
+##### Currencies #####
 Currencyeuros=Евро
 CurrencyAUD=Доллар АС
-CurrencyCAD=США могут
-CurrencyCHF=Швейцарский франк
-CurrencyEUR=Евро
-CurrencyFRF=Французский франк
-CurrencyMAD=Дирхам
-CurrencyMGA=Ariary
-CurrencyGBP=ГБ фунта
-CurrencyTND=TND
-CurrencyUSD=Доллар США
-CurrencyUAF=грн.
-CurrencyXAF=Франков КФА БГЦА
-CurrencyXOF=Франков КФА ЦБЗАГ
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
-CountryCH=Швейцария
-CountryMA=Марокко
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
 CurrencySingAUD=АС доллар
+CurrencyCAD=США могут
 CurrencySingCAD=CAN доллар
+CurrencyCHF=Швейцарский франк
 CurrencySingCHF=Швейцарский франк
+CurrencyEUR=Евро
 CurrencySingEUR=Евро
+CurrencyFRF=Французский франк
 CurrencySingFRF=Французский франк
+CurrencyGBP=ГБ фунта
 CurrencySingGBP=GB Pound
 CurrencyINR=Индийских рупий
 CurrencySingINR=Индийская рупия
+CurrencyMAD=Дирхам
 CurrencySingMAD=Дирхам
+CurrencyMGA=Ariary
 CurrencySingMGA=Ariary
 CurrencyMUR=Маврикий рупий
 CurrencySingMUR=Маврикий рупия
 CurrencyNOK=Норвежских крон
 CurrencySingNOK=Норвежская крона
+CurrencyTND=TND
 CurrencySingTND=Тунисский динар
+CurrencyUSD=Доллар США
 CurrencySingUSD=Доллар США
-CurrencySingUAF=грн.
+CurrencyUAH=Гривна
+CurrencySingUAH=Гривна
+CurrencyXAF=Франков КФА БГЦА
 CurrencySingXAF=Франк КФА СБЕР
+CurrencyXOF=Франков КФА ЦБЗАГ
 CurrencySingXOF=Франк КФА ЦБЗАГ
 CurrencyXPF=CFP франков
 CurrencySingXPF=Франк КФП
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:43:10).
 
+# CurrencyCentSingEUR=cent
+# CurrencyThousandthSingTND=thousandth
 
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-CurrencyUAH=Гривна
-CurrencySingUAH=Гривна
+#### Input reasons #####
 DemandReasonTypeSRC_INTE=Интернет
 DemandReasonTypeSRC_CAMP_MAIL=Почтовый кампании
 DemandReasonTypeSRC_CAMP_EMAIL=Отправка кампании
@@ -320,4 +302,28 @@ DemandReasonTypeSRC_CAMP_PHO=Телефон кампании
 DemandReasonTypeSRC_CAMP_FAX=Факс кампании
 DemandReasonTypeSRC_COMM=Коммерческие контакты
 DemandReasonTypeSRC_SHOP=Магазин контакт
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:03).
+# DemandReasonTypeSRC_WOM=Word of mouth
+# DemandReasonTypeSRC_PARTNER=Partner
+# DemandReasonTypeSRC_EMPLOYEE=Employee
+# DemandReasonTypeSRC_SPONSORING=Sponsorship
+
+#### Paper formats ####
+# PaperFormatEU4A0=Format 4A0
+# PaperFormatEU2A0=Format 2A0
+# PaperFormatEUA0=Format A0
+# PaperFormatEUA1=Format A1
+# PaperFormatEUA2=Format A2
+# PaperFormatEUA3=Format A3
+# PaperFormatEUA4=Format A4
+# PaperFormatEUA5=Format A5
+# PaperFormatEUA6=Format A6
+# PaperFormatUSLETTER=Format Letter US
+# PaperFormatUSLEGAL=Format Legal US
+# PaperFormatUSEXECUTIVE=Format Executive US
+# PaperFormatUSLEDGER=Format Ledger/Tabloid
+# PaperFormatCAP1=Format P1 Canada
+# PaperFormatCAP2=Format P2 Canada
+# PaperFormatCAP3=Format P3 Canada
+# PaperFormatCAP4=Format P4 Canada
+# PaperFormatCAP5=Format P5 Canada
+# PaperFormatCAP6=Format P6 Canada

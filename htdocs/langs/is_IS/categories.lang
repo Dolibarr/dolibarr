@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Flokkur
 Categories=Flokkar
 Rubrique=Flokkur
@@ -25,6 +16,7 @@ SuppliersCategoriesArea=Birgjar flokkar area
 CustomersCategoriesArea=Viðskiptavinir flokkar area
 ThirdPartyCategoriesArea=Í þriðja aðila flokkar area
 MembersCategoriesArea=Members flokkar area
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Helstu flokkar
 SubCats=Undirflokkar
 CatStatistics=Tölfræði
@@ -58,12 +50,15 @@ SupplierIsInCategories=Þriðji aðili er eigandi að eftirtöldum birgjum flokk
 CompanyIsInCustomersCategories=Þessi þriðji aðili er eigandi að fylgja viðskiptavinum / horfur flokkar
 CompanyIsInSuppliersCategories=Þessi þriðji aðili er eigandi að eftirtöldum birgjum flokkar
 MemberIsInCategories=Þessi aðili er eigandi að eftirfarandi aðilar flokkar
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Þessi vara / þjónusta er ekki í neinum flokkum
 SupplierHasNoCategory=Þetta birgir ekki í neinum flokkum
 CompanyHasNoCategory=Þetta fyrirtæki er ekki í neinum flokkum
 MemberHasNoCategory=Þessi aðili er ekki í neinum flokkum
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Flokka í flokki
 NoneCategory=None
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Þessi flokkur er þegar til með þessu tilv
 ReturnInProduct=Til baka vöru / þjónustu kort
 ReturnInSupplier=Til baka birgir kort
@@ -86,10 +81,12 @@ CustomersCategoriesShort=Viðskiptavinir flokkar
 CustomersProspectsCategoriesShort=Custo. / Prosp. Flokkur
 ProductsCategoriesShort=Vörur flokkar
 MembersCategoriesShort=Members flokkar
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Þessi flokkur inniheldur ekki vöruna.
 ThisCategoryHasNoSupplier=Þessi flokkur inniheldur ekki birgir.
 ThisCategoryHasNoCustomer=Þessi flokkur inniheldur ekki allir viðskiptavinur.
 ThisCategoryHasNoMember=Þessi flokkur inniheldur ekki meðlimur.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Úthlutað til viðskiptavinar
 AssignedToTheCustomer=Úthlutað til viðskiptavinar
 InternalCategory=Innri flokkur
@@ -99,4 +96,12 @@ CatSupList=Listi yfir flokka birgir
 CatCusList=Listi yfir viðskiptavini / horfur flokkar
 CatProdList=Listi yfir vörur flokkar
 CatMemberList=Listi yfir meðlimi flokkar
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

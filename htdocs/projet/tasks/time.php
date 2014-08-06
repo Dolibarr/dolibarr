@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  *
@@ -50,20 +50,22 @@ $projectstatic = new Project($db);
 
 /*
  * Actions
- */
+*/
 
 if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
 	$error=0;
 
-	if (empty($_POST["timespent_durationhour"]) && empty($_POST["timespent_durationmin"]))
+	$timespent_durationhour = GETPOST('timespent_durationhour','int');
+	$timespent_durationmin = GETPOST('timespent_durationmin','int');
+	if (empty($timespent_durationhour) && empty($timespent_durationmin))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
 		$error++;
 	}
 	if (empty($_POST["userid"]))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorUserNotAffectedToTask').'</div>';
+		setEventMessage($langs->trans('ErrorUserNotAffectedToTask'),'errors');
 		$error++;
 	}
 
@@ -80,11 +82,12 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 		$result=$object->addTimeSpent($user);
 		if ($result >= 0)
 		{
-
+			setEventMessage($langs->trans("RecordSaved"));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error),'errors');
+			$error++;
 		}
 	}
 	else
@@ -99,7 +102,7 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 
 	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")).'</div>';
+		setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentitiesnoconv("Duration")),'errors');
 		$error++;
 	}
 
@@ -118,11 +121,12 @@ if ($action == 'updateline' && ! $_POST["cancel"] && $user->rights->projet->cree
 		$result=$object->updateTimeSpent($user);
 		if ($result >= 0)
 		{
-
+			setEventMessage($langs->trans("RecordSaved"));
 		}
 		else
 		{
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error),'errors');
+			$error++;
 		}
 	}
 	else
@@ -139,7 +143,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	if (!$result)
 	{
 		$langs->load("errors");
-		$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+		setEventMessage($langs->trans($object->error),'errors');
+		$error++;
 		$action='';
 	}
 }
@@ -165,7 +170,7 @@ if (! empty($project_ref) && ! empty($withproject))
 
 /*
  * View
- */
+*/
 
 llxHeader("",$langs->trans("Task"));
 
@@ -176,60 +181,64 @@ if ($id > 0 || ! empty($ref))
 {
 	/*
 	 * Fiche projet en mode visu
-	 */
+	*/
 	if ($object->fetch($id) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		$object->project = dol_clone($projectstatic);
+
 		$userWrite = $projectstatic->restrictedProjectArea($user,'write');
 
 		if ($withproject)
 		{
-    		// Tabs for project
-    		$tab='tasks';
-    		$head=project_prepare_head($projectstatic);
-    		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+			// Tabs for project
+			$tab='tasks';
+			$head=project_prepare_head($projectstatic);
+			dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
 
-    		$param=($mode=='mine'?'&mode=mine':'');
+			$param=($mode=='mine'?'&mode=mine':'');
 
-    		print '<table class="border" width="100%">';
+			print '<table class="border" width="100%">';
 
-    		// Ref
-    		print '<tr><td width="30%">';
-    		print $langs->trans("Ref");
-    		print '</td><td>';
-    		// Define a complementary filter for search of next/prev ref.
-    		if (! $user->rights->projet->all->lire)
-    		{
-    		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
-    		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
-    		}
-    		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
-    		print '</td></tr>';
+			// Ref
+			print '<tr><td width="30%">';
+			print $langs->trans("Ref");
+			print '</td><td>';
+			// Define a complementary filter for search of next/prev ref.
+			if (! $user->rights->projet->all->lire)
+			{
+				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
+				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+			}
+			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+			print '</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
+			// Label
+			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
-    		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td>';
-    		print '</tr>';
+			// Thirdparty
+			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
+			else print '&nbsp;';
+			print '</td>';
+			print '</tr>';
 
-    		// Visibility
-    		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-    		if ($projectstatic->public) print $langs->trans('SharedProject');
-    		else print $langs->trans('PrivateProject');
-    		print '</td></tr>';
+			// Visibility
+			print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+			if ($projectstatic->public) print $langs->trans('SharedProject');
+			else print $langs->trans('PrivateProject');
+			print '</td></tr>';
 
-    		// Statut
-    		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
+			// Statut
+			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
-    		print '</table>';
+			print '</table>';
 
-    		dol_fiche_end();
+			dol_fiche_end();
 
-    		print '<br>';
+			print '<br>';
 		}
 
 		$head=task_prepare_head($object);
@@ -239,8 +248,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action == 'deleteline')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
 
 		print '<table class="border" width="100%">';
@@ -254,28 +262,31 @@ if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if (! GETPOST('withproject') || empty($projectstatic->id))
 		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
-		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
+			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td></tr>';
 
+		// Planned workload
+		print '<tr><td>'.$langs->trans("PlannedWorkload").'</td><td colspan="3">'.convertSecondToTime($object->planned_workload,'allhourmin').'</td></tr>';
+
 		// Project
 		if (empty($withproject))
 		{
-    		print '<tr><td>'.$langs->trans("Project").'</td><td>';
-    		print $projectstatic->getNomUrl(1);
-    		print '</td></tr>';
+			print '<tr><td>'.$langs->trans("Project").'</td><td>';
+			print $projectstatic->getNomUrl(1);
+			print '</td></tr>';
 
-    		// Third party
-    		print '<td>'.$langs->trans("Company").'</td><td>';
-    		if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
-    		else print '&nbsp;';
-    		print '</td></tr>';
+			// Third party
+			print '<td>'.$langs->trans("ThirdParty").'</td><td>';
+			if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
+			else print '&nbsp;';
+			print '</td></tr>';
 		}
 
 		print '</table>';
@@ -285,7 +296,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 * Add time spent
-		 */
+		*/
 		if ($user->rights->projet->creer)
 		{
 			print '<br>';
@@ -328,7 +339,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Duration
 			print '<td class="nowrap" align="right">';
-			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''));
+			print $form->select_duration('timespent_duration',($_POST['timespent_duration']?$_POST['timespent_duration']:''),0,'text');
 			print '</td>';
 
 			print '<td align="center">';
@@ -342,7 +353,7 @@ if ($id > 0 || ! empty($ref))
 
 		/*
 		 *  List of time spent
-		 */
+		*/
 		$sql = "SELECT t.rowid, t.task_date, t.task_duration, t.fk_user, t.note";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
@@ -389,21 +400,21 @@ if ($id > 0 || ! empty($ref))
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
-  		    print "<tr ".$bc[$var].">";
+			print "<tr ".$bc[$var].">";
 
-  		    // Date
-  		    print '<td>';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print $form->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
-  		    }
-  		    else
-  		    {
-  		    	print dol_print_date($db->jdate($task_time->task_date),'day');
-  		    }
-  		    print '</td>';
+			// Date
+			print '<td>';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print $form->select_date($db->jdate($task_time->task_date),'timeline','','','',"timespent_date");
+			}
+			else
+			{
+				print dol_print_date($db->jdate($task_time->task_date),'day');
+			}
+			print '</td>';
 
-  		    // User
+			// User
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
@@ -416,43 +427,43 @@ if ($id > 0 || ! empty($ref))
 				$userstatic->firstname 	= $task_time->firstname;
 				print $userstatic->getNomUrl(1);
 			}
-		    print '</td>';
+			print '</td>';
 
- 		    // Note
-  		    print '<td align="left">';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_3.'">'.$task_time->note.'</textarea>';
-  		    }
-  		    else
-  		    {
-  		    	print dol_nl2br($task_time->note);
-  		    }
-  		    print '</td>';
+			// Note
+			print '<td align="left">';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print '<textarea name="timespent_note_line" cols="80" rows="'.ROWS_3.'">'.$task_time->note.'</textarea>';
+			}
+			else
+			{
+				print dol_nl2br($task_time->note);
+			}
+			print '</td>';
 
-  		    // Time spent
-  		    print '<td align="right">';
-  		    if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
-  		    	print $form->select_duration('new_duration',$task_time->task_duration);
-  		    }
-  		    else
-  		    {
-				print convertSecondToTime($task_time->task_duration,'all');
-  		    }
-  		    print '</td>';
+			// Time spent
+			print '<td align="right">';
+			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
+			{
+				print '<input type="hidden" name="old_duration" value="'.$task_time->task_duration.'">';
+				print $form->select_duration('new_duration',$task_time->task_duration,0,'text');
+			}
+			else
+			{
+				print convertSecondToTime($task_time->task_duration,'allhourmin');
+			}
+			print '</td>';
 
 			// Edit and delete icon
 			print '<td align="center" valign="middle" width="80">';
 			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
-  		    {
-  		    	print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
-  		    	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-  		    	print '<br>';
-  		    	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-  		    }
-  		    else if ($user->rights->projet->creer)
+			{
+				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
+				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+				print '<br>';
+				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+			}
+			else if ($user->rights->projet->creer)
 			{
 				print '&nbsp;';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
@@ -470,7 +481,7 @@ if ($id > 0 || ! empty($ref))
 			$total += $task_time->task_duration;
 		}
 		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total,'allhourmin').'</td><td>&nbsp;</td>';
 		print '</tr>';
 
 		print "</table>";

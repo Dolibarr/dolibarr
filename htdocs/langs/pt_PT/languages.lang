@@ -1,31 +1,44 @@
-/*
- * Language code: pt_PT
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
- */
+# Dolibarr language file - Source file is en_US - languages
 
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-CHARSET=UTF-8
 Language_ar_AR=Árabe
+Language_ar_SA=Árabe
+Language_bg_BG=Búlgaro
 Language_ca_ES=Catalão
+Language_cs_CZ=Checo
 Language_da_DA=Dinamarquês
+Language_da_DK=Dinamarquês
 Language_de_DE=Alemão
+Language_de_AT=Alemão (Áustria)
+Language_el_GR=Grego
 Language_en_AU=Inglês (Austrália)
 Language_en_GB=Inglês (Reino Unido)
 Language_en_IN=Inglês (Índia)
+Language_en_NZ=Inglês (Nova Zelândia)
+Language_en_SA=Inglês (Arábia Saudita)
 Language_en_US=Inglês (Estados Unidos)
+Language_en_ZA=Inglês (África do Sul)
 Language_es_ES=Espanhol
 Language_es_AR=Espanhol (Argentina)
+Language_es_HN=Espanhol (Honduras)
+Language_es_MX=Espanhol (México)
+Language_es_PY=Espanhol (Paraguai)
+Language_es_PE=Espanhol (Peru)
+Language_es_PR=Espanhol (Porto Rico)
+Language_et_EE=Estónia
+Language_fa_IR=Persa
 Language_fi_FI=Fins
 Language_fr_BE=Francês (Bélgica)
 Language_fr_CA=Francês (Canadá)
 Language_fr_CH=Francês (Suíça)
 Language_fr_FR=Francês
+Language_fr_NC=Francês (Nova Caledónia)
+Language_he_IL=Hebreu
+Language_hu_HU=Húngaro
 Language_is_IS=Islandês
 Language_it_IT=Italiano
 Language_ja_JP=Língua japonesa
+Language_ko_KR=Koreano
+# Language_lv_LV=Latvian
 Language_nb_NO=Norueguês (bokmål)
 Language_nl_BE=Holandês (Bélgica)
 Language_nl_NL=Holandês (Países Baixos)
@@ -34,26 +47,12 @@ Language_pt_BR=Português (Brasil)
 Language_pt_PT=Português
 Language_ro_RO=Romeno
 Language_ru_RU=Russo
+Language_ru_UA=Russo (Ucrânia)
 Language_tr_TR=Turco
 Language_sl_SI=Esloveno
 Language_sv_SV=Sueco
-Language_zh_CN=Chinês
-Language_is_IS=Islandês
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:23).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-Language_ar_SA=Árabe
-Language_da_DK=Dinamarquês
-Language_de_AT=Alemão (Áustria)
-Language_el_GR=Grego
-Language_en_NZ=Inglês (Nova Zelândia)
-Language_es_HN=Espanhol (Honduras)
-Language_es_MX=Espanhol (México)
-Language_es_PR=Espanhol (Porto Rico)
-Language_fa_IR=Persa
-Language_hu_HU=Húngaro
-Language_ru_UA=Russo (Ucrânia)
 Language_sv_SE=Sueco
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:46).
+# Language_sk_SK=Slovakian
+Language_vi_VN=Vietnamita
+Language_zh_CN=Chinês
+Language_zh_TW=Chinês (Tradicional)

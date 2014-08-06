@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Контракты области
 ListOfContracts=Список договоров
 LastContracts=Последнее% с измененными контрактами
@@ -22,7 +12,10 @@ ContractStatusValidated=Подтвержденные
 ContractStatusClosed=Закрытые
 ServiceStatusInitial=Не работает
 ServiceStatusRunning=Запуск
+ServiceStatusNotLate=Запуск, не истек
+ServiceStatusNotLateShort=Не истек
 ServiceStatusLate=Запуск, истек
+ServiceStatusLateShort=Истек
 ServiceStatusClosed=Закрытые
 ServicesLegend=Услуги легенда
 Contracts=Договоры
@@ -45,6 +38,7 @@ ConfirmCloseService=Вы действительно хотите закрыть 
 ValidateAContract=Проверить контракт
 ActivateService=Активировать услугу
 ConfirmActivateService=Вы уверены, что хотите, чтобы активировать данную услугу с <b>даты %s?</b>
+# RefContract=Contract reference
 DateContract=Контракт дата
 DateServiceActivate=Дата активации услуги
 DateServiceUnactivate=Сроки службы unactivation
@@ -52,11 +46,14 @@ DateServiceStart=Дата начала службы
 DateServiceEnd=Дата окончания службы
 ShowContract=Показать контракта
 ListOfServices=Перечень услуг
+ListOfInactiveServices=Перечень услуг не активен
+ListOfExpiredServices=Список с истекшим сроком службы
+ListOfClosedServices=Список закрытых услуги
 ListOfRunningContractsLines=Список запуска контракта линий
 ListOfRunningServices=Список запущенных служб
 NotActivatedServices=Не активируется услуг (в том числе утверждены контракты)
 BoardNotActivatedServices=Услуги для активации среди утверждены контракты
-LastContracts=Последнее% контрактов
+LastContracts=Последнее% с измененными контрактами
 LastActivatedServices=Последнее %s активированных услуг
 LastModifiedServices=Последнее% с измененными услуги
 EditServiceLine=Изменить направление
@@ -72,53 +69,31 @@ DateEndReal=Реальная дата окончания
 DateEndRealShort=Реальная дата окончания
 NbOfServices=Nb услуг
 CloseService=Закрыть службы
-ServicesNomberShort= %s служба (ы)
+ServicesNomberShort=%s служба (ы)
 RunningServices=Запуск служб
 BoardRunningServices=Истекшие Запуск услуги
 ServiceStatus=Положение о службе
 DraftContracts=Проекты контрактов
 CloseRefusedBecauseOneServiceActive=Контракт не может быть закрыто, пока, по крайней мере один открытый службе по нему
 CloseAllContracts=Закрыть все контракты
+DeleteContractLine=Удалить контракт линия
+ConfirmDeleteContractLine=Вы уверены, что хотите удалить этот контракт линию?
 MoveToAnotherContract=Переместите службу в другой договор.
 ConfirmMoveToAnotherContract=Я выбранного новая цель договора и подтвердить, я хочу перейти эту услугу в этом договоре.
 ConfirmMoveToAnotherContractQuestion=Выборы, в которых существующего контракта (от же третья сторона), вы хотите переместить эту услугу?
+PaymentRenewContractId=Продлить контракт линия (номер %s)
+ExpiredSince=Срок действия
+RelatedContracts=Связанные контрактов
+NoExpiredServices=Не истек активных услуг
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Торговый представитель подписания контракта
 TypeContact_contrat_internal_SALESREPFOLL=Торговый представитель последующего договора
 TypeContact_contrat_external_BILLING=Платежная заказчика контакт
 TypeContact_contrat_external_CUSTOMER=После деятельность заказчика контакт
 TypeContact_contrat_external_SALESREPSIGN=Подписание контракта заказчик контакт
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-ServiceStatusNotLate=Запуск, не истек
-ServiceStatusNotLateShort=Не истек
-ServiceStatusLateShort=Истек
-ListOfInactiveServices=Перечень услуг не активен
-ListOfExpiredServices=Список с истекшим сроком службы
-ListOfClosedServices=Список закрытых услуги
-DeleteContractLine=Удалить контракт линия
-ConfirmDeleteContractLine=Вы уверены, что хотите удалить этот контракт линию?
-PaymentRenewContractId=Продлить контракт линия (номер %s)
-ExpiredSince=Срок действия
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-RelatedContracts=Связанные контрактов
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:52).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
 Error_CONTRACT_ADDON_NotDefined=Постоянное CONTRACT_ADDON не определена
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:57).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-NoExpiredServices=Не истек активных услуг
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:12).

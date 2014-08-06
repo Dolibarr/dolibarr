@@ -33,7 +33,7 @@
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array
+ *  @param	array	$ajaxoptions		Multiple options array (Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
@@ -146,11 +146,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						}
     						// Update an input
     						if (ui.item.update) {
-    							// clear old data before update
-    							$.each(ui.item.update, function(key, value) {
-    								$("#" + key).val("");
-    							});
-    							// update fields
+    							// loop on each "update" fields
     							$.each(ui.item.update, function(key, value) {
     								$("#" + key).val(value).trigger("change");
     							});
@@ -210,7 +206,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 										jQuery("#'.$htmlname.'").val(item.value);
 										// TODO move this to specific request
 										if (item.states) {
-											jQuery("#departement_id").html(item.states);
+											jQuery("#state_id").html(item.states);
 										}
 										for (i=0;i<length;i++) {
 											if (item[fields[i]]) {   // If defined
@@ -233,12 +229,12 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 								    {
 								        jQuery("#" + fields[i]).val(ui.item[fields[i]]);
 								        // If we set new country and new state, we need to set a new list of state to allow change
-                                        if (ui.item.states && ui.item["departement_id"] != jQuery("#departement_id").value) {
-                                            jQuery("#departement_id").html(ui.item.states);
+                                        if (ui.item.states && ui.item["state_id"] != jQuery("#state_id").value) {
+                                            jQuery("#state_id").html(ui.item.states);
                                         }
 								    }
 								}
-                                else if (fields[i]=="state_id" || fields[i]=="departement_id")
+                                else if (fields[i]=="state_id" || fields[i]=="state_id")
                                 {
                                     if (ui.item[fields[i]] > 0)     // Do not erase state if unknown
                                     {
@@ -309,6 +305,21 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 	global $conf;
 
 	if (! empty($conf->browser->phone)) return '';	// combobox disabled for smartphones (does not works)
+	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
+
+	/* Some properties for combobox:
+	minLengthToAutocomplete: 2,
+	comboboxContainerClass: "comboboxContainer",
+	comboboxValueContainerClass: "comboboxValueContainer",
+	comboboxValueContentClass: "comboboxValueContent",
+	comboboxDropDownClass: "comboboxDropDownContainer",
+	comboboxDropDownButtonClass: "comboboxDropDownButton",
+	comboboxDropDownItemClass: "comboboxItem",
+	comboboxDropDownItemHoverClass: "comboboxItemHover",
+	comboboxDropDownGroupItemHeaderClass: "comboboxGroupItemHeader",
+	comboboxDropDownGroupItemContainerClass: "comboboxGroupItemContainer",
+	animationType: "slide",
+	width: "500px" */
 
 	$msg = '<script type="text/javascript">
     $(function() {
@@ -347,6 +358,13 @@ function ajax_combobox($htmlname, $event=array(), $minLengthToAutocomplete=0)
 							}
 						});
 						$("select#" + htmlname).html(response.value);
+						if (response.num) {
+							var selecthtml_str = response.value;
+							var selecthtml_dom=$.parseHTML(selecthtml_str);
+							$("#inputautocomplete"+htmlname).val(selecthtml_dom[0][0].innerHTML);
+						} else {
+							$("#inputautocomplete"+htmlname).val("");
+						}
 					});
 		}
 	});';
@@ -372,7 +390,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0)
 
 	$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
 	<script type="text/javascript">
-		$(function() {
+		$(document).ready(function() {
 			var input = '.json_encode($input).';
 			var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 			var code = \''.$code.'\';

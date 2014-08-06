@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 BoxLastRssInfos=RSS-Informationen
 BoxLastProducts=%s zuletzt bearbeitete Produkte/Services
 BoxLastProductsInContract=%s zuletzt verkaufte Produkte/Services

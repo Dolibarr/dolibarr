@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - admin
-CHARSET=UTF-8
 VATManagement=Gestion TPS
 VATIsUsedDesc=Le taux de TPS proposé par défaut lors de la création de proposition commerciale, facture, commande, etc... répond à la règle standard suivante :<br>Si vendeur non assujetti à TPS, TPS par défaut=0. Fin de règle.<br>Si le (pays vendeur= pays acheteur) alors TPS par défaut=TPS du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu= moyen de transport neuf (auto, bateau, avion), TPS par défaut=0 (La TPS doit être payée par acheteur au centre d'impôts de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= particulier alors TPS par défaut=TPS du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur= entreprise alors TPS par défaut=0. Fin de règle.<br>Sinon TPS proposée par défaut=0. Fin de règle.<br>
 VATIsNotUsedDesc=Le taux de TPS proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.

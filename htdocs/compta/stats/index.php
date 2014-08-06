@@ -60,7 +60,8 @@ $form=new Form($db);
 if ($modecompta=="CREANCES-DETTES")
 {
 	$nom=$langs->trans("SalesTurnover");
-	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeDebt");
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
@@ -71,7 +72,8 @@ if ($modecompta=="CREANCES-DETTES")
 }
 else {
 	$nom=$langs->trans("SalesTurnover");
-	$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeEngagement");
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period="$year_start - $year_end";
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
@@ -81,7 +83,7 @@ else {
 }
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$moreparam,$calcmode);
 
 
 if ($modecompta == 'CREANCES-DETTES')
@@ -118,6 +120,7 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
+		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($obj->amount_ttc)
 		{
@@ -180,7 +183,8 @@ print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print '<td align="center" width="10%" colspan="2">';
+	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
+	else print '<td align="center" width="10%" colspan="2">';
 	print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
     if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
@@ -192,6 +196,7 @@ print '</tr>';
 print '<tr class="liste_titre"><td>'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
+	if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.$langs->trans("AmountHT").'</td>';
 	print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
 	print '<td align="right">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
@@ -224,6 +229,22 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		$case = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage),"%Y-%m");
 		$caseprev = dol_print_date(dol_mktime(1,1,1,$mois_modulo,1,$annee_decalage-1),"%Y-%m");
 
+		if ($modecompta == 'CREANCES-DETTES') {
+			// Valeur CA du mois w/o VAT
+			print '<td align="right">';
+			if ($cum_ht[$case])
+			{
+				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
+				print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case],1).'</a>';
+			}
+			else
+			{
+				if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+				else { print '&nbsp;'; }
+			}
+			print "</td>";
+		}
+		
 		// Valeur CA du mois
 		print '<td align="right">';
 		if ($cum[$case])
@@ -273,6 +294,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			print '</td>';
 		}
 
+		$total_ht[$annee]+=!empty($cum_ht[$case]) ? $cum_ht[$case] : 0;;
 		$total[$annee]+=$cum[$case];
 		if ($annee_decalage != $year_end) print '<td width="15">&nbsp;</td>';
 	}
@@ -284,7 +306,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
  for ($mois = 1 ; $mois < 13 ; $mois++)
  {
  $var=!$var;
- print "<tr $bc[$var]>";
+ print "<tr ".$bc[$var].">";
 
  print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,2000),"%B")."</td>";
  for ($annee = $year_start ; $annee <= $year_end ; $annee++)
@@ -349,6 +371,18 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
+	if ($modecompta == 'CREANCES-DETTES') {
+		// Montant total HT
+		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
+		{
+			print '<td align="right" class="nowrap">'.($total_ht[$annee]?price($total_ht[$annee]):"0")."</td>";
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+	}
+	
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
 	{
@@ -439,7 +473,7 @@ print "</table>";
  $i++;
  }
  $var=!$var;
- print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r�gl� des factures partiellement r�gl�es</td></tr>";
+ print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r�gl� des factures partiellement r�gl�es</td></tr>";
  }
  $db->free($resql);
  }
@@ -489,7 +523,7 @@ print "</table>";
  $i++;
  }
  $var=!$var;
- print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
+ print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
  }
  $db->free($resql);
  }
@@ -497,7 +531,7 @@ print "</table>";
  {
  dol_print_error($db);
  }
- print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
+ print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
  }
  print "</table>";
 

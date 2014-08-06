@@ -1,115 +1,107 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Categorie
 Categories=Categorii
 Rubrique=Categorie
 Rubriques=Categorii
 categories=categorii
-TheCategorie=În categoria
+TheCategorie=Categoria
+NoCategoryYet=Nici o categorie de acest tip creată
 In=În
-AddIn=Adăugaţi în
-modify=modifica
-Classify=Clasifica
-CategoriesArea=Categorii zona
-ProductsCategoriesArea=Produse / Servicii categorii zona
-SuppliersCategoriesArea=Furnizori categorii zona
-CustomersCategoriesArea=Clienţii categorii zona
-ThirdPartyCategoriesArea=Terţilor categorii zona
-MainCats=Principalele categorii de
+AddIn=Adăugă în
+modify=modifică
+Classify=Clasează
+CategoriesArea=Zona Categorii
+ProductsCategoriesArea=Zona Categorii Produse / Servicii
+SuppliersCategoriesArea=Zona Categorii Furnizori
+CustomersCategoriesArea=Zona Categorii Clienţii
+ThirdPartyCategoriesArea=Zona Categorii Terţi
+MembersCategoriesArea=Zona Categorii  Membrii
+ContactsCategoriesArea=Zona Categorii Contacte
+MainCats=Categorii Principale
 SubCats=Subcategorii
 CatStatistics=Statistici
-CatList=Lista de catgories
+CatList=Listă categorii
 AllCats=Toate categoriile
 ViewCat=Vezi categoria
-NewCat=Adauga categorie
-NewCategory=Noua categorie
-ModifCat=Modificare categorie
-CatCreated=Categorie creat
-CreateCat=Creaţi categorie
-CreateThisCat=Creaţi această categorie
-ValidateFields=Validate domeniile
-NoSubCat=Nu subcategorie.
+NewCat=Adaugă categorie
+NewCategory=Categorie nouă
+ModifCat=Modifică categorie
+CatCreated=Categorie creată
+CreateCat=Crează categorie
+CreateThisCat=Crează această categorie
+ValidateFields=Validează  câmpurile
+NoSubCat=Nici o subcategorie.
 SubCatOf=Subcategorie
-FoundCats=Found categorii
-FoundCatsForName=Categorii găsit de nume:
+FoundCats=Categorii găsite
+FoundCatsForName=Categorii găsite pentru numele:
 FoundSubCatsIn=Subcategorii găsit în categoria
 ErrSameCatSelected=Le-aţi selectat în aceeaşi categorie de mai multe ori
-ErrForgotCat=Ai uitat de a-şi alege categoria
-ErrForgotField=Ai uitat să îl informeze pe domenii
-ErrCatAlreadyExists=Acest nume este folosit deja
-AddProductToCat=Adauga acest produs la o categorie?
-ImpossibleAddCat=Imposibil de a adăuga la categoria
-ImpossibleAssociateCategory=Imposibil de a se asocia în categoria a
+ErrForgotCat=Ai uitat să alegeţi categoria
+ErrForgotField=Ai uitat să completezi un câmp
+ErrCatAlreadyExists=Acest nume este deja folosit
+AddProductToCat=Adăugi acest produs la o categorie?
+ImpossibleAddCat=Imposibil de adăugat la categoria
+ImpossibleAssociateCategory=Imposibil de asociat la categoria
 WasAddedSuccessfully=<b> %s</b> a fost adaugat cu succes.
-ObjectAlreadyLinkedToCategory=Elementul este deja legate de această categorie.
-CategorySuccessfullyCreated=Această categorie %s a fost adaugata cu succes.
-ProductIsInCategories=Produse / servicii pentru a deţine următoarele categorii
-SupplierIsInCategories=Terţă parte de a deţine următoarele categorii de furnizori
-CompanyIsInCustomersCategories=Acest terţ deţine la următoarele clienţi / perspectivele categorii
-CompanyIsInSuppliersCategories=Acest terţ deţine la următoarele categorii de furnizori
-ProductHasNoCategory=Acest produs / serviciu nu este în nici un categorii
-SupplierHasNoCategory=Acest furnizor nu este în nici un categorii
-CompanyHasNoCategory=Aceasta companie nu este în nici un categorii
-ClassifyInCategory=Clasifica în categoria
+ObjectAlreadyLinkedToCategory=Elementul este deja legat de această categorie.
+CategorySuccessfullyCreated=Categoria %s a fost adăugată cu succes.
+ProductIsInCategories=Produsul/ serviciu este în următoarele categorii
+SupplierIsInCategories=Acest furnizorul este în următoarele categorii
+CompanyIsInCustomersCategories=Această societate este în următoarele  categorii de clienţi / perspecte
+CompanyIsInSuppliersCategories=Această societate este în următoarele  categorii de furnizori
+MemberIsInCategories=Acest membru este în următoarele categorii de membri
+ContactIsInCategories=Acest contact face parte din următoarele categorii de contacte
+ProductHasNoCategory=Acest produs / serviciu nu este în nici o categorie
+SupplierHasNoCategory=Acest furnizor nu este în nici o categorie
+CompanyHasNoCategory=Aceasta companie nu este în nici o categorie
+MemberHasNoCategory=Acest membru nu este în nici o categorie
+ContactHasNoCategory=Acest contact nu este în nici o categorie
+ClassifyInCategory=Clasează în categoria
 NoneCategory=Niciunul
-CategoryExistsAtSameLevel=Această categorie nu există deja în acelaşi loc
-ReturnInProduct=Inapoi la produs / serviciu de carte
-ReturnInSupplier=Inapoi la furnizor carte
-ReturnInCompany=Inapoi la client / perspectiva carte
-ContentsVisibleByAll=Conţinutul vor fi vizibile de către toate
-ContentsVisibleByAllShort=Cuprins vizibil de către toate
-ContentsNotVisibleByAllShort=Cuprins nu sunt vizibile de către toate
-CategoriesTree=Categorii de copac
-DeleteCategory=Ştergere categorie
-ConfirmDeleteCategory=Sunteţi sigur că doriţi să ştergeţi această categorie?
-RemoveFromCategory=Eliminaţi link-ul cu Categorie
-RemoveFromCategoryConfirm=Sunteţi sigur că doriţi să ştergeţi legătura dintre tranzacţie şi de categorie?
-NoCategoriesDefined=Nu categorie definită
-SuppliersCategoryShort=Furnizori categorie
-CustomersCategoryShort=Clienţii categorie
-ProductsCategoryShort=Produse categorie
-SuppliersCategoriesShort=Furnizori categorii
-CustomersCategoriesShort=Clienţii categorii
-CustomersProspectsCategoriesShort=Custo. / Prosp. categorii
-ProductsCategoriesShort=Produse Categorii
+NotCategorized=Fără categorie
+CategoryExistsAtSameLevel=Această categorie  există deja cu această referinţă
+ReturnInProduct=Inapoi la  Fişa produs / serviciu
+ReturnInSupplier=Inapoi la Fişa furnizor
+ReturnInCompany=Inapoi la  Fişa client / prospect
+ContentsVisibleByAll=Conţinutul va fi vizibil pentru toţi
+ContentsVisibleByAllShort=Conţinut vizibil de către toţi
+ContentsNotVisibleByAllShort=Conţinutul nu va fi vizibil pentru toţi
+CategoriesTree=Arborescenţă Categorii
+DeleteCategory=Şterge categorie
+ConfirmDeleteCategory=Sigur  doriţi să ştergeţi această categorie?
+RemoveFromCategory=Eliminaţi link-ul cu Categoria
+RemoveFromCategoryConfirm=Sigur  doriţi să eliminaţi legătura dintre tranzacţie şi de categorie?
+NoCategoriesDefined=Nici o categorie definită
+SuppliersCategoryShort=Categorie Furnizori
+CustomersCategoryShort=Categorie Clienţii
+ProductsCategoryShort=Categorie Produse
+MembersCategoryShort=Categorie Membrii
+SuppliersCategoriesShort=Categorii Furnizori
+CustomersCategoriesShort=Categorii Clienţii
+CustomersProspectsCategoriesShort=Categorii  Clienţi / Prospecte
+ProductsCategoriesShort=Categorii Produse
+MembersCategoriesShort=Categorii Membrii
+ContactCategoriesShort=Categorii Contacte
 ThisCategoryHasNoProduct=Această categorie nu conţine nici un produs.
 ThisCategoryHasNoSupplier=Această categorie nu conţine nici un furnizor.
 ThisCategoryHasNoCustomer=Această categorie nu conţine nici un client.
-AssignedToCustomer=Angajat într-un client
-AssignedToTheCustomer=Atribuite de client
-InternalCategory=Inernal categorie
-CategoryContents=Categorie conţinutul
-CategId=Id-ul categoriei
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-NoCategoryYet=Nici o categorie de acest tip creat
-CatSupList=Lista de furnizor categorii
-CatCusList=Lista de client / categorii de perspectivă
-CatProdList=Lista de categorii de produse
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-MembersCategoriesArea=Membrii categorii zona
-MemberIsInCategories=Acest membru detine la următoarele categorii de membri
-MemberHasNoCategory=Acest membru nu este în nicio categorie
-MembersCategoryShort=Membrii categorie
-MembersCategoriesShort=Membrii categorii
 ThisCategoryHasNoMember=Această categorie nu conţine nici un membru.
-CatMemberList=Lista membrilor categorii
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:53).
-
+ThisCategoryHasNoContact=Această categorie nu conţine nici un contact
+AssignedToCustomer=Atribuie la un client
+AssignedToTheCustomer=Atribuit la clientul
+InternalCategory=Categorie internă
+CategoryContents=Conţinutul Categoriei
+CategId=ID Categorie
+CatSupList=Lista Categorii furnizori
+CatCusList=Lista Categorii clienţi / prospecte
+CatProdList=Lista Categorii  produse
+CatMemberList=Lista Categorii membrii
+CatContactList=Lista categoriilor de contacte şi contactelor
+CatSupLinks=Legături dintre furnizori şi categorii
+CatCusLinks=Legături dintre clienţi/prospecte şi categorii
+CatProdLinks=Legături dintre produse/servicii şi categorii
+CatMemberLinks=Legături dintre membrii şi categorii
+CatProdLinks=Legături dintre produse/servicii şi categorii
+CatCusLinks=Legături dintre clienţi/prospecte şi categorii
+CatSupLinks=Legături dintre furnizori şi categorii
+DeleteFromCat=Elimină din categorii

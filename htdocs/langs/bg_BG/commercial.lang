@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Търговски
 CommercialArea=Търговска площ
 CommercialCard=Търговския карта
@@ -89,6 +80,9 @@ ActionAC_SHIP=Изпрати доставка по пощата
 ActionAC_SUP_ORD=Изпращане на доставчика за по пощата
 ActionAC_SUP_INV=Изпращане на доставчика фактура по пощата
 ActionAC_OTH=Друг
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
 Stats=Статистика на продажбите
 CAOrder=Обемът на продажбите (валидирани поръчки)
 FromTo=от %s да %s
@@ -98,4 +92,4 @@ NoData=Няма данни
 StatusProsp=Prospect статус
 DraftPropals=Проектът на търговски предложения
 SearchPropal=Търсене на търговско предложение
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:24).
+# CommercialDashboard=Commercial summary

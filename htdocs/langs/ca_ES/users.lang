@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - users
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Fitxa usuari
 ContactCard=Fitxa contacte
 GroupCard=Fitxa grup
@@ -97,12 +96,13 @@ IdPhoneCaller=ID trucant (telèfon)
 UserLogged=Usuari %s conectat
 UserLogoff=Usuari %s desconectat
 NewUserCreated=usuari %s  creat
-NewUserPassword=Contrasenya canviada per a %s 
+NewUserPassword=Contrasenya canviada per a %s
 EventUserModified=Usuari %s modificat
 UserDisabled=Usuari %s deshabilitat
 UserEnabled=Usuari %s activat
 UserDeleted=Usuari %s eliminat
 NewGroupCreated=Grup %s creat
+GroupModified=Grup %s modificat
 GroupDeleted=Grup %s eliminat
 ConfirmCreateContact=Esteu segur de voler crear un compte Dolibarr per a aquest contacte?
 ConfirmCreateLogin=Esteu segur que voleu crear un compte Dolibarr per a aquest membre?
@@ -115,3 +115,6 @@ NbOfUsers=Nº d'usuaris
 DontDowngradeSuperAdmin=Només un superadmin pot degradar un superadmin
 HierarchicalResponsible=Responsable jeràrquic
 HierarchicView=Vista jeràrquica
+UseTypeFieldToChange=Modificar el camp Tipus per canviar
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

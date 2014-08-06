@@ -26,7 +26,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   object	$object		Object related to tabs
  * @return  array				Array of tabs to shoc
  */
 function propal_prepare_head($object)
@@ -48,7 +48,7 @@ function propal_prepare_head($object)
 	{
 		$langs->load("sendings");
 		$head[$h][0] = DOL_URL_ROOT.'/expedition/propal.php?id='.$object->id;
-		if ($conf->expedition_bon->enabled) $text=$langs->trans("Sendings");
+		if ($conf->expedition_bon->enabled) $text=$langs->trans("Shipment");
 		if ($conf->livraison_bon->enabled)  $text.='/'.$langs->trans("Receivings");
 		$head[$h][1] = $text;
 		$head[$h][2] = 'shipping';
@@ -78,18 +78,22 @@ function propal_prepare_head($object)
 
     if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
     {
+    	$nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+		if(!empty($object->note_public)) $nbNote++;
 	    $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('Notes');
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
 		$head[$h][2] = 'note';
 		$h++;
     }
 
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files'));
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
-	/*$filesdir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($propal->ref);
-	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1);
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));*/
 	$head[$h][1] = $langs->trans('Documents');
+	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
 	$head[$h][2] = 'document';
 	$h++;
 
@@ -132,11 +136,14 @@ function propal_admin_prepare_head($object)
     $head[$h][2] = 'attributes';
     $h++;
 
-	
+    $head[$h][0] = DOL_URL_ROOT.'/comm/admin/propaldet_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFieldsLines");
+    $head[$h][2] = 'attributeslines';
+    $h++;
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'propal_admin','remove');
 
-		return $head;
+	return $head;
 }
 
 

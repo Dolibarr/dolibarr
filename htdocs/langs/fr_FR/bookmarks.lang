@@ -1,5 +1,4 @@
-# Dolibarr language file - fr_FR - marque pages
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=Placer cette page dans les marques-pages
 Bookmark=Marque-page
 Bookmarks=Marque-pages
@@ -14,7 +13,7 @@ UrlOrLink=URL
 BehaviourOnClick=Comportement sur clic de l'URL
 CreateBookmark=Créer marque-page
 SetHereATitleForLink=Saisir ici un titre pour le marque-page
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL http externe ou une URL Dolibarr relative
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Saisir une URL HTTP externe ou une URL Dolibarr relative
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choisir si le raccourci doit ouvrir la page dans une nouvelle fenêtre ou fenêtre courante
 BookmarksManagement=Gestion des marque-pages
 ListOfBookmarks=Liste des marque-pages

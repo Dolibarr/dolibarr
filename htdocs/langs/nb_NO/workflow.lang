@@ -1,13 +1,4 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:06:43
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Arbeidsflyt modulen oppsett
 WorkflowDesc=Denne modulen er konstruert for å endre oppførselen til automatiske handlinger inn i programmet. Som standard er arbeidsflyten åpnet (du gjør ting i rekkefølge du vil). Du kan aktivere automatiske handlinger som du er interessant i.
 ThereIsNoWorkflowToModify=Det er ingen arbeidsflyt kan du endre for modul du har aktivert.
@@ -15,4 +6,6 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Lag en kundeordre automatisk etter en komme
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kommersiell forslag er signert
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kontrakt er validert
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Lag en kunde faktura automatisk etter en kundeordre er stengt
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:30).
+# descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer order is set to paid
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

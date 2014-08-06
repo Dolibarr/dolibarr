@@ -114,7 +114,9 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 	 */
 	public function export($content, $suffixinfilename='')
 	{
-		global $conf;
+		global $conf, $dolibarr_main_prod;
+
+		if (! empty($conf->global->MAIN_SYSLOG_DISABLE_FILE)) return;	// Global option to disable output of this handler
 
 		$logfile = $this->getFilename($suffixinfilename);
 
@@ -127,7 +129,7 @@ class mod_syslog_file extends LogHandler implements LogHandlerInterface
 			{
 				// Do not break dolibarr usage if log fails
 				//throw new Exception('Failed to open log file '.basename($logfile));
-				print 'Failed to open log file '.basename($logfile);
+				print 'Failed to open log file '.($dolibarr_main_prod?basename($logfile):$logfile);
 			}
 		}
 		else

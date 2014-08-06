@@ -1,13 +1,4 @@
-/*
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:19:38
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP-klient modul opsætning
 NewFTPClient=Ny FTP forbindelse setup
 FTPArea=FTP Område
@@ -18,4 +9,4 @@ FailedToConnectToFTPServer=Kunne ikke forbinde til FTP server (server %s, port %
 FailedToConnectToFTPServerWithCredentials=Kunne ikke logge på FTP server med defineret login / password
 FTPFailedToRemoveFile=Kunne ikke fjerne filen <b>%s.</b>
 FTPFailedToRemoveDir=Kunne ikke fjerne kataloget <b>%s</b> (Check tilladelser, og at biblioteket er tom).
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:21).
+# FTPPassiveMode=Passive mode

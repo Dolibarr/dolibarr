@@ -1,15 +1,7 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-28 13:09:36
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=RSS-information
 BoxLastProducts=Senaste %s produkter / tjänster
+# BoxProductsAlertStock=Products in stock alert
 BoxLastProductsInContract=Senaste %s avtalade produkter / tjänster
 BoxLastSupplierBills=Senaste leverantörens fakturor
 BoxLastCustomerBills=Senaste kundens fakturor
@@ -23,6 +15,9 @@ BoxLastCustomerOrders=Senaste kundorder
 BoxLastBooks=Senast böcker
 BoxLastActions=Senaste åtgärder
 BoxLastContracts=Senaste kontrakt
+BoxLastContacts=Senaste kontakter / adresser
+BoxLastMembers=Sista medlemmar
+# BoxFicheInter=Last interventions
 BoxCurrentAccounts=Löpande räkningar balans
 BoxSalesTurnover=Omsättningen
 BoxTotalUnpaidCustomerBills=Totalt obetalda kundens fakturor
@@ -31,6 +26,7 @@ BoxTitleLastBooks=Senaste %s inspelade böcker
 BoxTitleNbOfCustomers=Nombre de klient
 BoxTitleLastRssInfos=Senaste %s nyheter från %s
 BoxTitleLastProducts=Senast %s modifierade produkter / tjänster
+# BoxTitleProductsAlertStock=Products in stock alert
 BoxTitleLastCustomerOrders=Senast %s uppdaterad kundorder
 BoxTitleLastSuppliers=Senaste %s registreras leverantörer
 BoxTitleLastCustomers=Senaste %s registreras kunder
@@ -43,19 +39,29 @@ BoxTitleLastSupplierBills=Senaste %s leverantörens fakturor
 BoxTitleLastProspects=Senaste %s registreras framtidsutsikter
 BoxTitleLastModifiedProspects=Senast %s uppdaterad framtidsutsikter
 BoxTitleLastProductsInContract=Senaste %s produkter / tjänster i ett avtal
+BoxTitleLastModifiedMembers=Sista %s modifierade medlemmar
+# BoxTitleLastFicheInter=Last %s modified intervention
 BoxTitleOldestUnpaidCustomerBills=Äldsta %s obetalda kundens fakturor
 BoxTitleOldestUnpaidSupplierBills=Äldsta %s obetalda leverantörs fakturor
 BoxTitleCurrentAccounts=Bytesbalans: s tillgodohavanden
 BoxTitleSalesTurnover=Omsättningen
 BoxTitleTotalUnpaidCustomerBills=Obetalda kundens fakturor
 BoxTitleTotalUnpaidSuppliersBills=Obetalda leverantörs fakturor
+BoxTitleLastModifiedContacts=Senaste %s modifierade kontakter / adresser
 BoxMyLastBookmarks=Min sista %s bokmärken
+BoxOldestExpiredServices=Äldsta aktiva passerat tjänster
+BoxLastExpiredServices=Senaste %s äldsta kontakter med aktiva utgångna tjänster
+BoxTitleLastActionsToDo=Senaste %s åtgärder för att göra
+BoxTitleLastContracts=Senaste %s kontrakt
+BoxTitleLastModifiedDonations=Sista %s modifierad donationer
+BoxTitleLastModifiedExpenses=Sista %s modifierad kostnader
+# BoxGlobalActivity=Global activity (invoices, proposals, orders)
 FailedToRefreshDataInfoNotUpToDate=Misslyckades med att uppdatera RSS-flöde. Senaste framgångsrika uppdatera datum: %s
 LastRefreshDate=Senaste uppdateringen datum
 NoRecordedBookmarks=Inga bokmärken definieras. Klicka <a href="%s">här</a> för att lägga till bokmärken.
+ClickToAdd=Klicka här för att lägga till.
 NoRecordedCustomers=Inga registrerade kunder
-BoxTitleLastActionsToDo=Senaste %s åtgärder för att göra
-BoxTitleLastContracts=Senaste %s kontrakt
+NoRecordedContacts=Inga noterade kontakter
 NoActionsToDo=Inga åtgärder för att göra
 NoRecordedOrders=Inga registrerade kundens order
 NoRecordedProposals=Inga registrerade förslag
@@ -68,19 +74,18 @@ NoRecordedProducts=Inga registrerade produkter / tjänster
 NoRecordedProspects=Inga registrerade framtidsutsikter
 NoContractedProducts=Inga produkter / tjänster avtalade
 NoRecordedContracts=Inga registrerade kontrakt
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:03).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-BoxLastContacts=Senaste kontakter / adresser
-BoxLastMembers=Sista medlemmar
-BoxTitleLastModifiedMembers=Sista %s modifierade medlemmar
-BoxTitleLastModifiedContacts=Senaste %s modifierade kontakter / adresser
-BoxOldestExpiredServices=Äldsta aktiva passerat tjänster
-BoxLastExpiredServices=Senaste %s äldsta kontakter med aktiva utgångna tjänster
-BoxTitleLastModifiedDonations=Sista %s modifierad donationer
-BoxTitleLastModifiedExpenses=Sista %s modifierad kostnader
-ClickToAdd=Klicka här för att lägga till.
-NoRecordedContacts=Inga noterade kontakter
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:29).
+# NoRecordedInterventions=No recorded interventions
+# BoxLatestSupplierOrders=Latest supplier orders
+# BoxTitleLatestSupplierOrders=%s latest supplier orders
+# NoSupplierOrder=No recorded supplier order
+# BoxCustomersInvoicesPerMonth=Customer invoices per month
+# BoxSuppliersInvoicesPerMonth=Supplier invoices per month
+# BoxCustomersOrdersPerMonth=Customer orders per month
+# BoxSuppliersOrdersPerMonth=Supplier orders per month
+# BoxProposalsPerMonth=Proposals per month
+# NoTooLowStockProducts=No product under the low stock limit
+# BoxProductDistribution=Products/Services distribution
+# BoxProductDistributionFor=Distribution of %s for %s
+ForCustomersInvoices=Kundens fakturor
+# ForCustomersOrders=Customers orders
+ForProposals=Förslag

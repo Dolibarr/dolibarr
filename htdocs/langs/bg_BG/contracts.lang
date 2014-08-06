@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:14:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Договори област
 ListOfContracts=Списък на договорите
 LastContracts=Последно %s промяна на договорите
@@ -62,7 +53,7 @@ ListOfRunningContractsLines=Списък на линиите на движени
 ListOfRunningServices=Списък на стартираните услуги
 NotActivatedServices=Неактивни услуги (сред валидирани договори)
 BoardNotActivatedServices=Услуги за да активирате сред утвърдени договори
-LastContracts=Последните договори%
+LastContracts=Последно %s промяна на договорите
 LastActivatedServices=Последно %s активира услуги
 LastModifiedServices=Последно %s промяна услуги
 EditServiceLine=Редактиране на сервизна линия
@@ -94,10 +85,15 @@ PaymentRenewContractId=Поднови договора линия (брой %s)
 ExpiredSince=Срок на годност
 RelatedContracts=Подобни договори
 NoExpiredServices=Не изтекъл активни услуги
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Търговски представител подписване на договора
 TypeContact_contrat_internal_SALESREPFOLL=Търговски представител проследяване договор
 TypeContact_contrat_external_BILLING=Контакт с клиента за фактуриране
 TypeContact_contrat_external_CUSTOMER=Следвайте контакт с клиентите
 TypeContact_contrat_external_SALESREPSIGN=Подписване на договор клиента контакт
 Error_CONTRACT_ADDON_NotDefined=Постоянно CONTRACT_ADDON не е определен
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:26).

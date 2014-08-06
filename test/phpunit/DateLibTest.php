@@ -258,7 +258,7 @@ class DateLibTest extends PHPUnit_Framework_TestCase
     	// Check %a and %b format for en_US
     	$result=dol_print_date(0,'%a %b',true,$outputlangs);
     	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('Thu jan',$result);
+    	$this->assertEquals('Thu Jan',$result);
 
     	return $result;
     }
@@ -301,7 +301,26 @@ class DateLibTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $stime='1970-01-01T02:00:00Z';
+		$conf->global->MAIN_OLD_DATE=1;
+
+		$stime='19700102';
+		$result=dol_stringtotime($stime);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(86400,$result);
+
+		$conf->global->MAIN_OLD_DATE=0;
+
+		$stime='19700102';
+		$result=dol_stringtotime($stime);
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals(86400,$result);
+
+		$stime='1970-01-01T02:00:00Z';
+        $result=dol_stringtotime($stime);
+    	print __METHOD__." result=".$result."\n";
+		$this->assertEquals(7200,$result);
+
+        $stime='1970-01-01 02:00:00';
         $result=dol_stringtotime($stime);
     	print __METHOD__." result=".$result."\n";
 		$this->assertEquals(7200,$result);
@@ -315,11 +334,6 @@ class DateLibTest extends PHPUnit_Framework_TestCase
 		$result=dol_stringtotime($stime);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(7200,$result);
-
-		$stime='19700101';
-		$result=dol_stringtotime($stime);
-		print __METHOD__." result=".$result."\n";
-		$this->assertEquals(0,$result);
 
         return $result;
     }

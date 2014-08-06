@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=区人大常委会订单
 CustomersStandingOrdersArea=站在客户的订单面积
 StandingOrders=常年订单
@@ -20,11 +11,6 @@ Withdrawal=提款
 WithdrawalsReceipts=提款收据
 WithdrawalReceipt=提款收据
 WithdrawalReceiptShort=收据
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> zh_CN
 LastWithdrawalReceipts=最后%s撤出收益
 WithdrawedBills=撤回发票
 WithdrawalsLines=提款线
@@ -33,6 +19,7 @@ RequestStandingOrderTreated=站在请求处理的订单
 CustomersStandingOrders=站在客户的订单
 CustomerStandingOrder=客户的长期订单
 NbOfInvoiceToWithdraw=铌的发票与撤回要求
+NbOfInvoiceToWithdrawWithInfo=发票铌撤回界定的银行帐户信息的客户的要求
 InvoiceWaitingWithdraw=发票等待撤离
 AmountToWithdraw=收回的款额
 WithdrawsRefused=拒绝撤回
@@ -53,6 +40,7 @@ TransMetod=传输的方法
 Send=发送
 Lines=线路
 StandingOrderReject=发出拒绝
+InvoiceRefused=负责对客户拒绝
 WithdrawalRefused=提款Refuseds
 WithdrawalRefusedConfirm=你确定要输入一个社会拒绝撤出
 RefusedData=日期拒收
@@ -63,6 +51,7 @@ InvoiceRefused=负责对客户拒绝
 Status=地位
 StatusUnknown=未知
 StatusWaiting=等候
+StatusTrans=传播
 StatusCredited=计入
 StatusRefused=拒绝
 StatusMotif0=未指定
@@ -82,13 +71,6 @@ NotifyTransmision=提款传输
 NotifyEmision=撤离发射
 NotifyCredit=提款信用
 NumeroNationalEmetter=国家发射数
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-NbOfInvoiceToWithdrawWithInfo=发票铌撤回界定的银行帐户信息的客户的要求
-StatusTrans=传播
 PleaseSelectCustomerBankBANToWithdraw=选择撤回有关客户的银行帐户信息
 WithBankUsingRIB=有关银行账户，使用肋
 WithBankUsingBANBIC=使用的IBAN / BIC / SWIFT的银行帐户
@@ -98,6 +80,11 @@ WithdrawalFileNotCapable=无法生成撤出贵国收到文件
 ShowWithdraw=显示撤柜
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=然而，如果发票已至少有一个撤出支付尚未处理的，它不会被设置为支付最高允许管理撤出之前。
 DoStandingOrdersBeforePayments=这个标签允许你为一个固定的订单要求。一旦完成，你可以键入付款，收发票。
+WithdrawalFile=撤回文件
+SetToStatusSent=设置状态“发送的文件”
+ThisWillAlsoAddPaymentOnInvoice=这也将创造在付款发票上，将它们归类支付
+
+### Notifications
 InfoCreditSubject=由银行支付的长期订单%s
 InfoCreditMessage=站在为了%s银行已支付<br>付款资料：%s
 InfoTransSubject=传输到银行的长期订单%s
@@ -105,5 +92,5 @@ InfoTransMessage=%s %s银行长期订单的%s已被transmited。 <br><br>
 InfoTransData=金额：%s <br> metode：%s <br>日期：%s
 InfoFoot=这是一个自动发送的消息由Dolibarr
 InfoRejectSubject=站在为了拒绝
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=实模式下的选项没有设置，我们停止后，这个模拟
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:51).

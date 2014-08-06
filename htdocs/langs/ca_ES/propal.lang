@@ -1,14 +1,13 @@
-# Dolibarr language file - ca_ES - propal
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Pressupostos
 Proposal=Pressupost
 ProposalShort=Pressupost
 ProposalsDraft=Pressupostos esborrany
 ProposalDraft=Pressupost esborrany
+ProposalsOpened=Pressupostos oberts
 Prop=Pressupostos
 CommercialProposal=Pressupost
 CommercialProposals=Pressupostos
-ProposalsOpened=Pressupostos oberts
 ProposalCard=Fitxa pressupost
 NewProp=Nou pressupost
 NewProposal=Nou pressupost
@@ -71,6 +70,8 @@ ErrorPropalNotFound=Pressupost %s inexistent
 Estimate=Pressupost:
 EstimateShort=Pressupost
 OtherPropals=Altres pressupostos
+AddToDraftProposals=Afegir a pressupost esborrany
+NoDraftProposals=Sense pressupostos esborrany
 CopyPropalFrom=Crea un pressupost per còpia d'un d'existent
 CreateEmptyPropal=Crea pressupost buit
 DefaultProposalDurationValidity=Termini de validesa per defecte (en dies)
@@ -93,7 +94,9 @@ AvailabilityTypeAV_1M=1 mes
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguiment pressupost
 TypeContact_propal_external_BILLING=Contacte client de facturació pressupost
 TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
-# Documents models
+# Document models
 DocModelAzurDescription=Model de pressupost complet (logo...)
 DocModelJauneDescription=Model de pressupost Jaune
-Numbershort=Nº
+DefaultModelPropalCreate=Model per defecte
+DefaultModelPropalToBill=Model per defecte en tancar un pressupost (a facturar)
+DefaultModelPropalClosed=Model per defecte en tancar un pressupost (no facturat)

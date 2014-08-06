@@ -1,13 +1,4 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:13:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-CHARSET=UTF-8
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=Az értékesítés helyén
 CashDesk=Az értékesítés helyén
 CashDesks=Értékesítési
@@ -21,6 +12,7 @@ CashDeskProducts=Termékek
 CashDeskStock=Készlet
 CashDeskOn=én
 CashDeskThirdParty=Harmadik fél
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Bevásárlókocsi
 NewSell=Új eladni
 BackOffice=Back-office
@@ -28,7 +20,6 @@ AddThisArticle=Add hozzá ezt a cikket
 RestartSelling=Menj vissza eladni
 SellFinished=Eladás befejezte
 PrintTicket=Nyomtatás jegy
-NoResults=Nincs eredmény
 NoProductFound=Nem találtam cikket
 ProductFound=termék található
 ProductsFound=talált termék
@@ -45,4 +36,4 @@ BankToPay=Hitelszámla
 ShowCompany=Mutasd cég
 ShowStock=Mutasd raktár
 DeleteArticle=Kattintson, hogy távolítsa el ezt a cikket
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:23:42).
+# FilterRefOrLabelOrBC=Search (Ref/Label)

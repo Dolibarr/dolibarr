@@ -46,6 +46,7 @@ $langs->load('orders');
 
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
+$backtourl=GETPOST('backtourl');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -149,7 +150,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	if ($result > 0)
 	{
 		$db->commit();
-		header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		if (! empty($backtourl)) header("Location: ".$backtourl);
+		else header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
 		exit;
 	}
 	else
@@ -183,16 +185,14 @@ if ($action == 'builddoc')	// En get ou en post
 	$object = new Livraison($db);
 	$object->fetch($id);
 	$object->fetch_thirdparty();
-
-	if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}
+	
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
 	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
 	if (! empty($newlang))
 	{
@@ -345,7 +345,7 @@ if ($action == 'create')
 
 			$line = $commande->lines[$i];
 			$var=!$var;
-			print "<tr $bc[$var]>\n";
+			print "<tr ".$bc[$var].">\n";
 			if ($line->fk_product > 0)
 			{
 				$product->fetch($line->fk_product);
@@ -466,11 +466,13 @@ else
 		$result = $delivery->fetch($id);
 		$delivery->fetch_thirdparty();
 
+		// Origin of a 'livraison' (delivery) is ALWAYS 'expedition' (shipment).
+		// However, origin of shipment in future may differs (commande, proposal, ...)
+
 		$expedition=new Expedition($db);
 		$result = $expedition->fetch($delivery->origin_id);
-		$typeobject = $expedition->origin;
-
-		if ($delivery->origin_id)
+		$typeobject = $expedition->origin;	// example: commande
+		if ($delivery->origin_id > 0)
 		{
 			$delivery->fetch_origin();
 		}
@@ -481,7 +483,7 @@ else
 			$soc->fetch($delivery->socid);
 
 			$head=delivery_prepare_head($delivery);
-			dol_fiche_head($head, 'delivery', $langs->trans("Sending"), 0, 'sending');
+			dol_fiche_head($head, 'delivery', $langs->trans("Shipment"), 0, 'sending');
 
 			/*
 			 * Confirmation de la suppression
@@ -489,19 +491,18 @@ else
 			 */
 			if ($action == 'delete')
 			{
-				$expedition_id = $_GET["expid"];
-				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&amp;expid='.$expedition_id,$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
-				if ($ret == 'html') print '<br>';
+				$expedition_id = GETPOST("expid");
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id.'&expid='.$expedition_id.'&backtourl='.urlencode($backtourl),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$delivery->ref),'confirm_delete','','',1);
+
 			}
 
 			/*
 			 * Confirmation de la validation
-			 *
 			 */
 			if ($action == 'valid')
 			{
-				$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
-				if ($ret == 'html') print '<br>';
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$delivery->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$delivery->ref),'confirm_valid','','',1);
+
 			}
 
 
@@ -510,6 +511,20 @@ else
 			 */
 			print '<table class="border" width="100%">';
 
+			// Shipment
+			if (($delivery->origin == 'shipment' || $delivery->origin == 'expedition') && $delivery->origin_id > 0)
+			{
+				$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+				
+				// Ref
+				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
+				print '<td colspan="3">';
+				// Nav is hidden because on a delivery receipt of a shipment, if we go on next shipment, we may find no tab (a shipment may not have delivery receipt yet)
+				//print $form->showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
+				print $form->showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
+				print '</td></tr>';
+			}			
+				
 			// Ref
 			print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">'.$delivery->ref.'</td></tr>';
@@ -634,7 +649,7 @@ else
 			{
 				$var=!$var;
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				if ($delivery->lines[$i]->fk_product > 0)
 				{
 					$product = new Product($db);
@@ -723,7 +738,7 @@ else
 				{
 					if ($conf->expedition_bon->enabled)
 					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+						print '<a class="butActionDelete" href="fiche.php?id='.$delivery->id.'&amp;expid='.$delivery->origin_id.'&amp;action=delete&amp;backtourl='.urlencode(DOL_URL_ROOT.'/expedition/fiche.php?id='.$delivery->origin_id).'">'.$langs->trans("Delete").'</a>';
 					}
 					else
 					{

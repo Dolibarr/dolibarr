@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - suppliers
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Suppliers
 Supplier=Supplier
 AddSupplier=Add a supplier
@@ -13,6 +12,8 @@ OrderDate=Order date
 BuyingPrice=Buying price
 BuyingPriceMin=Minimum buying price
 BuyingPriceMinShort=Min buying price
+TotalBuyingPriceMin=Total of subproducts buying prices
+SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Add supplier price
 ChangeSupplierPrice=Change supplier price
 ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier or no price defined on this product for this supplier
@@ -38,3 +39,4 @@ AddSupplierOrder=Create supplier order
 AddSupplierInvoice=Create supplier invoice
 ListOfSupplierProductForSupplier=List of products and prices for supplier <b>%s</b>
 NoneOrBatchFileNeverRan=None or batch <b>%s</b> not ran recently
+SentToSuppliers=Sent to suppliers

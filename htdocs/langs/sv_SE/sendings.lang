@@ -1,16 +1,8 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. transporten
 Sending=Sändning
 Sendings=Transporter
+Shipment=Sändning
 Shipments=Transporter
 Receivings=Receivings
 SendingsArea=Transporter område
@@ -21,6 +13,7 @@ LastSendings=Senaste %s transporter
 SearchASending=Sök efter transport
 StatisticsOfSendings=Statistik för transporter
 NbOfSendings=Antal transporter
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Frakt-kort
 NewSending=Ny leverans
 CreateASending=Skapa en sändning
@@ -39,9 +32,11 @@ SendingsToValidate=Transporter för att validera
 StatusSendingCanceled=Annullerad
 StatusSendingDraft=Förslag
 StatusSendingValidated=Validerad (produkter till ett fartyg eller som redan sänts)
+StatusSendingProcessed=Bearbetade
 StatusSendingCanceledShort=Annullerad
 StatusSendingDraftShort=Förslag
 StatusSendingValidatedShort=Validerad
+StatusSendingProcessedShort=Bearbetade
 SendingSheet=Att skicka ark
 Carriers=Bärare
 Carrier=Carrier
@@ -55,23 +50,27 @@ Enlevement=Fått av kunden
 DocumentModelSimple=Enkel förlagan
 DocumentModelMerou=Merou A5-modellen
 WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
-StatsOnShipmentsOnlyValidated=Statistik som gjorts på transporter enda validerade
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Hyvlat leveransdatum
 DateReceived=Datum leverans fick
-SendingMethodCATCH=Fångst av kunden
-SendingMethodTRANS=Transporter
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Enkel handling modell för leverans kvitton
-DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:50:37).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
 SendShippingByEMail=Skicka leverans via e-post
 SendShippingRef=Skicka transport %s
 ActionsOnShipping=Evenemang på leverans
 LinkToTrackYourPackage=Länk till spåra ditt paket
 ShipmentCreationIsDoneFromOrder=För närvarande är skapandet av en ny leverans sker från ordern kortet.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Fångst av kunden
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Enkel handling modell för leverans kvitton
+DocumentModelTyphon=Mer komplett dokument modell för leverans intäkter (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:34:49).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

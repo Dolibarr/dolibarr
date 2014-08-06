@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - contracts
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área contratos
 ListOfContracts=Listado de contratos
 LastContracts=Los % últimos contratos
@@ -54,6 +53,7 @@ ListOfRunningContractsLines=Listado de líneas de contratos en servicio
 ListOfRunningServices=Listado de servicios activos
 NotActivatedServices=Servicios no activados (con los contratos validados)
 BoardNotActivatedServices=Servicios a activar con los contratos validados
+LastContracts=Los % últimos contratos
 LastActivatedServices=Los %s últimos servicios activados
 LastModifiedServices=Los %s últimos servicios modificados
 EditServiceLine=Edición línea del servicio
@@ -76,15 +76,20 @@ ServiceStatus=Estado del servicio
 DraftContracts=Contractos borrador
 CloseRefusedBecauseOneServiceActive=El contrato no puede ser cerrado ya que contiene al menos un servicio abierto.
 CloseAllContracts=Cerrar todos los servicios
-MoveToAnotherContract=Mover el servicio a otro contrato de este tercero.
 DeleteContractLine=Eliminar línea de contrato
 ConfirmDeleteContractLine=¿Está seguro de querer eliminar esta línea de contrato de servicio?
+MoveToAnotherContract=Mover el servicio a otro contrato de este tercero.
 ConfirmMoveToAnotherContract=He elegido el contrato y confirmo el cambio de servicio en el presente contrato.
 ConfirmMoveToAnotherContractQuestion=Elija cualquier otro contrato del mismo tercero, ¿desea mover este servicio?
 PaymentRenewContractId=Renovación servicio (número %s)
 ExpiredSince=Expirado desde el
 RelatedContracts=Contratos asociados
 NoExpiredServices=Sin servicios activos expirados
+ListOfServicesToExpireWithDuration=Listado de servicios activos a expirar en %s días
+ListOfServicesToExpireWithDurationNeg=Listado de servicios expirados más de %s días
+ListOfServicesToExpire=Listado de servicios activos a expirar
+NoteListOfYourExpiredServices=Este listado contiene solamente los servicios de contratos de terceros de los que usted es comercial
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Comercial firmante del contrato
 TypeContact_contrat_internal_SALESREPFOLL=Comercial seguimiento del contrato

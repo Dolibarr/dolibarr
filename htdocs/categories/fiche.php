@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,7 @@ if ($origin)
 	if ($type == 1) $idSupplierOrigin 	= $origin;
 	if ($type == 2) $idCompanyOrigin 	= $origin;
 	if ($type == 3) $idMemberOrigin 	= $origin;
+	if ($type == 4) $idContactOrigin 	= $origin;
 }
 
 if ($catorigin && $type == 0) $idCatOrigin = $catorigin;
@@ -96,6 +98,11 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		else if ($idCatOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&type='.$type);
+			exit;
+		}
+		else if ($idContactOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
 		}
 		else
@@ -170,6 +177,11 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCatOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+		else if ($idContactOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
 
 		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
 		exit;
@@ -181,8 +193,9 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
  * View
  */
 
-llxHeader("","",$langs->trans("Categories"));
 $form = new Form($db);
+
+llxHeader("","",$langs->trans("Categories"));
 
 if ($user->rights->categorie->creer)
 {

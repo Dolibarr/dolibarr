@@ -1,10 +1,8 @@
-# Dolibarr language file - es_ES - trips
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Desplazamiento
 Trips=Desplazamientos
 TripsAndExpenses=Honorarios
 TripsAndExpensesStatistics=Estadísticas de honorarios
-TripId=Id honorario
 TripCard=Ficha honorario
 AddTrip=Crear honorario
 ListOfTrips=Listado de honorarios

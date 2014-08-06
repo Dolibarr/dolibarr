@@ -25,6 +25,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -43,12 +44,13 @@ $product_id=GETPOST("product_id");
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
 $idproduct = GETPOST('idproduct','int');
-$year = isset($_GET["year"])?$_GET["year"]:$_POST["year"];
-$month = isset($_GET["month"])?$_GET["month"]:$_POST["month"];
-$search_movement = isset($_REQUEST["search_movement"])?$_REQUEST["search_movement"]:'';
-$search_product = isset($_REQUEST["search_product"])?$_REQUEST["search_product"]:'';
-$search_warehouse = isset($_REQUEST["search_warehouse"])?$_REQUEST["search_warehouse"]:'';
-$search_user = isset($_REQUEST["search_user"])?$_REQUEST["search_user"]:'';
+$year = GETPOST("year");
+$month = GETPOST("month");
+$search_movement = GETPOST("search_movement");
+$search_product_ref = trim(GETPOST("search_product_ref"));
+$search_product = trim(GETPOST("search_product"));
+$search_warehouse = trim(GETPOST("search_warehouse"));
+$search_user = trim(GETPOST("search_user"));
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -63,6 +65,7 @@ if (GETPOST("button_removefilter"))
     $year='';
     $month='';
     $search_movement="";
+    $search_product_ref="";
     $search_product="";
     $search_warehouse="";
     $search_user="";
@@ -109,12 +112,13 @@ if ($action == "correct_stock" && ! $_POST["cancel"])
 
 $productstatic=new Product($db);
 $warehousestatic=new Entrepot($db);
+$movement=new MouvementStock($db);
 $userstatic=new User($db);
 $form=new Form($db);
 $formother=new FormOther($db);
 $formproduct=new FormProduct($db);
 
-$sql = "SELECT p.rowid, p.label as produit, p.fk_product_type as type,";
+$sql = "SELECT p.rowid, p.ref as product_ref, p.label as produit, p.fk_product_type as type,";
 $sql.= " e.label as stock, e.rowid as entrepot_id,";
 $sql.= " m.rowid as mid, m.value, m.datem, m.fk_user_author, m.label,";
 $sql.= " u.login";
@@ -145,6 +149,10 @@ if (! empty($search_movement))
 {
     $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
 }
+if (! empty($search_product_ref))
+{
+    $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
+}
 if (! empty($search_product))
 {
     $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
@@ -157,7 +165,7 @@ if (! empty($search_user))
 {
     $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
-if (! empty($_GET['idproduct']))
+if ($idproduct > 0)
 {
     $sql.= " AND p.rowid = '".$idproduct."'";
 }
@@ -176,7 +184,7 @@ if ($resql)
         $product->fetch($idproduct);
     }
 
-    if ($_GET["id"])
+    if ($id > 0)
     {
         $entrepot = new Entrepot($db);
         $result = $entrepot->fetch($id);
@@ -190,8 +198,8 @@ if ($resql)
 
     $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     $texte = $langs->trans("ListOfStockMovements");
+    if ($id) $texte.=' ('.$langs->trans("ForThisWarehouse").')';
     llxHeader("",$texte,$help_url);
-
 
     /*
      * Show tab only if we ask a particular warehouse
@@ -228,15 +236,24 @@ if ($resql)
 
         // Country
         print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-        $img=picto_from_langcode($entrepot->country_code);
-        print ($img?$img.' ':'');
-        print $entrepot->country;
+        if (! empty($entrepot->country_code))
+        {
+        	$img=picto_from_langcode($entrepot->country_code);
+        	print ($img?$img.' ':'');
+        	print $entrepot->country;
+        }
         print '</td></tr>';
 
         // Status
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
 
+        $calcproductsunique=$entrepot->nb_different_products();
         $calcproducts=$entrepot->nb_products();
+
+        // Total nb of different products
+        print '<tr><td valign="top">'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
+        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
+        print "</td></tr>";
 
         // Nb of products
         print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
@@ -386,22 +403,24 @@ if ($resql)
     $param='';
     if ($id) $param.='&id='.$id;
     if ($search_movement)   $param.='&search_movement='.urlencode($search_movement);
+    if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
     if ($search_product)   $param.='&search_product='.urlencode($search_product);
     if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
     if ($sref) $param.='&sref='.urlencode($sref);
     if ($snom) $param.='&snom='.urlencode($snom);
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
-    if ($id) print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num,0,'');
-    else print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
+    if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,0,'');
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"], "m.datem","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Product"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ProductRef"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("ProductLabel"),$_SERVER["PHP_SELF"], "p.ref","",$param,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -419,11 +438,15 @@ if ($resql)
     print '</td>';
     // Label of movement
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="12" name="search_movement" value="'.$search_movement.'">';
+    print '<input class="flat" type="text" size="10" name="search_movement" value="'.$search_movement.'">';
     print '</td>';
-    // Product
+    // Product Ref
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="12" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
+    print '<input class="flat" type="text" size="6" name="search_product_ref" value="'.($idproduct?$product->ref:$search_product_ref).'">';
+    print '</td>';
+    // Product label
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" size="10" name="search_product" value="'.($idproduct?$product->libelle:$search_product).'">';
     print '</td>';
     print '<td class="liste_titre" align="left">';
     if (empty($idproduct) || $idproduct < 0) print '<input class="flat" type="text" size="10" name="search_warehouse" value="'.($search_warehouse).'">';	// We are on a specific warehouse card, no filter on other should be possible
@@ -432,26 +455,38 @@ if ($resql)
     print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print '&nbsp; ';
-    print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
     print '</td>';
     print "</tr>\n";
     print '</form>';
+
+    $arrayofuniqueproduct=array();
 
     $var=True;
     while ($i < min($num,$conf->liste_limit))
     {
         $objp = $db->fetch_object($resql);
+
+        $arrayofuniqueproduct[$objp->rowid]=$objp->produit;
+
         $var=!$var;
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
         // Id movement
         //print '<td>'.$objp->mid.'</td>';	// This is primary not movement id
         // Date
         print '<td>'.dol_print_date($db->jdate($objp->datem),'dayhour').'</td>';
         // Label of movement
         print '<td>'.$objp->label.'</td>';
-        // Product
+		// Product ref
+        print '<td>';
+        $productstatic->id=$objp->rowid;
+        $productstatic->ref=$objp->product_ref;
+        $productstatic->type=$objp->type;
+        print $productstatic->getNomUrl(1,'',16);
+        print "</td>\n";
+        // Product label
         print '<td>';
         $productstatic->id=$objp->rowid;
         $productstatic->ref=$objp->produit;
@@ -479,7 +514,38 @@ if ($resql)
     }
     $db->free($resql);
 
-    print "</table>";
+    print "</table><br>";
+
+    // Add number of product when there is a filter on period
+    if (count($arrayofuniqueproduct) == 1 && is_numeric($year))
+    {
+    	$productidselected=0;
+    	foreach ($arrayofuniqueproduct as $key => $val)
+    	{
+    		$productidselected=$key;
+    		$productlabelselected=$val;
+    	}
+		$datebefore=dol_get_first_day($year, $month?$month:1, true);
+		$dateafter=dol_get_last_day($year, $month?$month:12, true);
+    	$balancebefore=$movement->calculateBalanceForProductBefore($productidselected, $datebefore);
+    	$balanceafter=$movement->calculateBalanceForProductBefore($productidselected, $dateafter);
+
+    	//print '<tr class="total"><td class="liste_total">';
+    	print $langs->trans("NbOfProductBeforePeriod", $productlabelselected, dol_print_date($datebefore,'day','gmt'));
+    	//print '</td>';
+    	//print '<td class="liste_total" colspan="6" align="right">';
+    	print ': '.$balancebefore;
+    	print "<br>\n";
+    	//print '</td></tr>';
+    	//print '<tr class="total"><td class="liste_total">';
+    	print $langs->trans("NbOfProductAfterPeriod", $productlabelselected, dol_print_date($dateafter,'day','gmt'));
+    	//print '</td>';
+    	//print '<td class="liste_total" colspan="6" align="right">';
+    	print ': '.$balanceafter;
+    	print "<br>\n";
+    	//print '</td></tr>';
+    }
+
 
 }
 else

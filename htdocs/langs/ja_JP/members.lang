@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=メンバーエリア
 PublicMembersArea=公共のメンバーエリア
 MemberCard=メンバーカード
@@ -17,6 +8,7 @@ Members=メンバー
 MemberAccount=メンバーログイン
 ShowMember=メンバーカードを提示
 UserNotLinkedToMember=ユーザーがメンバーにリンクされていません
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=メンバーチケット
 FundationMembers=Foundationのメンバー
 Attributs=属性
@@ -127,8 +119,6 @@ LastMembers=最後%sメンバー
 LastMembersModified=最後に変更されたメンバー%s
 LastSubscriptionsModified=最後%sは、サブスクリプションを変更
 AttributeName=属性名
-FieldEdition=フィールド%sのエディション
-AlphaNumOnlyCharsAndNoSpace=スペースなしalphanumericals文字のみ
 String=文字列
 Text=テキスト
 Int=int型
@@ -140,6 +130,8 @@ AddSubscription=サブスクリプションを追加します。
 ShowSubscription=サブスクリプションを表示する
 MemberModifiedInDolibarr=メンバーはDolibarrで変更
 SendAnEMailToMember=メンバーへの情報メールを送る
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=メンバーautosubscriptionための電子メールの件名
 DescADHERENT_AUTOREGISTER_MAIL=メンバーautosubscriptionの電子メール
 DescADHERENT_MAIL_VALID_SUBJECT=メンバーの検証のための電子メールの件名
@@ -150,20 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=メンバーresiliationための電子メール�
 DescADHERENT_MAIL_RESIL=メンバーresiliationの電子メール
 DescADHERENT_MAIL_FROM=自動電子メールの送信者の電子メール
 DescADHERENT_ETIQUETTE_TYPE=ラベルページのフォーマット
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=カードのページのフォーマット
 DescADHERENT_CARD_HEADER_TEXT=メンバーカードの上に印刷されたテキスト
 DescADHERENT_CARD_TEXT=テキストは、（左揃え）メンバーカードに印刷
 DescADHERENT_CARD_TEXT_RIGHT=テキストは（右揃え）のメンバーカードに印刷
 DescADHERENT_CARD_FOOTER_TEXT=メンバーカードの下部に印刷されたテキスト
-DescADHERENT_MAILMAN_LISTS=新しいメンバーの自動insriptionのリスト（S）（コンマで区切る）
 GlobalConfigUsedIfNotDefined=ここで定義されていない場合財団モジュールのセットアップで定義されたテキストが使用されます
 MayBeOverwrited=このテキストは、メンバの型に対して定義された値によって上書きすることができます
 ShowTypeCard=タイプ &quot;%s&quot;を表示
 HTPasswordExport=htpasswordファイルの生成
 NoThirdPartyAssociatedToMember=このメンバに関連付けられているサードパーティません
 ThirdPartyDolibarr=Dolibarrサードパーティ
-MembersAndSubscriptions=メンバーとSubscriptions
+MembersAndSubscriptions= メンバーとSubscriptions
 MoreActions=記録上の相補的なアクション
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=アカウントに直接トランザクション·レコードを作成します。
 MoreActionBankViaInvoice=アカウントの請求書と支払いを作成します。
 MoreActionInvoiceOnly=なし支払いで請求書を作成します。
@@ -203,4 +196,9 @@ Collectivités=組織
 Particuliers=個人的な
 Entreprises=企業
 DOLIBARRFOUNDATION_PAYMENT_FORM=銀行振込を使用してサブスクリプション費用の支払いを行うには、ページ参照<a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribeを</a> 。 <br>クレジットカードまたはPayPalでお支払いには、このページの下部にあるボタンをクリックします。 <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:57:54).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

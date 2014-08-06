@@ -1,21 +1,19 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
-MenuManager=選單管理
+# Errors
 Error=錯誤
 Errors=錯誤
+# ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=電子郵件%s是錯誤的
 ErrorBadUrl=網址%s是錯誤的
 ErrorLoginAlreadyExists=登錄%s已經存在。
 ErrorGroupAlreadyExists=組%s已經存在。
 ErrorRecordNotFound=記錄沒有找到。
+ErrorFailToCopyFile=無法復制文件<b>'%s'</b>成<b>'%s'。</b>
+ErrorFailToRenameFile=無法重新命名為<b>“%s'</b>文件<b>'%s'。</b>
 ErrorFailToDeleteFile=無法刪除文件<b>'%s'</b>的。
 ErrorFailToCreateFile=無法創建文件<b>'%s'</b>的。
 ErrorFailToRenameDir=無法重命名目錄<b>'%s'</b>到<b>%s'</b>的。
@@ -26,6 +24,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=這個聯絡已定義為這種類型�
 ErrorCashAccountAcceptsOnlyCashMoney=這是一個銀行帳戶的現金帳戶，所以只接受現金支付的類型。
 ErrorFromToAccountsMustDiffers=源和目標的銀行帳戶必須是不同的。
 ErrorBadThirdPartyName=錯誤的客戶/供應商名稱
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=壞客戶代碼的語法
 ErrorCustomerCodeRequired=客戶代碼需要
 ErrorCustomerCodeAlreadyUsed=客戶代碼已被使用
@@ -35,6 +34,9 @@ ErrorBadSupplierCodeSyntax=錯誤!錯誤的供應商代碼語法
 ErrorSupplierCodeRequired=錯誤!需要提供供應商代號
 ErrorSupplierCodeAlreadyUsed=錯誤!供應商代號已被使用
 ErrorBadParameters=錯誤的參數
+ErrorBadValueForParameter=錯誤值“參數不正確”%s %s'“
+ErrorBadImageFormat=圖像文件有不支持的格式
+ErrorBadDateFormat=值“%s”有錯誤的日期格式
 ErrorFailedToWriteInDir=無法寫在目錄%s
 ErrorFoundBadEmailInFile=找到%S的語法不正確的電子郵件文件中的行（例如行%的電子郵件s =%s）的
 ErrorUserCannotBeDelete=用戶不能被刪除。也許它是相關聯的Dolibarr實體。
@@ -53,12 +55,13 @@ ErrorPartialFile=文件未收到了完全由服務器。
 ErrorNoTmpDir=臨時的說明書%s不存在。
 ErrorUploadBlockedByAddon=上傳封鎖一個PHP / Apache的插件。
 ErrorFileSizeTooLarge=文件大小是太大。
+ErrorSizeTooLongForIntType=尺寸int類型的長（%s最大位數）
+ErrorSizeTooLongForVarcharType=尺寸長字符串類型（%s字符最大）
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=菲爾德<b>%s</b>必須不包含特殊字符。
-WarningSafeModeOnCheckExecDir=警告，PHP的選項<b>safe_mode設置</b>為在此情況下命令必須在<b>safe_mode_exec_dir之</b>存儲參數的PHP目錄內宣布。
-WarningAllowUrlFopenMustBeOn=參數<b>allow_url_fopen選項</b>必須設置<b>為</b> php.ini <b>在</b>菲勒有這個模塊的工作完全。您必須手動修改這個文件。
-WarningBuildScriptNotRunned=<b>%s</b>是劇本尚未跑到建立圖形，或者有沒有數據顯示。
-WarningBookmarkAlreadyExists=本標題或此目標（網址）書簽已存在。
-WarningPassIsEmpty=警告，數據庫密碼是空的。這是一個安全漏洞。您應該添加一個密碼到您的數據庫，並改變你的conf.php文件，以反映這一點。
 ErrorNoAccountancyModuleLoaded=沒有一個會計模塊激活
 ErrorExportDuplicateProfil=這型材名稱已在該出口存在相當大。
 ErrorLDAPSetupNotComplete=Dolibarr - LDAP的匹配是不完整的。
@@ -67,19 +70,28 @@ ErrorCantSaveADoneUserWithZeroPercentage=無法儲存與行動“規約未啟動
 ErrorRefAlreadyExists=號的創作已經存在。
 ErrorPleaseTypeBankTransactionReportName=請輸入銀行收據的名字在交易報告（格式YYYYMM或采用YYYYMMDD）
 ErrorRecordHasChildren=刪除記錄失敗，因為它有一些兒童。
-WarningConfFileMustBeReadOnly=警告，你的配置文件<b>（conf.php htdocs中/ conf /中</b> ），可覆蓋由Web服務器。這是一個嚴重的安全漏洞。在文件修改權限在閱讀作業系統由Web服務器使用的用戶只模式。如果您的磁盤使用Windows和FAT格式的，你要知道，這個文件系統不允許添加文件的權限，因此不能完全安全的。
 ErrorModuleRequireJavascript=不能禁用JavaScript必須有此功能的工作。要啟用/禁用JavaScript，進入菜單首頁->安裝->“顯示。
 ErrorPasswordsMustMatch=這兩種類型的密碼必須相互匹配
+ErrorContactEMail=一個技術性錯誤發生。請聯系管理員，以下連接提供錯誤代碼<b>%s</b>在您的郵件，甚至更好，加入了這個頁面的屏幕拷貝的電子郵件<b>%s。</b>
 ErrorWrongValueForField=<b>s'</b>的領域的一些錯誤值<b>的%s（</b>價值<b>'%</b>不匹配正則表達式規則<b>%s）</b>
+ErrorFieldValueNotIn=場數<b>%s</b>錯誤值（值<b>'%s'</b>是不是一個值到領域表<b>%s %s）</b>
+ErrorFieldRefNotIn=錯場數<b>%s</b>值（值<b>'%s'</b>是不是一個的<b>%s</b>現有文獻）
 ErrorsOnXLines=<b>%</b>誤差<b>的</b>源上線
-WarningsOnXLines=<b>%S上</b>的源代碼行警告
 ErrorFileIsInfectedWithAVirus=防病毒程序無法驗證文件（文件可能被病毒感染）
 ErrorSpecialCharNotAllowedForField=特殊字符不為外地允許“%s的”
-WarningNoDocumentModelActivated=沒有模型，對文檔生成，已被激活。一個模式是選用默認，直到您檢查您的模塊設置。
 ErrorDatabaseParameterWrong=數據庫設置參數<b>'%s'</b>的值不兼容使用Dolibarr（必須有值<b>'%s'）。</b>
 ErrorNumRefModel=存在一個引用（%s）和編號是不符合本規則兼容到數據庫。記錄中刪除或重命名參考激活此模塊。
 ErrorQtyTooLowForThisSupplier=數量過低，供應商或供應商在這此產品沒有價格定義
+ErrorModuleSetupNotComplete=模塊設置，看起來是uncomplete的。進入設置 - 模塊來完成。
+ErrorBadMask=錯誤的遮罩參數值
+ErrorBadMaskFailedToLocatePosOfSequence=沒有序列號錯誤，面具
+ErrorBadMaskBadRazMonth=錯誤，壞的復位值
+ErrorSelectAtLeastOne=錯誤。選擇至少一個條目。
+ErrorProductWithRefNotExist=參考<i>“%s”</i>產品不存在
+ErrorDeleteNotPossibleLineIsConsolidated=刪除沒有可能的，因為記錄是調解到的銀行transation，
+ErrorProdIdAlreadyExist=%s被分配到另一個第三
 ErrorFailedToSendPassword=無法傳送密碼
+ErrorFailedToLoadRSSFile=未能得到RSS提要。嘗試添加恒定MAIN_SIMPLEXMLLOAD_DEBUG，如果錯誤消息不提供足夠的信息。
 ErrorPasswordDiffers=密碼不同，請重新輸入。
 ErrorForbidden=訪問被拒絕。 <br>您嘗試訪問的頁面，無一被驗證的會話區或功能，或者不允許你的用戶。
 ErrorForbidden2=此登錄權限可以定義你的Dolibarr從菜單%的S ->%s的管理員
@@ -96,32 +108,39 @@ ErrorFailedToChangePassword=無法更改密碼
 ErrorLoginDoesNotExists=<b>如何正確</b>使用手機與登錄<b>%</b>找不到。
 ErrorLoginHasNoEmail=這位用戶沒有電子郵件地址。進程中止。
 ErrorBadValueForCode=代碼有錯誤的值類型。再次嘗試以新的價值...
-WarningInstallDirExists=警告，安裝目錄<b>（htdocs中/安裝</b> ）依然存在。這是一個嚴重的安全漏洞。您應該刪除它盡快。
-WarningUntilDirRemoved=所有安全警告（可見由管理員用戶只）將保持活躍，只要是存在的脆弱性（或常數MAIN_REMOVE_INSTALL_WARNING是在安裝程序->其他設置添加）。
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-ErrorFailToCopyFile=無法復制文件<b>'%s'</b>成<b>'%s'。</b>
-ErrorFailToRenameFile=無法重新命名為<b>“%s'</b>文件<b>'%s'。</b>
-ErrorBadValueForParameter=錯誤值“參數不正確”%s %s'“
-ErrorBadImageFormat=圖像文件有不支持的格式
-ErrorBadDateFormat=值“%s”有錯誤的日期格式
-ErrorSizeTooLongForIntType=尺寸int類型的長（%s最大位數）
-ErrorSizeTooLongForVarcharType=尺寸長字符串類型（%s字符最大）
-ErrorContactEMail=一個技術性錯誤發生。請聯系管理員，以下連接提供錯誤代碼<b>%s</b>在您的郵件，甚至更好，加入了這個頁面的屏幕拷貝的電子郵件<b>%s。</b>
-ErrorFieldValueNotIn=場數<b>%s</b>錯誤值（值<b>'%s'</b>是不是一個值到領域表<b>%s %s）</b>
-ErrorFieldRefNotIn=錯場數<b>%s</b>值（值<b>'%s'</b>是不是一個的<b>%s</b>現有文獻）
-ErrorModuleSetupNotComplete=模塊設置，看起來是uncomplete的。進入設置 - 模塊來完成。
-ErrorBadMask=錯誤的遮罩參數值
-ErrorBadMaskFailedToLocatePosOfSequence=沒有序列號錯誤，面具
-ErrorBadMaskBadRazMonth=錯誤，壞的復位值
-ErrorSelectAtLeastOne=錯誤。選擇至少一個條目。
-ErrorProductWithRefNotExist=參考<i>“%s”</i>產品不存在
-ErrorDeleteNotPossibleLineIsConsolidated=刪除沒有可能的，因為記錄是調解到的銀行transation，
-ErrorProdIdAlreadyExist=%s被分配到另一個第三
-ErrorFailedToLoadRSSFile=未能得到RSS提要。嘗試添加恒定MAIN_SIMPLEXMLLOAD_DEBUG，如果錯誤消息不提供足夠的信息。
 ErrorBothFieldCantBeNegative=領域的%s及%s可以不消極
 ErrorWebServerUserHasNotPermission=<b>%s</b>用來執行Web服務器用戶帳戶沒有該權限
 ErrorNoActivatedBarcode=沒有激活的條碼類型
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:00).
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningSafeModeOnCheckExecDir=警告，PHP的選項<b>safe_mode設置</b>為在此情況下命令必須在<b>safe_mode_exec_dir之</b>存儲參數的PHP目錄內宣布。
+WarningAllowUrlFopenMustBeOn=參數<b>allow_url_fopen選項</b>必須設置<b>為</b> php.ini <b>在</b>菲勒有這個模塊的工作完全。您必須手動修改這個文件。
+WarningBuildScriptNotRunned=<b>%s</b>是劇本尚未跑到建立圖形，或者有沒有數據顯示。
+WarningBookmarkAlreadyExists=本標題或此目標（網址）書簽已存在。
+WarningPassIsEmpty=警告，數據庫密碼是空的。這是一個安全漏洞。您應該添加一個密碼到您的數據庫，並改變你的conf.php文件，以反映這一點。
+WarningConfFileMustBeReadOnly=警告，你的配置文件<b>（conf.php htdocs中/ conf /中</b> ），可覆蓋由Web服務器。這是一個嚴重的安全漏洞。在文件修改權限在閱讀作業系統由Web服務器使用的用戶只模式。如果您的磁盤使用Windows和FAT格式的，你要知道，這個文件系統不允許添加文件的權限，因此不能完全安全的。
+WarningsOnXLines=<b>%S上</b>的源代碼行警告
+WarningNoDocumentModelActivated=沒有模型，對文檔生成，已被激活。一個模式是選用默認，直到您檢查您的模塊設置。
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningUntilDirRemoved=所有安全警告（可見由管理員用戶只）將保持活躍，只要是存在的脆弱性（或常數MAIN_REMOVE_INSTALL_WARNING是在安裝程序->其他設置添加）。
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

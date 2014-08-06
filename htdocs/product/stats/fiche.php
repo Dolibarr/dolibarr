@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2005		Eric Seigne				<eric.seigne@ryxeo.com>
  *
@@ -28,6 +28,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+
+$WIDTH=DolGraph::getDefaultGraphSizeForStats('width',380);
+$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $langs->load("companies");
 $langs->load("products");
@@ -66,8 +69,8 @@ if (! empty($id) || ! empty($ref))
 		$head=product_prepare_head($object, $user);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type==1?'service':'product');
-		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
+		dol_fiche_head($head, 'stats', $titre, 0, $picto);
 
 		print '<table class="border" width="100%">';
 
@@ -92,27 +95,33 @@ if (! empty($id) || ! empty($ref))
 		print '</td></tr>';
 
 		print '</table>';
-		print '</div>';
+
+		dol_fiche_end();
 
 
 		// Choice of stats
+		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
+
 		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=byunit">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfUnits");
 		if ($mode == 'bynumber') print '</a>';
-		print ' &nbsp; &nbsp; &nbsp; ';
+
+		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
+		else print ' &nbsp; / &nbsp; ';
+
 		if ($mode == 'byunit') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=bynumber">';
 		else print img_picto('','tick').' ';
 		print $langs->trans("StatsByNumberOfEntities");
 		if ($mode == 'byunit') print '</a>';
 
-		print '<br><br>';
+		if (! empty($conf->dol_use_jmobile)) print '</div></div>';
+		else print '<br>';
+		print '<br>';
 
-		print '<table width="100%">';
+		//print '<table width="100%">';
 
 		// Generation des graphs
-		$WIDTH=380;
-		$HEIGHT=160;
 		$dir = (! empty($conf->product->multidir_temp[$object->entity])?$conf->product->multidir_temp[$object->entity]:$conf->service->multidir_temp[$object->entity]);
 		if (! file_exists($dir.'/'.$object->id))
 		{
@@ -197,10 +206,16 @@ if (! empty($id) || ! empty($ref))
 			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
 
 
-			if ($i % 2 == 0) print '<tr>';
+			if ($i % 2 == 0)
+			{
+				print "\n".'<div class="fichecenter"><div class="fichehalfleft">'."\n";
+			}
+			else
+			{
+				print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+			}
 
 			// Show graph
-			print '<td width="50%" align="center">';
 
 			print '<table class="border" width="100%">';
 			// Label
@@ -226,17 +241,25 @@ if (! empty($id) || ! empty($ref))
 			print '</tr>';
 			print '</table>';
 
-			print '</td>';
-
-			if ($i % 2 == 1) print '</tr>';
-
+			if ($i % 2 == 0)
+			{
+				print "\n".'</div>'."\n";
+			}
+			else
+			{
+				print "\n".'</div></div></div>';
+				print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
+			}
 
 			$i++;
 		}
-
-		if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
-
-		print '</table>';
+		// div not closed
+		if ($i % 2 == 1)
+		{
+			print "\n".'<div class="fichehalfright"><div class="ficheaddleft">'."\n";
+			print "\n".'</div></div></div>';
+			print '<div class="clear"><div class="fichecenter"><br></div></div>'."\n";
+		}
 
 		print '<div class="tabsAction">';
 		print '</div>';

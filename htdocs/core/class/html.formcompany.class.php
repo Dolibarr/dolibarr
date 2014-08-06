@@ -191,7 +191,7 @@ class FormCompany
 	 *   @param     string	$htmlname			Id of department
 	 *   @return	void
 	 */
-	function select_departement($selected='',$country_codeid=0, $htmlname='departement_id')
+	function select_departement($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		print $this->select_state($selected,$country_codeid, $htmlname);
 	}
@@ -203,12 +203,12 @@ class FormCompany
 	 *    un code donnee mais dans ce cas, le champ pays differe).
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
-	 *    @param	string	$selected        	Code state preselected
+	 *    @param	string	$selected        	Code state preselected (mus be state id) 
 	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
-	 * 	  @return	void
+	 * 	  @return	string						String with HTML select
 	 */
-	function select_state($selected='',$country_codeid=0, $htmlname='departement_id')
+	function select_state($selected='',$country_codeid=0, $htmlname='state_id')
 	{
 		global $conf,$langs,$user;
 
@@ -257,7 +257,8 @@ class FormCompany
 							}
 						}
 
-						if ($selected > 0 && $selected == $obj->rowid)
+						if ((! empty($selected) && $selected == $obj->rowid)
+						 || (empty($selected) && ! empty($conf->global->MAIN_FORCE_DEFAULT_STATE_ID) && $conf->global->MAIN_FORCE_DEFAULT_STATE_ID == $obj->rowid))
 						{
 							$out.= '<option value="'.$obj->rowid.'" selected="selected">';
 						}
@@ -352,9 +353,9 @@ class FormCompany
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   Title preselected
-	 * 	@param	string	$htmlname	Name of HTML select combo field
-	 *  @return	void
+	 *  @param  string	$selected   	Title preselected
+	 * 	@param	string	$htmlname		Name of HTML select combo field
+	 *  @return	string					String with HTML select
 	 */
 	function select_civility($selected='',$htmlname='civilite_id')
 	{
@@ -502,13 +503,13 @@ class FormCompany
 	/**
 	 *    Return list of third parties
 	 *
-	 *  @param  Object		$object         Object we try to find contacts
+	 *  @param  object		$object         Object we try to find contacts
 	 *  @param  string		$var_id         Name of id field
 	 *  @param  string		$selected       Pre-selected third party
 	 *  @param  string		$htmlname       Name of HTML form
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
-	 * 	@return	void
+	 * 	@return int The selected third party ID
 	 * 	TODO obsolete ?
 	 * 	cette fonction doit utiliser du javascript quoi qu'il en soit !
 	 * 	autant utiliser le système combobox sans rechargement de page non ?
@@ -615,7 +616,7 @@ class FormCompany
     /**
      *  Return a select list with types of contacts
      *
-     *  @param	Object		$object         Object to use to find type of contact
+     *  @param	object		$object         Object to use to find type of contact
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
@@ -627,7 +628,7 @@ class FormCompany
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
-			$lesTypes = $object->liste_type_contact($source, $order);
+			$lesTypes = $object->liste_type_contact($source, $order, 0, 1);
 			print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)

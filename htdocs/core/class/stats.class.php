@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (c) 2008-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2008-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  *
@@ -30,39 +30,94 @@
 abstract class Stats
 {
 	protected $db;
-
+	var $_lastfetchdate=array();	// Dates of cache file read by methods
+	var $cachefilesuffix='';		// Suffix to add to name of cache file (to avoid file name conflicts) 
 
 	/**
-	 * Return nb of entity by month for several years
+	 * Return nb of elements by month for several years
 	 *
-	 * @param 	int		$endyear	Start year
-	 * @param 	int		$startyear	End year
-	 * @return 	array				Array of values
+	 * @param 	int		$endyear		Start year
+	 * @param 	int		$startyear		End year
+	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @return 	array					Array of values
 	 */
-	function getNbByMonthWithPrevYear($endyear,$startyear)
+	function getNbByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
 	{
+		global $conf,$user,$langs;
+
 	    if ($startyear > $endyear) return -1;
 
 		$datay=array();
 
-		$year=$startyear;
-		while ($year <= $endyear)
-		{
-			$datay[$year] = $this->getNbByMonth($year);
-			$year++;
-		}
+		// Search into cache
+		if (! empty($cachedelay))
+	    {
+	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	    	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+	    }
 
-		$data = array();
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+		$newmask='0644';
 
-		for ($i = 0 ; $i < 12 ; $i++)
+		$nowgmt = dol_now();
+
+		$foundintocache=0;
+		if ($cachedelay > 0)
 		{
-			$data[$i][]=$datay[$endyear][$i][0];
-			$year=$startyear;
-			while($year <= $endyear)
+			$filedate=dol_filemtime($newpathofdestfile);
+			if ($filedate >= ($nowgmt - $cachedelay))
 			{
-				$data[$i][]=$datay[$year][$i][1];
+				$foundintocache=1;
+
+				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+			}
+			else
+			{
+				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+			}
+		}
+		
+		// Load file into $data
+		if ($foundintocache)    // Cache file found and is not too old
+		{
+			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+			$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+		}
+		else
+		{
+			$year=$startyear;
+			while ($year <= $endyear)
+			{
+				$datay[$year] = $this->getNbByMonth($year);
 				$year++;
 			}
+
+			$data = array();
+
+			for ($i = 0 ; $i < 12 ; $i++)
+			{
+				$data[$i][]=$datay[$endyear][$i][0];
+				$year=$startyear;
+				while($year <= $endyear)
+				{
+					$data[$i][]=$datay[$year][$i][1];
+					$year++;
+				}
+			}
+		}
+
+		// Save cache file
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		{
+			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			$fp = fopen($newpathofdestfile, 'w');
+			fwrite($fp, dol_json_encode($data));
+			fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+			@chmod($newpathofdestfile, octdec($newmask));
+
+			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		// return array(array('Month',val1,val2,val3),...)
@@ -70,36 +125,90 @@ abstract class Stats
 	}
 
 	/**
-	 * Return amount of entity by month for several years
+	 * Return amount of elements by month for several years
 	 *
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
+	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @return 	array					Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear,$startyear)
+	function getAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
 	{
+		global $conf,$user,$langs;
+
         if ($startyear > $endyear) return -1;
 
         $datay=array();
 
-		$year=$startyear;
-		while($year <= $endyear)
-		{
-			$datay[$year] = $this->getAmountByMonth($year);
-			$year++;
-		}
+        // Search into cache
+        if (! empty($cachedelay))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+        }
 
-		$data = array();
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+        $newmask='0644';
 
-		for ($i = 0 ; $i < 12 ; $i++)
+        $nowgmt = dol_now();
+
+        $foundintocache=0;
+        if ($cachedelay > 0)
+        {
+        	$filedate=dol_filemtime($newpathofdestfile);
+        	if ($filedate >= ($nowgmt - $cachedelay))
+        	{
+        		$foundintocache=1;
+
+        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+        	}
+        	else
+        	{
+        		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+        	}
+        }
+
+        // Load file into $data
+        if ($foundintocache)    // Cache file found and is not too old
+        {
+        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+        	$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+        }
+        else
 		{
-			$data[$i][]=$datay[$endyear][$i][0];
 			$year=$startyear;
 			while($year <= $endyear)
 			{
-				$data[$i][]=$datay[$year][$i][1];
+				$datay[$year] = $this->getAmountByMonth($year);
 				$year++;
 			}
+
+			$data = array();
+			// $data = array('xval'=>array(0=>xlabel,1=>yval1,2=>yval2...),...)
+			for ($i = 0 ; $i < 12 ; $i++)
+			{
+				$data[$i][]=$datay[$endyear][$i][0];	// set label
+				$year=$startyear;
+				while($year <= $endyear)
+				{
+					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+					$year++;
+				}
+			}
+		}
+
+		// Save cache file
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		{
+			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			$fp = fopen($newpathofdestfile, 'w');
+			fwrite($fp, dol_json_encode($data));
+			fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+			@chmod($newpathofdestfile, octdec($newmask));
+
+			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
 		}
 
 		return $data;
@@ -141,7 +250,80 @@ abstract class Stats
 		return $data;
 	}
 
+	/**
+	 * Return count, and sum of products
+	 *
+	 * @param	int		$year			Year
+	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @return 	array					Array of values
+	 */
+	function getAllByProductEntry($year,$cachedelay=0)
+	{
+		global $conf,$user,$langs;
 
+        $datay=array();
+
+        // Search into cache
+        if (! empty($cachedelay))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+        }
+
+        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+        $newmask='0644';
+
+        $nowgmt = dol_now();
+
+        $foundintocache=0;
+        if ($cachedelay > 0)
+        {
+        	$filedate=dol_filemtime($newpathofdestfile);
+        	if ($filedate >= ($nowgmt - $cachedelay))
+        	{
+        		$foundintocache=1;
+
+        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+        	}
+        	else
+        	{
+        		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+        	}
+        }
+
+        // Load file into $data
+        if ($foundintocache)    // Cache file found and is not too old
+        {
+        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+        	$data = dol_json_decode(file_get_contents($newpathofdestfile), true);
+        }
+        else
+		{
+			$data=$this->getAllByProduct($year);
+			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
+		}
+
+		// Save cache file
+		if (empty($foundintocache) && ($cachedelay > 0 || $cachedelay == -1))
+		{
+			dol_syslog(get_class($this).'::'.__FUNCTION__." save cache file ".$newpathofdestfile." onto disk.");
+			if (! dol_is_dir($conf->user->dir_temp)) dol_mkdir($conf->user->dir_temp);
+			$fp = fopen($newpathofdestfile, 'w');
+			fwrite($fp, dol_json_encode($data));
+			fclose($fp);
+			if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+			@chmod($newpathofdestfile, octdec($newmask));
+
+			$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$nowgmt;
+		}
+
+		return $data;
+	}	
+	
+	
+	// Here we have low level of shared code called by XxxStats.class.php
+
+	
 	/**
 	 * 	Return nb of elements by year
 	 *
@@ -152,7 +334,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this)."::_getNbByYear sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -182,7 +364,7 @@ abstract class Stats
 	{
 		$result = array();
 
-		dol_syslog(get_class($this)."::_getAllByYear sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -210,14 +392,15 @@ abstract class Stats
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
      *     @return	array				Array of nb each month
 	 */
-	function _getNbByMonth($year, $sql)
+	function _getNbByMonth($year, $sql, $format=0)
 	{
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this)."::_getNbByMonth sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -246,9 +429,9 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			$month=dol_substr($month,0,3);
-			$data[$i-1] = array(ucfirst($month), $res[$i]);
+			$data[$i-1] = array($month, $res[$i]);
 		}
 
 		return $data;
@@ -258,16 +441,17 @@ abstract class Stats
 	/**
 	 *     Renvoie le nombre d'element par mois pour une annee donnee
 	 *
-	 *     @param	int		$year        Year
-	 *     @param   string	$sql         SQL
+	 *     @param	int		$year       Year
+	 *     @param   string	$sql		SQL
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
 	 *     @return	array
 	 */
-	function _getAmountByMonth($year, $sql)
+	function _getAmountByMonth($year, $sql, $format=0)
 	{
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this)."::_getAmountByMonth sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -294,27 +478,27 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			$month=dol_substr($month,0,3);
-			$data[$i-1] = array(ucfirst($month), $res[$i]);
+			$data[$i-1] = array($month, $res[$i]);
 		}
 
 		return $data;
 	}
 
 	/**
-	 *	    Renvoie le montant moyen par mois pour une annee donnee
+	 *	   Renvoie le montant moyen par mois pour une annee donnee
 	 *
-     *      @param	int		$year        Year
-     *      @param  string	$sql         SQL
-     *      @return	array
+     *     @param	int		$year       Year
+     *     @param  	string	$sql        SQL
+     *     @return	array
 	 */
 	function _getAverageByMonth($year, $sql)
 	{
 		$result=array();
 		$res=array();
 
-		dol_syslog(get_class($this)."::_getAverageByMonth sql=".$sql);
+		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -340,13 +524,49 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),"%b");
+			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
 			$month=dol_substr($month,0,3);
-			$data[$i-1] = array(ucfirst($month), $res[$i]);
+			$data[$i-1] = array($month, $res[$i]);
 		}
 
 		return $data;
 	}
+	
+	
+	/**
+	 *	   Return number or total of product refs
+	 *
+     *     @param  	string	$sql        SQL
+     *     @param	int		$limit		Limit
+     *     @return	array
+	 */
+	function _getAllByProduct($sql, $limit=10)
+	{
+		global $langs;
+		
+		$result=array();
+		$res=array();
+
+		dol_syslog(get_class($this).'::'.__FUNCTION__." sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0; $other=0;
+			while ($i < $num)
+			{
+		  		$row = $this->db->fetch_row($resql);
+		  		if ($i < $limit || $num == $limit) $result[$i] = array($row[0],$row[1]);	// Ref of product, nb
+		  		else $other += $row[1];
+		  		$i++;
+		  	}
+		  	if ($num > $limit) $result[$i] = array($langs->transnoentitiesnoconv("Other"),$other);
+		  	$this->db->free($resql);
+		}
+        else dol_print_error($this->db);
+
+		return $result;
+	}	
 }
 
 ?>

@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=发送电子邮件
 EMailing=发送电子邮件
 Mailings=EMailings
@@ -52,6 +43,10 @@ MailingStatusSentCompletely=发送完全
 MailingStatusError=错误
 MailingStatusNotSent=不发送
 MailSuccessfulySent=电子邮件发送成功从%（s到%s）
+MailingSuccessfullyValidated=通过电子邮件发送成功验证
+MailUnsubcribe=退订
+Unsuscribe=退订
+MailingStatusNotContact=不要再联系
 ErrorMailRecipientIsEmpty=电子邮件收件人是空的
 WarningNoEMailsAdded=没有新的电子邮件添加到收件人的名单。
 ConfirmValidMailing=你确定要验证这个电子邮件？
@@ -77,12 +72,28 @@ CloneReceivers=克隆者
 DateLastSend=去年发送日期
 DateSending=发送日期
 SentTo=发送到<b>%s</b>
+MailingStatusRead=阅读
+CheckRead=已读回执
+YourMailUnsubcribeOK=电子邮件<b>%s</b>被正确地从邮件列表中退定
+MailtoEMail=超链接的电子邮件
+ActivateCheckRead=允许使用“取消订阅”链接
+ActivateCheckReadKey=“读回执”和“取消订阅”功能键用于加密URL使用
+EMailSentToNRecipients=电子邮件发送到 %s 的收件人。
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（联系客户，潜在客户，供应商，...）
 MailingModuleDescDolibarrUsers=用户与邮件全部Dolibarr
 MailingModuleDescFundationMembers=基金会成员与电子邮件
 MailingModuleDescEmailsFromFile=从一个文本文件（电子邮件电子邮件，姓名或名称;姓;评论）
+MailingModuleDescEmailsFromUser=从用户输入的邮件（电子邮件名字;姓;其他）
 MailingModuleDescContactsCategories=第三方的电子邮件（按类别）
 MailingModuleDescDolibarrContractsLinesExpired=与合同到期的路线第三方
+MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
+MailingModuleDescContactsByCategory=第三方联系人/地址按类别
+MailingModuleDescMembersCategories=基金会的成员（按类别）
+MailingModuleDescContactsByFunction=第三方联系（职位/职务）
+
+
 LineInFile=在文件%s的线
 RecipientSelectionModules=为收件人的选择定义的要求
 MailSelectedRecipients=选择收件人
@@ -95,10 +106,10 @@ SearchAMailing=搜索邮件
 SendMailing=发送电子邮件
 SendMail=发送电子邮件
 SentBy=发送
-MailingNeedCommand=对于证券的原因，发送电子邮件应该执行命令行。请问您的管理员发起以下命令发送的电子邮件发送给所有收件人：
+MailingNeedCommand=出于安全的原因，收发邮件发送是更好地执行命令行。如果你有一个，请问您的服务器管理员启动以下命令给所有收件人发送电子邮件：
 MailingNeedCommand2=但是您可以发送到网上，加入与最大的电子邮件数量值参数MAILING_LIMIT_SENDBYWEB你要发送的会议。
-ConfirmSendingEmailing=你确定要发送邮件？
-LimitSendingEmailing=在线emailings派遣是<b>%</b>有限的安全和超时原因<b>之晤谈</b>收件人发送。
+ConfirmSendingEmailing=如果你能或不喜欢他们发送您的www浏览器，请确认你确定要发送电子邮件现在从你的浏览器吗？
+LimitSendingEmailing=注：在线发送<b>%s</b>的email限制发送，安全和超时的原因。
 TargetsReset=清除名单
 ToClearAllRecipientsClickHere=点击这里以清除此电子邮件的收件人列表
 ToAddRecipientsChooseHere=添加从名单中选择收件人
@@ -106,6 +117,12 @@ NbOfEMailingsReceived=收到群众emailings
 IdRecord=编号记录
 DeliveryReceipt=送达回执
 YouCanUseCommaSeparatorForSeveralRecipients=您可以使用<b>逗号</b>分隔符指定多个收件人。
+TagCheckMail=追踪邮件打开
+TagUnsubscribe=退订链接
+TagSignature=签名发送给用户
+TagMailtoEmail=收件人电子邮件
+
+# Module Notifications
 Notifications=通知
 NoNotificationsWillBeSent=没有电子邮件通知此事件的计划和公司
 ANotificationsWillBeSent=1通知将通过电子邮件发送
@@ -113,13 +130,3 @@ SomeNotificationsWillBeSent=%s的通知将通过电子邮件发送
 AddNewNotification=启动一个新的电子邮件通知的要求
 ListOfActiveNotifications=列出所有有效的电子邮件通知要求
 ListOfNotificationsDone=列出所有发送电子邮件通知
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-MailingStatusRead=阅读
-MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
-MailingModuleDescMembersCategories=基金会的成员（按类别）
-MailingModuleDescContactsByFunction=第三方联系（职位/职务）
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:31).

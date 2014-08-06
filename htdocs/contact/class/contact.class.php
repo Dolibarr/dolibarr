@@ -5,7 +5,9 @@
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry		  	       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Alexandre Spangaro 	       <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +41,7 @@ class Contact extends CommonObject
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $id;
+    var $ref_ext;
 	var $civilite_id;  // In fact we store civility_code
     var $lastname;
 	var $firstname;
@@ -57,11 +60,22 @@ class Contact extends CommonObject
 	var $country_code;			// Code of country
 	var $country;				// Label of country
 
+    var $poste;                 // Position
+
 	var $socid;					// fk_soc
-	var $status;				// 0=brouillon, 1=4=actif, 5=inactif
+	var $statut;				// 0=inactif, 1=actif
 
 	var $code;
 	var $email;
+	var $skype;
+    var $jabberid;
+	var $phone_pro;
+	var $phone_perso;
+	var $phone_mobile;
+    var $fax;
+
+    var $priv;
+
 	var $birthday;
 	var $default_lang;
     var $note_public;           // Public note
@@ -89,6 +103,7 @@ class Contact extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
+		$this->statut = 1;	// By default, status is enabled
 	}
 
 	/**
@@ -111,8 +126,9 @@ class Contact extends CommonObject
         $this->firstname=trim($this->firstname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname=ucwords($this->lastname);
         if (! empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname=ucwords($this->firstname);
-        if (! $this->socid) $this->socid = 0;
-		if (! $this->priv) $this->priv = 0;
+        if (empty($this->socid)) $this->socid = 0;
+		if (empty($this->priv)) $this->priv = 0;
+		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
@@ -121,6 +137,7 @@ class Contact extends CommonObject
         $sql.= ", firstname";
         $sql.= ", fk_user_creat";
 		$sql.= ", priv";
+		$sql.= ", statut";
 		$sql.= ", canvas";
 		$sql.= ", entity";
 		$sql.= ", import_key";
@@ -132,6 +149,7 @@ class Contact extends CommonObject
         $sql.= "'".$this->db->escape($this->firstname)."',";
 		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
 		$sql.= " ".$this->priv.",";
+		$sql.= " ".$this->statut.",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->canvas."'":"null").",";
         $sql.= " ".$conf->entity.",";
         $sql.= " ".(! empty($this->import_key)?"'".$this->import_key."'":"null");
@@ -220,11 +238,13 @@ class Contact extends CommonObject
 		$this->phone_perso=trim($this->phone_perso);
 		$this->phone_mobile=trim($this->phone_mobile);
 		$this->jabberid=trim($this->jabberid);
+		$this->skype=trim($this->skype);
 		$this->fax=trim($this->fax);
 		$this->zip=(empty($this->zip)?'':$this->zip);
 		$this->town=(empty($this->town)?'':$this->town);
 		$this->country_id=($this->country_id > 0?$this->country_id:$this->country_id);
 		$this->state_id=($this->state_id > 0?$this->state_id:$this->fk_departement);
+		if (empty($this->statut)) $this->statut = 0;
 
 		$this->db->begin();
 
@@ -242,6 +262,7 @@ class Contact extends CommonObject
 		$sql .= ", poste='".$this->db->escape($this->poste)."'";
 		$sql .= ", fax='".$this->db->escape($this->fax)."'";
 		$sql .= ", email='".$this->db->escape($this->email)."'";
+		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
@@ -249,6 +270,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->priv."'";
+		$sql .= ", statut = ".$this->statut;
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$user->id."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->default_lang."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->no_email."'":"0");
@@ -371,6 +393,7 @@ class Contact extends CommonObject
 		if ($this->phone_perso && ! empty($conf->global->LDAP_CONTACT_FIELD_HOMEPHONE)) $info[$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_CONTACT_FIELD_FAX))	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
+    if ($this->skype && ! empty($conf->global->LDAP_CONTACT_FIELD_SKYPE))	    $info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
 		if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note_private;
 		if ($this->email && ! empty($conf->global->LDAP_CONTACT_FIELD_MAIL))     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
@@ -482,11 +505,11 @@ class Contact extends CommonObject
 		$langs->load("companies");
 
 		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civilite as civilite_id, c.lastname, c.firstname,";
-		$sql.= " c.address, c.zip, c.town,";
+		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
 		$sql.= " c.birthday,";
-		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid,";
+		$sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.skype,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
 		$sql.= " p.libelle as country, p.code as country_code,";
@@ -532,6 +555,7 @@ class Contact extends CommonObject
 				$this->socid			= $obj->fk_soc;
 				$this->socname			= $obj->socname;
 				$this->poste			= $obj->poste;
+				$this->statut			= $obj->statut;
 
 				$this->phone_pro		= trim($obj->phone);
 				$this->fax				= trim($obj->fax);
@@ -540,6 +564,7 @@ class Contact extends CommonObject
 
 				$this->email			= $obj->email;
 				$this->jabberid			= $obj->jabberid;
+        $this->skype			= $obj->skype;
 				$this->priv				= $obj->priv;
 				$this->mail				= $obj->email;
 
@@ -724,6 +749,21 @@ class Contact extends CommonObject
 
 		if (! $error)
 		{
+			// Remove category
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
+			dol_syslog(get_class($this)."::delete sql=".$sql);
+			$resql=$this->db->query($sql);
+			if (! $resql)
+			{
+				$error++;
+				$this->error .= $this->db->lasterror();
+				$errorflag=-1;
+				dol_syslog(get_class($this)."::delete error ".$errorflag." ".$this->error, LOG_ERR);
+			}
+		}
+
+		if (! $error)
+		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
 			dol_syslog(get_class($this)."::delete sql=".$sql);
@@ -890,14 +930,14 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 *  Retourne le libelle du statut du contact
+	 *	Return label of contact status
 	 *
-	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return     string      			Libelle
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->statut,$mode);
 	}
 
 	/**
@@ -907,51 +947,40 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
-	function LibStatut($statut, $mode)
+	function LibStatut($statut,$mode)
 	{
 		global $langs;
 
 		if ($mode == 0)
 		{
-			if ($statut==0) return $langs->trans('StatusContactDraft');
-			elseif ($statut==1) return $langs->trans('StatusContactValidated');
-			elseif ($statut==4) return $langs->trans('StatusContactValidated');
-			elseif ($statut==5) return $langs->trans('StatusContactValidated');
+			if ($statut==0 || $statut==5) return $langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return $langs->trans('Enabled');
 		}
 		elseif ($mode == 1)
 		{
-			if ($statut==0) return $langs->trans('StatusContactDraftShort');
-			elseif ($statut==1) return $langs->trans('StatusContactValidatedShort');
-			elseif ($statut==4) return $langs->trans('StatusContactValidatedShort');
-			elseif ($statut==5) return $langs->trans('StatusContactValidatedShort');
+			if ($statut==0 || $statut==5) return $langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return $langs->trans('Enabled');
 		}
 		elseif ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans('StatusContactDraftShort'),'statut0').' '.$langs->trans('StatusContactDraft');
-			elseif ($statut==1) return img_picto($langs->trans('StatusContactValidatedShort'),'statut1').' '.$langs->trans('StatusContactValidated');
-			elseif ($statut==4) return img_picto($langs->trans('StatusContactValidatedShort'),'statut4').' '.$langs->trans('StatusContactValidated');
-			elseif ($statut==5) return img_picto($langs->trans('StatusContactValidatedShort'),'statut5').' '.$langs->trans('StatusContactValidated');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
+
 		}
 		elseif ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans('StatusContactDraft'),'statut0');
-			elseif ($statut==1) return img_picto($langs->trans('StatusContactValidated'),'statut1');
-			elseif ($statut==4) return img_picto($langs->trans('StatusContactValidated'),'statut4');
-			elseif ($statut==5) return img_picto($langs->trans('StatusContactValidated'),'statut5');
+			if ($statut==0 || $statut==5) return img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4');
 		}
 		elseif ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans('StatusContactDraft'),'statut0').' '.$langs->trans('StatusContactDraft');
-			elseif ($statut==1) return img_picto($langs->trans('StatusContactValidated'),'statut1').' '.$langs->trans('StatusContactValidated');
-			elseif ($statut==4) return img_picto($langs->trans('StatusContactValidated'),'statut4').' '.$langs->trans('StatusContactValidated');
-			elseif ($statut==5) return img_picto($langs->trans('StatusContactValidated'),'statut5').' '.$langs->trans('StatusContactValidated');
+			if ($statut==0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('StatusContactDraft');
+			elseif ($statut==1 || $statut==4) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
 		}
 		elseif ($mode == 5)
 		{
-			if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactDraftShort').' </span>'.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
-			elseif ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
-			elseif ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut4');
-			elseif ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans('StatusContactValidatedShort').' </span>'.img_picto($langs->trans('StatusContactValidatedShort'),'statut5');
+			if ($statut==0 || $statut==5) return '<span class="hideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut5');
+			elseif ($statut==1 || $statut==4) return '<span class="hideonsmartphone">'.$langs->trans('Enabled').' </span>'.img_picto($langs->trans('Enabled'),'statut4');
 		}
 	}
 
@@ -1010,6 +1039,7 @@ class Contact extends CommonObject
 		$this->country_code = 'FR';
 		$this->country = 'France';
 		$this->email = 'specimen@specimen.com';
+    $this->skype = 'tom.hanson';
 
 		$this->phone_pro = '0909090901';
 		$this->phone_perso = '0909090902';
@@ -1021,6 +1051,54 @@ class Contact extends CommonObject
 
 		$socid = rand(1, $num_socs);
 		$this->socid = $socids[$socid];
+		$this->statut=1;
+	}
+
+	/**
+	 *  Change status of a user
+	 *
+	 *	@param	int		$statut		Status to set
+	 *  @return int     			<0 if KO, 0 if nothing is done, >0 if OK
+	 */
+	function setstatus($statut)
+	{
+		global $conf,$langs,$user;
+
+		$error=0;
+
+		// Check parameters
+		if ($this->statut == $statut) return 0;
+		else $this->statut = $statut;
+
+		$this->db->begin();
+
+		// Desactive utilisateur
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
+		$sql.= " SET statut = ".$this->statut;
+		$sql.= " WHERE rowid = ".$this->id;
+		$result = $this->db->query($sql);
+
+		dol_syslog(get_class($this)."::setstatus sql=".$sql);
+		if ($result)
+		{
+			// Appel des triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CONTACT_ENABLEDISABLE',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+		}
+
+		if ($error)
+		{
+			$this->db->rollback();
+			return -$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 }

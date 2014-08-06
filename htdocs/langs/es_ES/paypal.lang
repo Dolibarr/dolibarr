@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - paypal
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuración del módulo PayPal
 PaypalDesc=Este módulo ofrece una página  de pago a través del proveedor <a href="http://www.paypal.com" target="_blank">Paypal</a> para realizar cualquier pago o un pago en relación con un objeto Dolibarr (facturas, pedidos ...)
 PaypalOrCBDoPayment=Continuar el pago mediante tarjeta o Paypal
@@ -13,7 +12,7 @@ PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proponer pago integral (Tarjeta+Paypal) o sól
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Sólo PayPal
 PAYPAL_CSS_URL=Url opcional de la hoja de estilo CSS de la página de pago
-ThisIsTransactionId=Identificador de la transacción: <b>%s</b> 
+ThisIsTransactionId=Identificador de la transacción: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Añadir la url del pago Paypal al enviar un documento por e-mail
 PAYPAL_IPN_MAIL_ADDRESS=Dirección e-mail para las notificaciones instantáneas de pago (IPN)
 PredefinedMailContentLink=Puede hacer clic en el enlace seguro de abajo para realizar su pago a través de PayPal\n\n%s\n\n

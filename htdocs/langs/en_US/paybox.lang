@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - paybox
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox module setup
 PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target="_blank">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 FollowingUrlAreAvailableToMakePayments=Following URLs are available to offer a page to a customer to make a payment on Dolibarr objects
@@ -33,3 +32,6 @@ VendorName=Name of vendor
 CSSUrlForPaymentForm=CSS style sheet url for payment form
 MessageOK=Message on validated payment return page
 MessageKO=Message on canceled payment return page
+NewPayboxPaymentReceived=New Paybox payment received
+NewPayboxPaymentFailed=New Paybox payment tried but failed
+PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

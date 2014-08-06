@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - shop
 Shop=Shop
 ShopWeb=Vefverslun
 LastOrders=Síðasta pantanir
@@ -17,4 +8,3 @@ LastCustomers=Síðasta viðskiptavina
 OSCommerceShop=OsCommerce Vefverslun
 OSCommerce=OsCommerce
 AddProd=Sala á netinu
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).

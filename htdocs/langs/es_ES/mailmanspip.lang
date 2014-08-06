@@ -1,7 +1,6 @@
-# Dolibarr language file - es_ES - mailmanspip
-CHARSET=UTF-8
-MailmanTitle=Sistema de listas de correo Mailman
+# Dolibarr language file - Source file is en_US - mailmanspip
 MailmanSpipSetup=Configuración del módulo Mailman y SPIP
+MailmanTitle=Sistema de listas de correo Mailman
 TestSubscribe=Para comprobar la suscripción a listas Mailman
 TestUnSubscribe=Para comprobar la cancelación de suscripciones a listas Mailman
 MailmanCreationSuccess=La prueba de suscripción ha sido realizada con éxito
@@ -11,6 +10,7 @@ SynchroSpipEnabled=Una actualización de Mailman será efectuada
 DescADHERENT_MAILMAN_ADMINPW=Contraseña de administrador Mailman
 DescADHERENT_MAILMAN_URL=URL para las suscripciones Mailman
 DescADHERENT_MAILMAN_UNSUB_URL=URL para las desuscripciones Mailman
+DescADHERENT_MAILMAN_LISTS=Lista(s) para la suscripción automática de los nuevos miembros (separados por comas)
 SPIPTitle=Sistema de gestión de contenidos SPIP
 DescADHERENT_SPIP_SERVEUR=Servidor SPIP
 DescADHERENT_SPIP_DB=Nombre de la base de datos de SPIP

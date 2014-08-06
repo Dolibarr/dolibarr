@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Bruger kortet
 ContactCard=Kontaktkort
 GroupCard=Gruppen kortet
@@ -53,6 +41,9 @@ LoginNotDefined=Login er ikke defineret.
 NameNotDefined=Navn er ikke defineret.
 ListOfUsers=Liste over brugere
 Administrator=Administrator
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator med alle rettigheder
+AdministratorDesc=Administrators virksomhed
 DefaultRights=Standardtilladelserne
 DefaultRightsDesc=Definer her standardtilladelserne, der indrømmes automatisk til en ny oprettet bruger.
 DolibarrUsers=Dolibarr brugere
@@ -79,7 +70,12 @@ ListOfGroupsForUser=Liste over grupper for denne bruger
 UsersToAdd=Brugere at tilføje til denne gruppe
 GroupsToAdd=Grupper for at føje til denne bruger
 NoLogin=Nr. login
+LinkToCompanyContact=Link til tredjepart / kontakt
+LinkedToDolibarrMember=Link til medlem
+LinkedToDolibarrUser=Link til Dolibarr bruger
+LinkedToDolibarrThirdParty=Link til Dolibarr tredjepart
 CreateDolibarrLogin=Opret Dolibarr konto
+CreateDolibarrThirdParty=Opret en tredjepart
 LoginAccountDisable=Konto deaktiveret, kan du sætte et nyt login til at aktivere den.
 LoginAccountDisableInDolibarr=Konto deaktiveret i Dolibarr.
 LoginAccountDisableInLdap=Konto deaktiveret i domænet.
@@ -90,8 +86,15 @@ MyInformations=Mine data
 ExportDataset_user_1=Dolibarr brugere og egenskaber
 DomainUser=Domænebruger %s
 Reactivate=Genaktiver
+CreateInternalUserDesc=Denne form giver dig mulighed for at oprettet en bruger interne til din virksomheds / fundament. At oprettet en ekstern bruger (kunde, leverandør, ...), bruge knappen 'Opret Dolibarr bruger' fra tredjepartens kontaktkort.
+InternalExternalDesc=En <b>intern</b> bruger er en bruger, der er en del af din virksomhed / fundament. <br> En <b>ekstern</b> bruger er en kunde, leverandør eller andre. <br><br> I begge tilfælde permissions definerer rettigheder på Dolibarr, også eksterne bruger kan have en anden menu manager end intern bruger (Se Home - Setup - Display)
+PermissionInheritedFromAGroup=Tilladelse gives, fordi arvet fra en af en brugers gruppe.
+Inherited=Arvelige
+UserWillBeInternalUser=Oprettet brugeren vil blive en intern bruger (fordi der ikke er knyttet til en bestemt tredjepart)
+UserWillBeExternalUser=Oprettet bruger vil være en ekstern bruger (fordi knyttet til en bestemt tredjepart)
 IdPhoneCaller=Id telefonen ringer op
 UserLogged=Bruger %s tilsluttet
+UserLogoff=Bruger %s logout
 NewUserCreated=Bruger %s oprettet
 NewUserPassword=Ændring af adgangskode for %s
 EventUserModified=Bruger %s modificerede
@@ -99,56 +102,19 @@ UserDisabled=Bruger %s handicappede
 UserEnabled=Bruger %s aktiveret
 UserDeleted=Bruger %s fjernes
 NewGroupCreated=Gruppe %s oprettet
-GroupModified=Gruppe %s modificerede
+GroupModified=Gruppen modificerede held
 GroupDeleted=Gruppe %s fjernes
 ConfirmCreateContact=Er du sikker yu ønsker at skabe et Dolibarr højde for denne kontakt?
-LoginToCreate=Log ind for at oprette
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Administrator med alle rettigheder
-LinkToCompanyContact=Link til tredjepart / kontakt
-LinkedToDolibarrMember=Link til medlem
-LinkedToDolibarrUser=Link til Dolibarr bruger
-LinkedToDolibarrThirdParty=Link til Dolibarr tredjepart
-CreateDolibarrThirdParty=Opret en tredjepart
 ConfirmCreateLogin=Er du sikker på at du vil oprette en Dolibarr højde for dette medlem?
 ConfirmCreateThirdParty=Er du sikker på at du vil oprette en tredjepart for dette medlem?
+LoginToCreate=Log ind for at oprette
 NameToCreate=Navn af tredjemand til at skabe
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-CreateInternalUserDesc=Denne form giver dig mulighed for at oprettet en bruger interne til din virksomheds / fundament. At oprettet en ekstern bruger (kunde, leverandør, ...), bruge knappen 'Opret Dolibarr bruger' fra tredjepartens kontaktkort.
-InternalExternalDesc=En <b>intern</b> bruger er en bruger, der er en del af din virksomhed / fundament. <br> En <b>ekstern</b> bruger er en kunde, leverandør eller andre. <br><br> I begge tilfælde permissions definerer rettigheder på Dolibarr, også eksterne bruger kan have en anden menu manager end intern bruger (Se Home - Setup - Display)
-PermissionInheritedFromAGroup=Tilladelse gives, fordi arvet fra en af en brugers gruppe.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-Inherited=Arvelige
 YourRole=Din roller
 YourQuotaOfUsersIsReached=Din kvote af aktive brugere er nået!
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:44).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> da_DK
-AdministratorDesc=Administrators virksomhed
-UserWillBeInternalUser=Oprettet brugeren vil blive en intern bruger (fordi der ikke er knyttet til en bestemt tredjepart)
-UserWillBeExternalUser=Oprettet bruger vil være en ekstern bruger (fordi knyttet til en bestemt tredjepart)
-UserLogoff=Bruger %s logout
 NbOfUsers=Nb af brugere
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:30:46).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
 DontDowngradeSuperAdmin=Kun en superadmin kan nedgradere en superadmin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:37).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

@@ -16,7 +16,7 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_invoice_permonth.php
+ *	\file       htdocs/core/boxes/box_graph_invoices_permonth.php
  *	\ingroup    factures
  *	\brief      Box to show graph of invoices per month
  */
@@ -30,7 +30,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 {
 	var $boxcode="invoicespermonth";
 	var $boximg="object_bill";
-	var $boxlabel="BoxInvoicesPerMonth";
+	var $boxlabel="BoxCustomersInvoicesPerMonth";
 	var $depends = array("facture");
 
 	var $db;
@@ -50,7 +50,6 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		global $conf;
 
 		$this->db=$db;
-		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;
 	}
 
 	/**
@@ -65,63 +64,185 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 		$this->max=$max;
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($db);
+		$refreshaction='refresh_'.$this->boxcode;
 
-		$text = $langs->trans("BoxInvoicesPerMonth",$max);
+		//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		//$facturestatic=new Facture($db);
+
+		$text = $langs->trans("BoxCustomersInvoicesPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,
 				'limit'=> dol_strlen($text),
-				'graph'=> 1
+				'graph'=> 1,
+				'sublink'=>'',
+				'subtext'=>$langs->trans("Filter"),
+				'subpicto'=>'filter.png',
+				'subclass'=>'linkobject',
+				'target'=>'none'	// Set '' to get target="_blank"
 		);
+
+		$dir=''; 	// We don't need a path because image file will not be saved into disk
+		$prefix='';
+		$socid=0;
+		if ($user->societe_id) $socid=$user->societe_id;
+		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
 
 		if ($user->rights->facture->lire)
 		{
-			$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.datef as df";
-			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-			$sql.= ", s.nom, s.rowid as socid";
-			$sql.= ", f.date_lim_reglement as datelimite";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ")";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
-			$sql.= " ORDER BY f.tms DESC";
-			$sql.= $db->plimit($max, 0);
+			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
+			$param_shownb='DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
+			$param_showtot='DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
 
-			$result = $db->query($sql);
-			if ($result)
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
+			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 			{
-				$num = $db->num_rows($result);
-				$now=dol_now();
-
-				$i = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
-
-				while ($i < $num)
-				{
-					$objp = $db->fetch_object($result);
-					$datelimite=$db->jdate($objp->datelimite);
-					$datec=$db->jdate($objp->datec);
-
-					$picto='bill';
-					if ($objp->type == 1) $picto.='r';
-					if ($objp->type == 2) $picto.='a';
-					$late = '';
-					if ($objp->paye == 0 && ($objp->fk_statut != 2 && $objp->fk_statut != 3) && $datelimite < ($now - $conf->facture->client->warning_delay)) { $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));}
-
-					$i++;
-				}
-
-				$this->info_box_contents[0][0] = array('td' => 'align="center"','text2'=>'xxxxxxx');
+				$endyear=GETPOST($param_year,'int');
+				$shownb=GETPOST($param_shownb,'alpha');
+				$showtot=GETPOST($param_showtot,'alpha');
 			}
 			else
 			{
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+				$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$endyear=$tmparray['year'];
+				$shownb=$tmparray['shownb'];
+				$showtot=$tmparray['showtot'];
+			}
+			if (empty($shownb) && empty($showtot)) $showtot=1;
+			$nowarray=dol_getdate(dol_now(),true);
+			if (empty($endyear)) $endyear=$nowarray['year'];
+			$startyear=$endyear-1;
+			$mode='customer';
+			$userid=0;
+			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
+			$HEIGHT='192';
+
+			$stats = new FactureStats($this->db, 0, $mode, ($userid>0?$userid:0));
+
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			if ($shownb)
+			{
+				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+
+				$filenamenb = $dir."/".$prefix."invoicesnbinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesnbinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessuppliernbinyear-'.$endyear.'.png';
+
+				$px1 = new DolGraph();
+				$mesg = $px1->isGraphKo();
+				if (! $mesg)
+				{
+					$px1->SetData($data1);
+					unset($data1);
+					$px1->SetPrecisionY(0);
+					$i=$startyear;$legend=array();
+					while ($i <= $endyear)
+					{
+						$legend[]=$i;
+						$i++;
+					}
+					$px1->SetLegend($legend);
+					$px1->SetMaxValue($px1->GetCeilMaxValue());
+					$px1->SetWidth($WIDTH);
+					$px1->SetHeight($HEIGHT);
+					$px1->SetYLabel($langs->trans("NumberOfBills"));
+					$px1->SetShading(3);
+					$px1->SetHorizTickIncrement(1);
+					$px1->SetPrecisionY(0);
+					$px1->SetCssPrefix("cssboxes");
+					$px1->mode='depth';
+					$px1->SetTitle($langs->trans("NumberOfBillsByMonth"));
+
+					$px1->draw($filenamenb,$fileurlnb);
+				}
+			}
+
+			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
+			if ($showtot)
+			{
+				$data2 = $stats->getAmountByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
+
+				$filenamenb = $dir."/".$prefix."invoicesamountinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=invoicesamountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=billstatssupplier&amp;file=invoicessupplieramountinyear-'.$endyear.'.png';
+
+				$px2 = new DolGraph();
+				$mesg = $px2->isGraphKo();
+				if (! $mesg)
+				{
+					$px2->SetData($data2);
+					unset($data2);
+					$px2->SetPrecisionY(0);
+					$i=$startyear;$legend=array();
+					while ($i <= $endyear)
+					{
+						$legend[]=$i;
+						$i++;
+					}
+					$px2->SetLegend($legend);
+					$px2->SetMaxValue($px2->GetCeilMaxValue());
+					$px2->SetWidth($WIDTH);
+					$px2->SetHeight($HEIGHT);
+					$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
+					$px2->SetShading(3);
+					$px2->SetHorizTickIncrement(1);
+					$px2->SetPrecisionY(0);
+					$px2->SetCssPrefix("cssboxes");
+					$px2->mode='depth';
+					$px2->SetTitle($langs->trans("AmountOfBillsByMonthHT"));
+
+					$px2->draw($filenamenb,$fileurlnb);
+				}
+			}
+
+			if (! $mesg)
+			{
+				$stringtoshow='';
+				$stringtoshow.='<script type="text/javascript" language="javascript">
+					jQuery(document).ready(function() {
+						jQuery("#idsubimg'.$this->boxcode.'").click(function() {
+							jQuery("#idfilter'.$this->boxcode.'").toggle();
+						});
+					});
+					</script>';
+				$stringtoshow.='<div class="center hideobject" id="idfilter'.$this->boxcode.'">';	// hideobject is to start hidden
+				$stringtoshow.='<form class="flat formboxfilter" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+				$stringtoshow.='<input type="hidden" name="action" value="'.$refreshaction.'">';
+				$stringtoshow.='<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
+				$stringtoshow.='<input type="checkbox" name="'.$param_shownb.'"'.($shownb?' checked="true"':'').'"> '.$langs->trans("NumberOfBillsByMonth");
+				$stringtoshow.=' &nbsp; ';
+				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfBillsByMonthHT");
+				$stringtoshow.='<br>';
+				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
+				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='</form>';
+				$stringtoshow.='</div>';
+				if ($shownb && $showtot)
+				{
+					$stringtoshow.='<div class="fichecenter">';
+					$stringtoshow.='<div class="fichehalfleft">';
+				}
+				if ($shownb) $stringtoshow.=$px1->show();
+				if ($shownb && $showtot)
+				{
+					$stringtoshow.='</div>';
+					$stringtoshow.='<div class="fichehalfright">';
+				}
+				if ($showtot) $stringtoshow.=$px2->show();
+				if ($shownb && $showtot)
+				{
+					$stringtoshow.='</div>';
+					$stringtoshow.='</div>';
+				}
+				$this->info_box_contents[0][0] = array('td' => 'align="center" class="nohover"','textnoformat'=>$stringtoshow);
+			}
+			else
+			{
+				$this->info_box_contents[0][0] = array(	'td' => 'align="left" class="nohover"',
     	        										'maxlength'=>500,
-	            										'text' => ($db->error().' sql='.$sql));
+	            										'text' => $mesg);
 			}
 
 		}

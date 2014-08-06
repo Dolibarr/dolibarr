@@ -1,20 +1,12 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Пожертвование
 Donations=Пожертвования
+# DonationRef=Donation ref.
 Donor=Донор
 Donors=Доноры
 AddDonation=Добавить пожертвование
 NewDonation=Новое пожертвование
+# ShowDonation=Show donation
 DonationPromise=Обещание пожертвования
 PromisesNotValid=Неподтвержденные обещания
 PromisesValid=Подтвержденные обещания
@@ -29,10 +21,12 @@ DonationStatusPaid=Полученное пожертвование
 DonationStatusPromiseNotValidatedShort=Проект
 DonationStatusPromiseValidatedShort=Подтверждено
 DonationStatusPaidShort=Получено
-ValidPromise=Подтвердить обещание
+ValidPromess=Подтвердить обещание
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Создать подтверждение получения
 DonationsModels=Модели документов для подтверждение получения пожертвования
 LastModifiedDonations=Последние %s измененных пожертвований
 SearchADonation=Поиск пожертвования
-ValidPromess=Подтвердить обещание
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

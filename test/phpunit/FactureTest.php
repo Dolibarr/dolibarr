@@ -76,7 +76,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
   	public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+
+        if (! empty($conf->ecotaxdeee->enabled)) { print __METHOD__." ecotaxdeee module must not be enabled.\n"; die(); }
+
+        $db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
     	print __METHOD__."\n";
     }
@@ -242,6 +245,10 @@ class FactureTest extends PHPUnit_Framework_TestCase
         $localobject->info($localobject->id);
         print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
         $this->assertNotEquals($localobject->date_creation, '');
+
+        $result=$localobject->demande_prelevement($user);
+        print __METHOD__." result=".$result."\n";
+       	$this->assertLessThan($result, 0);
 
         return $localobject->id;
     }

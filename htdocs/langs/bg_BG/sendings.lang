@@ -1,16 +1,8 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Реф. пратка
 Sending=Пратка
 Sendings=Превозите
+Shipment=Пратка
 Shipments=Превозите
 Receivings=Receivings
 SendingsArea=Превозите област
@@ -21,6 +13,7 @@ LastSendings=Последен превоз %s
 SearchASending=Търсене за превоз
 StatisticsOfSendings=Статистика за превози
 NbOfSendings=Брой на пратките
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Доставка карта
 NewSending=Нова пратка
 CreateASending=Създаване на пратка
@@ -57,7 +50,7 @@ Enlevement=Набият по желание на клиента
 DocumentModelSimple=Обикновено документ модел
 DocumentModelMerou=Merou A5 модел
 WarningNoQtyLeftToSend=Внимание, няма продукти, които чакат да бъдат изпратени.
-StatsOnShipmentsOnlyValidated=Статистика провежда относно превози само валидирани
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Нарязани датата на доставка
 DateReceived=Дата на доставка
 SendShippingByEMail=Изпрати изпращане по електронна поща
@@ -66,10 +59,18 @@ ActionsOnShipping=Събития на пратка
 LinkToTrackYourPackage=Линк за проследяване на вашия пакет
 ShipmentCreationIsDoneFromOrder=За момента се извършва от картата с цел създаване на нова пратка.
 RelatedShippings=Свързани shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=Улов от клиента
 SendingMethodTRANS=Транспортьор
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=Simple образеца на документа за доставка постъпления
 DocumentModelTyphon=Повече целия документ модел за доставка постъпления (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Постоянно EXPEDITION_ADDON_NUMBER не е определен
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:43).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

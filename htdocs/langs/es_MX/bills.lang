@@ -1,5 +1,4 @@
 # Dolibarr language file - es_MX - bills
-CHARSET=UTF-8
 InvoiceAvoir=Nota de crédito
 InvoiceAvoirAsk=Nota de crédito para corregir la factura
 InvoiceAvoirDesc=La <b>nota de crédito</b> es una factura negativa destinada a compensar un importe de factura que difiere del importe realmente pagado (por haber pagado de más o por devolución de productos, por ejemplo).

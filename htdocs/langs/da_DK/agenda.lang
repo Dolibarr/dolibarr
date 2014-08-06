@@ -1,85 +1,51 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:18
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - agenda
+# IdAgenda=ID event
 Actions=Aktioner
 ActionsArea=Aktioner område (Events og opgaver)
-Agenda=Agenda
-Agendas=Dagsordener
-Calendar=Kalender
-Calendars=Kalendere
-AffectedTo=Påvirkes i
-DoneBy=Gøres ved at
-Events=Events
+Agenda= Agenda
+Agendas= Dagsordener
+Calendar= Kalender
+Calendars= Kalendere
+LocalAgenda=Lokal kalender
+AffectedTo= Påvirkes i
+DoneBy= Gøres ved at
+Events= Events
+# EventsNb=Number of events
+MyEvents=Mine begivenheder
+OtherEvents=Andre arrangementer
 ListOfActions=Liste over begivenheder
 Location=Placering
-SearchAnAction=Søg en action / opgave
-MenuDoneActions=Alle henlagt aktioner
-MenuToDoMyActions=Min ufuldstændige aktioner
-MenuDoneMyActions=Min henlagt aktioner
-ListOfEvents=Liste over Dolibarr begivenheder
+EventOnFullDay=Begivenhed på fuld dag
+SearchAnAction= Søg en action / opgave
+MenuToDoActions= Alle ufuldstændige tiltag
+MenuDoneActions= Alle henlagt aktioner
+MenuToDoMyActions= Min ufuldstændige aktioner
+MenuDoneMyActions= Min henlagt aktioner
+ListOfEvents= Liste over Dolibarr begivenheder
 ActionsAskedBy=Handlinger registreres af
 ActionsToDoBy=Aktioner påvirkes i
 ActionsDoneBy=Aktioner udført af
-AllMyActions=Alle mine handlinger / opgaver
-AllActions=Alle les handlinger / opgaver
+AllMyActions= Alle mine handlinger / opgaver
+AllActions= Alle les handlinger / opgaver
 ViewList=Vis liste
 ViewCal=Vis kalender
-ViewWithPredefinedFilters=Se med foruddefinerede filtre
-AutoActions=Automatisk påfyldning af dagsorden
-AgendaAutoActionDesc=Definer her begivenheder, som du vil Dolibarr at skabe automatisk en indsats på dagsordenen. Hvis det ikke er kontrolleret (som standard), kun manuel foranstaltninger vil blive inkluderet i dagsordenen.
-AgendaSetupOtherDesc=Denne side giver mulighed for at konfigurere andre parametre af dagsorden-modulet.
-ActionsEvents=Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsordenen automatisk
-PropalValidatedInDolibarr=Forslag valideret
-InvoiceValidatedInDolibarr=Faktura valideret
-OrderValidatedInDolibarr=Bestil valideret
-NewCompanyToDolibarr=Tredjepart skabt
-DateActionPlannedStart=Planlagt startdato
-DateActionPlannedEnd=Planlagte slutdato
-DateActionDoneStart=Real startdato
-DateActionDoneEnd=Real slutdato
-DateActionStart=Startdato
-DateActionEnd=Slutdato
-AgendaUrlOptions1=Du kan også tilføje følgende parametre til at filtrere output:
-AgendaUrlOptions2=<b>login=<b>login= %s</b> for at begrænse produktionen til aktioner skabt af, påvirkes i eller udføres af <b>brugeren %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina= %s</b> for at begrænse produktionen til aktioner skabt af <b>brugeren %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint= %s</b> for at begrænse produktionen til aktioner påvirket til <b>brugeren %s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind= %s</b> for at begrænse produktionen til aktioner udført af <b>brugeren %s.</b>
-AgendaShowBirthdayEvents=Vis fødselsdag kontakter
-AgendaHideBirthdayEvents=Skjul fødselsdag kontakter
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-MenuToDoActions=Alle ufuldstændige tiltag
-InterventionValidatedInDolibarr=Intervention %s valideret
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:56).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-LocalAgenda=Lokal kalender
-MyEvents=Mine begivenheder
-OtherEvents=Andre arrangementer
-EventOnFullDay=Begivenhed på fuld dag
 ViewDay=Dagsvisning
 ViewWeek=Ugevisning
+ViewWithPredefinedFilters= Se med foruddefinerede filtre
+AutoActions= Automatisk påfyldning af dagsorden
+AgendaAutoActionDesc= Definer her begivenheder, som du vil Dolibarr at skabe automatisk en indsats på dagsordenen. Hvis det ikke er kontrolleret (som standard), kun manuel foranstaltninger vil blive inkluderet i dagsordenen.
+AgendaSetupOtherDesc= Denne side giver mulighed for at konfigurere andre parametre af dagsorden-modulet.
 AgendaExtSitesDesc=Denne side giver mulighed for at erklære eksterne kalendere til at se deres begivenheder i Dolibarr dagsorden.
+ActionsEvents= Begivenheder, for hvilke Dolibarr vil skabe en indsats på dagsordenen automatisk
+PropalValidatedInDolibarr= Forslag valideret
+InvoiceValidatedInDolibarr= Faktura valideret
 InvoiceBackToDraftInDolibarr=Faktura %s gå tilbage til udkast til status
+# InvoiceDeleteDolibarr=Invoice %s deleted
+OrderValidatedInDolibarr= Bestil valideret
 OrderApprovedInDolibarr=Bestil %s godkendt
 OrderBackToDraftInDolibarr=Bestil %s gå tilbage til udkast til status
 OrderCanceledInDolibarr=Bestil %s annulleret
+InterventionValidatedInDolibarr=Intervention %s valideret
 ProposalSentByEMail=Kommercielle forslag %s sendt via e-mail
 OrderSentByEMail=Kunde ordre %s sendt via e-mail
 InvoiceSentByEMail=Kundefaktura %s sendt via e-mail
@@ -87,6 +53,24 @@ SupplierOrderSentByEMail=Leverandør ordre %s sendt via e-mail
 SupplierInvoiceSentByEMail=Leverandørfaktura %s sendt via e-mail
 ShippingSentByEMail=Forsendelse %s sendt via e-mail
 InterventionSentByEMail=Intervention %s sendt via e-mail
+NewCompanyToDolibarr= Tredjepart skabt
+DateActionPlannedStart= Planlagt startdato
+DateActionPlannedEnd= Planlagte slutdato
+DateActionDoneStart= Real startdato
+DateActionDoneEnd= Real slutdato
+DateActionStart= Startdato
+DateActionEnd= Slutdato
+AgendaUrlOptions1=Du kan også tilføje følgende parametre til at filtrere output:
+AgendaUrlOptions2=<b>login=<b>login= %s</b> for at begrænse produktionen til aktioner skabt af, påvirkes i eller udføres af <b>brugeren %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina= %s</b> for at begrænse produktionen til aktioner skabt af <b>brugeren %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint= %s</b> for at begrænse produktionen til aktioner påvirket til <b>brugeren %s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind= %s</b> for at begrænse produktionen til aktioner udført af <b>brugeren %s.</b>
+AgendaShowBirthdayEvents=Vis fødselsdag kontakter
+AgendaHideBirthdayEvents=Skjul fødselsdag kontakter
+# Busy=Busy
+# ExportDataset_event1=List of agenda events
+
+# External Sites ical
 ExportCal=Eksport kalender
 ExtSites=Importer eksterne kalendere
 ExtSitesEnableThisTool=Vis eksterne kalendere til dagsorden
@@ -94,4 +78,3 @@ ExtSitesNbOfAgenda=Antallet af kalendere
 AgendaExtNb=Kalender nb %s
 ExtSiteUrlAgenda=URL for at få adgang. ICal fil
 ExtSiteNoLabel=Ingen beskrivelse
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:01:58).

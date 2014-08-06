@@ -1,20 +1,15 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Lager-kort
 Warehouse=Lager
+Warehouses=Vöruhús
 NewWarehouse=Nýr lager / lager area
+WarehouseEdit=Breyta vörugeymsla
 MenuNewWarehouse=Nýr lager
 WarehouseOpened=Warehouse opna
 WarehouseClosed=Lager lokaður
 WarehouseSource=Heimild vörugeymsla
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Markmál vörugeymsla
 ValidateSending=Eyða sendingu
 CancelSending=Hætta við að senda
@@ -31,17 +26,22 @@ ListOfStockMovements=Listi yfir hreyfingar lager
 StocksArea=Stocks area
 Location=Staðsetning
 LocationSummary=Stutt nafn staðsetning
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Heildarfjöldi vörur
 LastMovement=Síðasta hreyfing
 LastMovements=Síðasta hreyfing
 Units=Einingar
 Unit=Unit
 StockCorrection=Rétt lager
+# StockTransfer=Stock transfer
 StockMovement=Transfer
 StockMovements=Kauphöll millifærslur
+# LabelMovement=Movement label
 NumberOfUnit=Fjöldi eininga
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Samtals á lager
 StockTooLow=Stock of lágt
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Gildi
 PMPValue=Vegið meðalverð
 PMPValueShort=WAP
@@ -57,6 +57,7 @@ DeStockOnShipment=Minnka alvöru stofnum á sendingunni löggilding
 ReStockOnBill=Auka raunverulegur birgðir birgja reikningum / kredit athugasemdir löggilding
 ReStockOnValidateOrder=Auka raunverulegur birgðir birgja pantanir approbation
 ReStockOnDispatchOrder=Auka raunverulegur birgðir á handbók dispatching í vöruhús, eftir röð birgja sem fá
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
 OrderStatusNotReadyToDispatch=Panta hefur ekki enn eða ekki meira stöðu sem gerir dispatching af vörum í vöruhús lager.
 StockDiffPhysicTeoric=Ástæða fyrir lager munur líkamlega og fræðilegum
 NoPredefinedProductToDispatch=Engar fyrirfram skilgreindum vörum fyrir þennan hlut. Svo neitun dispatching til á lager er krafist.
@@ -65,7 +66,6 @@ StockLimitShort=Takmörk
 StockLimit=Kauphöll takmörk fyrir viðvaranir
 PhysicalStock=Líkamleg lager
 RealStock=Real lager
-TheoreticalStock=Therocial lager
 VirtualStock=Virtual Stock
 MininumStock=Lágmark lager
 StockUp=Stock upp
@@ -77,26 +77,36 @@ LieuWareHouse=Staðsetning lager
 WarehousesAndProducts=Vöruhús og vörur
 AverageUnitPricePMPShort=Meðaltal inntak verð
 AverageUnitPricePMP=Meðaltal inntak verð
+SellPriceMin=Selja Unit verð
+EstimatedStockValueSellShort=Gildi til að selja
+EstimatedStockValueSell=Gildi til að selja
 EstimatedStockValueShort=Áætlað virði hlutabréfa
 EstimatedStockValue=Áætlað virði hlutabréfa
 DeleteAWarehouse=Eyða vörugeymsla
 ConfirmDeleteWarehouse=Ertu viss um að þú viljir eyða <b>lager %s ?</b>
-PersonalStock=Starfsfólk lager %s 
-ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af %s  %s 
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
-WarehouseEdit=Breyta vörugeymsla
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-SellPriceMin=Selja Unit verð
-EstimatedStockValueSellShort=Gildi til að selja
-EstimatedStockValueSell=Gildi til að selja
+PersonalStock=Starfsfólk lager %s
+ThisWarehouseIsPersonalStock=Þetta vöruhús táknar persónulegt birgðir af %s  %s
 SelectWarehouseForStockDecrease=Veldu vöruhús að nota til lækkunar hlutabréfa
 SelectWarehouseForStockIncrease=Veldu vöruhús að nota fyrir hækkun hlutabréfa
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:43).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

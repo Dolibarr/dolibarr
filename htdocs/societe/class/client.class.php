@@ -25,8 +25,7 @@ include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**
- *      \class      Client
- *		\brief      Class to manage customers
+ *	Class to manage customers
  */
 class Client extends Societe
 {
@@ -74,6 +73,7 @@ class Client extends Societe
                 if ($obj->client == 1 || $obj->client == 3) $this->nb["customers"]+=$obj->nb;
                 if ($obj->client == 2 || $obj->client == 3) $this->nb["prospects"]+=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else

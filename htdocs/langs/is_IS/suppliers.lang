@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Birgjar
 Supplier=Birgir
 AddSupplier=Bæta við birgja
@@ -19,18 +10,24 @@ ListOfSuppliers=Listi yfir birgja
 ShowSupplier=Sýna birgir
 OrderDate=Panta dagsetningu
 BuyingPrice=Kaupverð
+BuyingPriceMin=Lágmark Kaupverð
+BuyingPriceMinShort=Min Kaupverð
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Bæta við birgi verð
 ChangeSupplierPrice=Breyta birgir verð
 ErrorQtyTooLowForThisSupplier=Magn of lágt fyrir þetta birgis eða ekkert verði skilgreind á þessa vöru fyrir þennan birgir
 ErrorSupplierCountryIsNotDefined=Land fyrir þessa birgja er ekki skilgreind. Rétt þetta fyrst.
 ProductHasAlreadyReferenceInThisSupplier=Þessi vara er þegar með tilvísun í þessi birgi
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Þessi tilvísun birgir er nú þegar tengt með tilvísun: %s 
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Þessi tilvísun birgir er nú þegar tengt með tilvísun: %s
 NoRecordedSuppliers=Nei birgja skráð
 SupplierPayment=Birgir greiðslu
 SuppliersArea=Birgjar area
 RefSupplierShort=Tilv. birgir
+Availability=Framboð
 ExportDataset_fournisseur_1=Birgir reikningum lista og línur reiknings er
 ExportDataset_fournisseur_2=Birgir reikninga og greiðslur
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Samþykkja þessari röð
 ConfirmApproveThisOrder=Ertu viss um að þú viljir samþykkja þessari röð?
 DenyingThisOrder=Afneita þessari röð
@@ -42,12 +39,4 @@ AddSupplierOrder=Búa til birgja þess
 AddSupplierInvoice=Búa til birgja Reikningar
 ListOfSupplierProductForSupplier=Listi yfir vörur og verð <b>fyrir%</b> söluaðila <b>s</b>
 NoneOrBatchFileNeverRan=Enginn eða <b>hópur %s </b> er ekki hljóp nýlega
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-BuyingPriceMin=Lágmark Kaupverð
-BuyingPriceMinShort=Min Kaupverð
-Availability=Framboð
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:08).
+# SentToSuppliers=Sent to suppliers

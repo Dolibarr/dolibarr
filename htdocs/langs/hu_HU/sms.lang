@@ -1,13 +1,4 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:13:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms setup
 SmsDesc=Ez az oldal lehetővé teszi, hogy meghatározza globals opciók SMS funkciók
@@ -56,7 +47,7 @@ NbOfSms=Nbre a fon szám
 ThisIsATestMessage=Ez egy teszt üzenet
 SendSms=SMS küldése
 SmsInfoCharRemain=Nb a fennmaradó karakterek
-SmsInfoNumero=(Nemzetközi formátum, azaz: 33899701761)
+SmsInfoNumero= (Nemzetközi formátum, azaz: 33899701761)
 DelayBeforeSending=Késleltetett küldés előtt (perc)
 SmsNoPossibleRecipientFound=Nincs cél elérhető. Ellenőrizze beállítása az SMS szolgáltató.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:18:03).
+

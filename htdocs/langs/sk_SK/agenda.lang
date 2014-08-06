@@ -1,0 +1,80 @@
+# Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID udalosti
+Actions=Udalosti
+ActionsArea=Akcia plocha (Akcie a úlohy)
+Agenda= Program rokovania
+Agendas= Program
+Calendar= Kalendár
+Calendars= Kalendára
+LocalAgenda=Miestny kalendár
+AffectedTo= Priradené
+DoneBy= Vykonal
+Events= Udalosti
+EventsNb=Počet udalostí
+MyEvents=Moje udalosti
+OtherEvents=Ďalšie akcie
+ListOfActions=Zoznam udalostí
+Location=Umiestnenie
+EventOnFullDay=Akcie po celý deň (y)
+SearchAnAction= Hľadať udalosť / úlohu
+MenuToDoActions= Všetky neúplné udalosti
+MenuDoneActions= Všetky ukončené akcie
+MenuToDoMyActions= Moje neúplné udalosti
+MenuDoneMyActions= Moje ukončených akcií
+ListOfEvents= Zoznam udalostí Dolibarr
+ActionsAskedBy=Akcia hlásené
+ActionsToDoBy=Akcia priradené
+ActionsDoneBy=Akcie vykonané
+AllMyActions= Všetky moje akcie / úlohy
+AllActions= Všetky udalosti / úlohy
+ViewList=Zobrazenie zoznamu
+ViewCal=Mesačný pohľad
+ViewDay=Denné zobrazenie
+ViewWeek=Zobraziť týždeň
+ViewWithPredefinedFilters= Zobraziť s preddefinovanými filtrami
+AutoActions= Automatické plnenie
+AgendaAutoActionDesc= Definujte tu udalosti, na ktoré chcete Dolibarr vytvoriť automaticky udalosť v programe. Pokiaľ nie je označená (v predvolenom nastavení), bude iba manuálne činnosti byť zahrnuté do programu rokovania.
+AgendaSetupOtherDesc= Táto stránka poskytuje možnosti, ako dať export vašich akcií Dolibarr do externého kalendára (thunderbird, Google kalendár, ...)
+AgendaExtSitesDesc=Táto stránka umožňuje deklarovať externé zdroje kalendárov vidieť svoje akcie do programu Dolibarr.
+ActionsEvents= Udalosti, pre ktoré Dolibarr vytvorí akciu v programe automaticky
+PropalValidatedInDolibarr= Návrh %s overená
+InvoiceValidatedInDolibarr= Faktúra %s overená
+InvoiceBackToDraftInDolibarr=Faktúra %s vrátiť do stavu návrhu
+InvoiceDeleteDolibarr=Faktúra %s zmazaná
+OrderValidatedInDolibarr= Objednať %s overená
+OrderApprovedInDolibarr=Objednať %s schválený
+OrderBackToDraftInDolibarr=Objednať %s vrátiť do stavu návrhu
+OrderCanceledInDolibarr=Objednať %s zrušený
+InterventionValidatedInDolibarr=Intervenčné %s overená
+ProposalSentByEMail=Komerčné návrh %s zaslaná e-mailom
+OrderSentByEMail=%s zákazníkov objednávka zaslaná e-mailom
+InvoiceSentByEMail=%s faktúre Zákazníka zaslaná e-mailom
+SupplierOrderSentByEMail=%s Dodávateľ objednávka zaslaná e-mailom
+SupplierInvoiceSentByEMail=%s dodávateľskej faktúry zasielané e-mailom
+ShippingSentByEMail=Prepravné %s zaslaná e-mailom
+InterventionSentByEMail=Intervenčné %s zaslaná e-mailom
+NewCompanyToDolibarr= Tretia strana vytvorená
+DateActionPlannedStart= Plánovaný dátum začatia
+DateActionPlannedEnd= Plánovaný dátum ukončenia
+DateActionDoneStart= Skutočné dátum začatia
+DateActionDoneEnd= Skutočný dátum ukončenia
+DateActionStart= Dátum začatia
+DateActionEnd= Dátum ukončenia
+AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výstupu:
+AgendaUrlOptions2=<b>login = %s</b> obmedziť výstup na akcie vytvorené, pridelených alebo vykonať užívateľa <b>%s.</b>
+AgendaUrlOptions3=<b>Logina = %s</b> obmedziť výstup na akcie vytvorené užívateľom <b>%s.</b>
+AgendaUrlOptions4=<b>logint = %s</b> obmedziť výstup na akcie priradených užívateľských <b>%s.</b>
+AgendaUrlOptions5=<b>logind = %s</b> obmedziť výstup na akcie vykonané užívateľom <b>%s.</b>
+AgendaShowBirthdayEvents=Zobraziť narodeniny kontaktov
+AgendaHideBirthdayEvents=Skryť narodeniny kontaktov
+Busy=Zaneprázdnený
+ExportDataset_event1=Zoznam agendy udalostí
+
+# External Sites ical
+ExportCal=Export kalendár
+ExtSites=Importovať externé kalendára
+ExtSitesEnableThisTool=Zobraziť externých kalendára do programu
+ExtSitesNbOfAgenda=Počet kalendárov
+AgendaExtNb=Kalendár nb %s
+ExtSiteUrlAgenda=URL pre prístup. Súbor iCal
+ExtSiteNoLabel=Nie Popis

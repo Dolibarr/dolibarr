@@ -1,36 +1,32 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Annetus
 Donations=Annetused
+DonationRef=Annetuse viide
 Donor=Annetaja
-Donors=Doonorid
-AddDonation=Lisa annetuse
-NewDonation=New annetuse
-DonationPromise=Kingitus lubadus
-PromisesNotValid=Ei kinnitatud lubadusi
-PromisesValid=Valideeritud lubadusi
-DonationsPaid=Annetused makstakse
-DonationsReceived=Saadud annetuste
-PublicDonation=Avalik annetuse
-DonationsNumber=Toeta number
-DonationsArea=Annetused ala
-DonationStatusPromiseNotValidated=Eelnõu lubadus
-DonationStatusPromiseValidated=Kinnitatud lubadust
-DonationStatusPaid=Toeta saanud
-DonationStatusPromiseNotValidatedShort=Eelnõu
-DonationStatusPromiseValidatedShort=Valideeritud
-DonationStatusPaidShort=Saanud
-ValidPromess=Kinnitada lubadus
-BuildDonationReceipt=Ehitada kätte
-DonationsModels=Dokumendid mudelid annetuste laekumine
-LastModifiedDonations=Last %s muutmine annetusi
-SearchADonation=Otsi annetuse
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:42:58).
+Donors=Annetajad
+AddDonation=Lisa annetus
+NewDonation=Uus annetus
+ShowDonation=Kuva annetus
+DonationPromise=Annetuse lubadus
+PromisesNotValid=Kinnitamata annetused
+PromisesValid=Kinnitatud annetused
+DonationsPaid=Makstud annetused
+DonationsReceived=Vastu võetud annetused
+PublicDonation=Avalik annetus
+DonationsNumber=Annetuse number
+DonationsArea=Annetuste ala
+DonationStatusPromiseNotValidated=Lubaduse mustand
+DonationStatusPromiseValidated=Kinnitatud lubadus
+DonationStatusPaid=Annetus vastu võetud
+DonationStatusPromiseNotValidatedShort=Mustand
+DonationStatusPromiseValidatedShort=KInnitatud
+DonationStatusPaidShort=Vastu võetud
+ValidPromess=Kinnita lubadus
+DonationReceipt=Annetuse kviitung
+BuildDonationReceipt=Loo kviitung
+DonationsModels=Annetuse kviitungi dokumendi mudel
+LastModifiedDonations=Viimased %s muudetud annetust
+SearchADonation=Otsi annetust
+DonationRecipient=Annetuse saaja
+ThankYou=Täname Teid
+IConfirmDonationReception=Saaja kinnitab saadava summa vastu võtmist annetusena summas

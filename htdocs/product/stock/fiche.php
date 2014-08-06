@@ -191,9 +191,9 @@ if ($action == 'create')
 
 	// Zip / Town
 	print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+	print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 	print '</td><td>'.$langs->trans('Town').'</td><td>';
-	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+	print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 	print '</td></tr>';
 
 	// Country
@@ -240,9 +240,7 @@ else
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				$form = new Form($db);
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
-				if ($ret == 'html') print '<br>';
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
 			print '<table class="border" width="100%">';
@@ -281,7 +279,13 @@ else
 			// Status
 			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
+        	$calcproductsunique=$object->nb_different_products();
 			$calcproducts=$object->nb_products();
+
+	        // Total nb of different products
+	        print '<tr><td valign="top">'.$langs->trans("NumberOfDifferentProducts").'</td><td colspan="3">';
+	        print empty($calcproductsunique['nb'])?'0':$calcproductsunique['nb'];
+	        print "</td></tr>";
 
 			// Nb of products
 			print '<tr><td valign="top">'.$langs->trans("NumberOfProducts").'</td><td colspan="3">';
@@ -515,9 +519,9 @@ else
 
 			// Zip / Town
 			print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+			print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 			print '</td><td>'.$langs->trans('Town').'</td><td>';
-			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+			print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
 			print '</td></tr>';
 
 			// Country

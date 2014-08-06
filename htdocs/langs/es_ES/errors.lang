@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - errors
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - errors
 
 # No errors
 NoErrorCommitIsDone=Sin errores,  es válido
@@ -13,11 +12,10 @@ ErrorBadUrl=Url %s inválida
 ErrorLoginAlreadyExists=El login %s ya existe.
 ErrorGroupAlreadyExists=El grupo %s ya existe.
 ErrorRecordNotFound=Registro no encontrado
-ErrorDuplicateTrigger=Un archivo trigger de nombre '<b>%s</b>' está cargado. Elimine el doble del directorio '<b>%s</b>'.
 ErrorFailToCopyFile=Error al copiar el archivo '<b>%s</b>' en '<b>%s</b>'.
 ErrorFailToRenameFile=Error al renombrar el archivo '<b>%s</b>' a '<b>%s</b>'.
-ErrorFailToCreateFile=Error al crear el archivo  '<b>%s</b>'
 ErrorFailToDeleteFile=Error al eliminar el archivo '<b>%s</b>'.
+ErrorFailToCreateFile=Error al crear el archivo  '<b>%s</b>'
 ErrorFailToRenameDir=Error al renombrar el directorio '<b>%s</b>' a '<b>%s</b>'.
 ErrorFailToCreateDir=Error al crear el directorio '<b>%s</b>'
 ErrorFailToDeleteDir=Error al eliminar el directorio '<b>%s</b>'.
@@ -63,7 +61,7 @@ ErrorNoValueForSelectType=Los valores de la lista deben ser indicados
 ErrorNoValueForCheckBoxType=Los valores de la lista deben ser indicados
 ErrorNoValueForRadioType=Los valores de la lista deben ser indicados
 ErrorBadFormatValueList=Los valores de la lista no peudo contener mas de una coma : <u>%s</u>, pero necessita una: llave,valores
-ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales 
+ErrorFieldCanNotContainSpecialCharacters=El campo <b>%s</b> no debe contener carácteres especiales
 ErrorNoAccountancyModuleLoaded=Módulo de contabilidad no activado
 ErrorExportDuplicateProfil=El nombre del perfil ya existe para este lote de exportación
 ErrorLDAPSetupNotComplete=La configuración Dolibarr-LDAP es incompleta.
@@ -125,6 +123,10 @@ ErrorFailedToValidatePasswordReset=No se ha podido restablecer la contraseña. E
 ErrorToConnectToMysqlCheckInstance=Error de conexión con el servidor de la base de datos. Compruebe que MySQL está funcionando (en la mayoría de los casos, puede ejecutarlo desde la línea de comandos utilizando el comando  'etc sudo /etc/init.d/mysql start.
 ErrorFailedToAddContact=Error en la adición del contacto
 ErrorDateMustBeBeforeToday=La fecha no puede ser superior a hoy
+ErrorPaymentModeDefinedToWithoutSetup=Se ha establecido el modo de pago al tipo %s pero en la configuración del módulo de facturas no se ha indicado la información para mostrar de este modo de pago.
+ErrorPHPNeedModule=Error, su PHP debe tener instalado el módulo <b>%s</b> para usar esta funcionalidad.
+ErrorOpenIDSetupNotComplete=Ha configurado Dolibarr para aceptar la autentificación OpenID, pero la URL del servicio OpenID no se encuentra definida en la constante %s
+ErrorWarehouseMustDiffers=El almacén de origen y destino deben de ser diferentes
 
 # Warnings
 WarningMandatorySetupNotComplete=Los parámetros obligatorios de configuración no están todavía definidos
@@ -132,7 +134,7 @@ WarningSafeModeOnCheckExecDir=Atención, está activada la opción PHP <b>safe_m
 WarningAllowUrlFopenMustBeOn=El parámetro <b>allow_url_fopen</b> debe ser especificado a <b>on</b> en el archivo <b>php.ini</b> para disponer de este módulo completamente activo. Debe modificar este archivo manualmente
 WarningBuildScriptNotRunned=El script <b>%s</b> todavía no ha ejecutado la construcción de gráficos.
 WarningBookmarkAlreadyExists=Ya existe un marcador con este título o esta URL.
-WarningPassIsEmpty=Atención: La contraseña de la base de datos está vacía. Esto es un agujero de seguridad. Debe agregar una contraseña a su base de datos y cambiar su archivo conf.php para reflejar esto. 
+WarningPassIsEmpty=Atención: La contraseña de la base de datos está vacía. Esto es un agujero de seguridad. Debe agregar una contraseña a su base de datos y cambiar su archivo conf.php para reflejar esto.
 WarningConfFileMustBeReadOnly=Atención, su archivo (<b>htdocs/conf/conf.php</b>) es accesible en escritura al servidor Web. Esto representa un fallo serio de seguridad. Modifique los permisos para ser leído únicamente por la cuenta que ejecuta el servidor Web.<br>Si está ejecutando Windows en un disco con formato FAT, sea consciente que este sistema de archivos no protege los archivos y no ofrece ninguna solución para reducir los riesgos de manipulación de este fichero.
 WarningsOnXLines=Alertas en <b>%s</b> líneas fuente
 WarningNoDocumentModelActivated=No hay ningún modelo para la generación del documento activado. Se tomará un modelo por defecto hasta que se configure el módulo.

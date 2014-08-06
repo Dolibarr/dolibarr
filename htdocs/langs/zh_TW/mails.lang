@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=發送電子郵件
 EMailing=發送電子郵件
 Mailings=EMailings
@@ -52,6 +43,10 @@ MailingStatusSentCompletely=發送完全
 MailingStatusError=錯誤
 MailingStatusNotSent=不發送
 MailSuccessfulySent=電子郵件發送成功從%（s到%s）
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=電子郵件收件人是空的
 WarningNoEMailsAdded=沒有新的電子郵件添加到收件人的名單。
 ConfirmValidMailing=你確定要驗證這個電子郵件？
@@ -77,12 +72,28 @@ CloneReceivers=克隆者
 DateLastSend=去年發送日期
 DateSending=發送日期
 SentTo=發送到<b>%s</b>
+MailingStatusRead=閱讀
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（聯系客戶，潛在客戶，供應商，...）
 MailingModuleDescDolibarrUsers=用戶與郵件全部Dolibarr
 MailingModuleDescFundationMembers=基金會成員與電子郵件
 MailingModuleDescEmailsFromFile=從一個文本文件（電子郵件電子郵件，姓名或名稱;姓;評論）
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=第三方的電子郵件（按類別）
 MailingModuleDescDolibarrContractsLinesExpired=與合同到期的路線第三方
+MailingModuleDescContactsByCompanyCategory=聯系第三方（第三方類）
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescMembersCategories=基金會的成員（按類別）
+MailingModuleDescContactsByFunction=第三方聯系（職位/職務）
+
+
 LineInFile=在文件%s的線
 RecipientSelectionModules=為收件人的選擇定義的要求
 MailSelectedRecipients=選擇收件人
@@ -95,10 +106,10 @@ SearchAMailing=搜尋郵件
 SendMailing=發送電子郵件
 SendMail=發送電子郵件
 SentBy=發送
-MailingNeedCommand=對於證券的原因，發送電子郵件應該執行命令行。請問您的管理員發起以下命令發送的電子郵件發送給所有收件人：
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=但是您可以發送到網上，加入與最大的電子郵件數量值參數MAILING_LIMIT_SENDBYWEB你要發送的會議。
-ConfirmSendingEmailing=你確定要發送郵件？
-LimitSendingEmailing=在線emailings派遣是<b>%</b>有限的安全和超時原因<b>之晤談</b>收件人發送。
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=清除名單
 ToClearAllRecipientsClickHere=點擊這裏以清除此電子郵件的收件人列表
 ToAddRecipientsChooseHere=添加從名單中選擇收件人
@@ -106,6 +117,12 @@ NbOfEMailingsReceived=收到群眾emailings
 IdRecord=編號記錄
 DeliveryReceipt=索取讀取回條
 YouCanUseCommaSeparatorForSeveralRecipients=您可以使用<b>逗號</b>來指定多個收件人。
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=通知
 NoNotificationsWillBeSent=沒有電子郵件通知此事件的計劃和公司
 ANotificationsWillBeSent=1通知將通過電子郵件發送
@@ -113,13 +130,3 @@ SomeNotificationsWillBeSent=%s的通知將通過電子郵件發送
 AddNewNotification=啟動一個新的電子郵件通知的要求
 ListOfActiveNotifications=列出所有有效的電子郵件通知要求
 ListOfNotificationsDone=列出所有發送電子郵件通知
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-MailingStatusRead=閱讀
-MailingModuleDescContactsByCompanyCategory=聯系第三方（第三方類）
-MailingModuleDescMembersCategories=基金會的成員（按類別）
-MailingModuleDescContactsByFunction=第三方聯系（職位/職務）
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:31).

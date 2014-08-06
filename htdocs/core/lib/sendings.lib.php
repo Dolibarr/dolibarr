@@ -110,16 +110,15 @@ function delivery_prepare_head($object)
 	$head[$h][2] = 'delivery';
 	$h++;
 
-	/* We are on id of delivery, no shipment
-	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$object->origin_id;
 	$head[$h][1] = $langs->trans("ContactsAddresses");
 	$head[$h][2] = 'contact';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->origin_id;
 	$head[$h][1] = $langs->trans("Notes");
 	$head[$h][2] = 'note';
-	$h++;*/
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -205,7 +204,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			{
 				$var=!$var;
 				$objp = $db->fetch_object($resql);
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 
 				// Sending id
 				print '<td align="left" class="nowrap"><a href="'.DOL_URL_ROOT.'/expedition/fiche.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"),'sending').' '.$objp->exp_ref.'<a></td>';

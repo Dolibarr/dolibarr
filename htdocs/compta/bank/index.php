@@ -59,7 +59,7 @@ $accounts = array();
 
 $sql  = "SELECT rowid, courant, rappro";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " WHERE entity IN (".getEntity('bank_account', 1).')';
+$sql.= " WHERE entity IN (".getEntity('bank_account', 1).")";
 if ($statut != 'all') $sql.= " AND clos = 0";
 $sql.= $db->order('label', 'ASC');
 
@@ -234,7 +234,6 @@ if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'
 print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td><td align="right" class="liste_total">'.price($total).'</td></tr>';
 
 print "</table>";
-print "<br>";
 
 
 /*
@@ -242,7 +241,7 @@ print "<br>";
  */
 
 print '<div class="tabsAction">'."\n";
-if ($user->rights->banque->configurer) 
+if ($user->rights->banque->configurer)
 {
 	print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
 }

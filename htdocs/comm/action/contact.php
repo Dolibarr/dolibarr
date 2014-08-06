@@ -265,7 +265,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Ligne ajout pour contact interne
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			print '<td class="nowrap">';
 			print img_object('','user').' '.$langs->trans("Users");

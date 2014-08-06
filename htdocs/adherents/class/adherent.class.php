@@ -27,8 +27,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
@@ -67,6 +65,7 @@ class Adherent extends CommonObject
     var $country;
 
     var $email;
+    var $skype;
     var $phone;
     var $phone_perso;
     var $phone_mobile;
@@ -268,6 +267,9 @@ class Adherent extends CommonObject
 
         $now=dol_now();
 
+        // Clean parameters
+        $this->import_key = trim($this->import_key);
+
         // Check parameters
         if (! empty($conf->global->ADHERENT_MAIL_REQUIRED) && ! isValidEMail($this->email))
         {
@@ -289,7 +291,7 @@ class Adherent extends CommonObject
 
         // Insert member
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
-        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity)";
+        $sql.= " (datec,login,fk_user_author,fk_user_mod,fk_user_valid,morphy,fk_adherent_type,entity,import_key)";
         $sql.= " VALUES (";
         $sql.= " '".$this->db->idate($this->datec)."'";
         $sql.= ", ".($this->login?"'".$this->db->escape($this->login)."'":"null");
@@ -297,6 +299,7 @@ class Adherent extends CommonObject
         $sql.= ", null, null, '".$this->morphy."'";
         $sql.= ", '".$this->typeid."'";
         $sql.= ", ".$conf->entity;
+        $sql.= ", ".(! empty($this->import_key) ? "'".$this->import_key."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);
@@ -428,6 +431,7 @@ class Adherent extends CommonObject
         $sql.= ", country=".($this->country_id>0?"'".$this->country_id."'":"null");
         $sql.= ", state_id=".($this->state_id>0?"'".$this->state_id."'":"null");
         $sql.= ", email='".$this->email."'";
+        $sql.= ", skype='".$this->skype."'";
         $sql.= ", phone="   .($this->phone?"'".$this->db->escape($this->phone)."'":"null");
         $sql.= ", phone_perso="  .($this->phone_perso?"'".$this->db->escape($this->phone_perso)."'":"null");
         $sql.= ", phone_mobile=" .($this->phone_mobile?"'".$this->db->escape($this->phone_mobile)."'":"null");
@@ -524,6 +528,7 @@ class Adherent extends CommonObject
                         $luser->societe_id=$this->societe;
 
                         $luser->email=$this->email;
+                        $luser->skype=$this->skype;
                         $luser->office_phone=$this->phone;
                         $luser->user_mobile=$this->phone_mobile;
 
@@ -562,7 +567,8 @@ class Adherent extends CommonObject
                         $lthirdparty->zip=$this->zip;
                         $lthirdparty->town=$this->town;
                         $lthirdparty->email=$this->email;
-                        $lthirdparty->tel=$this->phone;
+                        $lthirdparty->skype=$this->skype;
+                        $lthirdparty->phone=$this->phone;
                         $lthirdparty->state_id=$this->state_id;
                         $lthirdparty->country_id=$this->country_id;
                         $lthirdparty->country_id=$this->country_id;
@@ -1000,6 +1006,36 @@ class Adherent extends CommonObject
         }
     }
 
+    /**
+     *	Method to load member from its name
+     *
+     *	@param	string	$firstname	Firstname
+     *	@param	string	$lastname	Lastname
+     *	@return	void
+     */
+    function fetch_name($firstname,$lastname)
+    {
+    	global $conf;
+
+    	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent";
+    	$sql.= " WHERE firstname='".$this->db->escape($firstname)."'";
+    	$sql.= " AND lastname='".$this->db->escape($lastname)."'";
+    	$sql.= " AND entity = ".$conf->entity;
+
+    	$resql=$this->db->query($sql);
+    	if ($resql)
+    	{
+    		if ($this->db->num_rows($resql))
+    		{
+    			$obj = $this->db->fetch_object($resql);
+    			$this->fetch($obj->rowid);
+    		}
+    	}
+    	else
+    	{
+    		dol_print_error($this->db);
+    	}
+    }
 
     /**
      *	Load member from database
@@ -1007,14 +1043,15 @@ class Adherent extends CommonObject
      *	@param	int		$rowid      Id of object to load
      * 	@param	string	$ref		To load member from its ref
      * 	@param	int		$fk_soc		To load member from its link to third party
+     * 	@param	int		$ref_ext	External reference
      *	@return int         		>0 if OK, 0 if not found, <0 if KO
      */
-    function fetch($rowid,$ref='',$fk_soc='')
+    function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
     {
         global $langs;
 
         $sql = "SELECT d.rowid, d.ref_ext, d.civilite, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
-        $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
+        $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
@@ -1037,6 +1074,10 @@ class Adherent extends CommonObject
         	$sql.= " AND d.entity IN (".getEntity().")";
         	if ($ref) $sql.= " AND d.rowid='".$ref."'";
         	elseif ($fk_soc) $sql.= " AND d.fk_soc='".$fk_soc."'";
+        }
+        elseif ($ref_ext)
+        {
+        	$sql.= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
         }
 
         dol_syslog(get_class($this)."::fetch sql=".$sql);
@@ -1078,6 +1119,7 @@ class Adherent extends CommonObject
                 $this->phone_perso		= $obj->phone_perso;
                 $this->phone_mobile		= $obj->phone_mobile;
                 $this->email			= $obj->email;
+                $this->skype			= $obj->skype;
 
                 $this->photo			= $obj->photo;
                 $this->statut			= $obj->statut;
@@ -1101,12 +1143,10 @@ class Adherent extends CommonObject
 
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
                 $extrafields=new ExtraFields($this->db);
                 $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-                if (count($extralabels)>0) {
-                	$this->fetch_optionals($this->id,$extralabels);
-                }
+                $this->fetch_optionals($this->id,$extralabels);
 
                 // Load other properties
                 $result=$this->fetch_subscriptions();
@@ -1139,6 +1179,8 @@ class Adherent extends CommonObject
     function fetch_subscriptions()
     {
         global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
         $sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
         $sql.= " c.tms as datem,";
@@ -1208,6 +1250,8 @@ class Adherent extends CommonObject
     function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
+
+		require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
 
 		$error=0;
 
@@ -1300,7 +1344,7 @@ class Adherent extends CommonObject
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
         $sql.= " statut = 1";
-        $sql.= ", datevalid = ".$this->db->idate($now);
+        $sql.= ", datevalid = '".$this->db->idate($now)."'";
         $sql.= ", fk_user_valid=".$user->id;
         $sql.= " WHERE rowid = ".$this->id;
 
@@ -1380,8 +1424,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui ajoute l'adherent aux abonnements automatiques mailing-list, spip, etc.
-     *  TODO Move this into member creation trigger (trigger of mailmanspip module)
+     *  Function to add member into external tools mailing-list, spip, etc.
      *
      *  @return		int		<0 if KO, >0 if OK
      */
@@ -1400,7 +1443,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->add_to_mailman($this);
             if ($result < 0)
             {
-            	$this->error=$mailmanspip->error;
+            	if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
                 $err+=1;
             }
             foreach ($mailmanspip->mladded_ko as $tmplist => $tmpemail)
@@ -1421,7 +1464,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
             {
-            	$this->error=$mailmanspip->error;
+            	$this->errors[]=$mailmanspip->error;
             	$err+=1;
             }
         }
@@ -1437,8 +1480,7 @@ class Adherent extends CommonObject
 
 
     /**
-     *  Fonction qui supprime l'adherent des abonnements automatiques mailing-list, spip, etc.
-     *  TODO Move this into member deletion trigger (trigger of mailmanspip module)
+     *  Function to delete a member from external tools like mailing-list, spip, etc.
      *
      *  @return     int     <0 if KO, >0 if OK
      */
@@ -1457,7 +1499,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->del_to_mailman($this);
             if ($result < 0)
             {
-                $this->error=$mailmanspip->error;
+                if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
                 $err+=1;
             }
 
@@ -1478,6 +1520,7 @@ class Adherent extends CommonObject
             $result=$mailmanspip->del_to_spip($this);
             if ($result < 0)
             {
+            	$this->errors[]=$mailmanspip->error;
                 $err+=1;
             }
         }
@@ -1502,7 +1545,7 @@ class Adherent extends CommonObject
     {
     	global $langs;
     	$langs->load("dict");
-    	
+
     	$code=(! empty($this->civilite_id)?$this->civilite_id:(! empty($this->civility_id)?$this->civility_id:''));
     	if (empty($code)) return '';
     	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
@@ -1663,6 +1706,7 @@ class Adherent extends CommonObject
             {
                 $this->nb["members"]=$obj->nb;
             }
+            $this->db->free($resql);
             return 1;
         }
         else
@@ -1743,6 +1787,7 @@ class Adherent extends CommonObject
         $this->country = 'France';
         $this->morphy = 1;
         $this->email = 'specimen@specimen.com';
+        $this->skype = 'tom.hanson';
         $this->phone        = '0999999999';
         $this->phone_perso  = '0999999998';
         $this->phone_mobile = '0999999997';
@@ -1814,6 +1859,7 @@ class Adherent extends CommonObject
         if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))        $info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
         if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))     $info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
         if ($this->email && ! empty($conf->global->LDAP_MEMBER_FIELD_MAIL))       $info[$conf->global->LDAP_MEMBER_FIELD_MAIL] = $this->email;
+        if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))       $info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
         if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))      $info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
         if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO)) $info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
         if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE)) $info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;

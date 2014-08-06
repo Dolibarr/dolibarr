@@ -1,12 +1,14 @@
-# Dolibarr language file - no_NB - orders
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Område for kundeordre
 SuppliersOrdersArea=Område for leverandørordre
 OrderCard=Ordrekort
+# OrderId=Order Id
 Order=Ordre
 Orders=Ordre
+OrderLine=Bestill linje
 OrderFollow=Oppfølging
 OrderDate=Ordredato
+OrderToProcess=For å kunne behandle
 NewOrder=Ny ordre
 ToOrder=Lag ordre
 MakeOrder=Lag ordre
@@ -21,12 +23,16 @@ OrdersToValid=Ordre til godkjenning
 OrdersToBill=Ordre til fakturering
 OrdersInProcess=Ordre under behandling
 OrdersToProcess=Ordre til behandling
+SuppliersOrdersToProcess=Leverandørens ordre om å behandle
 StatusOrderCanceledShort=Kansellert
 StatusOrderDraftShort=Kladd
 StatusOrderValidatedShort=Godkjent
+StatusOrderSentShort=I prosessen
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Under behandling
 StatusOrderProcessedShort=Behandlet
 StatusOrderToBillShort=Til fakturering
+StatusOrderToBill2Short=Til fakturering
 StatusOrderApprovedShort=Godkjent
 StatusOrderRefusedShort=Avvist
 StatusOrderToProcessShort=Til behandling
@@ -38,30 +44,34 @@ StatusOrderValidated=Godkjent
 StatusOrderOnProcess=Under behandling
 StatusOrderProcessed=Behandlet
 StatusOrderToBill=Til fakturering
+StatusOrderToBill2=Til fakturering
 StatusOrderApproved=Godkjent
 StatusOrderRefused=Avvist
 StatusOrderReceivedPartially=Dellevert
 StatusOrderReceivedAll=Fullt levert
+ShippingExist=En forsendelse eksisterer
 DraftOrWaitingApproved=Kladd eller ikke bestilt ennå
 DraftOrWaitingShipped=Kladd eller godkjent ikke sendt ennå
 MenuOrdersToBill=Ordre til fakturering
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Søk i ordre
-Sending=Levering
-Sendings=Leveringer
 ShipProduct=Lever produkt
 Discount=Rabatt
 CreateOrder=Lag ordre
 RefuseOrder=Avvis ordre
 ApproveOrder=Aksepter ordre
 ValidateOrder=Godkjenn ordre
+UnvalidateOrder=Unvalidate ordre
 DeleteOrder=Slett ordre
 CancelOrder=Avbryt ordre
 AddOrder=Legg til ordre
 AddToMyOrders=Legg til mine ordre
 AddToOtherOrders=Lagg til andre ordre
+# AddToDraftOrders=Add to draft order
 ShowOrder=Vis ordre
 NoOpenedOrders=Ingen åpne ordre
 NoOtherOpenedOrders=Ingen andre åpne ordre
+# NoDraftOrders=No draft orders
 OtherOrders=Andre ordre
 LastOrders=Siste %s ordre
 LastModifiedOrders=Siste %s endrede ordre
@@ -71,16 +81,18 @@ NbOfOrders=Antal ordre
 OrdersStatistics=Ordrestatistikk
 OrdersStatisticsSuppliers=Statistikk leverandørordre
 NumberOfOrdersByMonth=Antall ordre pr måned
-AmountOfOrdersByMonthHT=ordrebeløp pr måned (eksl. MVA)
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=Ordreoverikt
 CloseOrder=Lukk ordre
 ConfirmCloseOrder=Er du sikker på at du vil lukke denne ordren? Når en ordre er lukket kan den kun faktureres.
 ConfirmCloseOrderIfSending=Er du sikker på at du vil lukke denne ordren? Du må bare lukke ordren når alle leveringer er utført.
 ConfirmDeleteOrder=Er du sikker på at du vil slette denne ordren?
 ConfirmValidateOrder=Er du sikker på at du vil godkjenne denne ordren under navnet <b>%s</b> ?
+ConfirmUnvalidateOrder=Er du sikker på at du vil gjenopprette orden <b>%s</b> til utkastet status?
 ConfirmCancelOrder=Er du sikker på at du vil avbryte denne ordren?
 ConfirmMakeOrder=Vil du bekrefte at du lagde denne ordren den <b>%s</b> ?
 GenerateBill=Oppret faktura
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Klassifiser "Fakturert"
 ComptaCard=Regnskapskort
 DraftOrders=Ordrekladder
@@ -98,11 +110,28 @@ AuthorRequest=Request author
 UseCustomerContactAsOrderRecipientIfExist=Bruk kontaktpersons adresse i stedet for tredjepartens adresse
 RunningOrders=Ordre i behandling
 UserWithApproveOrderGrant=Brukere med rettigheter til å "godkjenne ordre".
+PaymentOrderRef=Betaling av ordre %s
+CloneOrder=Clone bestilling
+ConfirmCloneOrder=Er du sikker på at du vil klone denne bestillingen <b>%s?</b>
+DispatchSupplierOrder=Motta leverandør bestill %s
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Representant oppfølging kundeordre
+TypeContact_commande_internal_SHIPPING=Representant oppfølging shipping
+TypeContact_commande_external_BILLING=Kunden faktura kontakt
+TypeContact_commande_external_SHIPPING=Kunden shipping kontakt
+TypeContact_commande_external_CUSTOMER=Kundekontakt oppfølging rekkefølge
+TypeContact_order_supplier_internal_SALESREPFOLL=Representant oppfølging leverandør bestilling
+TypeContact_order_supplier_internal_SHIPPING=Representant oppfølging shipping
+TypeContact_order_supplier_external_BILLING=Leverandørfaktura kontakt
+TypeContact_order_supplier_external_SHIPPING=Leverandør shipping kontakt
+TypeContact_order_supplier_external_CUSTOMER=Leverandør kontakt oppfølging rekkefølge
 
 Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstant COMMANDE_SUPPLIER_ADDON er ikke definert
 Error_COMMANDE_ADDON_NotDefined=Konstant COMMANDE_ADDON er ikke definert
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Kunne ikke laste modulfilen '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Kunne ikke laste modulfilen '%s'
+# Error_OrderNotChecked=No orders to invoice selected
+
 
 # Sources
 OrderSource0=Tilbud
@@ -117,46 +146,21 @@ AddDeliveryCostLine=Legg til leveringskostnader og angi forsendelsens vekt
 
 # Documents models
 PDFEinsteinDescription=En komplett ordremodell (logo...)
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-OrderLine=Bestill linje
-OrderToProcess=For å kunne behandle
-PaymentOrderRef=Betaling av ordre %s
-CloneOrder=Clone bestilling
-ConfirmCloneOrder=Er du sikker på at du vil klone denne bestillingen <b>%s?</b>
-TypeContact_commande_internal_SALESREPFOLL=Representant oppfølging kundeordre
-TypeContact_commande_internal_SHIPPING=Representant oppfølging shipping
-TypeContact_commande_external_BILLING=Kunden faktura kontakt
-TypeContact_commande_external_SHIPPING=Kunden shipping kontakt
-TypeContact_commande_external_CUSTOMER=Kundekontakt oppfølging rekkefølge
-TypeContact_order_supplier_internal_SALESREPFOLL=Representant oppfølging leverandør bestilling
-TypeContact_order_supplier_internal_SHIPPING=Representant oppfølging shipping
-TypeContact_order_supplier_external_BILLING=Leverandørfaktura kontakt
-TypeContact_order_supplier_external_SHIPPING=Leverandør shipping kontakt
-TypeContact_order_supplier_external_CUSTOMER=Leverandør kontakt oppfølging rekkefølge
 PDFEdisonDescription=En enkel bestilling modell
-PDFQuevedoDescription=En komplett ordre modell med spanske RE og IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:34).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> nb_NO
-DispatchSupplierOrder=Motta leverandør bestill %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:06).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-SuppliersOrdersToProcess=Leverandørens ordre om å behandle
-StatusOrderSentShort=I prosessen
-ShippingExist=En forsendelse eksisterer
-UnvalidateOrder=Unvalidate ordre
-ConfirmUnvalidateOrder=Er du sikker på at du vil gjenopprette orden <b>%s</b> til utkastet status?
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=Mail
 OrderByFax=Faks
 OrderByEMail=-E-post
 OrderByWWW=Online
 OrderByPhone=Telefon
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:04).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

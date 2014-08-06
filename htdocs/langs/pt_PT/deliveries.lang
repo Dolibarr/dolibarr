@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_PT - deliveries
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Envio
 Deliveries=Envios
 DeliveryCard=Ficha Envio
@@ -12,20 +11,15 @@ QtyDelivered=Quant. Enviada
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
 ValidateDeliveryReceiptConfirm=Deseja mesmo confirmar esta entrega?
+DeleteDeliveryReceipt=Eliminar recibo de entrega
+DeleteDeliveryReceiptConfirm=Tem certeza de que deseja eliminar <b>%s</b> recibo de entrega?
 DeliveryMethod=Método de Envio
 TrackingNumber=Nº de tracking
+DeliveryNotValidated=Entrega não validada
 # merou PDF model
 NameAndSignature=Nome e assinatura:
 ToAndDate=Em___________________________________ a ____/_____/__________
-GoodStatusDeclaration=Recebi a mercadoria em bom estado, 
+GoodStatusDeclaration=Recebi a mercadoria em bom estado,
 Deliverer=Destinatário:
 Sender=Origem
 Recipient=Destinatário
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-DeleteDeliveryReceipt=Eliminar recibo de entrega
-DeleteDeliveryReceiptConfirm=Tem certeza de que deseja eliminar <b>%s</b> recibo de entrega?
-DeliveryNotValidated=Entrega não validada
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:47:44).

@@ -289,4 +289,11 @@ abstract class CommonInvoice extends CommonObject
 	}
 }
 
+/**
+ *	Parent class of all other business classes for details of elements (invoices, contracts, proposals, orders, ...)
+ */
+abstract class CommonInvoiceLine extends CommonObject
+{
+}
+
 ?>

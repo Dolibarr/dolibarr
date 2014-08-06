@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2008	   Patrick Raguin       <patrick.raguin@auguria.net>
+ * Copyright (C) 2008      Patrick Raguin       <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,7 @@ $action		= (GETPOST('action') ? GETPOST('action') : 'view');
 $confirm	= GETPOST('confirm');
 $socid		= GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
+if (empty($socid) && $action == 'view') $action='create';
 
 $object = new Societe($db);
 $extrafields = new ExtraFields($db);
@@ -116,7 +118,7 @@ if (empty($reshook))
             $object->particulier       = GETPOST("private");
 
             $object->name              = dolGetFirstLastname(GETPOST('firstname'),GETPOST('nom')?GETPOST('nom'):GETPOST('name'));
-            $object->civilite_id       = GETPOST('civilite_id');
+            $object->civility_id       = GETPOST('civilite_id');
             // Add non official properties
             $object->name_bis          = GETPOST('name')?GETPOST('name'):GETPOST('nom');
             $object->firstname         = GETPOST('firstname');
@@ -129,7 +131,8 @@ if (empty($reshook))
         $object->zip                   = GETPOST('zipcode');
         $object->town                  = GETPOST('town');
         $object->country_id            = GETPOST('country_id');
-        $object->state_id              = GETPOST('departement_id');
+        $object->state_id              = GETPOST('state_id');
+        $object->skype                 = GETPOST('skype');
         $object->phone                 = GETPOST('phone');
         $object->fax                   = GETPOST('fax');
         $object->email                 = GETPOST('email');
@@ -158,7 +161,7 @@ if (empty($reshook))
         $object->effectif_id           = GETPOST('effectif_id');
         if (GETPOST("private") == 1)
         {
-            $object->typent_id         = 8; // TODO predict another method if the field "special" change of rowid
+            $object->typent_id         = dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
         }
         else
         {
@@ -252,31 +255,14 @@ if (empty($reshook))
                     if ($object->particulier)
                     {
                         dol_syslog("This thirdparty is a personal people",LOG_DEBUG);
-                        $contact=new Contact($db);
-
-     					$contact->civilite_id		= $object->civilite_id;
-                        $contact->name				= $object->name_bis;
-                        $contact->firstname			= $object->firstname;
-                        $contact->address			= $object->address;
-                        $contact->zip				= $object->zip;
-                        $contact->town				= $object->town;
-                        $contact->state_id      	= $object->state_id;
-                        $contact->country_id		= $object->country_id;
-                        $contact->socid				= $object->id;	// fk_soc
-                        $contact->status			= 1;
-                        $contact->email				= $object->email;
-						$contact->phone_pro			= $object->phone;
-						$contact->fax				= $object->fax;
-                        $contact->priv				= 0;
-
-                        $result=$contact->create($user);
+                        $result=$object->create_individual($user);
                         if (! $result >= 0)
                         {
-                            $error=$contact->error; $errors=$contact->errors;
+                            $error=$object->error; $errors=$object->errors;
                         }
                     }
 
-                    // Gestion du logo de la société
+                    // Logo/Photo save
                     $dir     = $conf->societe->multidir_output[$conf->entity]."/".$object->id."/logos/";
                     $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                     if ($file_OK)
@@ -307,6 +293,19 @@ if (empty($reshook))
                             }
                         }
                     }
+                    else
+	              {
+						switch($_FILES['photo']['error'])
+						{
+						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+						    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+						      $errors[] = "ErrorFileSizeTooLarge";
+						      break;
+	      					case 3: //uploaded file was only partially uploaded
+						      $errors[] = "ErrorFilePartiallyUploaded";
+						      break;
+						}
+	                }
                     // Gestion du logo de la société
                 }
                 else
@@ -350,7 +349,7 @@ if (empty($reshook))
                     $error = $object->error; $errors = $object->errors;
                 }
 
-                // Gestion du logo de la société
+                // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
                 if ($file_OK)
@@ -389,9 +388,22 @@ if (empty($reshook))
                         }
                     }
                     else
-                    {
+					{
                         $errors[] = "ErrorBadImageFormat";
                     }
+                }
+                else
+              {
+					switch($_FILES['photo']['error'])
+					{
+					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+					    case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+					      $errors[] = "ErrorFileSizeTooLarge";
+					      break;
+      					case 3: //uploaded file was only partially uploaded
+					      $errors[] = "ErrorFilePartiallyUploaded";
+					      break;
+					}
                 }
                 // Gestion du logo de la société
 
@@ -402,12 +414,12 @@ if (empty($reshook))
 
                 	$sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
                 	$sql.= " SET fk_soc = NULL WHERE fk_soc = " . $id;
-                	dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
-                	if (! $this->db->query($sql))
+                	dol_syslog(get_class($object)."::delete sql=".$sql, LOG_DEBUG);
+                	if (! $object->db->query($sql))
                 	{
                 		$error++;
-                		$this->error .= $this->db->lasterror();
-                		dol_syslog(get_class($this)."::delete erreur -1 ".$this->error, LOG_ERR);
+                		$object->error .= $object->db->lasterror();
+                		dol_syslog(get_class($object)."::delete erreur -1 ".$object->error, LOG_ERR);
                 	}
                 }
 
@@ -451,6 +463,14 @@ if (empty($reshook))
     	$result = $object->set_parent(GETPOST('editparentcompany','int'));
     }
 
+
+    // Actions to send emails
+    $id=$socid;
+    $actiontypecode='AC_OTH_AUTO';
+    $paramname='socid';
+    include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+
+
     /*
      * Generate document
      */
@@ -476,15 +496,10 @@ if (empty($reshook))
                 $outputlangs = new Translate("",$conf);
                 $outputlangs->setDefaultLang($newlang);
             }
-            $result=thirdparty_doc_create($db, $object, '', $_REQUEST['model'], $outputlangs);
+            $result=thirdparty_doc_create($db, $object, '', GETPOST('model','alpha'), $outputlangs);
             if ($result <= 0)
             {
                 dol_print_error($db,$result);
-                exit;
-            }
-            else
-            {
-                header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                 exit;
             }
         }
@@ -594,7 +609,8 @@ else
         $object->address			= GETPOST('address');
         $object->zip				= GETPOST('zipcode');
         $object->town				= GETPOST('town');
-        $object->state_id			= GETPOST('departement_id');
+        $object->state_id			= GETPOST('state_id');
+        $object->skype				= GETPOST('skype');
         $object->phone				= GETPOST('phone');
         $object->fax				= GETPOST('fax');
         $object->email				= GETPOST('email');
@@ -703,9 +719,10 @@ else
                      });';
             print '</script>'."\n";
 
-            print "<br>\n";
             print '<div id="selectthirdpartytype">';
-            print $langs->trans("ThirdPartyType").': &nbsp; ';
+            print '<div class="hideonsmartphone float">';
+            print $langs->trans("ThirdPartyType").': &nbsp; &nbsp; ';
+            print '</div>';
             print '<input type="radio" id="radiocompany" class="flat" name="private" value="0"'.($private?'':' checked="checked"');
             print '> '.$langs->trans("Company/Fundation");
             print ' &nbsp; &nbsp; ';
@@ -741,7 +758,7 @@ else
             print '</tr>';
         }
         else
-        {
+		{
             print '<tr><td><span span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').'</span></td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'><input type="text" size="30" maxlength="60" name="nom" value="'.$object->name.'"></td>';
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
             {
@@ -760,7 +777,7 @@ else
         }
 
         // Prospect/Customer
-        print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%"><select class="flat" name="client">';
+        print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans('ProspectCustomer').'</span></td><td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client">';
         $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($selected==2?' selected="selected"':'').'>'.$langs->trans('Prospect').'</option>';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($selected==3?' selected="selected"':'').'>'.$langs->trans('ProspectCustomer').'</option>';
@@ -818,13 +835,13 @@ else
 
         // Zip / Town
         print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+        print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
         print '</td><td>'.$langs->trans('Town').'</td><td>';
-        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+        print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
         print '</td></tr>';
 
         // Country
-        print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+        print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_country((GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id),'country_id');
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
@@ -832,8 +849,8 @@ else
         // State
         if (empty($conf->global->SOCIETE_DISABLE_STATE))
         {
-            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-            if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'departement_id');
+            print '<tr><td>'.$langs->trans('State').'</td><td colspan="3" class="maxwidthonsmartphone">';
+            if ($object->country_id) print $formcompany->select_state($object->state_id,$object->country_code,'state_id');
             else print $countrynotdefined;
             print '</td></tr>';
         }
@@ -841,6 +858,12 @@ else
         // Email web
         print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
+
+        // Skype
+        if (! empty($conf->skype->enabled))
+        {
+            print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
+        }
 
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
@@ -872,7 +895,6 @@ else
         if ($j % 2 == 1) print '<td colspan="2"></td></tr>';
 
         // Assujeti TVA
-        $form = new Form($db);
         print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
         print '<td>';
         print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
@@ -908,17 +930,17 @@ else
 
         // Type - Size
         print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>'."\n";
-        print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id);
+        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td>';
         print '<td>'.$langs->trans("Staff").'</td><td>';
-        print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
+        print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
         print '</td></tr>';
 
         // Legal Form
         print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
-        print '<td colspan="3">';
+        print '<td colspan="3" class="maxwidthonsmartphone">';
         if ($object->country_id)
         {
             $formcompany->select_forme_juridique($object->forme_juridique_code,$object->country_code);
@@ -965,7 +987,7 @@ else
         }
         if (! empty($conf->global->MAIN_MULTILANGS))
         {
-            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3">'."\n";
+            print '<tr><td>'.$langs->trans("DefaultLang").'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
             print $formadmin->select_language(($object->default_lang?$object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
             print '</td>';
             print '</tr>';
@@ -976,7 +998,7 @@ else
             // Assign a Name
             print '<tr>';
             print '<td>'.$langs->trans("AllocateCommercial").'</td>';
-            print '<td colspan="3">';
+            print '<td colspan="3" class="maxwidthonsmartphone">';
             $form->select_users((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
@@ -1076,7 +1098,8 @@ else
                 $object->zip					= GETPOST('zipcode');
                 $object->town					= GETPOST('town');
                 $object->country_id				= GETPOST('country_id')?GETPOST('country_id'):$mysoc->country_id;
-                $object->state_id				= GETPOST('departement_id');
+                $object->state_id				= GETPOST('state_id');
+                $object->skype					= GETPOST('skype');
                 $object->phone					= GETPOST('phone');
                 $object->fax					= GETPOST('fax');
                 $object->email					= GETPOST('email');
@@ -1086,8 +1109,8 @@ else
                 $object->idprof2				= GETPOST('idprof2');
                 $object->idprof3				= GETPOST('idprof3');
                 $object->idprof4				= GETPOST('idprof4');
-        		$object->idprof5				= GETPOST('idprof5');
-        		$object->idprof6				= GETPOST('idprof6');
+        		    $object->idprof5				= GETPOST('idprof5');
+        		    $object->idprof6				= GETPOST('idprof6');
                 $object->typent_id				= GETPOST('typent_id');
                 $object->effectif_id			= GETPOST('effectif_id');
                 $object->barcode				= GETPOST('barcode');
@@ -1237,9 +1260,9 @@ else
 
             // Zip / Town
             print '<tr><td>'.$langs->trans('Zip').'</td><td>';
-            print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+            print $formcompany->select_ziptown($object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
             print '</td><td>'.$langs->trans('Town').'</td><td>';
-            print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+            print $formcompany->select_ziptown($object->town,'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
@@ -1259,6 +1282,12 @@ else
             // EMail / Web
             print '<tr><td>'.$langs->trans('EMail').(! empty($conf->global->SOCIETE_MAIL_REQUIRED)?'*':'').'</td><td colspan="3"><input type="text" name="email" size="32" value="'.$object->email.'"></td></tr>';
             print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="32" value="'.$object->url.'"></td></tr>';
+
+            // Skype
+            if (! empty($conf->skype->enabled))
+            {
+                print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3"><input type="text" name="skype" size="32" value="'.$object->skype.'"></td></tr>';
+            }
 
             // Phone / Fax
             print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="phone" value="'.$object->phone.'"></td>';
@@ -1358,7 +1387,7 @@ else
 
             // Type - Size
             print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-            print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id);
+            print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
             print '</td>';
             print '<td>'.$langs->trans("Staff").'</td><td>';
@@ -1441,9 +1470,7 @@ else
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
         {
-            $form = new Form($db);
-            $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
-            if ($ret == 'html') print '<br>';
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"action-delete");
         }
 
         dol_htmloutput_errors($error,$errors);
@@ -1549,12 +1576,12 @@ else
 
         // Country
         print '<tr><td>'.$langs->trans("Country").'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'" class="nowrap">';
-		if ($object->country_code)
-		{
-        	$img=picto_from_langcode($object->country_code);
-        	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-        	else print ($img?$img.' ':'').$object->country;
-		}
+    	if (! empty($object->country_code))
+    	{
+           	$img=picto_from_langcode($object->country_code);
+           	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+           	else print ($img?$img.' ':'').$object->country;
+    	}
         print '</td></tr>';
 
         // State
@@ -1569,6 +1596,14 @@ else
         print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
         print dol_print_url($object->url);
         print '</td></tr>';
+
+        // Skype
+        if (! empty($conf->skype->enabled))
+        {
+            print '<tr><td>'.$langs->trans('Skype').'</td><td colspan="3">';
+            print dol_print_skype($object->skype,0,$object->id,'AC_SKYPE');
+            print '</td></tr>';
+        }
 
         // Phone / Fax
         print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
@@ -1599,7 +1634,6 @@ else
         if ($j % 2 == 1)  print '<td colspan="2"></td></tr>';
 
         // VAT payers
-        $form = new Form($db);
         print '<tr><td>';
         print $langs->trans('VATIsUsed');
         print '</td><td>';
@@ -1685,7 +1719,7 @@ else
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
-        if ($object->capital) print $object->capital.' '.$langs->trans("Currency".$conf->currency);
+        if ($object->capital) print price($object->capital,'',$langs,0,-1,-1, $conf->currency);
         else print '&nbsp;';
         print '</td></tr>';
 
@@ -1705,6 +1739,7 @@ else
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
         	print $object->showOptionals($extrafields);
@@ -1717,10 +1752,8 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans('RIB');
             print '<td><td align="right">';
-            if ($user->rights->societe->creer)
-            print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
-            else
-            print '&nbsp;';
+            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
+            else print '&nbsp;';
             print '</td></tr></table>';
             print '</td>';
             print '<td colspan="3">';
@@ -1769,7 +1802,7 @@ else
             }
             else
             {
-                print $langs->trans("UserNotLinkedToMember");
+                print $langs->trans("ThirdpartyNotLinkedToMember");
             }
             print '</td>';
             print "</tr>\n";
@@ -1784,6 +1817,17 @@ else
          *  Actions
          */
         print '<div class="tabsAction">'."\n";
+
+        if (! empty($object->email))
+        {
+        	$langs->load("mails");
+        	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendMail').'</a></div>';
+        }
+        else
+		{
+        	$langs->load("mails");
+       		print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
+        }
 
         if ($user->rights->societe->creer)
         {
@@ -1804,51 +1848,138 @@ else
 
         print '</div>'."\n";
 
-        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
-        {
-			print '<div class="fichecenter"><div class="fichethirdleft">';
-        	//print '<table width="100%"><tr><td valign="top" width="50%">';
-            print '<a name="builddoc"></a>'; // ancre
 
-            /*
-             * Documents generes
-             */
-            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
-            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
-            $genallowed=$user->rights->societe->creer;
-            $delallowed=$user->rights->societe->supprimer;
+		if ($action == 'presend')
+		{
+			/*
+			 * Affiche formulaire mail
+			*/
 
-            $var=true;
+			// By default if $action=='presend'
+			$titreform='SendMail';
+			$topicmail='';
+			$action='send';
+			$modelmail='thirdparty';
 
-            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+			print '<br>';
+			print_titre($langs->trans($titreform));
 
-			print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+			// Cree l'objet formulaire mail
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+			$formmail->fromtype = 'user';
+			$formmail->fromid   = $user->id;
+			$formmail->fromname = $user->getFullName($langs);
+			$formmail->frommail = $user->email;
+			$formmail->withfrom=1;
+			$formmail->withtopic=1;
+			$liste=array();
+			foreach ($object->thirdparty_and_contact_email_array(1) as $key=>$value) $liste[$key]=$value;
+			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
+			$formmail->withtofree=0;
+			$formmail->withtocc=$liste;
+			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+			$formmail->withfile=2;
+			$formmail->withbody=1;
+			$formmail->withdeliveryreceipt=1;
+			$formmail->withcancel=1;
+			// Tableau des substitutions
+			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__PERSONALIZED__']='';
+			$formmail->substit['__CONTACTCIVNAME__']='';
+
+			//Find the good contact adress
+			/*
+			$custcontact='';
+			$contactarr=array();
+			$contactarr=$object->liste_contact(-1,'external');
+
+			if (is_array($contactarr) && count($contactarr)>0)
+			{
+			foreach($contactarr as $contact)
+			{
+			if ($contact['libelle']==$langs->trans('TypeContact_facture_external_BILLING')) {
+
+			require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+
+			$contactstatic=new Contact($db);
+			$contactstatic->fetch($contact['id']);
+			$custcontact=$contactstatic->getFullName($langs,1);
+			}
+			}
+
+			if (!empty($custcontact)) {
+			$formmail->substit['__CONTACTCIVNAME__']=$custcontact;
+			}
+			}*/
 
 
-			print '</div></div></div>';
+			// Tableau des parametres complementaires du post
+			$formmail->param['action']=$action;
+			$formmail->param['models']=$modelmail;
+			$formmail->param['socid']=$object->id;
+			$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?socid='.$object->id;
 
-            print '<br>';
-        }
+			// Init list of files
+			if (GETPOST("mode")=='init')
+			{
+				$formmail->clear_attached_files();
+				$formmail->add_attached_files($file,basename($file),dol_mimetype($file));
+			}
 
-        print '<div class="fichecenter"><br></div>';
+			$formmail->show_form();
 
-        // Subsidiaries list
-        $result=show_subsidiaries($conf,$langs,$db,$object);
+			print '<br>';
+		}
+		else
+		{
 
-        // Contacts list
-        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
-        {
-            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
+	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
+	        {
+				print '<div class="fichecenter"><div class="fichethirdleft">';
+	        	//print '<table width="100%"><tr><td valign="top" width="50%">';
+	            print '<a name="builddoc"></a>'; // ancre
 
-        // Addresses list
-        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
-        {
-        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
-        }
+	            /*
+	             * Documents generes
+	             */
+	            $filedir=$conf->societe->multidir_output[$object->entity].'/'.$object->id;
+	            $urlsource=$_SERVER["PHP_SELF"]."?socid=".$object->id;
+	            $genallowed=$user->rights->societe->creer;
+	            $delallowed=$user->rights->societe->supprimer;
 
-        // Projects list
-        $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	            $var=true;
+
+	            $somethingshown=$formfile->show_documents('company',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+
+				print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+
+				print '</div></div></div>';
+
+	            print '<br>';
+	        }
+
+	        print '<div class="fichecenter"><br></div>';
+
+	        // Subsidiaries list
+	        $result=show_subsidiaries($conf,$langs,$db,$object);
+
+	        // Contacts list
+	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
+	        {
+	            $result=show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	        }
+
+	        // Addresses list
+	        if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))
+	        {
+	        	$result=show_addresses($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+	        }
+
+	        // Projects list
+	        $result=show_projects($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);
+		}
     }
 
 }

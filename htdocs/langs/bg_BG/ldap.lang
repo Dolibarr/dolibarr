@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Парола за домейн
 YouMustChangePassNextLogon=Парола за потребителски <b>%s</b> за домейна <b>%s</b> трябва да бъдат променени.
 UserMustChangePassNextLogon=Потребителят трябва да смени паролата на домейна %s
@@ -36,4 +27,3 @@ MemberSynchronized=Държавите-синхронизирани
 ContactSynchronized=Свържи се синхронизират
 ForceSynchronize=Force синхронизиране Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Неуспех при четенето на LDAP база данни. Проверете LDAP модул за настройка и достъпността на базата данни.
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:38:21).

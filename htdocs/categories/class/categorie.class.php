@@ -5,7 +5,8 @@
  * Copyright (C) 2006-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
- * Copyright (C) 2013      Juanjo Menent	  	<jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent      	<jmenent@2byte.es>
+ * Copyright (C) 2013      Philippe Grand	  	<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 
 /**
@@ -44,7 +46,7 @@ class Categorie
 	var $label;
 	var $description;
 	var $socid;
-	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member
+	var $type;					// 0=Product, 1=Supplier, 2=Customer/Prospect, 3=Member, 4=Contact
 	var $import_key;
 
 	var $cats=array();			// Tableau en memoire des categories
@@ -294,7 +296,7 @@ class Categorie
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-			$sql.= " SET fk_parent = ".$this->fk_parent; 
+			$sql.= " SET fk_parent = ".$this->fk_parent;
 			$sql.= " WHERE fk_parent = ".$this->id;
 
 			if (!$this->db->query($sql))
@@ -348,6 +350,17 @@ class Categorie
 				$error++;
 			}
 		}
+		if (! $error)
+		{
+			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact";
+			$sql .= " WHERE fk_categorie = ".$this->id;
+			if (!$this->db->query($sql))
+			{
+				$this->error=$this->db->lasterror();
+				dol_syslog("Error sql=".$sql." ".$this->error, LOG_ERR);
+				$error++;
+			}
+		}
 
 		// Delete category
 		if (! $error)
@@ -387,22 +400,82 @@ class Categorie
 	 * 	Link an object to the category
 	 *
 	 *	@param		Object	$obj	Object to link to category
-	 * 	@param		string	$type	Type of category
-	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id non renseign, -3 : Already linked
+	 * 	@param		string	$type	Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * 	@return		int				1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
 	function add_type($obj,$type)
 	{
-		if ($this->id == -1)
-		{
-			return -2;
-		}
+		global $user,$langs,$conf;
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".($type=='fournisseur'?'societe':$type).")";
+		$error=0;
+
+		if ($this->id == -1) return -2;
+
+		// For backward compatibility
+		if ($type == 'company')  $type='societe';
+		if ($type == 'customer') $type='societe';
+		if ($type == 'supplier') $type='fournisseur';
+
+		$column_name=$type;
+        if ($type=='contact') $column_name='socpeople';
+        if ($type=='fournisseur') $column_name='societe';
+
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$column_name.")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
+		dol_syslog(get_class($this).'::add_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
-			return 1;
+			if (! empty($conf->global->CATEGORIE_RECURSIV_ADD))
+			{
+				$sql = 'SELECT fk_parent FROM '.MAIN_DB_PREFIX.'categorie';
+				$sql.= " WHERE rowid = ".$this->id;
+
+				dol_syslog(get_class($this)."::add_type sql=".$sql);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					if ($this->db->num_rows($resql) > 0)
+					{
+						$objparent = $this->db->fetch_object($resql);
+
+						if (!empty($objparent->fk_parent))
+						{
+							$cat = new Categorie($this->db);
+							$cat->id=$objparent->fk_parent;
+							$result=$cat->add_type($obj, $type);
+							if ($result < 0)
+							{
+								$this->error=$cat->error;
+								$error++;
+							}
+						}
+					}
+				}
+				else
+				{
+					$error++;
+					$this->error=$this->db->lasterror();
+				}
+
+				if ($error)
+				{
+					return -1;
+				}
+			}
+
+			// Save object we want to link category to into category instance to provide information to trigger
+			$this->linkto=$obj;
+
+			// Appel des triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CATEGORY_LINK',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; $this->error=$interface->error; }
+			// Fin appel triggers
+
+			if (! $error) return 1;
+			else return -2;
 		}
 		else
 		{
@@ -413,7 +486,7 @@ class Categorie
 			}
 			else
 			{
-				$this->error=$this->db->error().' sql='.$sql;
+				$this->error=$this->db->lasterror();
 			}
 			return -1;
 		}
@@ -423,35 +496,59 @@ class Categorie
 	 * Delete object from category
 	 *
 	 * @param 	Object	$obj	Object
-	 * @param	string	$type	Type
+	 * @param	string	$type	Type of category ('member', 'customer', 'supplier', 'product', 'contact')
 	 * @return 	int				1 if OK, -1 if KO
 	 */
 	function del_type($obj,$type)
 	{
+		global $user,$langs,$conf;
+
+		$error=0;
+
+		// For backward compatibility
+		if ($type == 'company')  $type='societe';
+		if ($type == 'customer') $type='societe';
+		if ($type == 'supplier') $type='fournisseur';
+
+		$column_name=$type;
+        if ($type=='contact') $column_name='socpeople';
+        if ($type=='fournisseur') $column_name='societe';
+
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND   fk_".($type=='fournisseur'?'societe':$type)."   = ".$obj->id;
+		$sql .= " AND   fk_".$column_name."   = ".$obj->id;
 
 		dol_syslog(get_class($this).'::del_type sql='.$sql);
 		if ($this->db->query($sql))
 		{
-			return 1;
+			// Save object we want to unlink category off into category instance to provide information to trigger
+			$this->unlinkoff=$obj;
+
+			// Appel des triggers
+			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CATEGORY_UNLINK',$this,$user,$langs,$conf);
+			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			// Fin appel triggers
+
+			if (! $error) return 1;
+			else return -2;
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
 
 	/**
-	 * 	Return list of contents of a category
+	 * 	Return list of id of elements having this category
 	 *
 	 * 	@param	string	$field				Field name for select in table. Full field name will be fk_field.
 	 * 	@param	string	$classname			PHP Class of object to store entity
 	 * 	@param	string	$category_table		Table name for select in table. Full table name will be PREFIX_categorie_table.
 	 *	@param	string	$object_table		Table name for select in table. Full table name will be PREFIX_table.
-	 *	@return	void
+	 *	@return	mixed						-1 if KO, array of instance of object if OK
 	 */
 	function get_type($field,$classname,$category_table='',$object_table='')
 	{
@@ -488,6 +585,49 @@ class Categorie
 		}
 	}
 
+	/**
+	 * check for the presence of an object in a category
+	 *
+	 * @param	string	$type				Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param 	int    	$object_id			id of the object to search
+	 * @return 	int   						number of occurrences
+	 */
+	function containsObject($type, $object_id)
+	{
+		$field = ''; $classname = ''; $category_table = ''; $object_table = '';
+		if ($type == 'product') {
+			$field = 'product';
+		}
+		if ($type == 'customer') {
+			$field = 'societe';
+		}
+		if ($type == 'supplier') {
+			$field = 'societe';
+			$category_table = 'fournisseur';
+		}
+		if ($type == 'member') {
+			$field = 'member';
+			$category_table = '';
+		}
+		if ($type == 'contact') {
+			$field = 'socpeople';
+			$category_table = 'contact';
+		}
+		if (empty($category_table)) {
+			$category_table = $field;
+		}
+		$sql = "SELECT COUNT(*) as nb FROM " . MAIN_DB_PREFIX . "categorie_" . $category_table;
+		$sql .= " WHERE fk_categorie = " . $this->id . " AND fk_" . $field . " = " . $object_id;
+		dol_syslog(get_class($this)."::containsObject sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return $this->db->fetch_object($resql)->nb;
+		} else {
+			$this->error=$this->db->error().' sql='.$sql;
+			dol_syslog(get_class($this)."::containsObject ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
 	 * Return childs of a category
@@ -536,7 +676,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
 		$sql.= " AND entity IN (".getEntity('category',1).")";
-		
+
 		dol_syslog(get_class($this)."::load_motherof sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -971,36 +1111,44 @@ class Categorie
 	}
 
 	/**
-	 * 		Return list of categories linked to element of type $type with id $typeid
+	 * 	Return list of categories linked to element of id $id and type $typeid
 	 *
-	 * 		@param		int		$id			Id of element
-	 * 		@param		int		$typeid		Type id of link (0,1,2,3...)
-	 * 		@return		array				List of category objects
+	 * 	@param		int		$id			Id of element
+	 * 	@param		int		$typeid		Type of link (0 or 'product', 1 or 'supplier', 2 or 'customer', 3 or 'member', ...)
+	 * 	@param		string	$mode		'object'=Get array of categories, 'label'=Get array of category labels
+	 * 	@return		mixed				Array of category objects or < 0 if KO
 	 */
-	function containing($id,$typeid)
+	function containing($id,$typeid,$mode='object')
 	{
-		$cats = array ();
+		$cats = array();
 
 		$table=''; $type='';
-		if ($typeid == 0)  { $table='product'; $type='product'; }
-		if ($typeid == 1)  { $table='societe'; $type='fournisseur'; }
-		if ($typeid == 2)  { $table='societe'; $type='societe'; }
-		if ($typeid == 3)  { $table='member'; $type='member'; }
+		if ($typeid == 0 || $typeid == 'product')         { $typeid=0; $table='product'; $type='product'; }
+		else if ($typeid == 1 || $typeid == 'supplier')  { $typeid=1; $table='societe'; $type='fournisseur'; }
+		else if ($typeid == 2 || $typeid == 'customer')  { $typeid=2; $table='societe'; $type='societe'; }
+		else if ($typeid == 3 || $typeid == 'member')    { $typeid=3; $table='member';  $type='member'; }
+        else if ($typeid == 4 || $typeid == 'contact')    { $typeid=4; $table='socpeople';  $type='contact'; }
 
-		$sql = "SELECT ct.fk_categorie";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
-		$sql.= " WHERE ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
+		$sql = "SELECT ct.fk_categorie, c.label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct, ".MAIN_DB_PREFIX."categorie as c";
+		$sql.= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".$table." = ".$id." AND c.type = ".$typeid;
 		$sql.= " AND c.entity IN (".getEntity('category',1).")";
 
+		dol_syslog(get_class($this).'::containing sql='.$sql);
 		$res = $this->db->query($sql);
 		if ($res)
 		{
-			while ($rec = $this->db->fetch_array($res))
+			while ($obj = $this->db->fetch_object($res))
 			{
-				$cat = new Categorie($this->db);
-				$cat->fetch($rec['fk_categorie']);
-				$cats[] = $cat;
+				if ($mode == 'label')
+				{
+					$cats[] = $obj->label;
+				}
+				else {
+					$cat = new Categorie($this->db);
+					$cat->fetch($obj->fk_categorie);
+					$cats[] = $cat;
+				}
 			}
 
 			return $cats;

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2011 	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@ if ($action == 'setvalue' && $user->admin)
     $result=dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("url"), 'chaine', 0, '', $conf->entity);
     if ($result >= 0)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+        setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -127,9 +127,6 @@ if (! empty($conf->global->CLICKTODIAL_URL))
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
 	}
 }
-
-dol_htmloutput_mesg($mesg);
-
 
 llxFooter();
 

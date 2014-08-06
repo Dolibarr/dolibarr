@@ -1,13 +1,4 @@
-/*
- * Language code: pl_PL
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:07:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=PayBox konfiguracji modułu
 PayBoxDesc=Moduł ten oferują strony, aby umożliwić płatności na <a href="http://www.paybox.com" target="_blank">Paybox</a> przez klientów. Może to być wykorzystane do swobodnego zapłatę lub płatność w szczególności Dolibarr obiektu (faktury, zamówienia, ...)
 FollowingUrlAreAvailableToMakePayments=Po adresy są dostępne na stronie ofertę do klienta, aby dokonać płatności na Dolibarr obiektów
@@ -23,37 +14,24 @@ PayBoxDoPayment=Przejdź na płatności
 YouWillBeRedirectedOnPayBox=Zostaniesz przekierowany na zabezpieczone Paybox stronę wejścia ci karty kredytowej informacje
 PleaseBePatient=Proszę, bądź cierpliwy
 Continue=Następny
+ToOfferALinkForOnlinePayment=URL %s płatności
 ToOfferALinkForOnlinePaymentOnOrder=URL zaoferowania %s płatności online interfejsu użytkownika na zamówienie
 ToOfferALinkForOnlinePaymentOnInvoice=URL zaoferowania %s płatności online interfejsu użytkownika na fakturze
 ToOfferALinkForOnlinePaymentOnContractLine=URL zaoferować płatności online %s interfejs użytkownika do umowy linii
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL zaoferować płatności online %s interfejs użytkownika w celu utworzenia bezpłatnego kwotę
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online %s interfejs użytkownika jest członkiem subskrypcji
 YouCanAddTagOnUrl=Możesz również dodać parametr <b>&</b> url <b>= <i>wartość</i> tagu</b> do żadnej z tych adresów URL (wymagany tylko za darmo płatności), aby dodać swój komentarz płatności tag.
 SetupPayBoxToHavePaymentCreatedAutomatically=Skonfiguruj PayBox url <b>z %s</b> do zapłaty tworzone automatycznie, gdy zatwierdzone przez paybox.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-ToOfferALinkForOnlinePaymentOnMemberSubscription=Adres URL do zaoferowania płatności online %s interfejs użytkownika jest członkiem subskrypcji
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:42).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pl_PL
+YourPaymentHasBeenRecorded=Ta strona potwierdza, że ​​płatność została nagrana. Dziękuję.
+YourPaymentHasNotBeenRecorded=Jesteś płatność nie została nagrana i transakcja została anulowana. Dziękuję.
+AccountParameter=Parametry konta
 UsageParameter=Parametry serwera
 InformationToFindParameters=Pomoc znaleźć %s informacje o koncie
 PAYBOX_CGI_URL_V2=Url Paybox moduł CGI płatności
 VendorName=Nazwa dostawcy
 CSSUrlForPaymentForm=CSS url arkusz dla formy płatności
 MessageOK=Wiadomość na zatwierdzonych strony powrót płatności
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:20:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-ToOfferALinkForOnlinePayment=URL %s płatności
-YourPaymentHasBeenRecorded=Ta strona potwierdza, że ​​płatność została nagrana. Dziękuję.
-YourPaymentHasNotBeenRecorded=Jesteś płatność nie została nagrana i transakcja została anulowana. Dziękuję.
-AccountParameter=Parametry konta
 MessageKO=Wiadomość na odwołana strony powrotnej płatności
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:49).
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

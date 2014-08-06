@@ -168,7 +168,7 @@ print '<input type="checkbox" name="canedit" '.$cocheplus.'> '. $langs->trans("V
 
 if ($_SESSION["mailsonde"]) $cochemail="checked";
 
-print '<input type=checkbox name=mailsonde '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
+print '<input type="checkbox" name="mailsonde" '.$cochemail.'> '. $langs->trans("ToReceiveEMailForEachVote") .'<br>'."\n";
 
 if (GETPOST('choix_sondage'))
 {

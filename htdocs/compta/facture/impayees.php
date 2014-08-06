@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,19 +37,21 @@ $langs->load("bills");
 $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action = GETPOST('action','alpha');
 $option = GETPOST('option');
-
-$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
+$builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user,'facture',$id,'');
+
+$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
+if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
 
 
 /*
  * Action
  */
 
-if ($action == "builddoc" && $user->rights->facture->lire)
+if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search') && !empty($builddoc_generatebutton))
 {
 	if (is_array($_POST['toGenerate']))
 	{
@@ -149,13 +151,13 @@ if ($action == 'remove_file')
  * View
  */
 
+$form = new Form($db);
+$formfile = new FormFile($db);
+
 $title=$langs->trans("BillsCustomersUnpaid");
 if ($option=='late') $title=$langs->trans("BillsCustomersUnpaid");
 
 llxHeader('',$title);
-
-$form = new Form($db);
-$formfile = new FormFile($db);
 
 ?>
 <script type="text/javascript">
@@ -170,15 +172,10 @@ $(document).ready(function() {
 </script>
 <?php
 
-/***************************************************************************
- *                                                                         *
- *                      Mode Liste                                         *
- *                                                                         *
- ***************************************************************************/
-
 $now=dol_now();
 
 $search_ref = GETPOST("search_ref");
+$search_refcustomer=GETPOST('search_refcustomer');
 $search_societe = GETPOST("search_societe");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
@@ -197,7 +194,7 @@ if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
+$sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
@@ -222,12 +219,13 @@ if (GETPOST('filtre'))
 		$sql .= " AND " . $filt[0] . " = " . $filt[1];
 	}
 }
-if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$search_ref."%'";
-if ($search_societe)     $sql .= " AND s.nom LIKE '%".$search_societe."%'";
-if ($search_montant_ht)  $sql .= " AND f.total = '".$search_montant_ht."'";
-if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$search_montant_ttc."'";
+if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$db->escape($search_ref)."%'";
+if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
+if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
+if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
+if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
 if (GETPOST('sf_ref'))   $sql .= " AND f.facnumber LIKE '%".$db->escape(GETPOST('sf_ref'))."%'";
-$sql.= " GROUP BY s.nom, s.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.rowid, f.fk_statut, f.type ";
+$sql.= " GROUP BY s.nom, s.rowid, f.rowid, f.facnumber, f.increment, f.total, f.tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp, f.datef, f.date_lim_reglement, f.paye, f.fk_statut, f.type ";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " ORDER BY ";
 $listfield=explode(',',$sortfield);
@@ -251,6 +249,7 @@ if ($resql)
 	$param.=(! empty($socid)?"&amp;socid=".$socid:"");
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
+    	if ($search_refcustomer) $param.='&amp;search_ref='.urlencode($search_refcustomer);
 	if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
@@ -271,11 +270,15 @@ if ($resql)
 
 	dol_htmloutput_mesg($mesg);
 
+	print '<form id="form_generate_pdf" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	if ($late) print '<input type="hidden" name="late" value="'.dol_escape_htmltag($late).'">';
+
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
@@ -289,27 +292,28 @@ if ($resql)
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 	// Ref
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'"></td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+        print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.$search_societe.'"></td>';
-	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
+	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
+	print '<td class="liste_titre" align="right"><input class="flat" type="text" size="8" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
 	print '</td>';
 	print "</tr>\n";
-	print '</form>';
 
 	if ($num > 0)
 	{
@@ -320,9 +324,6 @@ if ($resql)
 		$total_paid=0;
 
 		$facturestatic=new Facture($db);
-
-		print '<form id="form_generate_pdf" method="POST" action="'.$_SERVER["PHP_SELF"].'?sortfield='. $sortfield .'&sortorder='. $sortorder .'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
 		while ($i < $num)
 		{
@@ -363,8 +364,13 @@ if ($resql)
 
 			print "</td>\n";
 
-			print '<td nowrap align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
-			print '<td nowrap align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
+	                // Customer ref
+	                print '<td class="nowrap">';
+	                print $objp->ref_client;
+	                print '</td>';
+
+			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
+			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($objp->nom,28).'</a></td>';
 
@@ -409,7 +415,7 @@ if ($resql)
 		}
 
 		print '<tr class="liste_total">';
-		print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
+		print '<td colspan="5" align="left">'.$langs->trans("Total").'</td>';
 		print '<td align="right"><b>'.price($total_ht).'</b></td>';
 		print '<td align="right"><b>'.price($total_tva).'</b></td>';
 		print '<td align="right"><b>'.price($total_ttc).'</b></td>';
@@ -426,17 +432,13 @@ if ($resql)
 	 * Show list of available documents
 	 */
 	$filedir=$diroutputpdf;
-	if ($search_ref)         print '<input type="hidden" name="search_ref" value="'.$search_ref.'">';
-	if ($search_societe)     print '<input type="hidden" name="search_societe" value="'.$search_societe.'">';
-	if ($search_montant_ht)  print '<input type="hidden" name="search_montant_ht" value="'.$search_montant_ht.'">';
-	if ($search_montant_ttc) print '<input type="hidden" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
-	if ($late)               print '<input type="hidden" name="late" value="'.$late.'">';
 	$genallowed=$user->rights->facture->lire;
 	$delallowed=$user->rights->facture->lire;
 
 	print '<br>';
 	print '<input type="hidden" name="option" value="'.$option.'">';
-	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,0,0,48,1,$param,$langs->trans("PDFMerge"),$langs->trans("PDFMerge"));
+	// We disable multilang because we concat already existing pdf.
+	$formfile->show_documents('unpaid','',$filedir,$urlsource,$genallowed,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),$langs->trans("PDFMerge"));
 	print '</form>';
 
 	$db->free($resql);

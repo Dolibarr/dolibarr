@@ -63,35 +63,35 @@ if ($action == 'confirm_rejet')
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->trans("Date")),'errors');
 		}
-		
+
 		elseif ($daterej > dol_now())
 		{
 			$error++;
 			$langs->load("error");
 			setEventMessage($langs->transnoentities("ErrorDateMustBeBeforeToday"),'errors');
 		}
-		
+
 		if (GETPOST('motif','alpha') == 0)
 		{
 			$error++;
 			setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("RefusedReason")),'errors');
 		}
-		
+
 		if ( ! $error )
 		{
 			$lipre = new LignePrelevement($db, $user);
-			
+
 			if ($lipre->fetch($id) == 0)
-			
+
 			{
 				$rej = new RejetPrelevement($db, $user);
-				
+
 				$rej->create($user, $id, GETPOST('motif','alpha'), $daterej, $lipre->bon_rowid, GETPOST('facturer','int'));
 
 				header("Location: ligne.php?id=".$id);
 				exit;
 			}
-			
+
 		}
 		else
 		{
@@ -196,13 +196,13 @@ if ($id)
 		print '</td></tr>';
 
 		//Date
-		print '<tr><td class="fieldrequired" class="valid">'.$langs->trans("RefusedData").'</td>';
+		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
 		print $form->select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
-		print '<tr><td class="fieldrequired" class="valid">'.$langs->trans("RefusedReason").'</td>';
+		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
 		print $form->selectarray("motif", $rej->motifs);
 		print '</td></tr>';
@@ -299,7 +299,7 @@ if ($id)
 		{
 			$obj = $db->fetch_object($result);
 
-			print "<tr $bc[$var]><td>";
+			print "<tr ".$bc[$var]."><td>";
 
 			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
 			print img_object($langs->trans("ShowBill"),"bill");
@@ -325,7 +325,6 @@ if ($id)
 	{
 		dol_print_error($db);
 	}
-
 }
 
 llxFooter();

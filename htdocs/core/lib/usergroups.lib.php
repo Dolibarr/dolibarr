@@ -78,13 +78,13 @@ function user_prepare_head($object)
 	    $head[$h][2] = 'clicktodial';
         $h++;
     }
-    
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
-	
+
     //Info on users is visible only by internal user
     if (empty($user->societe_id))
     {
@@ -164,17 +164,17 @@ function user_admin_prepare_head()
 
 	$langs->load("users");
 	$h=0;
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/admin/user.php';
     $head[$h][1] = $langs->trans("Parameters");
     $head[$h][2] = 'card';
     $h++;
-	
+
     $head[$h][0] = DOL_URL_ROOT.'/user/admin/user_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
-    
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -224,8 +224,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
     global $conf,$langs,$bc;
 
-    //$conf->global->MAIN_FORCETHEMEDIR='';
-    $dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
+    //$dirthemes=array(empty($conf->global->MAIN_FORCETHEMEDIR)?'/theme':$conf->global->MAIN_FORCETHEMEDIR.'/theme');
+    $dirthemes=array('/theme');
     if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
     {
     	foreach($conf->modules_parts['theme'] as $reldir)
@@ -234,7 +234,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	}
     }
     $dirthemes=array_unique($dirthemes);
-    
+	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
+
     $selected_theme='';
     if (empty($foruserprofile)) $selected_theme=$conf->global->MAIN_THEME;
     else $selected_theme=empty($fuser->conf->MAIN_THEME)?'':$fuser->conf->MAIN_THEME;
@@ -287,13 +288,13 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     $var=!$var;
     print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
 
-    print '<table class="nobordernopadding" width="100%">';
+    print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
 
     $i=0;
-
     foreach($dirthemes as $dir)
     {
-    	$dirtheme=dol_buildpath($dir,0);
+    	//print $dirroot.$dir;exit;
+    	$dirtheme=dol_buildpath($dir,0);	// This include loop on $conf->file->dol_document_root
     	$urltheme=dol_buildpath($dir,1);
 
     	if (is_dir($dirtheme))
@@ -309,22 +310,15 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     					// Disable not stable themes
     					//if ($conf->global->MAIN_FEATURES_LEVEL < 1 && preg_match('/bureau2crea/i',$subdir)) continue;
 
-    					if ($i % $thumbsbyrow == 0)
-    					{
-    						print '<tr '.$bc[$var].'>';
-    					}
-
-    					print '<td align="center">';
+    					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					$file=$dirtheme."/".$subdir."/thumb.png";
     					$url=$urltheme."/".$subdir."/thumb.png";
     					if (! file_exists($file)) $url=$urltheme."/common/nophoto.jpg";
-    					print '<table><tr><td>';
     					print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.(GETPOST("optioncss")?'&optioncss='.GETPOST("optioncss",'alpha',1):'').($fuser?'&id='.$fuser->id:'').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
     					if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
     					else $title=$langs->trans("ShowPreview");
-    					print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'">';
-    					print '</a>';
-    					print '</td></tr><tr><td align="center">';
+    					print '<img src="'.$url.'" border="0" width="80" height="60" alt="'.$title.'" title="'.$title.'" style="margin-bottom: 5px;">';
+    					print '</a><br>';
     					if ($subdir == $selected_theme)
     					{
     						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
@@ -333,27 +327,16 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     					{
     						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="main_theme" value="'.$subdir.'"> '.$subdir;
     					}
-    					print '</td></tr></table></td>';
+						print '</div>';
 
     					$i++;
-
-    					if ($i % $thumbsbyrow == 0) print '</tr>';
     				}
     			}
     		}
     	}
     }
 
-    if ($i % $thumbsbyrow != 0)
-    {
-        while ($i % $thumbsbyrow != 0)
-        {
-            print '<td>&nbsp;</td>';
-            $i++;
-        }
-        print '</tr>';
-    }
-    print '</table>';
+    print '</div></td></tr></table>';
 
     print '</td></tr>';
     print '</table>';

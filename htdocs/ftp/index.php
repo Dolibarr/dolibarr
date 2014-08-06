@@ -71,7 +71,7 @@ $ftp_user=$conf->global->$s_ftp_user;
 $ftp_password=$conf->global->$s_ftp_password;
 $ftp_passive=$conf->global->$s_ftp_passive;
 
-$conn_id=0;	// FTP connection ID
+$conn_id=null;	// FTP connection ID
 
 
 
@@ -403,15 +403,15 @@ else
 		// Confirm remove file
 		if ($_GET['action'] == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+			
 		}
 
 		// Confirmation de la suppression d'une ligne categorie
 		if ($_GET['action'] == 'delete_section')
 		{
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?numero_ftp='.$numero_ftp.'&section='.urlencode($_REQUEST["section"]).'&file='.urlencode($_GET["file"]), $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+			
 		}
 
 		print $langs->trans("Server").': <b>'.$ftp_server.'</b><br>';

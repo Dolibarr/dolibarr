@@ -102,7 +102,7 @@ if ($resql)
 	print '<input class="fat" type="text" size="6" name="search_montant" value="'.GETPOST('search_montant').'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print "</tr>\n";
 
@@ -111,7 +111,7 @@ if ($resql)
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 
 		// Num ref cheque
 		print '<td width="80">';

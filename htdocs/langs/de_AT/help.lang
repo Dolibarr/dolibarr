@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 CommunitySupport=Forum/Wiki-Unterstützung
 EMailSupport=E-Mail-Unterstützung
 RemoteControlSupport=Fernwartungs-Support

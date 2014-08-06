@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=إعداد وحدة PayBox
 PayBoxDesc=This module offer pages to allow payment on <a href="http://www.paybox.com" target=هذا نموذج للسماح بعرض الصفحات على دفع <a href="http://www.paybox.com" target="_blank">Paybox</a> الواحد. هذه يمكن استخدامها لدفع حر أو لدفع مبلغ معين على وجوه Dolibarr (الفاتورة ، والنظام ،...)
 FollowingUrlAreAvailableToMakePayments=فيما يلي عناوين المواقع المتاحة لعرض هذه الصفحة زبون لتسديد دفعة Dolibarr على الأجسام
@@ -24,38 +14,24 @@ PayBoxDoPayment=على الدفع
 YouWillBeRedirectedOnPayBox=سوف يتم نقلك على تأمين Paybox لك صفحة لإدخال معلومات بطاقة الائتمان
 PleaseBePatient=من فضلك ، والتحلي بالصبر
 Continue=التالي
+ToOfferALinkForOnlinePayment=عنوان دفع %s
 ToOfferALinkForOnlinePaymentOnOrder=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للأمر
 ToOfferALinkForOnlinePaymentOnInvoice=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للفاتورة
 ToOfferALinkForOnlinePaymentOnContractLine=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للحصول على عقد خط
 ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم لمبلغ حرة
+ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان الموقع لتقديم الدفع عبر الإنترنت %s واجهة المستخدم للاشتراك عضو
 YouCanAddTagOnUrl=You can also add url parameter <b>&tag=يمكنك أيضا إضافة رابط المعلم <b>= & علامة</b> على أي من <i><b>قيمة</b></i> تلك عنوان (مطلوب فقط لدفع الحر) الخاصة بك لإضافة تعليق دفع الوسم.
 SetupPayBoxToHavePaymentCreatedAutomatically=الإعداد الخاص بك مع رابط PayBox <b>٪ ق</b> قد تنشأ تلقائيا عند دفع يصادق عليها paybox.
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان الموقع لتقديم الدفع عبر الإنترنت %s واجهة المستخدم للاشتراك عضو
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:52).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ar_SA
 YourPaymentHasBeenRecorded=هذه الصفحة يؤكد أنه قد تم تسجيلها دفعتك. شكرا لك.
-PAYBOX_CGI_URL_V2=عزيزي من وحدة لدفع CGI Paybox
-VendorName=اسم البائع
-CSSUrlForPaymentForm=عزيزي ورقة النمط المغلق للنموذج الدفع
-MessageOK=رسالة على الصفحة التحقق من صحة الدفع عودة
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:07:32).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-ToOfferALinkForOnlinePayment=عنوان دفع %s
 YourPaymentHasNotBeenRecorded=يمكنك دفع لم يسجل وتم إلغاء الصفقة. شكرا لك.
 AccountParameter=حساب المعلمات
 UsageParameter=استخدام المعلمات
 InformationToFindParameters=مساعدة للعثور على معلومات حسابك %s
+PAYBOX_CGI_URL_V2=عزيزي من وحدة لدفع CGI Paybox
+VendorName=اسم البائع
+CSSUrlForPaymentForm=عزيزي ورقة النمط المغلق للنموذج الدفع
+MessageOK=رسالة على الصفحة التحقق من صحة الدفع عودة
 MessageKO=رسالة في إلغاء دفع الصفحة عودة
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:43).
+# NewPayboxPaymentReceived=New Paybox payment received
+# NewPayboxPaymentFailed=New Paybox payment tried but failed
+# PAYBOX_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or failed)

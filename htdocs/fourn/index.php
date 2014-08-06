@@ -83,7 +83,7 @@ if ($resql)
 		$row = $db->fetch_row($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
@@ -265,7 +265,7 @@ if ($resql)
 	{
 		$var=!$var;
 
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
 		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
 		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
@@ -301,7 +301,7 @@ if (count($companystatic->SupplierCategories))
 	foreach ($companystatic->SupplierCategories as $rowid => $label)
 	{
 		$var=!$var;
-		print "<tr $bc[$var]>\n";
+		print "<tr ".$bc[$var].">\n";
 		print '<td>';
 		$categstatic->id=$rowid;
 		$categstatic->ref=$label;

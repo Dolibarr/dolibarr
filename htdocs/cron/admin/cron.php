@@ -106,40 +106,11 @@ dol_fiche_end();
 
 print '<br><br>';
 
+print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
 
-// Define $urlwithroot
-$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
-//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+print '<br><br>';
 
-// Cron launch
-print '<u>'.$langs->trans("URLToLaunchCronJobs").':</u><br>';
-$url=$urlwithroot.'/public/cron/cron_run_jobs.php'.(empty($conf->global->CRON_KEY)?'':'?securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-print ' '.$langs->trans("OrToLaunchASpecificJob").'<br>';
-$url=$urlwithroot.'/public/cron/cron_run_jobs.php'.(empty($conf->global->CRON_KEY)?'':'?securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-print '<br>';
-
-
-$linuxlike=1;
-if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
-if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
-
-print '<br>';
-print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
-
-$file='/scripts/cron/cron_run_jobs.php'.' '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$user->login.' [cronjobid]';
-print '<textarea rows="'.ROWS_2.'" cols="120">..'.$file."</textarea><br>\n";
-print '<br>';
-print $langs->trans("Note").': ';
-if ($linuxlike) {
-	print $langs->trans("CronExplainHowToRunUnix");
-} else {
-	print $langs->trans("CronExplainHowToRunWin");
-}
-
-
+dol_print_cron_urls();
 
 
 print '<br>';

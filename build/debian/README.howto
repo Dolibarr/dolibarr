@@ -7,21 +7,62 @@ This directory contains files used by makepack-dolibarr.pl
 script to build a package, ready to be distributed,
 with format .DEB (for Debian, Ubuntu, ...).
 
+
+
+##### Prepare linux env to work
+
 # To build a debian package, you need first
-# apt-get -i debhelper dpkg-source gpg lintian
+# With Ubuntu 12.04
+# apt-get install debhelper dpkg-source gpg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
+# With Debian 7
+# apt-get install debhelper dpkg gnupg lintian git-buildpackage pkg-php-tools schroot sbuild dh-linktree dh-make-php
 
 
-# This is standard command to work on Debian packaging:
-#
-# gpg --gen-key                          Generate a GPG key (-> pubring.gpg + secring.gpg)
-#
+# To generate gpg key for email used into changelog
+* Check your existing keys/emails
+> gpg --list-key
+* Generate a new one, if none exists for email you use as author
+> gpg --gen-key							Generate a GPG key (-> pubring.gpg + secring.gpg)
+Files are saved int .gnupg directory
+* Create a file ~/.gpb.conf by
+> cat >~/.gbp.conf <<END
+[DEFAULT]
+pristine-tar = True
+
+[git-buildpackage]
+sign-tags = True
+export-dir = ../build-area/
+
+[git-import-orig]
+filter-pristine-tar = True
+END
+
+
+# To use Alioth.debian.org
+* Create an account login
+* Update your ~/.ssh/config file to add:
+Host svn.debian.org git.debian.org bzr.debian.org hg.debian.org darcs.debian.org arch.debian.org
+	User eldy-guest
+	IdentityFile ~/.ssh/id_rsa
+* Check login on page https://alioth.debian.org/users/login
+Ex: https://alioth.debian.org/users/eldy-guest
+* Setup your ssh as described into page: http://wiki.debian.org/Alioth/SSH
+* Ask to be included into project collab-maint: http://alioth.debian.org/projects/collab-maint/
+
+
+
+##### Some interesting command to know
+
+# To translate .po files
 # debconf-updatepo					     		To run into po dir to regenate templates.pot
 # podebconf-report-po --from email@email.com	To send email to ask translations
 # Edit manually file XX.po and remove all lines "#, fuzzy" when translation is complete
-# msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX 
-#
+# msgfmt -v -c -o /dev/null XX.po		 		To have status of translation for language XX
+ 
+# To check package integrity
 # lintian --pedantic -E -I package.deb   To test a package   
-#
+
+# To manipulate packages
 # dpkg -l                                List all packages
 # dpkg -b                                To build binary only package
 # dpkg -c package.deb                    List content of package
@@ -30,13 +71,16 @@ with format .DEB (for Debian, Ubuntu, ...).
 # dpkg-reconfigure -plow package		 Reconfigure package
 # dpkg -L packagename                    List content of installed package 
 # dpkg -r packagename                    Remove config files and interactive saved answers
+# dpkg -s packagename                    Give status of installed package
 # dpkg --purge                           Remove config files and interactive saved answers
 #
 # dpkg-buildpackage -us -uc              Build a source and binary package
 #
 # gdebi package.deb						 Install a package + dependencies
 
-To submit a package to Debian:
+
+
+##### Global view of submit new package to Debian:
 
 - Post an ITP with reportbugs :
 > reportbug -B debian --email username@domain.tld wnpp
@@ -55,3 +99,155 @@ See page http://www.debian.org/devel/wnpp/#l1 for example of ITP requests conten
 - Once package is uploaded, following URL are available:
 http://packages.qa.debian.org/package.html
 http://bugs.debian.org/package
+
+
+
+##### Testing a package into unstable env
+
+Check you have a mysql server available from another interface than localhost
+Uncomment line if required and restart mysql
+bind-address = 127.0.0.1
+
+Create a chroot called "unstable-amd64-sbuild"
+> sudo sbuild-createchroot --keyring= unstable /srv/chroot/unstable http://ftp.uk.debian.org/debian
+
+Pour lister les env chroot
+> schroot -l
+
+Puis pour se connecter et préparer l'environnement 
+> schroot -c name_of_chroot
+> vi /usr/sbin/policy-rc.d     and replace return code 101 (not allowed) into 0 (ok)
+> apt-get install links mysql-client
+
+Pour tester un package
+> cp *.deb /srv/chroot/unstable/tmp
+> sudo schroot -c name_of_chroot
+> dpkg -i dolibarr*.deb
+> apt-get install -f
+
+
+
+
+
+##### Create/Maintain TCPDF package
+
+To update tcpdf package:
+
+* You can git clone tcpdf
+> git clone git.debian.org:/git/collab-maint/tcpdf.git [tcpdf-debian]
+or better
+> mkdir gitdebian
+> cd gitdebian
+> gbp-clone git.debian.org:/git/collab-maint/tcpdf.git
+
+* You can then create a PHP project from Eclipse called tcpdf-debian
+from git clone dir and make link to git.
+ 
+* If local branch upstream and pristine-tar does not exists, create it
+from origin/upstream and origin/pristine.
+
+* Into root dir, launch:
+> debian/get-orig-source.sh
+
+* Staying into git root directory, run
+> git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz
+
+Note: If there was errors solved manually, you may need to make a git commit
+
+* Add an entry into debian/changelog
+> dch -v x.y.z-1 "My comment" will add entry.
+For example: dch -v x.y.z-1 "New upstream release." for a new version
+
+Warning: Date must have format reported by "date -R"
+Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
+
+* We try to build package
+> rm -fr ../build-area
+> git-buildpackage -us -uc
+
+Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+Note: Package is built into directory ../build-area
+
+* If package .deb is ok:
+Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
+> git-buildpackage --git-tag-only --git-retag
+> git push --all ou git push origin --all
+> git push --tags
+
+* Compilation is then done by a debian developer and sent
+> sbuild ...
+> dput ...
+
+* Go into page. You should see new package into unstable.
+http://packages.qa.debian.org/t/tcpdf.html
+
+* Package will be into release when test will be moved as stable.
+
+
+
+##### Update but tracker system
+To set status of a bug to pending
+> bts tag 728235 +pending
+
+
+
+##### Create/Maintain dolibarr package
+
+To update dolibarr debian package
+
+* You can git clone debian git repo
+> git clone git.debian.org:/git/collab-maint/dolibarr.git [dolibarr-debian]
+or better
+> cd ~; mkdir git-debian; cd git-debian
+> gbp-clone git.debian.org:/git/collab-maint/dolibarr.git
+
+* You can then create a PHP project from Eclipse called dolibarr-debian
+from git clone dir and make link to git.
+
+* If local branch upstream and pristine-tar does not exists, create it
+from origin/upstream and origin/pristine.
+
+* If new upstream is available onto sourceforge, launch:
+> debian/get-orig-source.sh
+
+* Staying into git root directory, run
+> git-import-orig -vv ../dolibarr-3.3.4.tgz
+
+Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
+
+* Add an entry into debian/changelog
+> dch -v x.y.z-1 "My comment" will add entry.
+For example: dch -v x.y.z-1 "New upstream release." for a new version
+Then modify changelog to replace "unstable" with "UNRELEASED".
+
+Warning: Date must have format reported by "date -R"
+Warning: Name and email must match value into debian/control file (Entry added here is used by next step).
+
+* We try to build package
+> rm -fr ../build-area
+> git-buildpackage -us -uc
+
+Note: You can use git-buildpackage -us -uc --git-ignore-new if you want to test build with uncommited file
+Note: Package is built into directory ../build-area
+
+* Test package (see dedicated chapter to test it with debian unstable env)
+
+* If package .deb is ok:
+Note: If there was errors managed manually, you may need to make a git commit but do not use option "amend" previous commit
+> git-buildpackage --git-tag-only --git-retag
+> git push --all ou git push origin --all
+> git push --tags
+
+* Compilation is then done by a debian developer and sent
+> sbuild ...
+> dput ...
+
+* Package arrives into FTPmaster taskboard with status NEW (pending upload). You can view it at:
+http://ftp-master.debian.org/new/
+ 
+* Once package is validated, you should see it into area unstable at:
+http://packages.qa.debian.org
+
+* Package will be into release when test will be moved as stable.
+
+

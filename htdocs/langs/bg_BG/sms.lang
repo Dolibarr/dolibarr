@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms настройка
 SmsDesc=Тази страница ви позволява да се определят глобални опции за SMS функции
@@ -56,7 +47,7 @@ NbOfSms=Nbre на номера Phon
 ThisIsATestMessage=Това е тестово съобщение
 SendSms=Изпращане на SMS
 SmsInfoCharRemain=Nb на останалите герои
-SmsInfoNumero=(Формат международната т.е.: 33899701761)
+SmsInfoNumero= (Формат международната т.е.: 33899701761)
 DelayBeforeSending=Забавяне преди изпращане (минути)
 SmsNoPossibleRecipientFound=Целта на разположение. Проверете настройките на вашия доставчик на SMS.
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:46:45).
+

@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 17:23:15
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sms
 Sms=Sms
 SmsSetup=Sms de configurare
 SmsDesc=Această pagină vă permite să definiţi opţiunile de globali de pe caracteristici SMS
@@ -56,7 +47,7 @@ NbOfSms=Nbre de numere phon
 ThisIsATestMessage=Acesta este un mesaj de test
 SendSms=Trimite SMS
 SmsInfoCharRemain=NB de caractere rămase
-SmsInfoNumero=(Format internaţional şi anume: 33899701761)
+SmsInfoNumero= (Format internaţional şi anume: 33899701761)
 DelayBeforeSending=Întârziere înainte de a trimite (minute)
 SmsNoPossibleRecipientFound=Nu este disponibilă nicio ţintă. Verificaţi configurarea de furnizorul de SMS-uri.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:25:09).
+

@@ -1,16 +1,8 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Поездка
 Trips=Поездки
 TripsAndExpenses=Поездки и расходы
+TripsAndExpensesStatistics=Статистика поездок и расходов
 TripCard=Карточка поездки
 AddTrip=Добавить поездку
 ListOfTrips=Список поездок
@@ -24,7 +16,6 @@ ConfirmDeleteTrip=Вы уверены, что хотите удалить эту
 TF_OTHER=Другое
 TF_LUNCH=Обед
 TF_TRIP=Поездка
-TripsAndExpensesStatistics=Статистика поездок и расходов
 ListTripsAndExpenses=Список поездок и расходов
 ExpensesArea=Область поездок и расходов
 SearchATripAndExpense=Поиск поездок и расходов

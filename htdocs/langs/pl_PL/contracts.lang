@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Zamówienia obszarze
 ListOfContracts=Wykaz umów
 LastContracts=Ostatnia %s zmodyfikowane umów
@@ -24,7 +12,10 @@ ContractStatusValidated=Zatwierdzona
 ContractStatusClosed=Zamknięte
 ServiceStatusInitial=Nie działa
 ServiceStatusRunning=Uruchamianie
+ServiceStatusNotLate=Running, nie minął
+ServiceStatusNotLateShort=Nie minął
 ServiceStatusLate=Running, minął
+ServiceStatusLateShort=Minął
 ServiceStatusClosed=Zamknięte
 ServicesLegend=Usługi legendy
 Contracts=Kontrakty
@@ -47,6 +38,7 @@ ConfirmCloseService=Czy na pewno chcesz zamknąć tej usługi wraz z <b>datą %s
 ValidateAContract=Sprawdź umowę
 ActivateService=Aktywacja usługi
 ConfirmActivateService=Czy na pewno chcesz, aby uaktywnić tę usługę z <b>dnia %s?</b>
+# RefContract=Contract reference
 DateContract=Kontrakt daty
 DateServiceActivate=Data aktywacji usługi
 DateServiceUnactivate=Data doręczenia unactivation
@@ -54,11 +46,14 @@ DateServiceStart=Data na początku usługi
 DateServiceEnd=Termin do końca służby
 ShowContract=Pokaż umowy
 ListOfServices=Lista usług
+ListOfInactiveServices=Lista nie aktywnych usług
+ListOfExpiredServices=Lista minął aktywnych usług
+ListOfClosedServices=Wykaz zamkniętych usług
 ListOfRunningContractsLines=Listę uruchomionych linii zamówienia
 ListOfRunningServices=Lista uruchomionych usług
 NotActivatedServices=Nie aktywacji usług (wśród zatwierdzonych umów)
 BoardNotActivatedServices=Usługi uaktywnić wśród zatwierdzonych umów
-LastContracts=Ostatnia% zamówień
+LastContracts=Ostatnia %s zmodyfikowane umów
 LastActivatedServices=Ostatnia %s aktywacji usługi
 LastModifiedServices=Ostatnia %s zmodyfikowane usług
 EditServiceLine=Edycja usługa linii
@@ -81,42 +76,24 @@ ServiceStatus=Status usługi
 DraftContracts=Projekty budowlane
 CloseRefusedBecauseOneServiceActive=Umowa nie może zostać zamknięty, gdyż istnieje co najmniej jeden serwis otwarty na nim
 CloseAllContracts=Zamknij wszystkie umowy
+DeleteContractLine=Usuń umowy linii
+ConfirmDeleteContractLine=Czy na pewno chcesz usunąć tę linię zamówienia?
 MoveToAnotherContract=Przenieś usługi do innego zamówienia.
 ConfirmMoveToAnotherContract=I choosed nowego celu potwierdzenia zamówienia i chcę, aby przenieść tę usługę do niniejszej umowy.
 ConfirmMoveToAnotherContractQuestion=Wybierz, w którym istniejące umowy (na tej stronie), które chcesz przenieść tę usługę?
+PaymentRenewContractId=Odnowienie umowy linii (liczba %s)
+ExpiredSince=Data ważności
+RelatedContracts=Związane z nimi umowy
+NoExpiredServices=Nie minął aktywne usługi
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisanie umowy sprzedaży
 TypeContact_contrat_internal_SALESREPFOLL=Przedstawiciel handlowy w ślad za umowy
 TypeContact_contrat_external_BILLING=Billing kontakt z klientem
 TypeContact_contrat_external_CUSTOMER=W ślad za kontakt z klientem
 TypeContact_contrat_external_SALESREPSIGN=Podpisanie umowy, kontakt z klientem
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ServiceStatusNotLate=Running, nie minął
-ServiceStatusNotLateShort=Nie minął
-ServiceStatusLateShort=Minął
-ListOfInactiveServices=Lista nie aktywnych usług
-ListOfExpiredServices=Lista minął aktywnych usług
-ListOfClosedServices=Wykaz zamkniętych usług
-DeleteContractLine=Usuń umowy linii
-ConfirmDeleteContractLine=Czy na pewno chcesz usunąć tę linię zamówienia?
-PaymentRenewContractId=Odnowienie umowy linii (liczba %s)
-ExpiredSince=Data ważności
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-RelatedContracts=Związane z nimi umowy
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:49).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-NoExpiredServices=Nie minął aktywne usługi
 Error_CONTRACT_ADDON_NotDefined=Stała CONTRACT_ADDON nie zdefiniowano
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:47).

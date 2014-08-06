@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-28 13:09:36
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - install
 InstallEasy=Följ bara instruktionerna steg för steg.
 MiscellaneousChecks=Förutsättningarna läs
 DolibarrWelcome=Välkommen till Dolibarr
@@ -17,6 +8,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Konfigurationsfilen <b>%s</b> finns in
 ConfFileCouldBeCreated=Konfigurationsfil <b>%s</b> skulle kunna skapas.
 ConfFileIsNotWritable=Konfigurationsfilen <b>%s</b> är inte skrivbar. Kontrollera behörigheter. För den första installationen, måste din webbserver beviljas för att kunna skriva i denna fil under konfigurationen (&quot;chmod 666&quot; till exempel på en UNIX-liknande OS).
 ConfFileIsWritable=Konfigurationsfilen <b>%s</b> är skrivbar.
+ConfFileReload=Ladda all information från konfigurationsfilen.
 PHPSupportSessions=Detta stöder PHP sessioner.
 PHPSupportPOSTGETOk=Detta stöder PHP variabler POST och GET.
 PHPSupportPOSTGETKo=Det är möjligt din PHP-installation inte stöder variabler POST eller GET. Kontrollera din parameter <b>variables_order</b> i php.ini.
@@ -33,11 +25,14 @@ ErrorGoBackAndCorrectParameters=Gå tillbaka och rätta till felaktiga parametra
 ErrorWrongValueForParameter=Du kan ha skrivit fel värde för parametern &quot;%s&quot;.
 ErrorFailedToCreateDatabase=Misslyckades med att skapa databasen %s.
 ErrorFailedToConnectToDatabase=Det gick inte att ansluta till databasen &quot;%s&quot;.
+# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP version gamla också. Version %s krävs.
+WarningPHPVersionTooLow=PHP version för gammal. Version %s eller flera förväntas. Denna version bör göra det möjligt installera, men stöds inte.
 ErrorConnectedButDatabaseNotFound=Anslutning till servern framgångsrik, men databasen %s finns inte.
 ErrorDatabaseAlreadyExists=Databas &quot;%s&quot; finns redan.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Om databasen inte finns, gå tillbaka och kontrollera alternativet &quot;Create database&quot;.
 IfDatabaseExistsGoBackAndCheckCreate=Om databasen redan finns, gå tillbaka och avmarkera &quot;Skapa databasen&quot; valen.
+# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsätta ...
 PleaseBePatient=Ha tålamod ...
@@ -57,6 +52,7 @@ ServerAddressDescription=Namn eller IP-adress för databasserver, vanligtvis &qu
 ServerPortDescription=Databasservern hamn. Håll tom om okänd.
 DatabaseServer=Databasservern
 DatabaseName=Databas namn
+DatabasePrefix=Databas prefix tabellen
 Login=Inloggning
 AdminLogin=Logga in för Dolibarr databas ägaren.
 Password=Lösenord
@@ -139,11 +135,13 @@ RemoveItManuallyAndPressF5ToContinue=Ta bort den manuellt och trycka på F5 för
 KeepDefaultValuesWamp=Du använder Dolibarr inställningsguiden från DoliWamp, värden så som här föreslås är redan optimerade. Ändra dem bara om du vet vad du gör.
 KeepDefaultValuesDeb=Du använder Dolibarr inställningsguiden från en Ubuntu eller Debian, så värden som här föreslås är redan optimerade. Endast lösenord i databasen ägaren för att skapa måste fyllas. Ändra andra parametrar om du vet vad du gör.
 KeepDefaultValuesMamp=Du använder Dolibarr inställningsguiden från DoliMamp, värden så som här föreslås är redan optimerade. Ändra dem bara om du vet vad du gör.
+KeepDefaultValuesProxmox=Du använder Dolibarr inställningsguiden från en Proxmox virtuell apparat, så som föreslås här är redan optimerade. Ändra dem bara om du vet vad du gör.
 FieldRenamed=Fält bytt namn
 IfLoginDoesNotExistsCheckCreateUser=Om inloggningen inte finns ännu, måste du kontrollera alternativet &quot;Skapa användare&quot;
 ErrorConnection=Server <b>&quot;%s&quot;,</b> databasens namn <b>&quot;%s&quot;</b> login <b>&quot;%s&quot;</b> eller databas lösenord kan vara felaktiga eller PHP klientversionen kan vara för gamla, medan databas version.
 InstallChoiceRecommanded=Rekommenderat val att installera version <b>%s</b> från din nuvarande version <b>%s</b>
 InstallChoiceSuggested=<b>Installera val föreslås av installationsprogrammet.</b>
+MigrateIsDoneStepByStep=De riktade versionen (%s) har en lucka på flera versioner, så installerar guiden kommer tillbaka att föreslå nästa migration när detta kommer att vara klar.
 CheckThatDatabasenameIsCorrect=Kontrollera att databasen namnet <b>&quot;%s&quot;</b> är korrekt.
 IfAlreadyExistsCheckOption=Om detta namn är korrekta och att databasen ännu inte finns, måste du kontrollera alternativet &quot;Create database&quot;.
 OpenBaseDir=PHP openbasedir parameter
@@ -153,6 +151,14 @@ NextStepMightLastALongTime=Aktuella steget kan ta flera minuter. Vänta tills n�
 MigrationCustomerOrderShipping=Migrera leverans för kundorder lagring
 MigrationShippingDelivery=Bli lagring av frakt
 MigrationShippingDelivery2=Bli lagring av sjöfarten 2
+MigrationFinished=Migration färdiga
+LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
+ActivateModule=Aktivera modul %s
+# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+
+#########
+# upgrade
+#########
 MigrationFixData=Fix för denormalized data
 MigrationOrder=Migrering av data för kundens order
 MigrationSupplierOrder=Migrering av data för leverantörens order
@@ -198,24 +204,6 @@ MigrationDeliveryAddress=Uppdatera leveransadress i transporter
 MigrationProjectTaskActors=Migrering av data för llx_projet_task_actors bord
 MigrationProjectUserResp=Data migrationsområdet fk_user_resp av llx_projet till llx_element_contact
 MigrationProjectTaskTime=Uppdatera tid i sekunder
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:14:40).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sv_SE
-MigrateIsDoneStepByStep=De riktade versionen (%s) har en lucka på flera versioner, så installerar guiden kommer tillbaka att föreslå nästa migration när detta kommer att vara klar.
-MigrationFinished=Migration färdiga
-LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
 MigrationActioncommElement=Uppdatera uppgifter om åtgärder
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:33:48).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-ConfFileReload=Ladda all information från konfigurationsfilen.
-WarningPHPVersionTooLow=PHP version för gammal. Version %s eller flera förväntas. Denna version bör göra det möjligt installera, men stöds inte.
-DatabasePrefix=Databas prefix tabellen
-KeepDefaultValuesProxmox=Du använder Dolibarr inställningsguiden från en Proxmox virtuell apparat, så som föreslås här är redan optimerade. Ändra dem bara om du vet vad du gör.
-ActivateModule=Aktivera modul %s
 MigrationPaymentMode=Datamigrering betalning mode
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:18).
+# MigrationCategorieAssociation=Migration of categories

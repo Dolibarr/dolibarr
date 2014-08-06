@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (! empty($conf->projet->enabled))
 {
-    require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
@@ -437,8 +436,8 @@ else if ($id)
             */
             if ($action == 'delete')
             {
-                $ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
-                if ($ret == 'html') print '<br>';
+                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+                
             }
 
             $soc = new Societe($db);

@@ -243,15 +243,15 @@ class Entrepot extends CommonObject
 	function fetch($id, $ref='')
 	{
 		global $conf;
-			
+
 		$sql  = "SELECT rowid, label, description, statut, lieu, address, zip, town, fk_pays as country_id";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
-	
-		if ($id) 
+
+		if ($id)
 		{
 			$sql.= " WHERE rowid = '".$id."'";
 		}
-		
+
 		else
 		{
 			$sql.= " WHERE entity = " .$conf->entity;
@@ -276,12 +276,12 @@ class Entrepot extends CommonObject
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
-	
+
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 	            $tmp=getCountry($this->country_id,'all');
 				$this->country=$tmp['label'];
 				$this->country_code=$tmp['code'];
-	
+
 				return 1;
 			}
 			else
@@ -375,6 +375,38 @@ class Entrepot extends CommonObject
 			$this->db->free($result);
 		}
 		return $liste;
+	}
+
+	/**
+	 *	Return number of unique different product into a warehosue
+	 *
+	 * 	@return		Array		Array('nb'=>Nb, 'value'=>Value)
+	 */
+	function nb_different_products()
+	{
+		$ret=array();
+
+		$sql = "SELECT count(distinct p.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= ", ".MAIN_DB_PREFIX."product as p";
+		$sql.= " WHERE ps.fk_entrepot = ".$this->id;
+		$sql.= " AND ps.fk_product = p.rowid";
+
+		//print $sql;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			$ret['nb']=$obj->nb;
+			$this->db->free($result);
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+
+		return $ret;
 	}
 
 	/**

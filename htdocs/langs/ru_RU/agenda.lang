@@ -1,82 +1,51 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - agenda
+# IdAgenda=ID event
 Actions=Действия
 ActionsArea=Действия области (События и задач)
-Agenda=Повестка дня
-Agendas=Повестка дня
-Calendar=Календарь
-Calendars=Календари
-AffectedTo=Затронутые в
-DoneBy=Проделанную
-Events=События
+Agenda= Повестка дня
+Agendas= Повестка дня
+Calendar= Календарь
+Calendars= Календари
+LocalAgenda=Местное календарь
+AffectedTo= Затронутые в
+DoneBy= Проделанную
+Events= События
+# EventsNb=Number of events
+MyEvents=Мои события
+OtherEvents=Другие события
 ListOfActions=Список событий
 Location=Местонахождение
-SearchAnAction=Поиск действия / задачи
-MenuDoneActions=Все действия прекращены
-MenuToDoMyActions=Мои действия неполным
-MenuDoneMyActions=Мои действия прекращены
-ListOfEvents=Список Dolibarr событий
+EventOnFullDay=Событие на весь день
+SearchAnAction= Поиск действия / задачи
+MenuToDoActions= Wszystkich działań niekompletne
+MenuDoneActions= Все действия прекращены
+MenuToDoMyActions= Мои действия неполным
+MenuDoneMyActions= Мои действия прекращены
+ListOfEvents= Список Dolibarr событий
 ActionsAskedBy=Действия зарегистрированы
 ActionsToDoBy=Действия, пострадавших в
 ActionsDoneBy=Действия, проделанную
-AllMyActions=Все мои действия / задачи
-AllActions=Все ле действия / задачи
+AllMyActions= Все мои действия / задачи
+AllActions= Все ле действия / задачи
 ViewList=Посмотреть список
 ViewCal=Просмотр календаря
-ViewWithPredefinedFilters=Вид с встроенные фильтры
-AutoActions=Автоматическое заполнение дня
-AgendaAutoActionDesc=Определить здесь события, для которого вы хотите Dolibarr создать автоматическое действие в повестку дня. Если ничего не будет проверяться (по умолчанию), только вручную действия, будут включены в повестку дня.
-AgendaSetupOtherDesc=Эта страница позволяет настроить и другие параметры модуля дня.
-ActionsEvents=События, за которые Dolibarr создадут действий в повестку дня автоматически
-PropalValidatedInDolibarr=Предложение проверены
-InvoiceValidatedInDolibarr=Счет проверены
-OrderValidatedInDolibarr=Приказ проверены
-NewCompanyToDolibarr=Третья группа создала
-DateActionPlannedStart=Планируемая дата начала
-DateActionPlannedEnd=Планируемая дата окончания
-DateActionDoneStart=Реальная дата начала
-DateActionDoneEnd=Реальная дата окончания
-DateActionStart=Начальная дата
-DateActionEnd=Конечная дата
-AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
-AgendaUrlOptions2=<b>login=<b>логин= %s</b> ограничить выход на действия, созданный, пострадавших или сделали <b>пользователем %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina= %s</b> ограничить выход на действия, созданные <b>пользователем %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint= %s</b> ограничить выход на действия пользователя, <b>пострадавших %s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind= %s</b> ограничить выход на действия пользователя, <b>проделанной %s.</b>
-AgendaShowBirthdayEvents=Показать рождения контакты
-AgendaHideBirthdayEvents=Скрыть рождения контакты
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
-// Reference language: en_US
-InterventionValidatedInDolibarr=Intervensjon %s validert
-InterventionValidatedInDolibarr=Interventie %s gevalideerd
-MenuToDoActions=Wszystkich działań niekompletne
-InterventionValidatedInDolibarr=%s interwencji zatwierdzone
-InterventionValidatedInDolibarr=%s Intervenção validado
-MenuToDoActions=Все действия неполным
-InterventionValidatedInDolibarr=Вмешательство %s проверки
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-EventOnFullDay=Событие на весь день
 ViewDay=Обзор дня
 ViewWeek=Обзор недели
+ViewWithPredefinedFilters= Вид с встроенные фильтры
+AutoActions= Автоматическое заполнение дня
+AgendaAutoActionDesc= Определить здесь события, для которого вы хотите Dolibarr создать автоматическое действие в повестку дня. Если ничего не будет проверяться (по умолчанию), только вручную действия, будут включены в повестку дня.
+AgendaSetupOtherDesc= Эта страница позволяет настроить и другие параметры модуля дня.
 AgendaExtSitesDesc=Эта страница позволяет настроить внешний календарей.
+ActionsEvents= События, за которые Dolibarr создадут действий в повестку дня автоматически
+PropalValidatedInDolibarr= Предложение проверены
+InvoiceValidatedInDolibarr= Счет проверены
 InvoiceBackToDraftInDolibarr=Счет %s вернуться к проекту статус
+# InvoiceDeleteDolibarr=Invoice %s deleted
+OrderValidatedInDolibarr= Приказ проверены
+OrderApprovedInDolibarr=Заказ %s утвержденный
+OrderBackToDraftInDolibarr=Заказ %s вернуться к проекту статус
+OrderCanceledInDolibarr=Заказ %s отменен
+InterventionValidatedInDolibarr=Intervensjon %s validert
 ProposalSentByEMail=Коммерческое предложение %s отправлены по электронной почте
 OrderSentByEMail=Покупатель делает заказ %s отправлены по электронной почте
 InvoiceSentByEMail=Клиенту счет-фактура %s отправлены по электронной почте
@@ -84,23 +53,28 @@ SupplierOrderSentByEMail=Поставщик порядке %s отправлен
 SupplierInvoiceSentByEMail=Поставщиком счета %s отправлены по электронной почте
 ShippingSentByEMail=Доставка %s отправлены по электронной почте
 InterventionSentByEMail=Вмешательство %s отправлены по электронной почте
+NewCompanyToDolibarr= Третья группа создала
+DateActionPlannedStart= Планируемая дата начала
+DateActionPlannedEnd= Планируемая дата окончания
+DateActionDoneStart= Реальная дата начала
+DateActionDoneEnd= Реальная дата окончания
+DateActionStart= Начальная дата
+DateActionEnd= Конечная дата
+AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
+AgendaUrlOptions2=<b>login=<b>логин= %s</b> ограничить выход на действия, созданный, пострадавших или сделали <b>пользователем %s.</b>
+AgendaUrlOptions3=<b>logina=<b>logina= %s</b> ограничить выход на действия, созданные <b>пользователем %s.</b>
+AgendaUrlOptions4=<b>logint=<b>logint= %s</b> ограничить выход на действия пользователя, <b>пострадавших %s.</b>
+AgendaUrlOptions5=<b>logind=<b>logind= %s</b> ограничить выход на действия пользователя, <b>проделанной %s.</b>
+AgendaShowBirthdayEvents=Показать рождения контакты
+AgendaHideBirthdayEvents=Скрыть рождения контакты
+# Busy=Busy
+# ExportDataset_event1=List of agenda events
+
+# External Sites ical
+ExportCal=Экспорт календаря
 ExtSites=Внешние календари
-ExtSites=Внешние Календари
 ExtSitesEnableThisTool=как внешние календари в повестку дня
 ExtSitesNbOfAgenda=Количество календарей
 AgendaExtNb=Календарь NB %s
 ExtSiteUrlAgenda=URL для доступа. Ческих файлов
 ExtSiteNoLabel=Нет описания
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-LocalAgenda=Местное календарь
-MyEvents=Мои события
-OtherEvents=Другие события
-OrderApprovedInDolibarr=Заказ %s утвержденный
-OrderBackToDraftInDolibarr=Заказ %s вернуться к проекту статус
-OrderCanceledInDolibarr=Заказ %s отменен
-ExportCal=Экспорт календаря
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:29:01).

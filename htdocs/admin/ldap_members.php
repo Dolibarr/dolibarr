@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011 	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,7 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE',GETPOST("fieldphone"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_PHONE_PERSO',GETPOST("fieldphoneperso"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_MOBILE',GETPOST("fieldmobile"),'chaine',0,'',$conf->entity)) $error++;
+  if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_SKYPE',GETPOST("fieldskype"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_FAX',GETPOST("fieldfax"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ADDRESS',GETPOST("fieldaddress"),'chaine',0,'',$conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_FIELD_ZIP',GETPOST("fieldzip"),'chaine',0,'',$conf->entity)) $error++;
@@ -87,15 +88,15 @@ if ($action == 'setvalue' && $user->admin)
     if ($key) $valkey=$conf->global->$key;
     if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$valkey,'chaine',0,'',$conf->entity)) $error++;
 
-	if (! $error)
-  	{
-  		$db->commit();
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
-  	}
-  	else
-  	{
-  		$db->rollback();
-		dol_print_error($db);
+    if (! $error)
+    {
+    	$db->commit();
+    	setEventMessage($langs->trans("SetupSaved"));
+    }
+    else
+    {
+    	$db->rollback();
+    	dol_print_error($db);
     }
 }
 
@@ -115,7 +116,7 @@ $head = ldap_prepare_head();
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
-	$mesg.='<div class="error">'.$langs->trans("LDAPFunctionsNotAvailableOnPHP").'</div>';  ;
+	setEventMessage($langs->trans("LDAPFunctionsNotAvailableOnPHP"),'errors');
 }
 
 dol_fiche_head($head, 'members', $langs->trans("LDAPSetup"));
@@ -252,6 +253,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_MEMBER_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// Skype
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSkype").'</td><td>';
+print '<input size="25" type="text" name="fieldskype" value="'.$conf->global->LDAP_MEMBER_FIELD_SKYPE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldSkypeExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
@@ -435,8 +444,6 @@ if (function_exists("ldap_connect"))
 	}
 
 }
-
-dol_htmloutput_mesg($mesg);
 
 $db->close();
 

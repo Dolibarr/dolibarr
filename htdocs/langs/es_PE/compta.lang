@@ -1,5 +1,4 @@
 # Dolibarr language file - es_PU - compta 
-CHARSET=UTF-8
 VATToPay=IGV ventas
 VATReceived=IGV repercutido
 VATToCollect=IGV compras

@@ -1,36 +1,36 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - compta
 Accountancy=Бухгалтерия
 AccountancyCard=Бухгалтерия карту
 Treasury=Казначейство
 MenuFinancial=Финансовые
+# TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Вариант для бухгалтеров
+OptionModeTrue=Вариант "затраты-выпуск"
 OptionModeVirtual=Вариант Кредиты-Вычеты
+OptionModeTrueDesc=В этом контексте, оборот исчисляется за платежи (дата выплаты). \\ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
 OptionModeVirtualDesc=В этом контексте, оборот исчисляется более счетов (дата проверки). Когда эти счета-фактуры должны ли они были выплачены или нет, они перечислены в оборот продукции.
 FeatureIsSupportedInInOutModeOnly=Функция доступна только в виде кредитов-ДОЛГОВ бухгалтерия (см. Бухгалтерия конфигурации модуля)
+VATReportBuildWithOptionDefinedInModule=Суммы, показанные здесь, рассчитанного с использованием установленных правил налоговыми модуля установки.
 Param=Настройка
+RemainingAmountPayment=Сумма оплаты Осталось:
+AmountToBeCharged=Общая сумма для оплаты:
 AccountsGeneral=Счета
 Account=Учетная запись
 Accounts=Счета
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Законопроекты для поставщиков
 Income=Поступления
 Outcome=Итог
 ReportInOut=Поступления / Результат
+ReportTurnover=Оборот
 PaymentsNotLinkedToInvoice=Платежи, не связанные с какой-либо счет, это не связано с какой-либо третьей стороны
 PaymentsNotLinkedToUser=Платежи, не связанные с какой-либо пользователь
 Profit=Прибыль
 Balance=Баланс
 Debit=Дебет
 Credit=Кредит
+# Piece=Voucher
 Withdrawal=Снятие
 Withdrawals=Снятие
 AmountHTVATRealReceived=HT собрали
@@ -39,7 +39,11 @@ VATToPay=НДС к оплате
 VATReceived=НДС получил
 VATToCollect=НДС для сбора
 VATSummary=НДС Резюме
+LT2SummaryES=IRPF баланс
 VATPaid=НДС оплачивается
+LT2PaidES=Платные IRPF
+LT2CustomerES=IRPF продаж
+LT2SupplierES=IRPF покупки
 VATCollected=НДС собрали
 ToPay=Для оплаты
 ToGet=Чтобы вернуться
@@ -65,16 +69,22 @@ ListOfCustomerPayments=Список клиентов платежи
 ListOfSupplierPayments=Список поставщиков платежей
 DatePayment=Дата оплаты
 NewVATPayment=Новые оплаты НДС
+newLT2PaymentES=Новые IRPF оплаты
+LT2PaymentES=IRPF оплаты
+LT2PaymentsES=IRPF платежей
 VATPayment=Оплата НДС
 VATPayments=НДС Платежи
+SocialContributionsPayments=Социальные отчисления платежей
+ShowVatPayment=Показать оплате НДС
 TotalToPay=Всего к оплате
 TotalVATReceived=Общая сумма НДС, полученные
 CustomerAccountancyCode=Заказчиком бухгалтерской код
-AlreadyPaid=Уже оплачивается
+SupplierAccountancyCode=Поставщик бухгалтерских код
 AccountNumberShort=Номер счета
 AccountNumber=Номер счета
 NewAccount=Новый счет
 SalesTurnover=Оборот по продажам
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Бу-третьих сторон
 ByUserAuthorOfInvoice=На счету автора
 AccountancyExport=Бухгалтерия экспорт
@@ -93,66 +103,44 @@ ConfirmPaySocialContribution=Вы уверены, что хотите класс
 DeleteSocialContribution=Удалить социального взноса
 ConfirmDeleteSocialContribution=Вы уверены, что хотите удалить этот социальный взнос?
 ExportDataset_tax_1=Социальные взносы и платежи
-AnnualSummaryDueDebtMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме %sCrances-Dettes %s</b> DIT <b>comptabilit d'участия.</b>
-AnnualSummaryInputOutputMode=Билан DES recettes и dpenses, rsum annuel, в <b>режиме %sRecettes-Dpenses %s</b> DIT <b>comptabilit де ящик.</b>
+# CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+# CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
+# CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+# CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
+# AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
+# AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
 AnnualByCompaniesDueDebtMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме %sCrances-Dettes %s</b> DIT <b>comptabilit d'участия.</b>
 AnnualByCompaniesInputOutputMode=Билан DES recettes и dpenses, dtail пар ярусов, в <b>режиме %sRecettes-Dpenses %s</b> DIT <b>comptabilit де ящик.</b>
 SeeReportInInputOutputMode=См. LE <b>отношения %sRecettes-Dpenses %s</b> DIT <b>comptabilit де ящик</b> POUR UN CALCUL SUR LES paiements effectivement raliss
 SeeReportInDueDebtMode=См. LE <b>отношения %sCrances-Dettes %s</b> DIT <b>comptabilit d'участие</b> POUR UN CALCUL SUR LES factures Мизеса
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Суммы указаны с НДС <br> - Она включает в себя неоплаченные счета, расходы и НДС ли они выплачиваются или нет. <br> - Он основан на одобрении даты счета-фактуры и НДС, и на сегодняшний день из-за расходов.
-RulesResultInOut=- Суммы указаны с НДС <br> - Она включает в себя реальные выплаты на счета, расходы и НДС. <br> - Он основан на оплату даты счета-фактуры, расходы ANF НДС. <br>
+# RulesResultInOut=- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses and VAT.
 RulesCADue=- Она включает в себя клиентов из-за счетов ли они выплачиваются или нет. <br> - Он основан на дату одобрения этих счетов-фактур. <br>
 RulesCAIn=- Она включает в себя все эффективные платежи в счетах-фактурах, полученных от клиентов. <br> - Он основан на день оплаты этих счетов-фактур <br>
-VATReportByCustomersInInputOutputMode=Rapport пар клиента DES TVA collectes и платит (TVA сюр encaissement)
-VATReportByCustomersInDueDebtMode=Rapport пар клиента DES TVA collectes и платит (TVA сюр dbit)
-VATReportByQuartersInInputOutputMode=Rapport пар trimestre DES TVA collectes и платит (TVA сюр encaissement)
-VATReportByQuartersInDueDebtMode=Rapport пар trimestre DES TVA collectes и платит (TVA сюр dbit)
+DepositsAreNotIncluded=- Депозитные счета-фактуры и не включен
+DepositsAreIncluded=- Депозитные счета включены
+LT2ReportByCustomersInInputOutputModeES=Доклад третьей стороной IRPF
+# VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
+# VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
+# VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
+# VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
 SeeVATReportInInputOutputMode=См. LE <b>отношения %sTVA encaissement %s</b> для режима де CALCUL стандарт
 SeeVATReportInDueDebtMode=См. LE <b>отношения %sTVA сюр dbit %s</b> для режима де CALCUL AVEC вариант SUR LES dbits
-RulesVATIn=- POUR LES услуг, Le отношения inclut Ле дез TVA rglements effectivement Реус или MIS EN SE basant сюр-ла-дю rglement даты. <br> - POUR LES имущества matriels, IL inclut Ле дез TVA factures EN SE basant сюр-де-ла даты подтверждения де-ла-Фактура.
-RulesVATDue=- POUR LES услуг, Le отношения inclut Ле дез TVA factures взносы, или, не payes EN SE basant сюр-де-ла даты подтверждения DE CES factures. <br> - POUR LES имущества matriels, IL inclut Ле дез TVA factures EN SE basant сюр-де-ла даты подтверждения де-ла-Фактура.
-PercentOfInvoice=%%/счет-фактура
-Dispatch=Экспедирование
-Dispatched=Отправлено
-ToDispatch=Направить
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-ReportTurnover=Оборот
-NotUsedForGoods=Не используется на товары
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
-OptionModeTrue=Вариант "затраты-выпуск"
-OptionModeTrueDesc=В этом контексте, оборот исчисляется за платежи (дата выплаты). \ nThe действительности цифры обеспечивается только в том случае, если бухгалтерия является тщательно путем ввода / вывода по счетам с помощью счетов-фактур.
-ShowVatPayment=Показать оплате НДС
-SupplierAccountancyCode=Поставщик бухгалтерских код
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-TaxModuleSetupToModifyRules=Перейти на <a href="%s">модуль установки</a> для изменения правил расчета
-VATReportBuildWithOptionDefinedInModule=Суммы, показанные здесь, рассчитанного с использованием установленных правил налоговыми модуля установки.
-SocialContributionsPayments=Социальные отчисления платежей
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
+RulesVATInProducts=- Для материальных ценностей, она включает в себя счета-фактуры на основе даты выставления счета.
+RulesVATDueServices=- Для услуг, отчет включает в себя счета-фактуры за счет, оплачиваемый или нет, исходя из даты выставления счета.
+RulesVATDueProducts=- Для материальных ценностей, она включает в себя НДС, счета-фактуры, на основе даты выставления счета.
 OptionVatInfoModuleComptabilite=Примечание: Для материальных ценностей, она должна использовать даты доставки будет более справедливым.
-ThirdPartyMustBeEditAsCustomer=Третий участник должен быть определен в качестве клиента
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:53).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-RemainingAmountPayment=Сумма оплаты Осталось:
-AmountToBeCharged=Общая сумма для оплаты:
+PercentOfInvoice=%%/счет-фактура
+NotUsedForGoods=Не используется на товары
 ProposalStats=Статистика по предложениям
 OrderStats=Статистика по заказам
 InvoiceStats=Статистика по векселям
+Dispatch=Экспедирование
+Dispatched=Отправлено
+ToDispatch=Направить
+ThirdPartyMustBeEditAsCustomer=Третий участник должен быть определен в качестве клиента
 SellsJournal=Продажи журнала
 PurchasesJournal=Покупки Журнал
 DescSellsJournal=Продажи журнала
@@ -160,25 +148,31 @@ DescPurchasesJournal=Покупки Журнал
 InvoiceRef=Счет реф.
 CodeNotDef=Не определено
 AddRemind=Отправка доступная сумма
-RemainToDivide=Оставайтесь на рассылки:
+RemainToDivide= Оставайтесь на рассылки:
 WarningDepositsNotIncluded=Депозиты счетов не включены в эту версию с этим бухгалтерский учет модуля.
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:57).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-LT2SummaryES=IRPF баланс
-LT2PaidES=Платные IRPF
-LT2CustomerES=IRPF продаж
-LT2SupplierES=IRPF покупки
-newLT2PaymentES=Новые IRPF оплаты
-LT2PaymentES=IRPF оплаты
-LT2PaymentsES=IRPF платежей
-DepositsAreNotIncluded=- Депозитные счета-фактуры и не включен
-DepositsAreIncluded=- Депозитные счета включены
-LT2ReportByCustomersInInputOutputModeES=Доклад третьей стороной IRPF
-RulesVATInServices=- Для услуг, отчет включает в себя НДС, правила, фактически полученных и выданных на основании даты платежа. <br> - Для материальных ценностей, она включает в себя счета-фактуры на основе даты выставления счета.
-RulesVATInProducts=- Для материальных ценностей, она включает в себя счета-фактуры на основе даты выставления счета.
-RulesVATDueServices=- Для услуг, отчет включает в себя счета-фактуры за счет, оплачиваемый или нет, исходя из даты выставления счета.
-RulesVATDueProducts=- Для материальных ценностей, она включает в себя НДС, счета-фактуры, на основе даты выставления счета.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:09).
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services
+# RefExt=External ref
+# ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+# LinkedOrder=linked to command
+# ReCalculate=Recalculate
+# Mode1=Methode 1
+# Mode2=Method 2
+# CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
+# CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+# TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
+# CalculationMode=Calculation mode
+# COMPTA_PRODUCT_BUY_ACCOUNT=Code comptable par défaut des achats de marchandises
+# COMPTA_PRODUCT_SOLD_ACCOUNT=Code comptable par défaut des ventes de marchandises
+# COMPTA_SERVICE_BUY_ACCOUNT=Code comptable par défaut des achats de services
+# COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut des ventes de services
+# COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
+# COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
+# COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+# COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties

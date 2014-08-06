@@ -1,6 +1,5 @@
-# Dolibarr language file - es_ES - marque pages 
-CHARSET=UTF-8
-AddThisPageToBookmarks= Añadir esta página a los marcadores
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Añadir esta página a los marcadores
 Bookmark=Marcador
 Bookmarks=Marcadores
 NewBookmark=Nuevo marcador

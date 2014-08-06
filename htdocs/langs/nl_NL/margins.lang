@@ -1,52 +1,51 @@
-# Dolibarr language file - en_US - marges
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marges
 
 Margin=Marge
 Margins=Marges
 TotalMargin=Marge Totaal
-MarginOnProducts=Marge  Training/Boeken
-MarginOnServices=Marge  Dienst
-MarginRate=Marge Verhouding
-MarkRate=Markerings Verhouding
+MarginOnProducts=Marge / Training
+MarginOnServices=Marge / Dienst
+MarginRate=Marge verhouding
+MarkRate=Markerings verhouding
 DisplayMarginRates=Toon Marge Verhouding
 DisplayMarkRates=Toon Markeringsverhouding
 InputPrice=Voer Prijs in
 
-margin=Winst Marge Management
-margesSetup=Winst Marge Management setup
+margin=Winst marge management
+margesSetup=Winst marge management setup
 
-MarginDetails=Marge Details
+MarginDetails=Marge details
 
-ProductMargins=Product Marge
-CustomerMargins=Klant Marges
+ProductMargins=Product marge
+CustomerMargins=Klant marges
 AgentMargins=Acc. Manager marges
 
-ProductService=Training/Product of Dienst
+ProductService=Trainning of Dienst
 AllProducts=Alle Trainingen en Diensten
-ChooseProduct/Service=Kies Training/Product of Dienst
-CommercialAgent=Commercieël Agent
+ChooseProduct/Service=Kies Training of Dienst
+CommercialAgent=Commerciel Agent
 
 StartDate=Start datum
 EndDate=Eind datum
 Launch=Start
 
 ForceBuyingPriceIfNull=Forceer een inkoopprijs indien null
-ForceBuyingPriceIfNullDetails=indien "ON", marge wordt null   (inkoopprijs = verkoopprijs), anders("OFF"), marge is gelijk verkoopprijs (inkoopprijs = 0)
+ForceBuyingPriceIfNullDetails=indien "ON", marge wodt nul   (inkoopprijs = verkoopprijs), anders("OFF"), marge is gelijk verkoopprijs (inkoopprijs = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
-UseDiscountAsProduct=Als een training/dienst
+UseDiscountAsProduct=Als een training
 UseDiscountAsService=Als een dienst
 UseDiscountOnTotal=Op subtotaal
-MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieer als een globale discount, wordt behandelt als een training/product, een dienst, alleen een subtotaal voor marge berekening.
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieert als een globale discount wordt behandelt als een training, een dienst, of alleen een subtotaal voor marge berekening.
 
 MARGIN_TYPE=Marge type
-MargeBrute=Groffe Marge
-MargeNette=Netto Marge
-MARGIN_TYPE_DETAILS=Groffe marge : Verkoopprijs - Inkoopprijs<br/>Netto Marge : Verkoopprijs - Kostprijs
+MargeBrute=Groffe marge
+MargeNette=Netto marge
+MARGIN_TYPE_DETAILS=Groffe marge : Verkoopprijs - Inkoopprijs<br/>Netto marge : Verkoopprijs - Kostprijs
 
 CostPrice=Kostprijs
 BuyingCost=Kostprijs
-UnitCharges=Unit Toeslag
+UnitCharges=Unit toeslag
 Charges=Toeslag
 
 AgentContactType=Contact type used voor commissie
-AgentContactTypeDetails=Definieër het contact type (gelinked op facturen) wordt geassocieerd met een commercieël agent
+AgentContactTypeDetails=Definieer het contact type (gelinked op facturen) wordt geassocieerd met commercieel agent

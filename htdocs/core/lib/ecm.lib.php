@@ -26,7 +26,7 @@
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   object	$object		Object related to tabs
  * @return  array				Array of tabs to shoc
  */
 function ecm_prepare_head($object)
@@ -66,7 +66,7 @@ function ecm_file_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   object	$object		Object related to tabs
  * @return  array				Array of tabs to shoc
  */
 function ecm_prepare_head_fm($object)

@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - interventions
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Intervenção
 Interventions=Intervenções
 InterventionCard=Ficha de Intervenção
@@ -7,6 +6,7 @@ NewIntervention=Nova Intervenção
 AddIntervention=Criar Intervenção
 ListOfInterventions=Lista de Intervenções
 EditIntervention=Editar
+ActionsOnFicheInter=Açoes na intervençao
 LastInterventions=As %s últimas Intervenções
 AllInterventions=Todas as Intervenções
 CreateDraftIntervention=Criar Rascunho
@@ -14,6 +14,7 @@ CustomerDoesNotHavePrefix=O cliente não tem prefixoo de definido
 InterventionContact=Contato Intervenção
 DeleteIntervention=Eliminar Intervenção
 ValidateIntervention=Confirmar Intervenção
+ModifyIntervention=Modificar intervençao
 DeleteInterventionLine=Eliminar Linha de Intervenção
 ConfirmDeleteIntervention=Tem certeza que quer eliminar esta intervenção?
 ConfirmValidateIntervention=Tem certeza que quer Confirmar esta intervenção?
@@ -21,19 +22,12 @@ ConfirmModifyIntervention=Tem certeza que quer modificar esta intervenção?
 ConfirmDeleteInterventionLine=Tem certeza que quer eliminar esta linha?
 NameAndSignatureOfInternalContact=Nome e Assinatura do Participante:
 NameAndSignatureOfExternalContact=Nome e Assinatura do Cliente:
-InterventionCardsAndInterventionLines=Fichas e Linhas de Intervenção
-InterId=Id Intervenção
-InterRef=Ref. Intervenção
-InterDateCreation=Data Criação
-InterDuration=Duração Total
-InterStatus=Estado
-InterNote=Descrição
-InterLine=Linha Intervenção
-InterLineId=Id Linha Detalhe
-InterLineDate=Data Linha
-InterLineDuration=Duração Linha
-InterLineDesc=Descrição Linha
 DocumentModelStandard=Modelo da Norma Intervenção
+InterventionCardsAndInterventionLines=Fichas e Linhas de Intervenção
+ClassifyBilled=Clasificar "Faturado"
+StatusInterInvoiced=Faturado
+RelatedInterventions=Intervençoes relativas
+ShowIntervention=Mostrar intervençao
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsável do Seguimento da Intervenção
 TypeContact_fichinter_internal_INTERVENING=Interveniente
@@ -44,5 +38,5 @@ ArcticNumRefModelDesc1=Modelo de numeração genérico
 ArcticNumRefModelError=Ativação Impossível
 PacificNumRefModelDesc1=Devolve o número com o formato %syymm-nnnn onde yy é o ano, mm. O mês e nnnn um contador seq�êncial sem ruptura e sem ficar a 0
 PacificNumRefModelError=Uma fatura que começa por # $$syymm existe na base e é incompativel com esta numeração. Eliminia  ou renomea-la para ativar este módulo.
-
-
+PrintProductsOnFichinter=Imprimi produtos na ficha de intervento
+PrintProductsOnFichinterDetails=para intervençoes geradas dos pedidos

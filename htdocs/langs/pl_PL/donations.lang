@@ -1,22 +1,12 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Darowizna
-Donationss=Darowizny
+Donations=Darowizny
+# DonationRef=Donation ref.
 Donor=Donor
 Donors=Darczyńcy
 AddDonation=Dodaj darowiznę
 NewDonation=Nowe wpłaty
+# ShowDonation=Show donation
 DonationPromise=Prezent obietnicy
 PromisesNotValid=Nie potwierdzone obietnic
 PromisesValid=Zatwierdzona obietnic
@@ -31,28 +21,12 @@ DonationStatusPaid=Darowizna otrzymana
 DonationStatusPromiseNotValidatedShort=Szkic
 DonationStatusPromiseValidatedShort=Zatwierdzona
 DonationStatusPaidShort=Odebrane
-ValidPromise=Validate obietnicy
+ValidPromess=Sprawdź obietnicy
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Zbuduj otrzymania
 DonationsModels=Dokumenty modeli oddawania wpływy
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-Donations=Darowizny
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-ValidPromess=Sprawdź obietnicy
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:13).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
 LastModifiedDonations=Ostatnie %s modyfikowane darowizn
 SearchADonation=Szukaj darowiznę
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:58).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

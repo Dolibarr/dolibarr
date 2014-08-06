@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - projects
 Project=Проект
 Projects=Проекти
 SharedProject=Всички
@@ -54,6 +45,8 @@ MyActivities=Моите задачи / дейности
 MyProjects=Моите проекти
 DurationEffective=Ефективната продължителност
 Progress=Напредък
+# ProgressDeclared=Declared progress
+# ProgressCalculated=Calculated progress
 Time=Време
 ListProposalsAssociatedProject=Списък на търговските предложения, свързани с проекта
 ListOrdersAssociatedProject=Списък на клиентски поръчки, свързани с проекта
@@ -97,17 +90,26 @@ CloneProject=Clone проект
 CloneTasks=Клонингите задачи
 CloneContacts=Клонингите контакти
 CloneNotes=Клонингите бележки
-CloneFiles=Clone присъедини файлове
+# CloneProjectFiles=Clone project joined files
+# CloneTaskFiles=Clone task(s) joined files (if task(s) cloned)
 ConfirmCloneProject=Сигурен ли сте, че за клониране на този проект?
 ProjectReportDate=Промяна задача дата според началната дата на проекта
 ErrorShiftTaskDate=Невъзможно е да се смени датата на задача в съответствие с нова дата за началото на проекта
+# ProjectsAndTasksLines=Projects and tasks
+# ProjectCreatedInDolibarr=Project %s created
+##### Types de contacts #####
 TypeContact_project_internal_PROJECTLEADER=Ръководител на проекта
 TypeContact_project_external_PROJECTLEADER=Ръководител на проекта
-TypeContact_project_internal_CONTRIBUTOR=Сътрудник
-TypeContact_project_external_CONTRIBUTOR=Сътрудник
+TypeContact_project_internal_PROJECTCONTRIBUTOR=Сътрудник
+TypeContact_project_external_PROJECTCONTRIBUTOR=Сътрудник
 TypeContact_project_task_internal_TASKEXECUTIVE=Задача изпълнителен
 TypeContact_project_task_external_TASKEXECUTIVE=Задача изпълнителен
-TypeContact_project_task_internal_CONTRIBUTOR=Сътрудник
-TypeContact_project_task_external_CONTRIBUTOR=Сътрудник
+TypeContact_project_task_internal_TASKCONTRIBUTOR=Сътрудник
+TypeContact_project_task_external_TASKCONTRIBUTOR=Сътрудник
+# SelectElement=Select element
+# AddElement=Link to element
+# Documents models
 DocumentModelBaleine=Доклад за цялостния проект модел (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:17:10).
+# PlannedWorkload = Planned workload
+# WorkloadOccupation= Workload affectation
+# ProjectReferers=Refering objects

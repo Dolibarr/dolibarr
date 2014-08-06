@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=POS Kasse
 CashDesk=Kasse
 CashDesks=Kassen
@@ -20,6 +12,7 @@ CashDeskProducts=Produkte
 CashDeskStock=Lager
 CashDeskOn=An
 CashDeskThirdParty=Dritter
+CashdeskDashboard=Zugriff Kasse
 ShoppingCart=Einkaufswagen
 NewSell=Neu zu verkaufen
 BackOffice=Abrechnungsstelle
@@ -27,7 +20,6 @@ AddThisArticle=Hinzufügen dieses Artikels
 RestartSelling=zurück zum Verkauf
 SellFinished=Verkauf abgeschlossen
 PrintTicket=Kassenbon drucken
-NoResults=Keine Ergebnisse
 NoProductFound=Kein Artikel gefunden
 ProductFound=Produkt gefunden
 ProductsFound=Produkte gefunden
@@ -44,3 +36,4 @@ BankToPay=Kundenkonto
 ShowCompany=Zeige Unternehmen
 ShowStock=Zeige Lager
 DeleteArticle=Klicken, um diesen Artikel zu entfernen
+FilterRefOrLabelOrBC=Suche (Ref/Label)

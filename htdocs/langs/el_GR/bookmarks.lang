@@ -1,24 +1,19 @@
-/*  
-* Dolibarr language file - marque pages
-* Language code: el_GR
-* Manually translated by technicks.eu
-*/
-CHARSET = UTF-8
-AddThisPageToBookmarks = Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
-Bookmark = Σελιδοδείκτης
-Bookmarks = Σελιδοδείκτες
-NewBookmark = Νέος σελιδοδείκτης
-ShowBookmark = Εμφάνιση σελιδοδείκτη
-OpenANewWindow = Άνοιγμα νέου παραθύρου
-ReplaceWindow = Αντικατάσταση τρέχοντος παραθύρου
-BookmarkTargetNewWindowShort = Νέο παράθυρο
-BookmarkTargetReplaceWindowShort = Τρέχων παράθυρο
-BookmarkTitle = Τίτλος σελιδοδείκτη
-UrlOrLink = URL
-BehaviourOnClick = Μετάβαση σε
-CreateBookmark = Δημιουργία σελιδοδείκτη
-SetHereATitleForLink = Ορισμός τίτλου για τον σελιδοδείκτη
-UseAnExternalHttpLinkOrRelativeDolibarrLink = Χρησιμοποιήστε μια εξωτερική διεύθυνση URL ή μια σχετική διεύθυνση URL του Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Με ποιον τρόπο θα ανοίξει η σελίδα
-BookmarksManagement = Διαχείριση σελιδοδεικτών
-ListOfBookmarks = Λίστα σελιδοδεικτών
+# Dolibarr language file - Source file is en_US - marque pages
+AddThisPageToBookmarks=Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
+Bookmark=Σελιδοδείκτης
+Bookmarks=Σελιδοδείκτες
+NewBookmark=Νέος σελιδοδείκτης
+ShowBookmark=Εμφάνιση σελιδοδείκτη
+OpenANewWindow=Άνοιγμα σε νέο παράθυρο
+ReplaceWindow=Αντικατάσταση τρέχοντος παραθύρου
+BookmarkTargetNewWindowShort=Νέο παράθυρο
+BookmarkTargetReplaceWindowShort=Τρέχων παράθυρο
+BookmarkTitle=Τίτλος σελιδοδείκτη
+UrlOrLink=URL
+BehaviourOnClick=Μετάβαση σε
+CreateBookmark=Δημιουργία σελιδοδείκτη
+SetHereATitleForLink=Ορισμός τίτλου για τον σελιδοδείκτη
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Χρησιμοποιήστε μια εξωτερική διεύθυνση URL ή μια σχετική διεύθυνση URL του Dolibarr
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Με ποιον τρόπο θα ανοίξει η σελίδα
+BookmarksManagement=Διαχείριση σελιδοδεικτών
+ListOfBookmarks=Λίστα σελιδοδεικτών

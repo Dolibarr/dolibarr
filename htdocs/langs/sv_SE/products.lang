@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
 ProductRef=Produkt ref.
 ProductLabel=Produktmärkning
 ProductServiceCard=Produkter / tjänster kort
@@ -85,6 +76,7 @@ ContractStatusToRun=En mettre en tjänst
 ContractNotRunning=Detta kontrakt är inte igång
 ErrorProductAlreadyExists=En produkt med hänvisning %s finns redan.
 ErrorProductBadRefOrLabel=Felaktigt värde för referens eller etikett.
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=Leverantörer
 SupplierRef=Leverantör ref.
 ShowProduct=Visa produkt
@@ -99,14 +91,12 @@ AddToOtherBills=Lägg till andra räkningar
 CorrectStock=Rätt lager
 AddPhoto=Lägg till foto
 ListOfStockMovements=Lista över lageromsättningen
-NoPhotoYet=Finns inga tillgängliga bilder än
 BuyingPrice=BETALKURS
 SupplierCard=Leverantör kort
 CommercialCard=Kommersiella kort
 AllWays=Sökväg för att hitta din produkt i lager
 NoCat=Din produkt är inte i någon kategori
 PrimaryWay=Primär väg
-DeleteFromCat=Ta bort från kategori
 PriceRemoved=Pris bort
 BarCode=Barcode
 BarcodeType=Barcode typ
@@ -121,6 +111,9 @@ MultiPriceLevelsName=Pris kategorier
 AssociatedProductsAbility=Aktivera biprodukter
 AssociatedProducts=Biprodukter
 AssociatedProductsNumber=Antal produkter komponera denna produkt
+ParentProductsNumber=Antal förälder produkt
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Associate
 Translation=Översättning
 KeywordFilter=Nyckelord filter
@@ -130,6 +123,7 @@ AddDel=Lägg till / Ta bort
 Quantity=Kvantitet
 NoMatchFound=Ingen matchning hittades
 ProductAssociationList=Lista över relaterade produkter / tjänster: namn på produkten / tjänsten (kvantitet påverkas)
+ProductParentList=Förteckning över produkter och tjänster med denna produkt som en komponent
 ErrorAssociationIsFatherOfThis=Ett av valda produkten är förälder med nuvarande produkt
 DeleteProduct=Ta bort en produkt / tjänst
 ConfirmDeleteProduct=Är du säker på att du vill ta bort denna produkt / tjänst?
@@ -138,6 +132,8 @@ DeletePicture=Ta bort en bild
 ConfirmDeletePicture=Är du säker på att du vill ta bort denna bild?
 ExportDataset_produit_1=Produkter
 ExportDataset_service_1=Tjänster
+ImportDataset_produit_1=Produkter
+ImportDataset_service_1=Tjänster
 DeleteProductLine=Ta bort produktlinje
 ConfirmDeleteProductLine=Är du säker på att du vill ta bort denna produktlinje?
 NoProductMatching=Ingen produkt / tjänst matchar dina kriterier
@@ -146,12 +142,15 @@ NoStockForThisProduct=Ingen materiel för denna produkt
 NoStock=Inga Lager
 Restock=FYLLA PÅ
 ProductSpecial=Särskilda
-QtyMin=Kvantitet minsta
+# QtyMin=Minimum Qty
 PriceQty=Pris för denna kvantitet
-PriceQtyMin=Pris kvantitet min.
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=Inget pris / st fastställts för detta leverantör / produkt
 NoSupplierPriceDefinedForThisProduct=Ingen leverantör pris / st fastställts för denna produkt
 RecordedProducts=Produkter som registrerats
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Produkter / tjänster registreras
 GenerateThumb=Generera tumme
 ProductCanvasAbility=Använd speciell &quot;duk&quot; addons
@@ -165,20 +164,43 @@ CloneProduct=Klon produkt eller tjänst
 ConfirmCloneProduct=Är du säker på att du vill klona produkt eller tjänst <b>%s?</b>
 CloneContentProduct=Klona alla viktiga informationer av produkt / tjänst
 ClonePricesProduct=Klona viktigaste informationer och priser
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=Denna produkt används
 NewRefForClone=Ref. av ny produkt / tjänst
 CustomerPrices=Kunder priser
 SuppliersPrices=Leverantörer priser
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:49:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-ParentProductsNumber=Antal förälder produkt
-ProductParentList=Förteckning över produkter och tjänster med denna produkt som en komponent
-ImportDataset_produit_1=Produkter
-ImportDataset_service_1=Tjänster
 CustomCode=Tullkodex
 CountryOrigin=Ursprungsland
 HiddenIntoCombo=Dold i vissa utvalda listor
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:32).
+Nature=Naturen
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Antal
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

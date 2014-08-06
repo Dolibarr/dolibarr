@@ -1,5 +1,4 @@
 # Dolibarr language file - nl_BE - exports
-CHARSET=UTF-8
 ExportsArea=Export gebied
 ImportArea=Import gebied
 NewExport=Nieuwe exportmogelijkheden

@@ -613,7 +613,7 @@ class Account extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON ba.fk_pays = p.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON ba.state_id = d.rowid';
-        $sql.= " WHERE entity IN (".getEntity('bank_account', 1).')';
+        $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
         if ($id)  $sql.= " AND ba.rowid  = ".$id;
         if ($ref) $sql.= " AND ba.ref = '".$this->db->escape($ref)."'";
 
@@ -1436,18 +1436,21 @@ class AccountLine extends CommonObject
         if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
         $result.=$lien.$this->rowid.$lienfin;
 
+        if ($option == 'showall' || $option == 'showconciliated') $result.=' (';
         if ($option == 'showall')
         {
-            $result.=' (';
             $result.=$langs->trans("BankAccount").': ';
             $accountstatic=new Account($this->db);
             $accountstatic->id=$this->fk_account;
             $accountstatic->label=$this->bank_account_label;
             $result.=$accountstatic->getNomUrl(0).', ';
+        }
+        if ($option == 'showall' || $option == 'showconciliated')
+        {
             $result.=$langs->trans("BankLineConciliated").': ';
             $result.=yn($this->rappro);
-            $result.=')';
         }
+        if ($option == 'showall' || $option == 'showconciliated') $result.=')';
 
         return $result;
     }

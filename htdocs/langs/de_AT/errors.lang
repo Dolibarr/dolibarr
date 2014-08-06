@@ -4,7 +4,6 @@
  * Generation date 2010-11-14 10:09:12
  */
 
-CHARSET=UTF-8
 ErrorLoginAlreadyExists=Login %s existiert bereits.
 ErrorGroupAlreadyExists=Gruppe %s existiert bereits.
 ErrorFailToDeleteFile=Fehler beim Löschen der Datei '<b>%s</b>'.

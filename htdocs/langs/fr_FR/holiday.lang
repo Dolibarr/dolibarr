@@ -1,6 +1,5 @@
-# Dolibarr language file - fr_FR - holiday
-CHARSET= UTF-8
-
+# Dolibarr language file - Source file is en_US - holiday
+HRM=GRH
 Holidays=Congés
 CPTitreMenu=Congés
 MenuReportMonth=Etat mensuel
@@ -79,7 +78,6 @@ MenuLogCP=Voir les logs des congés
 LogCP=Logs des mises à jours des congés
 ActionByCP=Réalisée par
 UserUpdateCP=Pour l'utilisateur
-ActionTypeCP=Type
 PrevSoldeCP=Précédent Solde
 NewSoldeCP=Nouveau Solde
 alreadyCPexist=Une demande de congés à déjà été effectuée sur cette période.
@@ -89,6 +87,7 @@ FirstDayOfHoliday=Premier jour de congés
 LastDayOfHoliday=Dernier jour de congés
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
+HolidaysCancelation=Annulation de congès
 
 ## Configuration du Module ##
 ConfCP=Configuration du module Congés
@@ -101,12 +100,14 @@ UpdateConfCPOK=Mise à jour effectuée avec succès.
 ErrorUpdateConfCP=Une erreur à eu lieu durant la mise à jour, merci de réessayer.
 AddCPforUsers=Veuillez ajouter le solde des congés des utilisateurs en <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">cliquant ici</a>.
 DelayForSubmitCP=Délai pour faire une demande de congés  avant ceux-ci
+AlertapprobatortorDelayCP=Prévenir le validateur si la demande de congés ne correspond pas à la date limite
 AlertValidatorDelayCP=Prévenir le valideur si la demande de congés ne respecte le délai prévu
 AlertValidorSoldeCP=Prévenir le valideur si l'utilisateur demande des congés dépassant son solde
 nbUserCP=Nombre d'utilisateur pris en charge dans le module congés
 nbHolidayDeductedCP=Nombre de congés payés à déduire par jour de congé pris
 nbHolidayEveryMonthCP=Nombre de congés payés ajoutés chaque mois
 Module27130Name= Gestion des congés
+Module27130Desc= Gestion des congés
 TitleOptionMainCP=Réglages principaux des congés
 TitleOptionEventCP=Réglages des congés liés à des évènements
 ValidEventCP=Valider

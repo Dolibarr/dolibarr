@@ -75,7 +75,6 @@ class box_propales extends ModeleBoxes
         $sql.= $db->plimit($max, 0);
 
         $result = $db->query($sql);
-
         if ($result)
         {
         	$num = $db->num_rows($result);
@@ -120,6 +119,8 @@ class box_propales extends ModeleBoxes
         	}
 
         	if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedProposals"));
+
+			$db->free($result);
         }
         else
         {

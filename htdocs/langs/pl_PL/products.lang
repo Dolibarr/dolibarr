@@ -1,16 +1,6 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Produkt ref.
+ProductLabel=Etykieta produktu
 ProductServiceCard=Produkty / Usługi karty
 Products=Produkty
 Services=Usługi
@@ -23,6 +13,8 @@ NewProduct=Nowy produkt
 NewService=Nowa usługa
 ProductCode=Kod produktu
 ServiceCode=Kod usługi
+ProductAccountancyBuyCode=Kod Rachunkowości (kupić)
+ProductAccountancySellCode=Kod Rachunkowości (sprzedaż)
 ProductOrService=Produkt lub usługa
 ProductsAndServices=Produkty i usługi
 ProductsOrServices=Produkty i Usługi
@@ -36,6 +28,7 @@ ServicesOnSell=Usługi na sprzedaż
 ServicesNotOnSell=Usługi na sprzedaż
 InternalRef=Internal reference
 LastRecorded=Ostatnie produkty / usługi na sprzedaż rejestrowana
+LastRecordedProductsAndServices=Ostatnia %s rejestrowane produkty / usługi
 LastModifiedProductsAndServices=Ostatnia %s zmodyfikowane produkty / usługi
 LastRecordedProducts=Ostatnia %s produkty zarejestrowane
 LastRecordedServices=Ostatnia %s zarejestrowanych usług
@@ -51,18 +44,29 @@ Stock=Zasób
 Stocks=Zapasy
 Movement=Ruch
 Movements=Ruchy
+Sell=Sprzedaży
+Buy=Zakupy
 OnSell=Na sprzedaż
+OnBuy=Zakupionych
 NotOnSell=Spośród Sprzedam
 ProductStatusOnSell=Na sprzedaż
 ProductStatusNotOnSell=Spośród sprzedaży
 ProductStatusOnSellShort=Na sprzedaż
 ProductStatusNotOnSellShort=Spośród sprzedaży
+ProductStatusOnBuy=Dostępny
+ProductStatusNotOnBuy=Przestarzały
+ProductStatusOnBuyShort=Dostępny
+ProductStatusNotOnBuyShort=Przestarzały
 UpdatePrice=Aktualizacja ceny
 AppliedPricesFrom=Stosowane ceny od
 SellingPrice=Cena sprzedaży
+SellingPriceHT=Cena sprzedaży (bez podatku)
+SellingPriceTTC=Cena sprzedaży (w tym podatkowych)
 PublicPrice=Publicznego cena
 CurrentPrice=Aktualna cena
 NewPrice=Nowe ceny
+MinPrice=Półnuta. cena sprzedaży
+CantBeLessThanMinPrice=Cena sprzedaży nie może być niższy niż minimalny dozwolony dla tego produktu ( %s bez podatku)
 ContractStatus=Kontrakt statusu
 ContractStatusClosed=Zamknięte
 ContractStatusRunning=Uruchamianie
@@ -72,6 +76,7 @@ ContractStatusToRun=A mettre en service
 ContractNotRunning=Niniejsza umowa nie jest uruchomiony
 ErrorProductAlreadyExists=Produkt z odniesieniem %s już istnieje.
 ErrorProductBadRefOrLabel=Błędna wartość odniesienia lub etykietę.
+# ErrorProductClone=There was a problem while trying to clone the product or service.
 Suppliers=Dostawcy
 SupplierRef=Dostawca ref.
 ShowProduct=Pokaż produkt
@@ -86,14 +91,12 @@ AddToOtherBills=Dodaj inne rachunki
 CorrectStock=Poprawny stanie
 AddPhoto=Dodaj zdjęcia
 ListOfStockMovements=Wykaz stanu magazynowego
-NoPhotoYet=Żadne zdjęcia dostępne jeszcze
 BuyingPrice=Kupowanie cena
 SupplierCard=Dostawca karty
 CommercialCard=Commercial karty
 AllWays=Ścieżka znaleźć swój produkt w stanie
 NoCat=Twój produkt nie jest w każdej kategorii
 PrimaryWay=Pierwotne ścieżki
-DeleteFromCat=Usuń z kategorii
 PriceRemoved=Cena usunięte
 BarCode=Kody kreskowe
 BarcodeType=Kod kreskowy typu
@@ -108,6 +111,9 @@ MultiPriceLevelsName=Cena kategorii
 AssociatedProductsAbility=Włącz podobne produkty
 AssociatedProducts=Powiązane produkty
 AssociatedProductsNumber=Liczba produktów pochodnych
+ParentProductsNumber=Ilość produktu nadrzędnego
+# IfZeroItIsNotAVirtualProduct=If 0, this product is not a virtual product
+# IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any virtual product
 EditAssociate=Associate
 Translation=Tłumaczenie
 KeywordFilter=Słowo filtr
@@ -117,6 +123,7 @@ AddDel=Dodaj / Usuń
 Quantity=Ilość
 NoMatchFound=Nie znaleziono odpowiednika
 ProductAssociationList=Lista powiązanych produktów / usług: nazwa produktu / usługi (ilość naruszone)
+ProductParentList=Lista produktów / usług z tego produktu jako składnika
 ErrorAssociationIsFatherOfThis=Jednym z wybranego produktu jest rodzicem bieżącego produktu
 DeleteProduct=Usuwanie produktu / usługi
 ConfirmDeleteProduct=Czy na pewno chcesz usunąć ten produkt / usługa?
@@ -124,6 +131,9 @@ ProductDeleted=Produktu / usługi " %s" usunięty z bazy danych.
 DeletePicture=Usuń obraz
 ConfirmDeletePicture=Czy na pewno chcesz usunąć to zdjęcie?
 ExportDataset_produit_1=Produkty i usługi
+ExportDataset_service_1=Usługi
+ImportDataset_produit_1=Produkty
+ImportDataset_service_1=Usługi
 DeleteProductLine=Usuń linię produktów
 ConfirmDeleteProductLine=Czy na pewno chcesz usunąć tę linię produktów?
 NoProductMatching=Nr produktu / usługi spełniają Twoje kryteria
@@ -132,72 +142,65 @@ NoStockForThisProduct=Nie stanie dla tego produktu
 NoStock=Brak zapasów
 Restock=Zapasów
 ProductSpecial=Specjalne
-QtyMin=Ilość minimalna
+# QtyMin=Minimum Qty
 PriceQty=Cena za tę ilość
-PriceQtyMin=Cena ilości min.
+# PriceQtyMin=Price for this min. qty (w/o discount)
+# VATRateForSupplierProduct=VAT Rate (for this supplier/product)
+# DiscountQtyMin=Default discount for qty
 NoPriceDefinedForThisSupplier=Cena / qty określone dla tego dostawcy / produktu
 NoSupplierPriceDefinedForThisProduct=Nr dostawcy cena / qty określonych dla tego produktu
 RecordedProducts=Produkty zarejestrowane
+# RecordedServices=Services recorded
 RecordedProductsAndServices=Produkty / usługi zapisane
 GenerateThumb=Wygeneruj kciuka
 ProductCanvasAbility=Użyj specjalnych "płótnie" addons
 ServiceNb=Service # %s
+ListProductServiceByPopularity=Wykaz produktów / usług przez popularność
 ListProductByPopularity=Lista produktów / usług przez popularność
+ListServiceByPopularity=Wykaz usług według popularności
 Finished=Producent produktu
 RowMaterial=Pierwsze materiały
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ProductRef=Produkt ref.
-ProductLabel=Etykieta produktu
-MinPrice=Półnuta. cena sprzedaży
-CantBeLessThanMinPrice=Cena sprzedaży nie może być niższy niż minimalny dozwolony dla tego produktu ( %s bez podatku)
-ExportDataset_service_1=Usługi
 CloneProduct=Clone produktu lub usługi
 ConfirmCloneProduct=Czy na pewno chcesz klon produktu lub <b>usługi %s?</b>
 CloneContentProduct=Clone informacje o wszystkich głównych produktów / usług
 ClonePricesProduct=Clone główne informacje i ceny
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-// Reference language: en_US
-LastRecordedProductsAndServices=Ostatnia %s rejestrowane produkty / usługi
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-ProductAccountancyBuyCode=Kod Rachunkowości (kupić)
-ProductAccountancySellCode=Kod Rachunkowości (sprzedaż)
-Sell=Sprzedaży
-Buy=Zakupy
-OnBuy=Zakupionych
-ProductStatusOnBuy=Dostępny
-ProductStatusNotOnBuy=Przestarzały
-ProductStatusOnBuyShort=Dostępny
-ProductStatusNotOnBuyShort=Przestarzały
-SellingPriceHT=Cena sprzedaży (bez podatku)
-SellingPriceTTC=Cena sprzedaży (w tym podatkowych)
-ListProductServiceByPopularity=Wykaz produktów / usług przez popularność
-ListServiceByPopularity=Wykaz usług według popularności
+# CloneCompositionProduct=Clone product/service composition
 ProductIsUsed=Ten produkt jest używany
 NewRefForClone=Ref. nowych produktów / usług
 CustomerPrices=Klientów cenami
 SuppliersPrices=Dostawcy cen
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:23).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-ParentProductsNumber=Ilość produktu nadrzędnego
-ProductParentList=Lista produktów / usług z tego produktu jako składnika
-ImportDataset_produit_1=Produkty
-ImportDataset_service_1=Usługi
 CustomCode=Kodeks Celny
 CountryOrigin=Kraj pochodzenia
 HiddenIntoCombo=Ukryty na listach wyboru
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:00).
+Nature=Natura
+# ProductCodeModel=Product code template
+# ServiceCodeModel=Service code template
+# AddThisProductCard=Create product card
+# HelpAddThisProductCard=This option allows you to create or clone a product if it does not exist.
+# AddThisServiceCard=Create service card
+# HelpAddThisServiceCard=This option allows you to create or clone a service if it does not exist.
+# CurrentProductPrice=Current price
+# AlwaysUseNewPrice=Always use current price of product/service
+# AlwaysUseFixedPrice=Use the fixed price
+# PriceByQuantity=Price by quantity
+# PriceByQuantityRange=Quantity range
+# ProductsDashboard=Products/Services summary
+# UpdateOriginalProductLabel=Modify original label
+# HelpUpdateOriginalProductLabel=Allows to edit the name of the product
+### composition fabrication
+# Building=Production and items dispatchment
+# Build=Produce
+# BuildIt=Produce & Dispatch
+# BuildindListInfo=Available quantity for production per warehouse (set it to 0 for no further action)
+QtyNeed=Ilosc
+# UnitPmp=Net unit VWAP
+# CostPmpHT=Net total VWAP
+# ProductUsedForBuild=Auto consumed by production
+# ProductBuilded=Production completed
+# ProductsMultiPrice=Product multi-price
+# ProductSellByQuarterHT=Products turnover quarterly VWAP
+# ServiceSellByQuarterHT=Services turnover quarterly VWAP
+# Quarter1=1st. Quarter
+# Quarter2=2nd. Quarter
+# Quarter3=3rd. Quarter
+# Quarter4=4th. Quarter

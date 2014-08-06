@@ -96,7 +96,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 	<td><?php echo $langs->trans("EMail"); ?></td>
 	<td><?php echo $this->control->tpl['email']; ?></td>
 	<?php if ($this->control->tpl['nb_emailing']) { ?>
-	<td nowrap><?php echo $langs->trans("NbOfEMailingsReceived"); ?></td>
+	<td class="nowrap"><?php echo $langs->trans("NbOfEMailingsReceived"); ?></td>
 	<td><?php echo $this->control->tpl['nb_emailing']; ?></td>
 	<?php } else { ?>
 	<td colspan="2">&nbsp;</td>

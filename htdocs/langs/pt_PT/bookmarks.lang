@@ -1,10 +1,8 @@
-# Dolibarr language file - pt_PT - marque pages 
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=Adicionar esta página aos Favoritos
-
 Bookmark=Favorito
 Bookmarks=Favoritos
-NewBookmark=Nova Favorito
+NewBookmark=Novo Favorito
 ShowBookmark=Mostrar Favoritos
 OpenANewWindow=Abrir uma Nova Janela
 ReplaceWindow=Substituir a janela actual

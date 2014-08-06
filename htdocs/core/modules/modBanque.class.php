@@ -160,6 +160,34 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' AND ba.entity = '.$conf->entity;
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
+		
+		$r++;
+		$this->export_code[$r]=$this->rights_class.'_'.$r;
+		$this->export_label[$r]='Bordereaux remise Chq/Fact';
+		$this->export_permission[$r]=array(array("banque","export"));
+		$this->export_fields_array[$r]=array("bch.number"=>"Numero","bch.ref_ext"=>"RefExt",'ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.num_chq'=>'ChequeOrTransferNumber','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation",
+			"bch.date_bordereau"=>"Date","bch.amount"=>"Total","bch.nbcheque"=>"NbCheque","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","f.facnumber"=>"InvoiceRef"
+			);
+		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.num_chq'=>'Text','b.amount'=>'Number','b.num_releve'=>'Text','b.datec'=>"Date",
+			"bch.date_bordereau"=>"Date","bch.number"=>"Number","bch.ref_ext"=>"Text","bch.amount"=>"Number","bch.nbcheque"=>"NumBer","bu.url_id"=>"Text","s.nom"=>"Text","f.facnumber"=>"Text"
+			);
+		$this->export_entities_array[$r]=array('ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.num_chq'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account",
+			"bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company","f.facnumber"=>"invoice");
+		$this->export_special_array[$r]=array('b.amount'=>'NULLIFNEG');
+
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'bordereau_cheque as bch, '.MAIN_DB_PREFIX.'bank_account as ba, '.MAIN_DB_PREFIX.'bank as b)';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX."bank_url as bu ON (bu.fk_bank = b.rowid AND bu.type = 'company')";
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON b.rowid = p.fk_bank';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON p.rowid = pf.fk_paiement';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f ON f.rowid = pf.fk_facture';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON f.fk_soc = s.rowid';
+		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account AND bch.rowid = b.fk_bordereau and bch.fk_bank_account=ba.rowid';
+		$this->export_sql_end[$r] .=' AND b.fk_type = "CHQ"';
+		$this->export_sql_end[$r] .=' AND p.fk_paiement = 7';
+		$this->export_sql_end[$r] .=' AND ba.entity = '.$conf->entity;
+		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
+
 	}
 
 

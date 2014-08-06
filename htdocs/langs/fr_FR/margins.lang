@@ -1,5 +1,4 @@
-# Dolibarr language file - fr_FR - margins
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marges
 
 Margin=Marge
 Margins=Marges
@@ -43,8 +42,8 @@ MargeBrute=Marge brute
 MargeNette=Marge nette
 MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge nette : Prix de vente HT - Coût de revient
 
-BuyingPrice=Prix ​​d'achat
 CostPrice=Prix de revient
+BuyingCost=Coût de revient
 UnitCharges=Charge unitaire
 Charges=Charges
 

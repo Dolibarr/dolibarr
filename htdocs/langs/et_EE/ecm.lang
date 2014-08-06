@@ -1,61 +1,55 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=Dokumendid
 DocsMine=Minu dokumendid
 DocsGenerated=Loodud dokumendid
-DocsElements=Elemendid dokumendid
-DocsThirdParties=Dokumendid kolmandatele osapooltele
-DocsContracts=Dokumendid lepingud
-DocsProposals=Dokumendid ettepanekuid
-DocsOrders=Dokumendid korraldused
-DocsInvoices=Dokumendid arved
-ECMNbOfDocs=Nb dokumentide kataloog
-ECMNbOfDocsSmall=Nb ja doc.
-ECMSection=Kataloog
-ECMSectionManual=Käsitsi kataloog
-ECMSectionAuto=Automaatne kataloog
-ECMSectionsManual=Käsitsi puu
-ECMSectionsAuto=Automaatne puu
-ECMSections=Kataloogid
+DocsElements=Elementide dokumendid
+DocsThirdParties=Kolmandate isikute dokumendid
+DocsContracts=Lepingute dokumendid
+DocsProposals=Pakkumiste dokumendid
+DocsOrders=Tellimuste dokumendid
+DocsInvoices=Arvete dokumendid
+ECMNbOfDocs=Dokumente kaustas
+ECMNbOfDocsSmall=Dokumente
+ECMSection=Kaust
+ECMSectionManual=Kaust käsitsi
+ECMSectionAuto=Kaust automaatselt
+ECMSectionsManual=Puu käsitsi
+ECMSectionsAuto=Puu automaatselt
+ECMSections=Kaustad
 ECMRoot=Juur
-ECMNewSection=Uus kataloog
-ECMAddSection=Lisa kataloog
-ECMNewDocument=Uue dokumendi
+ECMNewSection=Uus kaust
+ECMAddSection=Lisa kaust
+ECMNewDocument=Uus dokument
 ECMCreationDate=Loomiskuupäev
-ECMNbOfFilesInDir=Failide arv kataloog
-ECMNbOfSubDir=Mitmeid sub-directories
-ECMNbOfFilesInSubDir=Nunber of Iles Sahara-kataloogid
+ECMNbOfFilesInDir=Faile kaustas
+ECMNbOfSubDir=Alakaustasid
+ECMNbOfFilesInSubDir=Faile alamkaustades
 ECMCreationUser=Looja
-ECMArea=ECM ala
-ECMAreaDesc=ECM (Electronic Content Management) valdkonnas võimaldab salvestada, jagada ja otsida kiiresti igasugu dokumentide Dolibarr.
-ECMAreaDesc2=* Automaatne kataloogid täidetakse automaatselt kui lisad dokumente kaart element. <br> * Käsitsi katalooge saab salvestada dokumente ei ole seotud konkreetse element.
-ECMSectionWasRemoved=Directory <b>%s</b> on kustutatud.
-ECMDocumentsSection=Dokumendi kataloog
+ECMArea=Dokumendihalduse ala
+ECMAreaDesc=Dokumendihalduse (EDM e Electronic Document Management) ala võimaldab Dolibarri dokumente kiiresti salvestada, jagada ja otsida.
+ECMAreaDesc2=* Kaustad täidetakse automaatselt dokumentide lisamisel elemendi kaardilt.<br> * Käsitsi kaustasid saab kasutada ühegi elemendita sidumata dokumentide salvestamiseks.
+ECMSectionWasRemoved=Kaust <b>%s</b> on kustutatud.
+ECMDocumentsSection=Dokument kaustas
 ECMSearchByKeywords=Otsi märksõnade järgi
-ECMSearchByEntity=Otsida objekti
-ECMSectionOfDocuments=Kataloogid dokumentide
-ECMTypeManual=Käsiraamat
+ECMSearchByEntity=Otsi objekti järgi
+ECMSectionOfDocuments=Dokumentide kaustad
+ECMTypeManual=Käsitsi
 ECMTypeAuto=Automaatne
-ECMDocsByThirdParties=Dokumendid, mis on seotud kolmandate isikute
-ECMDocsByProposals=Dokumendid seotud ettepanekute
-ECMDocsByOrders=Dokumendid, mis on seotud klientide tellimusi
-ECMDocsByContracts=Dokumendid, mis on seotud lepingute
-ECMDocsByInvoices=Dokumendid, mis on seotud klientide arved
-ECMDocsByProducts=Dokumendid seotud tooted
-ECMNoDirectoryYet=Ei kataloog loodud
-ShowECMSection=Näita kataloog
-DeleteSection=Eemalda kataloog
-ConfirmDeleteSection=Kas võite kinnitada, et soovid kustutada kataloog <b>%s?</b>
-ECMDirectoryForFiles=Suhteline kataloogi faile
-CannotRemoveDirectoryContainsFiles=Eemaldada ei ole võimalik, sest see sisaldab mõningaid faile
+ECMDocsBySocialContributions=Sotsiaalmaksudega seotud dokumendid
+ECMDocsByThirdParties=Kolmandate isikutega seotud dokumendid
+ECMDocsByProposals=Pakkumistega seotud dokumendid
+ECMDocsByOrders=Müügitellimustega seotud dokumendid
+ECMDocsByContracts=Lepingutega seotud dokumendid
+ECMDocsByInvoices=Müügiarvetega seotud dokumendid
+ECMDocsByProducts=Toodetega seotud dokumendid
+ECMDocsByProjects=Projektidega seotud dokumendid
+ECMNoDirectoryYet=Ühtki kausta pole loodud
+ShowECMSection=Näita kausta
+DeleteSection=Eemalda kaust
+ConfirmDeleteSection=Kas oled täiesti kindel, et soovid kustutada kausta <b>%s</b>?
+ECMDirectoryForFiles=Suhteline kaust failidele
+CannotRemoveDirectoryContainsFiles=Kustutada pole võimalik, kuna sisaldab faile
 ECMFileManager=Failihaldur
-ECMSelectASection=Vali kataloog vasakul puu ...
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:19:57).
+ECMSelectASection=Vali vasakul asuvas puus kaust...
+DirNotSynchronizedSyncFirst=See kaust paistab olevat loodud või muudetud väljaspool dokumendihalduse moodulit. Pead esmalt klõpsama "Värskenda" nupul ketta ja andmebaasi sünkroniseerimiseks, et selle kausta sisu vaadata.
+

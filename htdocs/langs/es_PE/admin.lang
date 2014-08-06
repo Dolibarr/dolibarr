@@ -1,5 +1,4 @@
 # Dolibarr language file - es_PU - admin 
-CHARSET=UTF-8
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV

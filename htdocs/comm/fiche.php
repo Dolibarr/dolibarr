@@ -1,11 +1,12 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2012 Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2013      Alexandre Spangaro          <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -128,6 +129,14 @@ if ($action == 'cstc')
 	if ($result < 0) setEventMessage($object->error,'errors');
 }
 
+// Update communication level
+if ($action == 'setOutstandingBill')
+{
+	$object->fetch($id);
+	$object->outstanding_limit=GETPOST('OutstandingBill');
+	$result=$object->set_OutstandingBill($user);
+	if ($result < 0) setEventMessage($object->error,'errors');
+}
 
 
 /*
@@ -188,13 +197,12 @@ if ($id > 0)
 
 
 	print '<div class="fichecenter"><div class="fichehalfleft">';
-	//print '<table width="100%" class="notopnoleftnoright">';
-	//print '<tr><td valign="top" class="notopnoleft">';
+
 
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="30%">'.$langs->trans("ThirdPartyName").'</td><td width="70%" colspan="3">';
-	$object->next_prev_filter="te.client in (1,3)";
+	$object->next_prev_filter="te.client in (1,2,3)";
 	print $form->showrefnav($object,'socid','',($user->societe_id?0:1),'rowid','nom','','');
 	print '</td></tr>';
 
@@ -242,9 +250,12 @@ if ($id > 0)
 
 	// Country
 	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">';
-	$img=picto_from_langcode($object->country_code);
-	if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
-	else print ($img?$img.' ':'').$object->country;
+	if (! empty($object->country_code))
+	{
+		$img=picto_from_langcode($object->country_code);
+		if ($object->isInEEC()) print $form->textwithpicto(($img?$img.' ':'').$object->country,$langs->trans("CountryIsInEEC"),1,0);
+		else print ($img?$img.' ':'').$object->country;
+	}
 	print '</td></tr>';
 
 	// EMail
@@ -254,10 +265,16 @@ if ($id > 0)
 	print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">'.dol_print_url($object->url,'_blank').'</td></tr>';
 
 	// Phone
-	print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->tel,$object->country_code,0,$object->id,'AC_TEL').'</td>';
+	print '<tr><td>'.$langs->trans('Phone').'</td><td style="min-width: 25%;">'.dol_print_phone($object->phone,$object->country_code,0,$object->id,'AC_TEL').'</td>';
 
 	// Fax
 	print '<td>'.$langs->trans('Fax').'</td><td style="min-width: 25%;">'.dol_print_phone($object->fax,$object->country_code,0,$object->id,'AC_FAX').'</td></tr>';
+
+  // Skype
+  if (! empty($conf->skype->enabled))
+  {
+	   print '<td>'.$langs->trans('Skype').'</td><td colspan="3">'.dol_print_skype($object->skype,0,$object->id,'AC_SKYPE').'</td></tr>';
+  }
 
 	// Assujeti a TVA ou pas
 	print '<tr>';
@@ -293,13 +310,12 @@ if ($id > 0)
 	}
 
 	// TVA Intra
-	print '<tr><td nowrap>'.$langs->trans('VATIntra').'</td><td colspan="3">';
+	print '<tr><td class="nowrap">'.$langs->trans('VATIntra').'</td><td colspan="3">';
 	print $object->tva_intra;
 	print '</td></tr>';
 
 	// Conditions de reglement par defaut
 	$langs->load('bills');
-	$form = new Form($db);
 	print '<tr><td>';
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('PaymentConditions');
@@ -309,18 +325,18 @@ if ($id > 0)
 	print '</td><td colspan="3">';
 	if ($action == 'editconditions')
 	{
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement,'cond_reglement_id',-1,1);
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_id,'cond_reglement_id',-1,1);
 	}
 	else
 	{
-		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement,'none');
+		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->cond_reglement_id,'none');
 	}
 	print "</td>";
 	print '</tr>';
 
 	// Mode de reglement par defaut
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '<td>';
 	if (($action != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
@@ -328,18 +344,18 @@ if ($id > 0)
 	print '</td><td colspan="3">';
 	if ($action == 'editmode')
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement,'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'mode_reglement_id');
 	}
 	else
 	{
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement,'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print "</td>";
 	print '</tr>';
 
 	// Relative discounts (Discounts-Drawbacks-Rebates)
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans("CustomerRelativeDiscountShort");
 	print '<td><td align="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
@@ -347,13 +363,13 @@ if ($id > 0)
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
-	print '</td><td colspan="3">'.($object->remise_client?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_client.'%</a>':$langs->trans("DiscountNone")).'</td>';
+	print '</td><td colspan="3">'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':$langs->trans("DiscountNone")).'</td>';
 	print '</tr>';
 
 	// Absolute discounts (Discounts-Drawbacks-Rebates)
-	print '<tr><td nowrap>';
+	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding">';
-	print '<tr><td nowrap>';
+	print '<tr><td class="nowrap">';
 	print $langs->trans("CustomerAbsoluteDiscountShort");
 	print '<td><td align="right">';
 	if ($user->rights->societe->creer && !$user->societe_id > 0)
@@ -365,16 +381,28 @@ if ($id > 0)
 	print '<td colspan="3">';
 	$amount_discount=$object->getAvailableDiscounts();
 	if ($amount_discount < 0) dol_print_error($db,$object->error);
-	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount).'</a>&nbsp;'.$langs->trans("Currency".$conf->currency);
+	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount,1,$langs,1,-1,-1,$conf->currency).'</a>';
 	else print $langs->trans("DiscountNone");
 	print '</td>';
 	print '</tr>';
 
+	if ($object->client)
+	{
+		print '<tr>';
+		print '<td>';
+		print $form->editfieldkey("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer);
+		print '</td><td colspan="3">';
+		print $form->editfieldval("OutstandingBill",'OutstandingBill',$object->outstanding_limit,$object,$user->rights->societe->creer,'amount',($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		print '</td>';
+		print '</tr>';
+	}
+
+
 	// Multiprice level
 	if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans("PriceLevel");
 		print '<td><td align="right">';
 		if ($user->rights->societe->creer)
@@ -389,8 +417,8 @@ if ($id > 0)
 	// Level of prospect
 	if ($object->client == 2 || $object->client == 3)
 	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+		print '<tr><td class="nowrap">';
+		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
 		print '<td>';
 		if ($action != 'editlevel' && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'),1).'</a></td>';
@@ -433,7 +461,7 @@ if ($id > 0)
         }
         else
         {
-            print $langs->trans("UserNotLinkedToMember");
+            print $langs->trans("ThirdpartyNotLinkedToMember");
         }
         print '</td>';
         print "</tr>\n";
@@ -443,8 +471,6 @@ if ($id > 0)
 
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	//print "</td>\n";
-	//print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
 
 	// Nbre max d'elements des petites listes
@@ -626,7 +652,7 @@ if ($id > 0)
 
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				$contrat->id=$objp->id;
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
@@ -748,7 +774,7 @@ if ($id > 0)
 			{
 				$objp = $db->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 				$facturestatic->id=$objp->facid;
 				$facturestatic->ref=$objp->facnumber;
@@ -781,8 +807,6 @@ if ($id > 0)
 
 	print '</div></div></div>';
 	print '<div style="clear:both"></div>';
-	//print "</td></tr>";
-	//print "</table>";
 
 	dol_fiche_end();
 

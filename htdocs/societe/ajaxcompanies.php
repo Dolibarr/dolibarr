@@ -66,7 +66,7 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 	{
         $sql.=" AND (";
         // Add criteria on name/code
-        if (! empty($conf->global->SOCIETE_DONOTSEARCH_ANYWHERE))   // Can use index
+        if (! empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))   // Can use index
         {
             $sql.="nom LIKE '" . $db->escape($socid) . "%'";
             $sql.=" OR code_client LIKE '" . $db->escape($socid) . "%'";

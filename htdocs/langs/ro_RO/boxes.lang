@@ -1,146 +1,91 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=Rss informaţii
 BoxLastProducts=Ultimele produse / servicii
+BoxProductsAlertStock=Alertă produse în stoc
 BoxLastProductsInContract=Ultima contractate de produse / servicii
 BoxLastSupplierBills=Ultima furnizorului facturi
 BoxLastCustomerBills=Ultimul client a facturilor
+BoxOldestUnpaidCustomerBills=Primele facturi neachitate clientului
+BoxOldestUnpaidSupplierBills=Primele facturi neachitate furnizorului
 BoxLastProposals=Ultima comerciale propuneri
 BoxLastProspects=Ultima perspectivele
 BoxLastCustomers=Ultima clienţi
-BoxLastCustomerOrders=Ultima client ordinelor
 BoxLastSuppliers=Ultima furnizori
+BoxLastCustomerOrders=Ultima client ordinelor
 BoxLastBooks=Ultimele cărţi
 BoxLastActions=Ultima acţiuni
+BoxLastContracts=Ultimele contracte
+BoxLastContacts=Ultimele date de contact / adresele
+BoxLastMembers=Ultimele membri
+BoxFicheInter=Ultimele intervenţii
 BoxCurrentAccounts=Conturile curente echilibru
 BoxSalesTurnover=Vanzari cifra de afaceri
+BoxTotalUnpaidCustomerBills=Total facturi neachitate clientului
+BoxTotalUnpaidSuppliersBills=Total facturi neachitate furnizorului
 BoxTitleLastBooks=Ultima %s înregistrate cărţi
 BoxTitleNbOfCustomers=Nombre de client
 BoxTitleLastRssInfos=Ultimele noutăţi de la %s %s
 BoxTitleLastProducts=Ultima %s modificate produse / servicii
+BoxTitleProductsAlertStock=Alertă produse în stoc
 BoxTitleLastCustomerOrders=Ultima modificare %s client ordinelor
 BoxTitleLastSuppliers=Ultima %s înregistrate de furnizori
 BoxTitleLastCustomers=Ultima %s înregistrate de clienţi
+BoxTitleLastModifiedSuppliers=%s Ultima modificare furnizori
+BoxTitleLastModifiedCustomers=%s Ultima modificare clienţii
 BoxTitleLastCustomersOrProspects=Ultima %s înregistrate de clienţi sau de perspectivele
 BoxTitleLastPropals=Ultima %s înregistrate propuneri
 BoxTitleLastCustomerBills=Ultima %s clientului facturi
 BoxTitleLastSupplierBills=Ultima %s furnizorului facturi
 BoxTitleLastProspects=Ultima %s înregistrate perspectivele
+BoxTitleLastModifiedProspects=%s Ultima modificare perspective
+BoxTitleLastProductsInContract=Ultima %s produse / servicii intr-un contract
+BoxTitleLastModifiedMembers=%s Ultimele membri modificate
+BoxTitleLastFicheInter=Ultimele %s intervenţii modificate
+BoxTitleOldestUnpaidCustomerBills=Cele mai vechi %s neachitate clientului facturi
+BoxTitleOldestUnpaidSupplierBills=Cele mai vechi %s neachitate furnizorului, facturi
 BoxTitleCurrentAccounts=Contul curent al soldurilor
 BoxTitleSalesTurnover=Vanzari cifra de afaceri
+BoxTitleTotalUnpaidCustomerBills=Neachitate clientului facturi
+BoxTitleTotalUnpaidSuppliersBills=Furnizorului, facturi neachitate
+BoxTitleLastModifiedContacts=%s Ultima modificare contacte / adrese
 BoxMyLastBookmarks=Ultima mea %s marcaje
-FailedToRefreshDataInfoNotUpToDate=Nu a reuşit să reîmprospătaţi flux RSS. Ultima reuşită a reîmprospăta data: %s
-NoRecordedBookmarks=No bookmarks defined. Click <a href=Nu marcaje definite. Faceţi clic <a href="%s">aici</a> pentru a adăuga marcaje.
-NoRecordedCustomers=Nu înregistrate de clienţi
+BoxOldestExpiredServices=Cele mai vechi active de servicii a expirat
+BoxLastExpiredServices=Ultimele %s mai vechi contacte cu serviciile de active expirate
 BoxTitleLastActionsToDo=Ultima %s acţiunile de a face
+BoxTitleLastContracts=Ultimele contracte %s
+BoxTitleLastModifiedDonations=%s Ultima modificare donaţii
+BoxTitleLastModifiedExpenses=%s Ultima modificare cheltuieli
+BoxGlobalActivity=Activitate globală ( facturi, oferte, comenzi)
+FailedToRefreshDataInfoNotUpToDate=Nu a reuşit să reîmprospătaţi flux RSS. Ultima reuşită a reîmprospăta data: %s
+LastRefreshDate=Ultima data de reîmprospătare
+NoRecordedBookmarks=No bookmarks defined. Click <a href=Nu marcaje definite. Faceţi clic <a href="%s">aici</a> pentru a adăuga marcaje.
+ClickToAdd=Click aici pentru a adăuga.
+NoRecordedCustomers=Nu înregistrate de clienţi
+NoRecordedContacts=Nu sunt înregistrate date de contact
 NoActionsToDo=Nr actiuni pentru a face
 NoRecordedOrders=Nu înregistrate clientului ordinelor
 NoRecordedProposals=Nu înregistrate propuneri
 NoRecordedInvoices=Nu înregistrate clientului facturi
+NoUnpaidCustomerBills=Nu neachitate clientului facturi
 NoRecordedSupplierInvoices=Nu înregistrate furnizorului facturi
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-LastRefreshDate=Ultima data de reîmprospătare
+NoUnpaidSupplierBills=Nu facturi neachitate furnizorului
+NoModifiedSupplierBills=Nici un furnizor nu a înregistrat facturile
 NoRecordedProducts=Nu înregistrate produse / servicii
 NoRecordedProspects=Nu înregistrate perspectivele
 NoContractedProducts=Nu produse / servicii contractate
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-// Reference language: en_US
-BoxOldestUnpaidCustomerBills=Primele facturi neachitate clientului
-BoxOldestUnpaidSupplierBills=Primele facturi neachitate furnizorului
-BoxTotalUnpaidCustomerBills=Total facturi neachitate clientului
-BoxTotalUnpaidSuppliersBills=Total facturi neachitate furnizorului
-BoxTitleOldestUnpaidCustomerBills=Cele mai vechi %s neachitate clientului facturi
-BoxTitleOldestUnpaidSupplierBills=Cele mai vechi %s neachitate furnizorului, facturi
-BoxTitleTotalUnpaidCustomerBills=Neachitate clientului facturi
-BoxTitleTotalUnpaidSuppliersBills=Furnizorului, facturi neachitate
-NoUnpaidCustomerBills=Nu neachitate clientului facturi
-NoUnpaidSupplierBills=Nu facturi neachitate furnizorului
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:22:33).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-BoxLastContracts=Ultimele contracte
-BoxTitleLastProductsInContract=Ultima %s produse / servicii intr-un contract
-BoxTitleLastContracts=Ultimele contracte %s
-NoModifiedSupplierBills=Nici un furnizor nu a înregistrat facturile
 NoRecordedContracts=Nr contracte înregistrate
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:39:15).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:08:18).
-// Reference language: en_US
-BoxLastContracts=Siste kontrakter
-LastRefreshDate=Siste oppdatering dato
-BoxTitleLastContracts=Siste %s kontrakter
-NoModifiedSupplierBills=Ingen registrert leverandørens faktura
-NoRecordedProducts=Ingen registrert produkter / tjenester
-NoRecordedProspects=Ingen registrert utsikter
-NoContractedProducts=Ingen produkter / tjenester innleide
-NoRecordedContracts=Ingen registrert kontrakter
-BoxLastContracts=Laatste contracten
-BoxTitleLastContracts=Laatste %s contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxOldestUnpaidCustomerBills=Oudste onbetaalde facturen klant
-BoxOldestUnpaidSupplierBills=Oudste onbetaalde facturen van de leverancier
-BoxLastContracts=Laatste contracten
-BoxTotalUnpaidCustomerBills=Totaal aantal onbetaalde facturen klant
-BoxTotalUnpaidSuppliersBills=Totaal aantal onbetaalde facturen van de leverancier
-BoxTitleOldestUnpaidCustomerBills=Oudste %s onbetaalde facturen klant
-BoxTitleOldestUnpaidSupplierBills=Oudste %s onbetaalde facturen van de leverancier
-BoxTitleTotalUnpaidCustomerBills=Onbetaalde facturen klant
-BoxTitleTotalUnpaidSuppliersBills=Onbetaalde facturen van de leverancier
-BoxTitleLastContracts=Laatste %s contracten
-NoModifiedSupplierBills=Geen geregistreerd leverancier facturen
-NoRecordedContracts=Geen geregistreerde overeenkomsten
-BoxLastContracts=Ostatnie zamówienia
-BoxTitleLastProductsInContract=Ostatnie %s produktów / usług w umowie
-BoxTitleLastContracts=Ostatnie %s umów
-NoModifiedSupplierBills=Nie zarejestrowane faktury dostawcy
-NoRecordedContracts=Umów nie zarejestrowanych
-BoxLastContracts=Última contratos
-BoxTitleLastContracts=Última contratos %s
-NoModifiedSupplierBills=Nenhum fornecedor facturas registadas na
-NoRecordedContracts=Sem contratos registrados
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:08:24).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ro_RO
-BoxTitleLastModifiedSuppliers=%s Ultima modificare furnizori
-BoxTitleLastModifiedCustomers=%s Ultima modificare clienţii
-BoxTitleLastModifiedProspects=%s Ultima modificare perspective
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:56:39).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-BoxLastContacts=Ultimele date de contact / adresele
-BoxLastMembers=Ultimele membri
-BoxTitleLastModifiedMembers=%s Ultimele membri modificate
-BoxTitleLastModifiedContacts=%s Ultima modificare contacte / adrese
-BoxOldestExpiredServices=Cele mai vechi active de servicii a expirat
-BoxLastExpiredServices=Ultimele %s mai vechi contacte cu serviciile de active expirate
-BoxTitleLastModifiedDonations=%s Ultima modificare donaţii
-BoxTitleLastModifiedExpenses=%s Ultima modificare cheltuieli
-ClickToAdd=Click aici pentru a adăuga.
-NoRecordedContacts=Nu sunt înregistrate date de contact
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:33).
+NoRecordedInterventions=Nici o intervenție înregistrată
+BoxLatestSupplierOrders=Ultimele comenzi furnizori
+BoxTitleLatestSupplierOrders=Ultimele %s comenzi furnizori
+NoSupplierOrder=Nicio comandă furnizor inregistrată
+BoxCustomersInvoicesPerMonth=Facturi Clienţi pe lună
+BoxSuppliersInvoicesPerMonth=Facturi Furnizori pe lună
+BoxCustomersOrdersPerMonth=Comenzi clienţi pe lună
+BoxSuppliersOrdersPerMonth=Comenzi furnizori pe lună
+BoxProposalsPerMonth=Propuneri pe lună
+NoTooLowStockProducts=Niciun produs sub limita minima de stoc
+BoxProductDistribution=Distribuţie Produse / Servicii
+BoxProductDistributionFor=Distribuţie de %s  pentru%s
+ForCustomersInvoices=Facturi Clienţi
+ForCustomersOrders=Comenzi clienți
+ForProposals=Propuneri comerciale

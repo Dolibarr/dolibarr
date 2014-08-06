@@ -1,11 +1,10 @@
-# Dolibarr language file - pt_BR rev. 0.0 - mails
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=Mailing
 EMailing=Mailing
 Mailings=Mailings
 EMailings=Mailings
-MailCard=Ficha de Mailing
 AllEMailings=Todos os E-Mailings
+MailCard=Ficha de Mailing
 MailTargets=Destinatários
 MailRecipients=Dsetinatarios
 MailRecipient=Destinatário
@@ -44,6 +43,10 @@ MailingStatusSentCompletely=Enviado Completamente
 MailingStatusError=Erro
 MailingStatusNotSent=Não Enviado
 MailSuccessfulySent=E-mail enviado corretamente (de %s a %s)
+MailingSuccessfullyValidated=Emailins validado com sucesso
+MailUnsubcribe=Desenscrever
+Unsuscribe=Desenscrever
+MailingStatusNotContact=Nao contactar mais
 ErrorMailRecipientIsEmpty=A endereço do destinatário está vazia
 WarningNoEMailsAdded=nenhum Novo e-mail a Adicionar à lista destinatários.
 ConfirmValidMailing=Confirma a validação do mailing?
@@ -61,15 +64,37 @@ YouCanAddYourOwnPredefindedListHere=Para Criar o seu módulo de seleção e-mail
 EMailTestSubstitutionReplacedByGenericValues=Em modo teste, as Variávels de substituição são sustituidas por valores genéricos
 MailingAddFile=Adicionar este Arquivo
 NoAttachedFiles=Sem arquivos anexos
+BadEMail=Valor errado para e-mail
+CloneEMailing=Clonar e-mailing
+ConfirmCloneEMailing=Voce tem certeza que quer clonar este e-mailing ?
+CloneContent=Clonar mensagem
+CloneReceivers=Clonar recebidores
+DateLastSend=Data ultimo envio
+DateSending=Data envio
+SentTo=Enviado para <b>%s</b>
+MailingStatusRead=Ler
+CheckRead=Ler recebidor
+YourMailUnsubcribeOK=O e-mail <b>%s</b> foi removido com sucesso da lista
+MailtoEMail=Hyper-link ao e-mail
+ActivateCheckRead=Permitir uso do atalho "Desenscrever"
+ActivateCheckReadKey=Chave principal para criptar URL de uso para funções "Ler destinatario" e "Desenscrever"
+EMailSentToNRecipients=E-mail enviado para %s destinatarios.
 
-# Libelle des modules de liste de destinataires mailing=
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contatos de Fornecedores (clientes potenciais, clientes, Fornecedores...)
 MailingModuleDescDolibarrUsers=Usuários de Dolibarr que tem e-mail
 MailingModuleDescFundationMembers=Membros que tem e-mail
 MailingModuleDescEmailsFromFile=E-Mails de um Arquivo (e-mail;Nome;Vários)
+MailingModuleDescEmailsFromUser=Entrar e-mails de usuario (email;sobrenome;nome;outro)
 MailingModuleDescContactsCategories=Fornecedores com e-mail (por categoria)
+MailingModuleDescDolibarrContractsLinesExpired=terceiros com linhas de contatos vencidas
+MailingModuleDescContactsByCompanyCategory=Contatos/Endereços de terceiros (por ategorias de terceiros)
+MailingModuleDescContactsByCategory=Contatos/endereços de terceiros por categoria
+MailingModuleDescMembersCategories=Membros da Fundação (por categoria)
+MailingModuleDescContactsByFunction=Contatos/Enderecos de terceiros (por posição/função)
 
-LineInFile=Linha %s em Arquivo
+
+LineInFile=Linha %s em arquivo
 RecipientSelectionModules=Módulos de seleção dos destinatários
 MailSelectedRecipients=Destinatários selecionados
 MailingArea=Área mailings
@@ -81,9 +106,10 @@ SearchAMailing=Procurar um mailing
 SendMailing=Enviar mailing
 SendMail=Enviar e-mail
 SentBy=Enviado por
-MailingNeedCommand=Por razões de segurança, o envio de um mailing em massa podem realizar-se em linha de comandos. Pessa ao seu administrador que lance o comando seguinte para para enviar a correspondencia e a todos os destinatários:
+MailingNeedCommand=Para razões de segurança, o envio de um mailing em massa e melhor quando feito da linha de comando. Se voce tem uma, pergunte ao seu administrador de serviço de executar o comando seguinte para enviar o mailing em massa a todos os destinatarios:
 MailingNeedCommand2=Pode enviar em linha adicionando o parâmetro MAILING_LIMIT_SENDBYWEB com um valor número que indica o máximo n� de e-mails enviados por Sessão.
-ConfirmSendingEmailing=Confirma o envio do e-mailing?<br>o envio em linha de e-mails estão limitados por segurança a <b>%s</b> destinatários por Sessão.
+ConfirmSendingEmailing=Caso voçê não pode ou prefere envia-los do seu www navegador, por favor confirme que voce tem certeza que quer enviar um mailing em massa do seu navegador ?
+LimitSendingEmailing=Observação: Envios online de mailings em massa são limitados por causa de segurança e tempo limite a n.<b>%s</b> destinatarios por sessão de envio.
 TargetsReset=Limpar lista
 ToClearAllRecipientsClickHere=Para limpar a lista dos destinatários deste mailing, faça click ao botão
 ToAddRecipientsChooseHere=Para Adicionar destinatários, escoja os que figuran em listas a continuação
@@ -91,13 +117,16 @@ NbOfEMailingsReceived=Mailings em massa recebidos
 IdRecord=ID registo
 DeliveryReceipt=Recibo de recpção
 YouCanUseCommaSeparatorForSeveralRecipients=Pode usar o caracter0 de separação <b>coma </b> para especificar multiplos destinatários.
+TagCheckMail=Seguir quando o e-mail sera lido
+TagUnsubscribe=Atalho para se desenscrever
+TagSignature=Assinatura do remetente
+TagMailtoEmail=E-mail destinatario
 
-# Module Notifications=
+# Module Notifications
 Notifications=Notificações
 NoNotificationsWillBeSent=Nenhuma notificação por e-mail está prevista para este evento e empresa
 ANotificationsWillBeSent=1 notificação vai a ser enviada por e-mail
 SomeNotificationsWillBeSent=%s Notificações vão ser enviadas por e-mail
 AddNewNotification=Ativar uma Nova pedido de notificação
 ListOfActiveNotifications=Lista das pedidos de Notificações ativas
-
-
+ListOfNotificationsDone=Listar todas as notificações de e-mail enviadas

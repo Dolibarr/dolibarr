@@ -1,48 +1,39 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-CashDeskMenu=Müügikohas
-CashDesk=Müügikohas
-CashDesks=Müügikohtade
+# Language file - Source file is en_US - cashdesk
+CashDeskMenu=Müügikoht
+CashDesk=Müügikoht
+CashDesks=Müügikoht
 CashDeskBank=Pangakonto
 CashDeskBankCash=Pangakonto (sularaha)
-CashDeskBankCB=Pangakonto (kaart)
-CashDeskBankCheque=Pangakonto (kontroll)
+CashDeskBankCB=Pangakonto (kaardimakse)
+CashDeskBankCheque=Pangakonto (tšekimakse)
 CashDeskWarehouse=Ladu
-CashdeskShowServices=Müük teenused
+CashdeskShowServices=Teenuste müük
 CashDeskProducts=Tooted
-CashDeskStock=Varu
+CashDeskStock=Laojääk
 CashDeskOn=kohta
-CashDeskThirdParty=Kolmas osapool
+CashDeskThirdParty=Kolmas isik
+CashdeskDashboard=Ligipääs müügikohale
 ShoppingCart=Ostukorv
-NewSell=New müüa
-BackOffice=Tagasi kontor
+NewSell=Uus müü
+BackOffice=Keskkontor
 AddThisArticle=Lisa see artikkel
-RestartSelling=Mine tagasi müüa
-SellFinished=Müü valmis
-PrintTicket=Trüki pilet
-NoResults=Ei kohteita
-NoProductFound=Ei artikkel leitud
-ProductFound=Toote leitud
+RestartSelling=Mine müümisel tagasi
+SellFinished=Müü lõpptooteid
+PrintTicket=Trüki tšekk
+NoProductFound=Artiklit ei leitud
+ProductFound=toodet leitud
 ProductsFound=tooteid leitud
-NoArticle=Ei artikkel
+NoArticle=Artiklid puuduvad
 Identification=Identifitseerimine
 Article=Artikkel
-Difference=Erinevus
-TotalTicket=Kokku pilet
-NoVAT=Ei käibemaksuga selle müügi
-Change=Liigne saanud
-CalTip=Vajuta, et näha kalender
-CashDeskSetupStock=Te küsite, et vähendada varude kohta arve loomist, kuid lattu seda ei määratletud <br> Muuda varu moodul setup, või valida ladu
-BankToPay=Charge Account
-ShowCompany=Näita ettevõte
+Difference=Vahe
+TotalTicket=Arve kokku
+NoVAT=Sellel müügil pole KM
+Change=Liigselt saadud
+CalTip=Klõpsa kalendri vaatamiseks
+CashDeskSetupStock=Määrasid arve loomisel laojäägi vähendamise, kuid jätsid selle jaoks lao määramata.<br>Muuda laojääkide mooduli seadistust või vali ladu
+BankToPay=Võta kontolt raha
+ShowCompany=Näita ettevõtet
 ShowStock=Näita ladu
-DeleteArticle=Vajuta, et eemaldada see artikkel
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:39:40).
+DeleteArticle=Klõpsa selle artikli eemaldamiseks
+FilterRefOrLabelOrBC=Otsi (viide/silt)

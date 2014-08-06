@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -576,8 +576,8 @@ class BonPrelevement extends CommonObject
     /**
      *	Get invoice list
      *
-     *  @param $amounts If you want to get the amount of the order for each invoice
-     *	@return	array id of invoices
+     *  @param 	int		$amounts 	If you want to get the amount of the order for each invoice
+     *	@return	array 				Id of invoices
      */
     private function getListInvoices($amounts=0)
     {
@@ -671,9 +671,10 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Get number of invoices to withdrawal
+     *	TODO delete params banque and agence when not necesary
      *
-     *	@param	int		$banque		bank
-     *	@param	int		$agence		agence
+     *	@param	int		$banque		dolibarr mysoc bank
+     *	@param	int		$agence		dolibarr mysoc agence
      *	@return	int					<O if KO, number of invoices if OK
      */
     function NbFactureAPrelever($banque=0,$agence=0)
@@ -683,16 +684,16 @@ class BonPrelevement extends CommonObject
         $sql = "SELECT count(f.rowid)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-        if ($banque == 1 || $agence == 1) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
+        //if ($banque || $agence) $sql.=", ".MAIN_DB_PREFIX."societe_rib as sr";
         $sql.= " WHERE f.fk_statut = 1";
         $sql.= " AND f.entity = ".$conf->entity;
         $sql.= " AND f.rowid = pfd.fk_facture";
         $sql.= " AND f.paye = 0";
         $sql.= " AND pfd.traite = 0";
         $sql.= " AND f.total_ttc > 0";
-        if ($banque == 1 || $agence == 1) $sql.= " AND f.fk_soc = sr.rowid";
-        if ($banque == 1) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-        if ($agence == 1) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
+        //if ($banque || $agence) $sql.= " AND f.fk_soc = sr.rowid";
+        //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
+        //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
         $resql = $this->db->query($sql);
 
@@ -715,9 +716,10 @@ class BonPrelevement extends CommonObject
 
     /**
      *	Create a withdraw
+     *  TODO delete params banque and agence when not necesary
      *
-     *	@param 	int		$banque		code of bank
-     *	@param	int		$agence		code of bank office (guichet)
+     *	@param 	int		$banque		dolibarr mysoc bank
+     *	@param	int		$agence		dolibarr mysoc bank office (guichet)
      *	@param	string	$mode		real=do action, simu=test only
      *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
      */
@@ -755,17 +757,17 @@ class BonPrelevement extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
             $sql.= ", ".MAIN_DB_PREFIX."societe as s";
             $sql.= ", ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-            if ($banque == 1 || $agence ==1) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
+            //if ($banque || $agence) $sql.= ", ".MAIN_DB_PREFIX."societe_rib as sr";
             $sql.= " WHERE f.rowid = pfd.fk_facture";
             $sql.= " AND f.entity = ".$conf->entity;
             $sql.= " AND s.rowid = f.fk_soc";
-            if ($banque == 1 || $agence ==1) $sql.= " AND s.rowid = sr.fk_soc";
+            //if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
             $sql.= " AND f.fk_statut = 1";
             $sql.= " AND f.paye = 0";
             $sql.= " AND pfd.traite = 0";
             $sql.= " AND f.total_ttc > 0";
-            if ($banque == 1) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-            if ($agence == 1) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
+            //if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
+            //if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
             dol_syslog(get_class($this)."::Create sql=".$sql, LOG_DEBUG);
             $resql = $this->db->query($sql);
@@ -777,7 +779,7 @@ class BonPrelevement extends CommonObject
                 while ($i < $num)
                 {
                     $row = $this->db->fetch_row($resql);
-                    $factures[$i] = $row;
+                    $factures[$i] = $row;	// All fields
                     $i++;
                 }
                 $this->db->free($resql);
@@ -793,22 +795,25 @@ class BonPrelevement extends CommonObject
 
         if (! $error)
         {
-            // Check RIB
+            require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+            $soc = new Societe($this->db);
+
+        	// Check RIB
             $i = 0;
             dol_syslog("Start RIB check");
 
             if (count($factures) > 0)
             {
-                foreach ($factures as $fac)
+                foreach ($factures as $key => $fac)
                 {
                     $fact = new Facture($this->db);
-
-                    if ($fact->fetch($fac[0]) >= 0)
+                    if ($fact->fetch($fac[0]) >= 0)		// Field 0 of $fac is rowid of invoice
                     {
-                        $soc = new Societe($this->db);
                         if ($soc->fetch($fact->socid) >= 0)
                         {
-                            if ($soc->verif_rib() == 1)
+                        	$bac = new CompanyBankAccount($this->db);
+                        	$bac->fetch(0,$soc->id);
+                            if ($bac->verif() >= 1)
                             {
                                 $factures_prev[$i] = $fac;
                                 /* second tableau necessaire pour BonPrelevement */
@@ -816,24 +821,24 @@ class BonPrelevement extends CommonObject
                                 $i++;
                             }
                             else
-                            {
-                                dol_syslog("Error on third party bank number RIB/IBAN $fact->socid $soc->nom", LOG_ERR);
-                                $facture_errors[$fac[0]]="Error on third party bank number RIB/IBAN $fact->socid $soc->nom";
+							{
+								dol_syslog("Error on default bank number RIB/IBAN for thirdparty reported by verif() ".$fact->socid." ".$soc->nom, LOG_ERR);
+                                $facture_errors[$fac[0]]="Error on default bank number RIB/IBAN for thirdparty reported by function verif() ".$fact->socid." ".$soc->nom;
                             }
                         }
                         else
-                        {
+						{
                             dol_syslog("Failed to read company", LOG_ERR);
                         }
                     }
                     else
-                    {
+					{
                         dol_syslog("Failed to read invoice", LOG_ERR);
                     }
                 }
             }
             else
-            {
+			{
                 dol_syslog("No invoice to process");
             }
         }
@@ -1252,7 +1257,7 @@ class BonPrelevement extends CommonObject
                     $num = $this->db->num_rows($resql);
 
 					$client = new Societe($this->db);
-                        
+
                     while ($i < $num)
                     {
                     	$obj = $this->db->fetch_object($resql);

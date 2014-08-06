@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=旅行
 Trips=ツアー
 TripsAndExpenses=旅行や経費
@@ -28,4 +19,3 @@ TF_TRIP=旅行
 ListTripsAndExpenses=旅行や費用のリスト
 ExpensesArea=旅行や経費エリア
 SearchATripAndExpense=旅行と費用を検索
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:47:05).

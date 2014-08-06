@@ -1,5 +1,4 @@
-# Dolibarr language file - fr_FR - contracts
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Espace contrats
 ListOfContracts=Liste des contrats
 LastContracts=Les %s derniers contrats modifiés
@@ -54,7 +53,7 @@ ListOfRunningContractsLines=Liste des lignes de contrats en service
 ListOfRunningServices=Liste des services actifs
 NotActivatedServices=Services non activés (parmi les contrats validés)
 BoardNotActivatedServices=Services à activer en contrat validé
-LastContracts=Les % derniers contrats
+LastContracts=Les %s derniers contrats modifiés
 LastActivatedServices=Les %s derniers services activés
 LastModifiedServices=Les %s derniers services modifiés
 EditServiceLine=Edition ligne du service
@@ -77,15 +76,21 @@ ServiceStatus=Statut du service
 DraftContracts=Contrats brouillons
 CloseRefusedBecauseOneServiceActive=Fermeture du contrat impossible car il y a au moins un service actif
 CloseAllContracts=Clôturer tous les services
-MoveToAnotherContract=Déplacer le service vers un autre contrat de ce tiers.
 DeleteContractLine=Supprimer ligne de contrat
 ConfirmDeleteContractLine=Êtes-vous sûr de vouloir supprimer cette ligne de contrat de service ?
+MoveToAnotherContract=Déplacer le service vers un autre contrat de ce tiers.
 ConfirmMoveToAnotherContract=J'ai choisi le contrat cible et confirme le déplacement du service dans ce contrat.
 ConfirmMoveToAnotherContractQuestion=Choisissez vers quel autre contrat de ce même tiers, vous voulez déplacer ce service ?
 PaymentRenewContractId=Renouvellement service (numéro %s)
 ExpiredSince=Expiré le
 RelatedContracts=Contrats associés
 NoExpiredServices=Pas de services actifs expirés
+ListOfServicesToExpireWithDuration=Liste des services actifs expirant dans %s jours
+ListOfServicesToExpireWithDurationNeg=Liste des services actifs expiré depuis plus de %s jours
+ListOfServicesToExpire=Liste des services actifs en expiration
+NoteListOfYourExpiredServices=Cette list ne contient que les contrats de services des tiers pour lesquels vous êtes liés comme représentant commercial.
+DocumentModelStandard=Modèle de contrat standard
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat
 TypeContact_contrat_internal_SALESREPFOLL=Commercial suivi du contrat

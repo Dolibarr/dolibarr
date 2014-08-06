@@ -21,15 +21,12 @@ font-size:13px;
 font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
 background: #f9f9f9 url(headbg.jpg) 0 0 no-repeat;
 /* background-color: #F4F4F4; */
-margin-left: 30px;
-margin-right: 30px;
-margin-top: 15px;
-margin-bottom: 10px;
+margin: 15px 30px 10px;
 }
 
 div.titre {
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 }
 
 span.titre {
@@ -39,26 +36,26 @@ background: #FFFFFF;
 color: #4965B3;
 border: 1px solid #8CACBB;
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 }
 
 div.soustitre {
 font-size: 15px;
 font-weight: bold;
 color: #4965B3;
-padding: 0em 1.2em 0.5em 2em;
+padding: 0 1.2em 0.5em 2em;
 margin: 1.2em 1.2em 1.2em 1.2em;
 border-bottom: 1px solid #8CACBB;
 border-right: 1px solid #8CACBB;
 text-align: right;
 }
 
-inputdisabled
+input:disabled
 {
 background: #FDFDFD;
 border: 1px solid #ACBCBB;
-padding: 0px 0px 0px 0px;
-margin: 0px 0px 0px 0px;
+padding: 0 0 0 0;
+margin: 0 0 0 0;
 }
 
 input[type=text], input[type=password] {
@@ -67,6 +64,10 @@ input[type=text], input[type=password] {
 input[type=text]:focus, input[type=password]:focus, textarea:focus, select:focus {
     border: 1px solid #ACBCBB;
 	box-shadow: 0 0 5px #C091AF;
+}
+input:-webkit-autofill {
+    background: #FBFFEA none !important;
+    -webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
 table.main {
@@ -86,11 +87,8 @@ color: #000000;
 
 table.listofchoices, tr.listofchoices, td.listofchoices {
 border-collapse: collapse;
-padding-top: 4px;
-padding-bottom: 4px;
-padding-left: 4px;
-padding-right: 4px;
-color: #000000;
+    padding: 4px;
+    color: #000000;
 border: 1px solid #888888 !important;
 }
 
@@ -132,7 +130,7 @@ div.error {
 color: #550000;
 font-weight: bold;
 padding: 0.2em 0.2em 0.2em 0.2em;
-margin: 0.5em 0em 0.5em 0em;
+margin: 0.5em 0 0.5em 0;
 border: 1px solid #6C7C8B;
 }
 font.error {
@@ -194,7 +192,7 @@ background-color: #B5C5C5;
 td.label {
 color: #5945A3;
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 border-bottom: 1px solid #CCCCDB;
 }
 
@@ -202,7 +200,7 @@ border-bottom: 1px solid #CCCCDB;
 td.comment {
 color: black;
 padding: 5px 5px 5px 5px;
-margin: 0em 0em 0em 0em;
+margin: 0 0 0 0;
 text-decoration:none;
 font-size: 11px;
 border-bottom: 1px solid #CCCCDB;
@@ -234,14 +232,13 @@ ul {
 
 
 .button {
-	background-color: #FFFFFF;
-    background-position: bottom;
+    background: #FFFFFF bottom;
     border: 1px solid #C0C0C0;
     padding: 0.3em 0.7em;
-    margin: 0em 0.5em;
-    -moz-border-radius:0px 5px 0px 5px;
-    -webkit-border-radius:0px 5px 0px 5px;
-    border-radius:0px 5px 0px 5px;
+    margin: 0 0.5em;
+    -moz-border-radius:0 5px 0 5px;
+    -webkit-border-radius:0 5px 0 5px;
+    border-radius:0 5px 0 5px;
     -moz-box-shadow: 2px 2px 3px #CCC;
     -webkit-box-shadow: 2px 2px 3px #CCC;
     box-shadow: 2px 2px 3px #CCC;

@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Leverans
 Deliveries=Leveranser
 DeliveryCard=Leverans kort
@@ -20,20 +11,15 @@ QtyDelivered=Antal levererade
 SetDeliveryDate=Ställ in leveransdatum
 ValidateDeliveryReceipt=Validate kvitto
 ValidateDeliveryReceiptConfirm=Är du säker på att du vill godkänna detta kvitto?
+DeleteDeliveryReceipt=Bort kvitto
+DeleteDeliveryReceiptConfirm=Är du säker på att du vill ta bort <b>%s</b> kvitto?
 DeliveryMethod=Leveransmetod
 TrackingNumber=Spårningsnummer
+DeliveryNotValidated=Leverans inte validerade
+# merou PDF model
 NameAndSignature=Namn och namnteckning:
 ToAndDate=To___________________________________ den ____ / _____ / __________
 GoodStatusDeclaration=Har tagit emot varan ovan i gott skick,
 Deliverer=Befriare:
 Sender=Avsändare
 Recipient=Mottagare
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:51:45).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-DeleteDeliveryReceipt=Bort kvitto
-DeleteDeliveryReceiptConfirm=Är du säker på att du vill ta bort <b>%s</b> kvitto?
-DeliveryNotValidated=Leverans inte validerade
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:33:52).

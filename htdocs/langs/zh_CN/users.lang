@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=用户卡
 ContactCard=联系卡
 GroupCard=集团卡
@@ -52,6 +43,7 @@ ListOfUsers=用户名单
 Administrator=管理员
 SuperAdministrator=超级管理员
 SuperAdministratorDesc=管理员的所有权利
+AdministratorDesc=管理员的实体
 DefaultRights=默认权限
 DefaultRightsDesc=这里定义<u>默认</u> ）权限自动授予一个<u>新创建的</u>用户的用户（转到卡上改变现有的用户权限。
 DolibarrUsers=Dolibarr用户
@@ -98,8 +90,11 @@ CreateInternalUserDesc=这种形式可以让您创造一个用户对贵公司内
 InternalExternalDesc=<b>内部</b>用户是一个用户是公司的一部分，你的/基础。 <br> <b>外部</b>用户是一个客户，供应商或其他。 <br><br>在这两种情况下，权限定义了Dolibarr权利，也有外部用户可以比内部用户（见首页 - 设置 - 显示不同的菜单经理）
 PermissionInheritedFromAGroup=因为从权限授予一个用户的一组继承。
 Inherited=遗传
+UserWillBeInternalUser=创建的用户将是一个内部用户（因为没有联系到一个特定的第三方）
+UserWillBeExternalUser=创建的用户将是外部用户（因为链接到一个特定的第三方）
 IdPhoneCaller=手机来电者身份
 UserLogged=用户%s的连接
+UserLogoff=用户%s注销
 NewUserCreated=创建用户%s
 NewUserPassword=%变动的密码
 EventUserModified=用户%s修改
@@ -107,7 +102,7 @@ UserDisabled=用户%s禁用
 UserEnabled=用户%s启动
 UserDeleted=使用者%s删除
 NewGroupCreated=集团创建%s的
-GroupModified=群组%s修改
+GroupModified=集团修改成功
 GroupDeleted=群组%s删除
 ConfirmCreateContact=你确定要为此创造联系Dolibarr帐户？
 ConfirmCreateLogin=你确定要创建该成员成为Dolibarr帐户？
@@ -116,15 +111,10 @@ LoginToCreate=登录创建
 NameToCreate=第三党的名称创建
 YourRole=您的角色
 YourQuotaOfUsersIsReached=你的活跃用户达到配额！
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-AdministratorDesc=管理员的实体
-UserWillBeInternalUser=创建的用户将是一个内部用户（因为没有联系到一个特定的第三方）
-UserWillBeExternalUser=创建的用户将是外部用户（因为链接到一个特定的第三方）
-UserLogoff=用户%s注销
 NbOfUsers=NB用户
 DontDowngradeSuperAdmin=只有超级管理员可以降级超级管理员
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:37:35).
+HierarchicalResponsible=责任分级
+HierarchicView=分层视图
+UseTypeFieldToChange=改变用户字段类型
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

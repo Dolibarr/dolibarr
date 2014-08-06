@@ -114,7 +114,7 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print "<td>";
 		$shipment->id=$objp->rowid;
 		$shipment->ref=$objp->ref;

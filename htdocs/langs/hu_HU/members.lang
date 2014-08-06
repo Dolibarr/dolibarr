@@ -1,13 +1,4 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:13:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Felhasználóinknak
 PublicMembersArea=Nyilvános tagok területén
 MemberCard=Tagja kártya
@@ -17,6 +8,7 @@ Members=Tagok
 MemberAccount=Belépés
 ShowMember=Mutasd tagja kártya
 UserNotLinkedToMember=A felhasználó nem kapcsolódik egy tagja
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Tagok Jegyek
 FundationMembers=Alapítvány tagjai
 Attributs=Attribútumok
@@ -127,8 +119,6 @@ LastMembers=Utolsó tagok %s
 LastMembersModified=Utolsó módosítás tagjai %s
 LastSubscriptionsModified=Utolsó módosítás előfizetések %s
 AttributeName=Attribútum neve
-FieldEdition=Kiadása terén %s
-AlphaNumOnlyCharsAndNoSpace=Csak alphanumericals characters szóköz nélkül
 String=Húr
 Text=Szöveg
 Int=Int
@@ -140,6 +130,8 @@ AddSubscription=Add előfizetés
 ShowSubscription=Mutasd előfizetés
 MemberModifiedInDolibarr=Tagja módosított Dolibarr
 SendAnEMailToMember=Küldés e-mailben tájékoztatást tagja
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=E-mail tárgya a tagállamok autosubscription
 DescADHERENT_AUTOREGISTER_MAIL=E-mail szolgáltatás tagja autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=E-mail tárgya a tagállamok hitelesítési
@@ -150,20 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=E-mail tárgya a tagállamok resiliation
 DescADHERENT_MAIL_RESIL=E-mail szolgáltatás tagja resiliation
 DescADHERENT_MAIL_FROM=Feladó e-mail címet automatikus e-maileket
 DescADHERENT_ETIQUETTE_TYPE=Oldal formátuma címkék
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=Formátuma kártyák oldal
 DescADHERENT_CARD_HEADER_TEXT=Nyomtatott szöveg tetején tag kártyák
 DescADHERENT_CARD_TEXT=Nyomtatott szöveg tagja kártyák (igazítsa a bal)
 DescADHERENT_CARD_TEXT_RIGHT=Nyomtatott szöveg tagja kártyák (igazítása jobb oldalon)
 DescADHERENT_CARD_FOOTER_TEXT=Nyomtatott szöveg alján tag kártyák
-DescADHERENT_MAILMAN_LISTS=Lista (ek) automatikus insription új tagok (vesszővel elválasztva)
 GlobalConfigUsedIfNotDefined=Szöveg meghatározott Alapítvány modul beállítás lesz használva, ha nincs itt meghatározott
 MayBeOverwrited=Ez a szöveg lehet az érték felülíródik meghatározott tagsági típus
 ShowTypeCard=Mutasd típusú &quot;%s&quot;
 HTPasswordExport=htpassword fájl létrehozása
 NoThirdPartyAssociatedToMember=Harmadik félnek nem társult a tag
 ThirdPartyDolibarr=Dolibarr harmadik fél
-MembersAndSubscriptions=A tagok és Subscriptions
+MembersAndSubscriptions= A tagok és Subscriptions
 MoreActions=Kiegészítő fellépés a felvételi
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Hozzon létre egy közvetlen tranzakciós rekord miatt
 MoreActionBankViaInvoice=Hozzon létre egy számlát és előleg
 MoreActionInvoiceOnly=Hozzon létre egy számlát nem kell fizetni
@@ -203,4 +196,9 @@ Collectivités=Szervezetek
 Particuliers=Személyes
 Entreprises=Cégek
 DOLIBARRFOUNDATION_PAYMENT_FORM=Ahhoz, hogy az előfizetés befizetését a banki átutalást, lásd <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Fizetni hitelkártyával vagy PayPal, kattintson gombra a lap alján. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:23:35).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

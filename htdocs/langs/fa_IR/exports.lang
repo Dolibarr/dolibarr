@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=صادرات المنطقة
 ImportArea=مجال الاستيراد
 NewExport=تصديرية جديدة
@@ -19,6 +9,7 @@ SelectExportDataSet=اختر البيانات التي تريد تصديرها..
 SelectImportDataSet=اختر البيانات التي تريد الاستيراد...
 SelectExportFields=اختيار الحقول التي تريد تصديرها ، أو اختيار ملف التصدير مسبقا
 SelectImportFields=اختيار الحقول التي تريد استيراد ، أو حدد ملف استيراد محددة سلفا ،
+NotImportedFields=حقول من الملف المصدر يتم استيراد
 SaveExportModel=احفظ هذا التصدير صورة لو كنت تخطط لإعادة استخدامها في وقت لاحق...
 SaveImportModel=إنقاذ هذه استيراد صورة لو كنت تخطط لإعادة استخدامها في وقت لاحق...
 ExportModelName=اسم تصدير صورة
@@ -31,10 +22,13 @@ ImportableFields=ارداتها المجالات
 ImportedFields=الحقول المستوردة
 DatasetToExport=بيانات التصدير
 DatasetToImport=استيراد البيانات
+NoDiscardedFields=يتم تجاهل أي حقول في الملف المصدر
 Dataset=بيانات
 ChooseFieldsOrdersAndTitle=اختيار الحقول من أجل...
 FieldsOrder=المجالات من أجل
 FieldsTitle=عنوان الحقول
+FieldOrder=مجال النظام
+FieldTitle=حقل العنوان
 ChooseExportFormat=اختيار شكل للتصدير
 NowClickToGenerateToBuildExportFile=الآن ، انقر على "توليد" لبناء ملف التصدير...
 AvailableFormats=الصيغ المتاحة و
@@ -65,22 +59,12 @@ TypeOfLineServiceOrProduct=Type of line (0=product, 1=نوع الخط (0= منت
 FileWithDataToImport=ملف استيراد البيانات
 FileToImport=مصدر لاستيراد ملف
 FileMustHaveOneOfFollowingFormat=ملف لاستيراد ويجب أن يكون واحدا من الشكل التالي
-ChooseFileToImport=اختيار ملف لاستيراد ثم اضغط على picto ٪ ق...
-FieldsInSourceFile=الحقول في ملف المصدر
-FieldsInTargetDatabase=Dolibarr المجالات المستهدفة في قاعدة البيانات
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-NotImportedFields=حقول من الملف المصدر يتم استيراد
-NoDiscardedFields=يتم تجاهل أي حقول في الملف المصدر
-FieldOrder=مجال النظام
-FieldTitle=حقل العنوان
 DownloadEmptyExample=تحميل مثال على مصدر ملف فارغ
 ChooseFormatOfFileToImport=اختيار تنسيق ملف لاستخدام تنسيق ملف الاستيراد عن طريق النقر على %s picto لتحديده.
+ChooseFileToImport=اختيار ملف لاستيراد ثم اضغط على picto ٪ ق...
 SourceFileFormat=مصدر تنسيق ملف
+FieldsInSourceFile=الحقول في ملف المصدر
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=حقل
 NoFields=لا الحقول
 MoveField=تحرك %s حقل رقم العمود
@@ -111,15 +95,36 @@ TooMuchErrors=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع و�
 TooMuchWarnings=لا يزال هناك <b>%s</b> خطوط مصدر آخر مع تحذيرات ولكن محدودة الانتاج و.
 EmptyLine=سيتم تجاهل سطر فارغ ()
 CorrectErrorBeforeRunningImport=أولا يجب أن تقوم بتصحيح كافة الأخطاء قبل تشغيل استيراد نهائي.
+# FileWasImported=File was imported with number <b>%s</b>.
 YouCanUseImportIdToFindRecord=يمكنك العثور على كافة السجلات المستوردة في قاعدة البيانات الخاصة بك عن طريق تصفية على <b>import_key</b> الحقل <b>= '%s'.</b>
 NbOfLinesOK=عدد الأسطر مع عدم وجود أخطاء وتحذيرات لا : <b>%s.</b>
 NbOfLinesImported=عدد خطوط المستوردة بنجاح : <b>%s.</b>
 DataComeFromNoWhere=قيمة لادخال تأتي من أي مكان في الملف المصدر.
 DataComeFromFileFieldNb=قيمة لادخال يأتي من <b>%s</b> عدد الحقول في الملف المصدر.
 DataComeFromIdFoundFromRef=من حقل رقم <b>%s</b> ملف مصدر سوف تستخدم القيمة التي تأتي للعثور على معرف الكائن الأصل لاستخدام (هكذا <b>%s</b> objet الذي يحتوي على المرجع من الملف المصدر يجب أن يوجد في Dolibarr).
+# DataComeFromIdFoundFromCodeId=Code that comes from field number <b>%s</b> of source file will be used to find id of parent object to use (So the code from source file must exists into dictionnary <b>%s</b>). Note that if you know id, you can also use it into source file instead of code. Import should work in both cases.
 DataIsInsertedInto=البيانات سوف تأتي من الملف المصدر يتم إدراجها في الحقل التالي :
 DataIDSourceIsInsertedInto=العثور على كائن معرف الأصل باستخدام البيانات الموجودة في الملف المصدر ، سيتم إدراج في الحقل التالي :
+# DataCodeIDSourceIsInsertedInto=The id of parent line found from code, will be inserted into following field:
 SourceRequired=بيانات قيمة إلزامية
 SourceExample=مثال على قيمة البيانات ممكن
+# ExampleAnyRefFoundIntoElement=Any ref found for element <b>%s</b>
+# ExampleAnyCodeOrIdFoundIntoDictionnary=Any code (or id) found into dictionnary <b>%s</b>
 CSVFormatDesc=<b>فاصلة فصل</b> ملف <b>القيمة</b> تنسيق (csv.). <br> هذا هو شكل ملف نصي ، حيث يتم فصل الحقول بواسطة فاصل [%s]. إذا تم العثور على فاصل داخل محتوى الحقل ، يتم تقريب الجولة الميدانية التي قام بها حرف] %s [. الهروب حرف وحرف الهروب جولة هو [%s].
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:48).
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=رمز المصرف
+DeskCode=مدونة مكتبية
+BankAccountNumber=رقم الحساب
+BankAccountNumberKey=مفتاح
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

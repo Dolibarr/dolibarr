@@ -5,7 +5,6 @@
  */
 
 
-CHARSET=UTF-8
 SecurityCode=Sicherheitsschlüssel
 Calendar=Kalender
 AddTrip=Reise hinzufügen

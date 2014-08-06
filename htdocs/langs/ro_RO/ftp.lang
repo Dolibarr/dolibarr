@@ -1,13 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:36:47
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=Un client FTP modul de configurare
 NewFTPClient=Noua conexiune FTP setup
 FTPArea=Spaţiul FTP
@@ -18,4 +9,4 @@ FailedToConnectToFTPServer=Nu a reuşit să se conecteze la serverul FTP (%s ser
 FailedToConnectToFTPServerWithCredentials=Nu a reuşit să login la serverul FTP cu login definite / parolă
 FTPFailedToRemoveFile=Nu reuşeau să îndepărteze <b>%s</b> fişier.
 FTPFailedToRemoveDir=Nu am putut şterge directorul <b>%s</b> (verificaţi permisiunile şi că directorul este gol).
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:38:45).
+FTPPassiveMode=Mod pasiv

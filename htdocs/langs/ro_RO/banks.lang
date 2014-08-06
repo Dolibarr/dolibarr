@@ -1,177 +1,158 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=Banca
 Banks=Banci
-MenuBankCash=Banca / Cash
-MenuSetupBank=Banca / Cash setup
-BankName=Numele băncii
+MenuBankCash=Banca / Casa
+MenuSetupBank=Setări Banca / Casa
+BankName=Numel bancă
 FinancialAccount=Cont
 FinancialAccounts=Conturi
 BankAccount=Cont bancar
 BankAccounts=Conturi bancare
 AccountRef=Contul financiar ref
 AccountLabel=Contul financiar etichetă
-CashAccount=Cash cont
-CashAccounts=Cash conturi
-MainAccount=Principalele cont
+CashAccount=Cont Casa
+CashAccounts=Conturi Casa
+MainAccount=Cont Pricipal
 CurrentAccount=Cont curent
 CurrentAccounts=Conturi curente
-SavingAccount=Cont de economii
-SavingAccounts=Conturile de economii
-ErrorBankLabelAlreadyExists=Contul financiar eticheta există deja
-BankBalance=Balanţa
-BalanceMinimalAllowed=Minimă permisă echilibru
-BalanceMinimalDesired=Minim dorit echilibru
-InitialBankBalance=Iniţială de echilibru
-EndBankBalance=Sfârşit echilibru
-CurrentBalance=Current echilibru
-FutureBalance=Viitorul echilibru
-ShowAllTimeBalance=Arata echilibru de la start
+SavingAccount=Cont  economii
+SavingAccounts=Conturi  economii
+ErrorBankLabelAlreadyExists=Eticheta Contului financiar există deja
+BankBalance=Sold
+BankBalanceBefore=Soldul înainte
+BankBalanceAfter=Soldul după
+BalanceMinimalAllowed=Sold minim permis
+BalanceMinimalDesired=Sold minim dorit
+InitialBankBalance=Sold Iniţial
+EndBankBalance=Sold Final
+CurrentBalance=Sold Curent
+FutureBalance=Sold Viitor
+ShowAllTimeBalance=Arată soldul de început
 Reconciliation=Reconciliere
-RIB=Bank Account Number
-IBAN=IBAN numărul
-BIC=BIC / SWIFT numărul
+RIB=Număr Cont Bancă
+IBAN=Cod IBAN
+BIC=Cod BIC / SWIFT
 StandingOrders=Ordine de plată
-StandingOrder=Permanent pentru
+StandingOrder=Ordin plată
 Withdrawals=Retrageri
 Withdrawal=Retragerea
-AccountStatement=De cont
-AccountStatementShort=Afirmaţie
-AccountStatements=Contul declaraţii
-LastAccountStatements=Ultima cont declaraţii
+AccountStatement=Extras Cont
+AccountStatementShort=Extras
+AccountStatements=Extrase Cont
+LastAccountStatements=Ultimele extrase de cont
 Rapprochement=Reconciliate
-IOMonthlyReporting=Lunar de raportare
-BankAccountDomiciliation=Contul adresa
-BankAccountOwner=Contul numele proprietarului
-BankAccountOwnerAddress=Contul adresa proprietarului
-CreateAccount=Crearea contului
-StandingOrderToProcess=Pentru a procesa
-StandingOrderProcessed=Prelucrate
+IOMonthlyReporting=Raport Lunar
+BankAccountDomiciliation=Adresă Cont
+BankAccountCountry=Tară Cont
+BankAccountOwner=Nume Proprietar Cont
+BankAccountOwnerAddress=Adresă Proprietar Cont
+RIBControlError=Eşec la verificarea integrităţii valorilor . Aceasta înseamnă pentru acest număr de cont nu e complet sau e greşit (verifica ţară, numere şi IBAN).
+CreateAccount=Crează cont
 NewAccount=Cont nou
-NewBankAccount=Nou cont bancar
-NewFinancialAccount=New contul financiar
-MenuNewFinancialAccount=New contul financiar
-NewCurrentAccount=New cont curent
-NewSavingAccount=Noul cont de economii
-NewCashAccount=New numerar cont
+NewBankAccount=Cont bancar nou
+NewFinancialAccount=Cont financiar nou
+MenuNewFinancialAccount=Cont financiar nou
+NewCurrentAccount=Cont curent nou
+NewSavingAccount=Cont economii nou
+NewCashAccount=Cont numerar nou
 EditFinancialAccount=Editare cont
-AccountSetup=Conturi financiare setup
-SearchBankMovement=Cautati banca circulaţie
+AccountSetup=Setări Conturi financiare
+SearchBankMovement=Caută transferuri bancare
 Debts=Datorii
-LabelBankCashAccount=Banca numerar sau eticheta
-AccountType=Tipul de cont
-BankType0=Cont de economii
-BankType1=Cont curent
-BankType2=Cash cont
+LabelBankCashAccount=Etichetă Banca sau Casa
+AccountType=Tip Cont
+BankType0=Cont economii
+BankType1=Cont curent sau card de credit
+BankType2=Cont numerar
 IfBankAccount=Dacă contul bancar
-AccountsArea=Conturi de zona
-AccountCard=Contul carte
-DeleteAccount=Ştergere cont
+AccountsArea=Zona Conturi
+AccountCard=Fişa Cont
+DeleteAccount=Şterge cont
 ConfirmDeleteAccount=Sunteţi sigur că doriţi să ştergeţi acest cont?
 Account=Cont
 ByCategories=Pe categorii
 ByRubriques=Pe categorii
-BankTransactionByCategories=Banca tranzacţii pe categorii
-BankTransactionForCategory=Banca tranzacţii de <b>categoria %s</b>
+BankTransactionByCategories=Tranzacţii  bancare pe categorii
+BankTransactionForCategory=Tranzacţii bancare  pentru categoria <b> %s</b>
 RemoveFromRubrique=Eliminaţi link-ul cu categoria
 RemoveFromRubriqueConfirm=Sunteţi sigur că doriţi să ştergeţi legătura dintre tranzacţie şi de categorie?
 ListBankTransactions=Lista de tranzacţii bancare
 IdTransaction=ID-ul tranzacţiei
-BankTransactions=Banca tranzacţiilor
-SearchTransaction=Cautati tranzacţie
+BankTransactions=Tranzacţii bancare
+SearchTransaction=Caută tranzacţie
 ListTransactions=Lista tranzacţiilor
 ListTransactionsByCategory=Lista tranzacţie / categorie
-TransactionsToConciliate=Tranzacţii de a concilia
-Conciliable=Conciliable
-Conciliate=Împăca
+TransactionsToConciliate=Tranzacţii de conciliat
+Conciliable=Conciliabil
+Conciliate=Conciliază
 Conciliation=Conciliere
-ConciliationForAccount=Câştiga acest cont
-IncludeClosedAccount=Includeţi închis conturile
-OnlyOpenedAccount=Numai deschise conturi
-AccountToCredit=Contul de credit
-AccountToDebit=Contul de debit
-DisableConciliation=Dezactivaţi conciliere caracteristică pentru acest cont
-ConciliationDisabled=Facilitate de conciliere cu handicap
+ConciliationForAccount=Conciliază acest cont
+IncludeClosedAccount=Includeţi conturile închise
+OnlyOpenedAccount=Numai conturile deschise
+AccountToCredit=Cont de credit
+AccountToDebit=Cont de debit
+DisableConciliation=Dezactivaţi reconcilierea pentru acest cont
+ConciliationDisabled=Reconciliere dezactivată
 StatusAccountOpened=Deschis
 StatusAccountClosed=Închis
-AccountIdShort=Numărul
-EditBankRecord=Editare record
+AccountIdShort=Cod
+EditBankRecord=Editare înregistrare
 LineRecord=Tranzacţie
-AddBankRecord=Adauga tranzacţie
-AddBankRecordLong=Adauga tranzacţie manual
-ConciliatedBy=Conciliated de
-DateConciliating=Împăca data
-BankLineConciliated=Tranzacţie conciliated
-CustomerInvoicePayment=Clientul de plată
-SupplierInvoicePayment=Furnizor de plată
-SocialContributionPayment=Social plata contribuţiei
-FinancialAccountJournal=Contul financiar Oficial
-BankTransfer=Transfer bancar
-BankTransfers=Transferuri bancare
-TransferDesc=Transferul de la un cont la altul, Dolibarr va scrie două înregistrări (un debit în cont sursă şi o ţintă de credit în cont, de la aceeaşi sumă. Aceeaşi etichetă şi data vor fi utilizate pentru această tranzacţie)
+AddBankRecord=Adaugă tranzacţie
+AddBankRecordLong=Adaugă tranzacţie manual
+ConciliatedBy=Conciliate de
+DateConciliating=Data Conciliere
+BankLineConciliated=Tranzacţie conciliată
+CustomerInvoicePayment=Plată Client
+CustomerInvoicePaymentBack=Return Plată client
+SupplierInvoicePayment=Plată Furnizor
+WithdrawalPayment=Retragerea de plată
+SocialContributionPayment=Plată contribuţie socială
+FinancialAccountJournal=Jurnal Cont Financiar
+BankTransfer=Virament bancar
+BankTransfers=Viramente bancare
+TransferDesc=Viramentul de la un cont la altul, Dolibarr va creea două înregistrări (una de debit în cont sursă şi una de credit în contul destinaţie, cu aceeaşi valoare. Aceeaşi etichetă şi data vor fi utilizate pentru această tranzacţie)
 TransferFrom=De la
 TransferTo=La
-TransferFromToDone=Un transfer de <b>la %s în %s din %s %s</b> nu a fost înregistrată.
-CheckTransmitter=Transmiţător
-ValidateCheckReceipt=Validate acest verifica primirea?
-ConfirmValidateCheckReceipt=Sunteţi sigur că doriţi să valideze această verificare la primire, nici o schimbare va fi posibilă o dată acest lucru este făcut?
-DeleteCheckReceipt=Ştergeţi acest verifica primirea?
-ConfirmDeleteCheckReceipt=Sunteţi sigur că doriţi să ştergeţi acest verifica primirea?
-BankChecks=Banca de cecuri
-BankChecksToReceipt=Cecuri de aşteptare pentru depozit
-NumberOfCheques=Nb de cecuri
-DeleteTransaction=Ştergere tranzacţie
+TransferFromToDone=Un viramentr de la  <b>%s</b> la <b> %s </b>  de<b> %s</b> %s a fost creată.
+CheckTransmitter=Emiţător
+ValidateCheckReceipt=Validaţi acest borderou de cecuri remise?
+ConfirmValidateCheckReceipt=Sunteţi sigur că doriţi să validaţi borderou , nici o schimbare nu va fi posibilă odată ce  borderoul este validat?
+DeleteCheckReceipt=Ştergeţi acest borderou ?
+ConfirmDeleteCheckReceipt=Sunteţi sigur că doriţi să ştergeţi acest borderou ?
+BankChecks=Cecuri bancare
+BankChecksToReceipt=Cecuri de depus
+ShowCheckReceipt=Arată borderou de cecuri remise
+NumberOfCheques=Nr de cecuri
+DeleteTransaction=Şterge tranzacţia
 ConfirmDeleteTransaction=Sunteţi sigur că doriţi să ştergeţi această tranzacţie?
-ThisWillAlsoDeleteBankRecord=Aceasta va şterge, de asemenea, generate de tranzacţii bancare
+ThisWillAlsoDeleteBankRecord=Aceasta va şterge  şi tranzacţiile bancare generate
 BankMovements=Mişcările
-CashBudget=Cash buget
-PlannedTransactions=Planificate tranzacţiilor
-ExportDataset_banque_1=Banca şi tranzacţiilor de cont
-TransactionOnTheOtherAccount=Tranzacţiei, pe de altă cont
+CashBudget=Buget de trezorerie
+PlannedTransactions=Tranzacţii Prevăzute
+Graph=Grafice
+ExportDataset_banque_1=Tranzacţii bancare şi extrase de cont
+TransactionOnTheOtherAccount=Tranzacţie pe de alt cont
+TransactionWithOtherAccount=Transfer Cont
 PaymentNumberUpdateSucceeded=Plata numărul fost actualizat cu succes
-PaymentNumberUpdateFailed=Numărul de plată nu a putut fi actualizate
-PaymentDateUpdateSucceeded=Plata data de actualizare cu succes
-PaymentDateUpdateFailed=Plata data nu a putut fi actualizate
-BankTransactionLine=Banca tranzacţie
-AllAccounts=Toate bancar / numerar conturi
+PaymentNumberUpdateFailed=Numărul plaţii nu a putut fi actualizat
+PaymentDateUpdateSucceeded=Data Plata  actualizată cu succes
+PaymentDateUpdateFailed=Data Plata  nu a putut fi actualizată
+Transactions=Tranzacţii
+BankTransactionLine=Tranzacţie bancă
+AllAccounts=Toate  conturile banca / casa
 BackToAccount=Inapoi la cont
-ShowAllAccounts=Arata pentru toate conturile
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-TransactionWithOtherAccount=Contul de transfer
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-BankAccountCountry=Contul ţară
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:09).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
-Graph=Grafică
-FutureTransaction=Tranzacţie în futur. In nici un caz pentru a concilia.
-SelectChequeTransactionAndGenerate=Select / filtru controale pentru a include în primirea de depozit verifica şi faceţi clic pe &quot;Create&quot;.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:16:58).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-RIBControlError=Verifica integritatea de valori nu. Acest lucru înseamnă pentru acest număr de cont nu sunt complete sau greşite (verifica ţară, numere şi IBAN).
-WithdrawalPayment=Retragerea de plată
-ShowCheckReceipt=Arată a verifica primirea de depozit
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:23:26).
+ShowAllAccounts=Arată pentru toate conturile
+FutureTransaction=Tranzacţie viitoare. In nici un caz de conciliat.
+SelectChequeTransactionAndGenerate=Selectaţi/ filtraţi cecurile pentru a  le include în borderoul de remise şi faceţi clic pe "Crează".
+InputReceiptNumber=Alegeți extrasul de cont privitor la conciliere. Folosiţi o valoare numerică sortabile (cum ar fi, YYYYMM)
+EventualyAddCategory=În cele din urmă, precizează o categorie în care să clasezi înregistrările
+ToConciliate=De conciliat ?
+ThenCheckLinesAndConciliate=Apoi, verifică liniile prezente în extrasul de bancă şi click
+BankDashboard=Sinteză  conturi bancare
+DefaultRIB=IBAN Implicit 
+AllRIB=Tot BAN
+LabelRIB=Etichetă BAN
+NoBANRecord=Nici o înregistrare BAN 
+DeleteARib=Ștergeți înregistrarea BAN
+ConfirmDeleteRib=Sigur doriţi să ştergeţi  această înregistrare BAN ?

@@ -1,19 +1,12 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Framlög
 Donations=Fjárframlög
+# DonationRef=Donation ref.
 Donor=Gjafa
 Donors=Styrktaraðila
 AddDonation=Bæta við framlag
 NewDonation=New málefnið
+# ShowDonation=Show donation
 DonationPromise=Gjöf loforð
 PromisesNotValid=Ekki staðfest loforð
 PromisesValid=Staðfestar loforð
@@ -28,20 +21,12 @@ DonationStatusPaid=Framlag borist
 DonationStatusPromiseNotValidatedShort=Víxill
 DonationStatusPromiseValidatedShort=Staðfestar
 DonationStatusPaidShort=Móttekin
-ValidPromise=Staðfesta loforð
+ValidPromess=Staðfesta loforð
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Byggja kvittun
 DonationsModels=Skjöl líkan fyrir kvittunum framlag
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
-ValidPromess=Staðfesta loforð
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:17:17).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
 LastModifiedDonations=Síðustu %s breytt framlög
 SearchADonation=Leita að framlag
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:42).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

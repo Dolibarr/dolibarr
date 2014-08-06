@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/index.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/facture/list.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchASupplierInvoice").'</td></tr>';
@@ -216,7 +216,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				print '<tr '.$bc[$var].'><td class="nowrap">';
@@ -285,10 +285,10 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 
 			$i = 0;
 			$tot_ttc = 0;
-			while ($i < $num && $i < 20)
+			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td nowrap>';
+				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$facturesupplierstatic->ref=$obj->ref;
 				$facturesupplierstatic->id=$obj->rowid;
 				$facturesupplierstatic->type=$obj->type;
@@ -679,7 +679,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				while ($i < $num)
 				{
 					$obj = $db->fetch_object($resql);
-					print "<tr $bc[$var]>";
+					print "<tr ".$bc[$var].">";
 					$chargestatic->id=$obj->rowid;
 					$chargestatic->ref=$obj->libelle;
 					$chargestatic->lib=$obj->libelle;
@@ -762,7 +762,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 			{
 				$obj = $db->fetch_object($resql);
 
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td class="nowrap">';
 
 				$commandestatic->id=$obj->rowid;
@@ -1026,7 +1026,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
 
-		print "<tr $bc[$var]><td>".dol_print_date($obj->da,"day")."</td>";
+		print "<tr ".$bc[$var]."><td>".dol_print_date($obj->da,"day")."</td>";
 		print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
 		$i++;
 	}

@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Вмешательство
 Interventions=Мероприятия
 InterventionCard=Вмешательство карту
@@ -16,6 +6,7 @@ NewIntervention=Новая интервенция
 AddIntervention=Добавить вмешательства
 ListOfInterventions=Перечень мероприятий
 EditIntervention=Editer вмешательства
+ActionsOnFicheInter=Действия по вмешательству
 LastInterventions=Последнее% с мероприятиями
 AllInterventions=Все мероприятия
 CreateDraftIntervention=Создание проекта
@@ -23,6 +14,7 @@ CustomerDoesNotHavePrefix=Клиент не имеет префикс
 InterventionContact=Вмешательство контакт
 DeleteIntervention=Удалить вмешательства
 ValidateIntervention=Проверка вмешательства
+ModifyIntervention=Изменить вмешательства
 DeleteInterventionLine=Исключить вмешательство линия
 ConfirmDeleteIntervention=Вы уверены, что хотите удалить это вмешательство?
 ConfirmValidateIntervention=Вы уверены, что хотите проверить это вмешательство?
@@ -31,29 +23,20 @@ ConfirmDeleteInterventionLine=Вы уверены, что хотите удал�
 NameAndSignatureOfInternalContact=Имя и подпись вмешательства:
 NameAndSignatureOfExternalContact=Имя и подпись клиента:
 DocumentModelStandard=Стандартная модель документа для выступлений
-TypeContact_fichinter_internal_INTERREPFOLL=Представители следующих мер вмешательства
-TypeContact_fichinter_internal_INTERVENING=Вмешательство
-TypeContact_fichinter_external_BILLING=Платежная заказчика контакт
-TypeContact_fichinter_external_CUSTOMER=После деятельность заказчика контакт
-ArcticNumRefModelDesc1=Общие номера модели
-ArcticNumRefModelError=Ошибка при активации
-PacificNumRefModelDesc1=Вернуться Numero с форматом %syymm-YY, где NNNN это год, мм в месяц, и это NNNN последовательности без перерыва и не вернуться до 0
-PacificNumRefModelError=Вмешательство карточки начиная с $ syymm уже и не совместимы с этой моделью последовательности. Удалить или переименовать его, чтобы активировать этот модуль.
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-ModifyIntervention=Изменить вмешательства
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-ActionsOnFicheInter=Действия по вмешательству
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
 ClassifyBilled=Классифицировать &quot;Объявленный&quot;
 StatusInterInvoiced=Объявленный
 RelatedInterventions=Связанные с ней мероприятия
 ShowIntervention=Показать вмешательства
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:22).
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Представители следующих мер вмешательства
+TypeContact_fichinter_internal_INTERVENING=Вмешательство
+TypeContact_fichinter_external_BILLING=Платежная заказчика контакт
+TypeContact_fichinter_external_CUSTOMER=После деятельность заказчика контакт
+# Modele numérotation
+ArcticNumRefModelDesc1=Общие номера модели
+ArcticNumRefModelError=Ошибка при активации
+PacificNumRefModelDesc1=Вернуться Numero с форматом %syymm-YY, где NNNN это год, мм в месяц, и это NNNN последовательности без перерыва и не вернуться до 0
+PacificNumRefModelError=Вмешательство карточки начиная с $ syymm уже и не совместимы с этой моделью последовательности. Удалить или переименовать его, чтобы активировать этот модуль.
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

@@ -1,19 +1,12 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=捐款
 Donations=捐贈
+# DonationRef=Donation ref.
 Donor=捐贈者
 Donors=捐助者
 AddDonation=添加捐贈
 NewDonation=新捐贈
+# ShowDonation=Show donation
 DonationPromise=禮品的承諾
 PromisesNotValid=未驗證的承諾
 PromisesValid=驗證承諾
@@ -28,20 +21,12 @@ DonationStatusPaid=收到的捐款
 DonationStatusPromiseNotValidatedShort=草案
 DonationStatusPromiseValidatedShort=驗證
 DonationStatusPaidShort=收稿
-ValidPromise=驗證承諾
+ValidPromess=驗證承諾
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=建立收據
 DonationsModels=捐贈收據的文件模式
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-ValidPromess=驗證承諾
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:40:14).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
 LastModifiedDonations=最後%s修改捐款
 SearchADonation=搜索捐贈
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:58).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

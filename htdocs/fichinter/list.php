@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,9 +74,15 @@ $sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 $sql.= " WHERE f.fk_soc = s.rowid ";
 $sql.= " AND f.entity = ".$conf->entity;
-if ($search_ref)     $sql .= " AND f.ref LIKE '%".$db->escape($search_ref)."%'";
-if ($search_company) $sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
-if ($search_desc)    $sql .= " AND (f.description LIKE '%".$db->escape($search_desc)."%' OR fd.description LIKE '%".$db->escape($search_desc)."%')";
+if ($search_ref) {
+    $sql .= natural_search('f.ref', $search_ref);
+}
+if ($search_company) {
+    $sql .= natural_search('s.nom', $search_company);
+}
+if ($search_desc) {
+    $sql .= natural_search(array('f.description', 'fd.description'), $search_desc);
+}
 if (! $user->rights->societe->client->voir && empty($socid))
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
@@ -117,7 +124,7 @@ if ($result)
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
 	$companystatic=new Societe($db);
@@ -129,7 +136,7 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 		$var=!$var;
-		print "<tr $bc[$var]>";
+		print "<tr ".$bc[$var].">";
 		print "<td>";
 		$interventionstatic->id=$objp->fichid;
 		$interventionstatic->ref=$objp->ref;

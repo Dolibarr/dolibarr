@@ -131,11 +131,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	$db=$this->savdb;
 
     	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_order.php';
-    	$WS_METHOD  = 'xxx';
+    	$WS_METHOD  = '';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
+    	print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
     	$soapclient = new nusoap_client($WS_DOL_URL);
     	if ($soapclient)
     	{
@@ -155,7 +155,7 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     	if ($WS_METHOD)
     	{
     		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
+    		print __METHOD__." call method ".$WS_METHOD."\n";
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
     		if (! $result)
     		{
@@ -165,190 +165,11 @@ class WebservicesOrdersTest extends PHPUnit_Framework_TestCase
     			print $soapclient->request;
     			print "<br>\n\n";
     			print $soapclient->response;
-    			exit;
     		}
+
+    		print __METHOD__." result=".$result."\n";
+	    	$this->assertEquals('OK',$result['result']['result_code']);
     	}
-
-    	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
-
-    	return $result;
-    }
-
-
-
-    /**
-     * testWSOtherGetVersions
-     *
-     * @return int
-     */
-    public function testWSOtherGetVersions()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-    	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
-    	$WS_METHOD  = 'getVersions';
-    	$ns='http://www.dolibarr.org/ns/';
-
-    	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
-    	$soapclient = new nusoap_client($WS_DOL_URL);
-    	if ($soapclient)
-    	{
-    		$soapclient->soap_defencoding='UTF-8';
-    		$soapclient->decodeUTF8(false);
-    	}
-
-    	// Call the WebService method and store its result in $result.
-    	$authentication=array(
-    	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-    	'sourceapplication'=>'DEMO',
-    	'login'=>'admin',
-    	'password'=>'admin',
-    	'entity'=>'');
-
-    	// Test URL
-    	if ($WS_METHOD)
-    	{
-    		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
-    		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-    		if (! $result)
-    		{
-    			//var_dump($soapclient);
-    			print $soapclient->error_str;
-    			print "<br>\n\n";
-    			print $soapclient->request;
-    			print "<br>\n\n";
-    			print $soapclient->response;
-    			exit;
-    		}
-    	}
-
-    	print __METHOD__." result=".$result."\n";
-    	$this->assertEquals('OK',$result['result']['result_code']);
-
-    	return $result;
-    }
-
-
-    /**
-     * testWSThirdparty
-     *
-     * @return int
-     */
-    public function testWSThirdparty()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-    	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-    	$WS_METHOD  = 'xxx';
-    	$ns='http://www.dolibarr.org/ns/';
-
-    	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
-    	$soapclient = new nusoap_client($WS_DOL_URL);
-    	if ($soapclient)
-    	{
-    		$soapclient->soap_defencoding='UTF-8';
-    		$soapclient->decodeUTF8(false);
-    	}
-
-    	// Call the WebService method and store its result in $result.
-    	$authentication=array(
-    	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-    	'sourceapplication'=>'DEMO',
-    	'login'=>'admin',
-    	'password'=>'admin',
-    	'entity'=>'');
-
-    	// Test URL
-    	if ($WS_METHOD)
-    	{
-    		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
-    		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-    		if (! $result)
-    		{
-    			//var_dump($soapclient);
-    			print $soapclient->error_str;
-    			print "<br>\n\n";
-    			print $soapclient->request;
-    			print "<br>\n\n";
-    			print $soapclient->response;
-    			exit;
-    		}
-    	}
-
-    	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
-
-    	return $result;
-    }
-
-
-    /**
-     * testWSUser
-     *
-     * @return int
-     */
-    public function testWSUser()
-    {
-    	global $conf,$user,$langs,$db;
-    	$conf=$this->savconf;
-    	$user=$this->savuser;
-    	$langs=$this->savlangs;
-    	$db=$this->savdb;
-
-    	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_user.php';
-    	$WS_METHOD  = 'xxx';
-    	$ns='http://www.dolibarr.org/ns/';
-
-    	// Set the WebService URL
-    	print __METHOD__."Create nusoap_client for URL=".$WS_DOL_URL."\n";
-    	$soapclient = new nusoap_client($WS_DOL_URL);
-    	if ($soapclient)
-    	{
-    		$soapclient->soap_defencoding='UTF-8';
-    		$soapclient->decodeUTF8(false);
-    	}
-
-    	// Call the WebService method and store its result in $result.
-    	$authentication=array(
-    	'dolibarrkey'=>$conf->global->WEBSERVICES_KEY,
-    	'sourceapplication'=>'DEMO',
-    	'login'=>'admin',
-    	'password'=>'admin',
-    	'entity'=>'');
-
-    	// Test URL
-    	if ($WS_METHOD)
-    	{
-    		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
-    		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-    		if (! $result)
-    		{
-    			//var_dump($soapclient);
-    			print $soapclient->error_str;
-    			print "<br>\n\n";
-    			print $soapclient->request;
-    			print "<br>\n\n";
-    			print $soapclient->response;
-    			exit;
-    		}
-    	}
-
-    	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
 
     	return $result;
     }

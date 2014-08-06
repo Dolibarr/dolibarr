@@ -1,5 +1,4 @@
 # Dolibarr language file - en_GB - main
-CHARSET=UTF-8
 PrettyLittleSentence=Accept the amount of payments due by cheques issued in my name as a Member of an accounting association approved by the Fiscal Administration.
 ChequeNumber=Cheque N°
 ChequeOrTransferNumber=Cheque/Transfer N°

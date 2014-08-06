@@ -27,11 +27,12 @@
  *	\brief      Fichier de la classe permettant de gerer une base pgsql
  */
 
+require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
 
 /**
  *	Class to drive a Postgresql database for Dolibarr
  */
-class DoliDBPgsql
+class DoliDBPgsql extends DoliDB
 {
     //! Database handler
     var $db;
@@ -60,7 +61,7 @@ class DoliDBPgsql
 	var $lastqueryerror;
 	var $lasterror;
 	var $lasterrno;
-	
+
 	var $unescapeslashquot=0;              // By default we do not force the unescape of \'. This is used only to process sql with mysql escaped data.
 	var $standard_conforming_strings=1;    // Database has option standard_conforming_strings to on
 
@@ -178,12 +179,18 @@ class DoliDBPgsql
 		}
 		if ($line != "")
 		{
+			// group_concat support (PgSQL >= 9.1)
+			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
+			$line = preg_replace('/ SEPARATOR/i', ',', $line);
+
 		    if ($type == 'auto')
 		    {
               if (preg_match('/ALTER TABLE/i',$line)) $type='dml';
               else if (preg_match('/CREATE TABLE/i',$line)) $type='dml';
               else if (preg_match('/DROP TABLE/i',$line)) $type='dml';
 		    }
+
+    		$line=preg_replace('/ as signed\)/i',' as integer)',$line);
 
 		    if ($type == 'dml')
 		    {
@@ -204,7 +211,8 @@ class DoliDBPgsql
     			}
 
     			// tinyint type conversion
-    			$line=str_replace('tinyint','smallint',$line);
+    			$line=preg_replace('/tinyint\(?[0-9]*\)?/','smallint',$line);
+    			$line=preg_replace('/tinyint/i','smallint',$line);
 
     			// nuke unsigned
     			$line=preg_replace('/(int\w+|smallint)\s+unsigned/i','\\1',$line);
@@ -228,13 +236,13 @@ class DoliDBPgsql
     			$line=preg_replace('/^float/i','numeric',$line);
     			$line=preg_replace('/(\s*)float/i','\\1numeric',$line);
 
-    			//Check tms timestamp field case (in Mysql this field is defautled to now and 
+    			//Check tms timestamp field case (in Mysql this field is defautled to now and
     			// on update defaulted by now
     			$line=preg_replace('/(\s*)tms(\s*)timestamp/i','\\1tms timestamp without time zone DEFAULT now() NOT NULL',$line);
-    			
+
     			// nuke ON UPDATE CURRENT_TIMESTAMP
     			$line=preg_replace('/(\s*)on(\s*)update(\s*)CURRENT_TIMESTAMP/i','\\1',$line);
-    			
+
     			// unique index(field1,field2)
     			if (preg_match('/unique index\s*\((\w+\s*,\s*\w+)\)/i',$line))
     			{
@@ -451,6 +459,16 @@ class DoliDBPgsql
 	function getVersionArray()
 	{
 		return explode('.',$this->getVersion());
+	}
+
+	/**
+	 *	Return version of database client driver
+	 *
+	 *	@return	        string      Version string
+	 */
+	function getDriverInfo()
+	{
+		return '';
 	}
 
     /**
@@ -860,7 +878,7 @@ class DoliDBPgsql
 			42701=> 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			'42710' => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			'23505' => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP',
+			'42704' => 'DB_ERROR_NO_INDEX_TO_DROP',		// May also be Type xxx does not exists
 			'42601' => 'DB_ERROR_SYNTAX',
 			'42P16' => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 			1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
@@ -1238,7 +1256,7 @@ class DoliDBPgsql
 			$sql.="(".$field_desc['value'].")";
 		}
 
-		// FIXME May not work with pgsql. May need to run a second request. If it works, just remove the FIXME tag
+		// TODO May not work with pgsql. May need to run a second request. If it works, just remove the comment
 		if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL') $sql.=" NOT NULL";
 
 		dol_syslog($sql,LOG_DEBUG);

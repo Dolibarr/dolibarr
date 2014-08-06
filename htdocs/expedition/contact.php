@@ -153,7 +153,7 @@ if ($id > 0 || ! empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Sending"), 0, 'sending');
+	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), 0, 'sending');
 
 
    /*
@@ -199,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Ref expedition client
 	print '<tr><td>';
-    print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+    print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer').'</td><td align="left">';
     print '</td>';
     print '</tr></table>';

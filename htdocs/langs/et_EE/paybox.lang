@@ -1,44 +1,37 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-PayBoxSetup=Paybox moodul setup
-PayBoxDesc=See moodul pakkumise leheküljed, mis võimaldab makse <a href="http://www.paybox.com" target="_blank">Paybox</a> kliendid. Seda saab kasutada tasuta makse või makse teatud Dolibarr objekti (arve, et ...)
-FollowingUrlAreAvailableToMakePayments=Pärast URL-id on saadaval pakkuda leht kliendi teha makse Dolibarr esemeid
-PaymentForm=Maksevahendina
-WelcomeOnPaymentPage=Tere tulemast meie online makseteenuse
-ThisScreenAllowsYouToPay=See ekraan võimaldab teil teha online-väljamaksed %s.
-ThisIsInformationOnPayment=See on informatsioon makse teha
-ToComplete=Et lõpetada
-YourEMail=Kirjuta saada tasu kinnitamine
-Creditor=Võlausaldaja
+# Dolibarr language file - Source file is en_US - paybox
+PayBoxSetup=PayBox mooduli seadistamine
+PayBoxDesc=See moodul võimaldab klientidel makseid sooritada <a href="http://www.paybox.com" target="_blank">Payboxi</a> lehel. Seda võib kasutada tavalise maksena või maksena teatud Dolibarri objektidel (arved, tellimused jne)
+FollowingUrlAreAvailableToMakePayments=Dolibarri objektide põhjal maksete sooritamiseks on klientidele pakkuda järgnevate lehtede URLid:
+PaymentForm=Maksmise vorm
+WelcomeOnPaymentPage=Tere tulemast meie online makseteenusesse
+ThisScreenAllowsYouToPay=See ekraan võimaldab teil teha online-makseid üksusele %s.
+ThisIsInformationOnPayment=See on makse sooritamise info
+ToComplete=Lõpuni viia
+YourEMail=E-posti aadress makse kinnituse saamiseks
+Creditor=Kreeditor
 PaymentCode=Makse kood
-PayBoxDoPayment=Mine makse
-YouWillBeRedirectedOnPayBox=Teid suunatakse on tagatud Paybox leht sisend sa krediitkaardi andmed
-PleaseBePatient=Palun ole kannatlik
+PayBoxDoPayment=Mine maksmisele
+YouWillBeRedirectedOnPayBox=Teid suunatakse turvalisele Payboxi lehele krediitkaardi info sisestamiseks
+PleaseBePatient=Palun olge kannatli
 Continue=Järgmine
-ToOfferALinkForOnlinePayment=URL %s makse
-ToOfferALinkForOnlinePaymentOnOrder=URL pakkuda %s online makse kasutajaliides kliendi tellimuse
-ToOfferALinkForOnlinePaymentOnInvoice=URL pakkuda %s online makse kasutajaliides kliendi arve
-ToOfferALinkForOnlinePaymentOnContractLine=URL pakkuda %s online makse kasutajaliides lepingu rida
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL pakkuda %s online makse kasutajaliides free summa
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pakkuda %s online makse kasutajaliides liige liitumisleping
-YouCanAddTagOnUrl=Võite lisada url parameetri <b>&amp; tag = <i>väärtus</i></b> ühtegi nimetatud URL (vajalik ainult vaba makse), et lisada oma makse kommentaar tag.
-SetupPayBoxToHavePaymentCreatedAutomatically=Sea oma Paybox koos url <b>%s</b> on makse loodud automaatselt kinnitatud Paybox.
-YourPaymentHasBeenRecorded=Seda lehekülge kinnitab, et makse on registreeritud. Aitäh.
-YourPaymentHasNotBeenRecorded=Te makse ei ole registreeritud ja tehing on tühistatud. Aitäh.
+ToOfferALinkForOnlinePayment=Makse %s URL
+ToOfferALinkForOnlinePaymentOnOrder=Müügitellimuse eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnInvoice=Müügiarve eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnContractLine=Lepingu rea eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnFreeAmount=Vaba rea eest maksmiseks kasutatava %s online makseteenuse URL
+ToOfferALinkForOnlinePaymentOnMemberSubscription=Liikmemaksu eest maksmiseks kasutatava %s online makseteenuse URL
+YouCanAddTagOnUrl=Samuti võid lisa URL parameetri <b>&tag=<i>value</i></b> igale nendest URLidest (nõutud vaid vaba makse jaoks) oma loodud makse kommentaari sildi jaoks.
+SetupPayBoxToHavePaymentCreatedAutomatically=Seadista oma PayBox URLiga <b>%s</b> makse automaatseks loomiseks, kui PayBox on selle kinnitanud.
+YourPaymentHasBeenRecorded=See lehekülg kinnitab, et makse on registreeritud. Täname!
+YourPaymentHasNotBeenRecorded=Makset ei ole registreeritud ja tehing on tühistatud. Täname!
 AccountParameter=Konto parameetrid
 UsageParameter=Kasutamise parameetrid
-InformationToFindParameters=Aidake leida oma %s konto andmed
-PAYBOX_CGI_URL_V2=URL Paybox CGI moodul makse
-VendorName=Nimi müüja
-CSSUrlForPaymentForm=CSS style sheet url maksmise vorm
-MessageOK=Sõnum on kontrollitud makse tagasi lehele
-MessageKO=Sõnum on tühistatud makse tagasi lehele
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:22:24).
+InformationToFindParameters=Abi %s konto info leidmiseks
+PAYBOX_CGI_URL_V2=Maksmiseks kasutatava Payboxi CGI mooduli URL
+VendorName=Müüja nim
+CSSUrlForPaymentForm=Maksmise vormi CSS stiililehtede URL
+MessageOK=Kinnitatud makse lehel olev sõnum
+MessageKO=Tühistatud makse lehel olev sõnum
+NewPayboxPaymentReceived=Uus Payboxi makse vastu võetud
+NewPayboxPaymentFailed=Uut Payboxi makset prooviti sooritada, kuid see ebaõnnestus
+PAYBOX_PAYONLINE_SENDEMAIL=E-posti aadress, kuhu saadetakse sõnum pärast makset (õnnestus või mitte)

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2011 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010     Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-204 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
     	if ($zipcode) $sql.=" AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
     	if ($town)    $sql.=" AND z.town LIKE '%" . $db->escape($town) . "%'";
     	$sql.= " ORDER BY z.zip, z.town";
-        $sql.= $db->plimit(50); // Avoid pb with bad criteria
+        $sql.= $db->plimit(100); // Avoid pb with bad criteria
 	}
 	else                                               // Use table of third parties
 	{
@@ -87,7 +87,7 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
         if ($zipcode) $sql.= " s.zip LIKE '".$db->escape($zipcode)."%'";
         if ($town)    $sql.= " s.town LIKE '%" . $db->escape($town) . "%'";
         $sql.= " ORDER BY s.fk_pays, s.zip, s.town";
-        $sql.= $db->plimit(50); // Avoid pb with bad criteria
+        $sql.= $db->plimit(100); // Avoid pb with bad criteria
 	}
 
     //print $sql;
@@ -97,8 +97,8 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 	{
 		while ($row = $db->fetch_array($resql))
 		{
-			$country = $row['fk_country']?($langs->trans('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->trans('Country'.$row['country_code']):$row['country']):'';
-			$county = $row['fk_county']?($langs->trans($row['county_code'])!=$row['county_code']?$langs->trans($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
+			$country = $row['fk_country']?($langs->transnoentitiesnoconv('Country'.$row['country_code'])!='Country'.$row['country_code']?$langs->transnoentitiesnoconv('Country'.$row['country_code']):$row['country']):'';
+			$county = $row['fk_county']?($langs->transnoentitiesnoconv($row['county_code'])!=$row['county_code']?$langs->transnoentitiesnoconv($row['county_code']):($row['county']!='-'?$row['county']:'')):'';
 
 			$row_array['label'] = $row['zip'].' '.$row['town'];
 			$row_array['label'] .= ($county || $country)?' (':'';
@@ -116,7 +116,6 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
 				$row_array['value'] = $row['town'];
 				$row_array['zipcode'] = $row['zip'];
 			}
-			$row_array['departement_id'] = $row['fk_county'];    // deprecated
 			$row_array['selectcountry_id'] = $row['fk_country'];
 			$row_array['state_id'] = $row['fk_county'];
 

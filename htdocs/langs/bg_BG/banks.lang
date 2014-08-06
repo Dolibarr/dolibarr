@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=Банка
 Banks=Банки
 MenuBankCash=Банка / Cash
@@ -28,6 +19,8 @@ SavingAccount=Спестовна сметка
 SavingAccounts=Спестовни сметки
 ErrorBankLabelAlreadyExists=Финансова сметка етикет, който вече съществува
 BankBalance=Баланс
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Минимална разрешена баланс
 BalanceMinimalDesired=Минимална желания баланс
 InitialBankBalance=Начален баланс
@@ -111,6 +104,7 @@ ConciliatedBy=Съгласуват от
 DateConciliating=Reconcile дата
 BankLineConciliated=Transaction примири
 CustomerInvoicePayment=Клиентско плащане
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=Доставчик плащане
 WithdrawalPayment=Оттегляне плащане
 SocialContributionPayment=Осигурителната вноска за плащане
@@ -155,4 +149,10 @@ InputReceiptNumber=Изберете банково извлечение, свъ�
 EventualyAddCategory=В крайна сметка, да посочите категорията, в която да се класифицират записи
 ToConciliate=За помирение?
 ThenCheckLinesAndConciliate=След това проверете линии в отчета на банката и кликнете
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:36:44).
+# BankDashboard=Bank accounts summary
+# DefaultRIB=Default BAN
+# AllRIB=All BAN
+# LabelRIB=BAN Label
+# NoBANRecord=No BAN record
+# DeleteARib=Delete BAN record
+# ConfirmDeleteRib=Are you sure you want to delete this BAN record ?

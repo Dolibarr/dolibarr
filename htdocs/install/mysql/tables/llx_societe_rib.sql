@@ -2,6 +2,7 @@
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2013      Peter Fontaine       <contact@peterfontaine.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ create table llx_societe_rib
   domiciliation  varchar(255),
   proprio        varchar(60),
   owner_address  varchar(255),
+  default_rib    smallint NOT NULL DEFAULT 0,
   import_key     varchar(14)    -- import key
 
 

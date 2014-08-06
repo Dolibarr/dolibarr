@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Komercyjne
 CommercialArea=Powierzchnia handlowa
 CommercialCard=Commercial karty
@@ -23,6 +11,8 @@ DeleteAction=Usuń działania / zadania
 NewAction=Nowe działania / zadania
 AddAction=Dodaj działania / zadania
 AddAnAction=Dodaj działania / zadania
+AddActionRendezVous=Dodać zadanie Rendezvous
+Rendez-Vous=Rendezvous
 ConfirmDeleteAction=Czy na pewno chcesz usunąć to zadanie?
 CardAction=Działanie karty
 PercentDone=Procent zrobić
@@ -33,6 +23,7 @@ TaskRDVWith=Spotkanie z %s
 ShowTask=Pokaż zadanie
 ShowAction=Pokaż działania
 ActionsReport=Działania raport
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Przedstawiciel handlowy
 SalesRepresentatives=Przedstawiciele handlowi
 SalesRepresentativeFollowUp=Przedstawiciel handlowy (kontynuacja)
@@ -51,9 +42,11 @@ DoneAndToDoActionsFor=Gotowe i zadania Aby zrobić dla %s
 DoneAndToDoActions=Sporządzono zadań oraz do uczynienia
 DoneActions=Sporządzono działania
 DoneActionsFor=Sporządzono działań dla %s
+ToDoActions=Niekompletne działań
+ToDoActionsFor=Niekompletne działań na rzecz %s
 SendPropalRef=Wyślij handlowych wniosku %s
 SendOrderRef=Wyślij zamówienie %s
-NoRecordedProspects=Nr perspektywa rejestrowane
+StatusNotApplicable=Nie dotyczy
 StatusActionToDo=Aby to zrobić
 StatusActionDone=Zrobione
 MyActionsAsked=Działania Mam zapisane
@@ -83,32 +76,20 @@ ActionAC_REL=Wyślij rozliczeniowe (przypomnienie)
 ActionAC_CLO=Blisko
 ActionAC_EMAILING=Wyślij e-maila masa
 ActionAC_COM=Wyślij zamówienie pocztą
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-// Reference language: en_US
-AddActionRendezVous=Dodać zadanie Rendezvous
-Rendez-Vous=Rendezvous
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-ToDoActions=Niekompletne działań
-ToDoActionsFor=Niekompletne działań na rzecz %s
+ActionAC_SHIP=Wyślij wysyłki za pośrednictwem poczty
 ActionAC_SUP_ORD=aby dostawca przesłać pocztą
 ActionAC_SUP_INV=fakturze dostawcy przesłać pocztą
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:00).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-StatusNotApplicable=Nie dotyczy
-ActionAC_SHIP=Wyślij wysyłki za pośrednictwem poczty
 ActionAC_OTH=Inny
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Stan perspektywa
 DraftPropals=Projekt komercyjne propozycje
 SearchPropal=Szukaj komercyjnego projektu
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:58).
+# CommercialDashboard=Commercial summary

@@ -19,6 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /**
  *  \file       htdocs/comm/action/index.php
  *  \ingroup    agenda
@@ -31,7 +32,9 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 if (! isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) $conf->global->AGENDA_MAX_EVENTS_DAY_VIEW=3;
 
@@ -76,7 +79,7 @@ $pid=GETPOST("projectid","int",3);
 $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
-$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=="0"?'':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+$actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
 
 if (GETPOST('viewcal') && $action != 'show_day' && $action != 'show_week')  {
     $action='show_month'; $day='';
@@ -143,9 +146,11 @@ if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0
         $source='AGENDA_EXT_SRC'.$i;
         $name='AGENDA_EXT_NAME'.$i;
         $color='AGENDA_EXT_COLOR'.$i;
+        $buggedfile='AGENDA_EXT_BUGGEDFILE'.$i;
         if (! empty($conf->global->$source) && ! empty($conf->global->$name))
         {
-        	$listofextcals[]=array('src'=>$conf->global->$source,'name'=>$conf->global->$name,'color'=>$conf->global->$color);
+        	// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+        	$listofextcals[]=array('src'=>$conf->global->$source,'name'=>$conf->global->$name,'color'=>$conf->global->$color,'buggedfile'=>(isset($conf->global->buggedfile)?$conf->global->buggedfile:0));
         }
     }
 }
@@ -230,7 +235,7 @@ if ($filterd) $param.="&filterd=".$filterd;
 if ($socid)   $param.="&socid=".$socid;
 if ($showbirthday) $param.="&showbirthday=1";
 if ($pid)     $param.="&projectid=".$pid;
-if ($actioncode) $param.="&actioncode=".$actioncode;
+if ($actioncode != '') $param.="&actioncode=".$actioncode;
 if ($type)   $param.="&type=".$type;
 if ($action == 'show_day' || $action == 'show_week') $param.='&action='.$action;
 $param.="&maxprint=".$maxprint;
@@ -306,11 +311,9 @@ $sql.= ' a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code';
 $sql.= ' FROM ('.MAIN_DB_PREFIX.'c_actioncomm as ca,';
-$sql.= " ".MAIN_DB_PREFIX.'user as u,';
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a)";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 $sql.= ' WHERE a.fk_action = ca.id';
-$sql.= ' AND a.fk_user_author = u.rowid';
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
@@ -319,28 +322,28 @@ if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit 
 if ($action == 'show_day')
 {
     $sql.= " AND (";
-    $sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+    $sql.= " (a.datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
     $sql.= " OR ";
-    $sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+    $sql.= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
     $sql.= " OR ";
-    $sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
-    $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
+    $sql.= " (a.datep < '".$db->idate(dol_mktime(0,0,0,$month,$day,$year))."'";
+    $sql.= " AND a.datep2 > '".$db->idate(dol_mktime(23,59,59,$month,$day,$year))."')";
     $sql.= ')';
 }
 else
 {
     // To limit array
     $sql.= " AND (";
-    $sql.= " (datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";   // Start 7 days before
+    $sql.= " (a.datep BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";   // Start 7 days before
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";            // End 7 days after + 3 to go from 28 to 31
     $sql.= " OR ";
-    $sql.= " (datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+    $sql.= " (a.datep2 BETWEEN '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
     $sql.= " AND '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= " OR ";
-    $sql.= " (datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
-    $sql.= " AND datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
+    $sql.= " (a.datep < '".$db->idate(dol_mktime(0,0,0,$month,1,$year)-(60*60*24*7))."'";
+    $sql.= " AND a.datep2 > '".$db->idate(dol_mktime(23,59,59,$month,28,$year)+(60*60*24*10))."')";
     $sql.= ')';
 }
 if ($type) $sql.= " AND ca.id = ".$type;
@@ -376,10 +379,10 @@ if ($resql)
         $event->type_code=$obj->code;
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
-        $event->author->id=$obj->fk_user_author;
-        $event->usertodo->id=$obj->fk_user_action;
-        $event->userdone->id=$obj->fk_user_done;
-
+        $event->author->id=$obj->fk_user_author;	// user id of creator
+        $event->usertodo->id=$obj->fk_user_action;	// user id of owner
+        $event->userdone->id=$obj->fk_user_done;	// deprecated
+		// $event->userstodo=... with s after user, in future version, will be an array with all id of user assigned to event
         $event->priority=$obj->priority;
         $event->fulldayevent=$obj->fulldayevent;
         $event->location=$obj->location;
@@ -526,9 +529,11 @@ if (count($listofextcals))
         $url=$extcal['src'];    // Example: https://www.google.com/calendar/ical/eldy10%40gmail.com/private-cde92aa7d7e0ef6110010a821a2aaeb/basic.ics
         $namecal = $extcal['name'];
         $colorcal = $extcal['color'];
-        //print "url=".$url." namecal=".$namecal." colorcal=".$colorcal;
+        $buggedfile = $extcal['buggedfile'];
+        //print "url=".$url." namecal=".$namecal." colorcal=".$colorcal." buggedfile=".$buggedfile;
         $ical=new ICal();
         $ical->parse($url);
+
         // After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
         //var_dump($ical->cal); exit;
         $icalevents=array();
@@ -642,6 +647,8 @@ if (count($listofextcals))
             // Loop on each entry into cal file to know if entry is qualified and add an ActionComm into $eventarray
             foreach($icalevents as $icalevent)
             {
+            	//var_dump($icalevent);
+
                 //print $icalevent['SUMMARY'].'->'.var_dump($icalevent).'<br>';exit;
                 if (! empty($icalevent['RRULE'])) continue;    // We found a repeatable event. It was already split into unitary events, so we discard general rule.
 
@@ -658,10 +665,34 @@ if (count($listofextcals))
                     $event->fulldayevent=true;
                     $addevent=true;
                 }
-                elseif (!is_array($icalevent['DTSTART'])) // not fullday event (DTSTART is not array)
+                elseif (!is_array($icalevent['DTSTART'])) // not fullday event (DTSTART is not array. It is a value like '19700101T000000Z' for 00:00 in greenwitch)
                 {
                     $datestart=$icalevent['DTSTART'];
                     $dateend=$icalevent['DTEND'];
+                    $addevent=true;
+                }
+                elseif (isset($icalevent['DTSTART']['unixtime']))	// File contains a local timezone + a TZ (for example when using bluemind)
+                {
+                    $datestart=$icalevent['DTSTART']['unixtime'];
+                    $dateend=$icalevent['DTEND']['unixtime'];
+                    // $buggedfile is set to uselocalandtznodaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtznodaylight'
+                    if ($buggedfile === 'uselocalandtznodaylight')	// unixtime is a local date that does not take daylight into account, TZID is +1 for example for 'Europe/Paris' in summer instead of 2
+                    {
+                    	// TODO
+                    }
+                    // $buggedfile is set to uselocalandtzdaylight if conf->global->AGENDA_EXT_BUGGEDFILEx = 'uselocalandtzdaylight' (for example with bluemind)
+                    if ($buggedfile === 'uselocalandtzdaylight')	// unixtime is a local date that does take daylight into account, TZID is +2 for example for 'Europe/Paris' in summer
+                    {
+                    	$localtzs = new DateTimeZone(preg_replace('/"/','',$icalevent['DTSTART']['TZID']));
+                    	$localtze = new DateTimeZone(preg_replace('/"/','',$icalevent['DTEND']['TZID']));
+                    	$localdts = new DateTime(dol_print_date($datestart,'dayrfc','gmt'), $localtzs);
+                    	$localdte = new DateTime(dol_print_date($dateend,'dayrfc','gmt'), $localtze);
+						$tmps=-1*$localtzs->getOffset($localdts);
+						$tmpe=-1*$localtze->getOffset($localdte);
+						$datestart+=$tmps;
+						$dateend+=$tmpe;
+						//var_dump($datestart);
+                    }
                     $addevent=true;
                 }
 
@@ -946,10 +977,9 @@ llxFooter();
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60)
 {
     global $user, $conf, $langs;
-    global $filter, $filtera, $filtert, $filterd, $status;
+    global $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $colorindexused;
-
 
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
@@ -1003,6 +1033,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     || (! empty($event->userdone->id) && $event->userdone->id == $user->id))
                     {
                     	$nummytasks++; $cssclass='family_mytasks';
+                    	// TODO Set a color using user color
+                    	// Must defined rule to choose color of who to use.
+                    	// event->usertodo->id will still contains user id of owner
+                    	// event->userstodo will be an array in future.
+                    	// $color=$user->color;
                     }
                     else if ($event->type_code == 'ICALEVENT')
                     {
@@ -1173,9 +1208,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                 }
                 else
                 {
-                    print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=0&month='.$monthshown.'&year='.$year;
+                	print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?maxprint=0&month='.$monthshown.'&year='.$year;
                     print ($status?'&status='.$status:'').($filter?'&filter='.$filter:'');
                     print ($filtera?'&filtera='.$filtera:'').($filtert?'&filtert='.$filtert:'').($filterd?'&filterd='.$filterd:'');
+                    print ($actioncode!=''?'&actioncode='.$actioncode:'');
                     print '">'.img_picto("all","1downarrow_selected.png").' ...';
                     print ' +'.(count($eventarray[$daykey])-$maxprint);
                     print '</a>';

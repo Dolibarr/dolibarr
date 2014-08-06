@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Vertrieb
 CommercialArea=Vertriebsübersicht
 CommercialCard=Vertriebskarte
@@ -31,6 +23,7 @@ TaskRDVWith=Treffen mit %s
 ShowTask=Zeige Aufgabe
 ShowAction=Zeige Maßnahme
 ActionsReport=Maßnahmenbericht
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Vertriebsmitarbeiter
 SalesRepresentatives=Vertreter
 SalesRepresentativeFollowUp=Vertriebsmitarbeiter (Follow-up)
@@ -66,11 +59,11 @@ LastProspectNeverContacted=Noch nicht kontaktiert
 LastProspectToContact=Zu kontaktieren
 LastProspectContactInProcess=Kontaktaufnahme läuft
 LastProspectContactDone=Kontaktaufnahme erledigt
-DateActionPlanned=Geplantes Erledigungsdatum 
+DateActionPlanned=Geplantes Erledigungsdatum
 DateActionDone=Echtes Erledigungsdatum
 ActionAskedBy=Maßnahme erbeten von
 ActionAffectedTo=Maßnahme zugewiesen an
-ActionDoneBy=Maßnahme erledigt von 
+ActionDoneBy=Maßnahme erledigt von
 ActionUserAsk=Aufgenommen durch
 ErrorStatusCantBeZeroIfStarted=Ist das Feld '<b>Echtes Erledigungsdatum</b>' ausgefüllt, so wurde die Aktion bereits gestartet (oder beendet) und der '<b>Status</b>' kann nicht 0%% sein.
 ActionAC_TEL=Anruf
@@ -87,6 +80,16 @@ ActionAC_SHIP=Lieferschein senden
 ActionAC_SUP_ORD=Sende Lieferantenbestellung per Post
 ActionAC_SUP_INV=Sende Lieferantenrechnung per Post
 ActionAC_OTH=Sonstiges
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+Stats=Verkaufsstatistik
+CAOrder=Verkaufsvolumen (Freigegebene Bestellungen)
+FromTo=von %s bis %s
+# MargeOrder=Margins (validated orders)
+RecapAnnee=Jahreszusammenfassung
+# NoData=There is no data
 StatusProsp=Lead Status
 DraftPropals=Entworfene Angebote
 SearchPropal=Ein Angebot suchen
+CommercialDashboard=Vertriebsusammenfassung

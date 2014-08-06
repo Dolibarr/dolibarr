@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=Firmenname %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorPrefixAlreadyExists=Präfix %s bereits vorhanden. Bitte wählen Sie einen anderen.
 ErrorSetACountryFirst=Wählen sie zuerst das Land
@@ -44,7 +36,9 @@ ThirdParty=Partner
 ThirdParties=Partner
 ThirdPartyAll=Partner (alle)
 ThirdPartyProspects=Leads
+ThirdPartyProspectsStats=Leads
 ThirdPartyCustomers=Kunden
+ThirdPartyCustomersStats=Kunden
 ThirdPartyCustomersWithIdProf12=Kunden mit %s oder %s
 ThirdPartySuppliers=Lieferanten
 ThirdPartyType=Typ des Partners
@@ -72,22 +66,29 @@ Country=Land
 CountryCode=Ländercode
 CountryId=Länder-ID
 Phone=Telefon
+Skype=Skype
+Call=Anruf
+# Chat=Chat
 PhonePro=Telefon berufl.
 PhonePerso=Telefon privat
 PhoneMobile=Mobiltelefon
+No_Email=Versenden sie keine Spammails
 Fax=Fax
 Zip=PLZ
 Town=Stadt
 Web=Web
-Poste=Posten
+Poste= Posten
 DefaultLang=Standardsprache
 VATIsUsed=MwSt.-pflichtig
 VATIsNotUsed=Nicht MwSt-pflichtig
+CopyAddressFromSoc=geben sie hier die Adressen Dritter ein
 ##### Local Taxes #####
-LocalTax1IsUsedES=RE wird verwendet
-LocalTax1IsNotUsedES=RE wird nicht verwendet
-LocalTax2IsUsedES=IRPF wird verwendet
-LocalTax2IsNotUsedES=IRPF wird nicht verwendet
+LocalTax1IsUsedES= RE wird verwendet
+LocalTax1IsNotUsedES= RE wird nicht verwendet
+LocalTax2IsUsedES= IRPF wird verwendet
+LocalTax2IsNotUsedES= IRPF wird nicht verwendet
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Kunden-Code ungültig
 WrongSupplierCode=Lieferanten-Code ungültig
@@ -107,7 +108,7 @@ ProfId3=Professional ID 3
 ProfId4=Professional ID 4
 ProfId5=Professional ID 5
 ProfId6=Professional ID 6
-ProfId1AR=Prof Id 1 (CUIT / Cuil)
+ProfId1AR=Prof Id 1 (CUIT)
 ProfId2AR=Prof Id 2 (Revenu Bestien)
 ProfId3AR=-
 ProfId4AR=-
@@ -154,7 +155,7 @@ ProfId2DE=Amtsgericht
 ProfId3DE=Handelsregister-Nummer
 ProfId4DE=Steuernummer
 ProfId5DE=-
-PfovId6DE=-
+ProfId6DE=-
 ProfId1ES=Prof Id 1 (CIF / NIF)
 ProfId2ES=Prof Id 2 (Social Security Number)
 ProfId3ES=Prof Id 3 (CNAE)
@@ -184,7 +185,7 @@ ProfId2IN=Prof Id 2
 ProfId3IN=Prof Id 3
 ProfId4IN=Prof Id 4
 ProfId5IN=Prof Id 5
-PaofId6IN=Prof Id 6
+ProfId6IN=-
 ProfId1MA=Id prof. 1 (R.C.)
 ProfId2MA=Id prof. 2 (Patente)
 ProfId3MA=Id prof. 3 (I.F.)
@@ -208,12 +209,12 @@ ProfId2PT=Prof Id 2 (Social Security Number)
 ProfId3PT=Prof Id 3 (Commercial Record-Nummer)
 ProfId4PT=Prof Id 4 (Konservatorium)
 ProfId5PT=-
-ProfID6PT=-
+ProfId6PT=-
 ProfId1SN=RC
-ProfId2SN=NINEA 
-ProfId3SN=- 
-ProfId4SN=- 
-ProfId5SN=- 
+ProfId2SN=NINEA
+ProfId3SN=-
+ProfId4SN=-
+ProfId5SN=-
 ProfId6SN=-
 ProfId1TN=Prof Id 1 (RC)
 ProfId2TN=Prof Id 2 (Geschäftsjahr matricule)
@@ -259,6 +260,7 @@ EditContact=Kontakt bearbeiten
 EditContactAddress=Kontakt/Adresse bearbeiten
 Contact=Kontakt
 ContactsAddresses=Kontakte/Adressen
+NoContactDefinedForThirdParty=Für diesen Kunden ist keine Adresse angegeben
 NoContactDefined=Kein Kontakt für diesen Partner
 DefaultContact=Standardkontakt
 AddCompany=Firma hinzufügen
@@ -364,6 +366,7 @@ ExportDataset_company_1=Partner und Eigenschaften
 ExportDataset_company_2=Kontakte und Eigenschaften
 ImportDataset_company_1=Partner und Eigenschaften
 ImportDataset_company_2=Kontakte (von Dritten oder auch nicht) und Attribute
+ImportDataset_company_3=Bankverbindung
 PriceLevel=Preisstufe
 DeliveriesAddress=Lieferadressen
 DeliveryAddress=Lieferadresse
@@ -395,7 +398,10 @@ UniqueThirdParties=Gesamte Anzahl der Kontakte
 InActivity=Aktiv
 ActivityCeased=Inaktiv
 ActivityStateFilter=Status
-
+ProductsIntoElements=Liste von Produkten in
+# CurrentOutstandingBill=Current outstanding bill
+OutstandingBill=Max. für ausstehende Rechnung
+# OutstandingBillReached=Reached max. for outstanding bill
 # Monkey
 MonkeyNumRefModelDesc=Zurück NUMERO mit Format %syymm-nnnn für den Kunden-Code und syymm%-nnnn für die Lieferanten-Code ist, wenn JJ Jahr, MM Monat und nnnn ist eine Folge ohne Pause und kein Zurück mehr gibt, auf 0 gesetzt.
 # Leopard

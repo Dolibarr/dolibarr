@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP客户端模块设置
 NewFTPClient=新的FTP连接建立
 FTPArea=的FTP区
@@ -18,4 +9,4 @@ FailedToConnectToFTPServer=无法连接到FTP服务器（服务器%s，港口%s�
 FailedToConnectToFTPServerWithCredentials=无法登录到FTP服务器的定义登录/密码
 FTPFailedToRemoveFile=无法删除文件<b>%s。</b>
 FTPFailedToRemoveDir=无法删除目录<b>%s（</b>检查权限和目录是空的）。
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:53:12).
+FTPPassiveMode=被动模式

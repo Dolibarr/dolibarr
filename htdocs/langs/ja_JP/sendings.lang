@@ -1,16 +1,8 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=REF。出荷
 Sending=出荷
 Sendings=出荷
+Shipment=出荷
 Shipments=出荷
 Receivings=Receivings
 SendingsArea=出荷エリア
@@ -21,6 +13,7 @@ LastSendings=最後%s出荷
 SearchASending=出荷の検索
 StatisticsOfSendings=出荷の統計
 NbOfSendings=出荷数
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=配送カード
 NewSending=新しい出荷
 CreateASending=出荷を作成します。
@@ -39,9 +32,11 @@ SendingsToValidate=検証するために出荷
 StatusSendingCanceled=キャンセル
 StatusSendingDraft=ドラフト
 StatusSendingValidated=検証（製品が出荷する、またはすでに出荷されます）
+StatusSendingProcessed=処理
 StatusSendingCanceledShort=キャンセル
 StatusSendingDraftShort=ドラフト
 StatusSendingValidatedShort=検証
+StatusSendingProcessedShort=処理
 SendingSheet=シートを送信する
 Carriers=キャリア
 Carrier=キャリア
@@ -55,7 +50,7 @@ Enlevement=顧客が得
 DocumentModelSimple=簡単な文書モデル
 DocumentModelMerou=メロウA5モデル
 WarningNoQtyLeftToSend=警告は、出荷されるのを待っていない製品。
-StatsOnShipmentsOnlyValidated=のみ検証の出荷に実施統計
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=配達のかんな日付
 DateReceived=日付の配信は、受信した
 SendShippingByEMail=電子メールで貨物を送る
@@ -63,10 +58,19 @@ SendShippingRef=出荷%sを送る
 ActionsOnShipping=出荷のイベント
 LinkToTrackYourPackage=あなたのパッケージを追跡するためのリンク
 ShipmentCreationIsDoneFromOrder=現時点では、新たな出荷の作成は、注文カードから行われます。
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
 SendingMethodCATCH=顧客がキャッチ
 SendingMethodTRANS=トランスポーター
 SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
 DocumentModelSirocco=配信確認のためのシンプルなドキュメントモデル
 DocumentModelTyphon=配信確認のために、より完全なドキュメントモデル（logo. ..）
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=定数EXPEDITION_ADDON_NUMBERが定義されていません
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:02:52).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=Електронната поща
 EMailing=Електронната поща
 Mailings=EMailings
@@ -87,6 +78,9 @@ YourMailUnsubcribeOK=От пощенския списък на <b>%s</b> име�
 MailtoEMail=Хипер-връзка на приятел
 ActivateCheckRead=Оставя се да се използва за четене тракер получаване и връзката unsubcribe
 ActivateCheckReadKey=Key използване за криптиране на използването на URL адрес за обратна разписка и функция unsubcribe
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Контакти на всички трети лица (клиенти, перспектива, доставчици, ...)
 MailingModuleDescDolibarrUsers=Dolibarr потребители
 MailingModuleDescFundationMembers=Фондация членове с имейли
@@ -95,8 +89,11 @@ MailingModuleDescEmailsFromUser=Имейли от приноса на потре
 MailingModuleDescContactsCategories=Трети страни (по категории)
 MailingModuleDescDolibarrContractsLinesExpired=Трети страни, с изтекъл срок на договора линии
 MailingModuleDescContactsByCompanyCategory=Контакти с трети страни (от трети страни категория)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
 MailingModuleDescMembersCategories=Фондация членове (по категории)
 MailingModuleDescContactsByFunction=Контакти на трети лица (от позицията / функция)
+
+
 LineInFile=Line %s във файла
 RecipientSelectionModules=Определени искания за подбор на получателя
 MailSelectedRecipients=Избрани получателите
@@ -109,10 +106,10 @@ SearchAMailing=Търсене пощенски
 SendMailing=Изпрати имейл
 SendMail=Изпращане на имейл
 SentBy=Изпратено от
-MailingNeedCommand=От съображения за сигурност, изпращане на електронната поща трябва да се извършва от командния ред. Посъветвайте се с вашия администратор, за да стартирате следната команда, за да изпратите електронна поща до всички получатели:
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Все пак можете да ги изпратите онлайн чрез добавяне на параметър MAILING_LIMIT_SENDBYWEB със стойност на максимален брой на имейлите, които искате да изпратите от сесията. За това, отидете на дома - Setup - Други.
-ConfirmSendingEmailing=Сигурен ли сте, че искате да изпратите електронна поща без командния ред и от уеб режим?
-LimitSendingEmailing=На линия изпращане на emailings са ограничени за сигурност и таймаут причини да <b>%s</b> получатели чрез изпращане на сесията.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=Изчисти списъка
 ToClearAllRecipientsClickHere=Щракнете тук, за да изчистите списъка на получателите за този електронната поща
 ToAddRecipientsChooseHere=Добавяне на получатели, като изберете от списъците
@@ -124,6 +121,8 @@ TagCheckMail=Tracker поща отвори
 TagUnsubscribe=Отписване връзка
 TagSignature=Подпис изпращане на потребителя
 TagMailtoEmail=Имейл на получателя
+
+# Module Notifications
 Notifications=Известия
 NoNotificationsWillBeSent=Не са планирани за това събитие и компания известия по имейл
 ANotificationsWillBeSent=1 уведомление, ще се изпращат по електронна поща
@@ -131,4 +130,3 @@ SomeNotificationsWillBeSent=%s нотификации ще бъдат изпра
 AddNewNotification=Активиране на ново искане за уведомяване имейл
 ListOfActiveNotifications=Списък на всички активни заявки за уведомяване имейл
 ListOfNotificationsDone=Списък на всички имейли, изпратени уведомления
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:48:17).

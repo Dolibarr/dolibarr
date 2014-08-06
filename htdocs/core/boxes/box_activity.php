@@ -56,7 +56,7 @@ class box_activity extends ModeleBoxes
 		// FIXME: Use a cache to save data because this slow down too much main home page. This box slow down too seriously software.
 		// FIXME: Removed number_format (not compatible with all languages)
 		// FIXME: Pb into some status
-		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;	// Not enabled by default due to bugs (see previous FIXME)
+		$this->enabled=$conf->global->MAIN_FEATURES_LEVEL;	// Not enabled by default due to bugs (see previous comments)
 	}
 
 	/**
@@ -118,7 +118,7 @@ class box_activity extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
+					'text' => price($objp->Mnttot,1,$langs,0,0,-1,$conf->currency)
 					);
 
 					// We add only for the current year
@@ -131,6 +131,8 @@ class box_activity extends ModeleBoxes
 					$i++;
 				}
 				if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoRecordedInvoices"));
+
+				$db->free($result);
 			}
 			else dol_print_error($db);
 
@@ -163,7 +165,7 @@ class box_activity extends ModeleBoxes
 					);
 					$totalnb += $objp->nb;
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
+					'text' => price($objp->Mnttot,1,$langs,0,0,-1,$conf->currency)
 					);
 					$totalMnt += $objp->Mnttot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"',
@@ -217,7 +219,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $objp->nb;
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
+					'text' => price($objp->Mnttot,1,$langs,0,0,-1,$conf->currency)
 					);
 					$totalMnt += $objp->Mnttot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"', 'text' => $commandestatic->LibStatut($objp->fk_statut,0,3));
@@ -268,7 +270,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $objp->nb;
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => dol_trunc(number_format($objp->Mnttot, 0, ',', ' '),40)."&nbsp;".$langs->getCurrencySymbol($conf->currency)
+					'text' => price($objp->Mnttot,1,$langs,0,0,-1,$conf->currency)
 					);
 					$totalMnt += $objp->Mnttot;
 					$this->info_box_contents[$i][4] = array('td' => 'align="right" width="18"', 'text' => $propalstatic->LibStatut($objp->fk_statut,3));
@@ -281,8 +283,8 @@ class box_activity extends ModeleBoxes
 
 		// Add the sum in the bottom of the boxes
 		$this->info_box_contents[$i][1] = array('td' => 'align="left" ', 'text' => $langs->trans("Total")."&nbsp;".$textHead);
-		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => number_format($totalnb, 0, ',', ' '));
-		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => number_format($totalMnt, 0, ',', ' ')."&nbsp;".$langs->getCurrencySymbol($conf->currency));
+		$this->info_box_contents[$i][2] = array('td' => 'align="right" ', 'text' => price($totalnb,1,$langs,0,0,-1,$conf->currency));
+		$this->info_box_contents[$i][3] = array('td' => 'align="right" ', 'text' => price($totalMnt,1,$langs,0,0,-1,$conf->currency));
 		$this->info_box_contents[$i][4] = array('td' => 'align="right" ', 'text' => "");
 		$this->info_box_contents[$i][5] = array('td' => 'align="right"', 'text' => "");
 	}

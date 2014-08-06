@@ -1,21 +1,14 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Клиенты заказы области
 SuppliersOrdersArea=Поставщики заказы области
 OrderCard=Заказать карту
+# OrderId=Order Id
 Order=Заказ
 Orders=Приказы
+OrderLine=Заказ линии
 OrderFollow=Последующие меры
 OrderDate=Дата заказа
+OrderToProcess=Для обработки
 NewOrder=Новый порядок
 ToOrder=Сделать заказ
 MakeOrder=Сделать заказ
@@ -30,12 +23,16 @@ OrdersToValid=Приказы по силе
 OrdersToBill=Заказы на законопроект
 OrdersInProcess=Заказы в процессе
 OrdersToProcess=Заказы на процесс
+SuppliersOrdersToProcess=Поставщика заказов для обработки
 StatusOrderCanceledShort=Отменен
 StatusOrderDraftShort=Черновик
 StatusOrderValidatedShort=Подтвержденные
+StatusOrderSentShort=В процессе
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=В процессе
 StatusOrderProcessedShort=Обработано
 StatusOrderToBillShort=В законопроекте
+StatusOrderToBill2Short=Для выставления
 StatusOrderApprovedShort=Утверждено
 StatusOrderRefusedShort=Отказался
 StatusOrderToProcessShort=Для обработки
@@ -47,30 +44,34 @@ StatusOrderValidated=Подтвержденные
 StatusOrderOnProcess=В процессе
 StatusOrderProcessed=Обработано
 StatusOrderToBill=В законопроекте
+StatusOrderToBill2=Для выставления
 StatusOrderApproved=Утверждено
 StatusOrderRefused=Отказался
 StatusOrderReceivedPartially=Частично получил
 StatusOrderReceivedAll=Все полученные
+ShippingExist=Отгрузки существует
 DraftOrWaitingApproved=Проект или утверждены еще не заказал
 DraftOrWaitingShipped=Проект или подтверждены не отгружен
 MenuOrdersToBill=Заказы на законопроект
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Поиск тем
-Sending=Отправка
-Sendings=Отправок
 ShipProduct=Судно продукта
 Discount=Скидка
 CreateOrder=Создать заказ
 RefuseOrder=Отписаться порядка
 ApproveOrder=Принять порядок
 ValidateOrder=Проверка порядка
+UnvalidateOrder=Unvalidate порядке
 DeleteOrder=Удалить тему
 CancelOrder=Отмена порядка
 AddOrder=Добавить тему
 AddToMyOrders=Добавить в мои заказы
 AddToOtherOrders=Добавить в других заказов
+# AddToDraftOrders=Add to draft order
 ShowOrder=Показать порядок
 NoOpenedOrders=Нет открыл заказов
 NoOtherOpenedOrders=Никакие другие открыли заказов
+# NoDraftOrders=No draft orders
 OtherOrders=Другие заказы
 LastOrders=Последнее %s заказов
 LastModifiedOrders=Последнее% с измененными заказов
@@ -80,16 +81,18 @@ NbOfOrders=Количество заказов
 OrdersStatistics=Приказы Статистика
 OrdersStatisticsSuppliers=Поставщик заказов статистика
 NumberOfOrdersByMonth=Количество заказов в месяц
-AmountOfOrdersByMonthHT=Сумма заказов в месяц (за вычетом налогов)
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=Список заказов
 CloseOrder=Закрыть тему
 ConfirmCloseOrder=Вы уверены, что хотите, чтобы закрыть эту тему? После того, как заказ является закрытым, он может быть выставлен счет.
 ConfirmCloseOrderIfSending=Вы уверены, что хотите, чтобы закрыть эту тему? Вы должны закрыть тему только тогда, когда все судоходство осуществляется.
 ConfirmDeleteOrder=Вы уверены, что хотите удалить эту тему?
 ConfirmValidateOrder=Вы уверены, что хотите проверить эту тему под <b>названием %s?</b>
+ConfirmUnvalidateOrder=Вы уверены, что хотите, чтобы восстановить порядок <b>%s</b> к проекту статус?
 ConfirmCancelOrder=Вы уверены, что хотите отменить этот заказ?
 ConfirmMakeOrder=Вы уверены, что хотите, чтобы подтвердить вы сделали этот заказ <b>на %s?</b>
 GenerateBill=Создать счет-фактуру
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Классифицировать "Billed"
 ComptaCard=Бухгалтерия карту
 DraftOrders=Проект распоряжения
@@ -107,38 +110,11 @@ AuthorRequest=Просьба автора
 UseCustomerContactAsOrderRecipientIfExist=Используйте адрес клиента, если определено, вместо сторонних адрес как адрес получателя порядка
 RunningOrders=Приказы о процессе
 UserWithApproveOrderGrant=Useres предоставляется с "утвердить приказы" разрешения.
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Постоянная COMMANDE_SUPPLIER_ADDON не определена
-Error_COMMANDE_ADDON_NotDefined=Постоянная COMMANDE_ADDON не определена
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Не удалось загрузить модуль файл ' %s'
-Error_FailedToLoad_COMMANDE_ADDON_File=Не удалось загрузить модуль файл ' %s'
-OrderSource0=Коммерческое предложение
-OrderSource1=Интернет
-OrderSource2=Mail кампании
-OrderSource3=Телефон compain
-OrderSource4=Факс кампании
-OrderSource5=Коммерческие
-OrderSource6=Склад
-QtyOrdered=Количество заказанных
-AddDeliveryCostLine=Добавить доставки Стоимость линии с указанием веса заказа
-PDFEinsteinDescription=Для полной модели (logo. ..)
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-OrderLine=Заказ линии
 PaymentOrderRef=Оплата заказа %s
 CloneOrder=Клон порядка
 ConfirmCloneOrder=Вы уверены, что хотите клон этого <b>приказа %s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-OrderToProcess=Для обработки
 DispatchSupplierOrder=Прием %s поставщиком для
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Представитель следующие меры для клиентов
 TypeContact_commande_internal_SHIPPING=Представитель следующие меры судоходства
 TypeContact_commande_external_BILLING=свяжитесь со счета
@@ -149,25 +125,42 @@ TypeContact_order_supplier_internal_SHIPPING=Представитель след
 TypeContact_order_supplier_external_BILLING=Поставщик счет контакта
 TypeContact_order_supplier_external_SHIPPING=Поставщик доставка контакты
 TypeContact_order_supplier_external_CUSTOMER=Поставщик связаться следующие меры для
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Постоянная COMMANDE_SUPPLIER_ADDON не определена
+Error_COMMANDE_ADDON_NotDefined=Постоянная COMMANDE_ADDON не определена
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Не удалось загрузить модуль файл ' %s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Не удалось загрузить модуль файл ' %s'
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
+OrderSource0=Коммерческое предложение
+OrderSource1=Интернет
+OrderSource2=Mail кампании
+OrderSource3=Телефон compain
+OrderSource4=Факс кампании
+OrderSource5=Коммерческие
+OrderSource6=Склад
+QtyOrdered=Количество заказанных
+AddDeliveryCostLine=Добавить доставки Стоимость линии с указанием веса заказа
+
+# Documents models
+PDFEinsteinDescription=Для полной модели (logo. ..)
 PDFEdisonDescription=Простая модель для
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:31).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-SuppliersOrdersToProcess=Поставщика заказов для обработки
-StatusOrderSentShort=В процессе
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=Почта
 OrderByFax=Факс
 OrderByEMail=EMail
 OrderByWWW=Интернет
 OrderByPhone=Телефон
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:00:04).
 
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-ShippingExist=Отгрузки существует
-UnvalidateOrder=Unvalidate порядке
-ConfirmUnvalidateOrder=Вы уверены, что хотите, чтобы восстановить порядок <b>%s</b> к проекту статус?
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:14).
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

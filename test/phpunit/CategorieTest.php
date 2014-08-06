@@ -184,16 +184,23 @@ class CategorieTest extends PHPUnit_Framework_TestCase
         print __METHOD__." catid=".$catid."\n";
         $this->assertGreaterThan(0, $catid);
 
-        // Category
+        // Try to create product linked to category
 		$localobject2=new Product($this->savdb);
     	$localobject2->initAsSpecimen();
     	$localobject2->ref.='-CATEG';
     	$localobject2->tva_npr=1;
-    	$localobject2->catid=$catid;
     	$result=$localobject2->create($user);
+    	$cat = new Categorie($this->savdb);
+    	$cat->id = $catid;
+    	$result=$cat->add_type($localobject2,"product");
 
-        print __METHOD__." result=".$result."\n";
+    	print __METHOD__." result=".$result."\n";
     	$this->assertGreaterThan(0, $result);
+
+    	// Get list of categories for product
+    	$localcateg=new Categorie($this->savdb);
+    	$listofcateg=$localcateg->containing($localobject2->id, 'product', 'label');
+    	$this->assertTrue(in_array('Specimen Category for product',$listofcateg), 'Categ not found linked to product when it should');
 
     	return $id;
     }

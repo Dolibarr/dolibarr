@@ -19,7 +19,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php
+ *	\file       htdocs/core/modules/project/pdf/doc_generic_project_odt.modules.php
  *	\ingroup    project
  *	\brief      File of class to build ODT documents for third parties
  */
@@ -90,7 +90,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$this->option_modereg = 0;                 // Affiche mode reglement
 		$this->option_condreg = 0;                 // Affiche conditions reglement
 		$this->option_codeproduitservice = 0;      // Affiche code produit-service
-		$this->option_multilang = 0;               // Dispo en plusieurs langues
+		$this->option_multilang = 1;               // Dispo en plusieurs langues
 		$this->option_escompte = 0;                // Affiche si il y a eu escompte
 		$this->option_credit_note = 0;             // Support credit notes
 		$this->option_freetext = 1;				   // Support add of a personalised text
@@ -322,7 +322,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
@@ -332,33 +332,23 @@ class doc_generic_project_odt extends ModelePDFProjects
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
-		$texte.= '<table><tr><td>';
+		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->PROJECT_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
-		$texte.= '</td>';
-		$texte.= '<td align="center">&nbsp; ';
+		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-
+		$texte.= '<br></div></div>';
+		
 		// Scan directories
 		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 		$texte.= '</td>';
 
-
-		$texte.= '<td valign="top" rowspan="2">';
+		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';
-
-		/*$texte.= '<tr>';
-		 $texte.= '<td align="center">';
-		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';*/
 
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -392,7 +382,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
 		global $action;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
@@ -469,15 +459,22 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 				// Open and load template
 				require_once ODTPHP_PATH.'odf.php';
-				$odfHandler = new odf(
-					$srctemplatepath,
-					array(
-					'PATH_TO_TMP'	  => $conf->projet->dir_temp,
-					'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-					'DELIMITER_LEFT'  => '{',
-					'DELIMITER_RIGHT' => '}'
-					)
-				);
+				try {
+					$odfHandler = new odf(
+						$srctemplatepath,
+						array(
+						'PATH_TO_TMP'	  => $conf->projet->dir_temp,
+						'ZIP_PROXY'		  => 'PclZipProxy',	// PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+						'DELIMITER_LEFT'  => '{',
+						'DELIMITER_RIGHT' => '}'
+						)
+					);
+				}
+				catch(Exception $e)
+				{
+					$this->error=$e->getMessage();
+					return -1;
+				}
 				// After construction $odfHandler->contentXml contains content and
 				// [!-- BEGIN row.lines --]*[!-- END row.lines --] has been replaced by
 				// [!-- BEGIN lines --]*[!-- END lines --]
@@ -585,7 +582,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 					if (!empty($object->fk_soc)) $socid = $object->fk_soc;
 
 					$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
-						
+
 
 					foreach ($tasksarray as $task)
 					{
@@ -909,14 +906,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 								{
 									$ref_array=array();
 									$ref_array['type']=$langs->trans($classname);
-										
+
 									$element = new $classname($this->db);
 									$element->fetch($elementarray[$i]);
 									$element->fetch_thirdparty();
 
 									//Ref object
 									$ref_array['ref']=$element->ref;
-										
+
 									//Date object
 									$dateref=$element->date;
 									if (empty($dateref)) $dateref=$element->datep;
@@ -976,6 +973,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 					return -1;
 				}
 
+				// Replace labels translated
+				$tmparray=$outputlangs->get_translations_for_substitutions();
+				foreach($tmparray as $key=>$value)
+				{
+					try {
+						$odfHandler->setVars($key, $value, true, 'UTF-8');
+					}
+					catch(OdfException $e)
+					{
+					}
+				}
+
 				// Call the beforeODTSave hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -997,7 +1006,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 						$this->error=$e->getMessage();
 						return -1;
 					}
-				}	
+				}
 
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));

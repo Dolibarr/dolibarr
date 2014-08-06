@@ -1,34 +1,34 @@
 <?php
 /* Copyright (C) 2003-2006	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
-* Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
-* Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
-* Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
-* Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
-* Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
-* Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
-* Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
-* Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
+ * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *	\file       htdocs/commande/fiche.php
-*	\ingroup    commande
-*	\brief      Page to show customer order
-*/
+ *	\ingroup    commande
+ *	\brief      Page to show customer order
+ */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -43,7 +43,7 @@ if (! empty($conf->propal->enabled))
 	require DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->projet->enabled)) {
 	require DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -80,7 +80,6 @@ $result=restrictedArea($user,'commande',$id);
 $object = new Commande($db);
 $extrafields = new ExtraFields($db);
 
-
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -113,6 +112,9 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 	{
 		if ($object->id > 0)
 		{
+			//Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = dol_clone($object);
+
 			$result=$object->createFromClone($socid);
 			if ($result > 0)
 			{
@@ -121,7 +123,8 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->commande->
 			}
 			else
 			{
-				$mesg='<div class="error">'.$object->error.'</div>';
+				setEventMessage($object->error, 'errors');
+				$object = $orig;
 				$action='';
 			}
 		}
@@ -141,7 +144,7 @@ else if ($action == 'reopen' && $user->rights->commande->creer)
 		}
 		else
 		{
-			$mesg='<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -155,9 +158,8 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->comm
 		header('Location: index.php');
 		exit;
 	}
-	else
-	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+	else {
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -188,7 +190,7 @@ else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->
 	}
 	else
 	{
-		$mesg='<div class="error">'.$object->error.'</div>';
+		setEventMessage($object->error, 'errors');
 	}
 }
 
@@ -318,8 +320,14 @@ else if ($action == 'add' && $user->rights->commande->creer)
 								$fk_parent_line = 0;
 							}
 
+							//Extrafields
+							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)  && method_exists($lines[$i],'fetch_optionals') ) // For avoid conflicts if trigger used
+							{
+								$lines[$i]->fetch_optionals($lines[$i]->rowid);
+								$array_option=$lines[$i]->array_options;
+							}
+
 							$result = $object->addline(
-								$object_id,
 								$desc,
 								$lines[$i]->subprice,
 								$lines[$i]->qty,
@@ -340,7 +348,8 @@ else if ($action == 'add' && $user->rights->commande->creer)
 								$fk_parent_line,
 								$lines[$i]->fk_fournprice,
 								$lines[$i]->pa_ht,
-								$label
+								$label,
+								$array_option
 							);
 
 							if ($result < 0)
@@ -439,6 +448,10 @@ else if ($action == 'add' && $user->rights->commande->creer)
 else if ($action == 'classifybilled' && $user->rights->commande->creer)
 {
 	$ret=$object->classifyBilled();
+
+	if ($ret < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 // Positionne ref commande client
@@ -558,51 +571,87 @@ else if ($action == 'setnote_private' && $user->rights->commande->creer)
 	if ($result < 0) dol_print_error($db,$object->error);
 }
 
-/*
- *  Ajout d'une ligne produit dans la commande
-*/
+// Add a new line
 else if ($action == 'addline' && $user->rights->commande->creer)
 {
 	$langs->load('errors');
-	$error = false;
+	$error = 0;
 
-	$idprod=GETPOST('idprod', 'int');
-	$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
-	$price_ht = GETPOST('price_ht');
-	$tva_tx = (GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	// Set if we used free entry or predefined product
+	if (GETPOST('addline_libre')
+			|| (GETPOST('dp_desc') && ! GETPOST('addline_libre') && ! GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
+	{
+		$predef='';
+		$idprod=0;
+		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$price_ht = GETPOST('price_ht');
+		$tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+	}
+	if (GETPOST('addline_predefined')
+			|| (! GETPOST('dp_desc') && ! GETPOST('addline_predefined') && GETPOST('idprod', 'int')>0)	// we push enter onto qty field
+			)
+	{
+		$predef=(($conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
+		$idprod=GETPOST('idprod', 'int');
+		$product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):''));
+		$price_ht = '';
+		$tva_tx = '';
+	}
+    if (GETPOST('usenewaddlineform')) {
+        $idprod=GETPOST('idprod', 'int');
+        $product_desc = (GETPOST('product_desc')?GETPOST('product_desc'):(GETPOST('np_desc')?GETPOST('np_desc'):(GETPOST('dp_desc')?GETPOST('dp_desc'):'')));
+        $price_ht = GETPOST('price_ht');
+        $tva_tx=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
+    }
+	$qty = GETPOST('qty'.$predef);
+	$remise_percent=GETPOST('remise_percent'.$predef);
 
-	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && (GETPOST('qty') < 0))
+	//Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline,$predef);
+	//Unset extrafield
+	if (is_array($extralabelsline))
+	{
+		// Get extra fields
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
+
+	if ((empty($idprod) || GETPOST('usenewaddlineform')) && ($price_ht < 0) && ($qty < 0))
 	{
 		setEventMessage($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if (empty($idprod) && GETPOST('type') < 0)
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if ((empty($idprod) || GETPOST('usenewaddlineform')) && (!($price_ht >= 0) || $price_ht == ''))	// Unit price can be 0 but not ''
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("UnitPriceHT")), 'errors');
 		$error++;
 	}
-	if (! GETPOST('qty') && GETPOST('qty') == '')
+	if ($qty == '')
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), 'errors');
-		$error = true;
+		$error++;
 	}
 	if (empty($idprod) && empty($product_desc))
 	{
 		setEventMessage($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), 'errors');
-		$error = true;
+		$error++;
 	}
 
-	if (! $error && (GETPOST('qty') >= 0) && (! empty($product_desc) || ! empty($idprod)))
+	if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod)))
 	{
 		// Clean parameters
-		$predef=((! empty($idprod) && $conf->global->MAIN_FEATURES_LEVEL < 2) ? '_predef' : '');
-		$date_start=dol_mktime(0, 0, 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end=dol_mktime(0, 0, 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), 0, GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), 0, GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		$price_base_type = (GETPOST('price_base_type', 'alpha')?GETPOST('price_base_type', 'alpha'):'HT');
 
 		// Ecrase $pu par celui du produit
@@ -637,6 +686,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
 					$price_min = $prod->multiprices_min[$object->client->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				else
 				{
@@ -646,9 +697,16 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 					$price_base_type = $prod->price_base_type;
 				}
 
+				// if price ht is forced (ie: calculated by margin rate and cost price)
+				if (!empty($price_ht))
+				{
+					$pu_ht	= price2num($price_ht, 'MU');
+					$pu_ttc	= price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+
 				// On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-				if ($tva_tx != $prod->tva_tx)
+				elseif ($tva_tx != $prod->tva_tx)
 				{
 					if ($price_base_type != 'HT')
 					{
@@ -710,8 +768,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		}
 
 		// Margin
-		$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
-		$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+		$fournprice=(GETPOST('fournprice'.$predef)?GETPOST('fournprice'.$predef):'');
+		$buyingprice=(GETPOST('buying_price'.$predef)?GETPOST('buying_price'.$predef):'');
 
 		// Local Taxes
 		$localtax1_tx= get_localtax($tva_tx, 1, $object->client);
@@ -722,24 +780,23 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 		$info_bits=0;
 		if ($tva_npr) $info_bits |= 0x01;
 
-		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
+		if (! empty($price_min) && (price2num($pu_ht)*(1-price2num($remise_percent)/100) < price2num($price_min)))
 		{
-			$mesg = $langs->trans("CantBeLessThanMinPrice",price2num($price_min,'MU').$langs->getCurrencySymbol($conf->currency));
+			$mesg = $langs->trans("CantBeLessThanMinPrice",price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency));
 			setEventMessage($mesg, 'errors');
 		}
 		else
 		{
 			// Insert line
 			$result = $object->addline(
-				$object->id,
 				$desc,
 				$pu_ht,
-				GETPOST('qty'),
+				$qty,
 				$tva_tx,
 				$localtax1_tx,
 				$localtax2_tx,
 				$idprod,
-				GETPOST('remise_percent'),
+				$remise_percent,
 				$info_bits,
 				0,
 				$price_base_type,
@@ -752,7 +809,8 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				GETPOST('fk_parent_line'),
 				$fournprice,
 				$buyingprice,
-				$label
+				$label,
+				$array_option
 			);
 
 			if ($result > 0)
@@ -776,7 +834,6 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 
 				unset($_POST['qty']);
 				unset($_POST['type']);
-				unset($_POST['idprod']);
 				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
 				unset($_POST['price_ttc']);
@@ -786,10 +843,18 @@ else if ($action == 'addline' && $user->rights->commande->creer)
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
-
-				// old method
-				unset($_POST['np_desc']);
+				unset($_POST['np_marginRate']);
+				unset($_POST['np_markRate']);
 				unset($_POST['dp_desc']);
+
+				unset($_POST['idprod']);
+				unset($_POST['qty_predef']);
+				unset($_POST['remise_percent_predef']);
+				unset($_POST['fournprice_predef']);
+				unset($_POST['buying_price_predef']);
+				unset($_POST['np_marginRate_predef']);
+				unset($_POST['np_markRate_predef']);
+				unset($_POST['np_desc']);
 			}
 			else
 			{
@@ -807,8 +872,8 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	// Clean parameters
 	$date_start='';
 	$date_end='';
-	$date_start=dol_mktime(0, 0, 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-	$date_end=dol_mktime(0, 0, 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+	$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
+	$date_end=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), 0, GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 	$description=dol_htmlcleanlastbr(GETPOST('product_desc'));
 	$pu_ht=GETPOST('price_ht');
 	$vat_rate=(GETPOST('tva_tx')?GETPOST('tva_tx'):0);
@@ -825,6 +890,19 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 	// Add buying price
 	$fournprice=(GETPOST('fournprice')?GETPOST('fournprice'):'');
 	$buyingprice=(GETPOST('buying_price')?GETPOST('buying_price'):'');
+
+	//Extrafields Lines
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline =$extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	//Unset extrafield POST Data
+	if (is_array($extralabelsline))
+	{
+		foreach ($extralabelsline as $key => $value)
+		{
+			unset($_POST["options_".$key]);
+		}
+	}
 
 	// Check minimum price
 	$productid = GETPOST('productid', 'int');
@@ -843,7 +921,7 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 
 		if ($price_min && (price2num($pu_ht)*(1-price2num(GETPOST('remise_percent'))/100) < price2num($price_min)))
 		{
-			setEventMessage($langs->trans("CantBeLessThanMinPrice", price2num($price_min,'MU')).$langs->getCurrencySymbol($conf->currency), 'errors');
+			setEventMessage($langs->trans("CantBeLessThanMinPrice", price(price2num($price_min,'MU'),0,$langs,0,0,-1,$conf->currency)), 'errors');
 			$error++;
 		}
 	}
@@ -879,7 +957,9 @@ else if ($action == 'updateligne' && $user->rights->commande->creer && GETPOST('
 			0,
 			$fournprice,
 			$buyingprice,
-			$label
+			$label,
+			0,
+			$array_option
 		);
 
 		if ($result >= 0)
@@ -931,8 +1011,18 @@ else if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->co
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -967,8 +1057,18 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1005,15 +1105,27 @@ else if ($action == 'confirm_modif' && $user->rights->commande->creer)
 else if ($action == 'confirm_shipped' && $confirm == 'yes' && $user->rights->commande->cloturer)
 {
 	$result = $object->cloture($user);
-	if ($result < 0) $mesgs=$object->errors;
+	if ($result < 0) {
+		setEventMessage($object->error, 'errors');
+	}
 }
 
 else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->commande->valider)
 {
 	$idwarehouse=GETPOST('idwarehouse');
 
+    $qualified_for_stock_change=0;
+	if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+	}
+	else
+	{
+	   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+	}
+
 	// Check parameters
-	if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+	if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 	{
 		if (! $idwarehouse || $idwarehouse == -1)
 		{
@@ -1026,6 +1138,10 @@ else if ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->comm
 	if (! $error)
 	{
 		$result = $object->cancel($idwarehouse);
+
+		if ($result < 0) {
+			setEventMessage($object->error, 'errors');
+		}
 	}
 }
 
@@ -1079,14 +1195,11 @@ else if ($action == 'builddoc')	// In get or post
 {
 	/*
 	 * Generate order document
-	* define into /core/modules/commande/modules_commande.php
-	*/
+	 * define into /core/modules/commande/modules_commande.php
+	 */
 
-	// Sauvegarde le dernier modele choisi pour generer un document
-	if ($_REQUEST['model'])
-	{
-		$object->setDocModel($user, $_REQUEST['model']);
-	}
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -1103,11 +1216,6 @@ else if ($action == 'builddoc')	// In get or post
 	if ($result <= 0)
 	{
 		dol_print_error($db,$result);
-		exit;
-	}
-	else
-	{
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
 		exit;
 	}
 }
@@ -1130,23 +1238,24 @@ else if ($action == 'remove_file')
 }
 
 // Print file
-else if ($action == 'print_file' AND $user->rights->printipp->use)
+else if ($action == 'print_file' AND $user->rights->printipp->read)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/dolprintipp.class.php';
 	$printer = new dolPrintIPP($db,$conf->global->PRINTIPP_HOST,$conf->global->PRINTIPP_PORT,$user->login,$conf->global->PRINTIPP_USER,$conf->global->PRINTIPP_PASSWORD);
 	$printer->print_file(GETPOST('file','alpha'),GETPOST('printer','alpha'));
+    setEventMessage($langs->trans("FileWasSentToPrinter", GETPOST('file')));
+    $action='';
 }
 
 else if ($action == 'update_extras')
 {
 	// Fill array 'array_options' with data from update form
 	$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+	if($ret < 0) $error++;
 
-	if($ret < 0)
-		$error++;
-
-	if(!$error) {
+	if (! $error)
+	{
 		// Actions on extra fields (by external module or standard code)
 		// FIXME le hook fait double emploi avec le trigger !!
 		$hookmanager->initHooks(array('orderdao'));
@@ -1154,22 +1263,16 @@ else if ($action == 'update_extras')
 		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			$result=$object->insertExtraFields();
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
 		}
 		else if ($reshook < 0) $error++;
 	}
-	else
-	{
-		$action = 'edit_extras';
-	}
 
+	if ($error) $action = 'edit_extras';
 }
 
 /*
@@ -1418,7 +1521,7 @@ if (! $error && ! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->righ
 
 /*
  *	View
-*/
+ */
 
 llxHeader('',$langs->trans('Order'),'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes');
 
@@ -1429,9 +1532,9 @@ $formorder = new FormOrder($db);
 
 /*********************************************************************
  *
-* Mode creation
-*
-*********************************************************************/
+ * Mode creation
+ *
+ *********************************************************************/
 if ($action == 'create' && $user->rights->commande->creer)
 {
 	print_fiche_titre($langs->trans('CreateOrder'));
@@ -1476,6 +1579,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
 
+			//Replicate extrafields
+			$objectsrc->fetch_optionals($originid);
+			$object->array_options=$objectsrc->array_options;
+
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 			$ref_client         = (!empty($objectsrc->ref_client)?$objectsrc->ref_client:'');
 
@@ -1486,7 +1593,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
 			$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
-			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+			$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
 			$datedelivery		= (!empty($objectsrc->date_livraison)?$objectsrc->date_livraison:'');
 
@@ -1505,7 +1612,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$demand_reason_id   = $soc->demand_reason_id;
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
-		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		$dateinvoice        = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 		$projectid          = 0;
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
@@ -1518,7 +1625,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
-	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
+	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
 
@@ -1562,7 +1669,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Ligne info remises tiers
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="2">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts();
@@ -1581,7 +1688,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if (empty($datedelivery))
 	{
 		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0;
+		else $datedelivery=empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 	}
 	$form->select_date($datedelivery,'liv_','','','',"crea_commande",1,1);
 	print "</td></tr>";
@@ -1609,8 +1716,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 	// Project
 	if (! empty($conf->projet->enabled) && $socid>0)
 	{
+		$formproject=new FormProjets($db);
+
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$numprojet=select_projects($soc->id,$projectid);
+		$numprojet=$formproject->select_projects($soc->id,$projectid);
 		if ($numprojet==0)
 		{
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/fiche.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1720,7 +1829,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 					print $form->select_produits('','idprod'.$i,'',$conf->product->limit_size);
 				print '</td>';
 				print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-				print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_client.'">%</td></tr>';
+				print '<td><input type="text" size="3" name="remise_percent'.$i.'" value="'.$soc->remise_percent.'">%</td></tr>';
 			}
 
 			print '</table>';
@@ -1808,8 +1917,19 @@ else
 				$text.='<br>';
 				$text.=$notify->confirmMessage('ORDER_VALIDATE',$object->socid);
 			}
+
+		    $qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1818,7 +1938,7 @@ else
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1)));
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
@@ -1827,9 +1947,19 @@ else
 		// Confirm back to draft status
 		if ($action == 'modif')
 		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$text=$langs->trans('ConfirmUnvalidateOrder',$object->ref);
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1838,7 +1968,7 @@ else
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1)));
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
@@ -1855,12 +1985,22 @@ else
 
 		/*
 		 * Confirmation de l'annulation
-		*/
+		 */
 		if ($action == 'cancel')
 		{
+			$qualified_for_stock_change=0;
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(2);
+			}
+			else
+			{
+			   	$qualified_for_stock_change=$object->hasProductsOrServices(1);
+			}
+
 			$text=$langs->trans('ConfirmCancelOrder',$object->ref);
 			$formquestion=array();
-			if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $object->hasProductsOrServices(1))
+			if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER) && $qualified_for_stock_change)
 			{
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -1869,7 +2009,7 @@ else
 				//'text' => $langs->trans("ConfirmClone"),
 				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone','idwarehouse','',1)));
 			}
 
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
@@ -1877,7 +2017,7 @@ else
 
 		/*
 		 * Confirmation de la suppression d'une ligne produit
-		*/
+		 */
 		if ($action == 'ask_deleteline')
 		{
 			$formconfirm=$form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
@@ -1974,7 +2114,7 @@ else
 		$addcreditnote='<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&socid='.$soc->id.'&type=2&backtopage='.urlencode($_SERVER["PHP_SELF"]).'?facid='.$object->id.'">'.$langs->trans("AddCreditNote").'</a>';
 
 		print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-		if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+		if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		print '. ';
 		$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
@@ -2151,24 +2291,29 @@ else
 			print '</td></tr>';
 		}
 
-		// Other attributes
+
+		if ($soc->outstanding_limit)
+		{
+			// Outstanding Bill
+			print '<tr><td>';
+			print $langs->trans('OutstandingBill');
+			print '</td><td align=right colspan=3>';
+			print price($soc->get_OutstandingBill()).' / ';
+			print price($soc->outstanding_limit, 0, '', 1, -1, -1, $conf->currency);
+			print '</td>';
+			print '</tr>';
+		}
+
+	    // Other attributes (TODO Move this into an include)
 		$res=$object->fetch_optionals($object->id,$extralabels);
 		$parameters=array('colspan' => ' colspan="3"');
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
-			if ($action == 'edit_extras')
-			{
-				print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
-				print '<input type="hidden" name="action" value="update_extras">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
-			}
-
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
 				if ($action == 'edit_extras') {
-				$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
+					$value=(isset($_POST["options_".$key])?$_POST["options_".$key]:$object->array_options["options_".$key]);
 				} else {
 					$value=$object->array_options["options_".$key];
 				}
@@ -2187,33 +2332,25 @@ else
 						$value = isset($_POST["options_".$key])?dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]):$db->jdate($object->array_options['options_'.$key]);
 					}
 
-					if ($action == 'edit_extras' && $user->rights->commande->creer)
+					if ($action == 'edit_extras' && $user->rights->commande->creer && GETPOST('attribute') == $key)
 					{
+						print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'" method="post" name="formsoc">';
+						print '<input type="hidden" name="action" value="update_extras">';
+						print '<input type="hidden" name="attribute" value="'.$key.'">';
+						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+						print '<input type="hidden" name="id" value="'.$object->id.'">';
+
 						print $extrafields->showInputField($key,$value);
+
+						print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+						print '</form>';
 					}
 					else
 					{
 						print $extrafields->showOutputField($key,$value);
+						if ($object->statut == 0 && $user->rights->commande->creer) print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 					}
 					print '</td></tr>'."\n";
-				}
-			}
-
-			if(count($extrafields->attribute_label) > 0) {
-
-				if ($action == 'edit_extras' && $user->rights->commande->creer)
-				{
-					print '<tr><td></td><td colspan="5">';
-					print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
-					print '</td></tr>';
-
-				}
-				else {
-					if ($object->statut == 0 && $user->rights->commande->creer)
-					{
-						print '<tr><td></td><td><a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras">'.img_picto('','edit').' '.$langs->trans('Modify').'</a></td></tr>';
-					}
 				}
 			}
 		}
@@ -2277,25 +2414,34 @@ else
 
 		/*
 		 * Lines
-		*/
+		 */
 		$result = $object->getLinesArray();
 
-		$numlines = count($object->lines);
+
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline')?'#add':'#line_'.GETPOST('lineid')).'" method="POST">
+		<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">
+		<input type="hidden" name="action" value="'.(($action != 'editline')?'addline':'updateligne').'">
+		<input type="hidden" name="mode" value="">
+		<input type="hidden" name="id" value="'.$object->id.'">
+		';
+
 
 		if (! empty($conf->use_javascript_ajax) && $object->statut == 0)
 		{
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
-		print '<table id="tablelines" class="noborder" width="100%">';
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		// Show object lines
 		if (! empty($object->lines))
 			$ret=$object->printObjectLines($action,$mysoc,$soc,$lineid,1);
 
+		$numlines = count($object->lines);
+
 		/*
 		 * Form to add new line
-		*/
+		 */
 		if ($object->statut == 0 && $user->rights->commande->creer)
 		{
 			if ($action != 'editline')
@@ -2325,7 +2471,10 @@ else
 			}
 		}
 		print '</table>';
-		print '</div>';
+
+		print "</form>\n";
+
+		dol_fiche_end();
 
 
 		/*
@@ -2342,13 +2491,16 @@ else
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a></div>';
 				}
-
 				// Edit
 				if ($object->statut == 1 && $user->rights->commande->creer)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&amp;action=modif">'.$langs->trans('Modify').'</a></div>';
 				}
-
+				// Create event
+				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD))	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("AddAction").'</a>';
+				}
 				// Send
 				if ($object->statut > 0)
 				{
@@ -2411,15 +2563,15 @@ else
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
 				}
 
-
 				// Create bill and Classify billed
-				if (! empty($conf->facture->enabled) && $object->statut > 0  && ! $object->billed)
+				// Note: Even if module invoice is not enabled, we should be able to use button "Classified billed"
+				if ($object->statut > 0  && ! $object->billed)
 				{
-					if ($user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
+					if (! empty($conf->facture->enabled) && $user->rights->facture->creer && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
 					}
-					if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORsKFLOW_BILL_ON_SHIPMENT))
+					if ($user->rights->commande->creer && $object->statut > 2 && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans("ClassifyBilled").'</a></div>';
 					}
@@ -2478,9 +2630,7 @@ else
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed=$user->rights->commande->creer;
 			$delallowed=$user->rights->commande->supprimer;
-			$printer = false;
-			if ($user->rights->printipp->use AND $conf->printipp->enabled) $printer = true;
-			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang,$printer);
+			$somethingshown=$formfile->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 			/*
 			 * Linked object block
@@ -2551,7 +2701,14 @@ else
 			$formmail->withto=GETPOST('sendto')?GETPOST('sendto'):$liste;
 			$formmail->withtocc=$liste;
 			$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-			$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			if(empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+			}
+			else if(!empty($object->ref_client))
+			{
+				$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__(__REFCLIENT__)');
+			}
 			$formmail->withfile=2;
 			$formmail->withbody=1;
 			$formmail->withdeliveryreceipt=1;
@@ -2559,6 +2716,7 @@ else
 			// Tableau des substitutions
 			$formmail->substit['__ORDERREF__']=$object->ref;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
+			$formmail->substit['__REFCLIENT__']=$object->ref_client;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
 

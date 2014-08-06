@@ -8,6 +8,7 @@
  * Copyright (C) 2010-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,6 @@ if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
 
 $langs->load('bills');
@@ -62,9 +62,11 @@ $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
+$search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
+$search_status=GETPOST('search_status','alpha');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -92,13 +94,10 @@ $fieldid = (! empty($ref)?'facnumber':'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
-// FIXME $usehm not used ?
-$usehm=(! empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:false);
-
 $object=new Facture($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('invoicecard'));
+$hookmanager->initHooks(array('invoicelist'));
 
 $now=dol_now();
 
@@ -120,6 +119,8 @@ if (GETPOST("button_removefilter_x"))
     $search_refcustomer='';
     $search_societe='';
     $search_montant_ht='';
+    $search_montant_ttc='';
+    $search_status='';
     $year='';
     $month='';
 }
@@ -139,10 +140,10 @@ $facturestatic=new Facture($db);
 
 if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
-$sql.= ' s.nom, s.rowid as socid';
+$sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
@@ -175,11 +176,15 @@ if ($filtre)
 }
 if ($search_ref)
 {
-    $sql.= ' AND f.facnumber LIKE \'%'.$db->escape(trim($search_ref)).'%\'';
+    $sql .= natural_search('f.facnumber', $search_ref);
+}
+if ($search_refcustomer)
+{
+	$sql .= natural_search('f.ref_client', $search_refcustomer);
 }
 if ($search_societe)
 {
-    $sql.= ' AND s.nom LIKE \'%'.$db->escape(trim($search_societe)).'%\'';
+    $sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_montant_ht)
 {
@@ -188,6 +193,10 @@ if ($search_montant_ht)
 if ($search_montant_ttc)
 {
     $sql.= ' AND f.total_ttc = \''.$db->escape(price2num(trim($search_montant_ttc))).'\'';
+}
+if ($search_status != '')
+{
+	$sql.= " AND f.fk_statut = '".$db->escape($search_status)."'";
 }
 if ($month > 0)
 {
@@ -212,16 +221,25 @@ if (! $sall)
     $sql.= ' GROUP BY f.rowid, f.facnumber, f.type, f.increment, f.total,f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
-    $sql.= ' s.nom, s.rowid';
+    $sql.= ' s.nom, s.rowid, f.note_private';
 }
 else
 {
-	$sql.= ' AND (s.nom LIKE \'%'.$db->escape($sall).'%\' OR f.facnumber LIKE \'%'.$db->escape($sall).'%\' OR f.note_private LIKE \'%'.$db->escape($sall).'%\' OR f.note_public LIKE \'%'.$db->escape($sall).'%\' OR fd.description LIKE \'%'.$db->escape($sall).'%\')';
+    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
 foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
 $sql.= ' f.rowid DESC ';
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
 $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
@@ -240,12 +258,13 @@ if ($resql)
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
+    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
     if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc) $param.='&search_montant_ttc='.$search_montant_ttc;
-    print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
     $i = 0;
     print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -269,13 +288,14 @@ if ($resql)
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="9">';
+        print '<td class="liste_titre" colspan="10">';
         print $moreforfilter;
         print '</td></tr>';
     }
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
@@ -290,8 +310,11 @@ if ($resql)
     // Filters lines
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+	print '</td>';
     print '<td class="liste_titre" align="center">';
     if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
     print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
@@ -303,7 +326,7 @@ if ($resql)
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     print "</td></tr>\n";
 
     if ($num > 0)
@@ -337,24 +360,35 @@ if ($resql)
             print $objp->increment;
             print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+            print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+            if (! empty($objp->note_private))
+            {
+				print ' <span class="note">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$objp->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+				print '</span>';
+			}
             $filename=dol_sanitizeFileName($objp->facnumber);
             $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
             $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
             print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
-            print '</td>';
+			print '</td>';
             print '</tr>';
             print '</table>';
 
             print "</td>\n";
 
-            // Date
-            print '<td align="center" nowrap>';
+			// Customer ref
+			print '<td class="nowrap">';
+			print $objp->ref_client;
+			print '</td>';
+
+			// Date
+            print '<td align="center" class="nowrap">';
             print dol_print_date($db->jdate($objp->df),'day');
             print '</td>';
 
             // Date limit
-            print '<td align="center" nowrap="1">'.dol_print_date($datelimit,'day');
+            print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
             if ($datelimit < ($now - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $paiement)
             {
                 print img_warning($langs->trans('Late'));
@@ -365,16 +399,18 @@ if ($resql)
             $thirdparty=new Societe($db);
             $thirdparty->id=$objp->socid;
             $thirdparty->nom=$objp->nom;
+            $thirdparty->client=$objp->client;
+            $thirdparty->code_client=$objp->code_client;
             print $thirdparty->getNomUrl(1,'customer');
             print '</td>';
 
-            print '<td align="right">'.price($objp->total_ht).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+            print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';
 
-            print '<td align="right">'.price($objp->total_tva).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+            print '<td align="right">'.price($objp->total_tva,0,$langs).'</td>';
 
-            print '<td align="right">'.price($objp->total_ttc).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+            print '<td align="right">'.price($objp->total_ttc,0,$langs).'</td>';
 
-            print '<td align="right">'.(! empty($paiement)?price($paiement).' '.$langs->getCurrencySymbol($conf->currency):'&nbsp;').'</td>';
+            print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>';
 
             // Affiche statut de la facture
             print '<td align="right" class="nowrap">';
@@ -393,11 +429,11 @@ if ($resql)
         {
             // Print total
             print '<tr class="liste_total">';
-            print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ht).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_tva).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ttc).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
-            print '<td class="liste_total" align="right">'.price($totalrecu).' '.$langs->getCurrencySymbol($conf->currency).'</td>';
+            print '<td class="liste_total" colspan="5" align="left">'.$langs->trans('Total').'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
+            print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';
+            print '<td class="liste_total" align="right">'.price($totalrecu,0,$langs).'</td>';
             print '<td class="liste_total" align="center">&nbsp;</td>';
             print '</tr>';
         }

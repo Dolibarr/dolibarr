@@ -1,0 +1,114 @@
+# Dolibarr language file - Source file is en_US - cron
+#
+# About page
+#
+About = Par
+CronAbout = Par Cron
+CronAboutPage = Cron par lapu
+
+#
+# Right
+#
+Permission23101 = Lasīt plānoto uzdevumu
+Permission23102 = Izveidot/atjaunināt plānoto uzdevumu
+Permission23103 = Dzēst plānoto uzdevumu
+Permission23104 = Izpildīt plānoto uzdevumu
+
+#
+# Admin
+#
+CronSetup= Plānotais darbu vadības iestatīšana
+# URLToLaunchCronJobs=URL to check and launch cron jobs if required
+# OrToLaunchASpecificJob=Or to check and launch a specific job
+KeyForCronAccess=Drošības atslēga URL uzsākt cron darbavietas
+FileToLaunchCronJobs=Komandrindas uzsākt cron darbavietas
+CronExplainHowToRunUnix=Par Unix vidē, jums vajadzētu izmantot crontab palaist komandrindas viena otras minūtes
+CronExplainHowToRunWin=Microsoft (tm), Windows environement jūs varat izmantot regulāro uzdevums rīkus, lai palaistu komandrindas viena otras minūtes
+
+
+#
+# Menu
+#
+CronJobs=Plānotais darba vietas
+CronListActive= Saraksts aktīvo darbu
+CronListInactive= Saraksts ar invaliditāti darba vietas
+CronListActive= Saraksts aktīvo darbu
+
+
+#
+# Page list
+#
+CronDateLastRun=Pēdējā run
+CronLastOutput=Pēdējo reizi palaist izejas
+CronLastResult=Pēdējais rezultāts kods
+CronListOfCronJobs=Saraksts ar plānoto darbu
+CronCommand=Komanda
+CronList=Darbu saraksts
+CronDelete= Dzēst cron darbavietas
+CronConfirmDelete= Vai tiešām vēlaties dzēst šo cron darbu?
+CronExecute=Uzsākt darbu
+CronConfirmExecute= Vai esat pārliecināts, ka, lai izpildītu šo darbu tagad
+CronInfo= Darbs ļauj izpildīt uzdevumu, kas ir plānots
+CronWaitingJobs=Wainting darbavietas
+CronTask=Darbs
+CronNone= Nav
+CronDtStart=Sākuma datums
+CronDtEnd=Beigu datums
+CronDtNextLaunch=Nākošā izpilde
+CronDtLastLaunch=Pēdējā izpilde
+CronFrequency=Biežums
+CronClass=Classe
+CronMethod=Metode
+CronModule=Modulis
+CronAction=Darbība
+CronStatus=Status
+CronStatusActive=Enabled
+CronStatusInactive=Invalīdiem
+CronNoJobs=Nav reģistrētas darbavietas
+CronPriority=Prioritāte
+CronLabel=Apraksts
+CronNbRun=Nb. sākt
+CronEach=Katru
+JobFinished=Darba uzsākta un pabeigta
+
+#
+#Page card
+#
+CronAdd= Pievienot darbu
+CronHourStart= Starta laiks un uzdevuma datumu
+CronEvery= Un izpildīt uzdevumu katrā
+CronObject= Instances / Object, lai radītu
+CronArgs=Parametri
+CronSaveSucess=Veiksmīgi saglabāts
+CronNote=Komentēt
+CronFieldMandatory=Lauki %s ir obligāta
+CronErrEndDateStartDt=Beigu datums nevar būt pirms sākuma datuma
+CronStatusActiveBtn=Dot iespēju
+CronStatusInactiveBtn=Atslēgt
+CronTaskInactive=Šis darbs ir atslēgts
+CronDtLastResult=Pēdējo rezultātu datums
+CronId=Id
+CronClassFile=Klases (filename.class.php)
+CronModuleHelp=Nosaukums Dolibarr moduļa direktoriju (arī strādāt ar ārējo Dolibarr moduli). <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / <u>produktu</u> / klase / product.class.php, moduļa vērtība ir <i>produkts</i>
+CronClassFileHelp=Faila nosaukumu, lai slodze. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / <u>product.class.php,</u> klases faila nosaukuma vērtība ir <i>product.class.php</i>
+CronObjectHelp=Objekta nosaukums, lai slodze. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / product.class.php, klases faila nosaukuma vērtība ir <i>produktu</i>
+CronMethodHelp=Objekts metode, lai palaistu. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / product.class.php, metodes vērtība ir ir <i>fecth</i>
+CronArgsHelp=Šī metode argumentus. <BR> Par exemple atnest metodi Dolibarr Produkta objekts / htdocs / produktu / klase / product.class.php, no paramters vērtība var būt <i>0, ProductRef</i>
+CronCommandHelp=Sistēma komandrindas izpildīt.
+
+#
+# Info
+#
+CronInfoPage=Informācija
+
+
+#
+# Common
+#
+CronType=Darba veids
+CronType_method=Zvanu metode ir Dolibarr klases
+CronType_command=Shell komandu
+CronMenu=Cron
+CronCannotLoadClass=Nevar ielādēt klases %s vai objektu %s
+
+UseMenuModuleToolsToAddCronJobs=Iet uz izvēlni &quot;Home - moduļi instrumenti - Darbs sarakstu&quot;, lai redzētu un rediģēt plānoto darbu.

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - mails
-CHARSET=UTF-8
 Mailing=Eposta
 EMailing=Eposta
 Mailings=Epostalar
@@ -90,6 +89,7 @@ MailingModuleDescEmailsFromUser=Kullanıcı girişli Epostalar (eposta;soyadı;i
 MailingModuleDescContactsCategories=Üçüncü partiler (kategoriye göre)
 MailingModuleDescDolibarrContractsLinesExpired=Süresi dolmuş sözleşme kalemleri ile üçüncü partiler
 MailingModuleDescContactsByCompanyCategory=Üçüncü parti kişileri (üçüncü parti kategorilerine göre)
+MailingModuleDescContactsByCategory=Kategoriye göre üçüncü parti kişileri/adresleri
 MailingModuleDescMembersCategories=Kurum üyeleri (kategoriye göre)
 MailingModuleDescContactsByFunction=Üçüncü parti kişileri (konumuna/görevine göre)
 
@@ -106,10 +106,10 @@ SearchAMailing=Eposta ara
 SendMailing=E-posta gönder
 SendMail=E-posta gönder
 SentBy=Gönderen
-MailingNeedCommand=Güvenlik nedeni ile, Eposta gönderimi sadece komut satırından yapılmalıdır. Bütün posta alıcılarında eposta göndermek için yönetciden aşağıdaki komutu başlatmasını isteyin:
+MailingNeedCommand=Güvenlik nedeni ile, Eposta gönderiminin komut satırından yapılması daha iyidir. Bütün posta alıcılarına eposta göndermek için sunucu yönetcisinden aşağıdaki komutu başlatmasını isteyin:
 MailingNeedCommand2=Bunula birlikte, oturum tarafından gönderilecek ençok Eposta sayılı MAILING_LIMIT_SENDBYWEB parametresini ekleyerek çevrim içi olarak gönderebilirsiniz. Bunu için Giriş-Kurulum-Diğer menüsüne gidin.
-ConfirmSendingEmailing=Epostayı komut satırı dışından ve web modundan göndermek istediğinizden emin misiniz?
-LimitSendingEmailing=Epostaların çevrimiçi gönderimi güvenlik ve süre aşımı nedenleriyle gönderme oturumu tarafından <b>%s</b> kadar alıcıyla sınırlandırılmıştır.
+ConfirmSendingEmailing=Eğer www tarayıcınız ile gönderemiyor ya da yeğlemiyorsanız, lütfen kendi tarayıcınızdan eposta göndermek istediğinizden emin olduğunuzu onaylayın.
+LimitSendingEmailing=Not: Epostaların çevrimiçi gönderimi güvenlik ve süre aşımı nedenleriyle gönderme oturumu tarafından <b>%s</b> kadar alıcıyla sınırlandırılmıştır.
 TargetsReset=Listeyi temizle
 ToClearAllRecipientsClickHere=Bu e-posta Alıcı listesini temizlemek için burayı tıkla
 ToAddRecipientsChooseHere=Listeden seçerek alıcıları ekle

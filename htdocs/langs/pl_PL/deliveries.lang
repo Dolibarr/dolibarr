@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostawa
 Deliveries=Dostawy
 DeliveryCard=Dostępność kart
@@ -23,21 +11,15 @@ QtyDelivered=Ilość wydana
 SetDeliveryDate=Ustaw datę wysyłki
 ValidateDeliveryReceipt=Validate otrzymania dostawy
 ValidateDeliveryReceiptConfirm=Czy na pewno chcesz, aby potwierdzić dostawę otrzymania?
+DeleteDeliveryReceipt=Usuń potwierdzenia dostarczenia
+DeleteDeliveryReceiptConfirm=Czy na pewno chcesz usunąć <b>%s</b> potwierdzenia dostarczenia?
 DeliveryMethod=Metoda dostawy
 TrackingNumber=Numer
+DeliveryNotValidated=Dostawa nie zatwierdzone
+# merou PDF model
 NameAndSignature=Nazwisko i podpis:
 ToAndDate=To___________________________________ na ____ / _____ / __________
 GoodStatusDeclaration=Czy otrzymane towary powyżej w dobrym stanie,
 Deliverer=Dostawca:
 Sender=Nadawca
 Recipient=Odbiorca
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-DeleteDeliveryReceipt=Usuń potwierdzenia dostarczenia
-DeleteDeliveryReceiptConfirm=Czy na pewno chcesz usunąć <b>%s</b> potwierdzenia dostarczenia?
-DeliveryNotValidated=Dostawa nie zatwierdzone
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:21).

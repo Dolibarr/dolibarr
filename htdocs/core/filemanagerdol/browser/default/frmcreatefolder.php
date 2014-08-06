@@ -128,7 +128,7 @@ window.onload = function()
 							<tr>
 								<td><?php echo img_picto_common('','treemenu/folder.gif','width="16" height="16"'); ?></td>
 								<td>&nbsp;</td>
-								<td nowrap>Create New Folder</td>
+								<td class="nowrap">Create New Folder</td>
 							</tr>
 						</table>
 					</button>

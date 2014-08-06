@@ -27,10 +27,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 
 
 /**
-        \class      Tva
-        \brief      Put here description of your class
-		\remarks	Initialy built by build_class_from_table on 2008-04-03 21:01
-*/
+ *  Put here description of your class
+ */
 class Tva extends CommonObject
 {
 	//public $element='tva';			//!< Id that identify managed objects
@@ -48,7 +46,6 @@ class Tva extends CommonObject
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
-
 
 
 
@@ -115,7 +112,7 @@ class Tva extends CommonObject
 
 		$sql.= ")";
 
-	   	dol_syslog("Tva::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -133,16 +130,17 @@ class Tva extends CommonObject
         else
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Tva::create ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
             return -1;
         }
     }
 
-    /*
-     *      \brief      Update database
-     *      \param      user        	User that modify
-     *      \param      notrigger	    0=no, 1=yes (no update trigger)
-     *      \return     int         	<0 if KO, >0 if OK
+    /**
+     * Update database
+     * 
+     * @param   User	$user        	User that modify
+     * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
+     * @return  int         			<0 if KO, >0 if OK
      */
     function update($user=0, $notrigger=0)
     {
@@ -177,12 +175,12 @@ class Tva extends CommonObject
 
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog("Tva::update sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (! $resql)
         {
             $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Tva::update ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
             return -1;
         }
 
@@ -200,11 +198,12 @@ class Tva extends CommonObject
     }
 
 
-    /*
-     *    \brief      Load object in memory from database
-     *    \param      id          id object
-     *    \param      user        User that load
-     *    \return     int         <0 if KO, >0 if OK
+    /**
+     *  Load object in memory from database
+     *  
+     *  @param	int		$id         id object
+     *  @param  User	$user       User that load
+     *  @return int         		<0 if KO, >0 if OK
      */
     function fetch($id, $user=0)
     {
@@ -229,7 +228,7 @@ class Tva extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
         $sql.= " WHERE t.rowid = ".$id;
 
-    	dol_syslog("Tva::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -259,17 +258,18 @@ class Tva extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog("Tva::fetch ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
 
 
- 	/*
-	*   \brief      Delete object in database
-    *	\param      user        User that delete
-	*	\return		int			<0 if KO, >0 if OK
-	*/
+ 	/**
+	 *  Delete object in database
+	 *  
+     *	@param	User	$user       User that delete
+	 *	@return	int					<0 if KO, >0 if OK
+	 */
 	function delete($user)
 	{
 		global $conf, $langs;
@@ -279,12 +279,12 @@ class Tva extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."tva";
 		$sql.= " WHERE rowid=".$this->id;
 
-	   	dol_syslog("Tva::delete sql=".$sql);
+	   	dol_syslog(get_class($this)."::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
 			$this->error="Error ".$this->db->lasterror();
-            dol_syslog("Tva::delete ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -322,9 +322,11 @@ class Tva extends CommonObject
 	}
 
 
-    /*
-     *      \brief      Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de TVA, non ?
-     *
+    /**
+     *  Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de TVA, non ?
+     *  
+     *	@param	int		$year		Year
+     *	@return	double				Amount
      */
     function solde($year = 0)
     {
@@ -339,11 +341,12 @@ class Tva extends CommonObject
         return $solde;
     }
 
-    /*
-     *      \brief      Total de la TVA des factures emises par la societe.
-     *
+    /**
+     * 	Total de la TVA des factures emises par la societe.
+     * 
+     *	@param	int		$year		Year
+     *	@return	double				Amount
      */
-
     function tva_sum_collectee($year = 0)
     {
 
@@ -352,7 +355,7 @@ class Tva extends CommonObject
 
         if ($year)
         {
-            $sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+            $sql .= " AND f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
         }
 
         $result = $this->db->query($sql);
@@ -379,11 +382,12 @@ class Tva extends CommonObject
         }
     }
 
-    /*
-     *      \brief      Tva pay�e
+    /**
+     * 	VAT payed
      *
+     *	@param	int		$year		Year
+     *	@return	double				Amount
      */
-
     function tva_sum_payee($year = 0)
     {
 
@@ -392,7 +396,7 @@ class Tva extends CommonObject
 
         if ($year)
         {
-            $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+            $sql .= " WHERE f.datef >= '".$year."-01-01' AND f.datef <= '".$year."-12-31' ";
         }
         $result = $this->db->query($sql);
 
@@ -419,12 +423,12 @@ class Tva extends CommonObject
     }
 
 
-    /*
-     *      \brief      Tva r�gl�e
-     *                  Total de la TVA r�glee aupres de qui de droit
+    /**
+     * 	Total de la TVA reglee aupres de qui de droit
      *
+     *	@param	int		$year		Year
+     *	@return	double				Amount
      */
-
     function tva_sum_reglee($year = 0)
     {
 
@@ -433,7 +437,7 @@ class Tva extends CommonObject
 
         if ($year)
         {
-            $sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
+            $sql .= " WHERE f.datev >= '".$year."-01-01' AND f.datev <= '".$year."-12-31' ";
         }
 
         $result = $this->db->query($sql);
@@ -473,14 +477,16 @@ class Tva extends CommonObject
 
         $this->db->begin();
 
+        // Clean parameters
+        $this->amount=price2num(trim($this->amount));
+        
         // Check parameters
-        $this->amount=price2num($this->amount);
 		if (! $this->label)
 		{
 			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 			return -3;
 		}
-        if ($this->amount <= 0)
+        if ($this->amount < 0 || $this->amount == '')
         {
             $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             return -4;
@@ -509,7 +515,7 @@ class Tva extends CommonObject
         $sql.=", '".$user->id."', NULL, ".$conf->entity;
         $sql.= ")";
 
-		dol_syslog("Tva::addPayment sql=".$sql);
+		dol_syslog(get_class($this)."::addPayment sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -525,7 +531,7 @@ class Tva extends CommonObject
             if ($this->id > 0)
             {
                 $ok=1;
-				if (! empty($conf->banque->enabled))
+				if (! empty($conf->banque->enabled) && ! empty($this->amount))
                 {
                     // Insertion dans llx_bank
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -536,7 +542,7 @@ class Tva extends CommonObject
 
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
 
-                    // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a g�n�r� l'�criture bancaire
+                    // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
@@ -547,7 +553,7 @@ class Tva extends CommonObject
 						$ok=0;
 					}
 
-                    // Mise a jour liens
+                    // Update links
                     $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/fiche.php?id=', "(VATPayment)", "payment_vat");
                     if ($result < 0)
                     {

@@ -99,8 +99,8 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
     $soc->country_id=1;
     $soc->country_code='FR';
 	// Un client sur 3 a une remise de 5%
-    $user_remise=rand(1,3); if ($user_remise==3) $soc->remise_client=5;
-	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_client."\n";
+    $user_remise=rand(1,3); if ($user_remise==3) $soc->remise_percent=5;
+	print "> client=".$soc->client.", fournisseur=".$soc->fournisseur.", remise=".$soc->remise_percent."\n";
 	$soc->note='Company created by the script generate-societe.php';
     $socid = $soc->create();
 

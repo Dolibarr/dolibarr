@@ -1,19 +1,8 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Wycieczka
 Trips=Wycieczki
 TripsAndExpenses=Wycieczki i koszty
+TripsAndExpensesStatistics=Koszty podróży i statystyki
 TripCard=Wycieczka karty
 AddTrip=Dodaj podróż
 ListOfTrips=Lista wyjazdów
@@ -27,19 +16,6 @@ ConfirmDeleteTrip=Czy na pewno chcesz usunąć tę wycieczkę?
 TF_OTHER=Inny
 TF_LUNCH=Lunch
 TF_TRIP=Wycieczka
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> pl_PL
-TripsAndExpensesStatistics=Koszty podróży i statystyki
 ListTripsAndExpenses=Lista wycieczek i wydatków
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:12).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
 ExpensesArea=Wycieczki i obszar wydatki
 SearchATripAndExpense=Szukaj w podróż i wydatki
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:19:06).

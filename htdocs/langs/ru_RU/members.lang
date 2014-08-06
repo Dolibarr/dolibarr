@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Для юзеров
 PublicMembersArea=Члены общественной области
 MemberCard=Член-карты
@@ -18,14 +8,20 @@ Members=Члены
 MemberAccount=Вход для зарегистрированных пользователей
 ShowMember=Показать карту члена
 UserNotLinkedToMember=Пользователь не связан с членом
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Члены Билеты
 FundationMembers=Члены фонда
 Attributs=Атрибуты
-Person=Лицо
 ErrorMemberTypeNotDefined=Член тип не определен
 ListOfPublicMembers=Список членов общественной
 ListOfValidatedPublicMembers=Список проверенных общественности
 ErrorThisMemberIsNotPublic=Этот член не является государственным
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Еще один член (имя и <b>фамилия: %s, логин: %s)</b> уже связан с третьей <b>стороной %s.</b> Удалить эту ссылку первых, потому третья сторона не может быть связан только один член (и наоборот).
+ErrorUserPermissionAllowsToLinksToItselfOnly=По соображениям безопасности, вы должны получить разрешение, чтобы изменить все пользователи должны иметь доступ к ссылке члена к пользователю, что это не твое.
+ThisIsContentOfYourCard=Это детали Вашей карты
+CardContent=Содержание Вашего члена карту
+SetLinkToUser=Ссылка на Dolibarr пользователя
+SetLinkToThirdParty=Ссылка на Dolibarr третья сторона
 MembersCards=Члены печати карт
 MembersList=Список членов
 MembersListToValid=Список членов проекта (будет подтверждено)
@@ -39,11 +35,14 @@ MenuMembersValidated=Подтвержденные участники
 MenuMembersUpToDate=На сегодняшний день членами
 MenuMembersNotUpToDate=За сегодняшний день члены
 MenuMembersResiliated=Resiliated участники
+MembersWithSubscriptionToReceive=Члены с подпиской на получение
 DateAbonment=Подписка на дату
 DateSubscription=Подписка на дату
 DateNextSubscription=Далее подписка
 DateEndSubscription=Подписка на дату окончания
 EndSubscription=Конец подписке
+SubscriptionId=Подписка ID
+MemberId=Член ID
 NewMember=Новый член
 NewType=Новый член типа
 MemberType=Член типа
@@ -72,13 +71,12 @@ MembersStatusNotPaidShort=Из даты
 MembersStatusResiliated=Resiliated участники
 MembersStatusResiliatedShort=Resiliated участники
 NewCotisation=Новый вклад
+PaymentSubscription=Новый вклад оплаты
 EditMember=Изменить член
 SubscriptionEndDate=Подписка на конец даты
-NewAttribute=Новые attribut
-AttributeCode=Атрибут код
-OptionalFieldsSetup=Необязательные поля установки
 MembersTypeSetup=Члены тип установки
 NewSubscription=Новая подписка
+NewSubscriptionDesc=Эта форма позволяет вам записывать вашу подписку в качестве нового члена Фонда. Если вы хотите продлить подписку (если уже зарегистрированы), пожалуйста, свяжитесь совета Фонда, а не по электронной почте, %s.
 Subscription=Подписка
 Subscriptions=Подписка
 SubscriptionLate=Поздно
@@ -112,13 +110,15 @@ ConfirmValidateMember=Вы уверены, что хотите проверит�
 FollowingLinksArePublic=Следующие ссылки открытых страниц не защищены какими-либо Dolibarr разрешения. Они не отформатированный страниц при условии, что в качестве примера, чтобы показать, как в списке членов данных.
 PublicMemberList=Общественная член списка
 BlankSubscriptionForm=Форма подписки
+BlankSubscriptionFormDesc=Dolibarr может предоставить вам на общедоступный ресурс, чтобы позволить внешним посетителям попросить, чтобы подписаться на фундамент. Если модуль онлайн оплаты включена, форма оплаты будет автоматически предоставляется.
+EnablePublicSubscriptionForm=Включить общественных авто-форму подписки
 MemberPublicLinks=Общественная ссылки / страниц
 ExportDataset_member_1=Члены и подписки
+ImportDataset_member_1=Члены
 LastMembers=Последнее% с членами
 LastMembersModified=Последнее% с измененными участники
+LastSubscriptionsModified=Последнее изменение %s подписки
 AttributeName=Название атрибута
-FieldEdition=Местах издание %s
-AlphaNumOnlyCharsAndNoSpace=только alphanumericals знаков без пространства
 String=String
 Text=Текст
 Int=Межд
@@ -130,6 +130,10 @@ AddSubscription=Добавить подписку
 ShowSubscription=Показать подписки
 MemberModifiedInDolibarr=Член Изменения в Dolibarr
 SendAnEMailToMember=Отправить по электронной почте информацию члена
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Тема сообщения для государств-членов autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=EMail для государств-членов autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=EMail тему член валидации
 DescADHERENT_MAIL_VALID=EMail для членов валидации
 DescADHERENT_MAIL_COTIS_SUBJECT=EMail предметом для подписки
@@ -138,41 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=EMail тему член resiliation
 DescADHERENT_MAIL_RESIL=EMail для членов resiliation
 DescADHERENT_MAIL_FROM=Отправитель EMail для автоматического письма
 DescADHERENT_ETIQUETTE_TYPE=Этикетки формате
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=Формат карт страницы
 DescADHERENT_CARD_HEADER_TEXT=Текст печатается на верхней части членов карты
 DescADHERENT_CARD_TEXT=Текст печатается на члена карты
+DescADHERENT_CARD_TEXT_RIGHT=Текст печатается на члена карты (выравнивание справа)
 DescADHERENT_CARD_FOOTER_TEXT=Текст печатается на нижней части члена карты
+GlobalConfigUsedIfNotDefined=Текст, определенный в настройках модуля Фонд будет использоваться, если не определено здесь
+MayBeOverwrited=Этот текст может быть overwrited от значения, определенного для типа пользователя
 ShowTypeCard=Показать типу ' %s'
 HTPasswordExport=htpassword файл поколения
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Еще один член (имя и <b>фамилия: %s, логин: %s)</b> уже связан с третьей <b>стороной %s.</b> Удалить эту ссылку первых, потому третья сторона не может быть связан только один член (и наоборот).
-ErrorUserPermissionAllowsToLinksToItselfOnly=По соображениям безопасности, вы должны получить разрешение, чтобы изменить все пользователи должны иметь доступ к ссылке члена к пользователю, что это не твое.
-ThisIsContentOfYourCard=Это детали Вашей карты
-CardContent=Содержание Вашего члена карту
-SetLinkToUser=Ссылка на Dolibarr пользователя
-SetLinkToThirdParty=Ссылка на Dolibarr третья сторона
-SubscriptionId=Подписка ID
-MemberId=Член ID
-PaymentSubscription=Новый вклад оплаты
 NoThirdPartyAssociatedToMember=Никакая третья сторона, связанных с этой член
 ThirdPartyDolibarr=Dolibarr третья сторона
-MembersAndSubscriptions=Члены и Suscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Тема сообщения для государств-членов autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=EMail для государств-членов autosubscription
-DescADHERENT_CARD_TYPE=Формат карт страницы
-DescADHERENT_CARD_TEXT_RIGHT=Текст печатается на члена карты (выравнивание справа)
-DescADHERENT_MAILMAN_LISTS=Список (ы) для автоматического insription новых членов (через запятую)
+MembersAndSubscriptions= Члены и Suscriptions
 MoreActions=Дополнительные меры по записи
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Создание прямой записи транзакций на счета
 MoreActionBankViaInvoice=Создание счета-фактуры и оплаты по счету
 MoreActionInvoiceOnly=Создание счета без каких-либо оплаты
@@ -181,18 +165,6 @@ LinkToGeneratedPagesDesc=Этот экран позволяет вам созд�
 DocForAllMembersCards=Создание визитной карточки для всех членов (формат для вывода на самом деле установки: <b>%s)</b>
 DocForOneMemberCards=Создание визитной карточки для конкретного члена (формат для вывода на самом деле установки: <b>%s)</b>
 DocForLabels=Создание листов адрес (формат для вывода на самом деле установки: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:35).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-MembersWithSubscriptionToReceive=Члены с подпиской на получение
-NewSubscriptionDesc=Эта форма позволяет вам записывать вашу подписку в качестве нового члена Фонда. Если вы хотите продлить подписку (если уже зарегистрированы), пожалуйста, свяжитесь совета Фонда, а не по электронной почте, %s.
-BlankSubscriptionFormDesc=Dolibarr может предоставить вам на общедоступный ресурс, чтобы позволить внешним посетителям попросить, чтобы подписаться на фундамент. Если модуль онлайн оплаты включена, форма оплаты будет автоматически предоставляется.
-EnablePublicSubscriptionForm=Включить общественных авто-форму подписки
-ImportDataset_member_1=Члены
-GlobalConfigUsedIfNotDefined=Текст, определенный в настройках модуля Фонд будет использоваться, если не определено здесь
-MayBeOverwrited=Этот текст может быть overwrited от значения, определенного для типа пользователя
 SubscriptionPayment=Абонентская плата
 LastSubscriptionDate=Последний день подписки
 LastSubscriptionAmount=Последняя сумма подписки
@@ -224,10 +196,9 @@ Collectivités=Организаций
 Particuliers=Личный
 Entreprises=Компании
 DOLIBARRFOUNDATION_PAYMENT_FORM=Чтобы сделать вашу подписку оплаты с помощью банковского перевода, см. стр. <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Для оплаты с помощью кредитной карты или Paypal, нажмите на кнопку в нижней части этой страницы. <br>
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:59).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-LastSubscriptionsModified=Последнее изменение %s подписки
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:50).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

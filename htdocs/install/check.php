@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,31 +385,40 @@ else
 								array('from'=>'3.0.0', 'to'=>'3.1.0'),
 								array('from'=>'3.1.0', 'to'=>'3.2.0'),
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
-								array('from'=>'3.3.0', 'to'=>'3.4.0')
+								array('from'=>'3.3.0', 'to'=>'3.4.0'),
+								array('from'=>'3.4.0', 'to'=>'3.5.0')
 						);
 
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
 			$count++;
-            $versionfrom=$migarray['from'];
+            $version=DOL_VERSION;
+			$versionfrom=$migarray['from'];
             $versionto=$migarray['to'];
-            $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
-            $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
+            $versionarray=preg_split('/[\.-]/',$version);
             $dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
             $dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
-            $version=preg_split('/[\.-]/',DOL_VERSION);
+            // Define string newversionxxx that are used for text to show
+            $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
+            $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
             $newversionfrombis='';
-            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis=' '.$langs->trans("or").' '.$versionto;
+            if (versioncompare($dolibarrversiontoarray,$versionarray) < -2)	// From x.y.z -> x.y.z+1
+            {
+            	$newversionfrombis=' '.$langs->trans("or").' '.$versionto;
+            }
 			print '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
 			print '<td class="listofchoices">';
 			print $langs->trans("UpgradeDesc");
+
 			if ($ok)
 			{
-				if (count($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
+				if (count($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and last upgrade version is known
 				{
 					// Now we check if this is the first qualified choice
-					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
+					if ($allowupgrade && empty($foundrecommandedchoice) &&
+						(versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0 || versioncompare($dolibarrversiontoarray,$versionarray) < -2)
+						)
 					{
 						print '<br>';
 						//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);

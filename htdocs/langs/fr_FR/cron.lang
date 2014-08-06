@@ -1,93 +1,114 @@
-# Dolibarr language file - fr_FR - cron
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - cron
+#
+# About page
+#
+About = À propos
+CronAbout = À propos de Cron
+CronAboutPage = Page à propos de Cron
+
+#
+# Right
+#
+Permission23101 = Voir les travaux planifiés
+Permission23102 = Créer/modifier des travaux planifiés
+Permission23103 = Supprimer un travail planifiée
+Permission23104 = Lancer un travail planifié
 
 #
 # Admin
 #
-CronSetup = Page de configuration du module - Gestion de tâches planifiées
-URLToLaunchCronJobs=URL pour lancer les tâches automatiques
-OrToLaunchASpecificJob=Ou pour lancer une tâche spécifique
-KeyForCronAccess=Clé de sécurité pour l'URL de lancement des tâches automatiques
-FileToLaunchCronJobs=Commande pour lancer les tâches automatiques
-CronExplainHowToRunUnix=Sur un environement Unix vous pouvez paramétrer CronTab pour executer cette commande toute les minutes.
-CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâches pour lancer cette commande toute les minutes.
+CronSetup= Page de configuration du module - Gestion des travaux programmés
+URLToLaunchCronJobs=URL pour vérifier et lancer les travaux programmés actifs
+OrToLaunchASpecificJob=Ou pour vérifier et lancer un travail programmé spécifique
+KeyForCronAccess=Clé de sécurité pour l'URL de lancement des travaux programmés
+FileToLaunchCronJobs=Commande pour lancer les travaux programmés actifs
+CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser 'crontab' pour exécuter une commande toute les minutes
+CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tâche pour lancer une commande toute les minutes
+
 
 #
 # Menu
 #
-CronListActive= Liste des tâches planifiées active
-CronListInactive= Liste des tâches planifiées inactive
+CronJobs=Travaux programmés
+CronListActive= Liste des travaux actifs
+CronListInactive= Liste des travaux inactifs
+CronListActive= Liste des travaux actifs
 
 
 #
 # Page list
 #
 CronDateLastRun=Dernier lancement
-CronLastOutput=Dernière sortie
-CronLastResult=Dernier code retour
+CronLastOutput=Sortie du dernier lancement
+CronLastResult=Dernier code de retour
+CronListOfCronJobs=Liste des travaux planifiés
 CronCommand=Commande
-CronList= Liste des tâches planifiées
-CronDelete= Supprimer la tâche planifiée
-CronConfirmDelete= Êtes-vous sûr de vouloir supprimer cette tâche planifiée ?
-CronExecute=Exécuter cette tâche
-CronConfirmExecute= Êtes-vous sûr de vouloir exécuter cette tâche maintenant?
-CronInfo= Les jobs permettent d'exécuter des tâches à intervales réguliers
-CronWaitingJobs= Vos jobs en attente:
-CronTask= Tâche
-CronNone=Aucun(e)
-CronDtStart=Date début
-CronDtEnd=Date fin
-CronDtNextLaunch=Prochaine éxécution
-CronDtLastLaunch=Dernière éxécution
+CronList=Liste des travaux
+CronDelete= Supprimer les travaux cron
+CronConfirmDelete= Êtes-vous sûr de vouloir supprimer ces travaux cron ?
+CronExecute=Lancer cette tâche
+CronConfirmExecute= Êtes-vous sûr de vouloir lancer ce travail maintenant?
+CronInfo= Les travaux planifiés permettent d'exécuter des tâches à intervales réguliers
+CronWaitingJobs=Travaux en attente
+CronTask=Tâche
+CronNone= Aucun(e)
+CronDtStart=Date de début
+CronDtEnd=Date de fin
+CronDtNextLaunch=Prochaine exécution
+CronDtLastLaunch=Dernière exécution
 CronFrequency=Fréquence
-CronClass=Classes
+CronClass=Classe
 CronMethod=Méthode
 CronModule=Module
 CronAction=Action
-CronStatus=Status
-CronStatusActive=Active
-CronStatusInactive=Inactive
-CronEach=Tou(te)s
-CronNoJobs= Aucun jobs actuellement
+CronStatus=État
+CronStatusActive=Actif
+CronStatusInactive=Inactif
+CronNoJobs=Aucun travail enregistré
 CronPriority=Priorité
 CronLabel=Description
 CronNbRun=Nb. exec.
-CronDtLastResult=Date du derniétre resulat de la dernière éxécution
+CronEach=Tous les
+JobFinished=Tâche lancée et terminée
 
 #
 #Page card
 #
-CronAdd= Ajoutez une tâche
-CronHourStart= Jour et Heure de début de la tâche
-CronEvery= Puis execution toutes les
-CronObject= Instance/Objet à créer
-CronArgs= Argument
+CronAdd= Ajoutez des travaux
+CronHourStart= Jour et heure de début de la tâche
+CronEvery= Puis exécution toutes les
+CronObject= Instance/objet à créer
+CronArgs=Paramètres
 CronSaveSucess=Enregistrement effectué
-CronNote=Note
+CronNote=Commentaire
 CronFieldMandatory=Le champ %s est obligatoire
 CronErrEndDateStartDt=La date de fin ne peux être avant la date de début
 CronStatusActiveBtn=Activer
 CronStatusInactiveBtn=Désactiver
 CronTaskInactive=Cette tâche est désactivée
+CronDtLastResult=Date du dernier résulat
 CronId=Id
-CronClassFile=Classes (fichier)
-CronModuleHelp=Nom du repertoire du module dolibarr (fonctionne automatiquement avec les modules externe Dolibarr). <BR> Par exemple pour appeler la mèthode fetch de l'object Product de Dolibarr /htdocs/<u>product</u>/class/product.class.php, la valeur de module est <i>product</i>
-CronClassFileHelp=Le fichier qui contient l'objet . <BR> Par exemple pour appeler la mèthode fetch de l'object Product de Dolibarr /htdocs/product/class/<u>product.class.php</u>, la valeur de classe est <i>product.class.php</i>
-CronObjectHelp=Le nom de l'object a crée. <BR> Par exemple pour appeler la mèthode fetch de l'object Product de Dolibarr /htdocs/product/class/product.class.php, la valeur de objet est <i>Product</i>
-CronMethodHelp=La mèthode a lancer. <BR> Par exemple pour appeler la mèthode fetch de l'object Product de Dolibarr  /htdocs/product/class/product.class.php, la valeur de mèthode est <i>fecth</i>
-CronArgsHelp=Les arguments de la mèthode. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, la valeur de paramétre pourrait être <i>0, RefProduit</i>
-CronCommandHelp=La commande système a éxecuter
+CronClassFile=Classes (nom de fichier)
+CronModuleHelp=Nom du répertoire du module Dolibarr (fonctionne aussi avec les modules externes de Dolibarr). <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/<u>product</u>/class/product.class.php, la valeur de module est <i>product</i>
+CronClassFileHelp=Le nom du fichier à charger. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/<u>product.class.php</u>, la valeur de du nom de fichier de classe est <i>product.class.php</i>
+CronObjectHelp=Le nom de l'objet à charger. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur du nom de l'objet est <i>Product</i>
+CronMethodHelp=La méthode à lancer. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur de la méthode est <i>fetch</i>
+CronArgsHelp=Les arguments de la méthode. <BR> Par exemple pour appeler la méthode fetch de l'objet Product de Dolibarr /htdocs/product/class/product.class.php, la valeur des arguments pourrait être <i>0, RefProduit</i>
+CronCommandHelp=La commande système a exécuter.
 
 #
 # Info
 #
-CronInfoPage=Suivie
+CronInfoPage=Information
+
 
 #
 # Common
 #
-CronType=Type d'action a executer
-CronType_method=Méthode d'une classe d'un module Dolibarr
-CronType_command=Commande Shell
+CronType=Type de tâche
+CronType_method=Méthode d'appel d'une classe Dolibarr
+CronType_command=Commande terminal
 CronMenu=Cron
-CronCannotLoadClass=impossible de charger la classe %s ou l'object %s
+CronCannotLoadClass=Impossible de charger la classe %s ou l'objet %s
+
+UseMenuModuleToolsToAddCronJobs=Aller dans le menu "Accueil - Configuration des modules - Liste des travaux" pour voir et éditer les travaux planifiés.

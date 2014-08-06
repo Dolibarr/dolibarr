@@ -1,6 +1,5 @@
-# Dolibarr language file - ca_ES - holiday
-CHARSET= UTF-8
-
+# Dolibarr language file - Source file is en_US - holiday
+HRM=RRHH
 Holidays=Vacacions
 CPTitreMenu=Vacacions
 MenuReportMonth=Estat mensual
@@ -16,7 +15,7 @@ DateFinCP=Data fi
 DateCreateCP=Data de creació
 DraftCP=Esborrany
 ToReviewCP=A l'espera d'aprovació
-ApprvedCP=Aprovada
+ApprovedCP=Aprovada
 CancelCP=Anul·lada
 RefuseCP=Rebutjada
 ValidatorCP=Validador
@@ -79,7 +78,6 @@ MenuLogCP=Veure els logs de vacances
 LogCP=Logs d'actualitzacions de vacances
 ActionByCP=Realitzat per
 UserUpdateCP=Per a l'usuari
-ActionTypeCP=Tipus
 PrevSoldeCP=Saldo anterior
 NewSoldeCP=Nou saldo
 alreadyCPexist=Ja s'ha efectuat una petició de vacances per a aquest període.
@@ -87,10 +85,9 @@ UserName=Nom Cognoms
 Employee=Empleat
 FirstDayOfHoliday=Primer dia lliure
 LastDayOfHoliday=Últim dí lliure
-Morning=Matí
-Afternoon=Vesprada
 HolidaysMonthlyUpdate=Actualització mensual
 ManualUpdate=Actualització manual
+# HolidaysCancelation=Holidays cancelation
 
 ## Configuration du Module ##
 ConfCP=Configuració del mòdul Vacacions
@@ -103,12 +100,14 @@ UpdateConfCPOK=Actualització efectuada correctament.
 ErrorUpdateConfCP=S'ha produït un error durant l'actualització, torne a provar.
 AddCPforUsers=Afegiu els saldos de vacances dels usuaris <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">fent clic aquí</a>.
 DelayForSubmitCP=Antelació mínima per sol·licitar vacances
+AlertapprobatortorDelayCP=Advertir al validador si la petició no correspon a la data límit
 AlertValidatorDelayCP=Advertir a l'usuari validador si la petició no respecta el límit previst
 AlertValidorSoldeCP=Advertir a l'usuari validador si l'usuari demana vacances superiors al seu saldo
 nbUserCP=Nombre d'usuaris presos en compte en el mòdul vacances
 nbHolidayDeductedCP=Nombre de dies retribuïts a deduir per dia de vacances
 nbHolidayEveryMonthCP=Nombre de vacances afegides per mes
-Module27130Name=Gestió de les vacances
+Module27130Name= Gestió de les vacances
+Module27130Desc= Gestió de dies lliures
 TitleOptionMainCP=Ajustaments principals de vacances
 TitleOptionEventCP=Ajustaments de vacances enllaçats a esdeveniments
 ValidEventCP=Validar

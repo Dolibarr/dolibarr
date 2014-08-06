@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:14:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:14:31).
-// Reference language: fr_FR -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Доставчици
 Supplier=Снабдител
 AddSupplier=Добави доставчик
@@ -21,8 +12,11 @@ OrderDate=Дата на поръчката
 BuyingPrice=Изкупната цена
 BuyingPriceMin=Минимална покупната цена
 BuyingPriceMinShort=Покупка мин. Цена
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Добави награда доставчик
 ChangeSupplierPrice=Промяна доставчик цена
+ErrorQtyTooLowForThisSupplier=Количество твърде ниска за този доставчик или няма цена, определена за този продукт на този доставчик
 ErrorSupplierCountryIsNotDefined=Не е определено на страната на доставчика. Корекция на щепсела.
 ProductHasAlreadyReferenceInThisSupplier=Този продукт има позоваване на този доставчик
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Този референтен доставчик вече е свързана с референтното: %s
@@ -33,6 +27,7 @@ RefSupplierShort=Не. снабдител
 Availability=Наличност
 ExportDataset_fournisseur_1=Фактури и фактура линии
 ExportDataset_fournisseur_2=Фактури и наредби
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Одобряване на поръчката
 ConfirmApproveThisOrder=Сигурен ли сте, че искате да одобри <b>%s Поръчката?</b>
 DenyingThisOrder=Да откаже поръчката
@@ -44,10 +39,4 @@ AddSupplierOrder=Създаване на поръчка за покупка
 AddSupplierInvoice=Създаване на фактура
 ListOfSupplierProductForSupplier=Списък на доставчици на стоки и цени <b>%s</b>
 NoneOrBatchFileNeverRan=Няма или не се изпълнява партида <b>%s</b> наскоро
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:15:57).
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-ErrorQtyTooLowForThisSupplier=Количество твърде ниска за този доставчик или няма цена, определена за този продукт на този доставчик
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:42:05).
+# SentToSuppliers=Sent to suppliers

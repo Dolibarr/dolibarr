@@ -68,6 +68,13 @@ class modCategorie extends DolibarrModules
 
 		// Constantes
 		$this->const = array();
+		$r=0;
+		$this->const[$r][0] = "CATEGORIE_RECURSIV_ADD";
+		$this->const[$r][1] = "yesno";
+		$this->const[$r][2] = "0";
+		$this->const[$r][3] = 'Affect parent categories';
+		$this->const[$r][4] = 0;
+		$r++;
 
 		// Boxes
 		$this->boxes = array();
@@ -140,7 +147,6 @@ class modCategorie extends DolibarrModules
         $this->export_enabled[$r]='$conf->produit->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("produit","lire"));
 		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'p.rowid'=>'ProductId','p.ref'=>'Ref');
-		//$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.rowid'=>'List:Product:label','p.ref'=>'Text');
 		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'p.ref'=>'Text');
 		$this->export_entities_array[$r]=array('p.rowid'=>'product','p.ref'=>'product');	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
@@ -163,6 +169,71 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cp.fk_categorie AND cp.fk_member = p.rowid';
 		$this->export_sql_end[$r] .=' AND u.entity = '.$conf->entity;
 		$this->export_sql_end[$r] .=' AND u.type = 3';	// Supplier categories
+
+		$r++;
+		$this->export_code[$r]='category_'.$r;
+		$this->export_label[$r]='CatContactList';
+		$this->export_icon[$r]='category';
+		$this->export_enabled[$r]='$conf->societe->enabled';
+		$this->export_permission[$r]=array(array("categorie", "lire"), array ("societe", "lire"));
+		$this->export_fields_array[$r]=array (
+			'u.rowid' => "CategId",
+			'u.label' => "Label",
+			'u.description' => "Description",
+			'p.rowid' => 'ContactId',
+			'p.civilite' => 'Civitity',
+			'p.lastname' => 'LastName',
+			'p.firstname' => 'Firstname',
+			'p.address' => 'Address',
+			'p.zip' => 'Zip',
+			'p.town' => 'Town',
+			'country.code' => 'CountryCode',
+			'country.libelle' => 'Country',
+			'p.birthday' => 'DateToBirth',
+			'p.poste' => 'PostOrFunction',
+			'p.phone' => 'Phone',
+			'p.phone_perso' => 'PhonePerso',
+			'p.phone_mobile' => 'PhoneMobile',
+			'p.fax' => 'Fax',
+			'p.email' => 'Email',
+			'p.note_private' => 'NotePrivate',
+			'p.note_public' => 'NotePublic'
+		);
+		$this->export_TypeFields_array[$r] = array (
+			'u.label' => "Text",
+			'u.description' => "Text",
+			'p.rowid' => 'List:contact:lastname',
+			'p.lastname' => 'Text',
+			'p.firstname' => 'Text'
+		);
+		$this->export_entities_array[$r] = array (
+			'u.rowid' => "category",
+			'u.label' => "category",
+			'u.description' => "category",
+			'p.rowid' => 'contact',
+			'p.civilite' => 'contact',
+			'p.lastname' => 'contact',
+			'p.firstname' => 'contact',
+			'p.address' => 'contact',
+			'p.zip' => 'contact',
+			'p.town' => 'contact',
+			'country.code' => 'contact',
+			'country.libelle' => 'contact',
+			'p.birthday' => 'contact',
+			'p.poste' => 'contact',
+			'p.phone' => 'contact',
+			'p.phone_perso' => 'contact',
+			'p.phone_mobile' => 'contact',
+			'p.fax' => 'contact',
+			'p.email' => 'contact',
+			'p.note_private' => 'contact',
+			'p.note_public' => 'contact'
+		); // We define here only fields that use another picto
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_pays as country ON p.fk_pays = country.rowid';
+		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity = ' . $conf->entity;
+		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
 
 		// Imports
 		//--------

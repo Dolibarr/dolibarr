@@ -156,15 +156,19 @@ class Conf
 
 					if ($value && preg_match('/^MAIN_MODULE_/',$key))
 					{
-						// If this is constant for a new tab page activated by a module.
+						// If this is constant for a new tab page activated by a module. It initializes modules_parts['tabs'].
 						if (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_TABS_/i',$key))
 						{
 							$partname = 'tabs';
 							$params=explode(':',$value,2);
 							if (! isset($this->modules_parts[$partname]) || ! is_array($this->modules_parts[$partname])) { $this->modules_parts[$partname] = array(); }
-							$this->modules_parts[$partname][$params[0]][]=$value;
+							$this->modules_parts[$partname][$params[0]][]=$value;	// $value may be a string or an array
 						}
-						// If this is constant for all generic part activated by a module
+						// If this is constant for all generic part activated by a module. It initializes
+						// modules_parts['login'], modules_parts['menus'], modules_parts['substitutions'], modules_parts['triggers'], modules_parts['tpl'],
+						// modules_parts['models'], modules_parts['theme']
+						// modules_parts['sms'],
+						// modules_parts['css'], ...
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)_([A-Z]+)$/i',$key,$reg))
 						{
 							$modulename = strtolower($reg[1]);
@@ -176,7 +180,7 @@ class Conf
 							else if (in_array($partname,array('models','theme'))) $value = '/'.$modulename.'/';
 							else if (in_array($partname,array('sms'))) $value = $modulename;
 							else if ($value == 1) $value = '/'.$modulename.'/core/modules/'.$partname.'/';	// ex: partname = societe
-							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));
+							$this->modules_parts[$partname] = array_merge($this->modules_parts[$partname], array($modulename => $value));	// $value may be a string or an array
 						}
                         // If this is a module constant (must be at end)
 						elseif (preg_match('/^MAIN_MODULE_([0-9A-Z_]+)$/i',$key,$reg))
@@ -196,6 +200,20 @@ class Conf
 		}
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts['theme']);
+
+		// If you can't set timezone of your PHP, set this constant. Better is to set it to UTC.
+		// In future, this constant will be forced to 'UTC' so PHP server timezone will not have effect anymore.
+		//$this->global->MAIN_SERVER_TZ='Europe/Paris';
+		if (! empty($this->global->MAIN_SERVER_TZ) && $this->global->MAIN_SERVER_TZ != 'auto')
+		{
+			try {
+				date_default_timezone_set($this->global->MAIN_SERVER_TZ);
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Error: Bad value for parameter MAIN_SERVER_TZ=".$this->global->MAIN_SERVER_TZ, LOG_ERR);
+			}
+		}
 
 		// Object $mc
 		if (! defined('NOREQUIREMC') && ! empty($this->multicompany->enabled))
@@ -396,11 +414,14 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_TOT))   $this->global->MAIN_MAX_DECIMALS_TOT=2;
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
+		// Default pdf use dash between lines
+		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;
+
 		// Default max file size for upload
 		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// Define list of limited modules
-		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda';	// '' means 'all'. Note that contact is added here as it should be a module later.
+		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,facture,categorie,commande,fournisseur,contact,propal,projet,contrat,societe,ficheinter,expedition,agenda';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
 		// Timeouts
         if (empty($this->global->MAIN_USE_CONNECT_TIMEOUT)) $this->global->MAIN_USE_CONNECT_TIMEOUT=10;

@@ -1,16 +1,5 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-13 21:12:07
- */
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=Adăugaţi această pagină la marcajele
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
 Bookmark=Bookmark
 Bookmarks=Marcaje
 NewBookmark=Marcaj nou

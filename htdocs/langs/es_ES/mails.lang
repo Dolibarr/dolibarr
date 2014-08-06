@@ -1,11 +1,10 @@
-# Dolibarr language file - es_ES - mails
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=E-Mailing
 EMailing=E-Mailing
 Mailings=E-Mailings
 EMailings=E-Mailings
-MailCard=Ficha E-Mailing
 AllEMailings=Todos los  E-Mailings
+MailCard=Ficha E-Mailing
 MailTargets=Destinatarios
 MailRecipients=Destinatarios
 MailRecipient=Destinatario
@@ -80,7 +79,8 @@ MailtoEMail=mailto email (hyperlink)
 ActivateCheckRead=Activar confirmación de lectura y opción de desuscripción
 ActivateCheckReadKey=Clave usada para encriptar la URL de la confirmación de lectura y la función de desuscripción
 EMailSentToNRecipients=E-Mail enviado a %s destinatarios.
-# Libelle des modules de liste de destinataires mailing=
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contactos de terceros (clientes potenciales, clientes, proveedores...)
 MailingModuleDescDolibarrUsers=Usuarios de Dolibarr
 MailingModuleDescFundationMembers=Miembros
@@ -89,8 +89,11 @@ MailingModuleDescEmailsFromUser=E-mails introducidos por el usuario (email;apell
 MailingModuleDescContactsCategories=Terceros (por categoría)
 MailingModuleDescDolibarrContractsLinesExpired=Terceros con líneas de contratos de servicios expirados
 MailingModuleDescContactsByCompanyCategory=Contactos de terceros (por categoría de terceros)
+MailingModuleDescContactsByCategory=Contactos/direcciones de terceros por categoría
 MailingModuleDescMembersCategories=Miembros (por categoría)
 MailingModuleDescContactsByFunction=Contactos de terceros (por puesto/función)
+
+
 LineInFile=Línea %s en archivo
 RecipientSelectionModules=Módulos de selección de los destinatarios
 MailSelectedRecipients=Destinatarios seleccionados
@@ -118,6 +121,7 @@ TagCheckMail=Seguimiento de la apertura del email
 TagUnsubscribe=Link de desuscripción
 TagSignature=Firma del usuario remitente
 TagMailtoEmail=Email del destinatario
+
 # Module Notifications
 Notifications=Notificaciones
 NoNotificationsWillBeSent=Ninguna notificación por e-mail está prevista para este evento y empresa

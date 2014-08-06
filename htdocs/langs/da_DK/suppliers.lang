@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Leverandører
 Supplier=Leverandør
 AddSupplier=Tilføj en leverandør
@@ -22,17 +10,24 @@ ListOfSuppliers=Liste over leverandører
 ShowSupplier=Vis leverandør
 OrderDate=Bestil dato
 BuyingPrice=Koebspris
+BuyingPriceMin=Min købskurs
+BuyingPriceMinShort=Min købskurs
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Tilføj leverandør pris
 ChangeSupplierPrice=Skifte leverandør pris
 ErrorQtyTooLowForThisSupplier=Mængde for lav for denne leverandør eller ingen pris defineret om dette produkt for denne leverandør
 ErrorSupplierCountryIsNotDefined=Land for denne leverandør er ikke defineret. Korrigere denne første.
 ProductHasAlreadyReferenceInThisSupplier=Dette produkt har allerede en henvisning i denne leverandør
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne henvisning leverandøren er allerede forbundet med en reference: %s
 NoRecordedSuppliers=Nr. leverandører registreres
 SupplierPayment=Leverandør betaling
 SuppliersArea=Leverandører område
 RefSupplierShort=Ref. leverandør
+Availability=Tilgængelighed
 ExportDataset_fournisseur_1=Leverandør fakturaer listen og fakturaer 'linjer
 ExportDataset_fournisseur_2=Leverandør fakturaer og betalinger
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Godkende denne ordre
 ConfirmApproveThisOrder=Er du sikker på at du vil godkende denne ordre?
 DenyingThisOrder=Benægte denne ordre
@@ -43,25 +38,5 @@ AddCustomerInvoice=Opret kunde faktura
 AddSupplierOrder=Opret leverandør for
 AddSupplierInvoice=Opret leverandørens faktura
 ListOfSupplierProductForSupplier=Liste over produkter og priser for <b>leverandørens %s</b>
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
 NoneOrBatchFileNeverRan=Ingen eller <b>parti %s</b> ikke kørte for nylig
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne henvisning leverandøren er allerede forbundet med en reference: %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:20:22).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
-BuyingPriceMin=Min købskurs
-BuyingPriceMinShort=Min købskurs
-Availability=Tilgængelighed
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:00:08).
+# SentToSuppliers=Sent to suppliers

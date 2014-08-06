@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - holiday
-CHARSET= UTF-8
-
-# HRM=HRM
-# Holidays=Holidays
+HRM=IK
+Holidays=Tatiller
 CPTitreMenu=Tatiller
 MenuReportMonth=Aylık özet
 MenuAddCP=Tatil için başvur
@@ -16,9 +14,9 @@ DateDebCP=Başlama tarihi
 DateFinCP=Bitiş tarihi
 DateCreateCP=Oluşturma tarihi
 DraftCP=Taslak
-# ToReviewCP=Awaiting approval
+ToReviewCP=Onay bekliyor
 ApprovedCP=Onaylandı
-CancelCP=Şptal edildi
+CancelCP=İptal edildi
 RefuseCP=Reddedildi
 ValidatorCP=Onaylayan
 ListeCP=Tatil listesi
@@ -89,6 +87,7 @@ FirstDayOfHoliday=Tatilin ilk günü
 LastDayOfHoliday=Tatilin son günü
 HolidaysMonthlyUpdate=Aylık güncelleme
 ManualUpdate=Elle güncelleme
+HolidaysCancelation=Tatil iptali
 
 ## Configuration du Module ##
 ConfCP=Tatil modülünün yapılandırılması

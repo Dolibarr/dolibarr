@@ -32,12 +32,14 @@ $WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
 $WS_METHOD_GETTHIRDSPARTY  = 'getThirdParty';
 $WS_METHOD_CREATETHIRDSPARTY = 'createThirdParty';
 $WS_METHOD_UPDATETHIRDSPARTY = 'updateThirdParty';
+$WS_METHOD_GETTHIRDSPARTYLIST = 'getListOfThirdParties';
 $ns='http://www.dolibarr.org/ns/';
 
 //Chosse action to do
 //$action='get';
-$action='create';
+//$action='create';
 //$action='update';
+$action='getList';
 
 
 // Set the WebService URL
@@ -72,6 +74,24 @@ if ($action=='get')
     	print "<br>\n\n";
     	print $soapclient->response;
     	exit;
+    }
+}
+
+// Test URL
+if ($action=='getList')
+{
+    $filterthirdparty=array('category'=>'3');
+    $parameters = array('authentication'=>$authentication,$filterthirdparty);
+    dol_syslog("Call method ".$WS_METHOD_GETTHIRDSPARTYLIST);
+    $result = $soapclient->call($WS_METHOD_GETTHIRDSPARTYLIST,$parameters,$ns,'');
+    if (! $result)
+    {
+        print $soapclient->error_str;
+        print "<br>\n\n";
+        print $soapclient->request;
+        print "<br>\n\n";
+        print $soapclient->response;
+        exit;
     }
 }
 

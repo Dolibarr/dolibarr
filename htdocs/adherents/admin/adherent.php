@@ -102,6 +102,8 @@ if ($action == 'unset')
  * View
  */
 
+$form = new Form($db);
+
 $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros';
 
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
@@ -127,23 +129,19 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 $var=true;
-$form = new Form($db);
 
 // Login/Pass required for members
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-{
-    $var=!$var;
-    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-    print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
-    print '</td><td align="center" width="80">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-    print "</td></tr>\n";
-    print '</form>';
-}
+$var=!$var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
+print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
+print '</td><td align="center" width="80">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+print "</td></tr>\n";
+print '</form>';
 
 // Mail required for members
 $var=!$var;

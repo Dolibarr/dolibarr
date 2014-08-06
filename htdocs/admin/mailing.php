@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  	<eldy@users.sourceforge.org>
- * Copyright (C) 2011-2012 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2005-2013 Laurent Destailleur  	<eldy@users.sourceforge.org>
+ * Copyright (C) 2011-2013 Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,15 +40,6 @@ $action = GETPOST('action','alpha');
  * Actions
  */
 
-if ($action == 'setMAILING_EMAIL_UNSUBSCRIBE')
-{
-	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",1,'chaine',0,'',$conf->entity);
-}
-if ($action == 'unsetMAILING_EMAIL_UNSUBSCRIBE')
-{
-	$res=dolibarr_del_const($db, "MAILING_EMAIL_UNSUBSCRIBE");
-}
-
 if ($action == 'setvalue')
 {
 	$db->begin();
@@ -62,34 +53,20 @@ if ($action == 'setvalue')
 	if (! $res > 0) $error++;
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_ERRORSTO",$mailerror,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	if ($checkread=='on')
-	{
-		$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",1,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-	}
-	else if ($checkread=='off')
-	{
-		$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE",0,'chaine',0,'',$conf->entity);
-		if (! $res > 0) $error++;
-	}
 
-	//Create temporary encryption key if nedded
-	if (($conf->global->MAILING_EMAIL_UNSUBSCRIBE==1) && (empty($checkread_key)))
-	{
-	    $checkread_key=getRandomPassword(true);
-	}
+	// Create temporary encryption key if nedded
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-
- 	if (! $error)
+    
+    if (! $error)
     {
     	$db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+    	setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
     	$db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+    	setEventMessage($langs->trans("Error"),'errors');
     }
 }
 
@@ -112,9 +89,6 @@ $hselected=$h;
 $h++;
 
 dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
-dol_htmloutput_mesg($mesg);
-
 
 if (! empty($conf->use_javascript_ajax))
 {
@@ -160,32 +134,13 @@ print '<input size="32" type="text" name="MAILING_EMAIL_ERRORSTO" value="'.$conf
 if (!empty($conf->global->MAILING_EMAIL_ERRORSTO) && ! isValidEmail($conf->global->MAILING_EMAIL_ERRORSTO)) print ' '.img_warning($langs->trans("BadEMail"));
 print '</td></tr>';
 
-// TODO the precedent values are deleted after turn on this switch
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("ActivateCheckRead").'</td><td>';
-if (!empty($conf->global->MAILING_EMAIL_UNSUBSCRIBE))
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=unsetMAILING_EMAIL_UNSUBSCRIBE">';
-	print img_picto($langs->trans("Enabled"),'switch_on');
-	print '</a>';
-	$readonly='';
-}
-else
-{
-	print '<a href="'.$_SERVER["PHP_SELF"].'?action=setMAILING_EMAIL_UNSUBSCRIBE">';
-	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a>';
-	$readonly='disabled="disabled"';
-}
-print '</td></tr>';
-
+// Constant to add salt into the unsubscribe and check read tag.
+// It is also used as a security key parameter.
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ActivateCheckReadKey").'</td><td>';
-print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" '.$readonly.' value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
-if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
+if (! empty($conf->use_javascript_ajax)) print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
 
 print '</table>';

@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Vertragsübersicht
 ListOfContracts=Liste der Verträge
 LastContracts=%s zuletzt geänderte Verträge
@@ -46,6 +38,7 @@ ConfirmCloseService=Möchten Sie dieses Service wirklich mit Datum <b>%s</b> sch
 ValidateAContract=Einen Vertrag freigeben
 ActivateService=Service aktivieren
 ConfirmActivateService=Möchten Sie diesen Service wirklich mit Datum <b>%s</b> aktivieren?
+RefContract=Vertrags-Referenz
 DateContract=Vertragsdatum
 DateServiceActivate=Service-Aktivierungsdatum
 DateServiceUnactivate=Service-Deaktivierungsdatum
@@ -60,7 +53,7 @@ ListOfRunningContractsLines=Liste der aktiven Vertragspositionen
 ListOfRunningServices=Liste aktiver Services
 NotActivatedServices=Inaktive Services (in freigegebenen Verträgen)
 BoardNotActivatedServices=Zu aktivierende Services (in freigegebenen Verträgen)
-LastContracts=%s neueste Verträge
+LastContracts=%s zuletzt geänderte Verträge
 LastActivatedServices=%s zuletzt aktivierte Services
 LastModifiedServices=%s zuletzt bearbeitete Services
 EditServiceLine=Service-Position bearbeiten
@@ -76,7 +69,7 @@ DateEndReal=Effektives Ende
 DateEndRealShort=Ende eff.
 NbOfServices=Anzahl der Leistungen
 CloseService=Leistung schließen
-ServicesNomberShort= %s Leistung(en)
+ServicesNomberShort=%s Leistung(en)
 RunningServices=Laufende Leistungen
 BoardRunningServices=Abgelaufene, aktive Leistungen
 ServiceStatus=Leistungs-Status
@@ -92,6 +85,11 @@ PaymentRenewContractId=Erneuere Vertragsposition (Nummer %s)
 ExpiredSince=Abgelaufen seit
 RelatedContracts=Verknüpfte Verträge
 NoExpiredServices=Keine abgelaufen aktiven Dienste
+ListOfServicesToExpireWithDuration=Liste der Leistungen die in %s Tagen ablaufen
+ListOfServicesToExpireWithDurationNeg=Liste der Services die seit mehr als %s Tagen abgelaufen sind
+ListOfServicesToExpire=Liste der Services die ablaufen
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertragsunterzeichnung durch Vertreter
 TypeContact_contrat_internal_SALESREPFOLL=Vertragsnachverfolgung durch Vertreter

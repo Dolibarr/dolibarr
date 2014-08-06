@@ -69,16 +69,25 @@ function dol_decode($chain)
 
 
 /**
- * 	Returns a hash of a string
+ * 	Returns a hash of a string.
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (md5 by default)
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		int			$type		Type of hash (0:md5, 1:sha1, 2:sha1+md5)
+ * 	@param		int			$type		Type of hash (0:auto, 1:sha1, 2:sha1+md5)
  * 	@return		string					Hash of string
  */
 function dol_hash($chain,$type=0)
 {
+	global $conf;
+
+	// Salt value
+	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;
+
 	if ($type == 1) return sha1($chain);
 	else if ($type == 2) return sha1(md5($chain));
+	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') return sha1($chain);
+	else if (! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') return sha1(md5($chain));
 	else return md5($chain);
 }
 
@@ -215,7 +224,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
             {
             	foreach($feature2 as $subfeature)
             	{
-            		if (empty($user->rights->$feature->$subfeature->creer) 
+            		if (empty($user->rights->$feature->$subfeature->creer)
             		&& empty($user->rights->$feature->$subfeature->write)
             		&& empty($user->rights->$feature->$subfeature->create)) $createok=0;
             		else { $createok=1; break; } // For bypass the second test if the first is ok
@@ -332,7 +341,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                     $sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
                 }
             }
-            else if (in_array($feature,$checksoc))
+            else if (in_array($feature,$checksoc))	// We check feature = checksoc
             {
                 // If external user: Check permission for external users
                 if ($user->societe_id > 0)
@@ -411,7 +420,8 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 // If external user: Check permission for external users
                 if ($user->societe_id > 0)
                 {
-                    $sql = "SELECT dbt.".$dbt_keyfield;
+                	if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
+                	$sql = "SELECT dbt.".$dbt_keyfield;
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= " WHERE dbt.rowid = ".$objectid;
                     $sql.= " AND dbt.".$dbt_keyfield." = ".$user->societe_id;
@@ -419,6 +429,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 // If internal user: Check permission for internal users that are restricted on their objects
                 else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
                 {
+                	if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
                     $sql = "SELECT sc.fk_soc";
                     $sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
                     $sql.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -439,7 +450,7 @@ function restrictedArea($user, $features, $objectid=0, $dbtablename='', $feature
                 }
             }
 
-            //print $sql."<br>";
+            //print "sql=".$sql."<br>";
             if ($sql)
             {
                 $resql=$db->query($sql);

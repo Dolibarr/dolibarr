@@ -17,14 +17,13 @@
  */
 
 /**
- *	\file       htdocs/contact/canvas/actions_adherentcard_common.class.php
- *	\ingroup    thirdparty
+ *	\file       htdocs/adherents/canvas/actions_adherentcard_common.class.php
+ *	\ingroup    adherent
  *	\brief      Fichier de la classe Adherent card controller (common)
  */
 
 /**
- *	\class      ActionsAdherentCardCommon
- *	\brief      Classe permettant la gestion des adherents par defaut
+ *	Class to maage members using default canvas
  */
 abstract class ActionsAdherentCardCommon
 {

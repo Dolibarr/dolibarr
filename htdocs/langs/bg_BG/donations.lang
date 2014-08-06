@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:14:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:14:31).
-// Reference language: fr_FR -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Дон
 Donations=Дарения
 DonationRef=Не. дарение
@@ -15,6 +6,7 @@ Donor=Дарител
 Donors=Дарители
 AddDonation=Добави подарък
 NewDonation=Ново дарение
+# ShowDonation=Show donation
 DonationPromise=Залог
 PromisesNotValid=Неангажираните обещания
 PromisesValid=Обещания валидирани
@@ -38,4 +30,3 @@ SearchADonation=Намерете подарък
 DonationRecipient=Бенефициенти плащания
 ThankYou=Благодаря
 IConfirmDonationReception=Получателят признава, че е получавал плащания съгласно правото на намаляване на данъка, сумата от
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:16:04).

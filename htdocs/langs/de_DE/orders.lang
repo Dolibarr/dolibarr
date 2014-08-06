@@ -1,15 +1,8 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Kundenbestellungsübersicht
 SuppliersOrdersArea=Lieferantenbestellungsübersicht
 OrderCard=Bestell-Karte
+OrderId=Bestell-ID
 Order=Bestellung
 Orders=Bestellungen
 OrderLine=Bestellservice
@@ -39,6 +32,7 @@ StatusOrderSent=Versand in Bearbeitung
 StatusOrderOnProcessShort=In Arbeit
 StatusOrderProcessedShort=Bearbeitet
 StatusOrderToBillShort=Zu verrechnen
+StatusOrderToBill2Short=Zu verrechnen
 StatusOrderApprovedShort=Genehmigt
 StatusOrderRefusedShort=Abgelehnt
 StatusOrderToProcessShort=Zu bearbeiten
@@ -50,6 +44,7 @@ StatusOrderValidated=Freigegeben
 StatusOrderOnProcess=Warten auf Empfang
 StatusOrderProcessed=Bearbeitet
 StatusOrderToBill=Zu verrechnen
+StatusOrderToBill2=Zu verrechnen
 StatusOrderApproved=Genehmigt
 StatusOrderRefused=Abgelehnt
 StatusOrderReceivedPartially=Teilweise erhalten
@@ -58,9 +53,8 @@ ShippingExist=Eine Sendung ist vorhanden
 DraftOrWaitingApproved=Entwurf oder genehmigt, noch nicht bestellt
 DraftOrWaitingShipped=Entwurf oder bestätigt, noch nicht versandt
 MenuOrdersToBill=Bestellverrechnung
+MenuOrdersToBill2=Zu verrechnende Bestellungen
 SearchOrder=Suche Bestellung
-Sending=Sendung
-Sendings=Sendungen
 ShipProduct=Produkt versenden
 Discount=Rabatt
 CreateOrder=Erzeuge Bestellung
@@ -73,9 +67,11 @@ CancelOrder=Bestellung verwerfen
 AddOrder=Bestellung hinzufügen
 AddToMyOrders=Zu meinen Bestellungen hinzufügen
 AddToOtherOrders=Zu Bestellungen Anderer hinzufügen
+AddToDraftOrders=Zu Bestellentwurf hinzufügen
 ShowOrder=Zeige Bestellung
 NoOpenedOrders=Keine offenen Bestellungen
 NoOtherOpenedOrders=Keine offenen Bestellungen Anderer
+NoDraftOrders=Keine Bestellentwürfe
 OtherOrders=Bestellungen Anderer
 LastOrders=Neuesten %s Bestellungen
 LastModifiedOrders=%s zuletzt bearbeitete Bestellungen
@@ -96,6 +92,7 @@ ConfirmUnvalidateOrder=Sind Sie sicher, die den Auftrag <b>%s</b> wieder in ein 
 ConfirmCancelOrder=Möchten Sie diese Bestellung wirklich verwerfen?
 ConfirmMakeOrder=Hiermit bestätigen Sie, diese Bestellung am <b>%s</b> persönlich angelegt zu haben.
 GenerateBill=Erzeuge Rechnung
+ClassifyShipped=Als geliefert markieren
 ClassifyBilled=Als verrechnet markieren
 ComptaCard=Buchhaltungskarte
 DraftOrders=Bestellentwürfe
@@ -133,6 +130,8 @@ Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Konstante COMMANDE_SUPPLIER_ADDON nicht
 Error_COMMANDE_ADDON_NotDefined=Konstante COMMANDE_ADDON nicht definiert
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Fehler beim Laden der Moduldatei '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Fehler beim Laden der Moduldatei '%s'
+Error_OrderNotChecked=Keine zu verrechnende Bestellungen ausgewählt
+
 
 # Sources
 OrderSource0=Angebot
@@ -148,10 +147,20 @@ AddDeliveryCostLine=Fügen Sie eine Versandkostenzeile zur Erfassung des Bestell
 # Documents models
 PDFEinsteinDescription=Eine vollständige Bestellvorlage (Logo, uwm.)
 PDFEdisonDescription=Eine einfache Bestellungsvorlage
-
+PDFProformaDescription=Eine vollständige Proforma-Rechnung (Logo, uwm.)
 # Orders modes
 OrderByMail=Post
 OrderByFax=Fax
 OrderByEMail=E-Mail
 OrderByWWW=Online
 OrderByPhone=Telefon
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+CloseProcessedOrdersAutomatically=Markiere alle ausgewählten Bestellungen als "verarbeitet".
+MenuOrdersToBill2=Zu verrechnende Bestellungen
+# OrderCreation=Order creation
+Ordered=Bestellt
+OrderCreated=Ihre Bestellungen wurden erstellt
+OrderFail=Ein Fehler trat beim Erstellen der Bestellungen auf
+CreateOrders=Erzeuge Bestellungen

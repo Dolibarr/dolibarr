@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - banks
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 Banks=Banks
 MenuBankCash=Bank/Cash
@@ -20,6 +19,8 @@ SavingAccount=Savings account
 SavingAccounts=Savings accounts
 ErrorBankLabelAlreadyExists=Financial account label already exists
 BankBalance=Balance
+BankBalanceBefore=Balance before
+BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Minimum allowed balance
 BalanceMinimalDesired=Minimum desired balance
 InitialBankBalance=Initial balance
@@ -27,6 +28,7 @@ EndBankBalance=End balance
 CurrentBalance=Current balance
 FutureBalance=Future balance
 ShowAllTimeBalance=Show balance from start
+AllTime=From start
 Reconciliation=Reconciliation
 RIB=Bank Account Number
 IBAN=IBAN number
@@ -149,3 +151,9 @@ EventualyAddCategory=Eventually, specify a category in which to classify the rec
 ToConciliate=To conciliate?
 ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
 BankDashboard=Bank accounts summary
+DefaultRIB=Default BAN
+AllRIB=All BAN
+LabelRIB=BAN Label
+NoBANRecord=No BAN record
+DeleteARib=Delete BAN record
+ConfirmDeleteRib=Are you sure you want to delete this BAN record ?

@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - paypal
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal module setup
 PaypalDesc=This module offer pages to allow payment on <a href="http://www.paypal.com" target="_blank">PayPal</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 PaypalOrCBDoPayment=Pay with credit card or Paypal
@@ -18,3 +17,6 @@ PAYPAL_ADD_PAYMENT_URL=Add the url of Paypal payment when you send a document by
 PAYPAL_IPN_MAIL_ADDRESS=E-mail address for the instant notification of payment (IPN)
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=You are currently in the "sandbox" mode
+NewPaypalPaymentReceived=New Paypal payment received
+NewPaypalPaymentFailed=New Paypal payment tried but failed
+PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

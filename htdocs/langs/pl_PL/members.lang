@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Strefa
 PublicMembersArea=Strefa publiczna
 MemberCard=Państwa karty
@@ -20,14 +8,20 @@ Members=Członkowie
 MemberAccount=Member Login
 ShowMember=Pokaż Państwa karty
 UserNotLinkedToMember=Użytkownik nie wiąże się z członkiem
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Członkowie Bilety
 FundationMembers=Fundacja użytkowników
 Attributs=Atrybuty
-Person=Osoba
 ErrorMemberTypeNotDefined=Państwo nie określono rodzaju
 ListOfPublicMembers=Lista członków publicznych
 ListOfValidatedPublicMembers=Wykaz zatwierdzonych publicznej użytkowników
 ErrorThisMemberIsNotPublic=Członek ten nie jest publicznie dostępna
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Inny członek <b>(nazwa: %s,</b> zaloguj <b>się: %s)</b> jest już związany z osobą <b>trzecią %s.</b> Usunięcie tego linku pierwsze, ponieważ jedna trzecia strona nie może być powiązana tylko z członkiem (i odwrotnie).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Ze względów bezpieczeństwa, musisz być przyznane uprawnienia do edycji wszystkich użytkowników, aby można było powiązać członka do użytkownika, który nie jest twoje.
+ThisIsContentOfYourCard=To szczegóły karty
+CardContent=Treść Twojej karty członka
+SetLinkToUser=Link do Dolibarr użytkownika
+SetLinkToThirdParty=Link do Dolibarr trzeciej
 MembersCards=Członkowie wydruku karty
 MembersList=Lista członków
 MembersListToValid=Lista członków projektu (być weryfikowane)
@@ -41,11 +35,14 @@ MenuMembersValidated=Zatwierdzona użytkowników
 MenuMembersUpToDate=Aktualnych członków
 MenuMembersNotUpToDate=Nieaktualne użytkowników
 MenuMembersResiliated=Resiliated użytkowników
+MembersWithSubscriptionToReceive=Użytkownicy z subskrypcji otrzymują
 DateAbonment=Subskrypcja daty
 DateSubscription=Subskrypcja daty
 DateNextSubscription=Następna subskrypcji
 DateEndSubscription=Data zakończenia subskrypcji
 EndSubscription=Koniec subskrypcji
+SubscriptionId=Subskrypcja id
+MemberId=Państwa id
 NewMember=Nowy członek
 NewType=Nowy członek typu
 MemberType=Państwa typ
@@ -74,13 +71,12 @@ MembersStatusNotPaidShort=Nieaktualne
 MembersStatusResiliated=Resiliated użytkowników
 MembersStatusResiliatedShort=Resiliated użytkowników
 NewCotisation=Nowe Wkład
+PaymentSubscription=Nowy wkład płatności
 EditMember=Edytuj członków
 SubscriptionEndDate=Data zakończenia subskrypcji
-NewAttribute=Nowe attribut
-AttributeCode=Attribute kod
-OptionalFieldsSetup=Pola opcjonalne konfiguracji
 MembersTypeSetup=Członkowie typu instalacji
 NewSubscription=Nowa subskrypcja
+NewSubscriptionDesc=Ta forma pozwala na nagrywanie abonament jako nowy członek fundacji. Jeśli chcesz odnowić subskrypcję (jeśli jest już członkiem), prosimy o kontakt z Rady Fundacji zamiast e-mailem %s.
 Subscription=Subskrypcja
 Subscriptions=Subskrypcje
 SubscriptionLate=Późno
@@ -114,13 +110,15 @@ ConfirmValidateMember=Czy na pewno chcesz, aby potwierdzić tę członkiem?
 FollowingLinksArePublic=Poniższe linki są otwarte strony nie są chronione przez jakiekolwiek Dolibarr zgody. Nie są one sformtowany strony, pod warunkiem, jako przykład pokazuje jak lista użytkowników bazy danych.
 PublicMemberList=Publicznego liście członków
 BlankSubscriptionForm=Formularz subskrypcji
+BlankSubscriptionFormDesc=Dolibarr może zapewnić publiczny adres URL, aby osoby z zewnątrz, aby zapytać zapisać się do fundacji. Jeśli moduł płatności on-line jest włączona, forma płatności zostanie również automatycznie dostarczane.
+EnablePublicSubscriptionForm=Umożliwić społeczeństwu auto subskrypcji formularz
 MemberPublicLinks=Publicznego linki / pages
 ExportDataset_member_1=Członkowie i abonamentów
+ImportDataset_member_1=Użytkownicy
 LastMembers=Ostatnia %s użytkowników
 LastMembersModified=Ostatnia %s zmodyfikowane użytkowników
+LastSubscriptionsModified=Ostatnie %s zmodyfikowano zapisy
 AttributeName=Nazwa atrybutu
-FieldEdition=Dziedzinie wydanie %s
-AlphaNumOnlyCharsAndNoSpace=tylko alphanumericals znaków bez spacji
 String=String
 Text=Tekst
 Int=Int.
@@ -132,6 +130,10 @@ AddSubscription=Dodaj abonament
 ShowSubscription=Pokaż subskrypcji
 MemberModifiedInDolibarr=Państwa zmodyfikowany w Dolibarr
 SendAnEMailToMember=Wyślij e-mail informacji na członka
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Temat wiadomości dla członka autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=E-mail dotyczące członka autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=EMail temat członkiem walidacji
 DescADHERENT_MAIL_VALID=EMail dla członka walidacji
 DescADHERENT_MAIL_COTIS_SUBJECT=EMail temat subskrypcji
@@ -140,40 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=EMail temat członka resiliation
 DescADHERENT_MAIL_RESIL=EMail dla członka resiliation
 DescADHERENT_MAIL_FROM=Nadawca wiadomości e-mail do automatycznych wiadomości e-mail
 DescADHERENT_ETIQUETTE_TYPE=Etykiety formacie
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=Format karty stronę
 DescADHERENT_CARD_HEADER_TEXT=Tekst wydrukowany na górę członka karty
 DescADHERENT_CARD_TEXT=Tekst wydrukowany na członka karty
+DescADHERENT_CARD_TEXT_RIGHT=Tekst wydrukowany na członka karty (dostosowanie po prawej)
 DescADHERENT_CARD_FOOTER_TEXT=Tekst wydrukowany na dole karty członka
+GlobalConfigUsedIfNotDefined=Tekst określony w konfiguracji modułu Fundacji zostaną wykorzystane, jeśli nie zdefiniowano tutaj
+MayBeOverwrited=Ten tekst może być overwrited według wartości zdefiniowanej dla członka typu
 ShowTypeCard=Pokaż typu ' %s'
 HTPasswordExport=htpassword pliku generacji
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Inny członek <b>(nazwa: %s,</b> zaloguj <b>się: %s)</b> jest już związany z osobą <b>trzecią %s.</b> Usunięcie tego linku pierwsze, ponieważ jedna trzecia strona nie może być powiązana tylko z członkiem (i odwrotnie).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Ze względów bezpieczeństwa, musisz być przyznane uprawnienia do edycji wszystkich użytkowników, aby można było powiązać członka do użytkownika, który nie jest twoje.
-ThisIsContentOfYourCard=To szczegóły karty
-CardContent=Treść Twojej karty członka
-SetLinkToUser=Link do Dolibarr użytkownika
-SetLinkToThirdParty=Link do Dolibarr trzeciej
-SubscriptionId=Subskrypcja id
-MemberId=Państwa id
-PaymentSubscription=Nowy wkład płatności
 NoThirdPartyAssociatedToMember=Nr trzeciej związane do tego członka
 ThirdPartyDolibarr=Dolibarr trzeciej
-MembersAndSubscriptions=Członkowie i Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Temat wiadomości dla członka autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=E-mail dotyczące członka autosubscription
-DescADHERENT_CARD_TYPE=Format karty stronę
-DescADHERENT_CARD_TEXT_RIGHT=Tekst wydrukowany na członka karty (dostosowanie po prawej)
-DescADHERENT_MAILMAN_LISTS=Wykaz (y) do automatycznego insription nowych członków (oddzielone przecinkiem)
+MembersAndSubscriptions= Członkowie i Subscriptions
 MoreActions=Działanie uzupełniające na nagrywanie
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Stworzenie bezpośredniego zapisu na rachunku transakcji
 MoreActionBankViaInvoice=Tworzenie faktury i wpłaty na rachunek
 MoreActionInvoiceOnly=Tworzenie faktury bez zapłaty
@@ -182,19 +165,6 @@ LinkToGeneratedPagesDesc=Ekran ten umożliwia generowanie plików PDF z wizytów
 DocForAllMembersCards=Generowanie wizytówek dla wszystkich członków (Format wyjściowy rzeczywiście setup: <b>%s)</b>
 DocForOneMemberCards=Generowanie wizytówki dla danego użytkownika (Format wyjściowy rzeczywiście setup: <b>%s)</b>
 DocForLabels=Generowanie arkuszy adres (Format wyjściowy rzeczywiście setup: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:25).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-MembersWithSubscriptionToReceive=Użytkownicy z subskrypcji otrzymują
-NewSubscriptionDesc=Ta forma pozwala na nagrywanie abonament jako nowy członek fundacji. Jeśli chcesz odnowić subskrypcję (jeśli jest już członkiem), prosimy o kontakt z Rady Fundacji zamiast e-mailem %s.
-BlankSubscriptionFormDesc=Dolibarr może zapewnić publiczny adres URL, aby osoby z zewnątrz, aby zapytać zapisać się do fundacji. Jeśli moduł płatności on-line jest włączona, forma płatności zostanie również automatycznie dostarczane.
-EnablePublicSubscriptionForm=Umożliwić społeczeństwu auto subskrypcji formularz
-ImportDataset_member_1=Użytkownicy
-LastSubscriptionsModified=Ostatnie %s zmodyfikowano zapisy
-GlobalConfigUsedIfNotDefined=Tekst określony w konfiguracji modułu Fundacji zostaną wykorzystane, jeśli nie zdefiniowano tutaj
-MayBeOverwrited=Ten tekst może być overwrited według wartości zdefiniowanej dla członka typu
 SubscriptionPayment=Płatność Subskrypcja
 LastSubscriptionDate=Ostatnia data abonament
 LastSubscriptionAmount=Ostatnio kwota subskrypcji
@@ -226,4 +196,9 @@ Collectivités=Organizacje
 Particuliers=Osobisty
 Entreprises=Firmy
 DOLIBARRFOUNDATION_PAYMENT_FORM=Aby dokonać płatności abonamentu za pomocą przelewu bankowego, patrz strona <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe~~dobj</a> . <br> Aby zapłacić za pomocą karty kredytowej lub PayPal, kliknij przycisk na dole tej strony. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:20:34).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

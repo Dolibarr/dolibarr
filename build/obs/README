@@ -23,13 +23,23 @@ To submit a snapshot for building, we should have a service file with content
   <service name="download_src_package">
     <param name="host">www.dolibarr.org</param>
     <param name="protocol">http</param>
-    <param name="path">/files/stable/package_rpm_generic/dolibarr-3.3.2-3.src.rpm</param>
+    <param name="path">/files/stable/package_rpm_generic/dolibarr-x.y.z-3.src.rpm</param>
   </service>
 </services>
 
-How to have such a service ?
-Try to make "Add file" and select Remote URL and enter http://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-3.3.2-3.src.rpm
+How to have such a service file created automatically ?
+Click on "Add file", then select mode "Upload From: Remote URL"
+Enter the Remote URL that should looks like this: http://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-x.y.v-3.src.rpm
 
 Then add into advanded - attributes
-OBS:Screenshots http://www.dolibarr.org/images/phocagallery/dolibarr_screenshot1.png
+OBS:Screenshots http://www.dolibarr.org/images/dolibarr_screenshot1.png
 OBS:QualityCategory Testing
+
+
+# Move project into official directory
+- Enter a bug to ask to be a maintener of a category or to add a new one.
+For example: https://bugzilla.novell.com/show_bug.cgi?id=848083 to be a maintener of category
+https://build.opensuse.org/project/show/Application:ERP
+- Once done, go into project, category, subproject and enter a subproject for your application.
+Fo example: Dolibarr
+- Then go onto project into your home and ask a publish to the category/you project your created. 

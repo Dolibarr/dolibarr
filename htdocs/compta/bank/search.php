@@ -42,7 +42,7 @@ $debit=GETPOST("debit");
 $credit=GETPOST("credit");
 $type=GETPOST("type");
 $account=GETPOST("account");
-$bid=GETPOST("bid");
+$bid=GETPOST("bid","int");
 
 $param='';
 if ($description) $param.='&description='.$description;
@@ -83,7 +83,7 @@ $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.label as labelurl, bu.url_id";
 $sql.= " FROM ";
-if (! empty($_REQUEST["bid"])) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
@@ -92,21 +92,21 @@ $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity = ".$conf->entity;
 if (GETPOST("req_nb"))
 {
-    $sql.= " AND b.num_chq like '%".$db->escape(GETPOST("req_nb"))."%'";
+    $sql.= " AND b.num_chq LIKE '%".$db->escape(GETPOST("req_nb"))."%'";
     $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
 }
 if (GETPOST("thirdparty"))
 {
-    $sql.=" AND (COALESCE(s.nom,'') LIKE '%".$db->escape(GETPOST("thirdparty"))."%')";
+    $sql.=" AND s.nom LIKE '%".$db->escape(GETPOST("thirdparty"))."%'";
     $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 }
-if (! empty($_REQUEST["bid"]))
+if ($bid)
 {
-	$sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$_REQUEST["bid"];
+	$sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$bid;
 }
-if(! empty($type))
+if (! empty($type))
 {
-	$sql .= " AND b.fk_type = '" . $type ."' ";
+	$sql.= " AND b.fk_type = '".$db->escape($type)."' ";
 }
 // Search criteria amount
 $si=0;
@@ -184,7 +184,7 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	print '<input type="hidden" name="action" value="search">';
 	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
-	print '<input type="image" class="liste_titre" name="submit" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="submit" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '</tr>';
 
@@ -206,7 +206,7 @@ if ($resql)
 		if ($printline) {
 			$var=!$var;
 
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 
 			// Ref
 			print '<td align="left" class="nowrap">';
@@ -227,7 +227,7 @@ if ($resql)
 	        print "</td>\n";
 
 	        // Num
-	        print '<td nowrap>'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+	        print '<td class="nowrap">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
 
 	        // Description
 			print "<td>";

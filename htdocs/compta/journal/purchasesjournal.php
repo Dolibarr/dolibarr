@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Alexandre spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
@@ -61,7 +61,9 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
  * View
  */
 
-llxHeader('',$langs->trans("PurchasesJournal"),'');
+$morequery='&date_startyear='.$date_startyear.'&date_startmonth='.$date_startmonth.'&date_startday='.$date_startday.'&date_endyear='.$date_endyear.'&date_endmonth='.$date_endmonth.'&date_endday='.$date_endday;
+
+llxHeader('',$langs->trans("PurchasesJournal"),'','',0,0,'','',$morequery);
 
 $form=new Form($db);
 
@@ -96,6 +98,7 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
 
+
 $sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle,";
 $sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
 $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
@@ -111,6 +114,9 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.t
 else $sql.= " AND f.type IN (0,1,2,3)";
 if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 
+// TODO Find a better trick to avoid problem with some mysql installations
+if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
+
 dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
@@ -118,7 +124,7 @@ if ($result)
 	$num = $db->num_rows($result);
 	// les variables
 	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
-	$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+	$cpttva = (! empty($conf->global->COMPTA_VAT_BUY_ACCOUNT)?$conf->global->COMPTA_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
 
 	$tabfac = array();
 	$tabht = array();
@@ -226,7 +232,7 @@ foreach ($tabfac as $key => $val)
 			{
 				print "<tr ".$bc[$var]." >";
 				//print "<td>".$conf->global->COMPTA_JOURNAL_BUY."</td>";
-				print "<td>".$val["date"]."</td>";
+				print "<td>".dol_print_date($val["date"])."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 

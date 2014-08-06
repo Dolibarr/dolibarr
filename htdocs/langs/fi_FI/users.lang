@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Käyttäjän kortti
 ContactCard=Osoitekortin
 GroupCard=Ryhmän kortti
@@ -51,6 +41,9 @@ LoginNotDefined=Kirjaudu ei ole määritelty.
 NameNotDefined=Nimi ei ole määritelty.
 ListOfUsers=Luettelo käyttäjistä
 Administrator=Administrator
+SuperAdministrator=Super Administrator
+SuperAdministratorDesc=Administrator kaikki oikeudet
+AdministratorDesc=Järjestelmänvalvojan kokonaisuus
 DefaultRights=Oletus käyttöoikeudet
 DefaultRightsDesc=Määritä tässä default käyttöoikeudet automaattisesti joka myönnetään uusille käyttäjille.
 DolibarrUsers=Dolibarr käyttäjät
@@ -77,7 +70,12 @@ ListOfGroupsForUser=Luettelo ryhmien tälle käyttäjälle
 UsersToAdd=Käyttäjät lisätä tähän ryhmään
 GroupsToAdd=Ryhmät, jos haluat lisätä tämän käyttäjän
 NoLogin=Ei tunnus
+LinkToCompanyContact=Linkki kolmannen osapuolen / contact
+LinkedToDolibarrMember=Linkki jäsen
+LinkedToDolibarrUser=Linkki Dolibarr käyttäjä
+LinkedToDolibarrThirdParty=Linkki Dolibarr kolmannen osapuolen
 CreateDolibarrLogin=Luo Dolibarr huomioon
+CreateDolibarrThirdParty=Luo kolmasosaa osapuoli
 LoginAccountDisable=Tili poistettu, aseta uusi kirjautumistunnuksesi sen käyttöön.
 LoginAccountDisableInDolibarr=Huomioon vammaisten Dolibarr.
 LoginAccountDisableInLdap=Tili poistettu alalla.
@@ -88,8 +86,15 @@ MyInformations=Omat tiedot
 ExportDataset_user_1=Dolibarr käyttäjille ja ominaisuudet
 DomainUser=Domain käyttäjän %s
 Reactivate=Uudelleenaktivoi
+CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / perusta. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä "kolmannen osapuolen yhteystiedot kortin.
+InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / perusta. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
+PermissionInheritedFromAGroup=Lupa myönnettiin, koska periytyy yhden käyttäjän ryhmä.
+Inherited=Peritty
+UserWillBeInternalUser=Luotu käyttäjä on sisäinen käyttäjä (koska ei liity erityistä kolmannelle osapuolelle)
+UserWillBeExternalUser=Luotu käyttäjä tulee ulkopuolinen käyttäjä (koska liittyy erityistä kolmannelle osapuolelle)
 IdPhoneCaller=Id puhelimeen soittajan
 UserLogged=Käyttäjän %s kytketty
+UserLogoff=Käyttäjä %s logout
 NewUserCreated=Käyttäjä %s on luotu
 NewUserPassword=Salasana muutos %s
 EventUserModified=Käyttäjän %s muuntamattomat
@@ -97,56 +102,19 @@ UserDisabled=Käyttäjän %s pois päältä
 UserEnabled=Käyttäjän %s aktivoitu
 UserDeleted=Käyttäjän %s poistettu
 NewGroupCreated=Ryhmän %s on luotu
-GroupModified=Ryhmän %s muuntamattomat
+GroupModified=Ryhmän muunnettu onnistuneesti
 GroupDeleted=Ryhmän %s poistettu
 ConfirmCreateContact=Oletko varma yu haluamme luoda Dolibarr huomioon tässä yhteydessä?
-LoginToCreate=Kirjaudu luoda
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-SuperAdministrator=Super Administrator
-SuperAdministratorDesc=Administrator kaikki oikeudet
-LinkToCompanyContact=Linkki kolmannen osapuolen / contact
-LinkedToDolibarrMember=Linkki jäsen
-LinkedToDolibarrUser=Linkki Dolibarr käyttäjä
-LinkedToDolibarrThirdParty=Linkki Dolibarr kolmannen osapuolen
-CreateDolibarrThirdParty=Luo kolmasosaa osapuoli
 ConfirmCreateLogin=Oletko varma, että haluat luoda Dolibarr huomioon tämän jäsen?
 ConfirmCreateThirdParty=Oletko varma, että haluat luoda kolmannelle osapuolelle tämä jäsen?
+LoginToCreate=Kirjaudu luoda
 NameToCreate=Nimi kolmannen osapuolen luoda
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-CreateInternalUserDesc=Tämän lomakkeen avulla voit luotu käyttäjän sisäinen yrityksenne / perusta. Voit luotu ulkopuolinen käyttäjä (asiakas, toimittaja, ...), käytä painiketta Luo Dolibarr käyttäjä "kolmannen osapuolen yhteystiedot kortin.
-InternalExternalDesc=<b>Sisäinen</b> käyttäjä on käyttäjä, joka on osa yrityksen / perusta. <br> <b>Ulkoinen</b> käyttäjä on asiakas, toimittaja tai muu. <br><br> Molemmissa tapauksissa, oikeudet määritellään oikeuksia Dolibarr myös ulkoinen käyttäjä voi olla eri valikosta johtaja kuin sisäinen käyttäjä (Katso etusivu - Asetukset - Display)
-PermissionInheritedFromAGroup=Lupa myönnettiin, koska periytyy yhden käyttäjän ryhmä.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-Inherited=Peritty
 YourRole=Omat roolit
 YourQuotaOfUsersIsReached=Tilakiintiösi aktiivisia käyttäjiä on saavutettu!
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:28).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fi_FI
-DontDowngradeSuperAdmin=Vain superadmin voi downgrade superadmin
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:33:26).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-AdministratorDesc=Järjestelmänvalvojan kokonaisuus
-UserWillBeInternalUser=Luotu käyttäjä on sisäinen käyttäjä (koska ei liity erityistä kolmannelle osapuolelle)
-UserWillBeExternalUser=Luotu käyttäjä tulee ulkopuolinen käyttäjä (koska liittyy erityistä kolmannelle osapuolelle)
-UserLogoff=Käyttäjä %s logout
 NbOfUsers=Nb käyttäjien
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:42).
+DontDowngradeSuperAdmin=Vain superadmin voi downgrade superadmin
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

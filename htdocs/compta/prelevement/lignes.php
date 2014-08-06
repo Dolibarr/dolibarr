@@ -166,7 +166,7 @@ if ($result)
 	{
 		$obj = $db->fetch_object($result);
 
-		print "<tr $bc[$var]><td>";
+		print "<tr ".$bc[$var]."><td>";
 
 		print $ligne->LibStatut($obj->statut,2);
 		print "&nbsp;";
@@ -199,7 +199,7 @@ if ($result)
 
 	if($socid)
 	{
-		print "<tr $bc[$var]><td>";
+		print "<tr ".$bc[$var]."><td>";
 
 		print '<td>Total</td>';
 

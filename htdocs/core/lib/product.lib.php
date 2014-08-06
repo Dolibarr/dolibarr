@@ -116,8 +116,14 @@ function product_prepare_head($object, $user)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
+	// Attachments
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files'));
     $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
+	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
 	$head[$h][2] = 'documents';
 	$h++;
 

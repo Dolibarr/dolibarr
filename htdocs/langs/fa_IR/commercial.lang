@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=التجارية
 CommercialArea=منطقة تجارية
 CommercialCard=بطاقة تجارية
@@ -21,6 +11,8 @@ DeleteAction=حذف عمل / المهمة
 NewAction=عمل جديدة / المهمة
 AddAction=أضف العمل / المهمة
 AddAnAction=إضافة عمل / المهمة
+AddActionRendezVous=إضافة مهمة رانديفو
+Rendez-Vous=الموعد
 ConfirmDeleteAction=هل أنت متأكد من أنك تريد حذف هذه المهمة؟
 CardAction=بطاقة العمل
 PercentDone=النسبة المئوية لعمله
@@ -31,6 +23,7 @@ TaskRDVWith=لقاء مع ق ٪
 ShowTask=وتظهر هذه المهمة
 ShowAction=وتظهر العمل
 ActionsReport=تقرير الأعمال
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=ممثل مبيعات
 SalesRepresentatives=مندوبي المبيعات
 SalesRepresentativeFollowUp=ممثل مبيعات (متابعة)
@@ -49,8 +42,11 @@ DoneAndToDoActionsFor=وعمله من أجل القيام بالمهام ق ٪
 DoneAndToDoActions=ويتم القيام بمهام
 DoneActions=إجراءات عمله
 DoneActionsFor=إجراءات لعمله ق ٪
+ToDoActions=عدم اكتمال الإجراءات
+ToDoActionsFor=لعدم اكتمال الإجراءات ق ٪
 SendPropalRef=اقتراح ارسال التجارية ق ٪
 SendOrderRef=من أجل إرسال المستندات ٪
+# StatusNotApplicable=Not applicable
 StatusActionToDo=القيام
 StatusActionDone=فعل
 MyActionsAsked=لقد سجلت الأعمال
@@ -80,26 +76,20 @@ ActionAC_REL=ارسال الفواتير (للتذكير)
 ActionAC_CLO=إغلاق
 ActionAC_EMAILING=إرسال البريد الإلكتروني الجماعي
 ActionAC_COM=لكي ترسل عن طريق البريد
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-AddActionRendezVous=إضافة مهمة رانديفو
-Rendez-Vous=الموعد
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
-// Reference language: en_US
-ToDoActions=عدم اكتمال الإجراءات
-ToDoActionsFor=لعدم اكتمال الإجراءات ق ٪
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:54:01).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
+# ActionAC_SHIP=Send shipping by mail
 ActionAC_SUP_ORD=أرسل النظام المورد عن طريق البريد
 ActionAC_SUP_INV=إرسال فاتورة المورد عن طريق البريد
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:17:37).
+ActionAC_OTH=أخرى
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
+StatusProsp=آفاق الوضع
+DraftPropals=مقترحات مشاريع تجارية
+# SearchPropal=Search a commercial proposal
+# CommercialDashboard=Commercial summary

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-CHARSET=UTF-8
+IdAgenda=Kimlik etkinliği
 Actions=Eylemler
 ActionsArea=Eylem alanı (Olaylar ve görevler)
 Agenda= Gündem
@@ -40,7 +40,7 @@ ActionsEvents= Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağ
 PropalValidatedInDolibarr= %s Teklifi doğrulandı
 InvoiceValidatedInDolibarr= %s Faturası doğrulandı
 InvoiceBackToDraftInDolibarr=%s Faturasını taslak durumuna geri götür
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=%s faturası silindi
 OrderValidatedInDolibarr= %s Siparişi doğrulandı
 OrderApprovedInDolibarr=%s Siparişi onayladı
 OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna geri götür
@@ -67,10 +67,11 @@ AgendaUrlOptions4=Çıktıyı kullanıcı <b>%s</b> tarafından etkilenen etkinl
 AgendaUrlOptions5=Çıktıyı kullanıcı<b>%s</b> tarafından yapılan etkinliklerle sınırlamak için<b>logind=%s</b>.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
-# Busy=Busy
+Busy=Meşgul
+ExportDataset_event1=Gündem etkinlikleri listesi
 
 # External Sites ical
-ExportCal=Dışaaktarım takvimi
+ExportCal=Takvim ver
 ExtSites=Dış takvimleri içeaktar
 ExtSitesEnableThisTool=Dış takvimleri gündemde göster
 ExtSitesNbOfAgenda=Takvimlerin sayısı

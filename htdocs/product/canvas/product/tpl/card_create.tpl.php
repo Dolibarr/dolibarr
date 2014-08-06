@@ -33,6 +33,9 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="0">
 <input type="hidden" name="canvas" value="<?php echo $canvas; ?>">
+<?php if (empty($conf->stock->enabled)) { ?>
+<input name="seuil_stock_alerte" type="hidden" value="0">
+<?php } ?>
 
 <table class="border allwidth">
 
@@ -61,8 +64,6 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <tr><td><?php echo $langs->trans("StockLimit"); ?></td><td>
 <input name="seuil_stock_alerte" size="4" value="<?php echo $object->seuil_stock_alerte; ?>">
 </td></tr>
-<?php } else { ?>
-<input name="seuil_stock_alerte" type="hidden" value="0">
 <?php } ?>
 
 <tr><td><?php echo $langs->trans("Nature"); ?></td><td>

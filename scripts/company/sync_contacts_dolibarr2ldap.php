@@ -31,27 +31,33 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now\n";
-    exit;
+	exit(-1);
 }
 $now=$argv[1];
 
-// Recupere env dolibarr
-$version='1.25';
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
 
+// Global variables
+$version=DOL_VERSION;
 $error=0;
 
 
-print "***** $script_file ($version) *****\n";
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
@@ -82,7 +88,7 @@ $input = trim(fgets(STDIN));
 if (! $conf->global->LDAP_CONTACT_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;
+	exit(-1);
 }
 */
 
@@ -142,5 +148,5 @@ else
 	dol_print_error($db);
 }
 
-return $error;
+exit($error);
 ?>

@@ -133,8 +133,8 @@ abstract class ActionsCardCommon
             $this->object->zip					= $_POST["zipcode"];
             $this->object->town					= $_POST["town"];
             $this->object->country_id			= $_POST["country_id"];
-            $this->object->state_id				= $_POST["departement_id"];
-            $this->object->tel					= $_POST["tel"];
+            $this->object->state_id				= $_POST["state_id"];
+            $this->object->phone					= $_POST["tel"];
             $this->object->fax					= $_POST["fax"];
             $this->object->email				= trim($_POST["email"]);
             $this->object->url					= $_POST["url"];
@@ -160,7 +160,7 @@ abstract class ActionsCardCommon
             $this->object->effectif_id			= $_POST["effectif_id"];
             if (GETPOST("private") == 1)
             {
-                $this->object->typent_id		= 8; // TODO predict another method if the field "special" change of rowid
+                $this->object->typent_id		= dol_getIdFromCode($db,'TE_PRIVATE','c_typent');
             }
             else
             {
@@ -290,7 +290,6 @@ abstract class ActionsCardCommon
                     }
                     else
                     {
-                        $this->object->id = $this->object->id;
                         $reload = 0;
                         $this->errors = $this->object->errors;
                         $action = "edit";
@@ -334,22 +333,17 @@ abstract class ActionsCardCommon
                 // Define output language
                 $outputlangs = $langs;
                 $newlang='';
-                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id') ) $newlang=GETPOST('lang_id');
+                if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
                 if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$this->object->default_lang;
                 if (! empty($newlang))
                 {
                     $outputlangs = new Translate("",$conf);
                     $outputlangs->setDefaultLang($newlang);
                 }
-                $result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model'), $outputlangs);
+                $result=thirdparty_doc_create($this->db, $this->object->id, '', GETPOST('model','alpha'), $outputlangs);
                 if ($result <= 0)
                 {
                     dol_print_error($this->db,$result);
-                    exit;
-                }
-                else
-                {
-                    header('Location: '.$_SERVER["PHP_SELF"].'?socid='.$this->object->id.(empty($conf->global->MAIN_JUMP_TAG)?'':'#builddoc'));
                     exit;
                 }
             }
@@ -489,10 +483,10 @@ abstract class ActionsCardCommon
             }
 
             // Zip
-            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','departement_id'),6);
+            $this->tpl['select_zip'] = $formcompany->select_ziptown($this->object->zip,'zipcode',array('town','selectcountry_id','state_id'),6);
 
             // Town
-            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','departement_id'));
+            $this->tpl['select_town'] = $formcompany->select_ziptown($this->object->town,'town',array('zipcode','selectcountry_id','state_id'));
 
             // Country
             $this->object->country_id = ($this->object->country_id ? $this->object->country_id : $mysoc->country_id);
@@ -561,7 +555,7 @@ abstract class ActionsCardCommon
             if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
-            $this->tpl['phone'] 	= dol_print_phone($this->object->tel,$this->object->country_code,0,$this->object->id,'AC_TEL');
+            $this->tpl['phone'] 	= dol_print_phone($this->object->phone,$this->object->country_code,0,$this->object->id,'AC_TEL');
             $this->tpl['fax'] 		= dol_print_phone($this->object->fax,$this->object->country_code,0,$this->object->id,'AC_FAX');
             $this->tpl['email'] 	= dol_print_email($this->object->email,0,$this->object->id,'AC_EMAIL');
             $this->tpl['url'] 		= dol_print_url($this->object->url);
@@ -624,7 +618,7 @@ abstract class ActionsCardCommon
                 }
                 else
                 {
-                    $this->tpl['linked_member'] = $langs->trans("UserNotLinkedToMember");
+                    $this->tpl['linked_member'] = $langs->trans("ThirdpartyNotLinkedToMember");
                 }
             }
 
@@ -676,8 +670,8 @@ abstract class ActionsCardCommon
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];
         $this->object->country_id			=	$_POST["country_id"]?$_POST["country_id"]:$mysoc->country_id;
-        $this->object->state_id		        =	$_POST["departement_id"];
-        $this->object->tel					=	$_POST["tel"];
+        $this->object->state_id		        =	$_POST["state_id"];
+        $this->object->phone					=	$_POST["tel"];
         $this->object->fax					=	$_POST["fax"];
         $this->object->email				=	$_POST["email"];
         $this->object->url					=	$_POST["url"];

@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Christophe
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +90,7 @@ class box_comptes extends ModeleBoxes
 			$sql.= " ORDER BY label";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("Box_comptes::loadBox sql=".$sql);
+			dol_syslog(get_class($this)."::loadBox sql=".$sql);
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -122,7 +123,7 @@ class box_comptes extends ModeleBoxes
 					);
 
 					$this->info_box_contents[$i][3] = array('td' => 'align="right"',
-					'text' => price($solde).' '.$langs->trans("Currency".$objp->currency_code)
+					'text' => price($solde, 0, $langs, 0, 0, -1, $objp->currency_code)
 					);
 
 					$listofcurrencies[$objp->currency_code]=1;
@@ -141,11 +142,13 @@ class box_comptes extends ModeleBoxes
 					$this->info_box_contents[$i][2] = array('td' => 'align="right" class="liste_total"',
 					'text' => '&nbsp;'
 					);
-					$totalamount=price($solde_total).' '.$langs->trans("Currency".$conf->currency);
+					$totalamount=price($solde_total,0,$langs,0,0,-1,$conf->currency);
 					$this->info_box_contents[$i][3] = array('td' => 'align="right" class="liste_total"',
 					'text' => $totalamount
 					);
 				}
+
+				$db->free($result);
 			}
 			else {
 				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',

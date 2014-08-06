@@ -1,21 +1,15 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Склад-карты
 Warehouse=Склад
+Warehouses=Склады
 NewWarehouse=Новый склад / Фондовый области
+WarehouseEdit=Изменить склад
 MenuNewWarehouse=Новый склад
 WarehouseOpened=Склад открыт
 WarehouseClosed=Склад закрыто
 WarehouseSource=Источник склад
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Целевой показатель на складе
 ValidateSending=Удалить отправке
 CancelSending=Отменить отправку
@@ -32,19 +26,25 @@ ListOfStockMovements=Список акций движения
 StocksArea=Акции области
 Location=Вместо
 LocationSummary=Сокращенное наименование расположение
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Общее количество продукции
 LastMovement=Последнее движение
 LastMovements=Последние движения
 Units=Единицы
 Unit=Единица
 StockCorrection=Правильно запас
+# StockTransfer=Stock transfer
 StockMovement=Трансфер
 StockMovements=Фондовый переводы
+# LabelMovement=Movement label
 NumberOfUnit=Количество единиц
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Всего на складе
 StockTooLow=Фондовый слишком низкими
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Значение
 PMPValue=Значение
+PMPValueShort=WAP
 EnhancedValueOfWarehouses=Склады стоимости
 UserWarehouseAutoCreate=Создать запас автоматически при создании пользователя
 QtyDispatched=Количество направил
@@ -53,14 +53,19 @@ RuleForStockManagementDecrease=Правило для управления зап
 RuleForStockManagementIncrease=Правило для управления запасами увеличить
 DeStockOnBill=Снижение реальных запасов на счета / кредитных нот
 DeStockOnValidateOrder=Снижение реальных запасов по заказам записки
+DeStockOnShipment=Снижение реальных запасов отгрузки проверки
 ReStockOnBill=Увеличение реальных запасов на счета / кредитных нот
 ReStockOnValidateOrder=Увеличение реальных запасов по заказам записки
+ReStockOnDispatchOrder=Увеличение реальных запасов на ручной посылаем в склады, после получения заказа поставщиком
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Заказ еще не или не более статуса, который позволяет отправку товаров на складе склады.
 StockDiffPhysicTeoric=Причина разницы запас физических и теоретических
+NoPredefinedProductToDispatch=Нет предопределенного продуктов для данного объекта. Так что не диспетчеризации в акции не требуется.
+DispatchVerb=Отправка
 StockLimitShort=Предельные
 StockLimit=Фондовый предел для оповещения
 PhysicalStock=Физическая запас
 RealStock=Real фондовая
-TheoreticalStock=Therocial запас
 VirtualStock=Виртуальный запас
 MininumStock=Минимальный запас
 StockUp=Запасти
@@ -70,45 +75,38 @@ IdWarehouse=Идентификатор склад
 DescWareHouse=Описание склада
 LieuWareHouse=Локализация склад
 WarehousesAndProducts=Склады и продукты
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-PMPValueShort=WAP
 AverageUnitPricePMPShort=Средняя цена входного
 AverageUnitPricePMP=Средняя цена входного
+SellPriceMin=Продажа Цена за штуку
+EstimatedStockValueSellShort=Значение продать
+EstimatedStockValueSell=Значение для продажи
 EstimatedStockValueShort=Ориентировочная стоимость товарно-материальных запасов
 EstimatedStockValue=Ориентировочная стоимость товарно-материальных запасов
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-WarehouseEdit=Изменить склад
-DeStockOnShipment=Снижение реальных запасов отгрузки проверки
-ReStockOnDispatchOrder=Увеличение реальных запасов на ручной посылаем в склады, после получения заказа поставщиком
-OrderStatusNotReadyToDispatch=Заказ еще не или не более статуса, который позволяет отправку товаров на складе склады.
-NoPredefinedProductToDispatch=Нет предопределенного продуктов для данного объекта. Так что не диспетчеризации в акции не требуется.
-DispatchVerb=Отправка
 DeleteAWarehouse=Удалить склад
 ConfirmDeleteWarehouse=Вы уверены, что хотите удалить склад <b>%s?</b>
 PersonalStock=Личный %s складе
 ThisWarehouseIsPersonalStock=Этот склад представляет собой персональный запас %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:36:02).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-SellPriceMin=Продажа Цена за штуку
-EstimatedStockValueSellShort=Значение продать
-EstimatedStockValueSell=Значение для продажи
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:31).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
 SelectWarehouseForStockDecrease=Выберите хранилище, чтобы использовать для снижения акции
 SelectWarehouseForStockIncrease=Выберите склад для использования в запас увеличения
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:15).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

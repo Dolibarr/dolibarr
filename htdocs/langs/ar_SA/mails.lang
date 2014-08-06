@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=مراسلة
 EMailing=مراسلة
 Mailings=EMailings
@@ -53,6 +43,10 @@ MailingStatusSentCompletely=أرسلت تماما
 MailingStatusError=خطأ
 MailingStatusNotSent=لم ترسل
 MailSuccessfulySent=أرسل بالبريد الإلكتروني بنجاح (٪ من المستندات ل٪)
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=البريد الإلكتروني المتلقي فارغة
 WarningNoEMailsAdded=بريد الكتروني جديدة تضاف الى قائمة المتلقي.
 ConfirmValidMailing=هل أنت متأكد أنك تريد إرساله عبر البريد الإلكتروني للتحقق من هذا؟
@@ -76,11 +70,30 @@ ConfirmCloneEMailing=هل أنت متأكد من استنساخ هذا البر�
 CloneContent=استنساخ الرسالة
 CloneReceivers=شبيه المستفيدين
 DateLastSend=تاريخ آخر ارسال
+DateSending=تاريخ إرسال
+SentTo=إرسالها إلى <b>%s</b>
+MailingStatusRead=قرأ
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=اتصالات لجميع الأطراف الثالثة (العملاء ، والاحتمال ، والمورد ،...)
 MailingModuleDescDolibarrUsers=Dolibarr جميع مستخدمي البريد الإلكتروني
+MailingModuleDescFundationMembers=مؤسسة البريد الالكتروني للأعضاء
 MailingModuleDescEmailsFromFile=رسائل البريد الإلكتروني من ملف نصي (البريد الإلكتروني ؛ اسم الشهرة ؛ التعليقات)
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=أطراف ثالثة مع رسائل البريد الإلكتروني (حسب الفئة)
 MailingModuleDescDolibarrContractsLinesExpired=أطراف ثالثة مع انتهاء العقد خطوط
+MailingModuleDescContactsByCompanyCategory=اتصالات من أطراف ثالثة (من قبل أطراف ثالثة الفئة)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescMembersCategories=أعضاء مؤسسة (حسب الفئات)
+MailingModuleDescContactsByFunction=اتصالات من أطراف ثالثة (من قبل المنصب / الوظيفة)
+
+
 LineInFile=خط المستندات في ملف ٪
 RecipientSelectionModules=حددت لطلبات المستفيدين الاختيار
 MailSelectedRecipients=اختيار المستفيدين
@@ -93,9 +106,10 @@ SearchAMailing=البحث البريدية
 SendMailing=إرسال البريد الإلكتروني
 SendMail=إرسال بريد إلكتروني
 SentBy=أرسلها
-MailingNeedCommand=أوراق ولإرسال البريد الإلكتروني لا يمكن إلا أن يكون أداؤها من سطر الأوامر. اطلب من مدير لاطلاق التالي لإرسال البريد الإلكتروني لجميع المستفيدين :
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.
-ConfirmSendingEmailing=هل أنت متأكد أنك تريد إرسال البريد؟ <br> على خط ارسال emailings محدودة لأسباب أمنية <b>ل٪ ق</b> المتلقين عن طريق إرسال والخمسين.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=لائحة واضحة
 ToClearAllRecipientsClickHere=من الواضح أن المستفيدين قائمة لهذا البريد الإلكتروني ، انقر على زر
 ToAddRecipientsChooseHere=إضافة إلى المتلقين ، وتختار في هذه القوائم
@@ -103,35 +117,16 @@ NbOfEMailingsReceived=وتلقى كتلة emailings
 IdRecord=رقم قياسي
 DeliveryReceipt=إيصال استلام
 YouCanUseCommaSeparatorForSeveralRecipients=يمكنك استخدام <b>الفاصلة</b> فاصل لتحديد عدد من المتلقين.
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=الإخطارات
 NoNotificationsWillBeSent=إشعارات البريد الإلكتروني لا يجري التخطيط لهذا الحدث ، وشركة
 ANotificationsWillBeSent=1 سيتم إرسال الإشعار عن طريق البريد الإلكتروني
 SomeNotificationsWillBeSent=ق ٪ سوف يتم إرسال الإخطارات عبر البريد الإلكتروني
 AddNewNotification=تفعيل جديد طلب إخطار بالبريد الإلكتروني
 ListOfActiveNotifications=قائمة البريد الإلكتروني لجميع طلبات الإخطار
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-// Reference language: en_US
-MailingModuleDescFundationMembers=مؤسسة البريد الالكتروني للأعضاء
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-DateSending=تاريخ إرسال
-SentTo=إرسالها إلى <b>%s</b>
-LimitSendingEmailing=على خط ارسال emailings محدودة لأسباب أمنية ومهلة للمستفيدين عن طريق إرسال <b>%s</b> الدورة.
 ListOfNotificationsDone=أرسلت قائمة جميع اشعارات بالبريد الالكتروني
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-MailingStatusRead=قرأ
-MailingModuleDescContactsByCompanyCategory=اتصالات من أطراف ثالثة (من قبل أطراف ثالثة الفئة)
-MailingModuleDescMembersCategories=أعضاء مؤسسة (حسب الفئات)
-MailingModuleDescContactsByFunction=اتصالات من أطراف ثالثة (من قبل المنصب / الوظيفة)
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:41).

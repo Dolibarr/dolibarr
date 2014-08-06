@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=請求書
 Bills=請求書
 BillsCustomers=顧客の請求書
@@ -42,7 +33,6 @@ ReplacementInvoice=交換用の請求書
 ReplacedByInvoice=請求書%sによって置き換えられ
 ReplacementByInvoice=請求書に置き換えられ
 CorrectInvoice=正しい請求書%s
-CorrectInvoice=正しい請求書%s
 CorrectionInvoice=訂正請求書
 UsedByInvoice=請求書%sを支払うために使用さ
 ConsumedBy=によって消費される
@@ -66,6 +56,7 @@ Payment=支払い
 PaymentBack=戻って支払い
 Payments=支払い
 PaymentsBack=背中の支払い
+# PaidBack=Paid back
 DatePayment=支払期日
 DeletePayment=支払いを削除します。
 ConfirmDeletePayment=この支払いを削除してもよろしいですか？
@@ -77,19 +68,22 @@ ReceivedCustomersPaymentsToValid=検証するために受信されたお客様�
 PaymentsReportsForYear=%sの支払い報告書
 PaymentsReports=決済レポート
 PaymentsAlreadyDone=支払いがすでに行わ
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=支払いルール
 PaymentMode=お支払い方法の種類
 PaymentConditions=支払期間
 PaymentConditionsShort=支払期間
 PaymentAmount=支払金額
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=支払うために思い出させるよりも高い支払い
-HelpPaymentHigherThanReminderToPay=注目は、1つまたは複数の請求書の支払額を支払うための残りの部分よりも高くなっています。 <br>あなたのエントリを編集し、それ以外の場合は確認して、それぞれの過払い請求のために受け取った過剰のクレジットメモを作成する方法について考える。
+HelpPaymentHigherThanReminderToPay= 注目は、1つまたは複数の請求書の支払額を支払うための残りの部分よりも高くなっています。 <br>あなたのエントリを編集し、それ以外の場合は確認して、それぞれの過払い請求のために受け取った過剰のクレジットメモを作成する方法について考える。
 ClassifyPaid=分類 '有料'
 ClassifyPaidPartially='は部分的に有料 &quot;に分類
 ClassifyCanceled=&quot;放棄&quot;を分類する
 ClassifyClosed=&quot;クローズ&quot;を分類する
 CreateBill=請求書を作成します。
 AddBill=請求書やクレジットメモを追加
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=請求書を削除します。
 SearchACustomerInvoice=顧客の請求書の検索
 SearchASupplierInvoice=仕入先請求書の検索
@@ -139,7 +133,7 @@ BillTo=請求する
 ActionsOnBill=請求書上のアクション
 NewBill=新しい請求書
 Prélèvements=立っているため、
-Prélèvements=立っている受注
+Prélèvements=立っているため、
 LastBills=最後%sの請求書
 LastCustomersBills=最後%sのお客様の請求書
 LastSuppliersBills=最後%sサプライヤーの請求書
@@ -188,10 +182,13 @@ ShowInvoiceDeposit=預金請求書を表示する
 ShowPayment=支払を表示する
 File=ファイル
 AlreadyPaid=既に支払わ
+# AlreadyPaidBack=Already paid back
 AlreadyPaidNoCreditNotesNoDeposits=すでに支払った（クレジットメモ、預金なし）
 Abandoned=放棄された
 RemainderToPay=支払うために、残り
 RemainderToTake=取るために、残り
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=量が主張
 ExcessReceived=過剰は、受信した
 EscompteOffered=提供される割引（用語の前にお支払い）
@@ -201,6 +198,7 @@ StandingOrders=立っている受注
 StandingOrder=立っているため、
 NoDraftBills=いいえドラフトの請求なし
 NoOtherDraftBills=他のドラフトの請求なし
+# NoDraftInvoices=No draft invoices
 RefBill=請求書参照
 ToBill=請求する
 RemainderToBill=法案に残り
@@ -217,11 +215,12 @@ NoSupplierBillsUnpaid=未払いのない仕入先請求書なし
 SupplierBillsToPay=支払うために仕入先の請求書
 CustomerBillsUnpaid=未払いの顧客の請求書
 DispenseMontantLettres=mechanographicalによって起草案は、文字の順序から除外されます
-DispenseMontantLettres=mecanographic手続きにより書かれた請求書は文字の順序によって分配される
+DispenseMontantLettres=mechanographicalによって起草案は、文字の順序から除外されます
 NonPercuRecuperable=回復不可能
 SetConditions=支払条件を設定します。
 SetMode=支払いモードを設定する
-SetDate=日付を設定する
+SetDate= 日付を設定する
+# SelectDate=Select a date
 Billed=請求
 RepeatableInvoice=事前に定義された請求書
 RepeatableInvoices=事前に定義された請求書
@@ -243,11 +242,12 @@ Discount=割引
 Discounts=割引
 AddDiscount=割引を作成します。
 AddRelativeDiscount=相対的なディスカウントを作成します。
-EditRelativelDiscount=relatvie割引を編集します。
+# EditRelativeDiscount=Edit relative discount
 AddGlobalDiscount=絶対的なディスカウントを作成します。
 EditGlobalDiscounts=絶対的な割引を編集
 AddCreditNote=クレジットメモを作成する
 ShowDiscount=割引を表示
+# ShowReduc=Show the deduction
 RelativeDiscount=相対的な割引
 GlobalDiscount=グローバル割引
 CreditNote=クレジットメモ
@@ -293,6 +293,8 @@ TotalOfTwoDiscountMustEqualsOriginal=二つの新しい割引の合計は元の�
 ConfirmRemoveDiscount=この割引を削除してよろしいですか？
 RelatedBill=関連する請求書
 RelatedBills=関連する請求書
+
+# PaymentConditions
 PaymentConditionShortRECEP=即時の
 PaymentConditionRECEP=即時の
 PaymentConditionShort30D=30日
@@ -303,6 +305,16 @@ PaymentConditionShort60D=60日
 PaymentCondition60D=60日
 PaymentConditionShort60DENDMONTH=月末60日
 PaymentCondition60DENDMONTH=月末60日
+PaymentConditionShortPT_DELIVERY=配達
+PaymentConditionPT_DELIVERY=着払い
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=銀行預金
 PaymentTypeShortVIR=銀行預金
 PaymentTypePRE=銀行のために
@@ -351,6 +363,7 @@ LawApplicationPart2=財の所有のまま
 LawApplicationPart3=売り手のキャッシングが完了するまで
 LawApplicationPart4=その価格。
 LimitedLiabilityCompanyCapital=資本金SARL
+# UseLine=Apply
 UseDiscount=割引を使用して、
 UseCredit=クレジットを使用する
 UseCreditNoteInInvoicePayment=このクレジットで支払う金額を減らす
@@ -375,7 +388,14 @@ CantRemovePaymentWithOneInvoicePaid=支払った分類少なくとも一つの�
 ExpectedToPay=予想される支払い
 PayedByThisPayment=この支払によって支払った
 ClosePaidInvoicesAutomatically=&quot;支払った&quot;すべての標準またはentirely支払った交換用の請求書を分類します。
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
 AllCompletelyPayedInvoiceWillBeClosed=を持たないすべての請求書は自動的にステータスが &quot;支払った&quot;に閉鎖され支払うことに残っています。
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=代表的なフォローアップ顧客の請求書
 TypeContact_facture_external_BILLING=顧客の請求書の連絡先
 TypeContact_facture_external_SHIPPING=顧客の出荷お問い合わせ
@@ -384,8 +404,12 @@ TypeContact_invoice_supplier_internal_SALESREPFOLL=代表的なフォローア�
 TypeContact_invoice_supplier_external_BILLING=サプライヤの請求書の連絡先
 TypeContact_invoice_supplier_external_SHIPPING=サプライヤの出荷の連絡先
 TypeContact_invoice_supplier_external_SERVICE=サプライヤサービスの連絡先
+# crabe PDF Model
 PDFCrabeDescription=請求書PDFテンプレートのカニ。完全な請求書テンプレート（テンプレートをおすすめ）
+# oursin PDF Model
 PDFOursinDescription=請求書PDFテンプレートOursin。完全な請求書テンプレート（テンプレートの代替）
-TerreNumRefModelDesc1=yyは年である貸方の標準的な請求書と%syymm-nnnnの形式%syymm-NNNN withニュメロを返し、mmは月とnnnnはありません休憩0〜ノーリターンでシーケンスです。
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=$ syymm始まる法案はすでに存在し、シーケンスのこのモデルと互換性がありません。それを削除するか、このモジュールを有効にするために名前を変更します。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:49:29).

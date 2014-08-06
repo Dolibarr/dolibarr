@@ -31,10 +31,10 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
-// Init global variables
+// Global variables
 $version='1.0';
 $error=0;
 
@@ -57,10 +57,10 @@ if (! $result > 0) { dol_print_error('',$user->error); exit; }
 $user->getrights();
 
 
-print "***** ".$script_file." (".$version.") *****\n";
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
 if (! isset($argv[1])) {	// Check parameters
     print "Usage: ".$script_file." param1 param2 ...\n";
-    exit;
+	exit(-1);
 }
 print '--- start'."\n";
 print 'Argument 1='.$argv[1]."\n";
@@ -163,5 +163,5 @@ else
 
 $db->close();	// Close $db database opened handler
 
-return $error;
+exit($error);
 ?>

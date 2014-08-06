@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - suppliers
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Leverandører
 Supplier=Leverandør
 AddSupplier=Legg til en leverandør
@@ -11,17 +10,24 @@ ListOfSuppliers=Leverandøroversikt
 ShowSupplier=Vis leverandør
 OrderDate=Bestillingsdato
 BuyingPrice=Innkjøpspris
+BuyingPriceMin=Minste kjøpskurs
+BuyingPriceMinShort=Min kjøpskurs
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Legg til leverandørpris
 ChangeSupplierPrice=Endre leverandørpris
 ErrorQtyTooLowForThisSupplier=Mengden er for lav for denne leverandørem, eller det er ikke definert noen pris for dette produktet for denne leverandøren
 ErrorSupplierCountryIsNotDefined=Det er ikke angitt noe land for denne leverandøren. Du må gjøre dette først.
 ProductHasAlreadyReferenceInThisSupplier=Dette produktet har allerede en referanse hos denne leverandøren
+ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne referansen leverandøren er allerede tilknyttet en referanse: %s
 NoRecordedSuppliers=Ingen leverandører registrert
 SupplierPayment=Leverandørbetaling
 SuppliersArea=Leverandørområde
 RefSupplierShort=Ref. leverandør
+Availability=Tilgjengelighet
 ExportDataset_fournisseur_1=Oversikt over leverandørfakturaer ig varelinjer
 ExportDataset_fournisseur_2=Leverandørfakturaer og betalinger
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Godkjenn denne innkjøpsordren
 ConfirmApproveThisOrder=Er du sikker på at du vil godkjenne denne innkjøpsordren?
 DenyingThisOrder=Avvis denne innkjøpsordren
@@ -32,18 +38,5 @@ AddCustomerInvoice=Opprett kundefaktura
 AddSupplierOrder=Opprett innkjøpsordre
 AddSupplierInvoice=Opprett innkjøpsfaktura
 ListOfSupplierProductForSupplier=Oversikt over produkter og priser for leverandøren <b>%s</b>
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-ReferenceSupplierIsAlreadyAssociatedWithAProduct=Denne referansen leverandøren er allerede tilknyttet en referanse: %s
 NoneOrBatchFileNeverRan=Ingen eller batch <b>%s</b> ikke løp nylig
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:52:11).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-BuyingPriceMin=Minste kjøpskurs
-BuyingPriceMinShort=Min kjøpskurs
-Availability=Tilgjengelighet
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:31).
+# SentToSuppliers=Sent to suppliers

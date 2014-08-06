@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Användarkort
 ContactCard=Kontaktkort
 GroupCard=Grupp kort
@@ -52,6 +43,7 @@ ListOfUsers=Lista över användare
 Administrator=Administratör
 SuperAdministrator=Super Administrator
 SuperAdministratorDesc=Administratör med alla rättigheter
+AdministratorDesc=Administratörens enhet
 DefaultRights=Standardbehörigheter
 DefaultRightsDesc=Definiera här <u>standardbehörigheter</u> som automatiskt ges till en <u>ny skapat</u> användare (Gå på användarkort att ändra tillstånd av en befintlig användare).
 DolibarrUsers=Dolibarr användare
@@ -98,8 +90,11 @@ CreateInternalUserDesc=Detta formulär låter dig creat en användare internt p�
 InternalExternalDesc=En <b>intern</b> användare är en användare som är en del av ert företag / stiftelse. <br> En <b>extern</b> användare är en kund, leverantör eller annan. <br><br> I båda fallen definierar behörigheter rättigheter Dolibarr, även externa användare kan ha en annan meny manager än interna användare (Se startsida - Setup - Display)
 PermissionInheritedFromAGroup=Tillstånd beviljas, eftersom ärvt från en av en användares grupp.
 Inherited=Ärvda
+UserWillBeInternalUser=Skapad användare kommer att vara en intern användare (eftersom inte kopplade till en viss tredje part)
+UserWillBeExternalUser=Skapad användare kommer att vara en extern användare (eftersom kopplat till en viss tredje part)
 IdPhoneCaller=Id telefonen ringer
 UserLogged=Användare %s anslutna
+UserLogoff=User %s logout
 NewUserCreated=Användare %s skapade
 NewUserPassword=Ändring av lösenord för %s
 EventUserModified=Användare %s modifierade
@@ -107,7 +102,7 @@ UserDisabled=Användare %s funktionshindrade
 UserEnabled=Användare %s aktiverad
 UserDeleted=Användare %s bort
 NewGroupCreated=Grupp %s skapade
-GroupModified=Grupp %s modifierade
+GroupModified=Grupp ändrades korrekt
 GroupDeleted=Grupp %s bort
 ConfirmCreateContact=Är du säker på att du vill skapa en Dolibarr konto för denna kontakt?
 ConfirmCreateLogin=Är du säker på att du vill skapa en Dolibarr konto för denna medlem?
@@ -116,15 +111,10 @@ LoginToCreate=Logga in för att skapa
 NameToCreate=Namn på tredje part för att skapa
 YourRole=Din roller
 YourQuotaOfUsersIsReached=Din kvot på aktiva användare är nådd!
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:49:14).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-AdministratorDesc=Administratörens enhet
-UserWillBeInternalUser=Skapad användare kommer att vara en intern användare (eftersom inte kopplade till en viss tredje part)
-UserWillBeExternalUser=Skapad användare kommer att vara en extern användare (eftersom kopplat till en viss tredje part)
-UserLogoff=User %s logout
 NbOfUsers=Nb av användare
 DontDowngradeSuperAdmin=Endast en SuperAdmin kan nedgradera en SuperAdmin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:23).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

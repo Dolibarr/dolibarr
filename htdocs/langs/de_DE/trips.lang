@@ -1,15 +1,8 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - trips
 Trip=Reise
 Trips=Reisen
 TripsAndExpenses=Reise- und Fahrtspesen
+TripsAndExpensesStatistics=Reise- und Spesenstatistiken
 TripCard=Reise-Karte
 AddTrip=Reise hinzufügen
 ListOfTrips=Liste der Reisen
@@ -24,6 +17,5 @@ TF_OTHER=Andere
 TF_LUNCH=Essen
 TF_TRIP=Reise
 ListTripsAndExpenses=Liste der Reisen und Spesen
-TripsAndExpensesStatistics=Reise- und Spesenstatistiken
 ExpensesArea=Spesenübersicht
 SearchATripAndExpense=Suchen nach einer Reise oder Aufwänden

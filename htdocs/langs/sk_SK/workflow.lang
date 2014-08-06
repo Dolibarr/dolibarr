@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - admin
+WorkflowSetup=Workflow modul nastavenia
+WorkflowDesc=Tento modul je určený pre zmenu správania automatických akcií, do aplikácie. V predvolenom nastavení workflow je otvorený (urobíte niečo, aby chcete). Môžete povoliť automatické akcie, ktoré sú zaujímavé palcov
+ThereIsNoWorkflowToModify=Nie je workflow môžete upraviť pre modul bolo aktivované.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Vytvorenie objednávky zákazníka automaticky po komerčné Návrh je podpísaný
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Vytvorte zákazníckej faktúry automaticky po komerčné Návrh je podpísaný
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Vytvorte zákazníckej faktúry automaticky po uzavretí zmluvy overená
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Vytvorte zákazníckej faktúry automaticky po zákazníkovi, aby je uzavretý
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Triediť prepojené zdrojový návrh účtoval keď je objednávka zákazníka nastavený na platenú
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Triediť spojené zdroj objednávka zákazníka (y) účtoval, keď je zákazník faktúry nastavený na platené
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Triediť prepojený zdroj objednávky zákazníka (y) účtoval keď je overený zákazníkmi faktúra

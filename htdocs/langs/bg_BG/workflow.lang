@@ -1,20 +1,11 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - admin
 WorkflowSetup=Workflow модул за настройка
-WorkflowDesc=Този модул е ​​desinged да променят поведението на автоматични действия да се прилага. По подразбиране, работният поток се отвори (да направите нещо, за което искате). Можете да позволи на автоматични действия, които да са интересни инча
+WorkflowDesc=Този модул е ​​designed да променят поведението на автоматични действия да се прилага. По подразбиране, работният поток се отвори (да направите нещо, за което искате). Можете да позволи на автоматични действия, които да са интересни инча
 ThereIsNoWorkflowToModify=Не е работния процес, можете да модифицирате за модул сте активирали.
 descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Създаване на заявка на клиента автоматично, след като е подписано търговско предложение
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Създаване на фактура на клиента автоматично, след като е подписано търговско предложение
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Създаване на фактура на клиента автоматично след договор е потвърден
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Създаване на фактура на клиента се затваря автоматично след поръчка на клиента
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Класифицира свързан източник на предложение за Плоскоклюн при поръчка на клиента на платен
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Класифицирайте свързани заявка на клиента източник на човка, когато клиент фактура е настроен на платен
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:17:20).
+# descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
+# descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated

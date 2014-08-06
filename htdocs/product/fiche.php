@@ -6,6 +6,8 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,6 +188,7 @@ if (empty($reshook))
             $object->duration_value     	= GETPOST('duration_value');
             $object->duration_unit      	= GETPOST('duration_unit');
             $object->seuil_stock_alerte 	= GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
+            $object->desiredstock           = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	= GETPOST('canvas');
             $object->weight             	= GETPOST('weight');
             $object->weight_units       	= GETPOST('weight_units');
@@ -255,6 +258,7 @@ if (empty($reshook))
                 $object->status             = GETPOST('statut');
                 $object->status_buy         = GETPOST('statut_buy');
                 $object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+                $object->desiredstock       = GETPOST('desiredstock');
                 $object->duration_value     = GETPOST('duration_value');
                 $object->duration_unit      = GETPOST('duration_unit');
                 $object->canvas             = GETPOST('canvas');
@@ -319,6 +323,19 @@ if (empty($reshook))
                     $id = $object->create($user);
                     if ($id > 0)
                     {
+                        if (GETPOST('clone_composition'))
+                        {
+                            $result = $object->clone_associations($originalId, $id);
+
+                            if ($result < 1)
+                            {
+                                $db->rollback();
+                                setEventMessage($langs->trans('ErrorProductClone'), 'errors');
+                                header("Location: ".$_SERVER["PHP_SELF"]."?id=".$originalId);
+                                exit;
+                            }
+                        }
+
                         // $object->clone_fournisseurs($originalId, $id);
 
                         $db->commit();
@@ -436,7 +453,6 @@ if (empty($reshook))
         }
 
         $result = $propal->addline(
-            $propal->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -510,7 +526,6 @@ if (empty($reshook))
         }
 
         $result =  $commande->addline(
-            $commande->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -584,7 +599,6 @@ if (empty($reshook))
         }
 
         $result = $facture->addline(
-            $facture->id,
             $desc,
             $pu_ht,
             GETPOST('qty'),
@@ -712,10 +726,15 @@ else
             print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
             print '<input name="seuil_stock_alerte" size="4" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td></tr>';
+            // Stock desired level
+            print '<tr><td>'.$langs->trans("DesiredStock").'</td><td>';
+            print '<input name="desiredstock" size="4" value="'.GETPOST('desiredstock').'">';
+            print '</td></tr>';
         }
         else
         {
             print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+            print '<input name="desiredstock" type="hidden" value="0">';
         }
 
         // Description (used in invoice, propal...)
@@ -781,11 +800,11 @@ else
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('colspan' => ' colspan="2"');
+        $parameters=array('colspan' => 0);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         if (empty($reshook) && ! empty($extrafields->attribute_label))
         {
-        	print $object->showOptionals($extrafields,'edit');
+        	print $object->showOptionals($extrafields,'edit',$parameters);
         }
 
         // Note (private, no output on invoices, propales...)
@@ -862,10 +881,10 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="128" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="128" value="'.dol_escape_htmltag($object->ref).'"></td></tr>';
 
             // Label
-            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
             // Status
             print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
@@ -923,10 +942,15 @@ else
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
                 print '</td></tr>';
+
+                print "<tr>".'<td>'.$langs->trans("DesiredStock").'</td><td colspan="2">';
+                print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
+                print '</td></tr>';
             }
             else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
+                print '<input name="desiredstock" type="hidden" value="'.$object->desiredstock.'">';
             }
 
             if ($object->isservice())
@@ -1059,8 +1083,8 @@ else
             if ($showbarcode)
             {
                 // Barcode type
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '<td>';
                 if (($action != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1080,8 +1104,8 @@ else
                 print '</td></tr>'."\n";
 
                 // Barcode value
-                print '<tr><td nowrap>';
-                print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+                print '<tr><td class="nowrap">';
+                print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '<td>';
                 if (($action != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
@@ -1233,19 +1257,22 @@ $formquestionclone=array(
 	'text' => $langs->trans("ConfirmClone"),
     array('type' => 'text', 'name' => 'clone_ref','label' => $langs->trans("NewRefForClone"), 'value' => $langs->trans("CopyOf").' '.$object->ref, 'size'=>24),
     array('type' => 'checkbox', 'name' => 'clone_content','label' => $langs->trans("CloneContentProduct"), 'value' => 1),
-    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true)
+    array('type' => 'checkbox', 'name' => 'clone_prices', 'label' => $langs->trans("ClonePricesProduct").' ('.$langs->trans("FeatureNotYetAvailable").')', 'value' => 0, 'disabled' => true),
+    array('type' => 'checkbox', 'name' => 'clone_composition', 'label' => $langs->trans('CloneCompositionProduct'), 'value' => 1)
 );
 
 // Confirm delete product
-if ($action == 'delete' && empty($conf->use_javascript_ajax))
+if (($action == 'delete' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))	// Output when action = clone if jmobile or no js
+	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
     print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
 }
 
 // Clone confirmation
-if ($action == 'clone' && empty($conf->use_javascript_ajax))
+if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
+	|| (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile)))							// Always output when not jmobile nor js
 {
-    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
 
 
@@ -1266,13 +1293,12 @@ if ($action == '' || $action == 'view')
 
         if (! isset($object->no_button_copy) || $object->no_button_copy <> 1)
         {
-            if (! empty($conf->use_javascript_ajax))
+            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
             {
                 print '<div class="inline-block divButAction"><span id="action-clone" class="butAction">'.$langs->trans('ToClone').'</span></div>'."\n";
-                print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',230,600);
             }
             else
-            {
+			{
                 print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=clone&amp;id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
             }
         }
@@ -1284,23 +1310,22 @@ if ($action == '' || $action == 'view')
     {
         if (empty($object_is_used) && (! isset($object->no_button_delete) || $object->no_button_delete <> 1))
         {
-            if (! empty($conf->use_javascript_ajax))
+            if (! empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))
             {
                 print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
-                print $form->formconfirm("fiche.php?id=".$object->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete",'',0,"action-delete");
             }
             else
-            {
+			{
                 print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
             }
         }
         else
-        {
+		{
             print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("ProductIsUsed").'">'.$langs->trans("Delete").'</a></div>';
         }
     }
     else
-    {
+	{
         print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Delete").'</a></div>';
     }
 }
@@ -1326,7 +1351,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $langs->load("propal");
 
         $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherProposals").'</td>';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftProposals").'</td>';
         $html .= '</tr><tr>';
         $html .= '<td valign="top">';
 
@@ -1353,7 +1378,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         else
         {
         	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedPropals");
+        	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
         $html .= '</table>';
@@ -1371,7 +1396,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         $langs->load("orders");
 
         $html .= '<tr class="liste_titre">';
-        $html .= '<td class="liste_titre">'.$langs->trans("AddToOtherOrders").'</td>';
+        $html .= '<td class="liste_titre">'.$langs->trans("AddToDraftOrders").'</td>';
         $html .= '</tr><tr>';
         $html .= '<td valign="top">';
 
@@ -1398,7 +1423,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         else
 		{
         	$html .= "<tr ".$bc[!$var]."><td>";
-        	$html .= $langs->trans("NoOtherOpenedOrders");
+        	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
         $html .= '</table>';
@@ -1416,7 +1441,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	$langs->load("bills");
 
     	$html .= '<tr class="liste_titre">';
-    	$html .= '<td class="liste_titre">'.$langs->trans("AddToOtherBills").'</td>';
+    	$html .= '<td class="liste_titre">'.$langs->trans("AddToDraftInvoices").'</td>';
         $html .= '</tr><tr>';
     	$html .= '<td valign="top">';
 
@@ -1443,7 +1468,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	else
     	{
     		$html .= "<tr ".$bc[!$var]."><td>";
-    		$html .= $langs->trans("NoOtherDraftBills");
+    		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
     	$html .= '</table>';

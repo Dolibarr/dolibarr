@@ -1,5 +1,4 @@
-# Dolibarr language file - hu_HU - ecm
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=Dokumentumok
 DocsMine=Az én dokumentumaim
 DocsGenerated=Generált dokumentumok
@@ -24,10 +23,10 @@ ECMNewDocument=Új Dokumentuk
 ECMCreationDate=Létrehozás dátuma
 ECMNbOfFilesInDir=Fájlok száma a könyvtárban
 ECMNbOfSubDir=Alkönyvtárok száma
-ECMNbOfFilesInSubDir=Fájlok száma a alkönyvtárakban
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Létrehozó
-ECMArea=ETM Terület
-ECMAreaDesc=Az ETM (Elektronikus Tartalom Management) terület lehetővé teszi, hogy elmentsen, megosszon vagy keressen a rendszerben tárolt dokumentumok közül.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Az automatikus könyvtárak önmagukat töltik föl amikor dokumentumot adunk valamilyen elem kártyájához.<br>* A kézi könyvtárakban elmenthetünk dokumentumokat amik nincsenek csatolva egyetlen elemhez sem.
 ECMSectionWasRemoved=<b>%s</b> könyvtár törölve lett.
 ECMDocumentsSection=Könyvtár dokumentuma
@@ -36,12 +35,14 @@ ECMSearchByEntity=Objektum alapjáni keresés
 ECMSectionOfDocuments=Dokumentumok könyvtárai
 ECMTypeManual=Kézi
 ECMTypeAuto=Automatikus
+# ECMDocsBySocialContributions=Documents linked to social contributions
 ECMDocsByThirdParties=Harmadik féllel kapcsolatban álló dokumentumok
 ECMDocsByProposals=Ajánlatokkat kapcsolatban álló dokumentumok
 ECMDocsByOrders=Megrendelésekkel kapcsolatban álló dokumentumok
 ECMDocsByContracts=Szerződésekkel kapcsolatban álló dokumentumok
 ECMDocsByInvoices=Ügyfél számlákkal kapcsolatban álló dokumentumok
 ECMDocsByProducts=Termékekkel kapcsolatban álló dokumentumok
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Nem lett könyvtár létrehozva
 ShowECMSection=Könyvtár mutatása
 DeleteSection=Könyvátr eltávolítása
@@ -50,3 +51,5 @@ ECMDirectoryForFiles=Relatív könyvtár a fájlokhoz
 CannotRemoveDirectoryContainsFiles=Az eltvolítás nem lehetséges amig tartalmaz fájlokat
 ECMFileManager=Fájl kezelő
 ECMSelectASection=Válasszon könyvtárat a bal oldali fából...
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

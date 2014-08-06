@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - members
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Members area
 PublicMembersArea=Public members area
 MemberCard=Member card
@@ -9,6 +8,7 @@ Members=Members
 MemberAccount=Member login
 ShowMember=Show member card
 UserNotLinkedToMember=User not linked to a member
+ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Members Tickets
 FundationMembers=Foundation members
 Attributs=Attributes
@@ -119,7 +119,6 @@ LastMembers=Last %s members
 LastMembersModified=Last %s modified members
 LastSubscriptionsModified=Last %s modified subscriptions
 AttributeName=Attribute name
-FieldEdition=Edition of field %s
 String=String
 Text=Text
 Int=Int

@@ -1,174 +1,166 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-OrdersArea=Clienţii ordinele zona
-SuppliersOrdersArea=Furnizori ordinele zona
-OrderCard=Comanda carte
-Order=Comanda
+# Dolibarr language file - Source file is en_US - orders
+OrdersArea=Zona Comenzi Clienţi
+SuppliersOrdersArea=Zona Comenzi Furnizori
+OrderCard=Fişă Comandă
+OrderId=ID Comandă
+Order=Comandă
 Orders=Comenzi
-OrderFollow=Urmări
-OrderDate=Ordinul data
-NewOrder=Noua ordine
-ToOrder=Asiguraţi pentru
-MakeOrder=Asiguraţi pentru
-SupplierOrder=Furnizor pentru
-SuppliersOrders=Furnizori ordinelor
-SuppliersOrdersRunning=Current furnizori ordinelor
-CustomerOrder=Pentru clienţi
-CustomersOrders=Ordinelor clienţilor
-CustomersOrdersRunning=Current ordinelor clienţilor
-CustomersOrdersAndOrdersLines=Clientul comenzi şi ordine "linii
-OrdersToValid=Comenzi la valabil
-OrdersToBill=Comenzi la factura
-OrdersInProcess=Comenzi în procesul de
-OrdersToProcess=Ordinele de a procesa
+OrderLine=Linie Comandă
+OrderFollow=Urmăreşte
+OrderDate=Dată Comandă
+OrderToProcess=Comandă de procesat
+NewOrder=Comandă nouă
+ToOrder=Plasează comanda
+MakeOrder=Plasează comanda
+SupplierOrder=Comandă Furnizor
+SuppliersOrders=Comenzi Furnizori
+SuppliersOrdersRunning=Comenzi Furnizori în curs
+CustomerOrder=Comandă client
+CustomersOrders=Comenzi Clienţi
+CustomersOrdersRunning=Comenzi Clienţi în curs
+CustomersOrdersAndOrdersLines=Comenzi Clienţi şi linii comenzi
+OrdersToValid=Comenzi clienţi de validat
+OrdersToBill=Comenzi Clienţi livrate
+OrdersInProcess=Comenzi Clienţi în desfăşurare
+OrdersToProcess=Comenzi Clienţi de tratat
+SuppliersOrdersToProcess=Comenzi Furnizori de tratat
 StatusOrderCanceledShort=Anulat
-StatusOrderDraftShort=Proiect
+StatusOrderDraftShort=Schiţă
 StatusOrderValidatedShort=Validat
-StatusOrderOnProcessShort=La proces
-StatusOrderProcessedShort=Prelucrate
-StatusOrderToBillShort=Pentru a factura
-StatusOrderApprovedShort=Aprobat
-StatusOrderRefusedShort=A refuzat
-StatusOrderToProcessShort=Pentru a procesa
-StatusOrderReceivedPartiallyShort=Parţial primit
-StatusOrderReceivedAllShort=Tot ceea ce a primit
-StatusOrderCanceled=Anulat
-StatusOrderDraft=Proiect (trebuie să fie validate)
-StatusOrderValidated=Validat
-StatusOrderOnProcess=La proces
-StatusOrderProcessed=Prelucrate
-StatusOrderToBill=Pentru a factura
-StatusOrderApproved=Aprobat
-StatusOrderRefused=A refuzat
-StatusOrderReceivedPartially=Parţial primit
-StatusOrderReceivedAll=Tot ceea ce a primit
-DraftOrWaitingApproved=Proiectul nu a fost încă aprobat sau a ordonat
-DraftOrWaitingShipped=Proiect de validat sau nu au fost încă expediate
-MenuOrdersToBill=Comenzi la factura
-SearchOrder=Comanda de cautare
-Sending=Trimiterea
-Sendings=Sendings
-ShipProduct=Expediaţi produs
-Discount=Reducere
-CreateOrder=Creaţi Comanda
-RefuseOrder=Refuza, pentru
-ApproveOrder=Pentru a accepta
-ValidateOrder=Validate pentru
-DeleteOrder=Ştergere pentru
-CancelOrder=Anulare pentru
-AddOrder=Adăugare pentru
-AddToMyOrders=Adauga la ordinele mele
+StatusOrderSentShort=În curs de procesare
+StatusOrderSent=Livrare în curs
+StatusOrderOnProcessShort=Recepţie
+StatusOrderProcessedShort=Procesate
+StatusOrderToBillShort=Livrate
+StatusOrderToBill2Short=De facturat
+StatusOrderApprovedShort=Aprobată
+StatusOrderRefusedShort=Refuzată
+StatusOrderToProcessShort=De procesat
+StatusOrderReceivedPartiallyShort=Parţial recepţionată
+StatusOrderReceivedAllShort=Integral recepţionată
+StatusOrderCanceled=Anulată
+StatusOrderDraft=Schiţă (de validat)
+StatusOrderValidated=Validată
+StatusOrderOnProcess=Asteptând recepţia
+StatusOrderProcessed=Procesată
+StatusOrderToBill=Livrată
+StatusOrderToBill2=De facturat
+StatusOrderApproved=Aprobată
+StatusOrderRefused=Refuzată
+StatusOrderReceivedPartially=Parţial recepţionată
+StatusOrderReceivedAll=Integral recepţionată
+ShippingExist=O expediţie există
+DraftOrWaitingApproved=Comenzi Schiţe sau încă  neaprobate
+DraftOrWaitingShipped=Comenzi Schiţe sau  validate încă neexpediate
+MenuOrdersToBill=Comenzi livrate
+MenuOrdersToBill2=Comenzi de facturat
+SearchOrder=Caută Comanda
+ShipProduct=Expediază produs
+Discount=Discount
+CreateOrder=Crează Comanda
+RefuseOrder=Refuză comanda
+ApproveOrder=Acceptă comanda
+ValidateOrder=Validează comanda
+UnvalidateOrder=Devalidează comandă
+DeleteOrder=Şterge comada
+CancelOrder=Anulează comanda
+AddOrder=Adaugă comanda
+AddToMyOrders=Adaugă la comenzile mele
 AddToOtherOrders=Adauga la alte comenzi
-ShowOrder=Arata pentru
-NoOpenedOrders=Nu a deschis comenzile
-NoOtherOpenedOrders=Nici o altă ordine de deschis
+AddToDraftOrders=Adaugă la comanda schiţă
+ShowOrder=Afişează comanda
+NoOpenedOrders=Nu sunt comenzi deschise
+NoOtherOpenedOrders=Nu sunt alte comenzi deschise
+NoDraftOrders=Nici o comandă  schiţă
 OtherOrders=Alte comenzi
-LastOrders=Ultima %s ordinele
-LastModifiedOrders=Ultima modificare %s ordinele
-LastClosedOrders=Ultima %s ordinele închise
+LastOrders=Ultimele %s comenzi
+LastModifiedOrders=Ultimele %s comenzi modificate
+LastClosedOrders=Ultimele %s comenzi închise
 AllOrders=Toate comenzile
-NbOfOrders=Numar de comenzi
-OrdersStatistics=Comenzi 'statistici
-OrdersStatisticsSuppliers=Furnizor ordinele "statistici
-NumberOfOrdersByMonth=Numarul de comenzi de luni
-AmountOfOrdersByMonthHT=valoarea ordinelor de luna (net de impozite)
-ListOfOrders=Lista de comenzi
-CloseOrder=Inchide pentru
-ConfirmCloseOrder=Sunteţi sigur că vreţi să închideţi acest ordin? Odată ce un ordin este închis, nu poate fi taxat doar.
-ConfirmCloseOrderIfSending=Sunteţi sigur că vreţi să închideţi acest ordin? Trebuie să închideţi un ordin doar atunci când toate expediere sunt de facut.
-ConfirmDeleteOrder=Sunteţi sigur că doriţi să ştergeţi acest ordin?
-ConfirmValidateOrder=Sunteţi sigur că doriţi să valideze această ordine sub <b>numele %s?</b>
-ConfirmCancelOrder=Sunteţi sigur că doriţi să anulaţi acest ordin?
-ConfirmMakeOrder=Sunteţi sigur că doriţi să confirme acest lucru, pentru ai face <b>pe %s?</b>
-GenerateBill=Generare factură
-ClassifyBilled=Clasifica "facturat"
-ComptaCard=Contabilitate carte
-DraftOrders=Proiect de ordine de
-RelatedOrders=Legate de comenzi
-OnProcessOrders=La procesul de comenzi
+NbOfOrders=Numar  comenzi
+OrdersStatistics=Statistici Comenzi
+OrdersStatisticsSuppliers=Statistici Comenzi Furnizori
+NumberOfOrdersByMonth=Numar comenzi pe luni
+AmountOfOrdersByMonthHT=Valoarea comenzilor pe luna (net fără taxe)
+ListOfOrders=Lista  comenzi
+CloseOrder=Inchide  comanda
+ConfirmCloseOrder=Sigur doriți să setați această comandă în  De Livrat? După ce o comandă este livrată, acesta poate fi setată  De Facturat.
+ConfirmCloseOrderIfSending=Sigur vreţi să închideţi această comandă ? Trebuie să închideţi un ordin doar atunci când toate expedierile sunt făcute.
+ConfirmDeleteOrder=Sigur doriţi să ştergeţi  această comandă ?
+ConfirmValidateOrder=Sigur doriţi să  validaţi această comandă sub numele  <b>%s</b>?
+ConfirmUnvalidateOrder=Sigur doriţi să restauraţi comanda <b>%s</b> a statutul de schiţă?
+ConfirmCancelOrder=Sigur doriţi să anulaţi această comandă ?
+ConfirmMakeOrder=Sigur doriţi să confirmaţi această comandă în data de<b>pe %s</b>?
+GenerateBill=Generează Factură
+ClassifyShipped=Clasează livrată
+ClassifyBilled=Clasează facturată
+ComptaCard=Fişă Contabilitate
+DraftOrders=Comenzi Schiţe
+RelatedOrders=Comenzi reatasate
+OnProcessOrders=Comenzi în curs de tratare
 RefOrder=Ref. comanda
-RefCustomerOrder=Ref. pentru client
-CustomerOrder=Pentru clienţi
-RefCustomerOrderShort=Ref. client. comanda
-SendOrderByMail=Pentru a trimite prin e-mail
-ActionsOnOrder=Acţiunile de pe ordinea
-NoArticleOfTypeProduct=Nici un articol de tip "produs" astfel încât nu shippable articol pentru acest ordin
-OrderMode=Ordinul metodă
-AuthorRequest=Cerere de autor
-UseCustomerContactAsOrderRecipientIfExist=Utilizaţi client adresa de contact, dacă este definită în loc de o terţă parte, pentru ca adresa destinatarului adresa
-RunningOrders=COMANDA ON proces
-UserWithApproveOrderGrant=Useres acordate cu "aproba ordinele" permisiune.
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON nu sunt definite
-Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON nu sunt definite
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Încărcare fişier modul " %s"
-Error_FailedToLoad_COMMANDE_ADDON_File=Încărcare fişier modul " %s"
-OrderSource0=Comerciale propunerea
+RefCustomerOrder=Ref. Comandă Client
+CustomerOrder=Comandă client
+RefCustomerOrderShort=Ref. Com. Client
+SendOrderByMail=Trimite comanda prin e-mail
+ActionsOnOrder=Evenimente pe comanda
+NoArticleOfTypeProduct=Nici un articol de tip "produs", astfel încât nici un articol expediabil pentru această  comandă
+OrderMode=Metoda de comandă
+AuthorRequest=Autor cerere
+UseCustomerContactAsOrderRecipientIfExist=Utilizați adresa de contact pentru clienți în cazul în care este definită în loc de adresa terţului ca destinatar comandă
+RunningOrders=Comandă în curs
+UserWithApproveOrderGrant=Utilizatorii cu permisiuni acordate  de "aproba comenzi" .
+PaymentOrderRef=Plata comandă %s
+CloneOrder=Clonează comanda
+ConfirmCloneOrder=Sigur doriţi să clonaţi acestă comandă <b>%s</b> ?
+DispatchSupplierOrder=Recepţia comenzii furnizorul ui%s
+##### Types de contacts #####
+TypeContact_commande_internal_SALESREPFOLL=Responsabil urmărire comandă client
+TypeContact_commande_internal_SHIPPING=Responsabil urmărire expediere comandă client
+TypeContact_commande_external_BILLING=Contact  client facturare comandă
+TypeContact_commande_external_SHIPPING=Contact client  livrare comandă
+TypeContact_commande_external_CUSTOMER=Contact client urmărire comandă
+TypeContact_order_supplier_internal_SALESREPFOLL=Responsabil urmărire comandă  furnizor
+TypeContact_order_supplier_internal_SHIPPING=Responsabil  recepţie  comandă  furnizor
+TypeContact_order_supplier_external_BILLING=Contact furnizor facturare comandă
+TypeContact_order_supplier_external_SHIPPING=Contact furnizor livrare comandă
+TypeContact_order_supplier_external_CUSTOMER=Contact furnizor urmărire comandă
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constanta COMMANDE_SUPPLIER_ADDON nedefinită
+Error_COMMANDE_ADDON_NotDefined=Constanta COMMANDE_ADDON nedefinită
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Eşec la încărcarea fișierului modul '%s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Eşec la încărcarea fișierului modul '%s'
+Error_OrderNotChecked=Nici o comandă de facturat selectată
+
+
+# Sources
+OrderSource0=Propunere Comercială
 OrderSource1=Internet
-OrderSource2=Mail campanie
-OrderSource3=Telefon compain
-OrderSource4=Fax campanie
-OrderSource5=Comerciale
+OrderSource2=Campanie poştă
+OrderSource3=Campanie telefon
+OrderSource4=Campanie fax
+OrderSource5=Comercial
 OrderSource6=Magazin
-QtyOrdered=Cantitate ordonat
-AddDeliveryCostLine=
+QtyOrdered=Cant. comandată
+AddDeliveryCostLine=Adaugă o linie cost livrare indicând greutatea comenzii
+
+# Documents models
 PDFEinsteinDescription=Un model complet pentru (logo. ..)
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-OrderLine=Ordinul linie
-PaymentOrderRef=Plata pentru %s
-CloneOrder=Clone pentru
-ConfirmCloneOrder=Sunteţi sigur că doriţi să clona pentru <b>acest %s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-OrderToProcess=Pentru a procesa
-TypeContact_commande_internal_SALESREPFOLL=Reprezentant client următoarele-up pentru
-TypeContact_commande_internal_SHIPPING=Reprezentant urmărire de transport maritim
-TypeContact_commande_external_BILLING=Clientul factura de contact
-TypeContact_commande_external_SHIPPING=Clientul de transport maritim de contact
-TypeContact_commande_external_CUSTOMER=lua legatura cu clientul pentru urmărirea
-TypeContact_order_supplier_internal_SALESREPFOLL=Reprezentant următoarele-up cu furnizorul pentru
-TypeContact_order_supplier_internal_SHIPPING=Reprezentant urmărire de transport maritim
-TypeContact_order_supplier_external_BILLING=A lua legatura cu furnizorul factură
-TypeContact_order_supplier_external_SHIPPING=Furnizor de transport maritim de contact
-TypeContact_order_supplier_external_CUSTOMER=A lua legatura ordinea următoare-up
 PDFEdisonDescription=Un simplu pentru model
-PDFQuevedoDescription=Un model complet cu scopul de spaniolă RE şi IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:36:50).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ro_RO
-DispatchSupplierOrder=Primirea comenzii furnizorul %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:24).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-SuppliersOrdersToProcess=Furnizorului de ordine pentru a prelucra
-StatusOrderSentShort=În procesul de
-ShippingExist=Un transport există
-UnvalidateOrder=Unvalidate pentru
-ConfirmUnvalidateOrder=Sunteţi sigur că doriţi să restauraţi <b>%s</b> de ordine la statutul de proiect?
+PDFProformaDescription=De completat factura proformă (logo-ul ...)
+# Orders modes
 OrderByMail=Poştă
 OrderByFax=Fax
-OrderByEMail=EMail
+OrderByEMail=Email
 OrderByWWW=Online
 OrderByPhone=Telefon
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:30).
+
+CreateInvoiceForThisCustomer=Comenzi facturate
+NoOrdersToInvoice=Nici o comandă facturabilă
+CloseProcessedOrdersAutomatically=Clasează automat "Procesat" toate comenzile selectate.
+MenuOrdersToBill2=Comenzi de facturat
+OrderCreation=Creare comandă
+Ordered=Comandat
+OrderCreated=Comenzile dvs au fost generate
+OrderFail=O eroare întâlnită în timpul creării comezilor dvs
+CreateOrders=Crează Comenzi

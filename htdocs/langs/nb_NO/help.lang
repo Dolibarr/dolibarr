@@ -1,13 +1,4 @@
-/*
- * Language code: nb_NO
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:45:17
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum / Wiki-støtte
 EMailSupport=Emails støtte
 RemoteControlSupport=Online sanntid / ekstern støtte
@@ -33,4 +24,5 @@ BackToHelpCenter=Ellers, her klikker du gå <a href="%s">tilbake til hjemmesiden
 LinkToGoldMember=Du kan ringe en av coach forhåndsvalgt ved Dolibarr for ditt språk (%s) ved å klikke sine Widget (status og høyeste pris er automatisk oppdatert):
 PossibleLanguages=Støttede språk
 MakeADonation=Hjelp Dolibarr prosjektet, gjøre en donasjon
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:45:56).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

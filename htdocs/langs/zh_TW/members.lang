@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=會員專區
 PublicMembersArea=市民區
 MemberCard=會員卡
@@ -17,6 +8,7 @@ Members=成員
 MemberAccount=會員登錄
 ShowMember=出示會員卡
 UserNotLinkedToMember=用戶成員沒有聯系
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=成員的機票
 FundationMembers=基金會成員
 Attributs=屬性
@@ -43,6 +35,7 @@ MenuMembersValidated=驗證成員
 MenuMembersUpToDate=到今天為止成員
 MenuMembersNotUpToDate=過時成員
 MenuMembersResiliated=Resiliated成員
+MembersWithSubscriptionToReceive=接收與認購成員
 DateAbonment=認購日期
 DateSubscription=認購日期
 DateNextSubscription=下一步訂閱
@@ -81,11 +74,9 @@ NewCotisation=新的貢獻
 PaymentSubscription=支付的新貢獻
 EditMember=編輯委員
 SubscriptionEndDate=認購的結束日期
-NewAttribute=新的屬性
-AttributeCode=屬性代碼
-OptionalFieldsSetup=安裝可選字段
 MembersTypeSetup=成員類型設置
 NewSubscription=新的訂閱
+NewSubscriptionDesc=這種形式可以讓你記錄你的訂閱為基礎的新成員。如果你想續訂（如果已經是會員），請聯系，而不是通過電子郵件%s基金會董事會。
 Subscription=訂閱
 Subscriptions=訂閱
 SubscriptionLate=晚
@@ -119,13 +110,15 @@ ConfirmValidateMember=你確定要驗證這個成員？
 FollowingLinksArePublic=下面的鏈接是沒有任何Dolibarr權限保護打開的網頁。他們不是格式化網頁，提供的例子，說明如何列出成員數據庫。
 PublicMemberList=公共成員名單
 BlankSubscriptionForm=認購表格
+BlankSubscriptionFormDesc=dolibarr可以為您提供一個公共URL允許外部訪問者問到訂閱的基礎。如果啟用在線支付模塊，付款方式也將被自動提供。
+EnablePublicSubscriptionForm=讓市民自動認購表格
 MemberPublicLinks=公共林克斯/頁
 ExportDataset_member_1=成員和訂閱
+ImportDataset_member_1=成員
 LastMembers=上次%s成員
 LastMembersModified=最後%S修飾成員
+LastSubscriptionsModified=最後%s修改訂閱
 AttributeName=屬性名稱
-FieldEdition=外地版 %s
-AlphaNumOnlyCharsAndNoSpace=只有alphanumericals字符沒有空間
 String=弦
 Text=文本
 Int=詮釋
@@ -137,6 +130,8 @@ AddSubscription=添加訂閱
 ShowSubscription=顯示訂閱
 MemberModifiedInDolibarr=會員修改Dolibarr
 SendAnEMailToMember=向會員發送信息的電子郵件
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=電郵題目會員autosubscription
 DescADHERENT_AUTOREGISTER_MAIL=電子郵箱會員autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=電郵題目會員驗證
@@ -147,23 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=電郵題目會員resiliation
 DescADHERENT_MAIL_RESIL=電子郵箱會員resiliation
 DescADHERENT_MAIL_FROM=發件人的電子郵件自動電子郵件
 DescADHERENT_ETIQUETTE_TYPE=標簽的格式頁
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
 DescADHERENT_CARD_TYPE=卡的格式頁
 DescADHERENT_CARD_HEADER_TEXT=文字印在會員卡頂部
 DescADHERENT_CARD_TEXT=文字印在（會員卡，左對齊）
 DescADHERENT_CARD_TEXT_RIGHT=文字印在（會員卡對齊右）
 DescADHERENT_CARD_FOOTER_TEXT=文字印在會員卡的底部
-DescADHERENT_MAILMAN_LISTS=目錄（S為一個逗號分隔的新成員（自動insription））
+GlobalConfigUsedIfNotDefined=如果這裏沒有定義，將用於基礎模塊設置中定義的文本
+MayBeOverwrited=這段文字可以為成員的類型定義的值overwrited
 ShowTypeCard=顯示類型'%s'
 HTPasswordExport=htpassword文件生成
 NoThirdPartyAssociatedToMember=無關聯的第三方該會員
 ThirdPartyDolibarr=Dolibarr第三者
-MembersAndSubscriptions=議員和Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
+MembersAndSubscriptions= 議員和Subscriptions
 MoreActions=補充行動記錄
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=創建一個直接交易記錄的帳戶
 MoreActionBankViaInvoice=建立發票和付款帳戶
 MoreActionInvoiceOnly=創建一個沒有付款發票
@@ -172,19 +165,6 @@ LinkToGeneratedPagesDesc=這個屏幕允許你生成你所有的成員或某成�
 DocForAllMembersCards=成員（名片格式生成所有輸出實際上設置<b>：%s）</b>
 DocForOneMemberCards=設置<b>：%s</b>生成名片輸出實際上是一個特定的成員（格式）
 DocForLabels=生成報告表（格式輸出實際上設置<b>：%s）</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:38:45).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-MembersWithSubscriptionToReceive=接收與認購成員
-NewSubscriptionDesc=這種形式可以讓你記錄你的訂閱為基礎的新成員。如果你想續訂（如果已經是會員），請聯系，而不是通過電子郵件%s基金會董事會。
-BlankSubscriptionFormDesc=dolibarr可以為您提供一個公共URL允許外部訪問者問到訂閱的基礎。如果啟用在線支付模塊，付款方式也將被自動提供。
-EnablePublicSubscriptionForm=讓市民自動認購表格
-ImportDataset_member_1=成員
-LastSubscriptionsModified=最後%s修改訂閱
-GlobalConfigUsedIfNotDefined=如果這裏沒有定義，將用於基礎模塊設置中定義的文本
-MayBeOverwrited=這段文字可以為成員的類型定義的值overwrited
 SubscriptionPayment=認購款項
 LastSubscriptionDate=最後認購日期
 LastSubscriptionAmount=最後認購金額
@@ -216,4 +196,9 @@ Collectivités=組織
 Particuliers=個人
 Entreprises=公司
 DOLIBARRFOUNDATION_PAYMENT_FORM=為了使您的訂閱使用銀行轉帳支付，請參閱頁<a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> 。 <br>使用信用卡或PayPal支付，點擊此頁底部的按鈕。 <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:39:32).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

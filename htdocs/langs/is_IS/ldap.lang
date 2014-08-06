@@ -1,13 +1,12 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
+DomainPassword=Lykilorð fyrir lén
+YouMustChangePassNextLogon=Lykilorð fyrir <b>notandann %s  í%</b> léni <b>s</b> verður að vera breytt.
+UserMustChangePassNextLogon=Notandi verður að breyta lykilorðinu á vefnum %s
+LdapUacf_NORMAL_ACCOUNT=Aðgangi
+LdapUacf_DONT_EXPIRE_PASSWORD=Lykilorð rennur aldrei
+LdapUacf_ACCOUNTDISABLE=Reikningurinn er fatlaður í the ríki %s
+LDAPInformationsForThisContact=Upplýsingar í LDAP gagnagrunninn fyrir þennan tengilið
+LDAPInformationsForThisUser=Upplýsingar í LDAP gagnagrunninn fyrir þennan notanda
 LDAPInformationsForThisGroup=Upplýsingar í LDAP gagnagrunninn fyrir þennan hóp
 LDAPInformationsForThisMember=Upplýsingar í LDAP gagnagrunninn fyrir þennan notanda
 LDAPAttribute=LDAP eigindi
@@ -28,17 +27,3 @@ MemberSynchronized=Aðildarríkin samstilla
 ContactSynchronized=Hafðu samstilla
 ForceSynchronize=Force synchronizing Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Ekki tókst að lesa LDAP gagnagrunninn. Athugaðu LDAP mát skipulag og gagnasafn aðgengi.
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-10 01:17:11).
-// Reference language: en_US
-DomainPassword=Lykilorð fyrir lén
-YouMustChangePassNextLogon=Lykilorð fyrir <b>notandann %s  í%</b> léni <b>s</b> verður að vera breytt.
-UserMustChangePassNextLogon=Notandi verður að breyta lykilorðinu á vefnum %s 
-LdapUacf_NORMAL_ACCOUNT=Aðgangi
-LdapUacf_DONT_EXPIRE_PASSWORD=Lykilorð rennur aldrei
-LdapUacf_ACCOUNTDISABLE=Reikningurinn er fatlaður í the ríki %s 
-LDAPInformationsForThisContact=Upplýsingar í LDAP gagnagrunninn fyrir þennan tengilið
-LDAPInformationsForThisUser=Upplýsingar í LDAP gagnagrunninn fyrir þennan notanda
-// STOP - Lines generated via autotranslator.php tool (2010-07-10 01:18:15).

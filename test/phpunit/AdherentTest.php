@@ -139,12 +139,13 @@ class AdherentTest extends PHPUnit_Framework_TestCase
 
     	return $localobject->id;
     }
-    
+
     /**
      * testAdherentCreate
      *
-     * @return void
-     * 
+     * @param	int		$fk_adherent_type		Id type of member
+     * @return 	int
+     *
      * @depends	testAdherentTypeCreate
      * The depends says test is run only if previous is ok
      */

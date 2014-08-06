@@ -1,28 +1,45 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-28 13:09:36
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=Säkerhetskod
 Calendar=Kalender
 AddTrip=Lägg resa
 Tools=Verktyg
+ToolsDesc=Detta område är avsedd för gruppen diverse verktyg som inte finns i andra menyposter. <br><br> Dessa verktyg kan nås från menyn på sidan.
 Birthday=Födelsedag
 BirthdayDate=Födelsedag
 DateToBirth=Datum för födelse
-BirthdayAlertOn=födelsedag alert aktiva
-BirthdayAlertOff=födelsedag alert inaktiv
+BirthdayAlertOn= födelsedag alert aktiva
+BirthdayAlertOff= födelsedag alert inaktiv
 Notify_FICHINTER_VALIDATE=Intervention validerade
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Kundfaktura validerade
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
 Notify_ORDER_SUPPLIER_APPROVE=Leverantör för godkänd
 Notify_ORDER_SUPPLIER_REFUSE=Leverantör för vägrat
 Notify_ORDER_VALIDATE=Kundorder validerade
 Notify_PROPAL_VALIDATE=Kunden förslag validerade
+Notify_WITHDRAW_TRANSMIT=Överföring tillbakadragande
+Notify_WITHDRAW_CREDIT=Credit tillbakadragande
+Notify_WITHDRAW_EMIT=Isue tillbakadragande
+Notify_ORDER_SENTBYMAIL=Kundorder skickas per post
+Notify_COMPANY_CREATE=Tredje part som skapats
+Notify_PROPAL_SENTBYMAIL=Kommersiell förslag skickas per post
+Notify_ORDER_SENTBYMAIL=Kundorder skickas per post
+Notify_BILL_PAYED=Kundfaktura betalade
+Notify_BILL_CANCEL=Kundfaktura avbryts
+Notify_BILL_SENTBYMAIL=Kundfaktura skickas per post
+Notify_ORDER_SUPPLIER_VALIDATE=Leverantör för validerade
+Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverantör beställning skickas per post
+Notify_BILL_SUPPLIER_VALIDATE=Leverantörsfaktura validerade
+Notify_BILL_SUPPLIER_PAYED=Leverantörsfaktura betalas
+Notify_BILL_SUPPLIER_SENTBYMAIL=Leverantör faktura skickas per post
+Notify_CONTRACT_VALIDATE=Kontrakt validerade
+Notify_FICHEINTER_VALIDATE=Intervention validerade
+Notify_SHIPPING_VALIDATE=Frakt validerade
+Notify_SHIPPING_SENTBYMAIL=Leverans skickas per post
+Notify_MEMBER_VALIDATE=Medlem validerade
+Notify_MEMBER_SUBSCRIPTION=Medlem tecknat
+Notify_MEMBER_RESILIATE=Medlem resiliated
+Notify_MEMBER_DELETE=Elementet bort
 NbOfAttachedFiles=Antal bifogade filer / dokument
 TotalSizeOfAttachedFiles=Total storlek på bifogade filer / dokument
 MaxSize=Maximal storlek
@@ -30,8 +47,16 @@ AttachANewFile=Bifoga en ny fil / dokument
 LinkedObject=Länkat objekt
 Miscellaneous=Diverse
 NbOfActiveNotifications=Antal anmälningar
-PredefinedMailTest=Detta är en test post. \ NDet två linjerna är åtskilda av en vagnretur.
+PredefinedMailTest=Detta är en test post. \\ NDet två linjerna är åtskilda av en vagnretur.
 PredefinedMailTestHtml=Detta är en <b>test</b> post (ordet Provningen skall i fetstil). <br> De två linjerna är åtskilda av en vagnretur.
+PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Här hittar du fakturan __FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Vi vill varna dig för att fakturan __FACREF__ verkar inte betalt. Så detta är fakturan i bilagan igen, som en påminnelse. \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Här hittar du den kommersiella propoal __PROPREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Här hittar du den ordning __ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Här hittar du vårt beställningsformulär __ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Här hittar du fakturan __FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Här hittar du sjöfarten __SHIPPINGREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
+PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Här hittar du insatsen __FICHINTERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
 DemoDesc=Dolibarr är en kompakt ERP / CRM består av flera funktionella moduler. En demo som inkluderar alla moduler inte betyder något som detta inträffar aldrig. Så, flera demo profiler finns tillgängliga.
 ChooseYourDemoProfil=Välj demo profil som matchar din aktivitet ...
 DemoFundation=Hantera medlemmar av en stiftelse
@@ -56,6 +81,10 @@ FeaturesSupported=Funktioner som stöds
 Width=Bredd
 Height=Höjd
 Depth=Djup
+Top=Topp
+Bottom=Botten
+Left=Vänster
+Right=Höger
 CalculatedWeight=Beräknad vikt
 CalculatedVolume=Beräknade volymen
 Weight=Vikt
@@ -75,12 +104,16 @@ SurfaceUnitm2=m2
 SurfaceUnitdm2=dm2
 SurfaceUnitcm2=cm2
 SurfaceUnitmm2=mm2
+# SurfaceUnitfoot2=ft2
+# SurfaceUnitinch2=in2
 Volume=Volym
 TotalVolume=Total volym
 VolumeUnitm3=m3
 VolumeUnitdm3=dm3
 VolumeUnitcm3=cm3
 VolumeUnitmm3=mm3
+# VolumeUnitfoot3=ft3
+# VolumeUnitinch3=in3
 VolumeUnitounce=uns
 VolumeUnitlitre=liter
 VolumeUnitgallon=gallon
@@ -91,6 +124,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=tum
 SizeUnitfoot=fot
+# SizeUnitpoint=point
 BugTracker=Bug tracker
 SendNewPasswordDesc=Denna blankett kan du begära ett nytt lösenord. Det kommer att skickas till din e-postadress. <br> Förändring kommer att ha verkan först efter att klicka på bekräftelse länk inne i den här e-postmeddelandet. <br> Kontrollera dina program e läsare.
 BackToLoginPage=Tillbaka till inloggningssidan
@@ -104,10 +138,12 @@ StatsByNumberOfEntities=Statistik på antalet nationella enheter
 NumberOfProposals=Antal förslag om senaste 12 månaderna
 NumberOfCustomerOrders=Antal kundorder på senaste 12 månaderna
 NumberOfCustomerInvoices=Antal kundfakturor den senaste 12 månaderna
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Antal leverantörsfakturor på senaste 12 månaderna
 NumberOfUnitsProposals=Antal enheter på förslag om senaste 12 månaderna
 NumberOfUnitsCustomerOrders=Antal enheter på kundens order på senaste 12 månaderna
 NumberOfUnitsCustomerInvoices=Antal enheter på kundernas fakturor senaste 12 månaderna
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Antal enheter på leverantörsfakturor på senaste 12 månaderna
 EMailTextInterventionValidated=Interventionen %s har validerats.
 EMailTextInvoiceValidated=Fakturan %s har validerats.
@@ -117,6 +153,7 @@ EMailTextOrderApproved=Ordern %s har godkänts.
 EMailTextOrderApprovedBy=Ordern %s har godkänts av %s.
 EMailTextOrderRefused=Ordern %s har avslagits.
 EMailTextOrderRefusedBy=Ordern %s har avslagits %s.
+# EMailTextExpeditionValidated=The shipping %s has been validated.
 ImportedWithSet=Import dataunderlaget
 DolibarrNotification=Automatisk anmälan
 ResizeDesc=Ange nya <b>bredd</b> eller ny höjd. Förhållandet kommer att hållas under storleksändring ...
@@ -128,9 +165,24 @@ CurrentInformationOnImage=Detta verktyg har utformats för att hjälpa dig att �
 ImageEditor=Bildredigerare
 YouReceiveMailBecauseOfNotification=Du får detta meddelande eftersom din e-post har lagts till i förteckningen över de mål som skall informeras om särskilda händelser i %s programvara %s.
 YouReceiveMailBecauseOfNotification2=Denna händelse är följande:
-LoginWebcal=Logga in för WebCalendar
-ErrorWebcalLoginNotDefined=Den WebCalendar inloggning associerade till din Dolibarr inloggning <b>%s</b> definieras inte.
-ErrorPhenixLoginNotDefined=Den Phenix inloggning associerade till din Dolibarr inloggning <b>%s</b> definieras inte.
+ThisIsListOfModules=Detta är en lista över moduler förvalda genom denna demo profil (endast vanligaste modulerna är synas i denna demo). Redigera den här att ha en mer personlig demo och klicka på &quot;Start&quot;.
+ClickHere=Klicka här
+UseAdvancedPerms=Använd den avancerade behörigheter för vissa moduler
+FileFormat=Filformat
+SelectAColor=Välj en färg
+AddFiles=Lägg till filer
+StartUpload=Starta upp
+CancelUpload=Avbryt upp
+FileIsTooBig=Filer är för stor
+PleaseBePatient=Ha tålamod ...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
 AddCalendarEntry=Lägg till post i kalendern %s
 NewCompanyToDolibarr=Företag %s la till Dolibarr
 ContractValidatedInDolibarr=Kontrakt %s validerats i Dolibarr
@@ -149,6 +201,10 @@ MemberValidatedInDolibarr=Medlem %s validerats i Dolibarr
 MemberResiliatedInDolibarr=Medlem %s resiliated i Dolibarr
 MemberDeletedInDolibarr=Medlem %s bort från Dolibarr
 MemberSubscriptionAddedInDolibarr=Teckning av medlem %s till i Dolibarr
+ShipmentValidatedInDolibarr=Transport %s validerats i Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
+Export=Exportera
 ExportsArea=Export område
 AvailableFormats=Tillgängliga format
 LibraryUsed=Librairy används
@@ -157,61 +213,5 @@ ExportableDatas=Exporteras data
 NoExportableData=Inga exporteras data (ingen moduler med exporteras laddats uppgifter, eller behörigheter som saknas)
 ToExport=Export
 NewExport=Nya exportmöjligheter
+##### External sites #####
 ExternalSites=Externa webbplatser
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:55).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sv_SE
-ToolsDesc=Detta område är avsedd för gruppen diverse verktyg som inte finns i andra menyposter. <br><br> Dessa verktyg kan nås från menyn på sidan.
-Notify_WITHDRAW_TRANSMIT=Överföring tillbakadragande
-Notify_WITHDRAW_CREDIT=Credit tillbakadragande
-Notify_WITHDRAW_EMIT=Isue tillbakadragande
-Notify_ORDER_SENTBYMAIL=Kundorder skickas per post
-Notify_COMPANY_CREATE=Tredje part som skapats
-Notify_ORDER_SUPPLIER_VALIDATE=Leverantör för validerade
-Notify_ORDER_SUPPLIER_SENTBYMAIL=Leverantör beställning skickas per post
-Notify_BILL_SUPPLIER_VALIDATE=Leverantörsfaktura validerade
-Notify_BILL_SUPPLIER_PAYED=Leverantörsfaktura betalas
-Notify_BILL_SUPPLIER_SENTBYMAIL=Leverantör faktura skickas per post
-Notify_CONTRACT_VALIDATE=Kontrakt validerade
-Notify_FICHEINTER_VALIDATE=Intervention validerade
-Notify_SHIPPING_VALIDATE=Frakt validerade
-Notify_SHIPPING_SENTBYMAIL=Leverans skickas per post
-Notify_MEMBER_VALIDATE=Medlem validerade
-Top=Topp
-Bottom=Botten
-Left=Vänster
-Right=Höger
-ThisIsListOfModules=Detta är en lista över moduler förvalda genom denna demo profil (endast vanligaste modulerna är synas i denna demo). Redigera den här att ha en mer personlig demo och klicka på &quot;Start&quot;.
-ClickHere=Klicka här
-UseAdvancedPerms=Använd den avancerade behörigheter för vissa moduler
-FileFormat=Filformat
-SelectAColor=Välj en färg
-AddFiles=Lägg till filer
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:08:05).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-Notify_PROPAL_SENTBYMAIL=Kommersiell förslag skickas per post
-Notify_BILL_PAYED=Kundfaktura betalade
-Notify_BILL_CANCEL=Kundfaktura avbryts
-Notify_BILL_SENTBYMAIL=Kundfaktura skickas per post
-Notify_MEMBER_SUBSCRIPTION=Medlem tecknat
-Notify_MEMBER_RESILIATE=Medlem resiliated
-Notify_MEMBER_DELETE=Elementet bort
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Här hittar du fakturan __FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Vi vill varna dig för att fakturan __FACREF__ verkar inte betalt. Så detta är fakturan i bilagan igen, som en påminnelse. \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n Här hittar du den kommersiella propoal __PROPREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendOrder=__CONTACTCIVNAME__ \n\n Här hittar du den ordning __ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendSupplierOrder=__CONTACTCIVNAME__ \n\n Här hittar du vårt beställningsformulär __ORDERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__ \n\n Här hittar du fakturan __FACREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendShipping=__CONTACTCIVNAME__ \n\n Här hittar du sjöfarten __SHIPPINGREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-PredefinedMailContentSendFichInter=__CONTACTCIVNAME__ \n\n Här hittar du insatsen __FICHINTERREF__ \n\n__PERSONALIZED__ Sincerely \n\n__SIGNATURE__
-StartUpload=Starta upp
-CancelUpload=Avbryt upp
-FileIsTooBig=Filer är för stor
-ShipmentValidatedInDolibarr=Transport %s validerats i Dolibarr
-Export=Exportera
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:07).

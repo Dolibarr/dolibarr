@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ if ($action == "save")
 	}
 
 	$db->commit();
-	$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	setEventMessage($langs->trans("SetupSaved"));
 }
 
 
@@ -115,10 +116,6 @@ print "</center>";
 print "</form>\n";
 
 print '</div>';
-
-
-dol_htmloutput_mesg($mesg);
-
 
 $db->close();
 

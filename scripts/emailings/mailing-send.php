@@ -32,12 +32,12 @@ $path=dirname(__FILE__).'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
     echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-    exit;
+	exit(-1);
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
 	print "Usage: ".$script_file." (ID_MAILING|all)\n";
-	exit;
+	exit(-1);
 }
 $id=$argv[1];
 
@@ -45,7 +45,19 @@ require_once ($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
 
 
-$error = 0;
+// Global variables
+$version=DOL_VERSION;
+$error=0;
+
+
+
+/*
+ * Main
+ */
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+
 
 
 // We get list of emailing to process
@@ -215,7 +227,7 @@ if ($resql)
 										$error++;
 									}
 
-					    //Update status communication of contact prospect
+					    			//Update status communication of contact prospect
 									$sqlx = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=2 WHERE rowid IN (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."socpeople AS sc INNER JOIN ".MAIN_DB_PREFIX."mailing_cibles AS mc ON mc.rowid=".$obj2->rowid." AND mc.source_type = 'contact' AND mc.source_id = sc.rowid)";
 									dol_syslog("fiche.php: set prospect contact status sql=".$sql, LOG_DEBUG);
 

@@ -80,9 +80,9 @@ if (! empty($conf->contrat->enabled))
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAContract").'</td></tr>';
 	print '<tr '.$bc[$var].'>';
-	print '<td nowrap>'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
+	print '<td class="nowrap">'.$langs->trans("Ref").':</td><td><input type="text" class="flat" name="search_contract" size="18"></td>';
 	print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-	print '<tr '.$bc[$var].'><td nowrap>'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
+	print '<tr '.$bc[$var].'><td class="nowrap">'.$langs->trans("Other").':</td><td><input type="text" class="flat" name="sall" size="18"></td>';
 	print '</tr>';
 	print "</table></form>\n";
 	print "<br>";
@@ -255,7 +255,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 			while ($i < $num && $i < 20)
 			{
 				$obj = $db->fetch_object($resql);
-				print '<tr '.$bc[$var].'><td nowrap>';
+				print '<tr '.$bc[$var].'><td class="nowrap">';
 				$staticcontrat->ref=$obj->ref;
 				$staticcontrat->id=$obj->rowid;
 				print $staticcontrat->getNomUrl(1,'');

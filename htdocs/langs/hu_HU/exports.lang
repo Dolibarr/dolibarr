@@ -1,13 +1,4 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:13:31
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Az export területén
 ImportArea=Import terület
 NewExport=Új export
@@ -73,7 +64,7 @@ ChooseFormatOfFileToImport=Válasszon fájlformátumot használni import fájl f
 ChooseFileToImport=Fájl feltöltése majd kattintson a Picto %s, hogy válasszon ki egy fájlt forrásként import file ...
 SourceFileFormat=Forrás fájlformátum
 FieldsInSourceFile=Mezői forrásfájlban
-FieldsInTargetDatabase=Cél mező Dolibarr adatbázis (* = kötelező)
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=Mező
 NoFields=Nem mezők
 MoveField=Mező áthelyezése oszlop száma %s
@@ -120,4 +111,20 @@ SourceExample=Példa lehet az adatok értékét
 ExampleAnyRefFoundIntoElement=Minden ref talált elem <b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=Bármely kód (vagy azonosító) találtak a dictionnary <b>%s</b>
 CSVFormatDesc=<b>Vesszővel elválasztott</b> fájlformátum (. Csv). <br> Ez egy szöveges fájl formátum ahol a mezők egymástól elválasztó [%s]. Ha az elválasztó belsejében található egy mező tartalmát, mező kerekíteni kerek karakter [%s]. Escape karakter menekülni kerek karakter [%s].
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:17:53).
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=Bank kódja
+DeskCode=Íróasztal kód
+BankAccountNumber=Számlaszám
+BankAccountNumberKey=Kulcs
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

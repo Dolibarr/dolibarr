@@ -1,6 +1,5 @@
-# Dolibarr language file - es_ES - holiday
-CHARSET= UTF-8
-
+# Dolibarr language file - Source file is en_US - holiday
+HRM=RRHH
 Holidays=Vacaciones
 CPTitreMenu=Vacaciones
 MenuReportMonth=Estado mensual
@@ -79,7 +78,6 @@ MenuLogCP=Ver los logs de vacaciones
 LogCP=Logs de actualizaciones de vacaciones
 ActionByCP=Realizado por
 UserUpdateCP=Para el usuario
-ActionTypeCP=Tipo
 PrevSoldeCP=Saldo anterior
 NewSoldeCP=Nuevo saldo
 alreadyCPexist=Ya se ha efectuado una petición de vacaciones para este periodo.
@@ -87,10 +85,9 @@ UserName=Nombre Apellidos
 Employee=Empleado
 FirstDayOfHoliday=Primer día libre
 LastDayOfHoliday=Último día libre
-Morning=Mañana
-Afternoon=Tarde
 HolidaysMonthlyUpdate=Actualización mensual
 ManualUpdate=Actualización manual
+HolidaysCancelation=Anulación vacaciones
 
 ## Configuration du Module ##
 ConfCP=Configuración del módulo Vacaciones
@@ -103,12 +100,14 @@ UpdateConfCPOK=Actualización efectuada correctamente.
 ErrorUpdateConfCP=Se ha producido un error durante la actualización, vuélvalo a intentar.
 AddCPforUsers=Añada los saldos de vacaciones de los usuarios <a href="../define_holiday.php" style="font-weight: normal; color: red; text-decoration: underline;">haciendo clic aquí</a>.
 DelayForSubmitCP=Antelación mínima para solicitar vacaciones
+AlertapprobatortorDelayCP=Advertir al validador si la petición no corresponde a la fecha límite
 AlertValidatorDelayCP=Advertir al usuario validador si la petición no respeta el límite previsto
 AlertValidorSoldeCP=Advertir al usuario validador si el usuario pide vacaciones superiores a su saldo
 nbUserCP=Número de usuarios tomados en cuenta en el módulo vacaciones
 nbHolidayDeductedCP=Número de días retribuídos a deducir por día de vacaciones
 nbHolidayEveryMonthCP=Número de vacaciones añadidas por mes
-Module27130Name=Gestion de las vacaciones
+Module27130Name= Gestion de las vacaciones
+Module27130Desc= Gestión de días libres
 TitleOptionMainCP=Ajustes principales de vacaciones
 TitleOptionEventCP=Ajustes de vacaciones enlazados a eventos
 ValidEventCP=Validar

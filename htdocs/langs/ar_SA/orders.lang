@@ -1,22 +1,14 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=أوامر منطقة العملاء
 SuppliersOrdersArea=الموردين أوامر المنطقة
 OrderCard=من أجل بطاقة
+# OrderId=Order Id
 Order=ترتيب
 Orders=أوامر
 OrderLine=من أجل خط
 OrderFollow=متابعة
 OrderDate=من أجل التاريخ
+OrderToProcess=من أجل عملية
 NewOrder=النظام الجديد
 ToOrder=ومن أجل جعل
 MakeOrder=ومن أجل جعل
@@ -31,12 +23,16 @@ OrdersToValid=أوامر صالحة
 OrdersToBill=أوامر لمشروع قانون
 OrdersInProcess=الأوامر في عملية
 OrdersToProcess=أوامر لعملية
+SuppliersOrdersToProcess=المورد أوامر لمعالجة
 StatusOrderCanceledShort=ألغى
 StatusOrderDraftShort=مسودة
 StatusOrderValidatedShort=صادق
+StatusOrderSentShort=في عملية
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=على عملية
 StatusOrderProcessedShort=تجهيز
 StatusOrderToBillShort=على مشروع قانون
+StatusOrderToBill2Short=على مشروع قانون
 StatusOrderApprovedShort=وافق
 StatusOrderRefusedShort=رفض
 StatusOrderToProcessShort=لعملية
@@ -48,30 +44,34 @@ StatusOrderValidated=صادق
 StatusOrderOnProcess=على عملية
 StatusOrderProcessed=تجهيز
 StatusOrderToBill=على مشروع قانون
+StatusOrderToBill2=على مشروع قانون
 StatusOrderApproved=وافق
 StatusOrderRefused=رفض
 StatusOrderReceivedPartially=تلقى جزئيا
 StatusOrderReceivedAll=وتلقى كل شيء
+ShippingExist=شحنة موجود
 DraftOrWaitingApproved=الموافقة على مشروع أو لم يأمر بعد
 DraftOrWaitingShipped=مشروع مصادق عليه أو لم تشحن
 MenuOrdersToBill=أوامر لمشروع قانون
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=من أجل البحث
-Sending=إرسال
-Sendings=الإرسال
 ShipProduct=سفينة المنتج
 Discount=الخصم
 CreateOrder=خلق أمر
 RefuseOrder=رفض النظام
 ApproveOrder=قبول النظام
 ValidateOrder=من أجل التحقق من صحة
+UnvalidateOrder=Unvalidate النظام
 DeleteOrder=من أجل حذف
 CancelOrder=من أجل إلغاء
 AddOrder=من أجل إضافة
 AddToMyOrders=أضف إلى أوامر
 AddToOtherOrders=إضافة إلى أوامر أخرى
+# AddToDraftOrders=Add to draft order
 ShowOrder=وتبين من أجل
 NoOpenedOrders=أي أوامر فتح
 NoOtherOpenedOrders=أي أوامر فتح
+# NoDraftOrders=No draft orders
 OtherOrders=أوامر أخرى
 LastOrders=ق الماضي أوامر ٪
 LastModifiedOrders=آخر تعديل أوامر ق ٪
@@ -81,16 +81,18 @@ NbOfOrders=عدد الأوامر
 OrdersStatistics=أوامر إحصاءات
 OrdersStatisticsSuppliers=المورد أوامر إحصاءات
 NumberOfOrdersByMonth=عدد أوامر الشهر
-AmountOfOrdersByMonthHT=مبلغ أوامر الشهر (بعد خصم الضريبة)
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=قائمة الأوامر
 CloseOrder=وثيق من أجل
 ConfirmCloseOrder=هل أنت متأكد من أجل اقفال هذا؟ مرة واحدة أمر قد انتهى ، فإنه لا يمكن إلا أن يكون فواتير.
 ConfirmCloseOrderIfSending=هل أنت متأكد من أجل اقفال هذا؟ يجب عليك أمر وثيق إلا عندما يتم شحن جميع.
 ConfirmDeleteOrder=هل أنت متأكد من أنك تريد حذف هذا النظام؟
 ConfirmValidateOrder=هل أنت متأكد أنك تريد التحقق من صحة هذا الأمر تحت اسم <b>٪ ق؟</b>
+ConfirmUnvalidateOrder=هل أنت متأكد أنك تريد استعادة <b>%s</b> أجل وضع مشروع؟
 ConfirmCancelOrder=هل أنت متأكد من أنك تريد إلغاء هذا النظام؟
 ConfirmMakeOrder=هل أنت متأكد من أن يؤكد لك هذا النظام على <b>٪ ق؟</b>
 GenerateBill=توليد الفاتورة
+# ClassifyShipped=Classify delivered
 ClassifyBilled=تصنيف "فواتير"
 ComptaCard=بطاقة المحاسبة
 DraftOrders=مشروع أوامر
@@ -111,27 +113,8 @@ UserWithApproveOrderGrant=مع منح المستخدمين "الموافقة ع�
 PaymentOrderRef=من أجل دفع ق ٪
 CloneOrder=استنساخ النظام
 ConfirmCloneOrder=هل أنت متأكد من أن هذا الأمر استنساخ <b>٪ ق؟</b>
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=لم تعرف COMMANDE_SUPPLIER_ADDON مستمر
-Error_COMMANDE_ADDON_NotDefined=لم تعرف COMMANDE_ADDON مستمر
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=لم يتم تحميل الملف وحدة '٪ ق'
-Error_FailedToLoad_COMMANDE_ADDON_File=لم يتم تحميل الملف وحدة '٪ ق'
-OrderSource0=اقتراح التجارية
-OrderSource1=الإنترنت
-OrderSource2=حملة بريدية
-OrderSource3=الهاتف compain
-OrderSource4=حملة الفاكس
-OrderSource5=التجارية
-OrderSource6=مخزن
-QtyOrdered=الكمية أمرت
-AddDeliveryCostLine=تضاف تكلفة توصيل خط يبين الوزن من أجل
-PDFEinsteinDescription=من أجل نموذج كامل (logo...)
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:13:51).
-// Reference language: en_US
-OrderToProcess=من أجل عملية
+DispatchSupplierOrder=%s استقبال النظام مورد
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=ممثل العميل متابعة النظام
 TypeContact_commande_internal_SHIPPING=ممثل الشحن متابعة
 TypeContact_commande_external_BILLING=الزبون فاتورة الاتصال
@@ -142,27 +125,42 @@ TypeContact_order_supplier_internal_SHIPPING=ممثل الشحن متابعة
 TypeContact_order_supplier_external_BILLING=المورد فاتورة الاتصال
 TypeContact_order_supplier_external_SHIPPING=المورد الشحن الاتصال
 TypeContact_order_supplier_external_CUSTOMER=المورد الاتصال أجل متابعة
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=لم تعرف COMMANDE_SUPPLIER_ADDON مستمر
+Error_COMMANDE_ADDON_NotDefined=لم تعرف COMMANDE_ADDON مستمر
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=لم يتم تحميل الملف وحدة '٪ ق'
+Error_FailedToLoad_COMMANDE_ADDON_File=لم يتم تحميل الملف وحدة '٪ ق'
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
+OrderSource0=اقتراح التجارية
+OrderSource1=الإنترنت
+OrderSource2=حملة بريدية
+OrderSource3=الهاتف compain
+OrderSource4=حملة الفاكس
+OrderSource5=التجارية
+OrderSource6=مخزن
+QtyOrdered=الكمية أمرت
+AddDeliveryCostLine=تضاف تكلفة توصيل خط يبين الوزن من أجل
+
+# Documents models
+PDFEinsteinDescription=من أجل نموذج كامل (logo...)
 PDFEdisonDescription=نموذج النظام بسيطة
-PDFQuevedoDescription=نموذج النظام الكامل مع الطاقة المتجددة الاسبانية وIRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:13:54).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ar_AR
-DispatchSupplierOrder=%s استقبال النظام مورد
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:33:59).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-SuppliersOrdersToProcess=المورد أوامر لمعالجة
-StatusOrderSentShort=في عملية
-ShippingExist=شحنة موجود
-UnvalidateOrder=Unvalidate النظام
-ConfirmUnvalidateOrder=هل أنت متأكد أنك تريد استعادة <b>%s</b> أجل وضع مشروع؟
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=بريد
 OrderByFax=الفاكس
 OrderByEMail=بريد إلكتروني
 OrderByWWW=على الانترنت
 OrderByPhone=هاتف
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:55:47).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

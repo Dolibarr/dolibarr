@@ -1,14 +1,13 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaners.at
- * Generation date 2010-11-12 18:09:12
- */
-
-
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - main
 DIRECTION=ltr
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
+FONTFORPDF=helvetica
+FONTSIZEFORPDF=10
 SeparatorDecimal=,
-SeparatorThousand=.
+SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy

@@ -63,16 +63,14 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 			$url = $shorturl = $newTabMenu[$i]['url'];
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				$param='';
-				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url))
-				{
-					if (! preg_match('/\?/',$url)) $param.='?';
-					else $param.='&';
-					$param.='mainmenu='.$newTabMenu[$i]['mainmenu'].'&leftmenu=';
-				}
+				$tmp=explode('?',$newTabMenu[$i]['url'],2);
+				$url = $shorturl = $tmp[0];
+				$param = (isset($tmp[1])?$tmp[1]:'');
+
+				if (! preg_match('/mainmenu/i',$url) || ! preg_match('/leftmenu/i',$url)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
-				$url=dol_buildpath($url,1).$param;
-				$shorturl = $newTabMenu[$i]['url'].$param;
+				$url = dol_buildpath($url,1).($param?'?'.$param:'');
+				$shorturl = $shorturl.($param?'?'.$param:'');
 			}
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
 			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
@@ -91,6 +89,10 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 		if (empty($noout)) print_end_menu_entry_auguria($showmode);
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target']?$newTabMenu[$i]['target']:$atarget), ($newTabMenu[$i]['mainmenu']?$newTabMenu[$i]['mainmenu']:$newTabMenu[$i]['rowid']), '');
 	}
+
+	$showmode=1;
+	if (empty($noout)) print_start_menu_entry_auguria('','class="tmenuend"',$showmode);
+	if (empty($noout)) print_end_menu_entry_auguria($showmode);
 
 	if (empty($noout)) print_end_menu_array_auguria();
 
@@ -155,7 +157,7 @@ function print_text_menu_entry_auguria($text, $showmode, $url, $id, $idsel, $cla
 	}
 	if ($showmode == 2)
 	{
-		print '<div class="'.$id.' '.$idsel.'"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
+		print '<div class="'.$id.' '.$idsel.' tmenudisabled"><span class="'.$id.'" id="mainmenuspan_'.$idsel.'"></span></div>';
 		print '<a class="tmenudisabled" id="mainmenua_'.$idsel.'" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">';
 		print '<span class="mainmenuaspan">';
 		print $text;
@@ -246,15 +248,15 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND clos = 0";
 		$sql.= " ORDER BY label";
-	
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$numr = $db->num_rows($resql);
 			$i = 0;
-	
+
 			if ($numr > 0) 	$newmenu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
-	
+
 			while ($i < $numr)
 			{
 				$objp = $db->fetch_object($resql);
@@ -281,14 +283,14 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			if (! empty($conf->global->$paramkey))
 			{
 				$link="/ftp/index.php?idmenu=".$_SESSION["idmenu"]."&numero_ftp=".$i;
-		
+
 				$newmenu->add($link, dol_trunc($conf->global->$paramkey,24));
 			}
 			$i++;
 		}
-	}	
+	}
 
-	
+
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
 	//var_dump($menu_array_before);exit;
 	//var_dump($menu_array_after);exit;
@@ -346,7 +348,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			}
 
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].' -->'."\n";
-				
+
 			// Menu niveau 0
 			if ($menu_array[$i]['level'] == 0)
 			{

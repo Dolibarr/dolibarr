@@ -75,7 +75,7 @@ if (GETPOST('action','alpha')=='install')
 		$result=dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'],$newfile,1,0,$_FILES['fileinstall']['error']);
 		if ($result > 0)
 		{
-			$documentrootalt=DOL_DOCUMENT_ROOT_ALT;
+			$documentrootalt=DOL_DOCUMENT_ROOT.'/extensions';
 			$result=dol_uncompress($newfile,$documentrootalt);
 			if (! empty($result['error']))
 			{
@@ -95,7 +95,7 @@ if (GETPOST('action','alpha')=='install')
  * View
  */
 
-$dirins=DOL_DOCUMENT_ROOT_ALT;
+$dirins=DOL_DOCUMENT_ROOT.'/extensions';
 $dirins_ok=(is_dir($dirins));
 
 $wikihelp='EN:Installation_-_Upgrade|FR:Installation_-_Mise_à_jour|ES:Instalación_-_Actualización';
@@ -141,7 +141,7 @@ print '<b>'.$langs->trans("StepNb",3).'</b>: ';
 print $langs->trans("UnpackPackageInDolibarrRoot",$dolibarrroot).'<br>';
 if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 {
-	if ($dirins_ok && $dirins != 'DOL_DOCUMENT_ROOT_ALT')
+	if ($dirins_ok)
 	{
 		print '<form enctype="multipart/form-data" method="POST" class="noborder" action="'.$_SERVER["PHP_SELF"].'" name="forminstall">';
 		print '<input type="hidden" name="action" value="install">';
@@ -151,8 +151,8 @@ if (! empty($conf->global->MAIN_ONLINE_INSTALL_MODULE))
 	}
 	else
 	{
-		$message=info_admin($langs->trans("NotExistsDirect").$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
-		print $message;
+		$message=info_admin($langs->trans("NotExistsDirect",$dirins).$langs->trans("InfDirAlt").$langs->trans("InfDirExample"));
+		print '<div class="warning">'.$message.'</div>';
 	}
 }
 else

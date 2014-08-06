@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
 Deliveries=Доставки
 DeliveryCard=Карточка доставки
@@ -26,11 +16,10 @@ DeleteDeliveryReceiptConfirm=Вы действительно хотите уда
 DeliveryMethod=Способ доставки
 TrackingNumber=Номер отправления
 DeliveryNotValidated=Доставка не подтверждена
+# merou PDF model
 NameAndSignature=Имя и подпись:
 ToAndDate=Получатель ___________________________________ доставлено ____ / _____ / __________
 GoodStatusDeclaration=Указанные выше товары получены в надлежащем состоянии,
 Deliverer=Доставщик:
 Sender=Отправитель
 Recipient=Получатель
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser

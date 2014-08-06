@@ -44,7 +44,7 @@ class modAgenda extends DolibarrModules
 	function __construct($db)
 	{
 		global $conf;
-		
+
 		$this->db = $db;
 		$this->numero = 2400;
 
@@ -74,6 +74,7 @@ class modAgenda extends DolibarrModules
 		// Constantes
 		//-----------
 		$this->const = array();
+		$this->const[15] = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_SENTBYMAIL","chaine","1");
 		$this->const[0]  = array("MAIN_AGENDA_ACTIONAUTO_COMPANY_CREATE","chaine","1");
         $this->const[1]  = array("MAIN_AGENDA_ACTIONAUTO_CONTRACT_VALIDATE","chaine","1");
         $this->const[2]  = array("MAIN_AGENDA_ACTIONAUTO_PROPAL_VALIDATE","chaine","1");
@@ -166,7 +167,7 @@ class modAgenda extends DolibarrModules
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
-		
+
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
@@ -367,7 +368,7 @@ class modAgenda extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]="ExportDataset_event1";
 		$this->export_permission[$r]=array(array("agenda","export"));
-		$this->export_fields_array[$r]=array('a.id'=>'IdAgenda','a.label'=>'Actions','a.datep'=>'DateActionStart',
+		$this->export_fields_array[$r]=array('a.id'=>'IdAgenda','a.label'=>'Title','a.datep'=>'DateActionStart',
 		'a.datea'=>'DateActionEnd','a.percent'=>'PercentDone','a.fk_user_author'=>'ActionAskedBy','a.fk_user_action'=>'ActionAffectedTo',
 		'a.fk_user_done'=>"ActionDoneBy","a.priority"=>"Priority","a.fulldayevent"=>"EventOnFullDay","a.location"=>"Location",
 		"a.fk_soc"=>"ThirdParty","a.fk_contact"=>"ThirdPartyContact","a.fk_action"=>"Type");
@@ -376,7 +377,7 @@ class modAgenda extends DolibarrModules
 		'a.datea'=>'Date','a.datea2'=>'Date','a.percent'=>'Numeric','a.fk_user_author'=>'List:user:name','a.fk_user_action'=>'List:user:name',
 		'a.fk_user_done'=>"List:user:name","a.priority"=>"Numeric","a.fulldayevent"=>"Boolean","a.location"=>"Text",
 		"a.fk_soc"=>"List:Societe:nom","a.fk_contact"=>"List:socpeople:name","a.fk_action"=>"List:c_actioncomm:libelle:code");
-		
+
 		$this->export_entities_array[$r]=array('a.id'=>'action','a.label'=>'action','a.datep'=>'action','a.datep2'=>'action',
 		'a.datea'=>'action','a.datea2'=>'action','a.percent'=>'action','a.fk_user_author'=>'action','a.fk_user_action'=>'action',
 		'a.fk_user_done'=>"action","a.priority"=>"action","a.fulldayevent"=>"action","a.location"=>"action",

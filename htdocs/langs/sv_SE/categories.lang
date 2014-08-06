@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Kategori
 Categories=Kategorier
 Rubrique=Kategori
@@ -25,6 +16,7 @@ SuppliersCategoriesArea=Leverantörer kategorier område
 CustomersCategoriesArea=Kunder kategorier område
 ThirdPartyCategoriesArea=Tredje part kategorier område
 MembersCategoriesArea=Medlemmar kategorier område
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Huvudkategorier
 SubCats=Underkategorier
 CatStatistics=Statistik
@@ -58,12 +50,15 @@ SupplierIsInCategories=Tredje part är att följande leverantörer kategorier
 CompanyIsInCustomersCategories=Denna tredje part äger att följande kunder / utsikter kategorier
 CompanyIsInSuppliersCategories=Denna tredje part äger att följande leverantörer kategorier
 MemberIsInCategories=Denna medlem äger till följande medlemmar kategorier
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Denna produkt / tjänst är inte på något kategorier
 SupplierHasNoCategory=Denna leverantör är inte på något kategorier
 CompanyHasNoCategory=Detta företag är inte på något kategorier
 MemberHasNoCategory=Denna medlem är inte på något kategorier
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Klassificera i kategorin
 NoneCategory=Ingen
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Denna kategori finns redan med denna ref
 ReturnInProduct=Tillbaka till produkt / tjänst kort
 ReturnInSupplier=Tillbaka till leverantör kort
@@ -86,10 +81,12 @@ CustomersCategoriesShort=Kunder kategorier
 CustomersProspectsCategoriesShort=Custo. / kommande utvecklingen. kategorier
 ProductsCategoriesShort=Produkter kategorier
 MembersCategoriesShort=Medlemmar kategorier
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Denna kategori innehåller inte någon produkt.
 ThisCategoryHasNoSupplier=Denna kategori innehåller inte någon leverantör.
 ThisCategoryHasNoCustomer=Denna kategori innehåller inte någon kund.
 ThisCategoryHasNoMember=Denna kategori innehåller inte någon medlem.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Avsatta till en kund
 AssignedToTheCustomer=Avsatta till kunden
 InternalCategory=Intern kategori
@@ -99,4 +96,12 @@ CatSupList=Lista över leverantör kategorier
 CatCusList=Förteckning över kund / utsikterna kategorier
 CatProdList=Förteckning över produkter kategorier
 CatMemberList=Förteckning över medlemmar kategorier
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:48:54).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

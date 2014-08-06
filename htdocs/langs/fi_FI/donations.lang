@@ -1,20 +1,12 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - donations
 Donation=Lahjoitus
-Donationss=Lahjoitukset
+Donations=Lahjoitukset
+# DonationRef=Donation ref.
 Donor=Rahoittajien
 Donors=Luovuttajat
 AddDonation=Lisää lahjoitus
 NewDonation=Uusi lahjoitus
+# ShowDonation=Show donation
 DonationPromise=Gift lupaus
 PromisesNotValid=Ei validoitava lupaukset
 PromisesValid=Validoidut lupaukset
@@ -29,27 +21,12 @@ DonationStatusPaid=Lahjoituksen vastaanotti
 DonationStatusPromiseNotValidatedShort=Vedos
 DonationStatusPromiseValidatedShort=Validoidut
 DonationStatusPaidShort=Vastatut
-ValidPromise=Validate lupaus
+ValidPromess=Vahvista lupaus
+# DonationReceipt=Donation receipt
 BuildDonationReceipt=Rakenna vastaanottamisesta
 DonationsModels=Asiakirjat malleja lahjoitus kuitit
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-Donations=Lahjoitukset
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-ValidPromess=Vahvista lupaus
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:49).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
 LastModifiedDonations=Viimeksi %s muutettu lahjoitukset
 SearchADonation=Etsi lahjoitus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:46).
+# DonationRecipient=Donation recipient
+# ThankYou=Thank You
+# IConfirmDonationReception=The recipient declare reception, as a donation, of the following amount

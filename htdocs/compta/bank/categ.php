@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copytight (C) 2013      Charles-Fr BENKE		<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,28 +30,30 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("banks");
 $langs->load("categories");
 
+$action=GETPOST('action');
+
 if (!$user->rights->banque->configurer)
   accessforbidden();
 
 
 
 /*
-* Actions ajout cat�gorie
-*/
-if ($_POST["action"] == 'add')
+ * Add category
+ */
+if (GETPOST('add'))
 {
-	if ($_POST["label"])
+	if (GETPOST("label"))
 	{
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
 		$sql.= "label";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
-		$sql.= "'".$db->escape($_POST["label"])."'";
+		$sql.= "'".$db->escape(GETPOST("label"))."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
+		dol_syslog("sql=".$sql);
 		$result = $db->query($sql);
-
 		if (!$result)
 		{
 			dol_print_error($db);
@@ -59,18 +62,38 @@ if ($_POST["action"] == 'add')
 }
 
 /*
-* Action suppression cat�gorie
-*/
-if ( $_REQUEST['action'] == 'delete' )
+ * Update category
+ */
+if (GETPOST('update'))
 {
-	if ( $_REQUEST['categid'] )
+	if (GETPOST("label"))
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
-		$sql.= " WHERE rowid = '".$_REQUEST['categid']."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ ";
+		$sql.= "set label='".$db->escape(GETPOST("label"))."'";
+		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
 		$sql.= " AND entity = ".$conf->entity;
 
+		dol_syslog("sql=".$sql);
 		$result = $db->query($sql);
+		if (!$result)
+		{
+			dol_print_error($db);
+		}
+	}
+}
+/*
+* Action suppression catégorie
+*/
+if ($action == 'delete')
+{
+	if (GETPOST('categid'))
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
+		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
+		$sql.= " AND entity = ".$conf->entity;
 
+		dol_syslog("sql=".$sql);
+		$result = $db->query($sql);
 		if (!$result)
 		{
 			dol_print_error($db);
@@ -81,7 +104,7 @@ if ( $_REQUEST['action'] == 'delete' )
 
 
 /*
- * Affichage liste des cat�gories
+ * View
  */
 
 llxHeader();
@@ -89,10 +112,9 @@ llxHeader();
 
 print_fiche_titre($langs->trans("Rubriques"));
 
-
-print '<form method="post" action="categ.php">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
@@ -106,36 +128,57 @@ $sql.= " ORDER BY label";
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows($result);
-  $i = 0; $total = 0;
+	$num = $db->num_rows($result);
+	$i = 0; $total = 0;
 
-  $var=True;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($result);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-      print "<td>$objp->label</td>";
-      print '<td style="text-align: center;"><a href="categ.php?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
-      print "</tr>";
-      $i++;
-    }
-  $db->free($result);
+	$var=True;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+		if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid)
+		{
+			print "<td colspan=2>";
+			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
+			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
+			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
+
+			print "</td>";
+		}
+		else
+		{
+			print "<td >".$objp->label."</td>";
+			print '<td style="text-align: center;">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+		}
+		print "</tr>";
+		$i++;
+	}
+	$db->free($result);
 }
 
+print "</form>";
+
 /*
- * Affichage ligne ajout de categorie
+ * Line to add category
  */
-$var=!$var;
-print "<tr $bc[$var]>";
-print "<td>&nbsp;</td><td><input name=\"label\" type=\"text\" size=45></td>";
-print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
-print "</table></form>";
+if ($action != 'edit')
+{
+	$var=!$var;
+	print '<tr '.$bc[$var].'>';
+	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
+	print '<td align="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
+	print '</tr>';
+}
 
+print "</table>";
 
-
-$db->close();
+print "</form>";
 
 llxFooter();
+
+$db->close();
 ?>

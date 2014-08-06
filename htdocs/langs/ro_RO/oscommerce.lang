@@ -1,14 +1,4 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - oscommerce
 OSCommerce=OS Commerce
 OSCommerceSetup=OS Commerce modul de configurare
 OSCommerceSetupSaved=OS Commerce setup salvate
@@ -16,5 +6,3 @@ OSCommerceServer=Sistem de operare server gazdă Comert / IP
 OSCommerceDatabaseName=OS Commerce denumirea de baze de date
 OSCommercePrefix=OS Commerce tabele prefix
 OSCommerceUser=OS Commerce baza de date de login
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser

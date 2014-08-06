@@ -1,105 +1,80 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
+# Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID eveniment
+Actions=Evenimente
+ActionsArea=Zona evenimente (acțiuni și sarcini)
+Agenda= Agenda
+Agendas= Agende
+Calendar= Calendar
+Calendars= Calendare
+LocalAgenda=Calendar local
+AffectedTo= Atribuit lui
+DoneBy= Realizat de
+Events= Evenimente
+EventsNb=Număr evenimente
+MyEvents=Evenimentele mele
+OtherEvents=Evenimente altora
+ListOfActions=Lista  evenimente
+Location=Locație
+EventOnFullDay=Eveniment toată zi(ua)lele
+SearchAnAction= Caută un eveniment / sarcină
+MenuToDoActions= Toate evenimentele neterminate
+MenuDoneActions= Toate evenimentele    terminate
+MenuToDoMyActions= Evenimentele mele neterminate
+MenuDoneMyActions= Evenimentele mele   terminate
+ListOfEvents= Lista  evenimente Dolibarr
+ActionsAskedBy=Evenimente înregistarte de
+ActionsToDoBy=Evenimente atribuite lui
+ActionsDoneBy=Evenimente efectuate de
+AllMyActions= Toate evenimentele / sarcinile mele
+AllActions= Toate  evenimentele / sarcini
+ViewList=Vezi  listă
+ViewCal=Vezi  lunar
+ViewDay=Vezi  zilnic
+ViewWeek=Vezi  săptămânal
+ViewWithPredefinedFilters= Vezi cu filtre predefinite
+AutoActions= Completarea automată
+AgendaAutoActionDesc= Definiți aici evenimentele pentru care doriți ca Dolibarr să  creeze automat un eveniment în agendă. În cazul în care nimic nu este bifat(implicit), doar acțiunile  manuale vor fi incluse în agendă.
+AgendaSetupOtherDesc= Această pagină permite configurarea unor opțiuni pentru exportul de evenimente Dolibarr într-un calendar extern (Thunderbird, Google Calendar, ...)
+AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
+ActionsEvents= Evenimente pentru care Dolibarr va crea o acţiune în agendă în mod automat
+PropalValidatedInDolibarr= Propunerea %s validată
+InvoiceValidatedInDolibarr= Factura %s validată
+InvoiceBackToDraftInDolibarr=Factura %s revenită de statutul nevalidată
+InvoiceDeleteDolibarr=Factura %s ştearsă
+OrderValidatedInDolibarr= Comanda %s validată
+OrderApprovedInDolibarr=Comanda %s aprobată
+OrderBackToDraftInDolibarr=Comanda %s revenită de statutul nevalidată
+OrderCanceledInDolibarr=Comanda  %s anulată
+InterventionValidatedInDolibarr=Intervenţie  %s  validată
+ProposalSentByEMail=Propunerea comercială %s  trimisă prin e-mail
+OrderSentByEMail=Comanda client %s trimisă prin e-mail
+InvoiceSentByEMail=Factura client %s trimisă prin e-mail
+SupplierOrderSentByEMail=Comanda  furnizor %s  trimisă prin e-mail
+SupplierInvoiceSentByEMail=Factura furnizor %s trimise prin e-mail
+ShippingSentByEMail=Avizul de expediţie %s trimis  prin e-mail
+InterventionSentByEMail=Intervenţia %s  trimisă prin e-mail
+NewCompanyToDolibarr= Terţ creat
+DateActionPlannedStart= Data planificată a începerii
+DateActionPlannedEnd= Data planificată a terminării
+DateActionDoneStart= Data reală a  începerii
+DateActionDoneEnd= Data reală a terminării
+DateActionStart= Data începerii
+DateActionEnd= Data terminării
+AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri pentru  filtrarea rezultatelor:
+AgendaUrlOptions2=<b>login=%s</b> ​​pentru a limita exportul de acțiuni create de, atribuite lui sau făcut de utilizatorul<b>% s</b>.
+AgendaUrlOptions3=<b>logina=% s</b> ​​pentru a limita exportul de acțiuni create de utilizatorul <b>% s</b>.
+AgendaUrlOptions4=<b>logint=% s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>% s</b>.
+AgendaUrlOptions5=<b>logind=% s</b> ​​pentru a limita exportul de acțiuni efectuate de utilizatorul <b>% s</b>
+AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
+AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
+Busy=Ocupat
+ExportDataset_event1=Lista evenimentelor din agenda
 
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-Actions=Acţiuni
-ActionsArea=Acţiuni domeniu (Evenimente si sarcini)
-Agenda=Ordinea de zi
-Agendas=Agendas
-Calendar=Calendar
-Calendars=Calendare
-AffectedTo=Afectate de
-DoneBy=Adoptată de către
-Events=Evenimente
-ListOfActions=Lista de evenimente
-Location=Locaţie
-SearchAnAction=Cautati o acţiune / sarcina
-MenuDoneActions=Toate acţiunile oprite
-MenuToDoMyActions=Incomplet acţiunile mele
-MenuDoneMyActions=My oprite acţiuni
-ListOfEvents=Lista de evenimente Dolibarr
-ActionsAskedBy=Acţiuni înregistrate de către
-ActionsToDoBy=Acţiuni afectate de
-ActionsDoneBy=Acţiuni făcut de către
-AllMyActions=Toate acţiunile / sarcini
-AllActions=Toutes les acţiuni / sarcini
-ViewList=Vezi lista
-ViewCal=Vezi calendarul
-ViewWithPredefinedFilters=Vezi cu filtre predefinite
-AutoActions=Completarea automată a ordinii de zi
-AgendaAutoActionDesc=Definiţi aici evenimente pentru care doriţi Dolibarr de a crea automat o acţiune în ordine de zi. Dacă nimic nu este verificat (implicit), doar manualul de acţiuni vor fi incluse în ordinea de zi.
-AgendaSetupOtherDesc=Această pagină permite să configuraţi alţi parametri de modul de ordine de zi.
-ActionsEvents=Evenimente pentru Dolibarr care va crea o acţiune în ordinea de zi în mod automat
-PropalValidatedInDolibarr=Propunere validate
-InvoiceValidatedInDolibarr=Factura validate
-OrderValidatedInDolibarr=Ordinul validate
-NewCompanyToDolibarr=A treia parte a creat
-DateActionPlannedStart=Planificate data de început
-DateActionPlannedEnd=Planificate data de sfârşit
-DateActionDoneStart=Real Data începerii
-DateActionDoneEnd=Real data de sfârşit
-DateActionStart=Data începerii
-DateActionEnd=Data de final
-AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri la filtru de iesire:
-AgendaUrlOptions2=<b>login=<b>login= %s</b> pentru a limita producţia de acţiuni create de, afectate pentru a face sau de către <b>utilizator %s.</b>
-AgendaUrlOptions3=<b>logina=<b>logina= %s</b> pentru a limita producţia de acţiuni create de <b>utilizator %s.</b>
-AgendaUrlOptions4=<b>logint=<b>logint= %s</b> pentru a limita producţia de acţiunile afectate de <b>utilizator %s.</b>
-AgendaUrlOptions5=<b>logind=<b>logind= %s</b> pentru a limita producţia de acţiuni efectuată de către <b>utilizatorul %s.</b>
-AgendaShowBirthdayEvents=Arata de ziua lui de contact
-AgendaHideBirthdayEvents=Ascunde ziua lui de contact
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-MenuToDoActions=Toate acţiunile incomplet
-InterventionValidatedInDolibarr=%s de intervenţie validate
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:42:52).
-// Reference language: en_US
-InterventionValidatedInDolibarr=Intervensjon %s validert
-InterventionValidatedInDolibarr=Interventie %s gevalideerd
-MenuToDoActions=Wszystkich działań niekompletne
-InterventionValidatedInDolibarr=%s interwencji zatwierdzone
-InterventionValidatedInDolibarr=%s Intervenção validado
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:42:54).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-LocalAgenda=Locale calendar
-MyEvents=Evenimente
-OtherEvents=Alte evenimente
-EventOnFullDay=Eveniment pe zi
-ViewDay=Ziua vedere
-ViewWeek=Săptămâna vedere
-AgendaExtSitesDesc=Această pagină vă permite să declare sursele externe de calendare pentru a vedea evenimentele în ordinea de zi Dolibarr.
-InvoiceBackToDraftInDolibarr=%s factura a reveni la statutul de proiect
-OrderApprovedInDolibarr=%s Comanda aprobat
-OrderBackToDraftInDolibarr=%s Ordine reveni la statutul de proiect
-OrderCanceledInDolibarr=%s Comanda anulat
-ProposalSentByEMail=%s comerciale propunerea trimisă prin e-mail
-OrderSentByEMail=%s comanda clientului trimise prin e-mail
-InvoiceSentByEMail=%s factura clientului trimise prin e-mail
-SupplierOrderSentByEMail=%s comandă cu furnizorul trimise prin e-mail
-SupplierInvoiceSentByEMail=%s factura furnizorului trimise prin e-mail
-ShippingSentByEMail=%s de expediere trimise prin e-mail
-InterventionSentByEMail=%s de intervenţie trimise prin e-mail
+# External Sites ical
 ExportCal=Export calendar
 ExtSites=Import calendare externe
-ExtSitesEnableThisTool=Arată calendare externe, în ordinea de zi
-ExtSitesNbOfAgenda=Numărul de calendare
-AgendaExtNb=Calendar NB %s
-ExtSiteUrlAgenda=URL-ul pentru a accesa. ICal fişier
-ExtSiteNoLabel=Nu Descriere
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:26:41).
+ExtSitesEnableThisTool=Afişează calendare externe, în agendă
+ExtSitesNbOfAgenda=Număr calendare
+AgendaExtNb=Calendar nr %s
+ExtSiteUrlAgenda=URL-ul pentru a accesa  fişierul . ical
+ExtSiteNoLabel=Nici o descriere

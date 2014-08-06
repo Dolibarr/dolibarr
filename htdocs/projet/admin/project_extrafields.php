@@ -51,7 +51,7 @@ if (!$user->admin) accessforbidden();
  * Actions
  */
 
-require DOL_DOCUMENT_ROOT.'/core/admin_extrafields.inc.php';
+require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
 
 
 
@@ -70,7 +70,7 @@ print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
 $head = project_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Project"), 0, 'user');
+dol_fiche_head($head, 'attributes', $langs->trans("Project"), 0, 'project');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";

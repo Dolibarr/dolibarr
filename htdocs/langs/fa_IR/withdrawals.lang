@@ -1,19 +1,11 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=أوامر دائمة المنطقة
 CustomersStandingOrdersArea=أوامر دائمة منطقة العملاء
 StandingOrders=أوامر دائمة
 StandingOrder=أوامر دائمة
 NewStandingOrder=دائمة جديدة من أجل
+StandingOrderToProcess=لعملية
+StandingOrderProcessed=معالجة
 Withdrawals=انسحابات
 Withdrawal=انسحاب
 WithdrawalsReceipts=إيصالات السحب
@@ -27,6 +19,7 @@ RequestStandingOrderTreated=طلب تعامل أوامر دائمة
 CustomersStandingOrders=الزبون أوامر دائمة
 CustomerStandingOrder=يقف النظام العميل
 NbOfInvoiceToWithdraw=ملاحظة : للفاتورة مع طلب سحب
+# NbOfInvoiceToWithdrawWithInfo=No. of invoice with withdraw request for customers having defined bank account information
 InvoiceWaitingWithdraw=فاتورة انتظار الانسحاب
 AmountToWithdraw=سحب المبلغ
 WithdrawsRefused=ورفض سحب
@@ -42,19 +35,12 @@ ThirdPartyDeskCode=طرف ثالث مكتب مدونة
 NoInvoiceCouldBeWithdrawed=أي فاتورة withdrawed بالنجاح. تأكد من أن الفاتورة على الشركات الحظر ساري المفعول.
 ClassCredited=تصنيف حساب
 ClassCreditedConfirm=هل أنت متأكد من أن يصنف هذا الانسحاب كما تلقي على حساب حسابك المصرفي؟
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-StandingOrderToProcess=لعملية
-StandingOrderProcessed=معالجة
 TransData=تاريخ الإرسال
 TransMetod=طريقة البث
-Send=إرسال
+Send=فرستادن
 Lines=خطوط
 StandingOrderReject=رفض إصدار
+InvoiceRefused=تهمة الرفض لزبون
 WithdrawalRefused=سحب Refuseds
 WithdrawalRefusedConfirm=هل أنت متأكد أنك تريد الدخول في رفض الانسحاب للمجتمع
 RefusedData=تاريخ الرفض
@@ -62,9 +48,10 @@ RefusedReason=أسباب الرفض
 RefusedInvoicing=رفض الفواتير
 NoInvoiceRefused=لا تهمة الرفض
 InvoiceRefused=تهمة الرفض لزبون
-Status=حالة
-StatusUnknown=غير معروف
+Status=وضعیت
+StatusUnknown=ناشناخته
 StatusWaiting=انتظار
+# StatusTrans=Sent
 StatusCredited=الفضل
 StatusRefused=رفض
 StatusMotif0=غير محدد
@@ -84,4 +71,26 @@ NotifyTransmision=انسحاب البث
 NotifyEmision=انسحاب الانبعاثات
 NotifyCredit=انسحاب الائتمان
 NumeroNationalEmetter=رقم المرسل وطنية
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:07).
+# PleaseSelectCustomerBankBANToWithdraw=Select information about customer bank account to withdraw
+# WithBankUsingRIB=For bank accounts using RIB
+# WithBankUsingBANBIC=For bank accounts using IBAN/BIC/SWIFT
+# BankToReceiveWithdraw=Bank account to receive withdraws
+# CreditDate=Credit on
+# WithdrawalFileNotCapable=Unable to generate withdrawal receipt file for your country
+# ShowWithdraw=Show Withdraw
+# IfInvoiceNeedOnWithdrawPaymentWontBeClosed=However, if invoice has at least one withdrawal payment not yet processed, it won't be set as paid to allow prior withdrawal management.
+# DoStandingOrdersBeforePayments=This tab allows you to request a standing order. Once it is complete, you can type the payment to close the invoice.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
+# InfoCreditSubject=Payment of standing order %s by the bank
+# InfoCreditMessage=The standing order %s has been paid by the bank<br>Data of payment: %s
+# InfoTransSubject=Transmission of standing order %s to bank
+# InfoTransMessage=The standing order %s has been sent to bank by %s %s.<br><br>
+# InfoTransData=Amount: %s<br>Method: %s<br>Date: %s
+# InfoFoot=This is an automated message sent by Dolibarr
+# InfoRejectSubject=Standing order refused
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
+# ModeWarning=Option for real mode was not set, we stop after this simulation

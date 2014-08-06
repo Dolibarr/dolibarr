@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - orders
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Customers orders area
 SuppliersOrdersArea=Suppliers orders area
 OrderCard=Order card
@@ -56,8 +55,6 @@ DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Orders delivered
 MenuOrdersToBill2=Orders to bill
 SearchOrder=Search order
-Sending=Sending
-Sendings=Sendings
 ShipProduct=Ship product
 Discount=Discount
 CreateOrder=Create Order
@@ -70,9 +67,11 @@ CancelOrder=Cancel order
 AddOrder=Add order
 AddToMyOrders=Add to my orders
 AddToOtherOrders=Add to other orders
+AddToDraftOrders=Add to draft order
 ShowOrder=Show order
 NoOpenedOrders=No opened orders
 NoOtherOpenedOrders=No other opened orders
+NoDraftOrders=No draft orders
 OtherOrders=Other orders
 LastOrders=Last %s orders
 LastModifiedOrders=Last %s modified orders
@@ -82,7 +81,7 @@ NbOfOrders=Number of orders
 OrdersStatistics=Order's statistics
 OrdersStatisticsSuppliers=Supplier order's statistics
 NumberOfOrdersByMonth=Number of orders by month
-AmountOfOrdersByMonthHT=amount of orders by month (net of tax)
+AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=List of orders
 CloseOrder=Close order
 ConfirmCloseOrder=Are you sure you want to set this order to deliverd ? Once an order is delivered, it can be set to billed.
@@ -148,6 +147,7 @@ AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
 # Documents models
 PDFEinsteinDescription=A complete order model (logo...)
 PDFEdisonDescription=A simple order model
+PDFProformaDescription=A complete proforma invoice (logo…)
 # Orders modes
 OrderByMail=Mail
 OrderByFax=Fax
@@ -159,3 +159,8 @@ CreateInvoiceForThisCustomer=Bill orders
 NoOrdersToInvoice=No orders billable
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders. 
 MenuOrdersToBill2=Billables orders
+OrderCreation=Order creation
+Ordered=Ordered
+OrderCreated=Your orders have been created
+OrderFail=An error happened during your orders creation
+CreateOrders=Create orders

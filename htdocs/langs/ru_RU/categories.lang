@@ -1,20 +1,11 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Категория
 Categories=Категории
 Rubrique=Категория
 Rubriques=Категории
 categories=категории
 TheCategorie=Категория
+NoCategoryYet=Категории этого типа не созданы
 In=В
 AddIn=Добавить в
 modify=изменить
@@ -24,6 +15,8 @@ ProductsCategoriesArea=Область категорий Товаров/Услу
 SuppliersCategoriesArea=Область категорий Поставщиков
 CustomersCategoriesArea=Область категорий Покупателей
 ThirdPartyCategoriesArea=Область категорий Контрагентов
+MembersCategoriesArea=Область категорий участников
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Основные категории
 SubCats=Подкатегории
 CatStatistics=Статистика
@@ -56,11 +49,16 @@ ProductIsInCategories=Товар/услуга принадлежит к след
 SupplierIsInCategories=Контрагент принадлежит к следующим категориям поставщиков
 CompanyIsInCustomersCategories=Этот контрагент принадлежит к следующим категориям покупателей/потенциальных клиентов
 CompanyIsInSuppliersCategories=Этот контрагент принадлежит к следующим категориям поставщиков
+MemberIsInCategories=Этот участник принадлежит к следующим категориям
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Этот товар/услуга не принадлежит к какой-либо категории
 SupplierHasNoCategory=Этот поставщик не принадлежит к какой-либо категории
 CompanyHasNoCategory=Эта компания не принадлежит к какой-либо категории
+MemberHasNoCategory=Этот пользователь не находится в какой-либо категории
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Добавить категорию
 NoneCategory=Нет
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Категория к таким кодом уже существует
 ReturnInProduct=Назад к карточке товара/услуги
 ReturnInSupplier=Назад к карточке поставщика
@@ -77,37 +75,33 @@ NoCategoriesDefined=Категории не определены
 SuppliersCategoryShort=Категории Поставщиков
 CustomersCategoryShort=Категории Покупателей
 ProductsCategoryShort=Категории Товаров
+MembersCategoryShort=Категории участников
 SuppliersCategoriesShort=Категории Поставщиков
 CustomersCategoriesShort=Категории Покупателей
 CustomersProspectsCategoriesShort=Категории Покупателей/Потенц. клиентов
 ProductsCategoriesShort=Категории Товаров
+MembersCategoriesShort=Категории участников
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=В этой категории нет товаров.
 ThisCategoryHasNoSupplier=В этой категории нет поставщиков.
 ThisCategoryHasNoCustomer=В этой категории нет покупателей.
+ThisCategoryHasNoMember=Эта категория не содержит участников.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Установленное для покупателя
 AssignedToTheCustomer=Установленное для покупателя
 InternalCategory=Внутренняя категория
 CategoryContents=Содержание категории
 CategId=Код категории
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-NoCategoryYet=Категории этого типа не созданы
 CatSupList=Список категорий поставщиков
 CatCusList=Список категорий покупателей / потенц. клиентов
 CatProdList=Список категорий продукции
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-MembersCategoriesArea=Область категорий участников
-MemberIsInCategories=Этот участник принадлежит к следующим категориям
-MemberHasNoCategory=Этот пользователь не находится в какой-либо категории
-MembersCategoryShort=Категории участников
-MembersCategoriesShort=Категории участников
-ThisCategoryHasNoMember=Эта категория не содержит участников.
 CatMemberList=Список категорий участников
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:21).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

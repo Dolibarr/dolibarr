@@ -135,7 +135,7 @@ SKK,Slovak Koruna,2
 SLL,Sierra Leone Leone,2
 SOS,Somali Shilling,2
 SRD,Surinam Dollar,2
-STD,São Tome and Principe Dobra,2
+STD,SÃ£o Tome and Principe Dobra,2
 SVC,El Salvador Colon,2
 SYP,Syrian Pound,2
 SZL,Swaziland Lilangeni,2

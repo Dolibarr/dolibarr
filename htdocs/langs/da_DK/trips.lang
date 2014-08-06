@@ -1,24 +1,14 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Tur
 Trips=Trips
 TripsAndExpenses=Udflugter og udgifter
+TripsAndExpensesStatistics=Udflugter og udgifter statistik
 TripCard=Trip kortet
 AddTrip=Tilføj tur
 ListOfTrips=Liste over ture
 ListOfFees=Liste over gebyrer
 NewTrip=Ny tur
+CompanyVisited=Company / fundament besøgte
 Kilometers=Kilometer
 FeesKilometersOrAmout=Beløb eller kilometer
 DeleteTrip=Slet tur
@@ -26,30 +16,6 @@ ConfirmDeleteTrip=Er du sikker på du vil slette denne tur?
 TF_OTHER=Anden
 TF_LUNCH=Frokost
 TF_TRIP=Tur
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
 ListTripsAndExpenses=Liste over ture og omkostninger
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-// Reference language: en_US
-CompanyVisited=Company / fundament besøgte
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:57:56).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-TripsAndExpensesStatistics=Udflugter og udgifter statistik
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:21:31).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
 ExpensesArea=Udflugter og udgifter området
 SearchATripAndExpense=Søg en tur og regning
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:59:54).

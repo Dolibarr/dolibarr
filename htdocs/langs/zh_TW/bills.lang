@@ -1,23 +1,18 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=發票
 Bills=發票
 BillsCustomers=客戶的發票
+BillsCustomer=客戶的發票
 BillsSuppliers=供應商的發票
 BillsCustomersUnpaid=尚未付款的客戶的發票(invoice)
 BillsCustomersUnpaidForCompany=尚未付款的客戶發票(invoice) for %s
 BillsSuppliersUnpaid=尚未付款的供應商發票(invoice)
+BillsSuppliersUnpaidForCompany=%s未付供應商的發票
 BillsUnpaid=尚未付款
+BillsLate=逾期付款
 BillsStatistics=客戶發票統計
 BillsStatisticsSuppliers=供應商發票統計
+DisabledBecauseNotErasable=禁用，因為不能被擦除
 InvoiceStandard=發票
 InvoiceStandardAsk=發票
 InvoiceStandardDesc=這是一種常見的發票。
@@ -27,6 +22,7 @@ InvoiceDepositDesc=這種類型的發票時進行存款已被接受。
 InvoiceProForma=形式發票
 InvoiceProFormaAsk=形式發票
 InvoiceProFormaDesc=<b>形式發票</b>是發票的形象，但沒有一個真正的會計價值。
+InvoiceReplacement=更換發票
 InvoiceReplacementAsk=更換發票的發票
 InvoiceReplacementDesc=<b>發票</b>是用來<b>替換</b>取消，代之以完全沒有付款發票已收到。 <br><br>註：沒有上只有付款發票可以被替換。如果沒有關閉，它會自動關閉'放棄'。
 InvoiceAvoir=信用票據
@@ -36,7 +32,6 @@ ReplaceInvoice=替換%s的發票
 ReplacementInvoice=更換發票
 ReplacedByInvoice=按發票取代%s
 ReplacementByInvoice=取代發票
-CorrectInvoice=%s的正確發票
 CorrectInvoice=%s的正確發票
 CorrectionInvoice=發票的更正
 UsedByInvoice=用於支付發票%s的
@@ -61,6 +56,7 @@ Payment=付款
 PaymentBack=付款回
 Payments=付款
 PaymentsBack=付款回
+# PaidBack=Paid back
 DatePayment=付款日期
 DeletePayment=刪除付款
 ConfirmDeletePayment=你確定要刪除這個付款？
@@ -72,19 +68,22 @@ ReceivedCustomersPaymentsToValid=待驗證的客戶已付款單據
 PaymentsReportsForYear=報告s為%付款
 PaymentsReports=收支報告
 PaymentsAlreadyDone=付款已完成
+# PaymentsBackAlreadyDone=Payments back already done
 PaymentRule=付款規則
 PaymentMode=付款方式
 PaymentConditions=付款條件
 PaymentConditionsShort=付款天數
 PaymentAmount=付款金額
+# ValidatePayment=Validate payment
 PaymentHigherThanReminderToPay=付款支付更高的比提醒
-HelpPaymentHigherThanReminderToPay=註意，一個或更多的票據付款金額比其他支付更高。 <br>編輯您的進入，否則確認並考慮建立一個每個多繳發票收到超出信用註記。
+HelpPaymentHigherThanReminderToPay= 註意，一個或更多的票據付款金額比其他支付更高。 <br>編輯您的進入，否則確認並考慮建立一個每個多繳發票收到超出信用註記。
 ClassifyPaid=分類'有償'
 ClassifyPaidPartially=分類薪部分'
 ClassifyCanceled=分類'遺棄'
 ClassifyClosed=分類'關閉'
 CreateBill=建立發票
 AddBill=新增發票(invoice)或票據(credit note)
+# AddToDraftInvoices=Add to draft invoice
 DeleteBill=刪除發票
 SearchACustomerInvoice=搜尋客戶發票
 SearchASupplierInvoice=搜尋供應商發票
@@ -134,7 +133,7 @@ BillTo=Bill To
 ActionsOnBill=行動對發票
 NewBill=新建發票(invoice)
 Prélèvements=長期訂單
-Prélèvements=常年訂單
+Prélèvements=長期訂單
 LastBills=上次%s的發票
 LastCustomersBills=上次%s的客戶發票
 LastSuppliersBills=上次%s的供應商發票
@@ -146,6 +145,7 @@ SuppliersDraftInvoices=供應商草稿發票
 Unpaid=未付
 ConfirmDeleteBill=你確定要刪除此發票？
 ConfirmValidateBill=你確定要驗證此<b>%</b>發票與<b>借鑒</b>意義？
+ConfirmUnvalidateBill=你確定你要更改發票<b>%s</b>草案的地位嗎？
 ConfirmClassifyPaidBill=您確定要更改<b>%s</b>的地位發票支付？
 ConfirmCancelBill=你確定要取消發票<b>%s嗎</b> ？
 ConfirmCancelBillQuestion=你為什麽要這樣分類發票'放棄'？
@@ -168,10 +168,11 @@ ConfirmClassifyAbandonReasonOtherDesc=這一選擇將用於所有的其他情形
 ConfirmCustomerPayment=你確認此為<b>%</b>付款<b>輸入</b> S%s嗎？
 ConfirmValidatePayment=你確定要驗證此款項？沒有改變，可一旦付款驗證。
 ValidateBill=驗證發票
+UnvalidateBill=Unvalidate發票
 NumberOfBills=發票數
-NumberOfBillsByMonthHT=按月份發票的鈮（稅後）
+NumberOfBillsByMonth=每月發票(invoice)數
 AmountOfBills=發票金額
-AmountOfBillsByMonth=按月份發票金額
+AmountOfBillsByMonthHT=每月發票(invoice)金額（稅後）
 ShowSocialContribution=顯示社會貢獻
 ShowBill=顯示發票
 ShowInvoice=顯示發票
@@ -181,20 +182,23 @@ ShowInvoiceDeposit=顯示發票保證金
 ShowPayment=顯示支付
 File=文件
 AlreadyPaid=已支付
+# AlreadyPaidBack=Already paid back
 AlreadyPaidNoCreditNotesNoDeposits=已支付（無信用票據及存款）
 Abandoned=棄
 RemainderToPay=未支付
 RemainderToTake=其余部分采取
+# RemainderToPayBack=Remainder to pay back
+# Rest=Pending
 AmountExpected=索賠額
 ExcessReceived=收到過剩
 EscompteOffered=折扣額（任期前付款）
-CreateDraft=建立草稿
 SendBillRef=%s的發送發票
 SendReminderBillRef=發送發票的%s（提醒）
 StandingOrders=常年訂單
 StandingOrder=長期訂單
 NoDraftBills=沒有任何發票(invoice)草案
 NoOtherDraftBills=沒有其他發票草案
+# NoDraftInvoices=No draft invoices
 RefBill=發票號
 ToBill=為了法案
 RemainderToBill=其余部分法案
@@ -211,11 +215,12 @@ NoSupplierBillsUnpaid=沒有供應商發票未付
 SupplierBillsToPay=待付款的供應商發票
 CustomerBillsUnpaid=客戶未付款的發票
 DispenseMontantLettres=由mechanographical是從字母順序豁免起草的法案
-DispenseMontantLettres=通過mecanographic程序的書面發票是由字母順序在配藥
+DispenseMontantLettres=由mechanographical是從字母順序豁免起草的法案
 NonPercuRecuperable=非可收回
 SetConditions=設置付款條件
 SetMode=設置支付方式
-SetDate=設置日期
+SetDate= 設置日期
+# SelectDate=Select a date
 Billed=帳單
 RepeatableInvoice=事先定義的發票
 RepeatableInvoices=事先定義的發票清單
@@ -235,7 +240,14 @@ Reductions=裁減
 ReductionsShort=折扣。
 Discount=折扣
 Discounts=折扣
+AddDiscount=新增折扣
+AddRelativeDiscount=建立相對折扣
+# EditRelativeDiscount=Edit relative discount
+AddGlobalDiscount=新增折扣
+EditGlobalDiscounts=編輯絕對折扣
+AddCreditNote=創建信用票據
 ShowDiscount=顯示折扣
+# ShowReduc=Show the deduction
 RelativeDiscount=相對折扣
 GlobalDiscount=全球折扣
 CreditNote=信用票據
@@ -250,8 +262,6 @@ NewGlobalDiscount=新的全域折扣
 NewRelativeDiscount=新的相對折扣
 NoteReason=備註/原因
 ReasonDiscount=原因
-AddDiscount=新增折扣
-AddGlobalDiscount=新增折扣
 DiscountOfferedBy=獲
 DiscountStillRemaining=剩餘的折扣
 DiscountAlreadyCounted=以計算的折扣
@@ -270,6 +280,7 @@ InvoicePaid=發票支付
 PaymentNumber=繳費號碼
 RemoveDiscount=刪除折扣
 WatermarkOnDraftBill=草稿發票產生浮水印字串(如果以下文字框不是空字串)
+InvoiceNotChecked=選擇無發票
 CloneInvoice=克隆發票
 ConfirmCloneInvoice=你確定要複製這個 <b>%s</b> 發票嗎?
 DisabledBecauseReplacedInvoice=行動禁用，因為發票已被取代
@@ -282,6 +293,8 @@ TotalOfTwoDiscountMustEqualsOriginal=兩個新的折扣總額必須等於原來�
 ConfirmRemoveDiscount=你確定要刪除此折扣？
 RelatedBill=相關發票
 RelatedBills=有關發票
+
+# PaymentConditions
 PaymentConditionShortRECEP=即時
 PaymentConditionRECEP=即時
 PaymentConditionShort30D=30天
@@ -292,6 +305,16 @@ PaymentConditionShort60D=60天
 PaymentCondition60D=60天
 PaymentConditionShort60DENDMONTH=本月60日結束
 PaymentCondition60DENDMONTH=本月60日結束
+PaymentConditionShortPT_DELIVERY=交貨
+PaymentConditionPT_DELIVERY=交貨
+# PaymentConditionShortPT_ORDER=On order
+# PaymentConditionPT_ORDER=On order
+# PaymentConditionShortPT_5050=50-50
+# PaymentConditionPT_5050=50%% in advance, 50%% on delivery
+# FixAmount=Fix amount
+# VarAmount=Variable amount (%% tot.)
+
+# PaymentType
 PaymentTypeVIR=銀行存款
 PaymentTypeShortVIR=銀行存款
 PaymentTypePRE=銀行的命令
@@ -340,6 +363,7 @@ LawApplicationPart2=貨物仍然是財產
 LawApplicationPart3=賣方直到完全兌現
 LawApplicationPart4=他們的價格。
 LimitedLiabilityCompanyCapital=SARL公司與資本
+# UseLine=Apply
 UseDiscount=使用折扣
 UseCredit=使用信用卡
 UseCreditNoteInInvoicePayment=減少金額與本信用證支付
@@ -353,6 +377,7 @@ ChequeDeposits=支票存款
 Cheques=檢查
 CreditNoteConvertedIntoDiscount=此信用票據或存款發票已到%轉換S
 UsBillingContactAsIncoiveRecipientIfExist=使用客戶的帳單，而不是作為第三方發票收件人地址聯系地址
+ShowUnpaidAll=顯示所有未付款的發票
 ShowUnpaidLateOnly=只顯示遲遲未付款的發票
 PaymentInvoiceRef=%s的付款發票
 ValidateInvoice=驗證發票
@@ -362,58 +387,29 @@ DisabledBecausePayments=不可能的，因為有一些付款
 CantRemovePaymentWithOneInvoicePaid=無法刪除，因為至少有付款發票分類所許
 ExpectedToPay=預期付款
 PayedByThisPayment=氟離子選擇電極通過此付款
+ClosePaidInvoicesAutomatically=分類“支付最高”的所有entirely支付最高標準或更換發票。
+# ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+AllCompletelyPayedInvoiceWillBeClosed=所有發票仍然沒有支付將被自動關閉狀態“支付最高”。
+# ToMakePayment=Pay
+# ToMakePaymentBack=Pay back
+# ListOfYourUnpaidInvoices=List of unpaid invoices
+# NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
+# RevenueStamp=Revenue stamp
+##### Types de contacts #####
 TypeContact_facture_internal_SALESREPFOLL=代表隨訪客戶發票
 TypeContact_facture_external_BILLING=客戶發票接觸
 TypeContact_facture_external_SHIPPING=客戶航運聯系
 TypeContact_facture_external_SERVICE=客戶服務聯系
-TypeContact_facture_fourn_internal_SALESREPFOLL=代表隨訪供應商發票
-TypeContact_facture_fourn_external_BILLING=供應商發票接觸
-TypeContact_facture_fourn_external_SHIPPING=航運供應商聯系
-TypeContact_facture_fourn_external_SERVICE=服務供應商聯系
-Of=杜
-PDFBerniqueDescription=發票(invoice)文件範本
-PDFBigorneauDescription=發票(invoice)文件範本
-PDFBulotDescription=發票(invoice)文件範本
+# TypeContact_invoice_supplier_internal_SALESREPFOLL=Representative following-up supplier invoice
+TypeContact_invoice_supplier_external_BILLING=供應商利用發票(invoice)方式
+TypeContact_invoice_supplier_external_SHIPPING=供應商利用貨運方式
+# TypeContact_invoice_supplier_external_SERVICE=Supplier service contact
+# crabe PDF Model
 PDFCrabeDescription=一個完整的PDF發票(invoice)文件範本（支援營業稅選項，折扣，付款條件..）
-PDFHuitreDescription=發票(invoice)文件範本
+# oursin PDF Model
 PDFOursinDescription=一個完整的PDF發票(invoice)文件範本
-PDFTourteauDescription=發票(invoice)文件範本
-TerreNumRefModelDesc1=用以下固定的方式回傳發票和信用票據編號:<br> %syymm-nnnn 為發票和信用票據編號生成格式。<br>   yy 是年、mm是月、nnnn是一個不為0的序號。 
+# NumRef Modules
+# TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+# MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+
 TerreNumRefModelError=美元的法案syymm起已經存在，而不是與此序列模型兼容。刪除或重新命名它激活該模塊。
-OrionNumRefModelDesc1=返回數字的格式下FAYYNNNNN其中YY是一年nnnnn代表的人數從1開始遞增。
-OrionNumRefModelDesc2=這一年是加1，如果沒有在本財政年度開始初始化為零。
-OrionNumRefModelDesc3=定義與在本財年開始，例如：9月9個月的變量SOCIETE_FISCAL_MONTH_START。
-OrionNumRefModelDesc4=在這個例子中，我們將不得不對2006年9月命名FA700354發票1日。
-TitanNumRefModelDesc1=返回格式的數字FAYYNNNNN其中YY是一年nnnnn是遞增數從1開始。
-TitanNumRefModelDesc2=這一年是加1和增量數初始化為零在本財年的開始。
-TitanNumRefModelDesc3=定義與在本財年開始，例如：9月9個月的變量SOCIETE_FISCAL_MONTH_START。
-TitanNumRefModelDesc4=在這個例子中，我們應當對2006年9月1日發票命名FA0700001
-PlutonNumRefModelDesc1=返回一個可定制的發票號碼，按確定的面具。
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> zh_CN
-InvoiceReplacement=更換發票
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:41:53).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-BillsCustomer=客戶的發票
-BillsSuppliersUnpaidForCompany=%s未付供應商的發票
-BillsLate=逾期付款
-DisabledBecauseNotErasable=禁用，因為不能被擦除
-ConfirmUnvalidateBill=你確定你要更改發票<b>%s</b>草案的地位嗎？
-UnvalidateBill=Unvalidate發票
-NumberOfBillsByMonth=每月發票(invoice)數
-AmountOfBillsByMonthHT=每月發票(invoice)金額（稅後）
-AddRelativeDiscount=建立相對折扣
-EditRelativelDiscount=編輯relatvie折扣
-EditGlobalDiscounts=編輯絕對折扣
-AddCreditNote=創建信用票據
-InvoiceNotChecked=選擇無發票
-ShowUnpaidAll=顯示所有未付款的發票
-ClosePaidInvoicesAutomatically=分類“支付最高”的所有entirely支付最高標準或更換發票。
-AllCompletelyPayedInvoiceWillBeClosed=所有發票仍然沒有支付將被自動關閉狀態“支付最高”。
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:07).

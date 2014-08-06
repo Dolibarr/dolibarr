@@ -1,23 +1,15 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Magazyn karty
 Warehouse=Magazyn
+Warehouses=Magazyny
 NewWarehouse=Nowy magazyn / Stock obszarze
+WarehouseEdit=Modyfikacja składu
 MenuNewWarehouse=Nowy magazyn
 WarehouseOpened=Magazyn otwarty
 WarehouseClosed=Magazyn zamknięte
 WarehouseSource=Źródło magazynu
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Docelowe magazynie
 ValidateSending=Usuń wysyłanie
 CancelSending=Anuluj wysyłanie
@@ -34,19 +26,25 @@ ListOfStockMovements=Wykaz stanu magazynowego
 StocksArea=Zapasy obszarze
 Location=Lieu
 LocationSummary=Nazwa skrócona lokalizacji
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Łączna liczba produktów
 LastMovement=Ostatni ruch
 LastMovements=Ostatnie ruchy
 Units=Jednostki
 Unit=Jednostka
 StockCorrection=Poprawny stanie
+# StockTransfer=Stock transfer
 StockMovement=Przeniesienie
 StockMovements=Stock transfery
+# LabelMovement=Movement label
 NumberOfUnit=Liczba jednostek
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Razem w akcji
 StockTooLow=Zasób zbyt niska
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Wartość
 PMPValue=Wartość
+PMPValueShort=WAP
 EnhancedValueOfWarehouses=Magazyny wartości
 UserWarehouseAutoCreate=Tworzenie stanie automatycznie podczas tworzenia użytkownika
 QtyDispatched=Ilość wysyłanych
@@ -58,12 +56,16 @@ DeStockOnValidateOrder=Spadek realnych zasobów zamówień notatek
 DeStockOnShipment=Spadek realnych zasobów wysyłką (zaleciły)
 ReStockOnBill=Wzrost realnego zasobów faktur / not kredytowych
 ReStockOnValidateOrder=Wzrost realnego zasobów zamówień notatek
+ReStockOnDispatchOrder=Wzrost rzeczywisty stan zapasów w magazynach ręcznego wysyłki, po otrzymaniu zamówienia dostawca
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Zamówienie nie jest jeszcze lub nie więcej status, który umożliwia wysyłanie produktów w magazynach czas.
 StockDiffPhysicTeoric=Powód różnica stanie fizycznym i teoretycznego
+NoPredefinedProductToDispatch=Nie gotowych produktów dla tego obiektu. Więc nie w czas wysyłki jest wymagane.
+DispatchVerb=Wysyłka
 StockLimitShort=Limit
 StockLimit=Stock limit wpisów
 PhysicalStock=Fizyczne zapasy
 RealStock=Real Stock
-TheoreticalStock=Therocial stanie
 VirtualStock=Wirtualne stanie
 MininumStock=Minimum stock
 StockUp=Stanie się
@@ -73,39 +75,38 @@ IdWarehouse=Identyfikator magazynu
 DescWareHouse=Opis składu
 LieuWareHouse=Lokalizacja hurtowni
 WarehousesAndProducts=Magazyny i produktów
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-PMPValueShort=WAP
 AverageUnitPricePMPShort=Średnia cena wejścia
 AverageUnitPricePMP=Średnia cena wejścia
+SellPriceMin=Cena sprzedaży jednostki
+EstimatedStockValueSellShort=Wartość sprzedaży
+EstimatedStockValueSell=Wartość sprzedaży
 EstimatedStockValueShort=Szacunkowa wartość zapasów
 EstimatedStockValue=Szacunkowa wartość zapasów
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-WarehouseEdit=Modyfikacja składu
-ReStockOnDispatchOrder=Wzrost rzeczywisty stan zapasów w magazynach ręcznego wysyłki, po otrzymaniu zamówienia dostawca
-OrderStatusNotReadyToDispatch=Zamówienie nie jest jeszcze lub nie więcej status, który umożliwia wysyłanie produktów w magazynach czas.
-NoPredefinedProductToDispatch=Nie gotowych produktów dla tego obiektu. Więc nie w czas wysyłki jest wymagane.
-DispatchVerb=Wysyłka
 DeleteAWarehouse=Usuń magazyn
 ConfirmDeleteWarehouse=Czy na pewno chcesz usunąć <b>%s</b> magazynie?
 PersonalStock=Osobowych %s czas
 ThisWarehouseIsPersonalStock=Tym składzie przedstawia osobiste zasobów %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:51).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-SellPriceMin=Cena sprzedaży jednostki
-EstimatedStockValueSellShort=Wartość sprzedaży
-EstimatedStockValueSell=Wartość sprzedaży
 SelectWarehouseForStockDecrease=Wybierz magazyn użyć do zmniejszenia czas
 SelectWarehouseForStockIncrease=Wybierz magazyn użyć do zwiększenia czas
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:54).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

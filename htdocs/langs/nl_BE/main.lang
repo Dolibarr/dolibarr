@@ -1,7 +1,6 @@
 # Dolibarr language file - nl_BE - main
-CHARSET=UTF-8
 SeparatorDecimal=,
-SeparatorThousand= 
+SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
 FormatDateShortInput=%d/%m/%Y
 FormatDateShortJava=dd/MM/yyyy
@@ -101,7 +100,8 @@ List=De lijst
 Statistics=Statistieken
 Status=Status
 Ref=Ref
-Comments=Commentaren
+Comment=Opmerking
+Comments=Opmerkingen
 ActionsDone=Acties gedaan
 ActionsToDo=Acties nog te doen
 Filter=filter

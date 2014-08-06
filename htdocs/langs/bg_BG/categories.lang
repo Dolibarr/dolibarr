@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Категория
 Categories=Категории
 Rubrique=Категория
@@ -25,6 +16,7 @@ SuppliersCategoriesArea=Доставчици категории област
 CustomersCategoriesArea=Клиентите категории област
 ThirdPartyCategoriesArea=Трети страни категории
 MembersCategoriesArea=Потребители категории област
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Основни категории
 SubCats=Подкатегории
 CatStatistics=Статистика
@@ -58,10 +50,12 @@ SupplierIsInCategories=Трето лице притежава следните �
 CompanyIsInCustomersCategories=Това трето лице притежава следните клиенти / перспективи категории
 CompanyIsInSuppliersCategories=Това трето лице притежава следните доставчици категории
 MemberIsInCategories=Този член притежава следните членове категории
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Този продукт / услуга не е в всички категории
 SupplierHasNoCategory=Този доставчик не е в никакви категории
 CompanyHasNoCategory=Тази фирма не е в никакви категории
 MemberHasNoCategory=Този участник не е в никакви категории
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Се класифицира в категорията
 NoneCategory=Никой
 NotCategorized=Без категория
@@ -87,10 +81,12 @@ CustomersCategoriesShort=Клиенти категории
 CustomersProspectsCategoriesShort=Custo / Prosp. категории
 ProductsCategoriesShort=Продукти категории
 MembersCategoriesShort=Потребители категории
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Тази категория не съдържа всеки продукт.
 ThisCategoryHasNoSupplier=Тази категория не съдържа никакви доставчика.
 ThisCategoryHasNoCustomer=Тази категория не съдържа всеки клиент.
 ThisCategoryHasNoMember=Тази категория не съдържа всеки член.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Целеви клиент
 AssignedToTheCustomer=Целеви на клиента
 InternalCategory=Вътрешен категория
@@ -100,4 +96,12 @@ CatSupList=Списък на доставчика категории
 CatCusList=Списък на потребителите / перспективата категории
 CatProdList=Списък на продуктите категории
 CatMemberList=Списък на членовете категории
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:37:58).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

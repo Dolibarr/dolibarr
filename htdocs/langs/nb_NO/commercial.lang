@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - commercial
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - commercial
 Commercial=Handel
 CommercialArea=Handelsområde
 CommercialCard=Handelskort
@@ -13,6 +12,7 @@ NewAction=Ny handling/oppgave
 AddAction=Legg til handling/oppgave
 AddAnAction=Legg til en handling/oppgave
 AddActionRendezVous=Legg til møte
+Rendez-Vous=Rendezvous
 ConfirmDeleteAction=Er du sikker på at du vil slette denne oppgaven?
 CardAction=Handlingskort
 PercentDone=Prosent ferdig
@@ -23,6 +23,7 @@ TaskRDVWith=Møte med %s
 ShowTask=Vis oppgave
 ShowAction=Vis handling
 ActionsReport=Handlingsrapport
+# ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
 SalesRepresentative=Salgsreprsentant
 SalesRepresentatives=Salgsrepresentanter
 SalesRepresentativeFollowUp=Salgsrepresentant (oppfølging)
@@ -45,7 +46,7 @@ ToDoActions=Ikke fullførte handlinger
 ToDoActionsFor=Ikke fullførte handlinger for %s
 SendPropalRef=Send tilbud %s
 SendOrderRef=Send ordre %s
-NoRecordedProspects=Ingen regisrtrerte prospekter
+StatusNotApplicable=Ikke aktuelt
 StatusActionToDo=To Do
 StatusActionDone=Utført
 MyActionsAsked=Handlinger jeg har registrert
@@ -75,22 +76,20 @@ ActionAC_REL=Send purring
 ActionAC_CLO=Lukk
 ActionAC_EMAILING=Send e-postutsendelse (massemailing)
 ActionAC_COM=Send ordre i posten
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> nb_NO
-Rendez-Vous=Rendezvous
+ActionAC_SHIP=Send levering post
 ActionAC_SUP_ORD=Send leverandør bestill ved mail
 ActionAC_SUP_INV=Send leverandør faktura i posten
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:20:02).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-StatusNotApplicable=Ikke aktuelt
-ActionAC_SHIP=Send levering post
 ActionAC_OTH=Andre
+# ActionAC_OTH_AUTO=Other (automatically inserted events)
+# ActionAC_MANUAL=Manually inserted events
+# ActionAC_AUTO=Automatically inserted events
+# Stats=Sales statistics
+# CAOrder=Sales volume (validated orders)
+# FromTo=from %s to %s
+# MargeOrder=Margins (validated orders)
+# RecapAnnee=Summary of the year
+# NoData=There is no data
 StatusProsp=Prospect status
 DraftPropals=Utkast kommersielle forslag
 SearchPropal=Søk en kommersiell forslag
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:09).
+# CommercialDashboard=Commercial summary

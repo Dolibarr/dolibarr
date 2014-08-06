@@ -416,9 +416,7 @@ else
     // Confirmation delete
     if ($action == 'delete')
     {
-        $form = new Form($db);
-        $ret=$form->form_confirm($_SERVER['PHP_SELF']."?socid=".$object->socid."&amp;id=".$id,$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
-        if ($ret == 'html') print '<br>';
+        print $form->formconfirm($_SERVER['PHP_SELF']."?socid=".$object->socid."&amp;id=".$id,$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
     }
 
     $nblines = count($object->lines);

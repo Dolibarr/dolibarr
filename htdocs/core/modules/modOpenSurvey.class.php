@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       htdocs/opensurvey/core/modules/modOpenSurvey.class.php
+ *      \file       htdocs/core/modules/modOpenSurvey.class.php
  *      \ingroup    opensurvey
  *      \brief      Description and activation file for module OpenSurvey
  */
@@ -57,7 +57,7 @@ class modOpenSurvey extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is value MyModule)
-		$this->description = "Module to integrate a survey (like Doodle, Studs, Rdvz, ...)";
+		$this->description = "Module to make online surveys (like Doodle, Studs, Rdvz, ...)";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -197,7 +197,7 @@ class modOpenSurvey extends DolibarrModules
 	{
 		// Permissions
 		$this->remove($options);
-		
+
 		$sql = array();
 
 		return $this->_init($sql,$options);

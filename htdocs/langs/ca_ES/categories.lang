@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - categories
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Categoria
 Categories=categories
 Rubrique=Categoria
@@ -17,6 +16,7 @@ SuppliersCategoriesArea=Àrea categories de proveïdors
 CustomersCategoriesArea=Àrea categories de clients
 ThirdPartyCategoriesArea=Àrea categories de tercers
 MembersCategoriesArea=Àrea categories de membres
+ContactsCategoriesArea=Àrea categories de contactes
 MainCats=Categories principals
 SubCats=Subcategories
 CatStatistics=Estadístiques
@@ -50,10 +50,12 @@ SupplierIsInCategories=Aquest proveïdor es troba en les següents categories
 CompanyIsInCustomersCategories=Aquesta empresa es troba en les següents categories
 CompanyIsInSuppliersCategories=Aquesta empresa es troba en les següents categories de proveïdors
 MemberIsInCategories=Aquest membre es troba en les següents categories de membres
+ContactIsInCategories=Aquest contacte es troba en les següents categories de contactes
 ProductHasNoCategory=Aquest producte/servei no es troba en cap categoria en particular
 SupplierHasNoCategory=Aquest proveïdor no es troba en cap categoria en particular
 CompanyHasNoCategory=Aquesta empresa no es troba en cap categoria en particular
 MemberHasNoCategory=Aquest membre no es troba en cap categoria en particular
+ContactHasNoCategory=Aquest contacte no es troba en cap categoria
 ClassifyInCategory=Classificar en la categoria
 NoneCategory=Cap
 NotCategorized=Sense categoria
@@ -79,10 +81,12 @@ CustomersCategoriesShort=Categories clients
 CustomersProspectsCategoriesShort=Categories clients
 ProductsCategoriesShort=Categories productes
 MembersCategoriesShort=Categories membres
+ContactCategoriesShort=Categories contactes
 ThisCategoryHasNoProduct=Aquesta categoria no conté cap producte.
 ThisCategoryHasNoSupplier=Aquesta categoria no conté cap proveïdor.
 ThisCategoryHasNoCustomer=Aquesta categoria no conté cap client.
 ThisCategoryHasNoMember=Aquesta categoria no té cap membre.
+ThisCategoryHasNoContact=Aquesta categoria no conté contactes
 AssignedToCustomer=Assignar a un client
 AssignedToTheCustomer=Assignat a un client
 InternalCategory=Categoria interna
@@ -92,9 +96,12 @@ CatSupList=Llista de categories de proveïdors
 CatCusList=Llista de categories de clients/potencials
 CatProdList=Llista de categories de productes
 CatMemberList=Llista de categories de membres
-
-# Imports
+CatContactList=Llistat de categories de contactes i contactes
 CatSupLinks=Proveïdors
 CatCusLinks=Clients/Clients potencials
 CatProdLinks=Productes
 CatMemberLinks=Membres
+CatProdLinks=Productes
+CatCusLinks=Clients/Clients potencials
+CatSupLinks=Proveïdors
+DeleteFromCat=Eliminar de la categoria

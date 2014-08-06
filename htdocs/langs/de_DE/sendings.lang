@@ -1,15 +1,8 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Versand Nr.
 Sending=Sendung
 Sendings=Sendungen
+Shipment=Sendung
 Shipments=Lieferungen
 Receivings=Warenerhalt
 SendingsArea=Versandübersicht
@@ -20,6 +13,7 @@ LastSendings=Letzte %s Sendungen
 SearchASending=Suche Sendung
 StatisticsOfSendings=Versandstatistik
 NbOfSendings=Anzahl der Sendungen
+NumberOfShipmentsByMonth=Anzahl der Sendungen nach Monaten
 SendingCard=Versandkarte
 NewSending=Neue Sendung
 CreateASending=Erzeuge eine Sendung
@@ -35,10 +29,14 @@ DateSendingShort=Versanddatum
 SendingsForSameOrder=Sendungen zu dieser Bestellung
 SendingsAndReceivingForSameOrder=Sendungen und Warenerhalt zu dieser Bestellung
 SendingsToValidate=Freizugebende Sendungen
+StatusSendingCanceled=Storniert
 StatusSendingDraft=Entwurf
 StatusSendingValidated=Freigegeben (Artikel versandfertig oder bereits versandt)
+StatusSendingProcessed=Verarbeitete
+StatusSendingCanceledShort=Storno
 StatusSendingDraftShort=Entwurf
 StatusSendingValidatedShort=Freigegeben
+StatusSendingProcessedShort=Fertig
 SendingSheet=Versandbeleg
 Carriers=Spediteure
 Carrier=Spediteur
@@ -50,11 +48,9 @@ ConfirmCancelSending=Möchten Sie diese Sendung wirklich verwerfen?
 GenericTransport=Generischer Transport
 Enlevement=Vom Kunden erhalten
 DocumentModelSimple=Einfache Dokumentvorlage
-WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
-StatsOnShipmentsOnlyValidated=Versandstatistik (nur Freigegebene)
-StatusSendingCanceled=Storniert
-StatusSendingCanceledShort=Storno
 DocumentModelMerou=Merou A5-Modell
+WarningNoQtyLeftToSend=Achtung, keine Produkte für den Versand
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Geplantes Zustellungsdatum
 DateReceived=Datum der Zustellung
 SendShippingByEMail=Verand per E-Mail
@@ -62,8 +58,9 @@ SendShippingRef=Senden Lieferung %s
 ActionsOnShipping=Anmerkungen zur Sendung
 LinkToTrackYourPackage=Link zur Sendungsnachverfolgung
 ShipmentCreationIsDoneFromOrder=Aktuell ist die Erstellung der neuen Sendung über die Bestellkarte erfolgt.
-StatusSendingProcessed=Verarbeitete
-StatusSendingProcessedShort=Fertig
+RelatedShippings=Ähnliche Sendungen
+ShipmentLine=Sendungszeilen
+CarrierList=Liste der Transporter
 
 # Sending methods
 SendingMethodCATCH=Abholung durch Kunden
@@ -75,3 +72,5 @@ DocumentModelSirocco=Einfache Dokumentvorlage für die Lieferungscheine
 DocumentModelTyphon=Vollständig Dokumentvorlage für die Lieferungscheine (Logo, ...)
 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstante EXPEDITION_ADDON_NUMBER nicht definiert
+SumOfProductVolumes=Summe der Produktevolumen
+SumOfProductWeights=Summe der Produktegewichte

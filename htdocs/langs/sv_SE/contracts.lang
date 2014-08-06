@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Kontrakt område
 ListOfContracts=Förteckning över avtal
 LastContracts=Senast %s ändrat avtal
@@ -47,6 +38,7 @@ ConfirmCloseService=Är du säker på att du vill avsluta denna tjänst med datu
 ValidateAContract=Validera ett kontrakt
 ActivateService=Aktivera tjänsten
 ConfirmActivateService=Är du säker på att du vill aktivera denna tjänst med datum <b>%s?</b>
+# RefContract=Contract reference
 DateContract=Kontraktsdatum
 DateServiceActivate=Service aktivering datum
 DateServiceUnactivate=Service avaktivering datum
@@ -61,7 +53,7 @@ ListOfRunningContractsLines=Förteckning över löpande kontrakt linjer
 ListOfRunningServices=Förteckning över körande tjänster
 NotActivatedServices=Inaktiv tjänster (bland valideras kontrakt)
 BoardNotActivatedServices=Tjänster för att aktivera bland validerade kontrakt
-LastContracts=Senast% kontrakt
+LastContracts=Senast %s ändrat avtal
 LastActivatedServices=Senaste %s aktiverad tjänster
 LastModifiedServices=Senast %s uppdaterad tjänster
 EditServiceLine=Redigera servicelinjen
@@ -92,21 +84,16 @@ ConfirmMoveToAnotherContractQuestion=Välj i vilket befintligt kontrakt (av samm
 PaymentRenewContractId=Förnya kontrakt linje (nummer %s)
 ExpiredSince=Utgångsdatum
 RelatedContracts=Liknande avtal
+NoExpiredServices=Inga utgångna aktiva tjänster
+# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+# ListOfServicesToExpire=List of Services to expire
+# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Säljare undertecknar avtal
 TypeContact_contrat_internal_SALESREPFOLL=Försäljare följa upp avtal
 TypeContact_contrat_external_BILLING=Fakturering kundkontakt
 TypeContact_contrat_external_CUSTOMER=Uppföljning kundkontakt
 TypeContact_contrat_external_SALESREPSIGN=Undertecknande kontrakt kundkontakt
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:51:41).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> sv_SE
 Error_CONTRACT_ADDON_NotDefined=Konstant CONTRACT_ADDON definieras inte
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:27:25).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-NoExpiredServices=Inga utgångna aktiva tjänster
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:20).

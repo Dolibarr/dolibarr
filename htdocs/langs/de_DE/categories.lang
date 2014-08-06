@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - categories
 Category=Kategorie
 Categories=Kategorien
 Rubrique=Kategorie
@@ -24,6 +16,7 @@ SuppliersCategoriesArea=Lieferantenkategorien
 CustomersCategoriesArea=Kundenkategorien
 ThirdPartyCategoriesArea=Organisationskategorien
 MembersCategoriesArea=Kategoriemitglieder-Bereich
+ContactsCategoriesArea=Kontaktkategorien
 MainCats=Hauptkategorien
 SubCats=Unterkategorien
 CatStatistics=Statistik
@@ -48,7 +41,7 @@ ErrForgotField=Sie haben ein oder mehrere Felder nicht ausgefüllt
 ErrCatAlreadyExists=Dieser Name wird bereits verwendet
 AddProductToCat=Dieses Produkt einer Kategorie zuweisen?
 ImpossibleAddCat=Das Hinzufügen dieser Kategorie ist nicht möglich
-ImpossibleAssociateCategory=Kann die Kategorie nicht zuweisen zu 
+ImpossibleAssociateCategory=Kann die Kategorie nicht zuweisen zu
 WasAddedSuccessfully=<b> %s</b> wurde erfolgreich hinzugefügt.
 ObjectAlreadyLinkedToCategory=Element ist bereits mit dieser Kategorie verknüpft.
 CategorySuccessfullyCreated=Die Kategorie %s wurde erfolgreich hinzugefügt.
@@ -57,12 +50,15 @@ SupplierIsInCategories=Dieser Lieferant ist folgenden Kategorien zugewiesen
 CompanyIsInCustomersCategories=Diese Organisation ist folgenden Lead-/Kundenkategorien zugewiesen
 CompanyIsInSuppliersCategories=Diese Organisation ist folgenden Lieferantenkategorien zugewiesen
 MemberIsInCategories=Dieses Mitglied ist Mitglied folgender Kategorien
+ContactIsInCategories=Dieser Kontakt ist folgenden Kontaktkategorien zugewiesen
 ProductHasNoCategory=Dieses Produkt / Dienstleistung ist nicht in allen Kategorien
 SupplierHasNoCategory=Dieser Lieferant ist keiner Kategorie zugewiesen
 CompanyHasNoCategory=Diese Organisation ist keiner Kategorie zugewiesen
 MemberHasNoCategory=Dieses Mitglied ist in keiner Kategorie
+ContactHasNoCategory=Dieser Kontakt ist keiner Kategorie zugewiesen
 ClassifyInCategory=Folgender Kategorie zuweisen
 NoneCategory=Keine
+NotCategorized=Ohne Kategorie
 CategoryExistsAtSameLevel=Diese Kategorie existiert bereits auf diesem Level
 ReturnInProduct=Zurück zur Produktkarte
 ReturnInSupplier=Zurück zur Anbieterkarte
@@ -85,10 +81,12 @@ CustomersCategoriesShort=Kundenkategorien
 CustomersProspectsCategoriesShort=Lead- / Kundenkategorien
 ProductsCategoriesShort=Produktkategorien
 MembersCategoriesShort=Mitgliedergruppen
+ContactCategoriesShort=Kontaktkategorien
 ThisCategoryHasNoProduct=Diese Kategorie enthält keine Produkte.
 ThisCategoryHasNoSupplier=Diese Kategorie enthält keine Lieferanten.
 ThisCategoryHasNoCustomer=Diese Kategorie enthält keine Kunden.
 ThisCategoryHasNoMember=Diese Kategorie enthält keine Mitglieder.
+ThisCategoryHasNoContact=Diese Kategorie enthält keine Kontakte.
 AssignedToCustomer=Einem Kunden zugeordnet
 AssignedToTheCustomer=An den Kunden
 InternalCategory=Interne Kategorie
@@ -98,3 +96,12 @@ CatSupList=Liste der Lieferantenkategorien
 CatCusList=Liste der Kunden-/ Leadkategorien
 CatProdList=Liste der Produktkategorien
 CatMemberList=Liste der Kategoriemitglieder
+CatContactList=Liste der Kontaktkategorien und Kontakte
+CatSupLinks=Verbindung zwischen Lieferanten und Kategorien
+CatCusLinks=Verbindung zwischen Kunden-/Lead und Kategorien
+CatProdLinks=Verbindungen zwischen Produkten/Services und Kategorien
+CatMemberLinks=Verbindung zwischen Mitgliedern und Kategorien
+CatProdLinks=Verbindungen zwischen Produkten/Services und Kategorien
+CatCusLinks=Verbindung zwischen Kunden-/Lead und Kategorien
+CatSupLinks=Verbindung zwischen Lieferanten und Kategorien
+DeleteFromCat=Aus Kategorie entfernen

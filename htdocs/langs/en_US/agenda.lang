@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - agenda 
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - agenda 
 IdAgenda=ID event
 Actions=Events
 ActionsArea=Events area (Actions and tasks)
@@ -53,6 +52,7 @@ InvoiceSentByEMail=Customer invoice %s sent by EMail
 SupplierOrderSentByEMail=Supplier order %s sent by EMail
 SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
 ShippingSentByEMail=Shipping %s sent by EMail
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s sent by EMail
 NewCompanyToDolibarr= Third party created
 DateActionPlannedStart= Planned start date

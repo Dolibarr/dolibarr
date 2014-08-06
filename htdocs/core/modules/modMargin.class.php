@@ -17,7 +17,7 @@
 
 /**     \defgroup   margin     Module margin
  *      \brief      Module to manage margins
- *      \file       htdocs/includes/modules/modMargin.class.php
+ *      \file       htdocs/core/modules/modMargin.class.php
  *      \ingroup    margin
  *      \brief      Description and activation file for module Margin
  */
@@ -42,7 +42,7 @@ class modMargin extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 59000;
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'margin';
+		$this->rights_class = 'margins';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
@@ -79,8 +79,8 @@ class modMargin extends DolibarrModules
 
 		// New pages on tabs
 		$this->tabs = array(
-				'product:+margin:Margins:margins:$conf->margin->enabled:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:$conf->margin->enabled && empty($user->societe_id):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
+				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous:/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 
@@ -106,11 +106,29 @@ class modMargin extends DolibarrModules
     			'url'=>'/margin/index.php',
     			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
     			'position'=>100,
-    			'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+    			'enabled'=>'$user->rights->margins->liretous',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
     			'perms'=>'1',			// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
     			'target'=>'',
     			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
+
+		// Permissions
+		$this->rights = array();
+		$r=0;
+
+		$r++;
+		$this->rights[$r][0] = 59001; // id de la permission
+		$this->rights[$r][1] = 'Visualiser les marges'; // libelle de la permission
+		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'liretous';
+
+		$r++;
+		$this->rights[$r][0] = 59002; // id de la permission
+		$this->rights[$r][1] = 'Définir les marges'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][4] = 'creer';
 	}
 
 	/**
@@ -124,7 +142,7 @@ class modMargin extends DolibarrModules
   	{
     	$sql = array();
 
-		$result=$this->load_tables();
+		//$result=$this->_load_tables();
 
     	return $this->_init($sql);
   	}
@@ -143,19 +161,6 @@ class modMargin extends DolibarrModules
     	return $this->_remove($sql);
   	}
 
-
-	/**
-	 * 	Create tables and keys required by module
-	 * 	Files mymodule.sql and mymodule.key.sql with create table and create keys
-	 * 	commands must be stored in directory /mymodule/sql/
-	 * 	This function is called by this->init.
-	 *
-	 * 	@return		int		<=0 if KO, >0 if OK
-	 */
-  	function load_tables()
-	{
-		//return $this->_load_tables();
-	}
 }
 
 ?>

@@ -1,16 +1,7 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
-ErrorCompanyNameAlreadyExists=%s Име на фирмата, която вече съществува. Избери друг.
-ErrorPrefixAlreadyExists=Префикс %s вече съществува. Избери друг.
-ErrorSetACountryFirst=Задайте страната на първо място
+# Dolibarr language file - Source file is en_US - companies
+ErrorCompanyNameAlreadyExists=Името на фирмата %s вече съществува. Изберете друго.
+ErrorPrefixAlreadyExists=Префикса %s вече съществува. Изберете друг.
+ErrorSetACountryFirst=Първо задайте страната
 SelectThirdParty=Изберете трета страна
 DeleteThirdParty=Изтриване на трета страна
 ConfirmDeleteCompany=Сигурен ли сте, че искате да изтриете тази фирма и всички наследени информация?
@@ -45,7 +36,9 @@ ThirdParty=Трета страна
 ThirdParties=Трети страни
 ThirdPartyAll=Трети страни (всички)
 ThirdPartyProspects=Перспективи
+ThirdPartyProspectsStats=Перспективи
 ThirdPartyCustomers=Клиентите
+ThirdPartyCustomersStats=Клиентите
 ThirdPartyCustomersWithIdProf12=Клиентите с %s или %s
 ThirdPartySuppliers=Доставчици
 ThirdPartyType=Трета страна тип
@@ -73,6 +66,9 @@ Country=Страна
 CountryCode=Код на държавата
 CountryId=Държава ID
 Phone=Телефон
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=Проф. телефон
 PhonePerso=Pers. телефон
 PhoneMobile=Подвижен
@@ -81,20 +77,25 @@ Fax=Факс
 Zip=Пощенски код
 Town=Град
 Web=Мрежа
-Poste=Позиция
+Poste= Позиция
 DefaultLang=Език по подразбиране
 VATIsUsed=ДДС се използва
 VATIsNotUsed=ДДС не се използва
-LocalTax1IsUsedES=RE се използва
-LocalTax1IsNotUsedES=RE не се използва
-LocalTax2IsUsedES=IRPF се използва
-LocalTax2IsNotUsedES=IRPF не се използва
+# CopyAddressFromSoc=Fill address with thirdparty address
+##### Local Taxes #####
+LocalTax1IsUsedES= RE се използва
+LocalTax1IsNotUsedES= RE не се използва
+LocalTax2IsUsedES= IRPF се използва
+LocalTax2IsNotUsedES= IRPF не се използва
+LocalTax1ES=RE
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Административна код невалиден
 WrongSupplierCode=Доставчик код невалиден
 CustomerCodeModel=Customer код модел
 SupplierCodeModel=Модел доставчик код
 Gencod=Бар код
+##### Professional ID #####
 ProfId1Short=Проф. номер 1
 ProfId2Short=Проф. номер 2
 ProfId3Short=Проф. номер 3
@@ -107,7 +108,7 @@ ProfId3=Professional ID 3
 ProfId4=Professional ID 4
 ProfId5=Professional ID 5
 ProfId6=Professional ID 6
-ProfId1AR=Проф. Id едно (CUIT / Cuil)
+ProfId1AR=Проф. Id едно (CUIL)
 ProfId2AR=Проф. Id 2 (Revenu зверове)
 ProfId3AR=-
 ProfId4AR=-
@@ -259,6 +260,7 @@ EditContact=Редактиране на контакт
 EditContactAddress=Редактиране на контакт / адрес
 Contact=Контакт
 ContactsAddresses=Контакти / Адреси
+# NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=Без допир, определени за тази трета страна
 DefaultContact=Контакт по подразбиране
 AddCompany=Добави фирма
@@ -364,6 +366,7 @@ ExportDataset_company_1=Трети страни (Фирми / фондации) 
 ExportDataset_company_2=Контакти и свойства
 ImportDataset_company_1=Трети страни (Фирми / фондации) и свойства
 ImportDataset_company_2=Контакти (на thirdparties или не) и атрибути
+ImportDataset_company_3=Банкови данни
 PriceLevel=Ценовото равнище
 DeliveriesAddress=Доставка адреси
 DeliveryAddress=Адрес за доставка
@@ -395,6 +398,11 @@ UniqueThirdParties=Общо уникални трети страни
 InActivity=Отворен
 ActivityCeased=Затворен
 ActivityStateFilter=Състоянието на дейността
+# ProductsIntoElements=List of products into
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
+# Monkey
 MonkeyNumRefModelDesc=Връщане Numero с формат %syymm-NNNN за клиента код и %syymm-NNNN за доставчика код, където YY е годината, mm е месец и NNNN е последователност, без почивка и няма връщане назад до 0.
+# Leopard
 LeopardNumRefModelDesc=Кодът е безплатно. Този код може да бъде променен по всяко време.
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:40:03).

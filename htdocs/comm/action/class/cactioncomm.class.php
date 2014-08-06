@@ -78,14 +78,14 @@ class CActionComm
                 $this->libelle = $obj->libelle;
                 $this->active  = $obj->active;
 
+                $this->db->free($resql);
                 return 1;
             }
             else
             {
+                $this->db->free($resql);
                 return 0;
             }
-
-            $this->db->free($resql);
         }
         else
         {

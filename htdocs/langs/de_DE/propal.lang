@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - propal
 Proposals=Angebote
 Proposal=Angebot
 ProposalShort=Angebot
@@ -41,7 +33,7 @@ ShowPropal=Zeige Angebot
 PropalsDraft=Entwürfe
 PropalsOpened=Offen
 PropalsNotBilled=Geschlossen, nicht verrechnet
-PropalStatusDraft=Entwurf (ist freizugeben)
+PropalStatusDraft=Entwurf (freizugeben)
 PropalStatusValidated=Freigegeben (Angebot ist offen)
 PropalStatusOpened=Freigegeben (Angebot ist offen)
 PropalStatusClosed=Geschlossen
@@ -78,6 +70,8 @@ ErrorPropalNotFound=Angebot %s nicht gefunden
 Estimate=Geschätzt:
 EstimateShort=Schätzung
 OtherPropals=Andere Angebote
+AddToDraftProposals=Zu Angebots-Entwurf hinzufügen
+NoDraftProposals=Keine Angebotsentwürfe
 CopyPropalFrom=Erstelle neues Angebot durch Kopieren eines vorliegenden Angebots
 CreateEmptyPropal=Erstelle leeres Angebot oder aus der Liste der Produkte/Dienstleistungen
 DefaultProposalDurationValidity=Standardmäßige Gültigkeitsdatuer (Tage)
@@ -103,3 +97,6 @@ TypeContact_propal_external_CUSTOMER=Partnerkontakt für Angebot
 # Document models
 DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, uwm.)
 DocModelJauneDescription=Angebotsvorlage <Jaune>
+DefaultModelPropalCreate=Erstellung Standardvorlage
+# DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
+# DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)

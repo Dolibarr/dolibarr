@@ -182,13 +182,14 @@ class ExportTsv extends ModeleExports
      *  @param      array		$array_export_fields_label   	Array with list of label of fields
      *  @param      array		$array_selected_sorted       	Array with list of field to export
      *  @param      Translate	$outputlangs    				Object lang to translate values
+     *  @param		array		$array_types					Array with types of fields
 	 * 	@return		int											<0 if KO, >0 if OK
 	 */
-    function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs)
+    function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
     {
         foreach($array_selected_sorted as $code => $value)
         {
-            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);
+            $newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);		// newvalue is now $outputlangs->charset_output encoded
 			$newvalue=$this->tsv_clean($newvalue,$outputlangs->charset_output);
 
 			fwrite($this->handle,$newvalue.$this->separator);
@@ -218,14 +219,11 @@ class ExportTsv extends ModeleExports
 			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
 
-            $newvalue=$outputlangs->convToOutputCharset($objp->$alias);
+            $newvalue=$outputlangs->convToOutputCharset($objp->$alias);		// objp->$alias must be utf8 encoded as any var in memory // newvalue is now $outputlangs->charset_output encoded
             $typefield=isset($array_types[$code])?$array_types[$code]:'';
 
             // Translation newvalue
-			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg))
-			{
-				$newvalue=$outputlangs->transnoentities($reg[1]);
-			}
+			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
 
 			$newvalue=$this->tsv_clean($newvalue,$outputlangs->charset_output);
 
@@ -262,7 +260,7 @@ class ExportTsv extends ModeleExports
      * Clean a cell to respect rules of TSV file cells
      *
      * @param 	string	$newvalue	String to clean
-	 * @param	string	$charset	Output character set
+	 * @param	string	$charset	Input AND Output character set
      * @return 	string				Value cleaned
      */
     function tsv_clean($newvalue, $charset)

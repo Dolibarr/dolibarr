@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
@@ -99,6 +99,11 @@ if ($action == 'updateprice' && GETPOST('cancel') <> $langs->trans("Cancel"))
     $tva_tx = str_replace('*','', GETPOST('tva_tx','alpha'));
     $tva_tx = price2num($tva_tx);
 
+    if ($tva_tx == '')
+    {
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("VATRateForSupplierProduct")).'</div>';
+    }
 	if (empty($quantity))
 	{
 		$error++;
@@ -353,6 +358,7 @@ if ($id || $ref)
 				if (! empty($socid))	// When update
 				{
 					$default_vat=get_default_tva($supplier, $mysoc, $product->id);
+					if (empty($default_vat)) $default_vat=$product->tva_tx;
 				}
 				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
 				print '</td></tr>';

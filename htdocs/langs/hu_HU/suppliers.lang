@@ -1,5 +1,4 @@
-# Dolibarr language file - hu_HU - suppliers
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=Beszállítók
 Supplier=Beszállító
 AddSupplier=Beszállító hozzáadása
@@ -11,6 +10,10 @@ ListOfSuppliers=Beszállító listája
 ShowSupplier=Beszállító mutatása
 OrderDate=Megrendelés dátuma
 BuyingPrice=Vásárlási ár
+BuyingPriceMin=Minimális felvásárlási árat
+BuyingPriceMinShort=Min felvásárlási ár
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=Beszállítói ár hozzáadása
 ChangeSupplierPrice=Beszállítói ár megváltoztatása
 ErrorQtyTooLowForThisSupplier=A mennyiség túl kicsi ehhez a beszállítóhoz vagy nincs ár meghatározva erre a termékre ettől beszállítótól.
@@ -21,8 +24,10 @@ NoRecordedSuppliers=Nincs beszállító bejegyezve
 SupplierPayment=Beszállító fizetés
 SuppliersArea=Beszállítói Terület
 RefSupplierShort=Beszállító #
+Availability=Elérhetőség
 ExportDataset_fournisseur_1=Beszállítói számla lista és számla sorok
 ExportDataset_fournisseur_2=Beszállítói számlák és fizetések
+# ExportDataset_fournisseur_3=Supplier orders and order lines
 ApproveThisOrder=Megrendelés jóváhagyása
 ConfirmApproveThisOrder=Biztos jóvá akarja hagyni a megrendelést?
 DenyingThisOrder=Megrendelés elutasítása
@@ -34,10 +39,4 @@ AddSupplierOrder=Beszállítói megrendelés létrehozása
 AddSupplierInvoice=Beszállítói számla létrehozása
 ListOfSupplierProductForSupplier=<b>%s</b> beszállító termékei és árai
 NoneOrBatchFileNeverRan=Nincs vagy a <b>%s</b> batch fájl nem futott az utóbbi időben
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
-BuyingPriceMin=Minimális felvásárlási árat
-BuyingPriceMinShort=Min felvásárlási ár
-Availability=Elérhetőség
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:17:28).
+# SentToSuppliers=Sent to suppliers

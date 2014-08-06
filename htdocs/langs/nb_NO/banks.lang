@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - banks
-CHARSET=UTF-8 
+# Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 Banks=Banker
 MenuBankCash=Bank/Kasse
@@ -20,6 +19,8 @@ SavingAccount=Kapitalkonto
 SavingAccounts=Kapitalkonti
 ErrorBankLabelAlreadyExists=Hovedbokskonto med samme navn eksisterer fra før
 BankBalance=Saldo
+# BankBalanceBefore=Balance before
+# BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Minste saldogrense
 BalanceMinimalDesired=Minste ønskede saldogrense
 InitialBankBalance=Inngående balanse
@@ -42,12 +43,11 @@ LastAccountStatements=Kontoutdrag
 Rapprochement=Avstemming
 IOMonthlyReporting=Månedlig rapportering
 BankAccountDomiciliation=Kontoadresse
+BankAccountCountry=Konto landet
 BankAccountOwner=Kontoeier
 BankAccountOwnerAddress=Kontoeiers adresse
 RIBControlError=Integritetssjekk feilet. Dette betyr at informasjon om denne kontoen er ufullstendig eller feil (sjekk land, nummer og IBAN).
 CreateAccount=Opprett konto
-StandingOrderToProcess=Til behandling
-StandingOrderProcessed=Behandlet
 NewAccount=Ny konto
 NewBankAccount=Ny bankkonto
 NewFinancialAccount=Ny hovedbokskonto
@@ -80,6 +80,8 @@ ListBankTransactions=Oversikt over transaksjoner
 IdTransaction=Transaksjons-ID
 BankTransactions=Banktransaksjoner
 SearchTransaction=Søk i transaksjoner
+ListTransactions=Liste transaksjoner
+ListTransactionsByCategory=Liste transaksjon / kategori
 TransactionsToConciliate=Transaksjon du vil stemme av
 Conciliable=Avstemmingsbar
 Conciliate=Avstemm
@@ -102,7 +104,9 @@ ConciliatedBy=Avstemt av
 DateConciliating=Avstemt den
 BankLineConciliated=Transaksjonen er avstemt
 CustomerInvoicePayment=Kundeinnbetaling
+# CustomerInvoicePaymentBack=Customer payment back
 SupplierInvoicePayment=Leverandøutbetaling
+WithdrawalPayment=Tilbaketrekking betaling
 SocialContributionPayment=Social contribution betaling (ikke i Norge)
 FinancialAccountJournal=Utskrift hovedbok
 BankTransfer=Bankoverføring
@@ -118,6 +122,7 @@ DeleteCheckReceipt=Slett denne sjekkbetalingen?
 ConfirmDeleteCheckReceipt=Er du sikker på at du vil slette denne sjekkbetalingen?
 BankChecks=Banksjekker
 BankChecksToReceipt=Sjekker som venter på å bli satt inn
+ShowCheckReceipt=Vis sjekk innskudd kvittering
 NumberOfCheques=Ant. sjekker
 DeleteTransaction=Slett transaksjon
 ConfirmDeleteTransaction=Er du sikker på at du vil slette transaksjonen?
@@ -125,6 +130,7 @@ ThisWillAlsoDeleteBankRecord=Dette vil også slette genererte banktransaksjoner
 BankMovements=Bevegelser
 CashBudget=Likviditetsbudsjett
 PlannedTransactions=Planlagte transaksjoner
+Graph=Grafikk
 ExportDataset_banque_1=Banktransaksjoner og kontoutdrag
 TransactionOnTheOtherAccount=Transaksjonen på den andre kontoen
 TransactionWithOtherAccount=Overført beløp
@@ -132,30 +138,21 @@ PaymentNumberUpdateSucceeded=Betalingsnummer er oppdatert
 PaymentNumberUpdateFailed=Klarte ikke å oppdatere betalingsnummer
 PaymentDateUpdateSucceeded=Betalingsdato oppdatert
 PaymentDateUpdateFailed=Klarte ikke å oppdatere betalingsdatoen
+# Transactions=Transactions
 BankTransactionLine=Bankoverføring
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-BankAccountCountry=Konto landet
-ListTransactions=Liste transaksjoner
-ListTransactionsByCategory=Liste transaksjon / kategori
 AllAccounts=Alle bank / cash kontoer
 BackToAccount=Tilbake til kontoen
 ShowAllAccounts=Vis for alle kontoer
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:48:15).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> nb_NO
-SelectChequeTransactionAndGenerate=Velg / filter sjekker for å inkludere inn sjekken innskudd kvitteringen og klikk på &quot;Create&quot;.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 07:15:02).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-WithdrawalPayment=Tilbaketrekking betaling
-ShowCheckReceipt=Vis sjekk innskudd kvittering
-Graph=Grafikk
 FutureTransaction=Transaksjon i Futur. Ingen måte å forsone.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:06:53).
+SelectChequeTransactionAndGenerate=Velg / filter sjekker for å inkludere inn sjekken innskudd kvitteringen og klikk på &quot;Create&quot;.
+# InputReceiptNumber=Choose the bank statement related with the conciliation. Use a sortable numeric value (such as, YYYYMM)
+# EventualyAddCategory=Eventually, specify a category in which to classify the records
+# ToConciliate=To conciliate?
+# ThenCheckLinesAndConciliate=Then, check the lines present in the bank statement and click
+# BankDashboard=Bank accounts summary
+# DefaultRIB=Default BAN
+# AllRIB=All BAN
+# LabelRIB=BAN Label
+# NoBANRecord=No BAN record
+# DeleteARib=Delete BAN record
+# ConfirmDeleteRib=Are you sure you want to delete this BAN record ?

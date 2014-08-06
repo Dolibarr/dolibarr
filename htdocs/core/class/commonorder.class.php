@@ -32,4 +32,13 @@ abstract class CommonOrder extends CommonObject
 
 }
 
+/**
+ *		\class 		CommonOrderLine
+ *       \brief 		Superclass for orders classes
+ */
+abstract class CommonOrderLine extends CommonObject
+{
+
+}
+
 ?>

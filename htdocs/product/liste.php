@@ -6,7 +6,9 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Jean Heimburger   	<jean@tiaris.info>
- * Copyright (C) 2013		Adolfo segura 		<adolfo.segura@gmail.com>
+ * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Adolfo segura        <adolfo.segura@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,76 +133,51 @@ else
     $sql.= ' p.fk_product_type, p.tms as datem,';
     $sql.= ' p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte,';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
+    $sql .= ', p.desiredstock';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
     if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
-// multilang
+	// multilang
 	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-    {
+	{
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
 	}
-    $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-    if ($sall)
-    {
-        // For natural search
-        $scrit = explode(' ', $sall);
-		
-		foreach ($scrit as $crit) {
-
-			$sql.= " AND (p.ref LIKE '%".$db->escape($crit)."%' OR p.label LIKE '%".$db->escape($crit)."%' OR p.description LIKE '%".$db->escape($crit)."%' OR p.note LIKE '%".$db->escape($crit)."%'";
-
-			// multilang
-			if ($conf->global->MAIN_MULTILANGS) {
-				$sql .= " OR pl.description LIKE '%".$db->escape($sall)."%' OR pl.note LIKE '%".$db->escape($sall)."%'";
-			}
-	        
-	        if (! empty($conf->barcode->enabled))
-	        {
-	        	//If the barcode looks like an EAN13 format and the last digit is included in it,
-				//then whe look for the 12-digit too
-				//As the twelve-digit string will also hit the 13-digit code, we only look for this one
-	        	if (strlen($crit) == 13) {
-					$crit_barcode = substr($crit, 0, 12);
-				} else {
-					$crit_barcode = $crit;
-				}
-
-				$sql .= " OR p.barcode LIKE '%".$db->escape($crit_barcode)."%'";
-	        }
-	        $sql.= ')';
-	    }
-    }
+	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+	if ($sall)
+	{
+		// For natural search
+		$params = array('p.ref', 'p.label', 'p.description', 'p.note');
+		// multilang
+		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+		{
+			$params[] = 'pl.description';
+			$params[] = 'pl.note';
+		}
+		if (! empty($conf->barcode->enabled)) {
+			$params[] = 'p.barcode';
+		}
+		$sql .= natural_search($params, $sall);
+	}
     // if the type is not 1, we show all products (type = 0,2,3)
     if (dol_strlen($type))
     {
     	if ($type == 1) $sql.= " AND p.fk_product_type = '1'";
     	else $sql.= " AND p.fk_product_type <> '1'";
     }
-    if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
-    if ($sbarcode) {
-
-		//If the barcode looks like an EAN13 format and the last digit is included in it,
-		//then whe look for the 12-digit too
-		//As the twelve-digit string will also hit the 13-digit code, we only look for this one
-		if (strlen($sbarcode) == 13) {
-			$sbarcode_12digit = substr($sbarcode, 0, 12);
-			$sql .=  "AND p.barcode LIKE '%".$sbarcode_12digit."%'";
-		} else {
-			$sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
-		}
-        
-    }
+	if ($sref)     $sql .= natural_search('p.ref', $sref);
+    if ($sbarcode) $sql .= natural_search('p.barcode', $sbarcode);
     if ($snom)
 	{
+		$params = array('p.label');
 		// multilang
 		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-	    {
-			$sql.= " AND (p.label LIKE '%".$db->escape($snom)."%' OR (pl.label IS NOT null AND pl.label LIKE '%".$db->escape($snom)."%'))";
+		{
+			$params[] = 'pl.label';
 		}
-		else $sql.= " AND p.label LIKE '%".$db->escape($snom)."%'";
-}
-    if (isset($tosell) && dol_strlen($tosell) > 0) $sql.= " AND p.tosell = ".$db->escape($tosell);
-    if (isset($tobuy) && dol_strlen($tobuy) > 0)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
+		$sql .= natural_search($params, $snom);
+	}
+    if (isset($tosell) && dol_strlen($tosell) > 0  && $tosell!=-1) $sql.= " AND p.tosell = ".$db->escape($tosell);
+    if (isset($tobuy) && dol_strlen($tobuy) > 0  && $tobuy!=-1)   $sql.= " AND p.tobuy = ".$db->escape($tobuy);
     if (dol_strlen($canvas) > 0)                    $sql.= " AND p.canvas = '".$db->escape($canvas)."'";
     if ($catid > 0)    $sql.= " AND cp.fk_categorie = ".$catid;
     if ($catid == -2)  $sql.= " AND cp.fk_categorie IS NULL";
@@ -210,7 +187,16 @@ else
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.tms,";
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
+    $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+
+    $nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+	}
+
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
@@ -251,7 +237,8 @@ else
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+
+    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
     	if (! empty($catid))
     	{
@@ -293,6 +280,13 @@ else
 
     		// Filter on categories
     	 	$moreforfilter='';
+    	 	$colspan=6;
+    	 	if (! empty($conf->barcode->enabled)) $colspan++;
+    	 	if (! empty($conf->service->enabled) && $type != 0) $colspan++;
+    	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
+    	 	if ($user->rights->fournisseur->lire) $colspan++;
+    	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
+
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
@@ -302,23 +296,25 @@ else
     	 	if ($moreforfilter)
     		{
     			print '<tr class="liste_titre">';
-    			print '<td class="liste_titre" colspan="9">';
+    			print '<td class="liste_titre" colspan="'.$colspan.'">';
     		    print $moreforfilter;
     		    print '</td></tr>';
     		}
 
     		// Lignes des titres
-    		print "<tr class=\"liste_titre\">";
+    		print '<tr class="liste_titre">';
     		print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
     		if (! empty($conf->barcode->enabled)) print_liste_field_titre($langs->trans("BarCode"), $_SERVER["PHP_SELF"], "p.barcode",$param,'','',$sortfield,$sortorder);
     		print_liste_field_titre($langs->trans("DateModification"), $_SERVER["PHP_SELF"], "p.tms",$param,"",'align="center"',$sortfield,$sortorder);
     		if (! empty($conf->service->enabled) && $type != 0) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
     		if (empty($conf->global->PRODUIT_MULTIPRICES)) print_liste_field_titre($langs->trans("SellingPrice"), $_SERVER["PHP_SELF"], "p.price",$param,"",'align="right"',$sortfield,$sortorder);
-    		print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		if ($user->rights->fournisseur->lire) print '<td class="liste_titre" align="right">'.$langs->trans("BuyingPriceMinShort").'</td>';
+    		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("DesiredStock").'</td>';
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("PhysicalStock").'</td>';
-    		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-            print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre($langs->trans("Sell"), $_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Buy"), $_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="center"',$sortfield,$sortorder);
+            print '<td width="1%">&nbsp;</td>';
     		print "</tr>\n";
 
     		// Lignes des champs de filtre
@@ -356,9 +352,11 @@ else
             }
 
     		// Minimum buying Price
-    		print '<td class="liste_titre">';
-    		print '&nbsp;';
-    		print '</td>';
+    		if ($user->rights->fournisseur->lire) {
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
 
     		// Stock
     		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
@@ -366,15 +364,23 @@ else
     			print '<td class="liste_titre">';
     			print '&nbsp;';
     			print '</td>';
+    			//desiredstock
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
     		}
 
-    		print '<td class="liste_titre">';
-            print '&nbsp;';
+    		print '<td align="center">';
+            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+            print '</td >';
+
+            print '<td align="center">';
+            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
 
     		print '<td class="liste_titre" align="right">';
-    		print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
     		print '</td>';
     		print '</tr>';
 
@@ -431,11 +437,15 @@ else
     			if (! empty($conf->service->enabled) && $type != 0)
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-    				else print $objp->duration;
+    				if (preg_match('/([0-9]+)[a-z]/i',$objp->duration))
+    				{
+	    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([0-9]+)h/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				else print $objp->duration;
+    				}
     				print '</td>';
     			}
 
@@ -449,21 +459,23 @@ else
     			}
 
     			// Better buy price
-                print  '<td align="right">';
-                if ($objp->minsellprice != '')
-                {
-                    //print price($objp->minsellprice).' '.$langs->trans("HT");
-        			if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+    			if ($user->rights->produit->creer) {
+        			print  '<td align="right">';
+        			if ($objp->minsellprice != '')
         			{
-        			    if ($product_fourn->product_fourn_price_id > 0)
-        			    {
-        			        $htmltext=$product_fourn->display_price_product_fournisseur();
-                            if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
-                            else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
-        			    }
+    					//print price($objp->minsellprice).' '.$langs->trans("HT");
+    					if ($product_fourn->find_min_price_product_fournisseur($objp->rowid) > 0)
+    					{
+    						if ($product_fourn->product_fourn_price_id > 0)
+    						{
+    							$htmltext=$product_fourn->display_price_product_fournisseur();
+    							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire) print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+    						}
+    					}
         			}
-                }
-                print '</td>';
+        			print '</td>';
+    			}
 
     			// Show stock
     			if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)
@@ -472,6 +484,9 @@ else
     				{
     					$product_static->id = $objp->rowid;
     					$product_static->load_stock();
+                        print '<td align="right">';
+                        print $objp->desiredstock;
+                        print '</td>';
     					print '<td align="right">';
                         if ($product_static->stock_reel < $objp->seuil_stock_alerte) print img_warning($langs->trans("StockTooLow")).' ';
         				print $product_static->stock_reel;
@@ -484,10 +499,12 @@ else
     			}
 
     			// Status (to buy)
-    			print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
+    			print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tosell,5,0).'</td>';
 
                 // Status (to sell)
-                print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+                print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+
+                print '<td>&nbsp;</td>';
 
                 print "</tr>\n";
     			$i++;
@@ -497,7 +514,7 @@ else
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
-    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);
 

@@ -2,7 +2,8 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Dimitri Mouillard <dmouillard@teclib.com>
+ * Copyright (C) 2011      Dimitri Mouillard 	<dmouillard@teclib.com>
+ * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 /**
  * 	  \defgroup   holiday 	Module holiday
  *    \brief      Module de gestion des congés
- *    \file       htdocs/includes/modules/modHoliday.class.php
+ *    \file       htdocs/core/modules/modHoliday.class.php
  *    \ingroup    holiday
  *    \brief      Description and activation file for module holiday
  */
@@ -178,6 +179,8 @@ class modHoliday extends DolibarrModules
 		$this->menus = array();			// List of menus to add
 		$r=0;
 
+		
+		/* Move to HRM menu
 		// Add here entries to declare new menus
 		$this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
 								'type'=>'top',			// This is a Top menu entry
@@ -257,7 +260,8 @@ class modHoliday extends DolibarrModules
 								'target'=>'',
 								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
-
+*/
+		
 		// Exports
 		$r=1;
 
@@ -286,7 +290,7 @@ class modHoliday extends DolibarrModules
 	{
 		$sql = array();
 
-		$result=$this->load_tables();
+		//$result=$this->_load_tables('');
 
 		return $this->_init($sql);
 	}
@@ -305,19 +309,6 @@ class modHoliday extends DolibarrModules
 		return $this->_remove($sql);
 	}
 
-
-	/**
-	 *	Create tables, keys and data required by module
-	 * 	Files llx_table1.sql, llx_table1.key.sql llx_data.sql with create table, create keys
-	 * 	and create data commands must be stored in directory /mymodule/sql/
-	 *	This function is called by this->init.
-	 *
-	 * 	@return		int		<=0 if KO, >0 if OK
-	 */
-	function load_tables()
-	{
-		return $this->_load_tables('');
-	}
 }
 
 ?>

@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 08:47:44
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 08:47:44).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum / Wiki stöd
 EMailSupport=E-postmeddelanden stöd
 RemoteControlSupport=Online realtid / fjärrsupport
@@ -33,4 +24,5 @@ BackToHelpCenter=Annars, här klickar du gå <a href="%s">tillbaka för att hjä
 LinkToGoldMember=Du kan ringa en av de tränare förvalda genom Dolibarr för ditt språk (%s) genom att klicka på hans Widget (status och högsta pris uppdateras automatiskt):
 PossibleLanguages=Språk som stöds
 MakeADonation=Hjälp Dolibarr projekt, göra en donation
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 08:48:18).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

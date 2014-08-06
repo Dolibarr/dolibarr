@@ -1,5 +1,4 @@
-# Dolibarr language file - no_NB - deliveries
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
 Deliveries=Leveringer
 DeliveryCard=Leveringskort
@@ -12,21 +11,15 @@ QtyDelivered=Ant levert
 SetDeliveryDate=Angi leveringsdato
 ValidateDeliveryReceipt=Godkjenn leveringskvittering
 ValidateDeliveryReceiptConfirm=Er du sikker på at du vil godkjenne denne leveringskvitteringen?
-DeliveryMethod=Leveringsmåte
-TrackingNumber=Trackingnummer
-
-# merou PDF model						   
-NameAndSignature=Navn og signatur : 
-ToAndDate=Til___________________________________ den ____/_____/__________
-GoodStatusDeclaration=Forsendelsen er mottatt uten skader,
-Deliverer=Transportør : 
-Sender=Avsender
-Recipient=Mottaker
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
 DeleteDeliveryReceipt=Slett levering kvittering
 DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvitteringen <b>%s?</b>
+DeliveryMethod=Leveringsmåte
+TrackingNumber=Trackingnummer
 DeliveryNotValidated=Levering ikke validert
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:08:29).
+# merou PDF model
+NameAndSignature=Navn og signatur :
+ToAndDate=Til___________________________________ den ____/_____/__________
+GoodStatusDeclaration=Forsendelsen er mottatt uten skader,
+Deliverer=Transportør :
+Sender=Avsender
+Recipient=Mottaker

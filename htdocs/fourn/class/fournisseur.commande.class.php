@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2013	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -223,7 +224,8 @@ class CommandeFournisseur extends CommonOrder
                     $line->tva_tx              = $objp->tva_tx;
                     $line->localtax1_tx		   = $objp->localtax1_tx;
                     $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->subprice            = $objp->subprice;
+                    $line->subprice            = $objp->subprice;	  // deprecated
+                    $line->pu_ht	           = $objp->subprice;	  // Unit price HT
                     $line->remise_percent      = $objp->remise_percent;
                     $line->total_ht            = $objp->total_ht;
                     $line->total_tva           = $objp->total_tva;
@@ -354,7 +356,7 @@ class CommandeFournisseur extends CommonOrder
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
                     // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
-                    // In order not to loose attached files
+                    // in order not to lose the attached files
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
                     $dirsource = $conf->fournisseur->dir_output.'/commande/'.$oldref;
@@ -388,7 +390,13 @@ class CommandeFournisseur extends CommonOrder
                 include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('ORDER_SUPPLIER_VALIDATE',$this,$user,$langs,$conf);
-                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                if ($result < 0)
+                {
+                    $error++;
+                    $this->errors=$interface->errors;
+                    $this->db->rollback();
+                    return -1;
+                }
                 // Fin appel triggers
             }
 
@@ -399,9 +407,9 @@ class CommandeFournisseur extends CommonOrder
             }
             else
             {
+                $this->error=$this->db->lasterror();
                 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
                 $this->db->rollback();
-                $this->error=$this->db->lasterror();
                 return -1;
             }
         }
@@ -461,7 +469,9 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
-                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
+                        $up_ht_disc=$this->lines[$i]->subprice;
+   	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+                        $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
                         if ($result < 0) { $error++; }
                     }
                 }
@@ -714,7 +724,9 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $mouvP = new MouvementStock($this->db);
                             // We decrement stock of product (and sub-products)
-                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("OrderApprovedInDolibarr",$this->ref));
+	                        $up_ht_disc=$this->lines[$i]->subprice;
+    	                    if (! empty($this->lines[$i]->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP)) $up_ht_disc=price2num($up_ht_disc * (100 - $this->lines[$i]->remise_percent) / 100, 'MU');
+                            $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $up_ht_disc, $langs->trans("OrderApprovedInDolibarr",$this->ref));
                             if ($result < 0) { $error++; }
                         }
                     }
@@ -738,7 +750,6 @@ class CommandeFournisseur extends CommonOrder
                 else
                 {
                     $this->db->rollback();
-                    $this->error=$this->db->lasterror();
                     return -1;
                 }
             }
@@ -769,30 +780,49 @@ class CommandeFournisseur extends CommonOrder
 
 		$error=0;
 
-        dol_syslog(get_class($this)."::refuse");
         $result = 0;
         if ($user->rights->fournisseur->commande->approuver)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
-            $sql .= " WHERE rowid = ".$this->id;
+            $this->db->begin();
 
-            if ($this->db->query($sql))
+            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 9";
+            $sql.= " WHERE rowid = ".$this->id;
+
+            dol_syslog(get_class($this)."::refuse sql=".$sql);
+            $resql=$this->db->query($sql);
+
+            if ($resql)
             {
                 $result = 0;
                 $this->log($user, 9, time());
 
-                if ($error == 0)
+                if (! $error)
                 {
                     // Appel des triggers
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('ORDER_SUPPLIER_REFUSE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                    }
                     // Fin appel triggers
+                }
+
+                if (! $error)
+                {
+                	$this->db->commit();
+                }
+                else
+              {
+	                $this->db->rollback();
                 }
             }
             else
             {
+                $this->db->rollback();
+                $this->error=$this->db->lasterror();
                 dol_syslog(get_class($this)."::refuse Error -1");
                 $result = -1;
             }
@@ -801,7 +831,7 @@ class CommandeFournisseur extends CommonOrder
         {
             dol_syslog(get_class($this)."::refuse Not Authorized");
         }
-        return $result ;
+        return $result;
     }
 
     /**
@@ -849,7 +879,6 @@ class CommandeFournisseur extends CommonOrder
                 else
                 {
                     $this->db->rollback();
-                    $this->error=$this->db->lasterror();
                     return -1;
                 }
             }
@@ -922,6 +951,9 @@ class CommandeFournisseur extends CommonOrder
 		$error=0;
         $now=dol_now();
 
+        // Clean parameters
+        if (empty($this->source)) $this->source = 0;
+
         /* On positionne en mode brouillon la commande */
         $this->brouillon = 1;
 
@@ -938,7 +970,8 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", fk_statut";
         $sql.= ", source";
         $sql.= ", model_pdf";
-        //$sql.= ", fk_mode_reglement";
+        $sql.= ", fk_mode_reglement";
+		$sql.= ", fk_cond_reglement";
         $sql.= ") ";
         $sql.= " VALUES (";
         $sql.= "''";
@@ -951,9 +984,10 @@ class CommandeFournisseur extends CommonOrder
 		//$sql.= ", ".$this->db->idate($now);
         $sql.= ", ".$user->id;
         $sql.= ", 0";
-        $sql.= ", 0";
+        $sql.= ", " . $this->source;
         $sql.= ", '".$conf->global->COMMANDE_SUPPLIER_ADDON_PDF."'";
-        //$sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'null');
+        $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'null');
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql);
@@ -1028,7 +1062,13 @@ class CommandeFournisseur extends CommonOrder
 	                    include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 	                    $interface=new Interfaces($this->db);
 	                    $result=$interface->run_triggers('ORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-	                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	                    if ($result < 0)
+	                    {
+	                        $error++;
+	                        $this->errors=$interface->errors;
+	                        $this->db->rollback();
+	                        return -1;
+	                    }
 	                    // Fin appel triggers
 	                }
 
@@ -1077,7 +1117,7 @@ class CommandeFournisseur extends CommonOrder
         $this->user_valid         = '';
         $this->date_creation      = '';
         $this->date_validation    = '';
-        $this->ref_supplier         = '';
+        $this->ref_supplier       = '';
 
         // Create clone
         $result=$this->create($user);
@@ -1194,7 +1234,8 @@ class CommandeFournisseur extends CommonOrder
                     }
                     if ($result == 0 || $result == -1)
                     {
-                        $this->error="No price found for this quantity. Quantity may be too low ?";
+                        $langs->load("errors");
+                        $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
                         $this->db->rollback();
                         dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
                         return -1;
@@ -1208,8 +1249,8 @@ class CommandeFournisseur extends CommonOrder
                     }
                 }
                 else
-                {
-                    $this->error=$this->db->error();
+				{
+                    $this->error=$prod->error;
                     return -1;
                 }
             }
@@ -1222,26 +1263,37 @@ class CommandeFournisseur extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty);
+
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty);
+
+            $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
 
+            $localtax1_type=$localtaxes_type[0];
+			$localtax2_type=$localtaxes_type[2];
+
             $subprice = price2num($pu,'MU');
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
             $sql.= " (fk_commande, label, description,";
             $sql.= " fk_product, product_type,";
-            $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, remise_percent, subprice, ref,";
+            $sql.= " qty, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice, ref,";
             $sql.= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc";
             $sql.= ")";
             $sql.= " VALUES (".$this->id.", '" . $this->db->escape($label) . "','" . $this->db->escape($desc) . "',";
             if ($fk_product) { $sql.= $fk_product.","; }
             else { $sql.= "null,"; }
             $sql.= "'".$product_type."',";
-            $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2.", ".$remise_percent.",'".price2num($subprice,'MU')."','".$ref."',";
+            $sql.= "'".$qty."', ".$txtva.", ".$txlocaltax1.", ".$txlocaltax2;
+
+           	$sql.= ", '".$localtax1_type."',";
+			$sql.= " '".$localtax2_type."'";
+
+            $sql.= ", ".$remise_percent.",'".price2num($subprice,'MU')."','".$ref."',";
             $sql.= "'".price2num($total_ht)."',";
             $sql.= "'".price2num($total_tva)."',";
             $sql.= "'".price2num($total_localtax1)."',";
@@ -1263,7 +1315,13 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEORDER_SUPPLIER_CREATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 
@@ -1290,7 +1348,7 @@ class CommandeFournisseur extends CommonOrder
      * @param 	int			$product	Id of product to dispatch
      * @param 	double		$qty		Qty to dispatch
      * @param 	int			$entrepot	Id of warehouse to add product
-     * @param 	double		$price		Price for PMP value calculation
+     * @param 	double		$price		Unit Price for PMP value calculation (Unit price without Tax and taking into account discount)
      * @param	string		$comment	Comment for stock movement
      * @return 	int						<0 if KO, >0 if OK
      */
@@ -1328,7 +1386,13 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEORDER_SUPPLIER_DISPATCH',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 
@@ -1346,6 +1410,7 @@ class CommandeFournisseur extends CommonOrder
                 $mouv = new MouvementStock($this->db);
                 if ($product > 0)
                 {
+                	// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
                     $result=$mouv->reception($user, $product, $entrepot, $qty, $price, $comment);
                     if ($result < 0)
                     {
@@ -1356,6 +1421,7 @@ class CommandeFournisseur extends CommonOrder
                 }
             }
 
+            //TODO: Check if there is a current transaction in DB but seems not.
             if ($error == 0)
             {
                 $this->db->commit();
@@ -1387,6 +1453,7 @@ class CommandeFournisseur extends CommonOrder
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
             $resql=$this->db->query($sql);
 
+            //TODO: Add trigger for deleted line
             dol_syslog(get_class($this)."::deleteline sql=".$sql);
             if ($resql)
             {
@@ -1433,11 +1500,13 @@ class CommandeFournisseur extends CommonOrder
         {
             if ($this->db->affected_rows($resql) < 1)
             {
+                $this->error=$this->db->lasterror();
                 $error++;
             }
         }
         else
         {
+            $this->error=$this->db->lasterror();
             $error++;
         }
 
@@ -1500,7 +1569,6 @@ class CommandeFournisseur extends CommonOrder
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -$error;
@@ -1701,7 +1769,7 @@ class CommandeFournisseur extends CommonOrder
         $resql = $this->db->query($sql);
         if ($resql)
         {
-
+            //TODO: Add trigger for status modification
         }
         else
         {
@@ -1772,12 +1840,18 @@ class CommandeFournisseur extends CommonOrder
             // qty, pu, remise_percent et txtva
             // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
             // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty);
+
+            $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty);
+
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+
+            $localtax1_type=$localtaxes_type[0];
+			$localtax2_type=$localtaxes_type[2];
 
             $subprice = price2num($pu,'MU');
 
@@ -1790,6 +1864,8 @@ class CommandeFournisseur extends CommonOrder
             $sql.= ",tva_tx='".price2num($txtva)."'";
             $sql.= ",localtax1_tx='".price2num($txlocaltax1)."'";
             $sql.= ",localtax2_tx='".price2num($txlocaltax2)."'";
+			$sql.= ",localtax1_type='".$localtax1_type."'";
+			$sql.= ",localtax2_type='".$localtax2_type."'";
             $sql.= ",qty='".price2num($qty)."'";
             /*if ($date_end) { $sql.= ",date_start='$date_end'"; }
             else { $sql.=',date_start=null'; }
@@ -1817,7 +1893,13 @@ class CommandeFournisseur extends CommonOrder
                     include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('LINEORDER_SUPPLIER_UPDATE',$this,$user,$langs,$conf);
-                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
+                    if ($result < 0)
+                    {
+                        $error++;
+                        $this->errors=$interface->errors;
+                        $this->db->rollback();
+                        return -1;
+                    }
                     // Fin appel triggers
                 }
 

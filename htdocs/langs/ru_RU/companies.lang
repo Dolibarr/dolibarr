@@ -1,17 +1,8 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - companies
 ErrorCompanyNameAlreadyExists=Название компании %s уже существует. Выберите другое.
 ErrorPrefixAlreadyExists=Префикс %s уже существует. Выберите другой.
 ErrorSetACountryFirst=Сначала установите страну
+SelectThirdParty=Выберите контрагента
 DeleteThirdParty=Удалить контрагента
 ConfirmDeleteCompany=Вы действительно хотите удалить эту компанию и всю связанную с ней информацию?
 DeleteContact=Удалить контакт
@@ -32,15 +23,22 @@ SocGroup=Группа компаний
 IdThirdParty=Код контрагента
 IdCompany=Код компании
 IdContact=Код контакта
+Contacts=Контакты
+ThirdPartyContacts=Контакты контрагента
+ThirdPartyContact=Контакт контрагента
+StatusContactValidated=Статус контакта
 Company=Компания
 CompanyName=Название компании
 Companies=Компании
 CountryIsInEEC=Страна входит в состав Европейского экономического сообщества
+ThirdPartyName=Наименование контрагента
 ThirdParty=Контрагент
 ThirdParties=Контрагенты
 ThirdPartyAll=Контрагенты (все)
 ThirdPartyProspects=Потенциальные клиенты
+ThirdPartyProspectsStats=Перспективы
 ThirdPartyCustomers=Покупатели
+ThirdPartyCustomersStats=Заказчики
 ThirdPartyCustomersWithIdProf12=Покупатели с %s или %s
 ThirdPartySuppliers=Поставщики
 ThirdPartyType=Тип контрагента
@@ -48,6 +46,9 @@ Company/Fundation=Организация
 Individual=Физическое лицо
 ToCreateContactWithSameName=Будет автоматически создан контакт с теми же данными
 ParentCompany=Материнская компания
+Subsidiary=Филиал
+Subsidiaries=Филиалы
+NoSubsidiary=Нет филиалов
 ReportByCustomers=Отчет по клиентам
 ReportByQuarter=Отчет по рейтингу
 CivilityCode=Код корректности
@@ -63,63 +64,170 @@ State=Штат/Провинция
 Region=Регион
 Country=Страна
 CountryCode=Код страны
+CountryId=Код страны
 Phone=Телефон
+# Skype=Skype
+# Call=Call
+# Chat=Chat
 PhonePro=Раб. телефон
 PhonePerso=Личн. телефон
 PhoneMobile=Мобильный
+# No_Email=Don't send mass e-mailings
 Fax=Факс
 Zip=Почтовый индекс
 Town=Город
 Web=Web
+Poste= Должность
+DefaultLang=Язык по умолчанию
 VATIsUsed=НДС используется
 VATIsNotUsed=НДС не используется
+# CopyAddressFromSoc=Fill address with thirdparty address
+##### Local Taxes #####
+LocalTax1IsUsedES= RE используется
+LocalTax1IsNotUsedES= RE не используется
+LocalTax2IsUsedES= IRPF используется
+LocalTax2IsNotUsedES= IRPF не используется
+LocalTax1ES=Повторно
+LocalTax2ES=IRPF
 ThirdPartyEMail=%s
 WrongCustomerCode=Неверный код Покупателя
 WrongSupplierCode=Неверный код Поставщика
 CustomerCodeModel=Шаблон кода Покупателя
 SupplierCodeModel=Шаблон кода Поставщика
 Gencod=Штрих-код
+##### Professional ID #####
 ProfId1Short=Проф ID 1
 ProfId2Short=Проф ID 2
 ProfId3Short=Проф ID 3
 ProfId4Short=Проф ID 4
+ProfId5Short=Проф ID 5
+# ProfId6Short=Prof. id 5
 ProfId1=Профессиональный ID 1
 ProfId2=Профессиональный ID 2
 ProfId3=Профессиональный ID 3
 ProfId4=Профессиональный ID 4
+ProfId5=Профессиональный ID 5
+# ProfId6=Professional ID 6
+ProfId1AR=Проф Id 1 (CUIL)
+ProfId2AR=Проф Id 2 (Revenu скоты)
+ProfId3AR=-
+ProfId4AR=-
+ProfId5AR=-
+# ProfId6AR=-
 ProfId1AU=Проф Id 1 (ABN)
 ProfId2AU=-
 ProfId3AU=-
 ProfId4AU=-
+ProfId5AU=-
+# ProfId6AU=-
 ProfId1BE=Проф Id 1 (Проф номер)
 ProfId2BE=-
 ProfId3BE=-
 ProfId4BE=-
+ProfId5BE=-
+# ProfId6BE=-
+# ProfId1BR=-
+# ProfId2BR=IE (Inscricao Estadual)
+# ProfId3BR=IM (Inscricao Municipal)
+# ProfId4BR=CPF
+#ProfId5BR=CNAE
+#ProfId6BR=INSS
 ProfId1CH=-
 ProfId2CH=-
 ProfId3CH=Проф ID 1 (федеральный номер)
 ProfId4CH=Проф Id 2 (коммерческий Запись номер)
+ProfId5CH=-
+# ProfId6CH=-
+ProfId1CL=Проф Id 1 (БУТ)
+ProfId2CL=-
+ProfId3CL=-
+ProfId4CL=-
+ProfId5CL=-
+# ProfId6CL=-
+ProfId1CO=Проф Id 1 (R.U.T.)
+ProfId2CO=-
+ProfId3CO=-
+ProfId4CO=-
+ProfId5CO=-
+# ProfId6CO=-
+ProfId1DE=Проф ID 1 (USt.-IdNr)
+ProfId2DE=Проф Id 2 (USt.-NR)
+ProfId3DE=Проф ID 3 (Handelsregister-Nr.)
+ProfId4DE=-
+ProfId5DE=-
+# ProfId6DE=-
+ProfId1ES=Проф Id 1 (CIF / NIF)
+ProfId2ES=Проф Id 2 (номер социального страхования)
+ProfId3ES=Проф Id 3 (CNAE)
+ProfId4ES=Проф Id 4 (Энциклопедический номер)
+ProfId5ES=-
+# ProfId6ES=-
 ProfId1FR=Проф Id 1 (SIREN)
 ProfId2FR=Проф Id 2 (SIRET)
 ProfId3FR=Проф Id 3 (NAF, старые APE)
 ProfId4FR=Проф Id 4 (RCS / РМ)
+ProfId5FR=Проф Id 5
+# ProfId6FR=-
 ProfId1GB=Проф ID 1 (регистрационный номер)
 ProfId2GB=-
 ProfId3GB=Проф Id 3 (SIC)
 ProfId4GB=-
+ProfId5GB=-
+# ProfId6GB=-
+ProfId1HN=Id проф. 1 (RTN)
+ProfId2HN=-
+ProfId3HN=-
+ProfId4HN=-
+ProfId5HN=-
+# ProfId6HN=-
+ProfId1IN=Проф Id 1 (ИНН)
+ProfId2IN=Проф Id 2
+ProfId3IN=Проф Id 3
+ProfId4IN=Проф Id 4
+ProfId5IN=Проф Id 5
+# ProfId6IN=-
+ProfId1MA=Id проф. 1 (RC)
+ProfId2MA=Id проф. 2 (Patente)
+ProfId3MA=Id проф. 3 (IF)
+ProfId4MA=Id проф. 4 (НКСО)
+ProfId5MA=-
+# ProfId6MA=-
+ProfId1MX=Проф Id 1 (RFC).
+ProfId2MX=Проф Id 2 (R.. P. ИМСС)
+ProfId3MX=Проф Id 3 (Профессиональные Устава)
+ProfId4MX=-
+ProfId5MX=-
+# ProfId6MX=-
+ProfId1NL=KVK Nummer
+ProfId2NL=-
+ProfId3NL=-
+ProfId4NL=-
+ProfId5NL=-
+# ProfId6NL=-
 ProfId1PT=Проф ID 1 (NIPC)
 ProfId2PT=Проф Id 2 (номера социального страхования)
 ProfId3PT=Проф Id 3 (коммерческий Запись номер)
 ProfId4PT=Проф Id 4 (Консерватория)
+ProfId5PT=-
+# ProfId6PT=-
+ProfId1SN=RC
+ProfId2SN=NINEA
+ProfId3SN=-
+ProfId4SN=-
+ProfId5SN=-
+# ProfId6SN=-
 ProfId1TN=Проф Id 1 (RC)
 ProfId2TN=Проф Id 2 (Финансовый matricule)
 ProfId3TN=Проф ID 3 (Douane код)
 ProfId4TN=Проф Id 4 (БАН)
+ProfId5TN=-
+# ProfId6TN=-
 ProfId1RU=Prof Id 1 (ОГРН)
 ProfId2RU=Prof Id 2 (ИНН)
 ProfId3RU=Prof Id 3 (КПП)
 ProfId4RU=Prof Id 4 (ОКПО)
 ProfId5RU=-
+# ProfId6RU=-
 VATIntra=Номер НДС
 VATIntraShort=Номер НДС
 VATIntraVeryShort=НДС
@@ -147,7 +255,12 @@ DiscountNone=Нет
 Supplier=Поставщик
 CompanyList=Список компаний
 AddContact=Добавить контакт/адрес
+# AddContactAddress=Add contact/address
+EditContact=Изменить контакт / адреса
+# EditContactAddress=Edit contact/address
 Contact=Контакт
+ContactsAddresses=Контакты/Адреса
+# NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=У этого контрагента не указаны контакты
 DefaultContact=Контакт по умолчанию
 AddCompany=Добавить компанию
@@ -169,6 +282,7 @@ LastProspect=Последний
 ProspectToContact=Потенциальный клиент для связи
 CompanyDeleted=Компания " %s" удалена из базы данных.
 ListOfContacts=Список контактов/адресов
+# ListOfContactsAddresses=List of contacts/adresses
 ListOfProspectsContacts=Список контактов потенциальных клиентов
 ListOfCustomersContacts=Список контактов покупателей
 ListOfSuppliersContacts=Список контактов поставщиков
@@ -187,6 +301,7 @@ NoContactForAnyProposal=Этот контакт не является конта
 NoContactForAnyContract=Этот контакт не является контактом договора
 NoContactForAnyInvoice=Этот контакт не является контактом счета-фактуры
 NewContact=Новый контакт/адрес
+# NewContactAddress=New contact/address
 LastContacts=Последние контакты
 MyContacts=Мои контакты
 Phones=Телефоны
@@ -250,6 +365,9 @@ NoDolibarrAccess=Нет доступа к Dolibarr
 ExportDataset_company_1=Контрагенты (Компании/Организации) и свойства
 ExportDataset_company_2=Контакты и свойства
 ImportDataset_company_1=Контрагенты (Компании/Организации) и свойства
+ImportDataset_company_2=Контакты (в thirdparties или нет) и атрибуты
+ImportDataset_company_3=Банковские реквизиты
+PriceLevel=Уровень цен
 DeliveriesAddress=Адреса доставки
 DeliveryAddress=Адрес доставки
 DeliveryAddressLabel=Бирка с адресом доставки
@@ -259,6 +377,7 @@ NewDeliveryAddress=Новый адрес доставки
 AddDeliveryAddress=Добавить адрес
 AddAddress=Добавить адрес
 NoOtherDeliveryAddress=Альтернативный адрес доставки не задан
+SupplierCategory=Категория поставщика
 JuridicalStatus200=Независимый
 DeleteFile=Удалить файл
 ConfirmDeleteFile=Вы уверены, что хотите удалить этот файл?
@@ -269,142 +388,21 @@ Organization=Организация
 AutomaticallyGenerated=Сгенерирован автоматически
 FiscalYearInformation=Информация о финансовом годе
 FiscalMonthStart=Первый месяц финансового года
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-Contacts=Контакты
-ThirdPartyContacts=Контакты контрагента
-ThirdPartyContact=Контакт контрагента
-StatusContactValidated=Статус контакта
-PriceLevel=Уровень цен
 YouMustCreateContactFirst=Вы должны сначала создать контакты электронной почты для контрагента, чтобы иметь возможность добавлять email-уведомления.
-MonkeyNumRefModelDesc=Вернуть номер с форматом %syymm-NNNN для кода покупателя и %syymm NNNN-код для кода поставщиков, где yy - это год, мм - месяц и NNNN - непрерывная последовательность без возврата к 0.
-LeopardNumRefModelDesc=Код покупателю/поставщику не присваивается. Он может быть изменен в любое время.
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
-ProfId1DE=Проф ID 1 (USt.-IdNr)
-ProfId2DE=Проф Id 2 (USt.-NR)
-ProfId3DE=Проф ID 3 (Handelsregister-Nr.)
-ProfId4DE=-
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-
-// Reference language: en_US -> ru_RU
-
-ThirdPartyName=Наименование контрагента
-Poste=Должность
-DefaultLang=Язык по умолчанию
-LocalTax1IsUsedES=RE используется
-LocalTax1IsNotUsedES=RE не используется
-LocalTax2IsUsedES=IRPF используется
-LocalTax2IsNotUsedES=IRPF не используется
-ProfId1IN=Проф Id 1 (ИНН)
-ProfId2IN=Проф Id 2
-ProfId3IN=Проф Id 3
-ProfId4IN=Проф Id 4
-ProfId1ES=Проф Id 1 (CIF / NIF)
-ProfId2ES=Проф Id 2 (номер социального страхования)
-ProfId3ES=Проф Id 3 (CNAE)
-ProfId4ES=Проф Id 4 (Энциклопедический номер)
-ProfId1NL=KVK Nummer
-ProfId2NL=-
-ProfId3NL=-
-ProfId4NL=-
-ProfId1AR=Проф Id 1 (CUIT / Cuil)
-ProfId2AR=Проф Id 2 (Revenu скоты)
-ProfId3AR=-
-ProfId4AR=-
-SupplierCategory=Категория поставщика
 ListSuppliersShort=Список поставщиков
 ListProspectsShort=Список потенц. клиентов
 ListCustomersShort=Список покупателей
-
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:39:58).
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-SelectThirdParty=Выберите контрагента
-Subsidiary=Филиал
-Subsidiaries=Филиалы
-NoSubsidiary=Нет филиалов
-ProfId5Short=Проф ID 5
-ProfId5=Профессиональный ID 5
-ProfId5AR=-
-ProfId5AU=-
-ProfId5BE=-
-ProfId5CH=-
-ProfId1CL=Проф Id 1 (БУТ)
-ProfId2CL=-
-ProfId3CL=-
-ProfId4CL=-
-ProfId5CL=-
-ProfId5DE=-
-ProfId5ES=-
-ProfId5FR=Проф Id 5
-ProfId5GB=-
-ProfId1HN=Id проф. 1 (RTN)
-ProfId2HN=-
-ProfId3HN=-
-ProfId4HN=-
-ProfId5HN=-
-ProfId5IN=Проф Id 5
-ProfId1MA=Id проф. 1 (RC)
-ProfId2MA=Id проф. 2 (Patente)
-ProfId3MA=Id проф. 3 (IF)
-ProfId4MA=Id проф. 4 (НКСО)
-ProfId5MA=-
-ProfId1MX=Проф Id 1 (RFC).
-ProfId2MX=Проф Id 2 (R.. P. ИМСС)
-ProfId3MX=Проф Id 3 (Профессиональные Устава)
-ProfId4MX=-
-ProfId5MX=-
-ProfId5NL=-
-ProfId5PT=-
-ProfId1SN=RC
-ProfId2SN=NINEA
-ProfId3SN=-
-ProfId4SN=-
-ProfId5SN=-
-ProfId5TN=-
-ContactsAddresses=Контакты/Адреса
 ThirdPartiesArea=Область контрагентов
 LastModifiedThirdParties=Последние %s измененных контрагентов
 UniqueThirdParties=Всего уникальных контрагентов
 InActivity=Открыто
 ActivityCeased=Закрыто
 ActivityStateFilter=Статус активности
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:58:46).
-
-
-// START - Lines generated via autotranslator.php tool (2011-09-08 22:13:08).
-// Reference language: en_US -> ru_RU
-ProfId1CO=Проф Id 1 (R.U.T.)
-ProfId2CO=-
-ProfId3CO=-
-ProfId4CO=-
-ProfId5CO=-
-// STOP - Lines generated via autotranslator.php tool (2011-09-08 22:13:43).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-CountryId=Код страны
-#ProfId1BR=CNAE
-#ProfId2BR=CNPJ
-#ProfId3BR=СПЛ
-#ProfId4BR=INSS
-#ProfId5BR=IE
-#ProfId6BR=IM
-EditContact=Изменить контакт / адреса
-ImportDataset_company_2=Контакты (в thirdparties или нет) и атрибуты
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:29:04).
+# ProductsIntoElements=List of products into
+# CurrentOutstandingBill=Current outstanding bill
+# OutstandingBill=Max. for outstanding bill
+# OutstandingBillReached=Reached max. for outstanding bill
+# Monkey
+MonkeyNumRefModelDesc=Вернуть номер с форматом %syymm-NNNN для кода покупателя и %syymm NNNN-код для кода поставщиков, где yy - это год, мм - месяц и NNNN - непрерывная последовательность без возврата к 0.
+# Leopard
+LeopardNumRefModelDesc=Код покупателю/поставщику не присваивается. Он может быть изменен в любое время.

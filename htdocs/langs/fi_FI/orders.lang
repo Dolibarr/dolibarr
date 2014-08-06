@@ -1,21 +1,14 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - orders
 OrdersArea=Asiakkaiden tilausten alueella
 SuppliersOrdersArea=Toimittajien tilaukset alueella
 OrderCard=Tilaa kortti
+# OrderId=Order Id
 Order=Tilata
 Orders=Tilaukset
+OrderLine=Tilaa linja
 OrderFollow=Seuranta
 OrderDate=Tilaa päivämäärä
+OrderToProcess=Jotta prosessi
 NewOrder=Uusi järjestys
 ToOrder=Tee jotta
 MakeOrder=Tee jotta
@@ -30,12 +23,16 @@ OrdersToValid=Tilauksia voimassa
 OrdersToBill=Tilaukset laskuttaa
 OrdersInProcess=Tilaukset prosessi
 OrdersToProcess=Tilausten käsittely
+SuppliersOrdersToProcess=Toimittajan tilauksia käsitellä
 StatusOrderCanceledShort=Peruutettu
 StatusOrderDraftShort=Vedos
 StatusOrderValidatedShort=Validoidut
+StatusOrderSentShort=Meneillään
+# StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Prosessissa
 StatusOrderProcessedShort=Jalostettu
 StatusOrderToBillShort=Bill
+StatusOrderToBill2Short=Bill
 StatusOrderApprovedShort=Hyväksyttiin
 StatusOrderRefusedShort=Kieltäydytty
 StatusOrderToProcessShort=Käsitellä
@@ -47,30 +44,34 @@ StatusOrderValidated=Validoidut
 StatusOrderOnProcess=Prosessissa
 StatusOrderProcessed=Jalostettu
 StatusOrderToBill=Bill
+StatusOrderToBill2=Bill
 StatusOrderApproved=Hyväksyttiin
 StatusOrderRefused=Kieltäydytty
 StatusOrderReceivedPartially=Osittain saanut
 StatusOrderReceivedAll=Kaikki saivat
+ShippingExist=Lähetys olemassa
 DraftOrWaitingApproved=Esitys tai hyväksytty ei vielä määrännyt
 DraftOrWaitingShipped=Esitys tai validoitua ole vielä lähetetty
 MenuOrdersToBill=Tilaukset laskuttaa
+# MenuOrdersToBill2=Orders to bill
 SearchOrder=Haku jotta
-Sending=Lähettävä
-Sendings=Sendings
 ShipProduct=Laiva tuote
 Discount=Discount
 CreateOrder=Luo Tilaa
 RefuseOrder=Jätteiden jotta
 ApproveOrder=Hyväksy jotta
 ValidateOrder=Validate jotta
+UnvalidateOrder=Unvalidate järjestys
 DeleteOrder=Poista jotta
 CancelOrder=Peruuta tilaus
 AddOrder=Lisää jotta
 AddToMyOrders=Add to my tilaukset
 AddToOtherOrders=Lisää muut tilaukset
+# AddToDraftOrders=Add to draft order
 ShowOrder=Näytä jotta
 NoOpenedOrders=N: o avataan tilaukset
 NoOtherOpenedOrders=Mikään muu avataan tilaukset
+# NoDraftOrders=No draft orders
 OtherOrders=Muut tilaukset
 LastOrders=Viimeisin %s tilaukset
 LastModifiedOrders=Viimeisin %s muunnettu tilaukset
@@ -80,16 +81,18 @@ NbOfOrders=Määrä tilauksia
 OrdersStatistics=Tilaukset tilastot
 OrdersStatisticsSuppliers=Toimittaja tilaukset tilastot
 NumberOfOrdersByMonth=Määrä tilauksia kuukausittain
-AmountOfOrdersByMonthHT=määrä tilauksia kuukausittain (ilman veroja)
+# AmountOfOrdersByMonthHT=Amount of orders by month (net of tax)
 ListOfOrders=Luettelo tilaukset
 CloseOrder=Sulje jotta
 ConfirmCloseOrder=Oletko varma, että haluat sulkea tämän tilauksen? Kun tilaus on päättynyt, se voidaan laskuttaa.
 ConfirmCloseOrderIfSending=Oletko varma, että haluat sulkea tämän tilauksen? Sinun on lähellä tilauksen vasta, kun kaikki merenkulku on valmis.
 ConfirmDeleteOrder=Oletko varma, että haluat poistaa tämän tilauksen?
 ConfirmValidateOrder=Oletko varma, että haluamme vahvistaa tämän määräyksen nojalla <b>nimi %s?</b>
+ConfirmUnvalidateOrder=Oletko varma että haluat palauttaa järjestyksen <b>%s</b> Luonnos-tilaan?
 ConfirmCancelOrder=Oletko varma, että haluat peruuttaa tämän tilauksen?
 ConfirmMakeOrder=Oletko varma, että haluat vahvistaa olet tehnyt tämän <b>tilauksen %s?</b>
 GenerateBill=Luo lasku
+# ClassifyShipped=Classify delivered
 ClassifyBilled=Luokittele "Laskutetun"
 ComptaCard=Kirjanpito-kortti
 DraftOrders=Luonnos tilaukset
@@ -107,36 +110,11 @@ AuthorRequest=Pyydä tekijä
 UseCustomerContactAsOrderRecipientIfExist=Käytä asiakkaan yhteystiedot, jos se on määritetty sijaan kolmannen osapuolen osoite jotta vastaanottajan osoite
 RunningOrders=Toimitussuhteet prosessi
 UserWithApproveOrderGrant=Useres myönnetään "hyväksyä tilauksia" lupaa.
-Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON ole määritelty
-Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON ole määritelty
-Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file ' %s'
-Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file ' %s'
-OrderSource0=Kaupalliset ehdotus
-OrderSource1=Internet
-OrderSource2=Mail kampanja
-OrderSource3=Puhelin compain
-OrderSource4=Faksi kampanja
-OrderSource5=Kaupalliset
-OrderSource6=Varastoida
-QtyOrdered=Kpl velvoitti
-AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
-PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-OrderLine=Tilaa linja
 PaymentOrderRef=Maksutoimisto jotta %s
 CloneOrder=Klooni jotta
 ConfirmCloneOrder=Oletko varma, että haluat klooni tässä <b>järjestyksessä %s?</b>
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-OrderToProcess=Jotta prosessi
+DispatchSupplierOrder=Vastaanottaminen toimittaja järjestys %s
+##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Edustaja seurantaan asiakkaan tilauksen
 TypeContact_commande_internal_SHIPPING=Edustaja seurantaan merenkulku
 TypeContact_commande_external_BILLING=Asiakkaan lasku yhteystiedot
@@ -147,27 +125,42 @@ TypeContact_order_supplier_internal_SHIPPING=Edustaja seurantaan merenkulku
 TypeContact_order_supplier_external_BILLING=Toimittajan lasku yhteystiedot
 TypeContact_order_supplier_external_SHIPPING=Toimittajan merenkulku yhteystiedot
 TypeContact_order_supplier_external_CUSTOMER=Toimittajan yhteystiedot seurantaan, jotta
+
+Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON ole määritelty
+Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON ole määritelty
+Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file ' %s'
+Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file ' %s'
+# Error_OrderNotChecked=No orders to invoice selected
+
+
+# Sources
+OrderSource0=Kaupalliset ehdotus
+OrderSource1=Internet
+OrderSource2=Mail kampanja
+OrderSource3=Puhelin compain
+OrderSource4=Faksi kampanja
+OrderSource5=Kaupalliset
+OrderSource6=Varastoida
+QtyOrdered=Kpl velvoitti
+AddDeliveryCostLine=Lisää toimitus kustannukset linja ilmoitetaan paino, jotta
+
+# Documents models
+PDFEinsteinDescription=Täydellinen jotta malli (logo. ..)
 PDFEdisonDescription=Yksinkertainen, jotta malli
-PDFQuevedoDescription=Täydellinen, jotta malli Espanjan RE ja IRPF
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:25).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> fi_FI
-DispatchSupplierOrder=Vastaanottaminen toimittaja järjestys %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:34:02).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-SuppliersOrdersToProcess=Toimittajan tilauksia käsitellä
-StatusOrderSentShort=Meneillään
-ShippingExist=Lähetys olemassa
-UnvalidateOrder=Unvalidate järjestys
-ConfirmUnvalidateOrder=Oletko varma että haluat palauttaa järjestyksen <b>%s</b> Luonnos-tilaan?
+# PDFProformaDescription=A complete proforma invoice (logo…)
+# Orders modes
 OrderByMail=Posti
 OrderByFax=Faksin
 OrderByEMail=Sähköposti
 OrderByWWW=Online
 OrderByPhone=Puhelin
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:45).
+
+# CreateInvoiceForThisCustomer=Bill orders
+# NoOrdersToInvoice=No orders billable
+# CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders.
+# MenuOrdersToBill2=Orders to bill
+# OrderCreation=Order creation
+# Ordered=Ordered
+# OrderCreated=Your orders have been created
+# OrderFail=An error happened during your orders creation
+# CreateOrders=Create orders

@@ -146,8 +146,8 @@ dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), 0,
  */
 if ($_GET['action'] == 'delete')
 {
-	$ret=$form->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	
 }
 
 /*
@@ -156,8 +156,8 @@ if ($_GET['action'] == 'delete')
 if ($_GET['action'] == 'valide')
 {
 	$facid = $_GET['facid'];
-	$ret=$form->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	
 }
 
 

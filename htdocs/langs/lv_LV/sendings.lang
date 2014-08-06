@@ -1,0 +1,76 @@
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Ref. sūtījums
+Sending=Sūtījums
+Sendings=Sūtījumi
+Shipment=Sūtījumu
+Shipments=Sūtījumi
+Receivings=Receivings
+SendingsArea=Sūtījumi platība
+ListOfSendings=Saraksts sūtījumiem
+SendingMethod=Sūtīšanas metode
+SendingReceipt=Piegāde saņemšana
+LastSendings=Pēdējās %s sūtījumiem
+SearchASending=Meklēt sūtījumu
+StatisticsOfSendings=Statistika sūtījumiem
+NbOfSendings=Sūtījumu skaits
+NumberOfShipmentsByMonth=Sūtījumu skaits pa mēnešiem
+SendingCard=Piegādes karte
+NewSending=Jauns sūtījums
+CreateASending=Izveidot sūtījumu
+CreateSending=Izveidot sūtījumu
+QtyOrdered=Daudz lika
+QtyShipped=Daudz nosūtīti
+QtyToShip=Daudz kuģu
+QtyReceived=Daudz saņemti
+KeepToShip=Glabāt uz kuģa
+OtherSendingsForSameOrder=Citas sūtījumiem uz šo rīkojumu
+DateSending=Datums nosūtot kārtība
+DateSendingShort=Datums nosūtot kārtība
+SendingsForSameOrder=Sūtījumiem uz šo rīkojumu
+SendingsAndReceivingForSameOrder=Sūtījumiem un Receivings par šo rīkojumu
+SendingsToValidate=Sūtījumi apstiprināšanai,
+StatusSendingCanceled=Atcelts
+StatusSendingDraft=Projekts
+StatusSendingValidated=Apstiprinātas (produkti, uz kuģi vai jau nosūtīti)
+StatusSendingProcessed=Apstrādāti
+StatusSendingCanceledShort=Atcelts
+StatusSendingDraftShort=Melnraksts
+StatusSendingValidatedShort=Validēta
+StatusSendingProcessedShort=Apstrādāti
+SendingSheet=Nosūtot lapu
+Carriers=Pārvadātāji
+Carrier=Pārvadātājs
+CarriersArea=Pārvadātāji platība
+NewCarrier=Jauns pārvadātājs
+ConfirmDeleteSending=Vai tiešām vēlaties dzēst šo sūtījumu?
+ConfirmValidateSending=Vai jūs tiešām vēlaties, lai apstiprinātu šo sūtījumu ar atsauces <b>%s?</b>
+ConfirmCancelSending=Vai esat pārliecināts, ka vēlaties atcelt šo sūtījumu?
+GenericTransport=Generic transports
+Enlevement=Gotten klienta
+DocumentModelSimple=Vienkārša dokumenta paraugs
+DocumentModelMerou=Merou A5 modelis
+WarningNoQtyLeftToSend=Uzmanību, nav produktu gaida nosūtīti.
+StatsOnShipmentsOnlyValidated=Statistika veikti uz sūtījumiem tikai apstiprinātiem. Lietots datums ir datums apstiprināšanu sūtījuma (ēvelēti piegādes datums ir ne vienmēr ir zināms).
+DateDeliveryPlanned=Ēvelēti piegādes datums
+DateReceived=Datums piegāde saņemti
+SendShippingByEMail=Nosūtīt sūtījumu pa e-pastu
+SendShippingRef=Nosūtīt sūtījuma %s
+ActionsOnShipping=Notikumi sūtījumu
+LinkToTrackYourPackage=Saite uz izsekot savu paketi
+ShipmentCreationIsDoneFromOrder=Uz šo brīdi, izveidot jaunu sūtījumu tiek darīts no pasūtījuma kartes.
+RelatedShippings=Saistītie shippings
+ShipmentLine=Sūtījuma līnija
+CarrierList=Saraksts pārvadātājiem
+
+# Sending methods
+SendingMethodCATCH=Nozvejas klienta
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Vienkāršs dokuments modelis piegādes ieņēmumiem
+DocumentModelTyphon=Vairāk pilnīgu dokumentu modelis piegādes ieņēmumiem (logo. ..)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=Pastāvīga EXPEDITION_ADDON_NUMBER nav noteikts
+SumOfProductVolumes=Summa saražotās produkcijas apjomu
+SumOfProductWeights=Summa produktu svaru

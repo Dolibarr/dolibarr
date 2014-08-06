@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Постоянни нареждания област
 CustomersStandingOrdersArea=Клиентите постоянни нареждания област
 StandingOrders=Постоянните поръчки
@@ -56,7 +47,7 @@ RefusedData=Дата на отхвърляне
 RefusedReason=Причина за отхвърляне
 RefusedInvoicing=Фактуриране отхвърлянето
 NoInvoiceRefused=Не зареждайте отхвърляне
-InvoiceRefused=Заредете отхвърляне на клиента
+InvoiceRefused=Фактура отказа
 Status=Статус
 StatusUnknown=Неизвестен
 StatusWaiting=Чакане
@@ -89,6 +80,11 @@ WithdrawalFileNotCapable=Не може да се генерира файл за 
 ShowWithdraw=Покажи Теглене
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Въпреки това, ако фактурата не е все още най-малко една оттегляне плащане обработват, не се определя като плаща, за да се даде възможност да управляват оттеглянето им преди.
 DoStandingOrdersBeforePayments=Това разделите ви позволява да изисквате за постоянно нареждане. След като той ще бъде завършен, можете да въведете плащането, за да затворите фактура.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Плащане на постоянно нареждане %s от банката
 InfoCreditMessage=Постоянната за %s е била платена от банката <br> Данни на плащане: %s
 InfoTransSubject=Предаване на %s постоянно нареждане до банката
@@ -96,6 +92,5 @@ InfoTransMessage=Постоянната за %s е предавана до ба�
 InfoTransData=Размер: %s <br> Metode: %s <br> Дата: %s
 InfoFoot=Това е автоматично съобщение, изпратено от Dolibarr
 InfoRejectSubject=Постоянния за отказа
-InfoRejectMessage=Здравейте, <br><br> на standig реда на фактура %s, свързани на компанията %s, с размера на %s е било отказано от банката. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Възможност за реален режим не е създаден, спираме след тази симулация
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:33:57).

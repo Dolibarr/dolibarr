@@ -86,7 +86,7 @@ if ($id > 0)
 			{
 				$objp = $dbosc->fetch_object($resql);
 				$var=!$var;
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td align="left" width="40%">';
 				print '<a href="fiche.php?id='.$objp->products_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" width="16" height="16" alt="Fiche livre"></a>';
 

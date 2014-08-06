@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Salasana verkkotunnuksen
 YouMustChangePassNextLogon=Salasana <b>käyttäjän %s verkkotunnuksen %s</b> on muuttunut.
 UserMustChangePassNextLogon=Käyttäjän on muutettava salasana verkkotunnuksen %s
@@ -32,15 +22,8 @@ LDAPFieldLastSubscriptionDate=Viimeisin tilaus päivämäärän
 LDAPFieldLastSubscriptionAmount=Viimeisin tilaus määrä
 SynchronizeDolibarr2Ldap=Synkronoi käyttäjä (Dolibarr -> LDAP)
 UserSynchronized=Käyttäjän synkronoidaan
-ForceSynchronize=Force synkronointi Dolibarr -> LDAP
-ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
 GroupSynchronized=Ryhmän synkronoidaan
 MemberSynchronized=Jäsen synkronoidaan
 ContactSynchronized=Yhteystiedot synkronoidaan
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
+ForceSynchronize=Force synkronointi Dolibarr -> LDAP
+ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.

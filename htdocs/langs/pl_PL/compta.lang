@@ -1,38 +1,36 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - compta
 Accountancy=Księgowość
 AccountancyCard=Księgowość karty
 Treasury=Skarbiec
 MenuFinancial=Finansowego
+# TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Opcja dla księgowych
+OptionModeTrue=Opcja Input-Output
 OptionModeVirtual=Opcja Kredyty-Debits
+OptionModeTrueDesc=W tym kontekście, obrót jest obliczana na płatności (data płatności). \\ nThe ważności danych jest zapewniona tylko wtedy, gdy księgowości jest zbadane przez wejścia / wyjścia na rachunkach za pomocą faktur.
 OptionModeVirtualDesc=W tym kontekście, obrót jest obliczana na fakturach (data zatwierdzenia). Gdy te faktury są należne, czy zostały zapłacone, czy nie są one wymienione w obrocie wyjście.
 FeatureIsSupportedInInOutModeOnly=Funkcja dostępna tylko w KREDYTÓW-DŁUGI rachunkowych trybu (patrz Rachunkowych moduł konfiguracji)
+VATReportBuildWithOptionDefinedInModule=Kwoty wyświetlane tutaj są obliczane na zasadach określonych przez organy podatkowe moduł konfiguracji.
 Param=Instalator
+RemainingAmountPayment=Płatność pozostałej kwoty:
+AmountToBeCharged=Łączna kwota do zapłaty:
 AccountsGeneral=Konta
 Account=Konto
 Accounts=Konta
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Rachunki dla dostawców
 Income=Przychody
 Outcome=Rezultat
 ReportInOut=Przychody / Rezultat
+ReportTurnover=Obrót
 PaymentsNotLinkedToInvoice=Płatności związane z wszelkich faktur, więc nie są związane z jakąkolwiek osobą trzecią
 PaymentsNotLinkedToUser=Płatności związane z dowolnego użytkownika
 Profit=Zysk
 Balance=Saldo
 Debit=Rozchody
 Credit=Kredyt
+# Piece=Voucher
 Withdrawal=Wycofanie
 Withdrawals=Wypłaty
 AmountHTVATRealReceived=HT zebrane
@@ -41,7 +39,11 @@ VATToPay=VAT do zapłaty
 VATReceived=VAT otrzymana
 VATToCollect=VAT do gromadzenia
 VATSummary=VAT Podsumowanie
+LT2SummaryES=Balans IRPF
 VATPaid=VAT paid
+LT2PaidES=IRPF Płatny
+LT2CustomerES=Sprzedaż IRPF
+LT2SupplierES=Zakupy IRPF
 VATCollected=VAT zebrane
 ToPay=Aby zapłacić
 ToGet=Aby powrócić
@@ -67,15 +69,22 @@ ListOfCustomerPayments=Lista klientów płatności
 ListOfSupplierPayments=Lista dostawców płatności
 DatePayment=Data płatności
 NewVATPayment=Nowe zapłaty podatku VAT
+newLT2PaymentES=Nowy IRPF płatności
+LT2PaymentES=Płatność IRPF
+LT2PaymentsES=Płatności IRPF
 VATPayment=Zapłaty podatku VAT
 VATPayments=Płatności VAT
+SocialContributionsPayments=Płatności składek na ubezpieczenia społeczne
+ShowVatPayment=Pokaż zapłaty podatku VAT
 TotalToPay=Razem do zapłaty
 TotalVATReceived=Razem VAT otrzymana
 CustomerAccountancyCode=Klient rachunkowych kod
+SupplierAccountancyCode=Dostawca rachunkowych kod
 AccountNumberShort=Numer konta
 AccountNumber=Numer konta
 NewAccount=Nowe konto
 SalesTurnover=Obrót
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu trzecich
 ByUserAuthorOfInvoice=Na fakturze autora
 AccountancyExport=Księgowość eksportu
@@ -94,93 +103,76 @@ ConfirmPaySocialContribution=Czy na pewno chcesz sklasyfikować ten społecznego
 DeleteSocialContribution=Usuń społecznego wkładu
 ConfirmDeleteSocialContribution=Czy na pewno chcesz usunąć ten wkład społeczny?
 ExportDataset_tax_1=Składek na ubezpieczenia społeczne i płatności
-AnnualSummaryDueDebtMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie %sCrances-dettes %s comptabilit</b> dit <b>d'engagement.</b>
-AnnualSummaryInputOutputMode=Bilan et des recettes dpenses, rsum annuel, pl <b>trybie %sRecettes-Dpenses %s comptabilit</b> dit <b>de Caisse.</b>
+# CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+# CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
+# CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+# CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
+# AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
+# AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
 AnnualByCompaniesDueDebtMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie %sCrances-dettes %s comptabilit</b> dit <b>d'engagement.</b>
 AnnualByCompaniesInputOutputMode=Bilan et des recettes dpenses, dtail par tiers, en <b>trybie %sRecettes-Dpenses %s comptabilit</b> dit <b>de Caisse.</b>
 SeeReportInInputOutputMode=Voir le <b>rapport %sRecettes-Dpenses %s comptabilit</b> dit pour un <b>Caisse de</b> calcul sur les paiements effectivement raliss
 SeeReportInDueDebtMode=Voir le <b>rapport %sCrances-dettes %s comptabilit</b> dit <b>d'engagement</b> pour un calcul sur les factures mises
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Kwoty wykazane są łącznie ze wszystkimi podatkami <br> - Obejmuje ona zaległych faktur, kosztów i podatku VAT, czy są one wypłacane lub nie. <br> - Jest on oparty na zatwierdzanie daty faktur i podatku VAT oraz o terminie płatności na wydatki.
-RulesResultInOut=- Kwoty wykazane są łącznie ze wszystkimi podatkami <br> - Obejmuje on rzeczywiste płatności faktur, koszty i VAT. <br> - Jest on oparty na terminy płatności faktur, koszty ANF VAT. <br>
+# RulesResultInOut=- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses and VAT.
 RulesCADue=- Obejmuje ona klientów z powodu faktury, czy są one wypłacane, czy nie. <br> - Jest on oparty na zatwierdzenie daty tych faktur. <br>
 RulesCAIn=- Obejmuje wszystkie skuteczne płatności faktur otrzymanych od klientów. <br> - Jest on oparty na dacie płatności tych faktur <br>
-PercentOfInvoice=%%/faktury
-Dispatch=Dysponowanie
-Dispatched=Wysłane
-ToDispatch=Do wysyłki
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ReportTurnover=Obrót
-NotUsedForGoods=Nie używany od towarów
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-// Reference language: en_US
-OptionModeTrue=Opcja Input-Output
-OptionModeTrueDesc=W tym kontekście, obrót jest obliczana na płatności (data płatności). \ nThe ważności danych jest zapewniona tylko wtedy, gdy księgowości jest zbadane przez wejścia / wyjścia na rachunkach za pomocą faktur.
-ShowVatPayment=Pokaż zapłaty podatku VAT
-SupplierAccountancyCode=Dostawca rachunkowych kod
-AlreadyPaid=Już wypłaconych
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:27:54).
-
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pl_PL
-TaxModuleSetupToModifyRules=Przejdź do <a href="%s">konfiguracji modułu</a> , aby zmienić zasady obliczania
-VATReportBuildWithOptionDefinedInModule=Kwoty wyświetlane tutaj są obliczane na zasadach określonych przez organy podatkowe moduł konfiguracji.
-SocialContributionsPayments=Płatności składek na ubezpieczenia społeczne
-VATReportByCustomersInInputOutputMode=Sprawozdanie z VAT klienta i opłacane (paragon VAT)
-VATReportByCustomersInDueDebtMode=Sprawozdanie z VAT klienta i płatny (stawka VAT)
-VATReportByQuartersInInputOutputMode=Sprawozdanie stawki VAT i wypłacane klejnoty (paragon VAT)
-VATReportByQuartersInDueDebtMode=Sprawozdanie stawki VAT i gromadzonych zapłaty (stawka VAT)
+DepositsAreNotIncluded=- Faktury depozytów są ani też
+DepositsAreIncluded=- Faktury depozytowe są zawarte
+LT2ReportByCustomersInInputOutputModeES=Raport osób trzecich IRPF
+# VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
+# VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
+# VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
+# VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
 SeeVATReportInInputOutputMode=Zobacz raport <b>%sVAT encasement%s</b> na standardowe obliczenia
 SeeVATReportInDueDebtMode=<b>%sVAT</b> sprawozdanie Zobacz <b>na flow%s</b> do obliczenia z opcją na przepływ
-RulesVATIn=Dla usług, raport zawiera regulacji podatku VAT faktycznie otrzymane lub wydane na podstawie daty zapłaty. <br> - Dla dobra materialne, zawiera faktur VAT na podstawie daty zatwierdzenia faktury.
-RulesVATDue=Dla usług, raport zawiera faktur VAT należny, zapłacone czy nie, w zależności od daty zatwierdzenia tych rachunków. <br> - Dla dobra materialne, zawiera VAT faktury, w zależności od daty zatwierdzenia faktury.
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
+RulesVATInProducts=- W przypadku środków trwałych, to obejmuje faktur VAT na podstawie daty wystawienia faktury.
+RulesVATDueServices=- W przypadku usług, raport zawiera faktur VAT należnego, płatnego lub nie, w oparciu o daty wystawienia faktury.
+RulesVATDueProducts=- W przypadku środków trwałych, to obejmuje faktury VAT, w oparciu o daty wystawienia faktury.
 OptionVatInfoModuleComptabilite=Uwaga: W przypadku dóbr materialnych, należy użyć daty dostawy do bardziej sprawiedliwego.
-ThirdPartyMustBeEditAsCustomer=Osoby trzecie muszą być określone jako klient
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:52:49).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pl_PL
-AmountToBeCharged=Łączna kwota do zapłaty:
+PercentOfInvoice=%%/faktury
+NotUsedForGoods=Nie używany od towarów
 ProposalStats=Statystyki na temat propozycji
 OrderStats=Statystyki dotyczące zamówień
 InvoiceStats=Statystyki na rachunkach
+Dispatch=Dysponowanie
+Dispatched=Wysłane
+ToDispatch=Do wysyłki
+ThirdPartyMustBeEditAsCustomer=Osoby trzecie muszą być określone jako klient
 SellsJournal=Dziennik sprzedaży
 PurchasesJournal=Dziennik zakupów
 DescSellsJournal=Dziennik sprzedaży
 DescPurchasesJournal=Dziennik zakupów
 InvoiceRef=Faktura ref.
 CodeNotDef=Nie zdefiniowane
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 06:16:21).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-RemainingAmountPayment=Płatność pozostałej kwoty:
-LT2SummaryES=Balans IRPF
-LT2PaidES=IRPF Płatny
-LT2CustomerES=Sprzedaż IRPF
-LT2SupplierES=Zakupy IRPF
-newLT2PaymentES=Nowy IRPF płatności
-LT2PaymentES=Płatność IRPF
-LT2PaymentsES=Płatności IRPF
-DepositsAreNotIncluded=- Faktury depozytów są ani też
-DepositsAreIncluded=- Faktury depozytowe są zawarte
-LT2ReportByCustomersInInputOutputModeES=Raport osób trzecich IRPF
-RulesVATInServices=- W przypadku usług, raport zawiera przepisy VAT faktycznie otrzymane lub wydane na podstawie daty płatności. <br> - W przypadku środków trwałych, to obejmuje faktur VAT na podstawie daty wystawienia faktury.
-RulesVATInProducts=- W przypadku środków trwałych, to obejmuje faktur VAT na podstawie daty wystawienia faktury.
-RulesVATDueServices=- W przypadku usług, raport zawiera faktur VAT należnego, płatnego lub nie, w oparciu o daty wystawienia faktury.
-RulesVATDueProducts=- W przypadku środków trwałych, to obejmuje faktury VAT, w oparciu o daty wystawienia faktury.
 AddRemind=Wysłanie dostępną kwotę
-RemainToDivide=Pozostają do wysyłki:
+RemainToDivide= Pozostają do wysyłki:
 WarningDepositsNotIncluded=Depozyty faktury nie są zawarte w tej wersji z tego modułu księgowego.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:39).
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services
+# RefExt=External ref
+# ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+# LinkedOrder=linked to command
+# ReCalculate=Recalculate
+# Mode1=Methode 1
+# Mode2=Method 2
+# CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
+# CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+# TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
+# CalculationMode=Calculation mode
+# COMPTA_PRODUCT_BUY_ACCOUNT=Code comptable par défaut des achats de marchandises
+# COMPTA_PRODUCT_SOLD_ACCOUNT=Code comptable par défaut des ventes de marchandises
+# COMPTA_SERVICE_BUY_ACCOUNT=Code comptable par défaut des achats de services
+# COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut des ventes de services
+# COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
+# COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
+# COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+# COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties

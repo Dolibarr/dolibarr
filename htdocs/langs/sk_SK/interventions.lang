@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - interventions
+Intervention=Intervencie
+Interventions=Intervencie
+InterventionCard=Intervencie karty
+NewIntervention=Nový zásah
+AddIntervention=Pridať zásah
+ListOfInterventions=Zoznam zásahov
+EditIntervention=Upraviť zásah
+ActionsOnFicheInter=Akcie zamerané na intervenciu
+LastInterventions=Posledný %s zásahy
+AllInterventions=Všetky zásahy
+CreateDraftIntervention=Vytvorte návrh
+CustomerDoesNotHavePrefix=Zákazník nemá predponu
+InterventionContact=Intervencie kontakt
+DeleteIntervention=Odstrániť zásah
+ValidateIntervention=Overiť zásah
+ModifyIntervention=Upraviť zásah
+DeleteInterventionLine=Odstrániť intervenčné linku
+ConfirmDeleteIntervention=Ste si istí, že chcete zmazať tento zásah?
+ConfirmValidateIntervention=Ste si istí, že chcete overiť tento zásah pod názvom <b>%s?</b>
+ConfirmModifyIntervention=Ste si istí, že chcete zmeniť tento zásah?
+ConfirmDeleteInterventionLine=Ste si istí, že chcete zmazať tento riadok intervencie?
+NameAndSignatureOfInternalContact=Meno a podpis intervencie:
+NameAndSignatureOfExternalContact=Meno a podpis objednávateľa:
+DocumentModelStandard=Štandardný dokument model pre zásahy
+InterventionCardsAndInterventionLines=Intervencia a linky intervencií
+ClassifyBilled=Klasifikovať &quot;účtovaný&quot;
+StatusInterInvoiced=Účtované
+RelatedInterventions=Súvisiace zákroky
+ShowIntervention=Zobraziť zásah
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Zástupca nasledujúce-up zásah
+TypeContact_fichinter_internal_INTERVENING=Zásah
+TypeContact_fichinter_external_BILLING=Fakturačný kontakt so zákazníkom
+TypeContact_fichinter_external_CUSTOMER=V nadväznosti kontakt so zákazníkom
+# Modele numérotation
+ArcticNumRefModelDesc1=Generic číslo modelu
+ArcticNumRefModelError=Nepodarilo sa aktivovať
+PacificNumRefModelDesc1=Späť numero vo formáte %syymm-nnnn, kde yy je rok, MM je mesiac a nnnn je sekvencia bez prerušenia a bez vráti na 0.
+PacificNumRefModelError=Zásah karta začína s $ syymm už existuje a nie je kompatibilný s týmto modelom sekvencie. Vyberte ju a premenujte ho na aktiváciu tohto modulu.
+PrintProductsOnFichinter=Vytlačiť produktov na intervenčnú karty
+PrintProductsOnFichinterDetails=forinterventions získané z objednávok

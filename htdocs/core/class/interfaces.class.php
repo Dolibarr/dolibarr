@@ -48,7 +48,7 @@ class Interfaces
      *   This function call all qualified triggers.
      *
      *   @param		string		$action     Trigger event code
-     *   @param     Object		$object     Objet concern
+     *   @param     object		$object     Objet concern
      *   @param     User		$user       Objet user
      *   @param     Lang		$langs      Objet lang
      *   @param     Conf		$conf       Objet conf
@@ -167,7 +167,8 @@ class Interfaces
                     // Action KO
                     $nbtotal++;
                     $nbko++;
-                    $this->errors[]=$objMod->error;
+                    if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
+                    else if (! empty($objMod->error))  $this->errors[]=$objMod->error;
                 }
             }
             else
@@ -258,6 +259,12 @@ class Interfaces
             $modName = $modules[$key];
             if (empty($modName)) continue;
 
+            if (! class_exists($modName))
+            {
+				print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
+            	continue;
+            }
+            
             $objMod = new $modName($this->db);
 
             // Define disabledbyname and disabledbymodule

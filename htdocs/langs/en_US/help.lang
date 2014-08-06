@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - help
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum/Wiki support
 EMailSupport=Emails support
 RemoteControlSupport=Online real time / remote support
@@ -26,3 +25,4 @@ LinkToGoldMember=You can call one of the coach preselected by Dolibarr for your 
 PossibleLanguages=Supported languages
 MakeADonation=Help Dolibarr project, make a donation
 SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

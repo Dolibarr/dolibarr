@@ -177,18 +177,19 @@ case "$1" in
 			    passopt="--password='"`echo "$dbadmpass" | sed -e "s/'/'"'"'"'"'"'"'/g"`"'"
 			fi
 			mysqlcmd="mysql $hostopt $passopt -u $dbadmin"
-
+			mysqlcmdnopass="mysql $hostopt -u $dbadmin"
+			
 		    # Now run the drop user
 			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'localhost';\"" ; then
 				echo postrm Database login $dbuser@localhost removed
 			else
-			    error="Unable to run $mysqlcmd -f -e \"DROP USER '$dbuser'@'localhost';\""
+			    error="Unable to run $mysqlcmdnopass -f -e \"DROP USER '$dbuser'@'localhost';\""
 				echo postrm $error
 			fi
 			if eval $mysqlcmd -f -e "\"DROP USER '$dbuser'@'%';\"" ; then
 				echo postrm Database login $dbuser@% removed
 			else
-			    error="Unable to run $mysqlcmd -f -e \"DROP USER '$dbuser'@'%';\""
+			    error="Unable to run $mysqlcmdnopass -f -e \"DROP USER '$dbuser'@'%';\""
 				echo postrm $error
 			fi
 

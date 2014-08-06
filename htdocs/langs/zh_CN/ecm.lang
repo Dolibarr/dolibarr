@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=文件
 DocsMine=我的文件
 DocsGenerated=生成的文件
@@ -28,15 +19,14 @@ ECMSections=目录
 ECMRoot=根
 ECMNewSection=新目录
 ECMAddSection=添加手册目录
-ECMNewSection=新手册目录
 ECMNewDocument=新文件
 ECMCreationDate=创建日期
 ECMNbOfFilesInDir=在目录中的文件数
 ECMNbOfSubDir=数子目录
-ECMNbOfFilesInSubDir=Nunber在子目录尔斯
+ECMNbOfFilesInSubDir=子目录中的文件数量
 ECMCreationUser=创造者
-ECMArea=流脑区
-ECMAreaDesc=马华（电子内容管理）区域允许您保存，共享和快速搜索所有文件中Dolibarr实物。
+ECMArea=电子文档管理
+ECMAreaDesc=EDM(电子文档管理)区允许您保存，共享和快速搜索各类文件。
 ECMAreaDesc2=*自动填写目录时自动加入一个元素从卡的文件。 <br> *手动目录可以用来保存未链接到一个特定元素的文件。
 ECMSectionWasRemoved=目录<b>%s</b>已被删除。
 ECMDocumentsSection=文件的目录
@@ -45,12 +35,14 @@ ECMSearchByEntity=搜索对象
 ECMSectionOfDocuments=目录中的文件
 ECMTypeManual=手册
 ECMTypeAuto=自动
+ECMDocsBySocialContributions=文件关联到社会的贡献
 ECMDocsByThirdParties=文件链接到第三方
 ECMDocsByProposals=文件与建议
 ECMDocsByOrders=文件链接到客户的订单
 ECMDocsByContracts=文件与合约
 ECMDocsByInvoices=文件与客户发票
 ECMDocsByProducts=文件与产品
+ECMDocsByProjects=文件关联到项目
 ECMNoDirectoryYet=没有目录中创建
 ShowECMSection=显示目录
 DeleteSection=删除目录
@@ -59,4 +51,5 @@ ECMDirectoryForFiles=相对目录的文件
 CannotRemoveDirectoryContainsFiles=删除不可能的，因为它包含了一些文件
 ECMFileManager=档案管理员
 ECMSelectASection=左树中选择一个目录...
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
+DirNotSynchronizedSyncFirst=该目录似乎外ECM模块来创建或修改。你必须先点击“刷新”按钮，磁盘和数据库同步，此目录的内容。
+

@@ -151,7 +151,8 @@ $formother = new FormOther($db);
 if ($modecompta=="CREANCES-DETTES")
 {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
-	$nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeDebt");
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCADue");
@@ -161,7 +162,8 @@ if ($modecompta=="CREANCES-DETTES")
 	//$exportlink=$langs->trans("NotYetAvailable");
 } else {
 	$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
-	$nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode=$langs->trans("CalcModeEngagement");
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description=$langs->trans("RulesCAIn");
@@ -170,7 +172,7 @@ if ($modecompta=="CREANCES-DETTES")
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams);
+report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
 
 // Show Array
@@ -246,6 +248,7 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom";
 $sql.= " ORDER BY s.rowid";
+//echo $sql;
 
 dol_syslog("casoc sql=".$sql);
 $result = $db->query($sql);
@@ -319,7 +322,7 @@ if ($subcat) {
 }
 print'></td>';
 print '<td colspan="4" align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
     // Array titles
@@ -426,13 +429,13 @@ if (count($amount)) {
 		print '<td align="right">';
 		if ($modecompta != 'CREANCES-DETTES') {
                     if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid='.$key.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid='.$key.'">';
 		    } else {
-			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?userid=-1">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/paiement/liste.php?socid=-1">';
 		    }
 		} else {
 		    if ($key > 0) {
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$key.'">';
 		    } else {
 			print '<a href="#">';
 		    }

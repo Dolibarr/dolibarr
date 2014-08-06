@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013 Juanjo Menent			    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +37,6 @@ if (!$user->admin) accessforbidden();
 
 // Allow/Disallow change to clear passwords once passwords are crypted
 $allow_disable_encryption=true;
-
-$mesg = '';
-
 
 /*
  * Actions
@@ -135,7 +133,7 @@ if ($action == 'activate_encryptdbpassconf')
 	}
 	else
 	{
-		$mesg='<div class="warning">'.$langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)).'</div>';
+		setEventMessage($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)),'warnings');	
 	}
 }
 else if ($action == 'disable_encryptdbpassconf')
@@ -150,7 +148,7 @@ else if ($action == 'disable_encryptdbpassconf')
 	}
 	else
 	{
-		$mesg='<div class="warning">'.$langs->trans('InstrucToClearPass',$dolibarr_main_db_pass).'</div>';
+		setEventMessage($langs->trans('InstrucToClearPass',$dolibarr_main_db_pass),'warnings');
 	}
 }
 
@@ -178,8 +176,6 @@ $form = new Form($db);
 llxHeader('',$langs->trans("Passwords"));
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
-
-dol_htmloutput_mesg($mesg);
 
 print $langs->trans("GeneratedPasswordDesc")."<br>\n";
 print "<br>\n";

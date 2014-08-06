@@ -51,7 +51,7 @@ $object = new FactureFournisseur($db);
 
 if ($action == 'addcontact' && $user->rights->fournisseur->facture->creer)
 {
-	$result = $object->fetch($id);
+	$result = $object->fetch($id, $ref);
 
     if ($result > 0 && $id > 0)
     {
@@ -142,11 +142,11 @@ if ($id > 0 || ! empty($ref))
 		 */
 		print '<table class="border" width="100%">';
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Reference du facture
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'facid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 		print "</td></tr>";
 
         // Ref supplier
@@ -155,16 +155,16 @@ if ($id > 0 || ! empty($ref))
 
 		// Third party
 		print "<tr><td>".$langs->trans("Supplier")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'supplier').'</td></tr>';
 		print "</table>";
 
 		print '</div>';
 
 		print '<br>';
-		
+
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
-		
+
 	}
 	else
 	{

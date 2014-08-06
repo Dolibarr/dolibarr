@@ -1,15 +1,10 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - languages
 
 Language_ar_AR=Arabisch
 Language_ar_SA=Arabisch
+Language_bg_BG=Bulgarisch
 Language_ca_ES=Katalanisch
+Language_cs_CZ=Tschechisch
 Language_da_DA=Dänisch
 Language_da_DK=Dänisch
 Language_de_DE=Deutsch
@@ -19,11 +14,15 @@ Language_en_AU=Englisch (Australien)
 Language_en_GB=Englisch (Großbritannien)
 Language_en_IN=Englisch (Indien)
 Language_en_NZ=Englisch (Neuseeland)
+Language_en_SA=Englisch (Saudi-Arabien)
 Language_en_US=Englisch (USA)
+Language_en_ZA=Englisch (Südafrika)
 Language_es_ES=Spanisch
 Language_es_AR=Spanisch (Argentinien)
 Language_es_HN=Spanisch (Honduras)
 Language_es_MX=Spanisch (Mexiko)
+Language_es_PY=Spanisch (Paraguay)
+Language_es_PE=Spanisch (Peru)
 Language_es_PR=Spanisch (Puerto Rico)
 Language_et_EE=Estnisch
 Language_fa_IR=Persisch
@@ -32,11 +31,14 @@ Language_fr_BE=Französisch (Belgien)
 Language_fr_CA=Französisch (Kanada)
 Language_fr_CH=Französisch (Schweiz)
 Language_fr_FR=Französisch
+Language_fr_NC=Französisch (Neukaledonien)
 Language_he_IL=Hebräisch
 Language_hu_HU=Ungarisch
 Language_is_IS=Isländisch
 Language_it_IT=Italienisch
 Language_ja_JP=Japanisch
+Language_ko_KR=Koreanisch
+Language_lv_LV=Litauisch
 Language_nb_NO=Norwegisch (Bokmål)
 Language_nl_BE=Niederländisch (Belgien)
 Language_nl_NL=Niederländisch (Niederlande)
@@ -50,5 +52,7 @@ Language_tr_TR=Türkisch
 Language_sl_SI=Slowenisch
 Language_sv_SV=Schwedisch
 Language_sv_SE=Schwedisch
+Language_sk_SK=Slovakisch
+Language_vi_VN=Vietnamesisch
 Language_zh_CN=Chinesisch
-Language_is_IS=Isländisch
+Language_zh_TW=Chinesisch (Traditionell)

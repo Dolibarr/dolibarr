@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=Точка на продажба
 CashDesk=Точка на продажба
 CashDesks=Точка на продажбите
@@ -21,6 +12,7 @@ CashDeskProducts=Продукти
 CashDeskStock=Наличност
 CashDeskOn=на
 CashDeskThirdParty=Трета страна
+# CashdeskDashboard=Point of sale access
 ShoppingCart=Количка за пазаруване
 NewSell=Нов продажба
 BackOffice=Обратно офис
@@ -28,7 +20,6 @@ AddThisArticle=Добави тази статия
 RestartSelling=Върнете се продават
 SellFinished=Продава приключи
 PrintTicket=Печат билет
-NoResults=Няма резултати
 NoProductFound=Не е статия намерени
 ProductFound=продукти, открити
 ProductsFound=намерени продукти
@@ -45,4 +36,4 @@ BankToPay=Банкова сметка
 ShowCompany=Покажи компания
 ShowStock=Покажи склад
 DeleteArticle=Кликнете, за да се премахне тази статия
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:17:18).
+# FilterRefOrLabelOrBC=Search (Ref/Label)

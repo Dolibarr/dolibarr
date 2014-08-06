@@ -1,5 +1,4 @@
-# Dolibarr language file - pt_BR rev. 0.0 - ecm
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=Documentos
 DocsMine=Os Meus Documentos
 DocsGenerated=Documentos Gerados
@@ -20,15 +19,14 @@ ECMSections=Pastas
 ECMRoot=Raíz
 ECMNewSection=Criar Pasta Manual
 ECMAddSection=Adicionar Pasta Manual
-ECMNewSection=Nova Pasta Manual
 ECMNewDocument=Novo Documento
 ECMCreationDate=Data Criação
 ECMNbOfFilesInDir=Número de Arquivos na Pasta
 ECMNbOfSubDir=Número de Subpastas
-ECMNbOfFilesInSubDir=Número de Arquivos em Subpastas
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Criador
-ECMArea=Área GED
-ECMAreaDesc=A área GED (Administração Eletrônica de Documentos) permite controlar rápidamente os documentos no Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=Pode criar pastas manuais e adicionar os documentos<br>as pastas automáticas são preenchidas automaticamente além de um documento numa ficha.
 ECMSectionWasRemoved=A pasta <b>%s</b> foi eliminada
 ECMDocumentsSection=Documento da Secção
@@ -37,13 +35,14 @@ ECMSearchByEntity=Procurar por Objeto
 ECMSectionOfDocuments=Pastas de Documetos
 ECMTypeManual=Manual
 ECMTypeAuto=Automático
+ECMDocsBySocialContributions=Documentos conectadors aos contribuentes sociais
 ECMDocsByThirdParties=Documentos Associados a Fornecedores
 ECMDocsByProposals=Documentos Assoicados a Orçamentos
 ECMDocsByOrders=Documentos Associados a Pedidos
-ECMDocsByNfes=Documentos Associados a Notas Fiscais
 ECMDocsByContracts=Documentos Associados a Contratos
 ECMDocsByInvoices=Documentos Associados a Faturas
 ECMDocsByProducts=Documentos ligados a produtos
+ECMDocsByProjects=Documentos conectados aos projetos
 ECMNoDirectoryYet=Não foi Criada a Pasta
 ShowECMSection=Mostrar Pasta
 DeleteSection=Apagar Pasta
@@ -52,5 +51,5 @@ ECMDirectoryForFiles=Pasta relativa para arquivos
 CannotRemoveDirectoryContainsFiles=Não se pode eliminar porque contém arquivos
 ECMFileManager=Explorador de Arquivos
 ECMSelectASection=Selecione uma pasta na árvore da esquerda
-
+DirNotSynchronizedSyncFirst=Este diretorio parece ser criado ou modificado fora do modulo ECM. Voce deve clickar no boatao "Atualizar" primeiro para sincronizar o disco com o banco de dados para receber o conteudo deste diretorio.
 

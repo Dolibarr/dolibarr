@@ -1,19 +1,11 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Постоянные заказы области
 CustomersStandingOrdersArea=Клиенты Регламента области
 StandingOrders=Постоянные заказы
 StandingOrder=Постоянные заказы
 NewStandingOrder=Новый постоянный порядок
+StandingOrderToProcess=Для обработки
+StandingOrderProcessed=Обработано
 Withdrawals=Снятие
 Withdrawal=Снятие
 WithdrawalsReceipts=Снятие квитанции
@@ -27,6 +19,7 @@ RequestStandingOrderTreated=Запрос Регламента лечение
 CustomersStandingOrders=Клиент Регламент
 CustomerStandingOrder=Для постоянных клиентов
 NbOfInvoiceToWithdraw=Nb счета с просьбой отозвать
+NbOfInvoiceToWithdrawWithInfo=Кол-во фактуру с отозвать запрос для клиентов, определив информацию о банковском счете
 InvoiceWaitingWithdraw=Счет ждет снимать
 AmountToWithdraw=Сумма снять
 WithdrawsRefused=Отзывает отказала
@@ -42,19 +35,12 @@ ThirdPartyDeskCode=Третий участник стол код
 NoInvoiceCouldBeWithdrawed=Нет счета withdrawed с успехом. Убедитесь в том, что счета-фактуры на компании с действительным запрета.
 ClassCredited=Классифицировать зачисленных
 ClassCreditedConfirm=Вы уверены, что хотите классифицировать этот вывод получения как кредитуются на ваш счет в банке?
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 02:09:13).
-// Reference language: en_US -> ru_RU
-StandingOrderToProcess=Для обработки
-StandingOrderProcessed=Обработано
 TransData=Дата передачи
 TransMetod=Метод передачи
 Send=Послать
 Lines=Линии
 StandingOrderReject=Выпуск отклонить
+InvoiceRefused=Зарядка отказа клиента
 WithdrawalRefused=Выплаты Refuseds
 WithdrawalRefusedConfirm=Вы уверены, что вы хотите ввести снятия отказа общества
 RefusedData=Дата отказа
@@ -65,6 +51,7 @@ InvoiceRefused=Зарядка отказа клиента
 Status=Статус
 StatusUnknown=Неизвестный
 StatusWaiting=Ожидание
+StatusTrans=Передающиеся
 StatusCredited=Кредитоваться
 StatusRefused=Отказавшийся
 StatusMotif0=Не указано
@@ -84,13 +71,6 @@ NotifyTransmision=Снятие передачи
 NotifyEmision=Снятие выбросов
 NotifyCredit=Снятие кредитную
 NumeroNationalEmetter=Национальный передатчик Количество
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 02:23:19).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-NbOfInvoiceToWithdrawWithInfo=Кол-во фактуру с отозвать запрос для клиентов, определив информацию о банковском счете
-StatusTrans=Передающиеся
 PleaseSelectCustomerBankBANToWithdraw=Выберите информацию о счете клиента банк, чтобы снять
 WithBankUsingRIB=Для банковских счетов с использованием RIB
 WithBankUsingBANBIC=Для банковских счетов с использованием IBAN / BIC / SWIFT
@@ -100,6 +80,11 @@ WithdrawalFileNotCapable=Невозможно создать файл вывод
 ShowWithdraw=Показать Вывод
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Однако, если счет-фактура имеет по крайней мере один вывод оплаты еще не обработан, то он не будет установлен, как оплачиваются, чтобы управлять снятие ранее.
 DoStandingOrdersBeforePayments=Это вкладок позволяет запросить за постоянного платежного поручения. Как только она будет закончена, вы можете ввести оплату, чтобы закрыть счета.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Оплата постоянных %s порядке банк
 InfoCreditMessage=Постоянное поручение %s была выплачена банком <br> Данные оплаты: %s
 InfoTransSubject=Передача стоять %s чтобы банк
@@ -107,6 +92,5 @@ InfoTransMessage=Постоянное поручение %s был Переда�
 InfoTransData=Сумма: %s <br> Metode: %s <br> Дата: %s
 InfoFoot=Это автоматизированное сообщение, отправленное Dolibarr
 InfoRejectSubject=Постоянное платежное поручение отказался
-InfoRejectMessage=Добрый день, <br><br> standig порядок счета %s, связанные с компанией %s, с количеством %s было отказано в банке. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Вариант для реального режима не был установлен, мы останавливаемся после этого моделирования
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:53).

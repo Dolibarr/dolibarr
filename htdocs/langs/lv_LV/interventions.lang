@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - interventions
+Intervention=Iejaukšanās
+Interventions=Iejaukšanās
+InterventionCard=Intervences karte
+NewIntervention=Jauna intervences
+AddIntervention=Pievienot iejaukšanās
+ListOfInterventions=Saraksts iejaukšanās
+EditIntervention=Labot iejaukšanās
+ActionsOnFicheInter=Pasākumi attiecībā uz intervenci
+LastInterventions=Pēdējās %s iejaukšanās
+AllInterventions=Visi pasākumi
+CreateDraftIntervention=Izveidot projektu
+CustomerDoesNotHavePrefix=Klientam nav prefiksu
+InterventionContact=Intervences kontakts
+DeleteIntervention=Dzēst iejaukšanās
+ValidateIntervention=Apstiprināt iejaukšanās
+ModifyIntervention=Modificēt iejaukšanās
+DeleteInterventionLine=Dzēst intervences līnija
+ConfirmDeleteIntervention=Vai tiešām vēlaties dzēst šo pasākumu?
+ConfirmValidateIntervention=Vai jūs tiešām vēlaties, lai apstiprinātu šo intervenci ar nosaukumu <b>%s?</b>
+ConfirmModifyIntervention=Vai esat pārliecināts, ka vēlaties mainīt šo pasākumu?
+ConfirmDeleteInterventionLine=Vai tiešām vēlaties dzēst šo intervences līnijas?
+NameAndSignatureOfInternalContact=Vārds, uzvārds un paraksts iejaukties:
+NameAndSignatureOfExternalContact=Vārds un klienta paraksts:
+DocumentModelStandard=Standarta dokumenta paraugs intervencēm
+InterventionCardsAndInterventionLines=Iejaukšanās un līnijas intervenču
+ClassifyBilled=Klasificēt &quot;Jāmaksā&quot;
+StatusInterInvoiced=Jāmaksā
+RelatedInterventions=Saistītie pasākumi
+ShowIntervention=Rādīt iejaukšanās
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Pārstāvis turpinot darboties iejaukšanās
+TypeContact_fichinter_internal_INTERVENING=Iejaukšanās
+TypeContact_fichinter_external_BILLING=Norēķinu klientu kontaktu
+TypeContact_fichinter_external_CUSTOMER=Šādi-up klientu kontaktu
+# Modele numérotation
+ArcticNumRefModelDesc1=Generic numurs modelis
+ArcticNumRefModelError=Neizdevās aktivizēt
+PacificNumRefModelDesc1=Atgriešanās Numero ar formātu %syymm-NNNN kur yy ir gads, MM ir mēnesis, un nnnn ir secība bez pārtraukuma un bez atgriešanos 0
+PacificNumRefModelError=Iejaukšanās karte sākot ar syymm $ jau pastāv un nav saderīgs ar šo modeli secību. Noņemt to vai pārdēvēt to aktivizētu šo moduli.
+PrintProductsOnFichinter=Drukāt produktus intervences kartes
+PrintProductsOnFichinterDetails=forinterventions iegūti no pasūtījumiem

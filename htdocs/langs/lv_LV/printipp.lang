@@ -1,0 +1,18 @@
+/*
+ * Language code: lv_LV
+ * Automatic generated via autotranslator.php tool
+ * Generation date 2013-11-09 12:40:15
+ */
+
+
+// START - Lines generated via autotranslator.php tool (2013-11-09 12:40:15).
+// Reference language: en_US -> lv_LV
+PrintIPPSetup=Setup moduļa Direct Print
+PrintIPPDesc=Ce modulis Përmet d'Ajouter ANO Bouton d'iespaids tieši des dokumenti vers votre imprimante. Il requiert ANO systeme Linux équipé de Kausi.
+PRINTIPP_ENABLED=Rādīt Picto &quot;Direct print&quot; par dokumentu saraksts
+PRINTIPP_HOST=Drukas serveris
+PRINTIPP_PORT=Osta
+PRINTIPP_USER=Login
+PRINTIPP_PASSWORD=Parole
+NoPrinterFound=Nav printeri atrasts (pārbaudiet savu tases etup)
+// STOP - Lines generated via autotranslator.php tool (2013-11-09 12:49:40).

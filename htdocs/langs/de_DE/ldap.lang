@@ -1,18 +1,10 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Domain-Passwort
 YouMustChangePassNextLogon=Bitte ändern Sie das Passwort für Benutzer <b>%s</b> auf der Domain <b>%s</b> bei Ihrer nächsten Anmeldung.
 UserMustChangePassNextLogon=Der Benutzer muss das Passwort für Domäne %s bei der nächsten Anmeldung ändern.
 LdapUacf_NORMAL_ACCOUNT=Benutzerkonto
 LdapUacf_DONT_EXPIRE_PASSWORD=Kennwort läuft nie ab
-LdapUacf_ACCOUNTDISABLE=Konto ist deaktiviert für Domäne %s 
+LdapUacf_ACCOUNTDISABLE=Konto ist deaktiviert für Domäne %s
 LDAPInformationsForThisContact=Informationen in der LDAP-Datenbank für diesen Kontakt
 LDAPInformationsForThisUser=Informationen in der LDAP-Datenbank für diesen Benutzer
 LDAPInformationsForThisGroup=Informationen in der LDAP-Datenbank für diese Gruppe

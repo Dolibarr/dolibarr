@@ -188,14 +188,14 @@ function expedition_pdf_create($db, $object, $modele, $outputlangs)
 	{
     	foreach(array('doc','pdf') as $prefix)
     	{
-    	    $file = $prefix."_expedition_".$modele.".modules.php";
+    	    $file = $prefix."_".$modele.".modules.php";
 
     		// We check the model location 
 	        $file=dol_buildpath($reldir."core/modules/expedition/doc/".$file,0);
     		if (file_exists($file))
     		{
     			$filefound=1;
-    			$classname=$prefix.'_expedition_'.$modele;
+    			$classname=$prefix.'_'.$modele;
     			break;
     		}
     	}

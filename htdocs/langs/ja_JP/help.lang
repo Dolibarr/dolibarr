@@ -1,13 +1,4 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 16:41:06
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - help
 CommunitySupport=フォーラム/ Wikiのサポート
 EMailSupport=電子メールをサポート
 RemoteControlSupport=オンラインリアルタイム/リモートサポート
@@ -33,4 +24,5 @@ BackToHelpCenter=それ以外の場合は、移動するには、ここをクリ
 LinkToGoldMember=あなたは彼のウィジェット（ステータスおよび最大価格が自動的に更新されます）をクリックして言語（%s）にDolibarrによって事前に選択コーチのいずれかを呼び出すことができます。
 PossibleLanguages=サポートされる言語
 MakeADonation=Dolibarrプロジェクトを支援、寄付をする
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:03:00).
+# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

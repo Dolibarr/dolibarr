@@ -1,0 +1,51 @@
+# Dolibarr language file - Source file is en_US - marges
+
+Margin=Marginaal
+Margins=Marginaalid
+TotalMargin=Kogukasum
+MarginOnProducts=Marginaal / Tooted
+MarginOnServices=Marginaal / Teenused
+MarginRate=Marginaali määr
+MarkRate=Juurdehindluse määr
+DisplayMarginRates=Kuva marginaalide määrad
+DisplayMarkRates=Kuva juurdehindluse määrad
+InputPrice=Sisendhind
+
+margin=Kasumimarginaalide haldamine
+margesSetup=Kasumimarginaalide haldamise seadistamine
+
+MarginDetails=Marginaalide info
+
+ProductMargins=Toodete marginaalid
+CustomerMargins=Klientide marginaalid
+AgentMargins=Agendi marginaal
+
+ProductService=Toode või teenus
+AllProducts=Kõik tooted ja teenused
+ChooseProduct/Service=Vali toode või teenus
+CommercialAgent=Müügiagent
+
+StartDate=Alguskuupäev
+EndDate=Lõppkuupäev
+Launch=Algus
+
+ForceBuyingPriceIfNull=Sunni ostuhind, kui tühi
+ForceBuyingPriceIfNullDetails=Kui "SEES", siis on rea marginaal null (ostuhind = müügihind), vastasel juhul ("OFF") on marginaal võrdne müügihinnaga (ostuhind = 0).
+MARGIN_METHODE_FOR_DISCOUNT=Üldiste allahindluste marginaali meetod
+UseDiscountAsProduct=Tootena
+UseDiscountAsService=Teenusena
+UseDiscountOnTotal=Vahesumma peal
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Määratleb, kas üldist allahindlust käsitletakse tootena, teenusena või ainult vahesummana marginaali arvutamisel.
+
+MARGIN_TYPE=Marginaali lii
+MargeBrute=Toores marginaal
+MargeNette=Netomarginaal
+MARGIN_TYPE_DETAILS=Toores marginaal: müügihind - ostuhind<br/>Netomarginaal: müügihind - tootmishind
+
+CostPrice=Tootmishind
+BuyingCost=Tootmishind
+UnitCharges=Ühiku kulud
+Charges=Kulud
+
+AgentContactType=Müügiagendi kontakti liik
+AgentContactTypeDetails=Määratle, millist kontakti tüüpi (arvetel lingitud) kasutatakse müügiagentide marginaalide aruande tarbeks

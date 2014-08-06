@@ -25,28 +25,30 @@ create table llx_actioncomm
   id				integer AUTO_INCREMENT PRIMARY KEY,
   ref_ext			varchar(128),
   entity			integer DEFAULT 1 NOT NULL,		-- multi company id
-  datep				datetime,						-- date debut planifiee
-  datep2			datetime,						-- deprecated
-  datea				datetime,						-- date debut realisation
+  datep				datetime,						-- date start
+  datep2			datetime,						-- date end
+  datea				datetime,						-- deprecated
   datea2			datetime,						-- deprecated
 
   fk_action			integer,						-- type of action (optionnal link with llx_c_actioncomm or null)
   code				varchar(32) NULL,				-- code of action for automatic action
-  label				varchar(128) NOT NULL,			-- libelle de l'action
+  label				varchar(128) NOT NULL,			-- label/title of event
   
   datec				datetime,						-- date creation
-  tms				timestamp,						-- date modif
-  fk_user_author	integer,						-- id user qui a cree l'action
-  fk_user_mod		integer,						-- id dernier user qui a modifier l'action
+  tms				timestamp,						-- date modification
+  fk_user_author	integer,						-- user id of user that has created record
+  fk_user_mod		integer,						-- user id of user that has modified record
 
   fk_project		integer,
   fk_soc			integer,
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
 
-  fk_user_action	integer,						-- id de la personne qui doit effectuer l'action
-  transparency      integer,						-- transparency (ical standard). used to say if people assigned to event are busy or not by event.
-  fk_user_done		integer,						-- id de la personne qui a effectue l'action
+  fk_user_action	integer,						-- user id of owner of action (currently also user id of actor that must do action. In future, actors assigned to action will be an array into table llx_actioncomm_resources)
+
+  transparency      integer,						-- transparency (ical standard). used to say if people assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_resources)
+  fk_user_done		integer,						-- user id of people that has made action (deprecated)
+  
   priority			smallint,
   fulldayevent		smallint NOT NULL default 0,
   punctual			smallint NOT NULL default 1,

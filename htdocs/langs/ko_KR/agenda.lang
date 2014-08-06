@@ -1,0 +1,80 @@
+# Dolibarr language file - Source file is en_US - agenda
+# IdAgenda=ID event
+Actions=이벤트
+ActionsArea=이벤트 영역 (액션과 작업)
+# Agenda= Agenda
+# Agendas= Agendas
+# Calendar= Calendar
+# Calendars= Calendars
+# LocalAgenda=Local calendar
+# AffectedTo= Assigned to
+# DoneBy= Done by
+Events= 이벤트
+# EventsNb=Number of events
+MyEvents=내 이벤트
+# OtherEvents=Other events
+ListOfActions=이벤트 목록
+Location=위치
+# EventOnFullDay=Event on all day(s)
+# SearchAnAction= Search an event/task
+# MenuToDoActions= All incomplete events
+# MenuDoneActions= All terminated events
+# MenuToDoMyActions= My incomplete events
+# MenuDoneMyActions= My terminated events
+# ListOfEvents= List of Dolibarr events
+# ActionsAskedBy=Events reported by
+# ActionsToDoBy=Events assigned to
+# ActionsDoneBy=Events done by
+# AllMyActions= All my events/tasks
+# AllActions= All events/tasks
+# ViewList=List view
+# ViewCal=Month view
+# ViewDay=Day view
+# ViewWeek=Week view
+# ViewWithPredefinedFilters= View with predefined filters
+# AutoActions= Automatic filling
+# AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked (by default), only manual actions will be included in agenda.
+# AgendaSetupOtherDesc= This page provides options to allow export of your Dolibarr events into an external calendar (thunderbird, google calendar, ...)
+# AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
+# ActionsEvents= Events for which Dolibarr will create an action in agenda automatically
+# PropalValidatedInDolibarr= Proposal %s validated
+# InvoiceValidatedInDolibarr= Invoice %s validated
+# InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status
+# InvoiceDeleteDolibarr=Invoice %s deleted
+# OrderValidatedInDolibarr= Order %s validated
+# OrderApprovedInDolibarr=Order %s approved
+# OrderBackToDraftInDolibarr=Order %s go back to draft status
+# OrderCanceledInDolibarr=Order %s canceled
+# InterventionValidatedInDolibarr=Intervention %s validated
+# ProposalSentByEMail=Commercial proposal %s sent by EMail
+# OrderSentByEMail=Customer order %s sent by EMail
+# InvoiceSentByEMail=Customer invoice %s sent by EMail
+# SupplierOrderSentByEMail=Supplier order %s sent by EMail
+# SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
+# ShippingSentByEMail=Shipping %s sent by EMail
+# InterventionSentByEMail=Intervention %s sent by EMail
+# NewCompanyToDolibarr= Third party created
+# DateActionPlannedStart= Planned start date
+# DateActionPlannedEnd= Planned end date
+# DateActionDoneStart= Real start date
+# DateActionDoneEnd= Real end date
+# DateActionStart= Start date
+# DateActionEnd= End date
+# AgendaUrlOptions1=You can also add following parameters to filter output:
+# AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by, assigned to or done by user <b>%s</b>.
+# AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions created by user <b>%s</b>.
+# AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b>.
+# AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.
+# AgendaShowBirthdayEvents=Show birthday's contacts
+# AgendaHideBirthdayEvents=Hide birthday's contacts
+# Busy=Busy
+# ExportDataset_event1=List of agenda events
+
+# External Sites ical
+# ExportCal=Export calendar
+# ExtSites=Import external calendars
+# ExtSitesEnableThisTool=Show external calendars into agenda
+# ExtSitesNbOfAgenda=Number of calendars
+# AgendaExtNb=Calendar nb %s
+# ExtSiteUrlAgenda=URL to access .ical file
+# ExtSiteNoLabel=No Description

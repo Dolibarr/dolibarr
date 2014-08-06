@@ -1,31 +1,25 @@
-# Dolibarr language file - it_IT - deliveries
-# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
-// Reference language: en_US -> it_IT
-CHARSET							=UTF-8
-APE							=Iscr. trib.: 
-CreateDeliveryOrder					=Genera ordine di consegna
-Date 							=Data: 
-DeleteDeliveryReceiptConfirm				=Sei sicuro di voler cancellare la ricevuta di consegna <b>%s</b>?
-DeleteDeliveryReceipt					=Eliminare ricevuta di consegna
-Deliverer						=Chi consegna: 
-Deliveries						=Consegne
-DeliveryCard						=Scheda consegna
-Delivery						=Consegna
-DeliveryDate						=Data di consegna
-DeliveryDateShort					=Data consegna
-DeliveryMethod						=Metodo di consegna
-DeliveryNotValidated					=Consegna non convalidata
-DeliveryOrder						=Ordine di consegna
-DeliveryOrders						=Ordini di consegna
-GoodStatusDeclaration 					=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
-ICOMM							=N° P. IVA : 
-NameAndSignature					=Nome e firma: 
-QtyDelivered						=Quantità consegnata
-Recipient						=Destinatario
-Sender							=Mittente
-SetDeliveryDate						=Imposta la data di spedizione
-SIRET							=R.E.A.: 
-ToAndDate 						=A___________________________________ il ____/_____/__________
-TrackingNumber						=Numero di tracking
-ValidateDeliveryReceiptConfirm				=Vuoi davvero convalidare questa ricevuta di consegna?
-ValidateDeliveryReceipt					=Convalida la ricevuta di consegna
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Consegna
+Deliveries=Consegne
+DeliveryCard=Scheda consegna
+DeliveryOrder=Ordine di consegna
+DeliveryOrders=Ordini di consegna
+DeliveryDate=Data di consegna
+DeliveryDateShort=Data consegna
+CreateDeliveryOrder=Genera ordine di consegna
+QtyDelivered=Quantità consegnata
+SetDeliveryDate=Imposta la data di spedizione
+ValidateDeliveryReceipt=Convalida la ricevuta di consegna
+ValidateDeliveryReceiptConfirm=Vuoi davvero convalidare questa ricevuta di consegna?
+DeleteDeliveryReceipt=Eliminare ricevuta di consegna
+DeleteDeliveryReceiptConfirm=Vuoi davvero cancellare la ricevuta di consegna <b>%s</b>?
+DeliveryMethod=Metodo di consegna
+TrackingNumber=Numero di tracking
+DeliveryNotValidated=Consegna non convalidata
+# merou PDF model
+NameAndSignature=Nome e firma:
+ToAndDate=A___________________________________ il ____/_____/__________
+GoodStatusDeclaration=Dichiaro di aver ricevuto le merci di cui sopra in buone condizioni,
+Deliverer=Chi consegna:
+Sender=Mittente
+Recipient=Destinatario

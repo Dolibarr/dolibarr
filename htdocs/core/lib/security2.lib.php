@@ -153,7 +153,8 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Note: $conf->css looks like '/theme/eldy/style.css.php'
 	$conf->css = "/theme/".(GETPOST('theme')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
-	$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+	//$themepath=dol_buildpath((empty($conf->global->MAIN_FORCETHEMEDIR)?'':$conf->global->MAIN_FORCETHEMEDIR).$conf->css,1);
+	$themepath=dol_buildpath($conf->css,1);
 	if (! empty($conf->modules_parts['theme']))		// Using this feature slow down application
 	{
 		foreach($conf->modules_parts['theme'] as $reldir)
@@ -270,12 +271,13 @@ function dol_loginfunction($langs,$conf,$mysoc)
 	if (! empty($conf->global->MAIN_HOME))
 	{
 		$i=0;
-		while (preg_match('/__\(([a-zA-Z]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
+		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_HOME,$reg) && $i < 100)
 		{
-			$conf->global->MAIN_HOME=preg_replace('/__\('.$reg[1].'\)__/i',$langs->trans($reg[1]),$conf->global->MAIN_HOME);
+			$tmp=explode('|',$reg[1]);
+			if (! empty($tmp[1])) $langs->load($tmp[1]);
+			$conf->global->MAIN_HOME=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_HOME);
 			$i++;
 		}
-
 		$main_home=dol_htmlcleanlastbr($conf->global->MAIN_HOME);
 	}
 
@@ -284,16 +286,17 @@ function dol_loginfunction($langs,$conf,$mysoc)
 
 	// Set jquery theme
 	$dol_loginmesg = (! empty($_SESSION["dol_loginmesg"])?$_SESSION["dol_loginmesg"]:'');
-	$favicon=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/favicon.ico';
+	$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
+	if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
 	$jquerytheme = 'smoothness';
 	if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
 	// Set dol_hide_topmenu, dol_hide_leftmenu, dol_optimize_smallscreen, dol_nomousehover
-	$dol_hide_topmenu=GETPOST('dol_hide_topmenu');
-	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu');
-	$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen');
-	$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover');
-	$dol_use_jmobile=GETPOST('dol_use_jmobile');
+	$dol_hide_topmenu=GETPOST('dol_hide_topmenu','int');
+	$dol_hide_leftmenu=GETPOST('dol_hide_leftmenu','int');
+	$dol_optimize_smallscreen=GETPOST('dol_optimize_smallscreen','int');
+	$dol_no_mouse_hover=GETPOST('dol_no_mouse_hover','int');
+	$dol_use_jmobile=GETPOST('dol_use_jmobile','int');
 
 	// Include login page template
 	include $template_dir.'login.tpl.php';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +47,6 @@ top_httphead();
 
 print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
-//print '<body id="mainbody">';
-
 dol_syslog(join(',',$_POST));
 
 // Generation liste des pays
@@ -77,6 +76,4 @@ if (! empty($country))
 	}
 }
 
-//print "</body>";
-//print "</html>";
 ?>

@@ -285,6 +285,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$object->phone_perso = trim($_POST["phone_perso"]);
 		$object->phone_mobile= trim($_POST["phone_mobile"]);
 		$object->email       = trim($_POST["email"]);
+		$object->skype       = trim($_POST["skype"]);
 		$object->birth       = $birthdate;
 
 		$object->typeid      = $_POST["typeid"];
@@ -320,6 +321,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 		$result=$object->update($user,0,$nosyncuser,$nosyncuserpass);
 		if ($result >= 0 && ! count($object->errors))
 		{
+			// Logo/Photo save
 			$dir= $conf->adherent->dir_output . '/' . get_exdir($object->id,2,0,1).'/photos';
 			$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 			if ($file_OK)
@@ -360,35 +362,21 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 					$errmsgs[] = "ErrorBadImageFormat";
 				}
 			}
-
-			// Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
-			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))
+			else
 			{
-				if ($object->oldcopy->email != $object->email)    // If email has changed we delete mailman subscription for old email
+				switch($_FILES['photo']['error'])
 				{
-					if ($object->oldcopy->del_to_abo() < 0)
-					{
-						if (! empty($object->oldcopy->error)) setEventMessage($langs->trans("ErrorFailedToRemoveToMailmanList").': '.$object->oldcopy->error, 'errors');
-						setEventMessage($object->oldcopy->errors, 'errors');
-					}
-					else
-					{
-						setEventMessage($object->oldcopy->mesgs,'mesgs');
-					}
-				}
-    			// We add subscription if new email or new type (new type may means more mailing-list to subscribe)
-    			if ($object->add_to_abo() < 0)
-    			{
-    				 if (! empty($object->error)) setEventMessage($langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error, 'errors');
-    				 setEventMessage($object->errors, 'errors');
-    			}
-				else
-				{
-					setEventMessage($object->mesgs, 'mesgs');
+					case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+					case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+						$errors[] = "ErrorFileSizeTooLarge";
+						break;
+					case 3: //uploaded file was only partially uploaded
+						$errors[] = "ErrorFilePartiallyUploaded";
+						break;
 				}
 			}
 
-			$rowid=$object->id;
+            $rowid=$object->id;
 			$action='';
 
 			if (! empty($backtopage))
@@ -440,6 +428,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$phone=$_POST["phone"];
 	$phone_perso=$_POST["phone_perso"];
 	$phone_mobile=$_POST["phone_mobile"];
+	$skype=$_POST["member_skype"];
 	$email=$_POST["member_email"];
 	$login=$_POST["member_login"];
 	$pass=$_POST["password"];
@@ -464,6 +453,7 @@ if ($action == 'add' && $user->rights->adherent->creer)
 	$object->phone       = $phone;
 	$object->phone_perso = $phone_perso;
 	$object->phone_mobile= $phone_mobile;
+	$object->skype       = $skype;
 	$object->email       = $email;
 	$object->login       = $login;
 	$object->pass        = $pass;
@@ -602,15 +592,6 @@ if ($user->rights->adherent->creer && $action == 'confirm_valid' && $confirm == 
 				$errmsg.=$object->error;
 			}
 		}
-
-		// Add user to other systems (mailman, spip, etc...)
-		// TODO Move this into trigger on validate action
-		if (! $error && $object->add_to_abo() < 0)
-		{
-			$langs->load("errors");
-			$error++;
-			$errmsg.= $langs->trans("ErrorFailedToAddToMailmanList").': '.$object->error." ".join(',',$object->errors)."<br>\n";
-		}
 	}
 	else
 	{
@@ -648,13 +629,6 @@ if ($user->rights->adherent->supprimer && $action == 'confirm_resign')
 			if ($result < 0)
 			{
 				$errmsg.=$object->error;
-			}
-
-			// supprime l'utilisateur des divers abonnements ..
-			if ($object->del_to_abo() < 0)
-			{
-				// error
-				$errmsg.=$langs->trans("FaildToRemoveFromMailmanList").': '.$object->error."<br>\n";
 			}
 		}
 		else
@@ -698,7 +672,7 @@ if ($user->rights->adherent->creer && $action == 'confirm_add_spip' && $confirm 
 
 /*
  * View
-*/
+ */
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -736,7 +710,7 @@ else
 		/*                                                                            */
 		/* ************************************************************************** */
 		$object->canvas=$canvas;
-		$object->state_id = GETPOST('departement_id', 'int');
+		$object->state_id = GETPOST('state_id', 'int');
 
 		// We set country_id, country_code and country for the selected country
 		$object->country_id=GETPOST('country_id','int')?GETPOST('country_id','int'):$mysoc->country_id;
@@ -831,6 +805,9 @@ else
 		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(GETPOST('firstname','alpha')?GETPOST('firstname','alpha'):$object->firstname).'"></td>';
 		print '</tr>';
 
+		// EMail
+		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(GETPOST('member_email','alpha')?GETPOST('member_email','alpha'):$object->email).'"></td></tr>';
+
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
@@ -884,8 +861,11 @@ else
 		// Tel mobile
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
-		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="member_email" size="40" value="'.(GETPOST('member_email','alpha')?GETPOST('member_email','alpha'):$object->email).'"></td></tr>';
+	    // Skype
+	    if (! empty($conf->skype->enabled))
+	    {
+			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
+	    }
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1078,6 +1058,9 @@ else
 		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td>';
 		print '</tr>';
 
+		// EMail
+		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
+
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
@@ -1120,8 +1103,11 @@ else
 		// Tel mobile
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
 
-		// EMail
-		print '<tr><td>'.($conf->global->ADHERENT_MAIL_REQUIRED?'<span class="fieldrequired">':'').$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'</span>':'').'</td><td><input type="text" name="email" size="40" value="'.(isset($_POST["email"])?$_POST["email"]:$object->email).'"></td></tr>';
+	    // Skype
+	    if (! empty($conf->skype->enabled))
+	    {
+			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+	    }
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1237,8 +1223,7 @@ else
 				if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
 				else $text.=$langs->trans("UserWillBeInternalUser");
 			}
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
 		}
 
 		// Confirm create third party
@@ -1257,8 +1242,7 @@ else
 			// Create a form array
 			$formquestion=array(		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-			$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
 
 		// Confirm validate member
@@ -1288,10 +1272,10 @@ else
 			// Cree un tableau formulaire
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label,  'value' => ($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL?true:false));
-			if (! empty($conf->global->ADHERENT_USE_MAILMAN)) {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>'');
 			}
-			if (! empty($conf->global->ADHERENT_USE_SPIP))    {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
 			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1);
@@ -1331,8 +1315,7 @@ else
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			$ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
 		}
 
 		// Confirm remove member
@@ -1340,31 +1323,29 @@ else
 		{
 			$formquestion=array();
 			if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			$ret=$form->form_confirm("fiche.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
 		}
 
 		/*
 		 * Confirm add in spip
-		*/
+		 */
 		if ($action == 'add_spip')
 		{
-			$ret=$form->form_confirm("fiche.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
 
 		/*
 		 * Confirm removed from spip
-		*/
+		 */
 		if ($action == 'del_spip')
 		{
-			$ret=$form->form_confirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm("fiche.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
 		}
 
 		$rowspan=17;
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) $rowspan++;
 		if (! empty($conf->societe->enabled)) $rowspan++;
+		if (! empty($conf->skype->enabled)) $rowspan++;
 
 		print '<table class="border" width="100%">';
 
@@ -1404,12 +1385,15 @@ else
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td class="valeur">'.$object->getCivilityLabel().'&nbsp;</td>';
 		print '</tr>';
 
-		// Name
+		// Lastname
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td>';
 		print '</tr>';
 
 		// Firstname
 		print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$object->firstname.'&nbsp;</td></tr>';
+
+		// EMail
+		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
 
 		// Password
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
@@ -1444,8 +1428,11 @@ else
 		// Tel mobile
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.dol_print_phone($object->phone_mobile,$object->country_code,0,$object->fk_soc,1).'</td></tr>';
 
-		// EMail
-		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.dol_print_email($object->email,0,$object->fk_soc,1).'</td></tr>';
+    	// Skype
+		if (! empty($conf->skype->enabled))
+		{
+			print '<tr><td>'.$langs->trans("Skype").'</td><td class="valeur">'.dol_print_skype($object->skype,0,$object->fk_soc,1).'</td></tr>';
+		}
 
 		// Birthday
 		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';

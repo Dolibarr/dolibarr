@@ -398,16 +398,17 @@ function dol_dir_is_emtpy($folder)
 	if (is_dir($newfolder))
 	{
 		$handle = opendir($newfolder);
+        $folder_content = '';
 		while ((gettype($name = readdir($handle)) != "boolean"))
 		{
 			$name_array[] = $name;
 		}
 		foreach($name_array as $temp) $folder_content .= $temp;
 
+        closedir($handle);
+
 		if ($folder_content == "...") return true;
 		else return false;
-
-		closedir($handle);
 	}
 	else
 	return true; // Dir does not exists
@@ -448,7 +449,7 @@ function dol_count_nb_of_line($file)
 /**
  * Return size of a file
  *
- * @param 	tring		$pathoffile		Path of file
+ * @param 	string		$pathoffile		Path of file
  * @return 	string						File size
  */
 function dol_filesize($pathoffile)
@@ -461,7 +462,7 @@ function dol_filesize($pathoffile)
  * Return time of a file
  *
  * @param 	string		$pathoffile		Path of file
- * @return 	timestamp					Time of file
+ * @return 	int					Time of file
  */
 function dol_filemtime($pathoffile)
 {
@@ -509,6 +510,12 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	    return -3;
 	}
 	if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+	if (empty($newmask))	// This should no happen
+	{
+		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+		$newmask='0664';	
+	}
+	
 	@chmod($newpathofdestfile, octdec($newmask));
 
 	return 1;
@@ -530,13 +537,24 @@ function dol_move($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
     $result=false;
 
     dol_syslog("files.lib.php::dol_move srcfile=".$srcfile." destfile=".$destfile." newmask=".$newmask." overwritifexists=".$overwriteifexists);
-    if ($overwriteifexists || ! dol_is_file($destfile))
+    $destexists=dol_is_file($destfile);
+    if ($overwriteifexists || ! $destexists)
     {
         $newpathofsrcfile=dol_osencode($srcfile);
         $newpathofdestfile=dol_osencode($destfile);
 
         $result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
-        if (! $result) dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
+        if (! $result)
+        {
+        	if ($destexists)
+        	{
+        		dol_syslog("files.lib.php::dol_move failed. We try to delete first and move after.", LOG_WARNING);
+        		// We force delete and try again. Rename function sometimes fails to replace dest file with some windows NTFS partitions.
+        		dol_delete_file($destfile);
+        		$result=@rename($newpathofsrcfile, $newpathofdestfile); // To see errors, remove @
+        	}
+        	else dol_syslog("files.lib.php::dol_move failed", LOG_WARNING);
+        }
         if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
         @chmod($newpathofsrcfile, octdec($newmask));
     }
@@ -714,6 +732,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 	$langs->load("other");
 	$langs->load("errors");
 
+	dol_syslog("dol_delete_file file=".$file." disableglob=".$disableglob." nophperrors=".$nophperrors." nohook=".$nohook);
+
 	if (empty($nohook))
 	{
 		$hookmanager->initHooks(array('fileslib'));
@@ -830,7 +850,7 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
 /**
  *  Delete all preview files linked to object instance
  *
- *  @param	Object	$object		Object to clean
+ *  @param	object	$object		Object to clean
  *  @return	int					0 if error, 1 if OK
  */
 function dol_delete_preview($object)
@@ -994,18 +1014,29 @@ function dol_init_file_process($pathtoscan='')
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
  * @param	int		$donotupdatesession		1=Do no edit _SESSION variable
  * @param	string	$varfiles				_FILES var name
+ * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+ * @param	string	$link					Link to add
  * @return	void
  */
-function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=0,$varfiles='addedfile')
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
 {
 	global $db,$user,$conf,$langs;
 
 	if (! empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession, LOG_DEBUG);
+		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		if (dol_mkdir($upload_dir) >= 0)
 		{
-			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $upload_dir . "/" . $_FILES[$varfiles]['name'], $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
+			// Define $destpath (path to file including filename) and $destfile (only filename)
+			$destpath=$upload_dir . "/" . $_FILES[$varfiles]['name'];
+			$destfile=$_FILES[$varfiles]['name'];
+			if ($savingdocmask)
+			{
+				$destpath=$upload_dir . "/" . preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
+				$destfile=preg_replace('/__file__/',$_FILES[$varfiles]['name'],$savingdocmask);
+			}
+
+			$resupload = dol_move_uploaded_file($_FILES[$varfiles]['tmp_name'], $destpath, $allowoverwrite, 0, $_FILES[$varfiles]['error'], 0, $varfiles);
 			if (is_numeric($resupload) && $resupload > 0)
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -1013,16 +1044,16 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
-					$formmail->add_attached_files($upload_dir . "/" . $_FILES[$varfiles]['name'],$_FILES[$varfiles]['name'],$_FILES[$varfiles]['type']);
+					$formmail->add_attached_files($destpath, $destfile, $_FILES[$varfiles]['type']);
 				}
-				if (image_format_supported($upload_dir . "/" . $_FILES[$varfiles]['name']) == 1)
+				if (image_format_supported($destpath) == 1)
 				{
 					// Create small thumbs for image (Ratio is near 16/9)
 					// Used on logon for example
-					$imgThumbSmall = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_small', 50, "thumbs");
+					$imgThumbSmall = vignette($destpath, 160, 120, '_small', 50, "thumbs");
 					// Create mini thumbs for image (Ratio is near 16/9)
 					// Used on menu or for setup page for example
-					$imgThumbMini = vignette($upload_dir . "/" . $_FILES[$varfiles]['name'], 160, 120, '_mini', 50, "thumbs");
+					$imgThumbMini = vignette($destpath, 160, 120, '_mini', 50, "thumbs");
 				}
 
 				setEventMessage($langs->trans("FileTransferComplete"));
@@ -1042,6 +1073,23 @@ function dol_add_file_process($upload_dir,$allowoverwrite=0,$donotupdatesession=
 				{
 					setEventMessage($langs->trans($resupload), 'errors');
 				}
+			}
+		}
+	} elseif ($link) {
+		if (dol_mkdir($upload_dir) >= 0) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+			$linkObject = new Link($db);
+			$linkObject->entity = $conf->entity;
+			$linkObject->url = $link;
+			$linkObject->objecttype = GETPOST('objecttype', 'alpha');
+			$linkObject->objectid = GETPOST('objectid', 'int');
+			$linkObject->label = GETPOST('label', 'alpha');
+			$res = $linkObject->create($user);
+			$langs->load('link');
+			if ($res > 0) {
+				setEventMessage($langs->trans("LinkComplete"));
+			} else {
+				setEventMessage($langs->trans("ErrorFileNotLinked"), 'errors');
 			}
 		}
 	}
@@ -1234,7 +1282,7 @@ function dol_uncompress($inputfile,$outputdir)
  * @param 	string	$dir			Directory to scan
  * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	int		$nohook			Disable all hooks
+ * @param	int		$nohook			Disable all hooks
  * @return	string					Full path to most recent file
  */
 function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
@@ -1246,25 +1294,29 @@ function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$
 /**
  * Security check when accessing to a document (used by document.php, viewimage.php and webservices)
  *
- * @param	string	$modulepart			Module of document
+ * @param	string	$modulepart			Module of document (module, module_user_temp, module_user or module_temp)
  * @param	string	$original_file		Relative path with filename
- *  @param  User	$fuser				User object (forced)
  * @param	string	$entity				Restrict onto entity
+ * @param  	User	$fuser				User object (forced)
+ * @param	string	$refname			Ref of object to check permission for external users (autodetect if not provided)
  * @return	mixed						Array with access information : accessallowed & sqlprotectagainstexternals & original_file (as full path name)
  */
-function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='')
+function dol_check_secure_access_document($modulepart,$original_file,$entity,$fuser='',$refname='')
 {
-	global $user, $conf;
+	global $user, $conf, $db;
 
 	if (! is_object($fuser)) $fuser=$user;
 
 	if (empty($modulepart)) return 'ErrorBadParameter';
 	if (empty($entity)) $entity=0;
-	dol_syslog('$modulepart='.$modulepart.' $original_file= '.$original_file);
+	dol_syslog('modulepart='.$modulepart.' original_file='.$original_file);
 	// We define $accessallowed and $sqlprotectagainstexternals
 	$accessallowed=0;
 	$sqlprotectagainstexternals='';
 	$ret=array();
+
+	// find the subdirectory name as the reference
+	if (empty($refname)) $refname=basename(dirname($original_file)."/");
 
 	// Wrapping for some images
 	if ($modulepart == 'companylogo')
@@ -1441,7 +1493,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->societe->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$refname."' AND entity IN (".getEntity('societe', 1).")";
+		$sqlprotectagainstexternals = "SELECT rowid as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$db->escape($refname)."' AND entity IN (".getEntity('societe', 1).")";
 	}
 
 	// Wrapping for invoices
@@ -1452,7 +1504,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	else if ($modulepart == 'unpaid')
@@ -1472,7 +1524,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les deplacements et notes de frais
@@ -1483,7 +1535,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->deplacement->dir_output.'/'.$original_file;
-		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$refname."' AND entity=".$conf->entity;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 	// Wrapping pour les propales
 	else if ($modulepart == 'propal')
@@ -1494,7 +1546,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 
 		$original_file=$conf->propal->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les commandes
@@ -1505,7 +1557,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les projets
@@ -1516,7 +1568,16 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
+	else if ($modulepart == 'project_task')
+	{
+		if ($fuser->rights->projet->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->projet->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les commandes fournisseurs
@@ -1527,7 +1588,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les factures fournisseurs
@@ -1538,7 +1599,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 			$accessallowed=1;
 		}
 		$original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$refname."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
 	// Wrapping pour les rapport de paiements
@@ -1740,6 +1801,12 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		else
 		{
+			if (empty($conf->$modulepart->dir_output))	// modulepart not supported
+			{
+				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				exit;
+			}
+
 			$perm=GETPOST('perm');
 			$subperm=GETPOST('subperm');
 			if ($perm || $subperm)
@@ -1771,7 +1838,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$sqlProtectConstName = strtoupper($modulepart).'_SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS';
 		if (! empty($conf->global->$sqlProtectConstName))	// If module want to define its own $sqlprotectagainstexternals
 		{
-			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$refname."' AND entity=".$conf->entity;
+			// Example: mymodule__SQLPROTECTAGAINSTEXTERNALS_FOR_DOCUMENTS = "SELECT fk_soc FROM ".MAIN_DB_PREFIX.$modulepart." WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 			eval('$sqlprotectagainstexternals = "'.$conf->global->$sqlProtectConstName.'";');
 		}
 	}

@@ -1,16 +1,4 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: pl_PL
- * Automatic generated via autotranslator tool
- * Generation date 2009-01-19 00:44:06
- */
-
-
-// Date 2009-01-19 00:44:06
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=Interwencja
 Interventions=Interwencje
 InterventionCard=Interwencja karty
@@ -18,6 +6,7 @@ NewIntervention=Nowa interwencja
 AddIntervention=Dodaj interwencji
 ListOfInterventions=Wykaz interwencji
 EditIntervention=Editer interwencji
+ActionsOnFicheInter=Działania w zakresie interwencji
 LastInterventions=Ostatnia %s interwencji
 AllInterventions=Wszystkie interwencje
 CreateDraftIntervention=Tworzenie projektu
@@ -25,6 +14,7 @@ CustomerDoesNotHavePrefix=Klient nie ma prefiks
 InterventionContact=Interwencja kontakt
 DeleteIntervention=Usuń interwencji
 ValidateIntervention=Validate interwencji
+ModifyIntervention=Modyfikuj interwencji
 DeleteInterventionLine=Usuń interwencyjnej linii
 ConfirmDeleteIntervention=Czy na pewno chcesz usunąć tę interwencję?
 ConfirmValidateIntervention=Czy na pewno chcesz, aby potwierdzić tej interwencji?
@@ -33,34 +23,20 @@ ConfirmDeleteInterventionLine=Czy na pewno chcesz usunąć tę linię interwencj
 NameAndSignatureOfInternalContact=Nazwisko i podpis interwencji:
 NameAndSignatureOfExternalContact=Nazwisko i podpis klienta:
 DocumentModelStandard=Model standardowy dokument dla interwencji
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
+ClassifyBilled=Klasyfikowanie &quot;Zapowiadane&quot;
+StatusInterInvoiced=Zapowiadane
+RelatedInterventions=Podobne interwencje
+ShowIntervention=Pokaż interwencji
+##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Przedstawiciela w ślad za interwencję
 TypeContact_fichinter_internal_INTERVENING=Interwencja
 TypeContact_fichinter_external_BILLING=Billing kontakt z klientem
 TypeContact_fichinter_external_CUSTOMER=W ślad za kontakt z klientem
+# Modele numérotation
 ArcticNumRefModelDesc1=Generic numer modelu
 ArcticNumRefModelError=Nie można włączyć
 PacificNumRefModelDesc1=Wróć NUMERO z formatu %syymm rr-nnnn gdzie jest rok, mm miesiąc i nnnn jest ciągiem bez przerwy i nie ma powrotu do 0
 PacificNumRefModelError=Interwencja karty zaczynające się od $ syymm już istnieje i nie jest kompatybilne z tym modelem sekwencji. Usuń go lub zmienić jego nazwę, aby włączyć ten moduł.
-// Date 2009-01-19 00:44:06
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-// Reference language: en_US
-ModifyIntervention=Modyfikuj interwencji
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:07:31).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> pl_PL
-StatusInterInvoiced=Zapowiadane
-RelatedInterventions=Podobne interwencje
-ShowIntervention=Pokaż interwencji
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:26:57).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:18:29).
-// Reference language: en_US -> pl_PL
-ActionsOnFicheInter=Działania w zakresie interwencji
-ClassifyBilled=Klasyfikowanie &quot;Zapowiadane&quot;
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:18:35).
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

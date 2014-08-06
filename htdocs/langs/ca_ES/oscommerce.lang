@@ -1,5 +1,4 @@
-# Dolibarr language file - ca_ES - oscommerce
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - oscommerce
 OSCommerce=OS Commerce
 OSCommerceSetup=Configuració del mòdul OS Commerce
 OSCommerceSetupSaved=Configuració OS Commerce desada

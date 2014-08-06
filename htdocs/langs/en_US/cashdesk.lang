@@ -1,5 +1,4 @@
-# Language file - en_US - cashdesk
-CHARSET=UTF-8
+# Language file - Source file is en_US - cashdesk
 CashDeskMenu=Point of sale
 CashDesk=Point of sale
 CashDesks=Point of sales
@@ -38,3 +37,4 @@ ShowCompany=Show company
 ShowStock=Show warehouse
 DeleteArticle=Click to remove this article
 FilterRefOrLabelOrBC=Search (Ref/Label)
+UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

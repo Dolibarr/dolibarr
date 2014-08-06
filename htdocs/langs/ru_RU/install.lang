@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - install
 InstallEasy=Мы постарались сделать Dolibarr настройки настолько прост, насколько это возможно. Просто следуйте инструкциям, шаг за шагом.
 MiscellaneousChecks=Условия проверки
 DolibarrWelcome=Добро пожаловать на Dolibarr
@@ -18,6 +8,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Файл <b>конфигурации %
 ConfFileCouldBeCreated=Файл <b>конфигурации %s</b> может быть создан.
 ConfFileIsNotWritable=Файл <b>конфигурации %s</b> не для записи. Проверка разрешений. Для первой установки, Ваш веб-сервер должен быть предоставлен чтобы иметь возможность писать в этом файле конфигурации во время процесса ( "Chmod 666", например, Unix подобные ОС).
 ConfFileIsWritable=Файл <b>конфигурации %s</b> на запись.
+ConfFileReload=Перезагрузить всю информацию из файла конфигурации.
 PHPSupportSessions=Это PHP поддерживает сессии.
 PHPSupportPOSTGETOk=Это PHP поддерживает переменные POST и GET.
 PHPSupportPOSTGETKo=Можно настроить ваш PHP не поддерживает переменные и POST или GET. Проверьте параметр <b>variables_order</b> в php.ini.
@@ -34,11 +25,14 @@ ErrorGoBackAndCorrectParameters=Перейти назад и исправить 
 ErrorWrongValueForParameter=Вы ввели неправильное значение для параметра ' %s'.
 ErrorFailedToCreateDatabase=Не удается создать базу данных ' %s'.
 ErrorFailedToConnectToDatabase=Не удалось подключиться к базе данных ' %s'.
+# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP версии слишком стар. Версия %s обязательна.
+WarningPHPVersionTooLow=PHP версии слишком стар. Версия %s или более не ожидается. Эта версия должна позволить установить, но не поддерживается.
 ErrorConnectedButDatabaseNotFound=Подключение к серверу базы данных, но успешным ' %s' не найден.
 ErrorDatabaseAlreadyExists=База данных ' %s' уже существует.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Если база данных не существует, вернитесь назад и проверьте параметр "Создать базу данных".
 IfDatabaseExistsGoBackAndCheckCreate=Если база данных уже существует, вернитесь назад и снимите флажок "Создать базу данных" вариант.
+# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Вы можете продолжать ...
 PleaseBePatient=Пожалуйста, будьте терпеливы ...
@@ -47,6 +41,8 @@ ConfigurationFile=Файл конфигурации
 WebPagesDirectory=Каталог веб-страницах, где хранятся
 DocumentsDirectory=Каталог для хранения загруженных и порожденные документы
 URLRoot=URL Корневого
+ForceHttps=Force sikre tilkoblinger (https)
+CheckToForceHttps=Sjekk dette alternativet for å tvinge sikre tilkoblinger (https). <br> Dette krever at web-serveren er satt opp med en SSL-sertifikat.
 DolibarrDatabase=Dolibarr База данных
 DatabaseChoice=Выбор базы данных
 DatabaseType=База данных типа
@@ -56,6 +52,7 @@ ServerAddressDescription=Имя или IP-адрес сервера баз да�
 ServerPortDescription=База данных сервера порт. Держите пустым, если неизвестно.
 DatabaseServer=Сервер базы данных
 DatabaseName=Название базы данных
+DatabasePrefix=Таблица базы данных префиксов
 Login=Войти
 AdminLogin=Логин Dolibarr для администратора базы данных. Держите пустым, если вы подключаетесь в анонимном
 Password=Пароль
@@ -66,6 +63,7 @@ CreateUser=Создать пользователя
 DatabaseSuperUserAccess=База данных - Superuser доступа
 CheckToCreateDatabase=Флажок, если база данных не существует, и должен быть создан. <br> В этом случае, вы должны заполнить логин и пароль для учетной записи суперпользователя в нижней части этой страницы.
 CheckToCreateUser=Флажок, если логин не существует и должна быть создана. <br> В этом случае, вы должны заполнить логин и пароль для учетной записи суперпользователя в нижней части этой страницы.
+Experimental=(экспериментальная, не действуют)
 DatabaseRootLoginDescription=Войти на пользователя разрешается создавать новые базы данных и новых пользователей, бесполезны, если ваша база данных, и ваша база данных логин уже существует (например, когда вы Хостинг провайдер веб-хостинга).
 KeepEmptyIfNoPassword=Оставьте пустым, если пользователь не имеет пароля (избежать этого)
 SaveConfigurationFile=Сохранить ценности
@@ -90,9 +88,13 @@ SystemIsInstalled=Эта установка будет завершена.
 SystemIsUpgraded=Dolibarr был обновлен успешно.
 YouNeedToPersonalizeSetup=Вам нужно настроить Dolibarr, чтобы они соответствовали вашим потребностям (внешний вид, особенности, ...). Для этого, пожалуйста, перейдите по ссылке ниже:
 AdminLoginCreatedSuccessfuly=Dolibarr логин администратора <b>' %s'</b> создан успешно.
+GoToDolibarr=Перейти к Dolibarr
 GoToSetupArea=Перейти к Dolibarr (настройка область)
+MigrationNotFinished=Версия базы данных не совсем в курсе, так что вам придется запустить процесс обновления еще раз.
+GoToUpgradePage=Перейти на страницу снова обновить
 Examples=Примеры
 WithNoSlashAtTheEnd=Без черту "/" в конце
+DirectoryRecommendation=Det er recommanded å bruke en ut av ditt katalogen av websidene dine.
 LoginAlreadyExists=Уже существует
 DolibarrAdminLogin=Dolibarr администратора
 AdminLoginAlreadyExists=Dolibarr администратора учетной записи <b>' %s'</b> уже существует.
@@ -131,206 +133,15 @@ BecauseConnectionFailedParametersMayBeWrong=В связи неудачу, при
 OrphelinsPaymentsDetectedByMethod=Orphelins оплаты обнаружена методом %s
 RemoveItManuallyAndPressF5ToContinue=Удалите ее вручную и нажмите F5, чтобы продолжить.
 KeepDefaultValuesWamp=Вы можете использовать мастер настройки DoliWamp, поэтому ценности предлагаемого здесь уже оптимизирован. Изменить их только, если вы знаете, что вы делаете.
+KeepDefaultValuesDeb=Du bruker Dolibarr konfigurasjonsveiviseren fra en Ubuntu eller Debian-pakke, så verdiene foreslått her allerede er optimalisert. Bare passordet til databasen eieren til å opprette må fullføres. Endre andre parametere bare hvis du vet hva du gjør.
 KeepDefaultValuesMamp=Вы можете использовать мастер настройки DoliMamp, поэтому ценности предлагаемого здесь уже оптимизирован. Изменить их только, если вы знаете, что вы делаете.
+KeepDefaultValuesProxmox=Вы можете использовать мастер установки из Dolibarr прибор Proxmox виртуальные, поэтому значения предлагаемых здесь уже оптимизированы. Изменение их, только если вы знаете, что вы делаете.
 FieldRenamed=Поле переименовали
 IfLoginDoesNotExistsCheckCreateUser=Если вход не существует еще, вы должны проверить опцию "Создать пользователя"
 ErrorConnection=Сервер <b>" %s",</b> имя базы данных <b>" %s",</b> логин <b>" %s",</b> или базы данных паролей могут быть неправильными или PHP версии клиента может быть слишком стар, по сравнению с версией базы данных.
-MigrationOrder=Данные по миграции клиентов заказы
-MigrationSupplierOrder=Данные миграции для поставщиков заказов
-MigrationProposal=Данные миграции для коммерческих предложений
-MigrationInvoice=Данные миграции для клиентов, счета-фактуры
-MigrationContract=Данные по миграции контрактов
-MigrationSuccessfullUpdate=Обновление успешной
-MigrationPaymentsUpdate=Оплата данных коррекции
-MigrationPaymentsNumberToUpdate=% с платежа (ей) для обновления
-MigrationProcessPaymentUpdate=Обновление платежа (ей) %s
-MigrationPaymentsNothingToUpdate=Нет более вещи делать
-MigrationPaymentsNothingUpdatable=Нет больше платежей, которые могут быть исправлены
-MigrationContractsUpdate=Контракт коррекция данных
-MigrationContractsNumberToUpdate= %s договора (ов) для обновления
-MigrationContractsLineCreation=Создание линии по контракту контракт исх %s
-MigrationContractsNothingToUpdate=Нет более вещи делать
-MigrationContractsFieldDontExist=Поле fk_facture не существует больше. Ничего делать.
-MigrationContractsEmptyDatesUpdate=Контракт пустую дату коррекции
-MigrationContractsEmptyDatesUpdateSuccess=Контракт emtpy дата коррекции сделали успешно
-MigrationContractsEmptyDatesNothingToUpdate=Ни один контракт не пустой даты исправить
-MigrationContractsEmptyCreationDatesNothingToUpdate=Нет контракта дата создания исправить
-MigrationContractsInvalidDatesUpdate=Плохо стоимости контракта дата коррекции
-MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Правильно% с контракта (контракт даты= %s, начиная службу дата мин= %s)
-MigrationContractsInvalidDatesNumber= %s контрактов измененные
-MigrationContractsInvalidDatesNothingToUpdate=Нет даты с плохим значение для исправления
-MigrationContractsIncoherentCreationDateUpdate=Плохо стоимость контракта дата создания коррекции
-MigrationContractsIncoherentCreationDateUpdateSuccess=Плохо стоимость контракта дата создания коррекции сделали успешно
-MigrationContractsIncoherentCreationDateNothingToUpdate=Нет плохих стоимости контракта на создание дата правильная
-MigrationReopeningContracts=Открыть контракт закрыт ошибке
-MigrationReopenThisContract=Вновь контракт %s
-MigrationReopenedContractsNumber= %s контрактов измененные
-MigrationReopeningContractsNothingToUpdate=Нет закрытых контракту, чтобы открыть
-MigrationBankTransfertsUpdate=Обновление связей между Банком сделки и банковские передачи
-MigrationBankTransfertsNothingToUpdate=Все ссылки в курсе
-MigrationShipmentOrderMatching=Отправок получения обновлений
-MigrationDeliveryOrderMatching=Доставка получения обновлений
-MigrationDeliveryDetail=Поставка обновлений
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-GoToDolibarr=Перейти к Dolibarr
-GoToUpgradePage=Перейти на страницу снова обновить
-InstallChoiceSuggested=<b>Установить выбор предложенной установки.</b>
-MigrationStockDetail=Обновление запасов стоимость товаров
-MigrationMenusDetail=Обновление динамического меню таблицы
-MigrationDeliveryAddress=Обновить адрес для доставки грузов в
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
-Experimental=(экспериментальная, не действуют)
-MigrationUpdateFailed=Сбой процесса обновления
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 12:23:40).
-// Reference language: en_US
-CHARSET=UTF-8
-InstallEasy=Bare følg instruksjonene trinn for trinn.
-MiscellaneousChecks=Forutsetninger sjekk
-DolibarrWelcome=Velkommen til Dolibarr
-ConfFileExists=Konfigurasjonsfil <b>%s</b> eksisterer.
-ConfFileDoesNotExists=Konfigurasjonsfil <b>%s</b> finnes ikke!
-ConfFileDoesNotExistsAndCouldNotBeCreated=Konfigurasjonsfil <b>%s</b> eksisterer ikke og kunne ikke opprettes!
-ConfFileCouldBeCreated=Konfigurasjonsfil <b>%s</b> kunne bli skapt.
-ConfFileIsNotWritable=Konfigurasjonsfil <b>%s</b> er ikke skrivbar. Sjekk tillatelser. For første installere, må webserveren få innvilget å kunne skrive inn i denne filen under konfigureringen ("chmod 666" for eksempel på en Unix som OS).
-ConfFileIsWritable=Konfigurasjonsfil <b>%s</b> er skrivbar.
-PHPSupportSessions=Dette PHP støtter sesjoner.
-PHPSupportPOSTGETOk=Dette PHP støtter variabler POST og GET.
-PHPSupportPOSTGETKo=Det er mulig at din PHP-oppsettet støtter ikke variabler POST og / eller GET. Sjekk din parameter <b>variables_order</b> i php.ini.
-PHPSupportGD=Denne PHP-støtte GD grafiske funksjoner.
-PHPSupportUTF8=Denne PHP-støtte UTF8 funksjoner.
-PHPMemoryOK=Din PHP max økten minnet er satt til <b>%s.</b> Dette bør være nok.
-PHPMemoryTooLow=Din PHP max økten minnet er satt til <b>%s</b> bytes. Dette bør være for lav. Endre <b>php.ini</b> å sette <b>memory_limit</b> parameter til minst <b>%s</b> byte.
-Recheck=Klikk her for en mer significative test
-ErrorPHPDoesNotSupportSessions=Din PHP installasjon har ikke støtte for sesjoner. Denne funksjonen er nødvendig for å gjøre Dolibarr jobbe. Sjekk din PHP oppsett.
-ErrorPHPDoesNotSupportGD=Din PHP installasjon har ikke støtte for grafiske funksjonen GD. Ingen grafen vil være tilgjengelig.
-ErrorPHPDoesNotSupportUTF8=Din PHP installasjon har ikke støtte for UTF8 funksjoner. Dolibarr kan ikke fungere riktig. Løs dette før du installerer Dolibarr.
-ErrorDirDoesNotExists=Directory %s finnes ikke.
-ErrorGoBackAndCorrectParameters=Gå bakover og korrigere feil parametre.
-ErrorWrongValueForParameter=Du har kanskje skrevet feil verdi for parameteren '%s'.
-ErrorFailedToCreateDatabase=Kunne ikke opprette database '%s'.
-ErrorFailedToConnectToDatabase=Kunne ikke koble til database '%s'.
-ErrorPHPVersionTooLow=PHP-versjonen for gammel. Versjon %s er nødvendig.
-ErrorConnectedButDatabaseNotFound=Tilkobling til server vellykket, men database '%s' ikke funnet.
-ErrorDatabaseAlreadyExists=Database '%s' finnes allerede.
-IfDatabaseNotExistsGoBackAndUncheckCreate=Hvis databasen ikke finnes, gå tilbake og sjekke alternativet "Opprett database".
-IfDatabaseExistsGoBackAndCheckCreate=Hvis databasen allerede eksisterer, gå tilbake og fjern "Opprett database" alternativet.
-PHPVersion=PHP versjon
-YouCanContinue=Du kan fortsette ...
-PleaseBePatient=Vær tålmodig ...
-License=Bruke lisens
-ConfigurationFile=Konfigurasjonsfil
-WebPagesDirectory=Katalog der hvor web sider er lagret
-DocumentsDirectory=Katalog for å lagre lastet opp og genererte dokumenter
-URLRoot=URL Root
-ForceHttps=Force sikre tilkoblinger (https)
-CheckToForceHttps=Sjekk dette alternativet for å tvinge sikre tilkoblinger (https). <br> Dette krever at web-serveren er satt opp med en SSL-sertifikat.
-DolibarrDatabase=Dolibarr Database
-DatabaseChoice=Database valg
-DatabaseType=Database type
-DriverType=Driver type
-Server=Server
-ServerAddressDescription=Navn eller IP-adressen til database-serveren, som regel "localhost" når database server ligger på samme server enn webserveren
-ServerPortDescription=Database server port. Hold tomt hvis ukjent.
-DatabaseServer=Databaseserveren
-DatabaseName=Databasenavn
-Login=Innlogging
-AdminLogin=Logg inn for Dolibarr database eier.
-Password=Passord
-PasswordAgain=Skriv inn passordet en gang
-AdminPassword=Passord for Dolibarr database eier.
-CreateDatabase=Opprett database
-CreateUser=Lag eier
-DatabaseSuperUserAccess=Databaseserveren - Superbruker tilgang
-CheckToCreateDatabase=Boksen hvis databasen finnes ikke og må lages. <br> I dette tilfellet må du fylle login / passord for superuser kontoen nederst på denne siden.
-CheckToCreateUser=Boksen hvis databasen eieren ikke eksisterer og må opprettes. <br> I dette tilfellet må du velge sin login og passord, og også fylle brukernavn / passord for superuser kontoen nederst på denne siden. Hvis denne boksen ikke er avkrysset, eier database og passord må finnes.
-Experimental=(Eksperimentell)
-DatabaseRootLoginDescription=Logg inn av brukeren lov til å opprette nye databaser eller nye brukere, ubrukelig hvis databasen og databasen din logikk allerede eksisterer (som når du er vert for en web hosting leverandør).
-KeepEmptyIfNoPassword=La det være tomt hvis bruker har ingen passord (unngå denne)
-SaveConfigurationFile=Lagre verdier
-ConfigurationSaving=Lagrer konfigurasjonsfil
-ServerConnection=Server-tilkobling
-DatabaseConnection=Databasetilkobling
-DatabaseCreation=Database opprettelse
-UserCreation=Bruker opprettelse
-CreateDatabaseObjects=Databaseobjekter opprettelse
-ReferenceDataLoading=Referanse data lasting
-TablesAndPrimaryKeysCreation=Tabeller og primærnøkler opprettelse
-CreateTableAndPrimaryKey=Lag tabell %s
-CreateOtherKeysForTable=Lag utenlandske nøkler og indekser for bord %s
-OtherKeysCreation=Utenlandske nøkler og indekser opprettelse
-FunctionsCreation=Funksjoner opprettelse
-AdminAccountCreation=Administrator login opprettelse
-PleaseTypePassword=Vennligst skriv inn et passord, er tomt passord ikke tillatt!
-PleaseTypeALogin=Vennligst skriv inn en logikk!
-PasswordsMismatch=Passord skiller, vennligst prøv igjen!
-SetupEnd=Slutt på oppsett
-SystemIsInstalled=Denne installasjonen er fullført.
-SystemIsUpgraded=Dolibarr har blitt oppgradert med hell.
-YouNeedToPersonalizeSetup=Du må konfigurere Dolibarr som passer dine behov (utseende, funksjoner, ...). For å gjøre dette, vennligst følg lenken nedenfor:
-AdminLoginCreatedSuccessfuly=Dolibarr administrator login <b>'%s'</b> opprettet heldig.
-GoToDolibarr=Gå til Dolibarr
-GoToSetupArea=Gå til Dolibarr (setup-området)
-GoToUpgradePage=Gå til side oppgradere igjen
-Examples=Eksempler
-WithNoSlashAtTheEnd=Uten skråstrek "/" på slutten
-DirectoryRecommendation=Det er recommanded å bruke en ut av ditt katalogen av websidene dine.
-LoginAlreadyExists=Det finnes allerede
-DolibarrAdminLogin=Dolibarr admin login
-AdminLoginAlreadyExists=Dolibarr administratorkonto <b>'%s'</b> finnes allerede.
-WarningRemoveInstallDir=Advarsel, av sikkerhetshensyn, når installere eller oppgraderingen er fullført, bør du fjerne <b>installerer katalogen eller endre navnet til install.lock for å unngå den skadelige bruk.</b>
-ThisPHPDoesNotSupportTypeBase=Dette PHP Systemet støtter ikke noen grensesnitt for å få tilgang til databasen type %s
-FunctionNotAvailableInThisPHP=Ikke tilgjengelig på denne PHP
-MigrateScript=Migrasjon script
-ChoosedMigrateScript=Velg migrasjon script
-DataMigration=Datamigrering
-DatabaseMigration=Struktur databasen migrasjon
-ProcessMigrateScript=Script behandling
-ChooseYourSetupMode=Velg ditt oppsett modus og klikk på "Start" ...
-FreshInstall=Frisk installere
-FreshInstallDesc=Bruk denne modusen hvis dette er den første installere. Hvis ikke, kan denne modusen reparere en ufullstendig tidligere installere, men hvis du ønsker å oppgradere din versjon, velg "Oppgrader" modus.
-Upgrade=Oppgrader
-UpgradeDesc=Bruk denne modusen hvis du har erstattet gamle Dolibarr filene med filer fra en nyere versjon. Dette vil oppgradere din database og data.
-Start=Start
-InstallNotAllowed=Installasjonsprogrammet ikke tillates av <b>conf.php</b> tillatelser
-NotAvailable=Ikke tilgjengelig
-YouMustCreateWithPermission=Du må lage filen %s og sette skriverettigheter på den for web-serveren under installasjonsprosessen.
-CorrectProblemAndReloadPage=Rett problemet og trykk F5 for å laste siden.
-AlreadyDone=Allerede migrert
-DatabaseVersion=Database versjon
-ServerVersion=Databaseserveren versjon
-YouMustCreateItAndAllowServerToWrite=Du må lage denne katalogen og la for web-serveren til å skrive inn i den.
-CharsetChoice=Tegnsett valg
-CharacterSetClient=Tegnsett brukes for genererte HTML-nettsider
-CharacterSetClientComment=Velg tegnsettet for web visning. <br/> Standard foreslåtte tegnsett er en av databasen.
-DBSortingCollation=Tegn sorteringsrekkefølgen
-DBSortingCollationComment=Velg side kode som definerer figuren sorteringsrekkefølgen brukes av databasen. Denne parameteren blir også kalt "sortering" av noen databaser. <br/> Denne parameteren kan ikke defineres dersom databasen allerede eksisterer.
-CharacterSetDatabase=Tegnsettet for databasen
-CharacterSetDatabaseComment=Velg tegnsettet ettersøkt for database skaperverk. <br/> Denne parameteren kan ikke defineres dersom databasen allerede eksisterer.
-YouAskDatabaseCreationSoDolibarrNeedToConnect=ber deg opprette database <b>%s,</b> men for dette, Dolibarr trenger å koble til serveren <b>%s</b> med superbruker <b>%s</b> tillatelser.
-YouAskLoginCreationSoDolibarrNeedToConnect=ber deg opprette database logikk <b>%s,</b> men for dette, Dolibarr trenger å koble til serveren <b>%s</b> med superbruker <b>%s</b> tillatelser.
-BecauseConnectionFailedParametersMayBeWrong=Som tilkobling mislyktes, må vert eller super bruker parametere være feil.
-OrphelinsPaymentsDetectedByMethod=Orphans innbetaling oppdaget av metoden %s
-RemoveItManuallyAndPressF5ToContinue=Fjerne det manuelt, og trykk F5 for å fortsette.
-KeepDefaultValuesWamp=Du bruker Dolibarr konfigureringsveiviseren fra DoliWamp, verdiene slik foreslått her, er allerede optimalisert. Endre dem bare hvis du vet hva du gjør.
-KeepDefaultValuesDeb=Du bruker Dolibarr konfigurasjonsveiviseren fra en Ubuntu eller Debian-pakke, så verdiene foreslått her allerede er optimalisert. Bare passordet til databasen eieren til å opprette må fullføres. Endre andre parametere bare hvis du vet hva du gjør.
-KeepDefaultValuesMamp=Du bruker Dolibarr konfigureringsveiviseren fra DoliMamp, verdiene slik foreslått her, er allerede optimalisert. Endre dem bare hvis du vet hva du gjør.
-FieldRenamed=Field omdøpt
-IfLoginDoesNotExistsCheckCreateUser=Hvis logikk ikke eksisterer ennå, må du sjekke alternativet "Opprett bruker"
-ErrorConnection=Server <b>"%s",</b> databasenavn <b>"%s",</b> logg inn <b>"%s",</b> eller database passordet er feil eller PHP-klient-versjon kan være for gammel i forhold til database versjon.
 InstallChoiceRecommanded=Anbefalt valget å installere versjon <b>%s</b> fra din nåværende versjonen <b>%s</b>
-InstallChoiceSuggested=<b>Installer valg foreslått av installatør.</b>
+InstallChoiceSuggested=<b>Установить выбор предложенной установки.</b>
+MigrateIsDoneStepByStep=Целевых версия (%s) имеет разрыв в несколько версий, поэтому мастер установки вернется предложить следующий миграции раз этот будет завершен.
 CheckThatDatabasenameIsCorrect=Sjekk at database navn <b>"%s"</b> er korrekt.
 IfAlreadyExistsCheckOption=Hvis dette navnet er riktig, og at databasen ikke eksisterer ennå, du må sjekke alternativet "Opprett database".
 OpenBaseDir=PHP openbasedir parameter
@@ -340,152 +151,59 @@ NextStepMightLastALongTime=Gjeldende trinn kan vare i flere minutter. Vennligst 
 MigrationCustomerOrderShipping=Migrer frakt for kundeordrer oppbevaring
 MigrationShippingDelivery=Oppgrader lagring av shipping
 MigrationShippingDelivery2=Oppgrader lagring av shipping 2
+MigrationFinished=Миграция готового
+LastStepDesc=<strong>Последний шаг:</strong> Определить здесь Логин и пароль, которые вы планируете использовать для подключения к программному обеспечению. Как не потерять эту, как это внимание, чтобы управлять всеми другими.
+ActivateModule=Активировать модуль %s
+# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+
+#########
+# upgrade
+#########
 MigrationFixData=Fastsette for denormalized data
-MigrationOrder=Data migrering for kundens ordre
-MigrationSupplierOrder=Data migrering for leverandørens ordre
-MigrationProposal=Data migrering for kommersielle forslag
-MigrationInvoice=Data migrering for kundens fakturaer
-MigrationContract=Data migrering for kontrakter
-MigrationSuccessfullUpdate=Oppgrader vellykket
-MigrationUpdateFailed=Mislyktes oppgraderingsprosessen
+MigrationOrder=Данные по миграции клиентов заказы
+MigrationSupplierOrder=Данные миграции для поставщиков заказов
+MigrationProposal=Данные миграции для коммерческих предложений
+MigrationInvoice=Данные миграции для клиентов, счета-фактуры
+MigrationContract=Данные по миграции контрактов
+MigrationSuccessfullUpdate=Обновление успешной
+MigrationUpdateFailed=Сбой процесса обновления
 MigrationRelationshipTables=Data migrering for forholdet tabeller (%s)
-MigrationPaymentsUpdate=Betaling data korreksjon
-MigrationPaymentsNumberToUpdate=%s betaling (er) for å oppdatere
-MigrationProcessPaymentUpdate=Oppdater betaling (er) %s
-MigrationPaymentsNothingToUpdate=Ingen flere ting å gjøre
-MigrationPaymentsNothingUpdatable=Ingen flere betalinger som kan korrigeres
-MigrationContractsUpdate=Kontrakt data korreksjon
-MigrationContractsNumberToUpdate=%s kontrakt (er) for å oppdatere
-MigrationContractsLineCreation=Lag kontrakt linje for kontrakt Ref %s
-MigrationContractsNothingToUpdate=Ingen flere ting å gjøre
-MigrationContractsFieldDontExist=Felt fk_facture eksisterer ikke lenger. Ingenting å gjøre.
-MigrationContractsEmptyDatesUpdate=Kontrakt tom dato korreksjon
-MigrationContractsEmptyDatesUpdateSuccess=Kontrakt emtpy dato korreksjon gjort heldig
-MigrationContractsEmptyDatesNothingToUpdate=Ingen kontrakt tom dato til korrekt
-MigrationContractsEmptyCreationDatesNothingToUpdate=Ingen kontrakt opprettelsesdato å korrigere
-MigrationContractsInvalidDatesUpdate=Bad valuteringsdato kontrakten korreksjon
-MigrationContractsInvalidDateFix=Riktig kontrakt %s (Contract dato = %s, Starter service datoen min = %s)
-MigrationContractsInvalidDatesNumber=%s kontrakter endret
-MigrationContractsInvalidDatesNothingToUpdate=Ingen dato med dårlig verdi til rette
-MigrationContractsIncoherentCreationDateUpdate=Bad verdi kontrakten opprettelsesdato korreksjon
-MigrationContractsIncoherentCreationDateUpdateSuccess=Bad verdi kontrakten opprettelsesdato korreksjon gjort med suksess
-MigrationContractsIncoherentCreationDateNothingToUpdate=Ingen dårlig verdi for kontrakten opprettelsesdato å korrigere
-MigrationReopeningContracts=Åpne kontrakt lukket av feil
-MigrationReopenThisContract=Åpne kontrakt %s
-MigrationReopenedContractsNumber=%s kontrakter endret
-MigrationReopeningContractsNothingToUpdate=Ingen lukket kontrakt for å åpne
-MigrationBankTransfertsUpdate=Oppdater koblinger mellom bank transaksjon og en bankoverføring
-MigrationBankTransfertsNothingToUpdate=Alle linker er oppdatert
-MigrationShipmentOrderMatching=Sendings kvittering oppdatering
-MigrationDeliveryOrderMatching=Levering kvittering oppdatering
-MigrationDeliveryDetail=Levering oppdatering
-MigrationStockDetail=Oppdater lager verdien av produkter
-MigrationMenusDetail=Oppdater dynamiske menyer tabeller
-MigrationDeliveryAddress=Oppdater leveringsadresse i leveransene
+MigrationPaymentsUpdate=Оплата данных коррекции
+MigrationPaymentsNumberToUpdate=% с платежа (ей) для обновления
+MigrationProcessPaymentUpdate=Обновление платежа (ей) %s
+MigrationPaymentsNothingToUpdate=Нет более вещи делать
+MigrationPaymentsNothingUpdatable=Нет больше платежей, которые могут быть исправлены
+MigrationContractsUpdate=Контракт коррекция данных
+MigrationContractsNumberToUpdate=%s договора (ов) для обновления
+MigrationContractsLineCreation=Создание линии по контракту контракт исх %s
+MigrationContractsNothingToUpdate=Нет более вещи делать
+MigrationContractsFieldDontExist=Поле fk_facture не существует больше. Ничего делать.
+MigrationContractsEmptyDatesUpdate=Контракт пустую дату коррекции
+MigrationContractsEmptyDatesUpdateSuccess=Контракт emtpy дата коррекции сделали успешно
+MigrationContractsEmptyDatesNothingToUpdate=Ни один контракт не пустой даты исправить
+MigrationContractsEmptyCreationDatesNothingToUpdate=Нет контракта дата создания исправить
+MigrationContractsInvalidDatesUpdate=Плохо стоимости контракта дата коррекции
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=Правильно% с контракта (контракт даты= %s, начиная службу дата мин= %s)
+MigrationContractsInvalidDatesNumber=%s контрактов измененные
+MigrationContractsInvalidDatesNothingToUpdate=Нет даты с плохим значение для исправления
+MigrationContractsIncoherentCreationDateUpdate=Плохо стоимость контракта дата создания коррекции
+MigrationContractsIncoherentCreationDateUpdateSuccess=Плохо стоимость контракта дата создания коррекции сделали успешно
+MigrationContractsIncoherentCreationDateNothingToUpdate=Нет плохих стоимости контракта на создание дата правильная
+MigrationReopeningContracts=Открыть контракт закрыт ошибке
+MigrationReopenThisContract=Вновь контракт %s
+MigrationReopenedContractsNumber=%s контрактов измененные
+MigrationReopeningContractsNothingToUpdate=Нет закрытых контракту, чтобы открыть
+MigrationBankTransfertsUpdate=Обновление связей между Банком сделки и банковские передачи
+MigrationBankTransfertsNothingToUpdate=Все ссылки в курсе
+MigrationShipmentOrderMatching=Отправок получения обновлений
+MigrationDeliveryOrderMatching=Доставка получения обновлений
+MigrationDeliveryDetail=Поставка обновлений
+MigrationStockDetail=Обновление запасов стоимость товаров
+MigrationMenusDetail=Обновление динамического меню таблицы
+MigrationDeliveryAddress=Обновить адрес для доставки грузов в
 MigrationProjectTaskActors=Data migrering for llx_projet_task_actors bord
 MigrationProjectUserResp=Data migrering feltet fk_user_resp av llx_projet å llx_element_contact
 MigrationProjectTaskTime=Oppdater tid i sekunder
-ForceHttps=Force beveiligde verbindingen (https)
-CheckToForceHttps=Vink deze optie aan beveiligde verbindingen (https kracht). <br> Dit vereist dat de webserver is geconfigureerd met een SSL certificaat.
-KeepDefaultValuesDeb=U gebruikt de Dolibarr setup-wizard uit een Ubuntu of Debian pakket, dus hier voorgestelde waarden zijn al geoptimaliseerd. Alleen het wachtwoord van de database-eigenaar te maken moeten worden ingevuld. Wijzig andere parameters alleen als je weet wat je doet.
-CheckThatDatabasenameIsCorrect=Controleer of de database naam <b>"%s"</b> juist is.
-IfAlreadyExistsCheckOption=Als deze naam correct is en dat de database nog niet bestaat, moet u controleren optie "Create database".
-OpenBaseDir=PHP openbasedir parameter
-YouAskToCreateDatabaseSoRootRequired=U gecontroleerd het vakje "Create database". Voor dit, moet je login / wachtwoord van de root (bodem van de vorm).
-YouAskToCreateDatabaseUserSoRootRequired=U controleerde het vak "Create database-eigenaar". Voor dit, moet je login / wachtwoord van de root (bodem van de vorm).
-NextStepMightLastALongTime=Huidig stap kan enkele minuten duren. Gelieve te wachten tot het volgende scherm wordt weergegeven voordat u verdergaat.
-MigrationCustomerOrderShipping=Migreren verzendkosten voor de klant bestellingen opslag
-MigrationShippingDelivery=Upgrade opslag van de scheepvaart
-MigrationShippingDelivery2=Upgrade opslag van de scheepvaart 2
-MigrationFixData=Fix voor gedenormaliseerd gegevens
-MigrationRelationshipTables=Data migratie voor de relatie tabellen (%s)
-MigrationProjectTaskActors=Data migratie voor llx_projet_task_actors tafel
-MigrationProjectUserResp=Data migratie fk_user_resp gebied van llx_projet om llx_element_contact
-MigrationProjectTaskTime=Update tijd in seconden
-ForceHttps=Force beveiligde verbindingen (https)
-CheckToForceHttps=Vink deze optie aan beveiligde verbindingen (https kracht). <br> Dit vereist dat de webserver is geconfigureerd met een SSL certificaat.
-MigrationCustomerOrderShipping=Migreren verzendkosten voor de klant bestellingen opslag
-MigrationShippingDelivery=Upgrade opslag van de scheepvaart
-MigrationShippingDelivery2=Upgrade opslag van de scheepvaart 2
-ForceHttps=Życie bezpiecznych połączeń (HTTPS)
-CheckToForceHttps=Zaznacz tę opcję, aby zmusić bezpiecznych połączeń (HTTPS). <br> Wymaga to, aby serwer WWW jest skonfigurowany z certyfikatem SSL.
-KeepDefaultValuesDeb=Państwo skorzystać z kreatora konfiguracji Dolibarr z pakietu Debiana lub Ubuntu, więc wartości proponowanego tutaj są już zoptymalizowane. Tylko hasła właściciela bazy danych do tworzenia muszą być wypełnione. Zmień inne parametry tylko jeśli wiesz co robisz.
-CheckThatDatabasenameIsCorrect=Sprawdź, czy nazwa bazy danych <b>"%s"</b> jest poprawna.
-IfAlreadyExistsCheckOption=Jeśli nazwa jest poprawna i że baza danych nie istnieje, należy sprawdzić opcję "Utwórz bazę danych".
-OpenBaseDir=parametr openbasedir PHP
-YouAskToCreateDatabaseSoRootRequired=Zaznaczono pole "Tworzenie bazy danych". W tym celu musisz podać login / hasło administratora (na dole formularza).
-YouAskToCreateDatabaseUserSoRootRequired=Zaznaczono pole "właściciel bazy danych Utwórz". W tym celu musisz podać login / hasło administratora (na dole formularza).
-NextStepMightLastALongTime=Aktualny krok może trwać kilka minut. Proszę czekać do następnego ekranu znajduje się całkowicie w niej danych.
-MigrationCustomerOrderShipping=koszty migracji do przechowywania zleceń klienta
-MigrationShippingDelivery=Upgrade pamięci żeglugi
-MigrationShippingDelivery2=Upgrade pamięci żeglugi 2
-MigrationFixData=Ustalenie dla danych nieznormalizowaną
-MigrationRelationshipTables=Migracja danych do tabel relacji (%s)
-MigrationProjectTaskActors=Migracja danych do tabeli llx_projet_task_actors
-MigrationProjectUserResp=Migracja danych fk_user_resp dziedzinie llx_projet do llx_element_contact
-MigrationProjectTaskTime=Aktualizacja czasu spędził w sekundach
-ForceHttps=conexões seguras (https)
-CheckToForceHttps=Marque esta opção para forçar conexões seguras (https). <br> Isso exige que o servidor web está configurado com um certificado SSL.
-DirectoryRecommendation=É recomendaram usar um diretório fora do diretório das suas páginas da web.
-KeepDefaultValuesDeb=Você pode usar o assistente de configuração Dolibarr de um Ubuntu ou um pacote Debian, então os valores propostos aqui já estão otimizados. Apenas a senha do proprietário do banco de dados para criar tem de ser concluída. Alterar parâmetros outros apenas se você sabe o que fazer.
-InstallChoiceRecommanded=Recomendado opção de instalar a versão do seu <b>%s %s</b> versão atual
-CheckThatDatabasenameIsCorrect=Verifique se o nome do banco de dados <b>"%s"</b> está correto.
-IfAlreadyExistsCheckOption=Se esse nome está correto e que banco de dados ainda não existe, você deve marcar a opção "Criar banco de dados".
-OpenBaseDir=PHP parâmetro openbasedir
-YouAskToCreateDatabaseSoRootRequired=Você marcou a caixa "Criar banco de dados". Para isso, você precisa fornecer login e senha de superusuário (parte inferior do formulário).
-YouAskToCreateDatabaseUserSoRootRequired=Você marcou a caixa "Criar banco de dados proprietário". Para isso, você precisa fornecer login e senha de superusuário (parte inferior do formulário).
-NextStepMightLastALongTime=etapa atual pode durar vários minutos. Por favor, aguarde até a próxima tela é mostrada completamente antes de continuar.
-MigrationCustomerOrderShipping=Migrar para o transporte de armazenamento ordens do cliente
-MigrationShippingDelivery=Upgrade de armazenamento de navegação
-MigrationShippingDelivery2=Upgrade de armazenamento do transporte 2
-MigrationFixData=Correção de dados desnormalizada
-MigrationRelationshipTables=Migração de dados para tabelas de relacionamento (%s)
-MigrationProjectTaskActors=Migração de dados para llx_projet_task_actors tabela
-MigrationProjectUserResp=Dados fk_user_resp domínio da migração de llx_projet para llx_element_contact
-MigrationProjectTaskTime=Atualização de tempo gasto em segundos
-ForceHttps=Силы безопасные соединения (HTTPS)
-CheckToForceHttps=Включите эту опцию, чтобы заставить защищенные соединения (HTTPS). <br> Это требует, чтобы веб-сервер настроен с сертификатом SSL.
-DirectoryRecommendation=Это Рекомендуемая использовать каталог вне вашей директории вашего веб-страниц.
-KeepDefaultValuesDeb=Вы можете использовать мастер установки Dolibarr с Ubuntu и Debian пакет, так что значения, предложенные здесь уже оптимизирован. Только пароль владельца базы данных для создания должны быть заполнены. Изменение других параметров, только если вы знаете, что делать.
-InstallChoiceRecommanded=Рекомендуем к выбору установить версию <b>%s</b> от вашего текущего <b>%s</b> версия
-CheckThatDatabasenameIsCorrect=Убедитесь, что имя базы данных <b>"%s"</b> является правильным.
-IfAlreadyExistsCheckOption=Если это имя правильно и что база данных не существует, необходимо проверить опцию "Создать базу данных".
-OpenBaseDir=PHP openbasedir параметра
-YouAskToCreateDatabaseSoRootRequired=Вы флажок "Создать базу данных". Для этого вам необходимо предоставить Логин и пароль с правами администратора (внизу формы).
-YouAskToCreateDatabaseUserSoRootRequired=Вы флажок "Создать базу данных владельца". Для этого вам необходимо предоставить Логин и пароль с правами администратора (внизу формы).
-NextStepMightLastALongTime=Текущий этап может длиться несколько минут. Подождите, пока на следующем экране отображается полностью, прежде чем продолжить.
-MigrationCustomerOrderShipping=Перенос доставки для хранения заказов клиентов
-MigrationShippingDelivery=Обновление хранилища судоходства
-MigrationShippingDelivery2=Обновление хранения судоходства 2
-MigrationFixData=Исправление для нестандартным данных
-MigrationRelationshipTables=Миграция данных для отношений таблицы (%s)
-MigrationProjectTaskActors=Миграция данных для llx_projet_task_actors стол
-MigrationProjectUserResp=Миграция данных из поля fk_user_resp llx_projet к llx_element_contact
-MigrationProjectTaskTime=Обновление времени в секундах
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 12:41:32).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-MigrationNotFinished=Версия базы данных не совсем в курсе, так что вам придется запустить процесс обновления еще раз.
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:57:38).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-ConfFileReload=Перезагрузить всю информацию из файла конфигурации.
-WarningPHPVersionTooLow=PHP версии слишком стар. Версия %s или более не ожидается. Эта версия должна позволить установить, но не поддерживается.
-KeepDefaultValuesProxmox=Вы можете использовать мастер установки из Dolibarr прибор Proxmox виртуальные, поэтому значения предлагаемых здесь уже оптимизированы. Изменение их, только если вы знаете, что вы делаете.
-MigrateIsDoneStepByStep=Целевых версия (%s) имеет разрыв в несколько версий, поэтому мастер установки вернется предложить следующий миграции раз этот будет завершен.
-MigrationFinished=Миграция готового
-LastStepDesc=<strong>Последний шаг:</strong> Определить здесь Логин и пароль, которые вы планируете использовать для подключения к программному обеспечению. Как не потерять эту, как это внимание, чтобы управлять всеми другими.
 MigrationActioncommElement=Обновление данных о действиях
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 16:59:19).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:28:02).
-// Reference language: en_US -> ru_RU
-DatabasePrefix=Таблица базы данных префиксов
-ActivateModule=Активировать модуль %s
 MigrationPaymentMode=Миграция данных для оплаты режим
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:28:12).
+# MigrationCategorieAssociation=Migration of categories

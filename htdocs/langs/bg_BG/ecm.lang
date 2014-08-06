@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ecm
 MenuECM=Документи
 DocsMine=Моите документи
 DocsGenerated=Генериране на документи
@@ -32,10 +23,10 @@ ECMNewDocument=Нов документ
 ECMCreationDate=Дата на създаване
 ECMNbOfFilesInDir=Брой на файловете в директорията
 ECMNbOfSubDir=Брой на под-директории
-ECMNbOfFilesInSubDir=Nunber на Iles в под-директории
+# ECMNbOfFilesInSubDir=Number of files in sub-directories
 ECMCreationUser=Създател
-ECMArea=ECM област
-ECMAreaDesc=ECM (Electronic Content Management) позволява да запишете, акции и бързо търсене на всички видове документи в Dolibarr.
+# ECMArea=EDM area
+# ECMAreaDesc=The EDM (Electronic Document Management) area allows you to save, share and search quickly all kind of documents in Dolibarr.
 ECMAreaDesc2=* Автоматично директории се попълват автоматично при добавяне на документи от карта на елемент. <br> * Ръчно директории могат да бъдат използвани, за да запазите документи, които не са свързани с определен елемент.
 ECMSectionWasRemoved=Directory <b>%s</b> е била изтрита.
 ECMDocumentsSection=Документ на директорията
@@ -51,6 +42,7 @@ ECMDocsByOrders=Документи, свързани с поръчки на кл
 ECMDocsByContracts=Документи, свързани с договори
 ECMDocsByInvoices=Документи, свързани с клиентите фактури
 ECMDocsByProducts=Документи, свързани с продуктите
+# ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Не е създаден директория
 ShowECMSection=Покажи директория
 DeleteSection=Махни директория
@@ -59,4 +51,5 @@ ECMDirectoryForFiles=Относителен директория за файло
 CannotRemoveDirectoryContainsFiles=Премахнато не е възможно, тъй като тя съдържа някои файлове
 ECMFileManager=Файлов мениджър
 ECMSelectASection=Изберете директория на лявата дърво ...
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:35:11).
+# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+

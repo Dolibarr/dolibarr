@@ -1,13 +1,4 @@
-/*
- * Language code: bg_BG
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-09-08 17:16:45
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-09-08 17:16:45).
-// Reference language: en_US -> bg_BG
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - other
 SecurityCode=Код за сигурност
 Calendar=Календар
 AddTrip=Добави пътуване
@@ -16,10 +7,12 @@ ToolsDesc=Тази област е посветена на група разни
 Birthday=Рожден ден
 BirthdayDate=Рожден ден
 DateToBirth=Дата да се раждат
-BirthdayAlertOn=рожден ден сигнал активна
-BirthdayAlertOff=рожден ден сигнал неактивни
+BirthdayAlertOn= рожден ден сигнал активна
+BirthdayAlertOff= рожден ден сигнал неактивни
 Notify_FICHINTER_VALIDATE=Интервенция валидирани
+# Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_BILL_VALIDATE=Клиентът фактура се заверява
+# Notify_BILL_UNVALIDATE=Customer invoice unvalidated
 Notify_ORDER_SUPPLIER_APPROVE=Доставчик утвърдения
 Notify_ORDER_SUPPLIER_REFUSE=Доставчик за отказа
 Notify_ORDER_VALIDATE=Клиента заявка се заверява
@@ -30,7 +23,7 @@ Notify_WITHDRAW_EMIT=Извършване на оттегляне
 Notify_ORDER_SENTBYMAIL=Поръчка на клиента, изпратено по пощата
 Notify_COMPANY_CREATE=От трета страна е създаден
 Notify_PROPAL_SENTBYMAIL=Търговско предложение, изпратено по пощата
-Notify_ORDER_SENTBYMAIL=POR електронна поща envío pedido
+Notify_ORDER_SENTBYMAIL=Поръчка на клиента, изпратено по пощата
 Notify_BILL_PAYED=Клиентът фактура плаща
 Notify_BILL_CANCEL=Клиентът фактура отменен
 Notify_BILL_SENTBYMAIL=Клиентът фактура, изпратена по пощата
@@ -54,7 +47,7 @@ AttachANewFile=Прикрепете нов файл / документ
 LinkedObject=Свързан обект
 Miscellaneous=Разни
 NbOfActiveNotifications=Броят на нотификациите
-PredefinedMailTest=Това е тест поща. \ NПромените две линии са разделени с нов ред. \n\n __ SIGNATURE__
+PredefinedMailTest=Това е тест поща. \\ NПромените две линии са разделени с нов ред. \n\n __ SIGNATURE__
 PredefinedMailTestHtml=Това е <b>тест</b> поща (тест дума трябва да бъде с удебелен шрифт). <br> Двете линии са разделени от връщане на каретката. <br><br> __SIGNATURE__
 PredefinedMailContentSendInvoice=__CONTACTCIVNAME__ \n\n Тук ще намерите фактура __ FACREF__ \n\n от __ PERSONALIZED__Sincerely \n\n __ SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__ \n\n Бихме искали да ви предупредя, че фактурата FACREF__ __ изглежда не се заплащат. Така че това е фактурата в прикачения файл отново, за напомняне. \n\n __ PERSONALIZED__Sincerely \n\n __ SIGNATURE__
@@ -131,6 +124,7 @@ SizeUnitcm=cm
 SizeUnitmm=mm
 SizeUnitinch=инч
 SizeUnitfoot=крак
+# SizeUnitpoint=point
 BugTracker=Свържете се с нас
 SendNewPasswordDesc=Тази форма ви позволява да поиска нова парола. Тя ще бъде изпратена на вашия имейл адрес. <br> Промяната ще бъде в сила само след като щракнете върху връзката за потвърждение вътре този имейл. <br> Проверете своя имейл софтуер четец.
 BackToLoginPage=Назад към страницата за вход
@@ -144,10 +138,12 @@ StatsByNumberOfEntities=Статистиката в брой, отнасящи �
 NumberOfProposals=Брой на предложенията за последните 12 месеца
 NumberOfCustomerOrders=Брой на поръчки от клиенти за последните 12 месеца
 NumberOfCustomerInvoices=Брой на клиентите фактури за последните 12 месеца
+# NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Брой доставчици фактури за последните 12 месеца
 NumberOfUnitsProposals=Брой дялове относно предложенията за последните 12 месеца
 NumberOfUnitsCustomerOrders=Брой единици на поръчки от клиенти за последните 12 месеца
 NumberOfUnitsCustomerInvoices=Брой единици на клиентите фактури за последните 12 месеца
+# NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Брой единици на доставчика фактури за последните 12 месеца
 EMailTextInterventionValidated=Намесата %s е била потвърдена.
 EMailTextInvoiceValidated=Фактура %s е била потвърдена.
@@ -157,6 +153,7 @@ EMailTextOrderApproved=За %s е одобрен.
 EMailTextOrderApprovedBy=Е бил одобрен за %s от %s.
 EMailTextOrderRefused=За %s е била отказана.
 EMailTextOrderRefusedBy=За %s е отказано от %s.
+# EMailTextExpeditionValidated=The shipping %s has been validated.
 ImportedWithSet=Внос набор от данни
 DolibarrNotification=Автоматично уведомяване
 ResizeDesc=Въвеждане на нова ширина <b>или</b> височина. Съотношение ще се запазват по време преоразмеряване ...
@@ -178,6 +175,14 @@ StartUpload=Започнете качване
 CancelUpload=Анулиране на качването
 FileIsTooBig=Files е твърде голям
 PleaseBePatient=Моля, бъдете търпеливи ...
+# RequestToResetPasswordReceived=A request to change your Dolibarr password has been received
+# NewKeyIs=This is your new keys to login
+# NewKeyWillBe=Your new key to login to software will be
+# ClickHereToGoTo=Click here to go to %s
+# YouMustClickToChange=You must however first click on the following link to validate this password change
+# ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
+
+##### Calendar common #####
 AddCalendarEntry=Добави запис в календара %s
 NewCompanyToDolibarr=Фирма %s добавя в Dolibarr
 ContractValidatedInDolibarr=Поръчки %s заверени в Dolibarr
@@ -197,6 +202,8 @@ MemberResiliatedInDolibarr=Държавите-%s resiliated в Dolibarr
 MemberDeletedInDolibarr=Държавите-%s изтрит от Dolibarr
 MemberSubscriptionAddedInDolibarr=Абонамент за държавите %s добави Dolibarr
 ShipmentValidatedInDolibarr=Превоз %s валидирани в Dolibarr
+# ShipmentDeletedInDolibarr=Shipment %s deleted from Dolibarr
+##### Export #####
 Export=Износ
 ExportsArea=Износът площ
 AvailableFormats=Налични формати
@@ -206,5 +213,5 @@ ExportableDatas=Изнасяни данни
 NoExportableData=Не са изнасяни данни (няма модули с изнасяни данни натоварен, или липсващи разрешения)
 ToExport=Износ
 NewExport=Нов износ
+##### External sites #####
 ExternalSites=Външни сайтове
-// STOP - Lines generated via autotranslator.php tool (2012-09-08 17:49:03).

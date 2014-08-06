@@ -1,12 +1,15 @@
-# Dolibarr language file - pt_PT - stocks
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Ficha Armazem
 Warehouse=Armazem
+Warehouses=Armazéns
 NewWarehouse=Novo Armazem ou Zona de Armazenagem
+WarehouseEdit=Modificar armazém
 MenuNewWarehouse=Novo Armazem
 WarehouseOpened=Armazem Aberto
 WarehouseClosed=Armazem Fechado
 WarehouseSource=Armazem Origem
+WarehouseSourceNotDefined=Sem armazém definido
+AddOne=Adicionar um
 WarehouseTarget=Armazem Destino
 ValidateSending=Confirmar Envío
 CancelSending=Cancelar Envío
@@ -23,17 +26,22 @@ ListOfStockMovements=Lista de movimentos de stock
 StocksArea=Área stocks
 Location=Localização
 LocationSummary=Nome abreviado da localização
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Numero total de produtos
 LastMovement=Último movimento
 LastMovements=Últimos movimentos
 Units=Unidades
 Unit=Unidade
 StockCorrection=Correcção stock
+# StockTransfer=Stock transfer
 StockMovement=Transferencia
 StockMovements=Movimentos de stock
+# LabelMovement=Movement label
 NumberOfUnit=Número de peças
+UnitPurchaseValue=Preço de compra Unitário
 TotalStock=Total em stock
 StockTooLow=Stock insuficiente
+StockLowerThanLimit=Stock menor do que o limite de alerta
 EnhancedValue=Valor
 PMPValue=Valor (PMP)
 PMPValueShort=PMP
@@ -48,12 +56,16 @@ DeStockOnValidateOrder=Decrementar os stocks físicos sobre os pedidos
 DeStockOnShipment=Decrementar os stocks físicos sobre os envíos (recomendado)
 ReStockOnBill=Incrementar os stocks físicos sobre as facturas/recibos
 ReStockOnValidateOrder=Incrementar os stocks físicos sobre os pedidos
+ReStockOnDispatchOrder=Aumentar o stock real de manual de expedição em armazéns, após receber ordem de fornecedor
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Pedido não está pronto para despacho.
 StockDiffPhysicTeoric=Motivo da diferença entre valores físicos e teóricos
+NoPredefinedProductToDispatch=Não há produtos pré-definidos para este objeto. Portanto, não despachando em stock é exigido.
+DispatchVerb=Expedição
 StockLimitShort=Límite máximo
 StockLimit=Límite máximo existencias
 PhysicalStock=Stock físico
 RealStock=Stock real
-TheoreticalStock=Stock teórico
 VirtualStock=Stock virtual
 MininumStock=Stock mínimo
 StockUp=Stock máximo
@@ -63,36 +75,38 @@ IdWarehouse=Id. armazem
 DescWareHouse=Descrição armazem
 LieuWareHouse=Localização armazem
 WarehousesAndProducts=Armazens e produtos
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-// Reference language: en_US
 AverageUnitPricePMPShort=Média dos preços de entrada
 AverageUnitPricePMP=Média dos preços de entrada
+SellPriceMin=Vendendo Preço unitário
+EstimatedStockValueSellShort=Valor para vender
+EstimatedStockValueSell=Valor para vender
 EstimatedStockValueShort=Valor estimado de stock
 EstimatedStockValue=Valor estimado de stock
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:10:10).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> pt_PT
-WarehouseEdit=Modificar armazém
-ReStockOnDispatchOrder=Aumentar o stock real de manual de expedição em armazéns, após receber ordem de fornecedor
-OrderStatusNotReadyToDispatch=Pedido não está pronto para despacho.
-NoPredefinedProductToDispatch=Não há produtos pré-definidos para este objeto. Portanto, não despachando em stock é exigido.
-DispatchVerb=Expedição
 DeleteAWarehouse=Excluir um armazém
 ConfirmDeleteWarehouse=Tem certeza de que deseja excluir o <b>%s</b> armazém?
 PersonalStock=Pessoal %s stock
 ThisWarehouseIsPersonalStock=Este armazém representa stock pessoal de %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:56).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:45:52).
-// Reference language: en_US -> pt_PT
-SellPriceMin=Vendendo Preço unitário
-EstimatedStockValueSellShort=Valor para vender
-EstimatedStockValueSell=Valor para vender
 SelectWarehouseForStockDecrease=Escolha depósito a ser usado para diminuição de ações
 SelectWarehouseForStockIncrease=Escolha depósito a ser usado para aumentar stock
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:46:12).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

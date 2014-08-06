@@ -1,14 +1,4 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - interventions
 Intervention=التدخل
 Interventions=المداخلات
 InterventionCard=تدخل البطاقة
@@ -16,6 +6,7 @@ NewIntervention=التدخل الجديدة
 AddIntervention=إضافة التدخل
 ListOfInterventions=قائمة التدخلات
 EditIntervention=Editer التدخل
+# ActionsOnFicheInter=Actions on intervention
 LastInterventions=آخر تدخلات ٪ ق
 AllInterventions=كل التدخلات
 CreateDraftIntervention=إنشاء مشروع
@@ -32,19 +23,20 @@ ConfirmDeleteInterventionLine=هل أنت متأكد من أنك تريد حذف
 NameAndSignatureOfInternalContact=الاسم والتوقيع على التدخل :
 NameAndSignatureOfExternalContact=اسم وتوقيع العميل :
 DocumentModelStandard=نموذج وثيقة موحدة للتدخلات
+# InterventionCardsAndInterventionLines=Interventions and lines of interventions
+# ClassifyBilled=Classify "Billed"
+StatusInterInvoiced=فواتير
+# RelatedInterventions=Related interventions
+ShowIntervention=نمایش مداخله
+##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=ممثل متابعة التدخل
 TypeContact_fichinter_internal_INTERVENING=التدخل
 TypeContact_fichinter_external_BILLING=فواتير العملاء الاتصال
 TypeContact_fichinter_external_CUSTOMER=متابعة العملاء الاتصال
+# Modele numérotation
 ArcticNumRefModelDesc1=عدد نموذج عامة
 ArcticNumRefModelError=فشل لتفعيل
 PacificNumRefModelDesc1=عودة número مع الشكل nnnn - ٪ syymm فيها السنة هي السنة ، هو شهر ملم وnnnn هو كسر التسلسل وليس هناك عودة لل0
 PacificNumRefModelError=تدخل البطاقة ابتداء من دولار ويوجد بالفعل syymm لا تتفق مع هذا النموذج من التسلسل. إزالة أو تغيير تسميتها لتصبح لتفعيل هذه الوحدة.
-// Date 2009-08-11 13:27:01
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fa_IR
-ShowIntervention=نمایش مداخله
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:20:00).
+# PrintProductsOnFichinter=Print products on intervention card
+# PrintProductsOnFichinterDetails=forinterventions generated from orders

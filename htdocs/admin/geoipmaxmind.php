@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2012	Laurent Destailleur	<eldy@users.sourceforge.org>
- * Copyright (C) 2011	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ if ($action == 'set')
 
 	if (! $gimcdf && ! file_exists($gimcdf))
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFileNotFound",$gimcdf).'</div>';
+		setEventMessage($langs->trans("ErrorFileNotFound",$gimcdf),'errors');
 		$error++;
 	}
 
@@ -56,16 +56,15 @@ if ($action == 'set')
 		if (! $res > 0) $error++;
 
 		if (! $error)
-	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
-	    }
-	    else
-	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
-	    }
+		{
+			setEventMessage($langs->trans("SetupSaved"));
+		}
+		else
+		{
+			setEventMessage($langs->trans("Error"),'errors');
+		}
 	}
 }
-
 
 
 /*
@@ -85,6 +84,13 @@ $geoip='';
 if (! empty($conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE))
 {
 	$geoip=new DolGeoIP('country',$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE);
+	//if ($geoip->error) print dol_htmloutput_errors($geoip->errorlabel,'',1);
+	if ($geoip->gi == 'NOGI') $geointernal=true;
+	else $geointernal=false;
+}
+else
+{
+	if (function_exists('geoip_country_code_by_name')) 	$geointernal=true;
 }
 
 // Mode
@@ -102,6 +108,8 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
+
+if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';
 print '<input size="50" type="text" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.$conf->global->GEOIPMAXMIND_COUNTRY_DATAFILE.'">';
 if ($geoip) $version=$geoip->getVersion();
 if ($version)
@@ -146,8 +154,6 @@ if ($geoip)
 	*/
 	$geoip->close();
 }
-
-dol_htmloutput_mesg($mesg);
 
 llxFooter();
 

@@ -2,13 +2,15 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrmodule.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
-# \author       (c)2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
 use Cwd;
+$OWNER="ldestailleur";
+$GROUP="ldestailleur";
 
 
-@LISTETARGET=("TGZ");   # Possible packages
+@LISTETARGET=("ZIP");   # Possible packages
 %REQUIREMENTTARGET=(    # Tool requirement for each package
 "TGZ"=>"tar",
 "ZIP"=>"7z"
@@ -18,8 +20,8 @@ use Cwd;
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='1.20';
-$VERSION="1.0 (build $REVISION)";
+$REVISION='1.0';
+$VERSION="3.5 (build $REVISION)";
 
 
 
@@ -35,9 +37,9 @@ if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
 elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
-    print "makepack-dolbarrmodule.pl was not able to detect your OS.\n";
+    print "$PROG.$Extension was not able to detect your OS.\n";
 	print "Can't continue.\n";
-	print "makepack-dolibarrmodule.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
 	exit 1;
 }
@@ -57,7 +59,7 @@ if ($OS =~ /windows/) {
 if (! $TEMP || ! -d $TEMP) {
     print "Error: A temporary directory can not be find.\n";
     print "Check that TEMP or TMP environment variable is set correctly.\n";
-	print "makepack-dolibarrmodule.pl aborted.\n";
+	print "$PROG.$Extension aborted.\n";
     sleep 2;
     exit 2;
 } 
@@ -85,18 +87,6 @@ print "Makepack for modules version $VERSION\n";
 print "Source directory: $SOURCE\n";
 print "Target directory: $NEWDESTI\n";
 
-
-# Ask and set version $MAJOR, $MINOR and $BUILD
-print "Enter value for version: ";
-$PROJVERSION=<STDIN>;
-chomp($PROJVERSION);
-($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
-if ($MINOR eq '')
-{
-    print "Enter value for minor version: ";
-    $MINOR=<STDIN>;
-    chomp($MINOR);
-}
 
 # Ask module
 print "Enter name for your module (mymodule, mywonderfulmondule, ... or 'all') : ";
@@ -128,6 +118,8 @@ else
 # Loop on each projects
 foreach my $PROJECT (@PROJECTLIST) {
 	
+	$PROJECTLC=lc($PROJECT);
+	
 	if (! -f "makepack-".$PROJECT.".conf")
 	{
 	    print "Error: can't open conf file makepack-".$PROJECT.".conf\n";
@@ -139,9 +131,28 @@ foreach my $PROJECT (@PROJECTLIST) {
 	    exit 2;
 	}
 	
-	$FILENAME="$PROJECT";
-	$FILENAMETGZ="module_$PROJECT-$MAJOR.$MINOR".($BUILD ne ''?".$BUILD":"");
-	$FILENAMEZIP="module_$PROJECT-$MAJOR.$MINOR".($BUILD ne ''?".$BUILD":"");
+	# Get version $MAJOR, $MINOR and $BUILD
+	print "Version detected for module ".$PROJECT.": ";
+	$result=open(IN,"<".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php");
+	if (! $result) { die "Error: Can't open descriptor file ".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php for reading.\n"; }
+    while(<IN>)
+    {
+    	if ($_ =~ /this->version\s*=\s*'([\d\.]+)'/) { $PROJVERSION=$1; break; }
+    }
+    close IN;
+	print $PROJVERSION."\n";
+
+	($MAJOR,$MINOR,$BUILD)=split(/\./,$PROJVERSION,3);
+	if ($MINOR eq '')
+	{
+	    print "Enter value for minor version for module ".$PROJECT.": ";
+	    $MINOR=<STDIN>;
+	    chomp($MINOR);
+	}
+		
+	$FILENAME="$PROJECTLC";
+	$FILENAMETGZ="module_$PROJECTLC-$MAJOR.$MINOR".($BUILD ne ''?".$BUILD":"");
+	$FILENAMEZIP="module_$PROJECTLC-$MAJOR.$MINOR".($BUILD ne ''?".$BUILD":"");
 	if (-d "/usr/src/redhat") {
 	    # redhat
 	    $RPMDIR="/usr/src/redhat";
@@ -228,54 +239,66 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    	$ret=`rm -fr "$BUILDROOT"`;
 	
 		    	mkdir "$BUILDROOT";
-		    	mkdir "$BUILDROOT/$PROJECT";
+		    	mkdir "$BUILDROOT/$PROJECTLC";
 		    	
 				$result=open(IN,"<makepack-".$PROJECT.".conf");
 				if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
 			    while(<IN>)
 			    {
-			    	if ($_ =~ /^#/) { next; }	# Do not process comments
+			    	$entry=$_;
+			    	
+			    	if ($entry =~ /^#/) { next; }	# Do not process comments
 					
-					$_ =~ s/\n//;
-			    	$_ =~ /^(.*)\/[^\/]+/;
-			    	print "Create directory $BUILDROOT/$PROJECT/$1\n";
-			    	$ret=`mkdir -p "$BUILDROOT/$PROJECT/$1"`;
-			    	if ($_ !~ /version\-/)
+					$entry =~ s/\n//;
+
+			    	if ($entry =~ /^!(.*)$/)		# Exclude so remove file/dir
 			    	{
-			    	    print "Copy $SOURCE/$_ into $BUILDROOT/$PROJECT/$_\n";
-		    		    $ret=`cp -pr "$SOURCE/$_" "$BUILDROOT/$PROJECT/$_"`;
+			    		print "Remove $BUILDROOT/$PROJECTLC/$1\n";
+			    		$ret=`rm -fr "$BUILDROOT/$PROJECTLC/"$1`;
+		    		    if ($? != 0) { die "Failed to delete a file to exclude declared into makepack-".$PROJECT.".conf file (Fails on line ".$entry.")\n"; }
+		    		    next; 
 			    	}
+					
+					$entry =~ /^(.*)\/[^\/]+/;
+			    	print "Create directory $BUILDROOT/$PROJECTLC/$1\n";
+			    	$ret=`mkdir -p "$BUILDROOT/$PROJECTLC/$1"`;
+			    	if ($entry !~ /version\-/)
+			    	{
+			    	    print "Copy $SOURCE/$entry into $BUILDROOT/$PROJECTLC/$entry\n";
+		    		    $ret=`cp -pr "$SOURCE/$entry" "$BUILDROOT/$PROJECTLC/$entry"`;
+		    		    if ($? != 0) { die "Failed to make copy of a file declared into makepack-".$PROJECT.".conf file (Fails on line ".$entry.")\n"; } 
+			    	}
+			    	
 				}	
 				close IN;
 				
 				@timearray=localtime(time());
 				$fulldate=($timearray[5]+1900).'-'.($timearray[4]+1).'-'.$timearray[3].' '.$timearray[2].':'.$timearray[1];
-				open(VF,">$BUILDROOT/$PROJECT/build/version-".$PROJECT.".txt");
+				open(VF,">$BUILDROOT/$PROJECTLC/build/version-".$PROJECTLC.".txt");
 		
-				print "Create version file $BUILDROOT/$PROJECT/build/version-".$PROJECT.".txt with date ".$fulldate."\n";
-				$ret=`mkdir -p "$BUILDROOT/$PROJECT/build"`;
+				print "Create version file $BUILDROOT/$PROJECTLC/build/version-".$PROJECTLC.".txt with date ".$fulldate."\n";
+				$ret=`mkdir -p "$BUILDROOT/$PROJECTLC/build"`;
 				print VF "Version: ".$MAJOR.".".$MINOR.($BUILD ne ''?".$BUILD":"")."\n";
 				print VF "Build  : ".$fulldate."\n";
 				close VF;
 		    }
 		    print "Clean $BUILDROOT\n";
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/.cache`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/index.php`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/build/html`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.old`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf.php.postgres`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/conf/conf*sav*`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom`;
-	        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/custom2`;
-	        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/theme/bureau2crea`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
-		    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.cache`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.project`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/.settings`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/index.php`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/build/html`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/documents`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/document`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.mysql`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.old`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf.php.postgres`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/conf/conf*sav*`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom`;
+	        $ret=`rm -fr $BUILDROOT/$PROJECTLC/htdocs/custom2`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/test`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/Thumbs.db $BUILDROOT/$PROJECTLC/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/Thumbs.db $BUILDROOT/$PROJECTLC/*/*/*/*/Thumbs.db`;
+		    $ret=`rm -fr $BUILDROOT/$PROJECTLC/CVS* $BUILDROOT/$PROJECTLC/*/CVS* $BUILDROOT/$PROJECTLC/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/CVS* $BUILDROOT/$PROJECTLC/*/*/*/*/*/CVS*`;
 		}    
 	    
 	    # Build package for each target
@@ -313,9 +336,9 @@ foreach my $PROJECT (@PROJECTLIST) {
 	    		unlink "$NEWDESTI/$FILENAMEZIP.zip";
 	    		print "Compress $FILENAMEZIP into $FILENAMEZIP.zip...\n";
 	
-	            print "Go to directory $BUILDROOT/$PROJECT\n";
+	            print "Go to directory $BUILDROOT/$PROJECTLC\n";
 	     		$olddir=getcwd();
-	     		chdir("$BUILDROOT/$PROJECT");
+	     		chdir("$BUILDROOT/$PROJECTLC");
 	    		$cmd= "7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip *";
 				print $cmd."\n";
 				$ret= `$cmd`;
@@ -323,6 +346,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 	
 	            print "Move $FILENAMEZIP.zip to $NEWDESTI/$FILENAMEZIP.zip\n";
 	            $ret=`mv "$BUILDROOT/$FILENAMEZIP.zip" "$NEWDESTI/$FILENAMEZIP.zip"`;
+	            $ret=`chown $OWNER.$GROUP "$NEWDESTI/$FILENAMEZIP.zip"`;
 	    		next;
 	    	}
 	    

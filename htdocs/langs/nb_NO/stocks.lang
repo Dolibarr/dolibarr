@@ -1,12 +1,15 @@
-# Dolibarr language file - no_NB - stocks
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - stocks
 WarehouseCard=Lagerkort
 Warehouse=Lager
+Warehouses=Lagere
 NewWarehouse=Nytt lager
+WarehouseEdit=Endre lager
 MenuNewWarehouse=Nytt lager
 WarehouseOpened=Lager åpnet
 WarehouseClosed=Lager lukket
 WarehouseSource=Kildelager
+# WarehouseSourceNotDefined=No warehouse defined,
+# AddOne=Add one
 WarehouseTarget=Mållager
 ValidateSending=Godkjenn levering
 CancelSending=Avbryt levering
@@ -23,18 +26,25 @@ ListOfStockMovements=Oversikt over bevegelser
 StocksArea=Beholdningsområde
 Location=Lokasjon
 LocationSummary=Kort navn på lokasjon
+# NumberOfDifferentProducts=Number of different products
 NumberOfProducts=Totalt antall produkter
 LastMovement=Siste bevegelse
 LastMovements=Siste bevegelser
 Units=Enheter
 Unit=Enhet
 StockCorrection=Korriger lagerbeholdning
+# StockTransfer=Stock transfer
 StockMovement=Overføring
 StockMovements=Lageroverføring
+# LabelMovement=Movement label
 NumberOfUnit=Atntall enheter
+# UnitPurchaseValue=Unit purchase price
 TotalStock=Tottal beholdning
 StockTooLow=For lav beholdning
+# StockLowerThanLimit=Stock lower than alert limit
 EnhancedValue=Verdi
+PMPValue=Veid gjennomsnittlig pris
+PMPValueShort=WAP
 EnhancedValueOfWarehouses=Lagerverdi
 UserWarehouseAutoCreate=Opprett lager automatisk når en bruker opprettes
 QtyDispatched=Antall sendt
@@ -46,12 +56,16 @@ DeStockOnValidateOrder=Reduser virkelig beholdning ut fra ordre
 DeStockOnShipment=reduser virkelig beholdning ved forsendelse (anbefalt)
 ReStockOnBill=Øk virkelig beholdning ut fra faktura/kreditnota
 ReStockOnValidateOrder=Øk virkelig beholdning ut fra ordre
+ReStockOnDispatchOrder=Øk virkelige aksjer på manuelle sende ut i lagerbygninger, etter leverandør bestill mottak
+# ReStockOnDeleteInvoice=Increase real stocks on invoice deletion
+OrderStatusNotReadyToDispatch=Bestill har ikke ennå, eller ikke mer en status som gjør at ekspedering av produkter på lager lager.
 StockDiffPhysicTeoric=Årsak til forskjell mellom fysisk og teoretisk beholdning
+NoPredefinedProductToDispatch=Ingen forhåndsdefinerte produkter for dette objektet. Så nei utsending på lager er nødvendig.
+DispatchVerb=Dispatch
 StockLimitShort=Grense
 StockLimit=Minimumsbeholdning for varselmeldinger
 PhysicalStock=Fysisk beholdning
 RealStock=Virkelig beholdning
-TheoreticalStock=Teoretisk beholdning
 VirtualStock=Virtuell beholdning
 MininumStock=Minimumsbeholdning
 StockUp=Bør bestilles
@@ -61,33 +75,38 @@ IdWarehouse=Id lager
 DescWareHouse=Beskrivelse av lager
 LieuWareHouse=Lagerlokasjon
 WarehousesAndProducts=Lager og varer
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:45:17).
-// Reference language: en_US
-WarehouseEdit=Endre lager
-PMPValue=Veid gjennomsnittlig pris
-PMPValueShort=WAP
-ReStockOnDispatchOrder=Øk virkelige aksjer på manuelle sende ut i lagerbygninger, etter leverandør bestill mottak
-OrderStatusNotReadyToDispatch=Bestill har ikke ennå, eller ikke mer en status som gjør at ekspedering av produkter på lager lager.
-NoPredefinedProductToDispatch=Ingen forhåndsdefinerte produkter for dette objektet. Så nei utsending på lager er nødvendig.
-DispatchVerb=Dispatch
 AverageUnitPricePMPShort=Veid gjennomsnittlig inngang pris
 AverageUnitPricePMP=Veid gjennomsnittlig inngang pris
+SellPriceMin=Selge Enhetspris
+EstimatedStockValueSellShort=Verdi å selge
+EstimatedStockValueSell=Verdi å selge
 EstimatedStockValueShort=Estimert verdi av lager
 EstimatedStockValue=Estimert verdi av lager
 DeleteAWarehouse=Slette et lager
 ConfirmDeleteWarehouse=Er du sikker på at du vil slette lageret <b>%s?</b>
 PersonalStock=Personlig lager %s
 ThisWarehouseIsPersonalStock=Dette lageret representerer personlige lager av %s %s
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:46:31).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:06:43).
-// Reference language: en_US -> nb_NO
-SellPriceMin=Selge Enhetspris
-EstimatedStockValueSellShort=Verdi å selge
-EstimatedStockValueSell=Verdi å selge
 SelectWarehouseForStockDecrease=Velg lageret til bruk for lager nedgang
 SelectWarehouseForStockIncrease=Velg lageret til bruk for lager økning
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:07:05).
+# NoStockAction=No stock action
+# LastWaitingSupplierOrders=Orders waiting for receptions
+# DesiredStock=Desired stock
+# StockToBuy=To order
+# Replenishment=Replenishment
+# ReplenishmentOrders=Replenishment orders
+# UseVirtualStock=Use virtual stock instead of physical stock
+# RuleForStockReplenishment=Rule for stocks replenishment
+# SelectProductWithNotNullQty=Select at least one product with a qty not null and a supplier
+# AlertOnly= Alerts only
+# WarehouseForStockDecrease=The warehouse <b>%s</b> will be used for stock decrease
+# WarehouseForStockIncrease=The warehouse <b>%s</b> will be used for stock increase
+# ForThisWarehouse=For this warehouse
+# ReplenishmentStatusDesc=This is list of all product with a physical stock lower than desired stock (or alert value if checkbox "alert only" is checked) and suggest you to create supplier orders to fill the difference.
+# ReplenishmentOrdersDesc=This is list of all opened supplier orders
+# Replenishments=Replenishments
+# NbOfProductBeforePeriod=Quantity of product %s in stock before selected period (< %s)
+# NbOfProductAfterPeriod=Quantity of product %s in stock after selected period (> %s)
+# MassStockMovement=Mass stock movement
+# SelectProductInAndOutWareHouse=Select a product, a quantity, a source warehouse and a target warehouse, then click "%s". Once this is done for all required movements, click onto "%s".
+# RecordMovement=Record transfert
+# ReceivingForSameOrder=Receivings for this order

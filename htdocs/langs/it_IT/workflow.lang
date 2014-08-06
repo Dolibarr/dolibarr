@@ -1,11 +1,11 @@
-# Dolibarr language file - it_IT - withdrawals 
-# Copyright (C) 2012 Lorenzo Novaro <novalore@19.coop>
-// Reference language: en_US -> it_IT
-CHARSET=UTF-8
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE				=Creare automaticamente una fattura attiva alla convalida del contratto
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE					=Creare automaticamente una fattura attiva alla chiusura dell'ordine cliente
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE					=Creare automaticamente una fattura attiva alla firma di una proposta commerciale
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER					=Creare automaticamente un ordine cliente alla firma di una proposta commerciale
-ThereIsNoWorkflowToModify						=Non vi è alcun flusso di lavoro modificabile per il modulo.
-WorkflowDesc								=Questo modulo è progettato per impostare le azioni automatiche dell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (puoi adattarlo alle tue esigenze). Puoi scegliere quali azioni automatiche abilitare.
-WorkflowSetup								=Impostazioni flusso di lavoro
+# Dolibarr language file - Source file is en_US - admin
+WorkflowSetup=Impostazioni flusso di lavoro
+WorkflowDesc=Questo modulo è progettato per impostare le azioni automatiche dell'applicazione. Per impostazione predefinita, il flusso di lavoro è aperto (puoi adattarlo alle tue esigenze). Puoi scegliere quali azioni automatiche abilitare.
+ThereIsNoWorkflowToModify=Non vi è alcun flusso di lavoro modificabile per il modulo.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Creare automaticamente un ordine cliente alla firma di una proposta commerciale
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla firma di una proposta commerciale
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla convalida del contratto
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Creare automaticamente una fattura attiva alla chiusura dell'ordine cliente
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classifica la proposta commerciale collegata come fatturare quando l'ordine cliente è impostato come pagato
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti da fatturare quando la fattura viene impostata come pagata
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classifica gli ordini dei clienti da fatturare quando la fattura è validata

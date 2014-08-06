@@ -1,12 +1,4 @@
-/*
-* Language code: de_DE
-* Manually translated by modula71.de
-* Generation date 2012-05-23
-* QA release date 2012-05-27
-*/
-
-CHARSET=UTF-8
-
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=Fügen Sie diese Seite zu Ihren Lesezeichen hinzu
 Bookmark=Lesezeichen
 Bookmarks=Lesezeichen
@@ -17,7 +9,7 @@ ReplaceWindow=Aktuelles Fenster ersetzen
 BookmarkTargetNewWindowShort=Neues Fenster
 BookmarkTargetReplaceWindowShort=Aktuelles Fenster
 BookmarkTitle=Titel des Lesezeichens
-UrlOrLink=URL oder Link
+UrlOrLink=URL
 BehaviourOnClick=Verhalten bei Klick auf den Link
 CreateBookmark=Erstelle Lesezeichen
 SetHereATitleForLink=Geben Sie hier einen Linktitel ein

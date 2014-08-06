@@ -39,11 +39,19 @@ class EcmDirectory // extends CommonObject
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
 	var $date_c;
 	var $date_m;
+    public $fk_user_m;
+    public $fk_user_c;
+    public $ref;
 
 	var $cats=array();
 	var $motherof=array();
 
     var $forbiddenchars = array('<','>',':','/','\\','?','*','|','"');
+
+    public $full_arbo_loaded;
+
+    public $error;
+    public $errors;
 
 
 	/**
@@ -495,7 +503,8 @@ class EcmDirectory // extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj= $this->db->fetch_object($resql))
+			// This assignment in condition is not a bug. It allows walking the results.
+			while ($obj=$this->db->fetch_object($resql))
 			{
 				$this->motherof[$obj->id_son]=$obj->id_parent;
 			}
@@ -560,6 +569,7 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->cats = array();
 			$i=0;
+			// This assignment in condition is not a bug. It allows walking the results.
 			while ($obj = $this->db->fetch_object($resql))
 			{
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
@@ -647,8 +657,6 @@ class EcmDirectory // extends CommonObject
 				$this->build_path_from_id_categ($val,$protection);
 			}
 		}
-
-		return 1;
 	}
 
 	/**

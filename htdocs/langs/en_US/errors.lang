@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - errors
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - errors
 
 # No errors
 NoErrorCommitIsDone=No error, we commit
@@ -63,6 +62,7 @@ ErrorNoValueForCheckBoxType=Please fill value for checkbox list
 ErrorNoValueForRadioType=Please fill value for radio list
 ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=Field <b>%s</b> must not contains special characters.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=No accountancy module activated
 ErrorExportDuplicateProfil=This profil name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP matching is not complete.
@@ -124,7 +124,11 @@ ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit 
 ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
 ErrorFailedToAddContact=Failed to add contact
 ErrorDateMustBeBeforeToday=The date can not be greater than today
+ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
 ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+ErrorWarehouseMustDiffers=Source and target warehouses must differs
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

@@ -138,7 +138,7 @@ if ($result)
             print "<form method=\"post\" action=\"cotisations.php\">";
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         }
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         // Ref
         print '<td>'.$cotisation->getNomUrl(1).'</td>';
@@ -171,7 +171,6 @@ if ($result)
                 {
                     print '<input type="hidden" name="action" value="2bank">';
                     print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
-                    $form = new Form($db);
                     $form->select_comptes('','accountid',0,'',1);
                     print '<br>';
                     $form->select_types_paiements('','paymenttypeid');

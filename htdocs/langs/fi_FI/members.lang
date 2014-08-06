@@ -1,14 +1,4 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - members
 MembersArea=Jäsenalue
 PublicMembersArea=Julkiset jäsenten alueella
 MemberCard=Jäsen-kortti
@@ -18,13 +8,20 @@ Members=Jäsenet
 MemberAccount=Kirjaudu
 ShowMember=Näytä jäsenen kortti
 UserNotLinkedToMember=Käyttäjää ei liity jäseneksi
+# ThirdpartyNotLinkedToMember=Third-party not linked to a member
 MembersTickets=Jäsenet Liput
+FundationMembers=Säätiön jäsenet
 Attributs=Määritteet
-Person=Henkilö
 ErrorMemberTypeNotDefined=Jäsen tyyppiä ei ole määritelty
 ListOfPublicMembers=Luettelo yleisistä jäseniä
 ListOfValidatedPublicMembers=Luettelo validoitujen yleisön jäsenet
 ErrorThisMemberIsNotPublic=Tämä jäsen ei ole julkinen
+ErrorMemberIsAlreadyLinkedToThisThirdParty=Toinen jäsen <b>(nimi: %s, kirjautuminen: %s)</b> on jo liitetty kolmasosaa <b>osapuoli %s.</b> Poista tämä ensimmäiseksi, koska kolmas osapuoli ei voi yhdistää vain jäsen (ja päinvastoin).
+ErrorUserPermissionAllowsToLinksToItselfOnly=Turvallisuussyistä sinun täytyy myöntää oikeudet muokata kaikki käyttäjät pystyvät linkki jäsenen käyttäjä, joka ei ole sinun.
+ThisIsContentOfYourCard=Tämä on yksityiskohtaiset tiedot kortin
+CardContent=Sisältö jäsennimesi kortti
+SetLinkToUser=Linkki on Dolibarr käyttäjä
+SetLinkToThirdParty=Linkki on Dolibarr kolmannen osapuolen
 MembersCards=Jäsenet tulostaa kortit
 MembersList=Luettelo jäsenistä
 MembersListToValid=Luettelo luonnoksen jäsenten (jotka on vahvistettu)
@@ -38,11 +35,14 @@ MenuMembersValidated=Validoidut jäseniä
 MenuMembersUpToDate=Ajan jäsenten
 MenuMembersNotUpToDate=Vanhentunut jäseniä
 MenuMembersResiliated=Resiliated jäseniä
+MembersWithSubscriptionToReceive=Jäsenet Merkintäoikeuksien vastaanottaa
 DateAbonment=Tilaus päivämäärän
 DateSubscription=Tilaus päivämäärän
 DateNextSubscription=Seuraava tilaus
 DateEndSubscription=Tilaus lopetuspäivämäärää
 EndSubscription=Lopeta tilaus
+SubscriptionId=Tilaus id
+MemberId=Jäsen id
 NewMember=Uusi jäsen
 NewType=Uusi jäsen tyyppi
 MemberType=Jäsen tyyppi
@@ -71,13 +71,12 @@ MembersStatusNotPaidShort=Vanhentunut
 MembersStatusResiliated=Resiliated jäseniä
 MembersStatusResiliatedShort=Resiliated jäseniä
 NewCotisation=Uusi rahoitusosuus
+PaymentSubscription=Uusi osuus maksu
 EditMember=Muokkaa jäsenluetteloa
 SubscriptionEndDate=Tilaus päättymispäivämäärän
-NewAttribute=Uusi attribut
-AttributeCode=Määreen koodi
-OptionalFieldsSetup=Valinnaiset tiedot setup
 MembersTypeSetup=Jäsenet tyyppi setup
 NewSubscription=Uusi tilaus
+NewSubscriptionDesc=Tämän lomakkeen avulla voit tallentaa tilauksen uutena jäsenenä säätiön. Jos haluat uudistaa tilauksen (jos on jo jäsen), ota yhteyttä säätiön hallituksen sijasta sähköpostitse %s.
 Subscription=Tilaus
 Subscriptions=Tilaukset
 SubscriptionLate=Myöhäinen
@@ -111,13 +110,15 @@ ConfirmValidateMember=Oletko varma, että haluat vahvistaa tämän jäsen?
 FollowingLinksArePublic=Seuraavat linkit ovat avoinna sivua ei ole suojattu millään Dolibarr lupaa. Ne eivät ole formated sivua, jos esimerkkinä osoittaakseen, miten listan jäsenille tietokantaan.
 PublicMemberList=Julkiset jäsenluetteloa
 BlankSubscriptionForm=Merkintälomake
+BlankSubscriptionFormDesc=Dolibarr voi tarjota sinulle julkista URL jotta ulkopuolisia vierailijoita pyytää tilata perusta. Jos online-maksu moduuli on käytössä, maksuvälineenä myös automaattisesti säädetään.
+EnablePublicSubscriptionForm=Ota yleisölle auto-merkintälomakkeen
 MemberPublicLinks=Julkiset linkit / sivut
 ExportDataset_member_1=Jäsenet ja tilaukset
+ImportDataset_member_1=Jäsenet
 LastMembers=Viimeisin %s jäseniä
 LastMembersModified=Viimeisin %s muunnettu jäseniä
+LastSubscriptionsModified=Viimeksi %s muutettu liittymät
 AttributeName=Attribuutin nimi
-FieldEdition=Alalla painos %s
-AlphaNumOnlyCharsAndNoSpace=vain alphanumericals merkkiä ilman tilaa
 String=String
 Text=Teksti
 Int=Int
@@ -129,6 +130,10 @@ AddSubscription=Lisää tilaus
 ShowSubscription=Näytä tilaus
 MemberModifiedInDolibarr=Jäsen muutettu Dolibarr
 SendAnEMailToMember=Lähetä tiedot sähköpostitse jäsen
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
+# DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Viestin aihe ja jäsen autosubscription
+DescADHERENT_AUTOREGISTER_MAIL=Sähköpostitse jäsenen autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=EMail aihe jäsen validointi
 DescADHERENT_MAIL_VALID=EMail jäsenen validointi
 DescADHERENT_MAIL_COTIS_SUBJECT=EMail aihe tilaamisesta
@@ -137,51 +142,21 @@ DescADHERENT_MAIL_RESIL_SUBJECT=EMail aihe jäsen résiliation
 DescADHERENT_MAIL_RESIL=EMail jäsenen résiliation
 DescADHERENT_MAIL_FROM=Sender EMail automaattisen sähköpostit
 DescADHERENT_ETIQUETTE_TYPE=Etiketit muodossa
+# DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_CARD_TYPE=Muotoile korttien sivu
 DescADHERENT_CARD_HEADER_TEXT=Teksti painettu päälle jäsen kortit
 DescADHERENT_CARD_TEXT=Teksti painettu jäsen kortit
+DescADHERENT_CARD_TEXT_RIGHT=Teksti on painettu jäsen kortit (yhdenmukaistettava oikealla)
 DescADHERENT_CARD_FOOTER_TEXT=Teksti painettu pohjaan jäsen kortit
+GlobalConfigUsedIfNotDefined=Teksti on määritelty säätiön moduulissa asennusohjelma käyttää, jos ei määritellä tässä
+MayBeOverwrited=Tämä teksti voidaan overwrited arvosta määritelty jäsenen mukaan
 ShowTypeCard=Näytä tyyppi ' %s'
 HTPasswordExport=htpassword tiedosto sukupolven
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-ErrorMemberIsAlreadyLinkedToThisThirdParty=Toinen jäsen <b>(nimi: %s, kirjautuminen: %s)</b> on jo liitetty kolmasosaa <b>osapuoli %s.</b> Poista tämä ensimmäiseksi, koska kolmas osapuoli ei voi yhdistää vain jäsen (ja päinvastoin).
-ErrorUserPermissionAllowsToLinksToItselfOnly=Turvallisuussyistä sinun täytyy myöntää oikeudet muokata kaikki käyttäjät pystyvät linkki jäsenen käyttäjä, joka ei ole sinun.
-ThisIsContentOfYourCard=Tämä on yksityiskohtaiset tiedot kortin
-CardContent=Sisältö jäsennimesi kortti
-SetLinkToUser=Linkki on Dolibarr käyttäjä
-SetLinkToThirdParty=Linkki on Dolibarr kolmannen osapuolen
-SubscriptionId=Tilaus id
-MemberId=Jäsen id
-PaymentSubscription=Uusi osuus maksu
 NoThirdPartyAssociatedToMember=Kolmansista osapuolista ei näihin jäsen
 ThirdPartyDolibarr=Dolibarr kolmannen osapuolen
-MembersAndSubscriptions=Jäsenet ja Subscriptions
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-FundationMembers=Säätiön jäsenet
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=Viestin aihe ja jäsen autosubscription
-DescADHERENT_AUTOREGISTER_MAIL=Sähköpostitse jäsenen autosubscription
-DescADHERENT_CARD_TYPE=Muotoile korttien sivu
-DescADHERENT_CARD_TEXT_RIGHT=Teksti on painettu jäsen kortit (yhdenmukaistettava oikealla)
-DescADHERENT_MAILMAN_LISTS=List (s) automaattisesti insription uusien jäsenten (pilkulla erotettuna)
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:26:43).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> fi_FI
+MembersAndSubscriptions= Jäsenet ja Subscriptions
 MoreActions=Täydentäviä toimia tallennus
+# MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
 MoreActionBankDirect=Luo suoraan tiliotteensa takia
 MoreActionBankViaInvoice=Luo lasku ja ennakkomaksu
 MoreActionInvoiceOnly=Luo laskun maksua
@@ -190,19 +165,6 @@ LinkToGeneratedPagesDesc=Tässä näytössä voit luoda PDF-tiedostoja käyntiko
 DocForAllMembersCards=Luo käyntikortteja kaikkien jäsenten (malli lähtö todella setup: <b>%s)</b>
 DocForOneMemberCards=Luo käyntikortit erityisesti jäsen (malli lähtö todella setup: <b>%s)</b>
 DocForLabels=Luo osoite arkkia (malli lähtö todella setup: <b>%s)</b>
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:37:54).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-MembersWithSubscriptionToReceive=Jäsenet Merkintäoikeuksien vastaanottaa
-NewSubscriptionDesc=Tämän lomakkeen avulla voit tallentaa tilauksen uutena jäsenenä säätiön. Jos haluat uudistaa tilauksen (jos on jo jäsen), ota yhteyttä säätiön hallituksen sijasta sähköpostitse %s.
-BlankSubscriptionFormDesc=Dolibarr voi tarjota sinulle julkista URL jotta ulkopuolisia vierailijoita pyytää tilata perusta. Jos online-maksu moduuli on käytössä, maksuvälineenä myös automaattisesti säädetään.
-EnablePublicSubscriptionForm=Ota yleisölle auto-merkintälomakkeen
-ImportDataset_member_1=Jäsenet
-LastSubscriptionsModified=Viimeksi %s muutettu liittymät
-GlobalConfigUsedIfNotDefined=Teksti on määritelty säätiön moduulissa asennusohjelma käyttää, jos ei määritellä tässä
-MayBeOverwrited=Tämä teksti voidaan overwrited arvosta määritelty jäsenen mukaan
 SubscriptionPayment=Tilaus maksu
 LastSubscriptionDate=Viimeinen merkintäpäivä
 LastSubscriptionAmount=Viime merkinnän määrästä
@@ -234,4 +196,9 @@ Collectivités=Organisaatiot
 Particuliers=Henkilökohtainen
 Entreprises=Yritykset
 DOLIBARRFOUNDATION_PAYMENT_FORM=Voit tehdä tilauksen maksun avulla pankkisiirrolla sivulla <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> Voit maksaa luottokortilla tai PayPal, klikkaa painiketta sivun alalaidassa. <br>
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:12:22).
+# ByProperties=By characteristics
+# MembersStatisticsByProperties=Members statistics by characteristics
+# MembersByNature=Members by nature
+# VATToUseForSubscriptions=VAT rate to use for subscriptions
+# NoVatOnSubscription=No TVA for subscriptions
+# MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription

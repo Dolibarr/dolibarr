@@ -136,7 +136,7 @@ if ($socid > 0)
                 $totalpaye = $fac->getSommePaiement();
 
                 $var=!$var;
-                print "<tr $bc[$var]>";
+                print "<tr ".$bc[$var].">";
 
                 print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
                 print "<td><a href=\"facture/fiche.php?facid=$fac->id\">".img_object($langs->trans("ShowBill"),"bill")." ".$fac->ref."</a></td>\n";
@@ -172,7 +172,7 @@ if ($socid > 0)
                     {
                         $objp = $db->fetch_object($resqlp);
                         //$var=!$var;
-                        print "<tr $bc[$var]>";
+                        print "<tr ".$bc[$var].">";
                         print '<td align="center">'.dol_print_date($db->jdate($objp->dp))."</td>\n";
                         print '<td>';
                         print '&nbsp; &nbsp; &nbsp; '; // Decalage

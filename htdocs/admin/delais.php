@@ -107,7 +107,7 @@ if ($action == 'update')
     	{
     		foreach($delays as $delay)
     		{
-    			if (GETPOST($delay['code']))
+    			if (GETPOST($delay['code']) != '')
     			{
     				dolibarr_set_const($db, $delay['code'], GETPOST($delay['code']), 'chaine', 0, '', $conf->entity);
     			}
@@ -123,15 +123,16 @@ if ($action == 'update')
  * View
  */
 
+$form = new Form($db);
+
 llxHeader();
 
 print_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"),'','setup');
 
 print $langs->transnoentities("DelaysOfToleranceDesc",img_warning());
-print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
+print " ".$langs->trans("OnlyActiveElementsAreShown",DOL_URL_ROOT.'/admin/modules.php')."<br>\n";
 print "<br>\n";
 
-$form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 if ($action == 'edit')

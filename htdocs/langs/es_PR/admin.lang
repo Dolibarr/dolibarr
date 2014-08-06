@@ -1,5 +1,4 @@
 # Dolibarr language file - es_PR - admin 
-CHARSET=UTF-8
 Permission91=Consultar impuestos e IVU
 Permission92=Crear/modificar impuestos e IVU
 Permission93=Eliminar impuestos e IVU

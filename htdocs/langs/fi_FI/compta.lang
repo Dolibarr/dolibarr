@@ -1,36 +1,36 @@
-/*
- * Language code: fi_FI
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 22:07:11
- */
-
-
-// Date 2009-01-19 22:07:11
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - compta
 Accountancy=Kirjanpito
 AccountancyCard=Kirjanpito-kortti
 Treasury=Treasury
 MenuFinancial=Financial
+# TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 OptionMode=Vaihtoehto kirjanpitotietojen
+OptionModeTrue=Vaihtoehto Panos-tuotos
 OptionModeVirtual=Vaihtoehto Credits-Debits
+OptionModeTrueDesc=Tässä yhteydessä, että liikevaihto on laskettu yli maksut (maksupäivät). \\ nThe voimassaoloaika luvut on taattu vain, jos kirjanpitoon on tarkastettu kautta panos / tuotos-ja tilien kautta laskut.
 OptionModeVirtualDesc=Tässä yhteydessä, että liikevaihto on laskettava laskuista (päivämäärä validointi). Kun nämä laskut maksetaan, onko ne maksettu vai ei, ne on mainittu liikevaihto tuotos.
 FeatureIsSupportedInInOutModeOnly=Ominaisuus saatavilla vain CREDITS-VELAT kirjanpitotietojen tilassa (Katso kirjanpidon moduulin määritykset)
+VATReportBuildWithOptionDefinedInModule=Määrät kuvassa on laskettu määrittelemien sääntöjen Tax moduuli setup.
 Param=Setup
+RemainingAmountPayment=Määrä maksu jäljellä:
+AmountToBeCharged=Kokonaismäärä maksaa:
 AccountsGeneral=Tilit
 Account=Tili
 Accounts=Tilit
+# Accountparent=Account parent
+# Accountsparent=Accounts parent
 BillsForSuppliers=Esitykset toimittajille
 Income=Tuotot
 Outcome=Tulos
 ReportInOut=Tulot / tulokset
+ReportTurnover=Liikevaihto
 PaymentsNotLinkedToInvoice=Maksut eivät ole sidoksissa mihinkään lasku, joten ei liity mihinkään kolmannen osapuolen
 PaymentsNotLinkedToUser=Maksut eivät ole sidoksissa mihinkään käyttäjä
 Profit=Voitto
 Balance=Saldo
 Debit=Debet
 Credit=Credit
+# Piece=Voucher
 Withdrawal=Peruuttaminen
 Withdrawals=Nostot
 AmountHTVATRealReceived=HT kerätty
@@ -39,7 +39,11 @@ VATToPay=ALV maksettava
 VATReceived=ALV
 VATToCollect=Alv kerätä
 VATSummary=Alv Yhteenveto
+LT2SummaryES=IRPF Balance
 VATPaid=Alv maksetaan
+LT2PaidES=IRPF Maksettu
+LT2CustomerES=IRPF myynti
+LT2SupplierES=IRPF ostot
 VATCollected=Alv
 ToPay=Maksaa
 ToGet=Palatakseni
@@ -65,16 +69,22 @@ ListOfCustomerPayments=Luettelo asiakkaan maksut
 ListOfSupplierPayments=Luettelo toimittaja maksut
 DatePayment=Maksupäivä
 NewVATPayment=Uuden alv-maksu
+newLT2PaymentES=Uusi IRPF maksu
+LT2PaymentES=IRPF Maksu
+LT2PaymentsES=IRPF maksut
 VATPayment=Alv maksutoimisto
 VATPayments=Alv-maksut
+SocialContributionsPayments=Sosiaaliturvamaksut maksut
+ShowVatPayment=Näytä arvonlisäveron maksaminen
 TotalToPay=Yhteensä maksaa
 TotalVATReceived=Yhteensä ALV
 CustomerAccountancyCode=Asiakas kirjanpitotietojen koodi
-AlreadyPaid=Jo maksanut
+SupplierAccountancyCode=Toimittaja kirjanpitotietojen koodi
 AccountNumberShort=Tilinumero
 AccountNumber=Tilinumero
 NewAccount=Uusi tili
 SalesTurnover=Myynnin liikevaihto
+# SalesTurnoverMinimum=Minimum sales turnover
 ByThirdParties=Bu kolmansien osapuolten
 ByUserAuthorOfInvoice=Laskulla tekijä
 AccountancyExport=Kirjanpidon vienti
@@ -93,91 +103,76 @@ ConfirmPaySocialContribution=Oletko varma, että haluat luokitella tämä yhteis
 DeleteSocialContribution=Poista yhteiskunnallinen
 ConfirmDeleteSocialContribution=Oletko varma, että haluat poistaa tämän yhteiskunnallinen?
 ExportDataset_tax_1=Sosiaaliturvamaksut ja maksut
-AnnualSummaryDueDebtMode=Bilan des RECETTES et dpenses, rsum annuel, en <b>tilassa %sCrances-dettes %s</b> dit <b>comptabilit d'engagement.</b>
-AnnualSummaryInputOutputMode=Bilan des RECETTES et dpenses, rsum annuel, en <b>tilassa %sRecettes-Dpenses %s</b> dit <b>comptabilit de caisse.</b>
+# CalcModeVATDebt=Mode <b>%sVAT on commitment accounting%s</b>.
+# CalcModeVATEngagement=Mode <b>%sVAT on incomes-expenses%s</b>.
+# CalcModeDebt=Mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
+# CalcModeEngagement=Mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>
+# AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
+# AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
 AnnualByCompaniesDueDebtMode=Bilan des RECETTES et dpenses, dtail par tiers, en <b>tilassa %sCrances-dettes %s</b> dit <b>comptabilit d'engagement.</b>
 AnnualByCompaniesInputOutputMode=Bilan des RECETTES et dpenses, dtail par tiers, en <b>tilassa %sRecettes-Dpenses %s</b> dit <b>comptabilit de caisse.</b>
 SeeReportInInputOutputMode=Voir le <b>rapport %sRecettes-Dpenses %s</b> dit <b>comptabilit de caisse</b> pour un calcul sur les paiements effectivement raliss
 SeeReportInDueDebtMode=Voir le <b>rapport %sCrances-dettes %s</b> dit <b>comptabilit d'engagement</b> pour un calcul sur les valmistaa Mises
+# RulesAmountWithTaxIncluded=- Amounts shown are with all taxes included
 RulesResultDue=- Määrät ovat kaikki verot mukaan luettuina <br> - Se sisältää maksamatta laskuja, kulut ja ALV ne on maksettu tai ei. <br> - Se perustuu validointia päivämäärä laskut ja alv ja eräpäivä kuluihin.
-RulesResultInOut=- Määrät ovat kaikki verot mukaan luettuina <br> - Se sisältää todellista maksetaan laskut, kuluja ja arvonlisäveroa. <br> - Se perustuu maksupäivät koskevista laskuista, kulut ANF arvonlisäveroa. <br>
+# RulesResultInOut=- It includes the real payments made on invoices, expenses and VAT. <br>- It is based on the payment dates of the invoices, expenses and VAT.
 RulesCADue=- Se sisältää asiakkaiden vuoksi laskut ne on maksettu tai ei. <br> - Se perustuu validointia päivämäärä nämä laskut. <br>
 RulesCAIn=- Se sisältää kaikki tehokkaan maksut laskut asiakkailta. <br> - Se perustuu maksupäivä näiden laskujen osalta <br>
-VATReportByCustomersInInputOutputMode=Rapport par asiakkaan des TVA collectes et pays (TVA sur encaissement)
-VATReportByCustomersInDueDebtMode=Rapport par asiakkaan des TVA collectes et pays (TVA sur dbit)
-VATReportByQuartersInInputOutputMode=Rapport par trimestre des TVA collectes et pays (TVA sur encaissement)
-VATReportByQuartersInDueDebtMode=Rapport par trimestre des TVA collectes et pays (TVA sur dbit)
-SeeVATReportInInputOutputMode=Voir le <b>rapport %sTVA encaissement %s</b> pour mode de calcul standardi
-SeeVATReportInDueDebtMode=Voir le <b>rapport %sTVA sur dbit %s</b> pour mode de calcul avec vaihtoehto sur les dbits
-RulesVATIn=- Pour les palvelut, le rapport inclut les TVA des rglements effectivement reus ou mis fi se basant sur la date du rglement. <br> - Pour les biens matriels, il inclut les TVA des valmistaa fi se basant sur la date de validointia de la seen.
-RulesVATDue=- Pour les palvelut, le rapport inclut les TVA des valmistaa veroja, payes tai ei fi se basant sur la date de validointia de ces valmistaa. <br> - Pour les biens matriels, il inclut les TVA des valmistaa fi se basant sur la date de validointia de la seen.
-OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait käytä la date de livraison pour tre plus juste.
-PercentOfInvoice=%%/lasku
-Dispatch=Lähetyskeskukset
-Dispatched=Lähetysolosuhteita
-ToDispatch=Lähettämistä
-// Date 2009-01-19 22:07:11
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-// Reference language: en_US
-ReportTurnover=Liikevaihto
-NotUsedForGoods=Ei käytetä tavaroiden
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:45:19).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-// Reference language: en_US
-OptionModeTrue=Vaihtoehto Panos-tuotos
-OptionModeTrueDesc=Tässä yhteydessä, että liikevaihto on laskettu yli maksut (maksupäivät). \ nThe voimassaoloaika luvut on taattu vain, jos kirjanpitoon on tarkastettu kautta panos / tuotos-ja tilien kautta laskut.
-ShowVatPayment=Näytä arvonlisäveron maksaminen
-SupplierAccountancyCode=Toimittaja kirjanpitotietojen koodi
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:44:21).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:26:22).
-// Reference language: en_US
-TaxModuleSetupToModifyRules=Siirry <a href="%s">moduuli setup</a> muuttaa laskentaa koskevia sääntöjä
-VATReportBuildWithOptionDefinedInModule=Määrät kuvassa on laskettu määrittelemien sääntöjen Tax moduuli setup.
-SocialContributionsPayments=Sosiaaliturvamaksut maksut
-ThirdPartyMustBeEditAsCustomer=Kolmannen osapuolen on määriteltävä asiakkaan
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:28:03).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> fi_FI
-RemainingAmountPayment=Määrä maksu jäljellä:
-AmountToBeCharged=Kokonaismäärä maksaa:
-ProposalStats=Tilastot ehdotuksista
-OrderStats=Tilastot tilauksista
-InvoiceStats=Tilasto laskut
-SellsJournal=Myynti lehdessä
-PurchasesJournal=Ostot lehdessä
-RemainToDivide=Remain lähettää:
-WarningDepositsNotIncluded=Talletukset laskut eivät sisälly tähän versioon tämän kirjanpito moduulin.
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 05:43:27).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:10:23).
-// Reference language: en_US -> fi_FI
-LT2SummaryES=IRPF Balance
-LT2PaidES=IRPF Maksettu
-LT2CustomerES=IRPF myynti
-LT2SupplierES=IRPF ostot
-newLT2PaymentES=Uusi IRPF maksu
-LT2PaymentES=IRPF Maksu
-LT2PaymentsES=IRPF maksut
 DepositsAreNotIncluded=- Talletus laskut eivät sisälly
 DepositsAreIncluded=- Talletus laskut kuuluvat
 LT2ReportByCustomersInInputOutputModeES=Raportti kolmannen osapuolen IRPF
-RulesVATInServices=- Palvelujen osalta raportti sisältää alv säännöksiä tosiasiallisesti saanut tai antanut perusteella maksupäivä. <br> - Jos materiaali omaisuutta, se sisältää verolaskun pohjalta laskun päiväyksestä.
+# VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
+# VATReportByCustomersInDueDebtMode=Report by the customer VAT collected and paid
+# VATReportByQuartersInInputOutputMode=Report by rate of the VAT collected and paid
+# VATReportByQuartersInDueDebtMode=Report by rate of the VAT collected and paid
+SeeVATReportInInputOutputMode=Voir le <b>rapport %sTVA encaissement %s</b> pour mode de calcul standardi
+SeeVATReportInDueDebtMode=Voir le <b>rapport %sTVA sur dbit %s</b> pour mode de calcul avec vaihtoehto sur les dbits
+# RulesVATInServices=- For services, the report includes the VAT regulations actually received or issued on the basis of the date of payment.
 RulesVATInProducts=- Jos materiaali omaisuutta, se sisältää verolaskun pohjalta laskun päiväyksestä.
 RulesVATDueServices=- Palvelujen, raportti sisältää ALV laskuja vuoksi, maksettu vai ei, perustuu laskun päivämäärästä.
 RulesVATDueProducts=- Jos materiaali omaisuutta, se sisältää alv laskujen pohjalta laskun päivämäärästä.
+OptionVatInfoModuleComptabilite=Remarque: Pour les biens matriels, il faudrait käytä la date de livraison pour tre plus juste.
+PercentOfInvoice=%%/lasku
+NotUsedForGoods=Ei käytetä tavaroiden
+ProposalStats=Tilastot ehdotuksista
+OrderStats=Tilastot tilauksista
+InvoiceStats=Tilasto laskut
+Dispatch=Lähetyskeskukset
+Dispatched=Lähetysolosuhteita
+ToDispatch=Lähettämistä
+ThirdPartyMustBeEditAsCustomer=Kolmannen osapuolen on määriteltävä asiakkaan
+SellsJournal=Myynti lehdessä
+PurchasesJournal=Ostot lehdessä
 DescSellsJournal=Myynti lehdessä
 DescPurchasesJournal=Ostot lehdessä
 InvoiceRef=Laskun ref.
 CodeNotDef=Ei määritelty
 AddRemind=Lähettäminen saatavissa määrä
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:10:32).
+RemainToDivide= Remain lähettää:
+WarningDepositsNotIncluded=Talletukset laskut eivät sisälly tähän versioon tämän kirjanpito moduulin.
+# DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
+# Pcg_version=Pcg version
+# Pcg_type=Pcg type
+# Pcg_subtype=Pcg subtype
+# InvoiceLinesToDispatch=Invoice lines to dispatch
+# InvoiceDispatched=Dispatched invoices
+# AccountancyDashboard=Accountancy summary
+# ByProductsAndServices=By products and services
+# RefExt=External ref
+# ToCreateAPredefinedInvoice=To create a predefined invoice, create a standard invoice then, without validating it, click onto button "Convert to predefined invoice".
+# LinkedOrder=linked to command
+# ReCalculate=Recalculate
+# Mode1=Methode 1
+# Mode2=Method 2
+# CalculationRuleDesc=To calculate total VAT, there is two methods:<br>Method 1 is rounding vat on each line, then summing them.<br>Method 2 is summing all vat on each line, then rounding result.<br>Final result may differs from few cents. Default mode is mode <b>%s</b>.
+# CalculationRuleDescSupplier=according to supplier, choose appropriate method to apply same calculation rule and get same result expected by your supplier.
+# TurnoverPerProductInCommitmentAccountingNotRelevant=Turnover report per product, when using a <b>cash accountancy</b> mode is not relevant. This report is only available when using <b>engagement accountancy</b> mode (see setup of accountancy module).
+# CalculationMode=Calculation mode
+# COMPTA_PRODUCT_BUY_ACCOUNT=Code comptable par défaut des achats de marchandises
+# COMPTA_PRODUCT_SOLD_ACCOUNT=Code comptable par défaut des ventes de marchandises
+# COMPTA_SERVICE_BUY_ACCOUNT=Code comptable par défaut des achats de services
+# COMPTA_SERVICE_SOLD_ACCOUNT=Code comptable par défaut des ventes de services
+# COMPTA_VAT_ACCOUNT=Code comptable par défaut de la TVA collectée
+# COMPTA_VAT_BUY_ACCOUNT=Code comptable par défaut de la TVA déductible
+# COMPTA_ACCOUNT_CUSTOMER=Accountancy code by default for customer thirdparties
+# COMPTA_ACCOUNT_SUPPLIER=Accountancy code by default for supplier thirdparties

@@ -297,7 +297,7 @@ if ($socid > 0)
 
 	if ($_GET['action'] == 'remove')
 	{
-		$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
 	/*
@@ -338,7 +338,7 @@ if ($socid > 0)
 		{
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{
@@ -384,7 +384,7 @@ if ($socid > 0)
 
 			if ($_GET["action"]=='split' && $_GET['remid'] == $obj->rowid)
 			{
-				print "<tr $bc[$var]>";
+				print "<tr ".$bc[$var].">";
 				print '<td colspan="8">';
 				$amount1=price2num($obj->amount_ttc/2,'MT');
 				$amount2=($obj->amount_ttc-$amount1);
@@ -394,7 +394,7 @@ if ($socid > 0)
 				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 				);
 				$langs->load("dict");
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$obj->rowid, $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($obj->amount_ttc),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&remid='.$obj->rowid, $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($obj->amount_ttc),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 				print '</td>';
 				print '</tr>';
 			}
@@ -495,7 +495,7 @@ if ($socid > 0)
 		{
 			$obj = array_shift($tab_sqlobj);
 			$var = !$var;
-			print "<tr $bc[$var]>";
+			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
 			if ($obj->description == '(CREDIT_NOTE)')
 			{

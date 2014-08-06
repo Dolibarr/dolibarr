@@ -1,13 +1,4 @@
-/*
- * Language code: zh_CN
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - suppliers
 Suppliers=供应商
 Supplier=供应商
 AddSupplier=新增供应商
@@ -19,6 +10,10 @@ ListOfSuppliers=供应商名单
 ShowSupplier=查看供应商
 OrderDate=订购日期
 BuyingPrice=买价
+BuyingPriceMin=最低购买价格
+BuyingPriceMinShort=最小买入价
+# TotalBuyingPriceMin=Total of subproducts buying prices
+# SomeSubProductHaveNoPrices=Some sub-products have no price defined
 AddSupplierPrice=新增供应商的价格
 ChangeSupplierPrice=供应商的价格变化
 ErrorQtyTooLowForThisSupplier=数量过低，供应商或供应商在这此产品没有价格定义
@@ -29,8 +24,10 @@ NoRecordedSuppliers=没有供应商记录
 SupplierPayment=供应商付款
 SuppliersArea=供应商区
 RefSupplierShort=号。供应商
+Availability=可用性
 ExportDataset_fournisseur_1=供应商发票清单和发票的路线
 ExportDataset_fournisseur_2=供应商发票和付款
+ExportDataset_fournisseur_3=供应商的订单和订单行
 ApproveThisOrder=批准这一命令
 ConfirmApproveThisOrder=你确定要批准了这项命令？
 DenyingThisOrder=否认这种秩序
@@ -42,12 +39,4 @@ AddSupplierOrder=建立供应商的订单
 AddSupplierInvoice=创建供应商发票
 ListOfSupplierProductForSupplier=<b>%</b>产品供应商名单和价格<b>的</b> S
 NoneOrBatchFileNeverRan=无或批处理<b>%不是</b>最近跑
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:37:09).
-// Reference language: en_US -> zh_CN
-BuyingPriceMin=最低购买价格
-BuyingPriceMinShort=最小买入价
-Availability=可用性
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:38:10).
+SentToSuppliers=发送到供应商

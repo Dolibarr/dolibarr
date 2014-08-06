@@ -1,13 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-28 13:09:36
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - withdrawals
 StandingOrdersArea=Stående order område
 CustomersStandingOrdersArea=Kunder stående order område
 StandingOrders=Stående order
@@ -28,6 +19,7 @@ RequestStandingOrderTreated=Begäran om stående behandlas order
 CustomersStandingOrders=Kunden stående order
 CustomerStandingOrder=Kunden stående order
 NbOfInvoiceToWithdraw=Nb av fakturan med dra tillbaka begäran
+NbOfInvoiceToWithdrawWithInfo=Nb av faktura med återkalla begäran om kunder som har definierats bankkontoinformation
 InvoiceWaitingWithdraw=Faktura väntar på återkalla
 AmountToWithdraw=Belopp att dra tillbaka
 WithdrawsRefused=Återkallar vägrade
@@ -48,6 +40,7 @@ TransMetod=Metod Transmission
 Send=Skicka
 Lines=Linjer
 StandingOrderReject=Utfärda ett förkasta
+InvoiceRefused=Ladda avvisande till kund
 WithdrawalRefused=Uttag Refuseds
 WithdrawalRefusedConfirm=Är du säker på att du vill ange ett tillbakadragande avslag för samhället
 RefusedData=Datum för avslag
@@ -58,6 +51,7 @@ InvoiceRefused=Ladda avvisande till kund
 Status=Status
 StatusUnknown=Okänd
 StatusWaiting=Väntar
+StatusTrans=Överförs
 StatusCredited=Krediteras
 StatusRefused=Refused
 StatusMotif0=Ospecificerat
@@ -77,13 +71,6 @@ NotifyTransmision=Återkallelse Transmission
 NotifyEmision=Återkallelse utsläpp
 NotifyCredit=Återkallelse Credit
 NumeroNationalEmetter=Nationella sändare Antal
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:13:15).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:32:03).
-// Reference language: en_US -> sv_SE
-NbOfInvoiceToWithdrawWithInfo=Nb av faktura med återkalla begäran om kunder som har definierats bankkontoinformation
-StatusTrans=Överförs
 PleaseSelectCustomerBankBANToWithdraw=Välj information om kunden bankkonto ta ut
 WithBankUsingRIB=För bankkonton med hjälp av RIB
 WithBankUsingBANBIC=För bankkonton som använder IBAN / BIC / SWIFT
@@ -93,6 +80,11 @@ WithdrawalFileNotCapable=Det går inte att skapa filen uttag kvitto för ditt la
 ShowWithdraw=Visa Dra
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Om faktura har minst ett uttag betalning som ännu inte behandlats, kommer det inte anges som betalas för att hantera uttag innan.
 DoStandingOrdersBeforePayments=Detta flikar gör att du kan begära en stående order. När det kommer att vara färdig, kan du skriva betalningen för att stänga fakturan.
+# WithdrawalFile=Withdrawal file
+# SetToStatusSent=Set to status "File Sent"
+# ThisWillAlsoAddPaymentOnInvoice=This will also apply payments to invoices and will classify them as "Paid"
+
+### Notifications
 InfoCreditSubject=Betalning av %s stående order av banken
 InfoCreditMessage=Den stående beställning %s har betalats av banken <br> Uppgifter om betalning: %s
 InfoTransSubject=Överföring av %s stående order till bank
@@ -100,6 +92,5 @@ InfoTransMessage=Den stående beställning %s har transmited till bank med %s %s
 InfoTransData=Belopp: %s <br> Metode: %s <br> Datum: %s
 InfoFoot=Detta är ett automatiskt meddelande skickas av Dolibarr
 InfoRejectSubject=Stående order vägrade
-InfoRejectMessage=Hej, <br><br> att ständig ordning faktura %s relaterade till företagets %s med en mängd %s har avslagits av banken. <br><br> - <br> % $
+# InfoRejectMessage=Hello,<br><br>the standing order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Alternativ på riktigt läget inte var satt, sluta vi efter denna simulering
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:32:37).

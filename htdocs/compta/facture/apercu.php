@@ -149,7 +149,7 @@ if ($id > 0 || ! empty($ref))
 
         print '<tr><td>'.$langs->trans('Discounts');
         print '</td><td colspan="5">';
-        if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+        if ($soc->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_percent);
         else print $langs->trans("CompanyHasNoRelativeDiscount");
 
         if ($absolute_discount > 0)
@@ -316,7 +316,7 @@ if ($id > 0 || ! empty($ref))
             print_titre($langs->trans("Documents"));
             print '<table class="border" width="100%">';
 
-            print "<tr $bc[$var]><td>".$langs->trans("Bill")." PDF</td>";
+            print "<tr ".$bc[$var]."><td>".$langs->trans("Bill")." PDF</td>";
 
             print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$object->ref.'.pdf</a></td>';
             print '<td align="right">'.dol_print_size(dol_filesize($file)). '</td>';
@@ -326,7 +326,7 @@ if ($id > 0 || ! empty($ref))
             // Si fichier detail PDF existe
             if (file_exists($filedetail)) // facture detaillee supplementaire
             {
-                print "<tr $bc[$var]><td>Facture detaillee</td>";
+                print "<tr ".$bc[$var]."><td>Facture detaillee</td>";
 
                 print '<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$object->ref.'-detail.pdf</a></td>';
                 print '<td align="right">'.dol_print_size(dol_filesize($filedetail)).'</td>';

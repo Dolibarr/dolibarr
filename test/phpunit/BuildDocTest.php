@@ -44,8 +44,8 @@ require_once dirname(__FILE__).'/../../htdocs/core/modules/propale/doc/pdf_azur.
 require_once dirname(__FILE__).'/../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/project/pdf/pdf_baleine.modules.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_expedition_merou.modules.php';
-require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_expedition_rouget.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_merou.modules.php';
+require_once dirname(__FILE__).'/../../htdocs/core/modules/expedition/doc/pdf_rouget.modules.php';
 // Mother classes of pdf generators
 require_once dirname(__FILE__).'/../../htdocs/core/modules/facture/modules_facture.php';
 require_once dirname(__FILE__).'/../../htdocs/core/modules/supplier_invoice/modules_facturefournisseur.php';

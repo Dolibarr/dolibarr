@@ -1,34 +1,19 @@
-/*
- * Language code: ja_JP
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ja_JP
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 12:04:11).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:41:06).
-// Reference language: en_US -> ja_JP
+# Dolibarr language file - Source file is en_US - marque pages
 AddThisPageToBookmarks=このページのブックマークに追加する
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:43:24).
-
 Bookmark=ブックマーク
 Bookmarks=ブックマーク
 NewBookmark=新しいブックマーク
 ShowBookmark=ブックマークを表示
 OpenANewWindow=新しいウィンドウを開きます
 ReplaceWindow=現在のウィンドウを置き換える
+BookmarkTargetNewWindowShort=新しいウィンドウ
+BookmarkTargetReplaceWindowShort=現在のウィンドウ
+BookmarkTitle=ブックマークのタイトル
+UrlOrLink=URL
+# BehaviourOnClick=Behaviour when a URL is clicked
+CreateBookmark=ブックマークを作成します。
 SetHereATitleForLink=ブックマークのタイトルを設定する
 UseAnExternalHttpLinkOrRelativeDolibarrLink=外部のhttp URLまたは相対DolibarrのURLを使用して、
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=リンクで開いたページは、現在または新しいウィンドウに表示される必要がある場合に選択します。
 BookmarksManagement=ブックマークの管理
 ListOfBookmarks=ブックマークのリスト
-BookmarkTargetNewWindowShort=新しいウィンドウ
-BookmarkTargetReplaceWindowShort=現在のウィンドウ
-BookmarkTitle=ブックマークのタイトル
-CreateBookmark=ブックマークを作成します。
-UrlOrLink=URL

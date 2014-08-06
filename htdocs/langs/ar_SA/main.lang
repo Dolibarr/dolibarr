@@ -1,32 +1,31 @@
-/*
- * Language code: ar_AR
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-08-11 13:27:01
- */
-
-// Date 2009-08-11 13:27:01
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - main
 DIRECTION=rtl
-#FONTFORPDF=Freemono
+# Note for Chinese:
+# msungstdlight or cid0ct are for traditional Chinese (traditional does not render with Ubuntu pdf reader)
+# stsongstdlight or cid0cs are for simplified Chinese
+# To read Chinese pdf with Linux: sudo apt-get install poppler-data
 FONTFORPDF=DejaVuSans
 FONTSIZEFORPDF=9
 SeparatorDecimal=.
 SeparatorThousand=None
 FormatDateShort=%d/%m/%Y
-FormatDateShortInpu=%d/%m/%Y
+# FormatDateShortInput=%m/%d/%Y
 FormatDateShortJava=dd/MM/yyyy
 FormatDateShortJavaInput=dd/MM/yyyy
 FormatDateShortJQuery=dd/mm/yy
 FormatDateShortJQueryInput=dd/mm/yy
 FormatHourShort=%H:%M
+FormatHourShortDuration=%H:%M
 FormatDateTextShort=%d %b %Y
 FormatDateText=%d %B %Y
 FormatDateHourShort=%d/%m/%Y %H:%M
+# FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=قاعدة بيانات الصدد
+# NoTranslation=No translation
+# NoRecordFound=No record found
+NoError=أي خطأ
 Error=خطأ
 ErrorFieldRequired=الميدان '٪ ق' مطلوب
 ErrorFieldFormat=الميدان '٪ ق' سيئة القيمة
@@ -38,7 +37,10 @@ ErrorConstantNotDefined=معلمة ٪s ق لم تحدد
 ErrorUnknown=Unkown خطأ
 ErrorSQL=خطأ SQL
 ErrorLogoFileNotFound=شعار ملف '٪ ق' لم يتم العثور على
+ErrorGoToGlobalSetup=اذهب إلى 'شركة / مؤسسة' الإعداد لتثبيت هذا
 ErrorGoToModuleSetup=الذهاب الى الوحدة لتحديد هذا الإعداد
+ErrorFailedToSendMail=فشل إرسال البريد (ق= ٪ مرسل ، واستقبال= ٪)
+ErrorAttachedFilesDisabled=إرفاق ملفات الميزة المعوقين على هذا الخادم
 ErrorFileNotUploaded=لم تحميل الملف. تأكد من أن حجمها لا يتجاوز الحد الأقصى المسموح به ، والتي توفر مساحة خالية على القرص الصلب ، وأنه لا يوجد بالفعل ملف بنفس الاسم في هذا الدليل.
 ErrorInternalErrorDetected=اكتشاف الخطأ
 ErrorNoRequestRan=لا يتعارض مع طلب
@@ -54,11 +56,18 @@ ErrorSomeErrorWereFoundRollbackIsDone=تم العثور على بعض الأخط
 ErrorConfigParameterNotDefined=المعلم <b>ل ٪</b> غير محدد Dolibarr داخل ملف <b>conf.php.</b>
 ErrorCantLoadUserFromDolibarrDatabase=فشلت في العثور على المستخدم <b>٪ ق</b> Dolibarr في قاعدة البيانات.
 ErrorNoVATRateDefinedForSellerCountry=خطأ ، لم يعرف لمعدلات ضريبة القيمة المضافة فى البلاد ٪ ق.
+ErrorNoSocialContributionForSellerCountry=خطأ ، لا يوجد نوع المساهمة الاجتماعية المحددة للبلد '%s'.
 ErrorFailedToSaveFile=خطأ ، وفشلت في انقاذ الملف.
 ErrorOnlyPngJpgSupported=خطأ فقط. بابوا نيو غينيا ، وجيه. شكل صورة ملف الدعم.
 ErrorImageFormatNotSupported=PHP الخاص بك لا يدعم وظائف لتحويل الصور من هذا الشكل.
+# SeeAlso=See also %s
+BackgroundColorByDefault=لون الخلفية الافتراضي
+FileWasNotUploaded=يتم تحديد ملف مرفق لكنه لم يكن بعد تحميلها. انقر على "ملف إرفاق" لهذا الغرض.
+NbOfEntries=ملاحظة : إدخالات
+GoToWikiHelpPage=الانترنت تساعد على قراءة (على ضرورة الوصول إلى الإنترنت)
 GoToHelpPage=قراءة مساعدة
 RecordSaved=سجل المحفوظة
+# RecordDeleted=Record deleted
 LevelOfFeature=مستوى الملامح
 NotDefined=غير معرف
 DefinedAndHasThisValue=وحددت قيمة
@@ -108,9 +117,11 @@ Activated=تفعيل
 Closed=مغلقة
 Closed2=مغلقة
 Enabled=مكن
+# Deprecated=Deprecated
 Disable=يعطل
 Disabled=المعاقين
 Add=إضافة
+AddLink=إضافة وصلة
 Update=تحديث
 AddActionToDo=إضافة إلى العمل لا
 AddActionDone=أضف العمل به
@@ -132,17 +143,24 @@ TestConnection=اختبار الصدد
 ToClone=استنساخ
 ConfirmClone=اختر البيانات التي تريد استنساخ :
 NoCloneOptionsSpecified=لا توجد بيانات محددة للاستنساخ.
+Of=من
+# Go=Go
+# Run=Run
 CopyOf=نسخة من
 Show=يظهر
 ShowCardHere=وتظهر البطاقة
 Search=بحث
+SearchOf=البحث
 Valid=صحيح
 Approve=الموافقة
 ReOpen=إعادة فتح
 Upload=ارسال الملف
+# ToLink=Link
 Select=رتخا
 Choose=يختار
 ChooseLangage=من فضلك اختر اللغة
+Resize=تغيير حجم
+Recenter=Recenter
 Author=المؤلف
 User=مستخدم
 Users=المستخدمين
@@ -178,6 +196,8 @@ DefaultModel=النموذج الافتراضي
 Action=العمل
 About=حول
 Number=عدد
+NumberByMonth=عدد من الشهر
+AmountByMonth=كمية من شهر
 Numero=عدد
 Limit=الحد
 Limits=حدود
@@ -211,6 +231,7 @@ DateProcess=تاريخ العملية
 DatePlanShort=تاريخ تعتزم
 DateRealShort=التاريخ الحقيقي.
 DateBuild=التقرير بناء التاريخ
+DatePayment=تاريخ الدفع
 DurationYear=سنة
 DurationMonth=الشهر
 DurationWeek=الأسبوع
@@ -240,7 +261,17 @@ Quadri=قادري
 MonthOfDay=خلال شهر من اليوم
 HourShort=حاء
 Rate=سعر
+# UseLocalTax=Include tax
 Bytes=بايت
+KiloBytes=كيلو بايت
+MegaBytes=ميغا بايت
+GigaBytes=غيغا بايت
+TeraBytes=تيرابايت
+b=ب.
+Kb=كيلو بايت
+Mb=ميغابايت
+Gb=غيغابايت
+Tb=مرض السل
 Cut=قص
 Copy=نسخة
 Paste=لصق
@@ -262,6 +293,10 @@ AmountTTCShort=المبلغ (شركة الضريبية)
 AmountHT=المبلغ (صافي الضرائب)
 AmountTTC=المبلغ (شركة الضريبية)
 AmountVAT=مبلغ الضريبة على القيمة المضافة
+# AmountLT1=Amount tax 2
+# AmountLT2=Amount tax 3
+AmountLT1ES=كمية الطاقة المتجددة
+AmountLT2ES=مبلغ IRPF
 AmountTotal=المبلغ الإجمالي
 AmountAverage=متوسط المبلغ
 PriceQtyHT=سعر هذه الكمية (بعد خصم الضريبة)
@@ -277,10 +312,16 @@ TotalHT=المجموع (الصافي للضريبة)
 TotalTTC=المجموع (شركة الضريبية)
 TotalTTCToYourCredit=المجموع (شركة الضريبية) الائتمان الخاصة بك
 TotalVAT=مجموع الضريبة على القيمة المضافة
+# TotalLT1=Total tax 2
+# TotalLT2=Total tax 3
+TotalLT1ES=مجموع الطاقة المتجددة
+TotalLT2ES=مجموع IRPF
 IncludedVAT=وتشمل الضريبة على القيمة المضافة
 HT=بعد خصم الضرائب
 TTC=شركة ضريبة على القيمة المضافة
 VAT=ضريبة القيمة المضافة
+LT1ES=تعاود
+LT2ES=IRPF
 VATRate=سعر الضريبة على القيمة المضافة
 Average=متوسط
 Sum=وخلاصة القول
@@ -290,11 +331,13 @@ Option=الخيار
 List=قائمة
 FullList=القائمة الكاملة
 Statistics=احصاءات
+OtherStatistics=آخر الإحصاءات
 Status=حالة
+# ShortInfo=Info.
 Ref=المرجع.
 RefSupplier=المرجع. المورد
 RefPayment=المرجع. الدفع
-CommercialProposals=مقترحات تجارية
+CommercialProposalsShort=مقترحات تجارية
 Comment=التعليق
 Comments=تعليقات
 ActionsToDo=الإجراءات للقيام
@@ -302,11 +345,16 @@ ActionsDone=إجراءات عمله
 ActionsToDoShort=القيام
 ActionsRunningshort=بدأت
 ActionsDoneShort=فعل
+ActionNotApplicable=لا ينطبق
 ActionRunningNotStarted=لم تبدأ
 ActionRunningShort=بدأت
 ActionDoneShort=انتهى
+CompanyFoundation=الشركة / المؤسسة
 ContactsForCompany=اتصالات لهذا الطرف الثالث
+# ContactsAddressesForCompany=Contacts/addresses for this third party
+# AddressesForCompany=Addresses for this third party
 ActionsOnCompany=الأعمال حول هذا الطرف الثالث
+ActionsOnMember=أحداث حول هذا العضو
 NActions=ق ٪ الإجراءات
 NActionsLate=ق ٪ في وقت متأخر
 Filter=فلتر
@@ -323,6 +371,7 @@ OtherInformationsBoxes=معلومات أخرى صناديق
 DolibarrBoard=مجلس Dolibarr
 DolibarrStateBoard=احصاءات
 DolibarrWorkBoard=مهام عمل المجلس
+Available=متاح
 NotYetAvailable=لم تتوفر بعد
 NotAvailable=غير متاحة
 Popularity=شعبية
@@ -339,7 +388,7 @@ OtherInformations=معلومات أخرى
 Quantity=الكمية
 Qty=الكمية
 ChangedBy=تغيير
-ReCalculate=إعادة بناء
+# ReCalculate=Recalculate
 ResultOk=النجاح
 ResultKo=فشل
 Reporting=الإبلاغ
@@ -354,6 +403,7 @@ Unknown=غير معروف
 General=العامة
 Size=حجم
 Received=وردت
+Paid=دفع
 Topic=Sujet
 ByCompanies=الشركات
 ByUsers=من قبل المستخدمين
@@ -371,6 +421,7 @@ Late=متأخر
 Photo=صورة
 Photos=الصور
 AddPhoto=إضافة صورة
+Login=تسجيل الدخول
 CurrentLogin=ادخل الحالي
 January=كانون الثاني / يناير
 February=شباط / فبراير
@@ -384,6 +435,18 @@ September=أيلول / سبتمبر
 October=تشرين الأول / أكتوبر
 November=تشرين الثاني / نوفمبر
 December=كانون الأول / ديسمبر
+JanuaryMin=يناير
+FebruaryMin=فبراير
+MarchMin=مارس
+AprilMin=أبريل
+MayMin=قد
+JuneMin=يونيو
+JulyMin=يوليو
+AugustMin=أغسطس
+SeptemberMin=سبتمبر
+OctoberMin=أكتوبر
+NovemberMin=نوفمبر
+DecemberMin=ديسمبر
 Month01=كانون الثاني / يناير
 Month02=فبراير
 Month03=مارس
@@ -409,6 +472,7 @@ MonthShort10=أكتوبر
 MonthShort11=نوفمبر
 MonthShort12=ديسمبر
 AttachedFiles=الملفات والوثائق المرفقة
+FileTransferComplete=تم تحميل الملف بنجاح
 DateFormatYYYYMM=سنة ملم
 DateFormatYYYYMMDD=سنة ملم - دال
 DateFormatYYYYMMDDHHMM=سنة ملم بين سمو دال : س.
@@ -419,6 +483,8 @@ Report=تقرير
 Keyword=الفحص السنوي clé
 Legend=أسطورة
 FillTownFromZip=شغل البلدة من الرمز البريدي
+# Fill=Fill
+# Reset=Reset
 ShowLog=وتظهر الدخول
 File=ملف
 Files=ملفات
@@ -426,12 +492,15 @@ NotAllowed=غير مسموح
 ReadPermissionNotAllowed=إذن لا يسمح للقراءة
 AmountInCurrency=المبلغ بالعملة ق ٪
 Example=مثال
+Examples=أمثلة
 NoExample=على سبيل المثال لا
 FindBug=تقرير خلل
 NbOfThirdParties=عدد من الأطراف الثالثة
 NbOfCustomers=عدد من العملاء
 NbOfLines=عدد الخطوط
 NbOfObjects=عدد الأجسام
+# NbOfReferers=Number of referrers
+# Referers=Consumption
 TotalQuantity=الكمية الإجمالية
 DateFromTo=ل٪ من ق ق ٪
 DateFrom=من ق ٪
@@ -470,6 +539,7 @@ CloseWindow=إغلاق النافذة
 Question=السؤال
 Response=رد
 Priority=الأولوية
+SendByMail=أرسل عن طريق البريد الالكتروني
 MailSentBy=البريد الإلكتروني التي بعث بها
 TextUsedInTheMessageBody=هيئة البريد الإلكتروني
 SendAcknowledgementByMail=ارسال Ack. عن طريق البريد الإلكتروني
@@ -483,6 +553,7 @@ GoBack=العودة
 CanBeModifiedIfOk=يمكن تعديلها إذا كان صحيحا
 CanBeModifiedIfKo=يمكن تعديلها إذا لم يكن صحيحا
 RecordModifiedSuccessfully=سجل تعديل بنجاح
+# RecordsModified=%s records modified
 AutomaticCode=مدونة الآلي
 NotManaged=لم يفلح
 FeatureDisabled=سمة المعوقين
@@ -501,6 +572,7 @@ Canceled=ألغى
 YouCanChangeValuesForThisListFromDictionnarySetup=يمكنك تغيير القيم لهذه القائمة من قائمة الإعداد -- dictionnary
 Color=لون
 Documents=ربط الملفات
+DocumentsNb=ملفات مرتبطة (%s)
 Documents2=وثائق
 BuildDocuments=ولدت وثائق
 UploadDisabled=تحميل المعوقين
@@ -512,6 +584,7 @@ ThisLimitIsDefinedInSetup=Dolibarr الحد (القائمة المنزل الإ�
 NoFileFound=لا الوثائق المحفوظة في هذا المجلد
 CurrentUserLanguage=الصيغة الحالية
 CurrentTheme=الموضوع الحالي
+# CurrentMenuManager=Current menu manager
 DisabledModules=والمعوقين وحدات
 For=لأجل
 ForCustomer=الزبون
@@ -529,60 +602,12 @@ FreeZone=نص حر
 CloneMainAttributes=استنساخ وجوه مع السمات الرئيسية
 PDFMerge=دمج الشعبي
 Merge=دمج
-Day1=الاثنين
-Day2=الثلاثاء
-Day3=الأربعاء
-Day4=الخميس
-Day5=جمعة
-Day6=السبت
-Day0=الأحد
-ShortMonday=م
-ShortTuesday=تي
-ShortWednesday=دبليو
-ShortThursday=تي
-ShortFriday=واو
-ShortSaturday=دإ
-ShortSunday=دإ
-Login=تسجيل الدخول
-ErrorGoToGlobalSetup=اذهب إلى 'شركة / مؤسسة' الإعداد لتثبيت هذا
-ErrorFailedToSendMail=فشل إرسال البريد (ق= ٪ مرسل ، واستقبال= ٪)
-ErrorAttachedFilesDisabled=إرفاق ملفات الميزة المعوقين على هذا الخادم
-GoToWikiHelpPage=الانترنت تساعد على قراءة (على ضرورة الوصول إلى الإنترنت)
-CompanyFoundation=الشركة / المؤسسة
-FileTransferComplete=تم تحميل الملف بنجاح
-Paid=دفع
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 21:04:44).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:16:46).
-// Reference language: en_US
-FormatHourShortDuration=%H:%M
-NoError=أي خطأ
-ErrorNoSocialContributionForSellerCountry=خطأ ، لا يوجد نوع المساهمة الاجتماعية المحددة للبلد '%s'.
-BackgroundColorByDefault=لون الخلفية الافتراضي
-FileWasNotUploaded=يتم تحديد ملف مرفق لكنه لم يكن بعد تحميلها. انقر على "ملف إرفاق" لهذا الغرض.
-NbOfEntries=ملاحظة : إدخالات
-Resize=تغيير حجم
-Recenter=Recenter
-NumberByMonth=عدد من الشهر
-KiloBytes=كيلو بايت
-MegaBytes=ميغا بايت
-GigaBytes=غيغا بايت
-b=ب.
-Kb=كيلو بايت
-Mb=ميغابايت
-Gb=غيغابايت
-AmountLT1ES=كمية الطاقة المتجددة
-AmountLT2ES=مبلغ IRPF
-TotalLT1ES=مجموع الطاقة المتجددة
-TotalLT2ES=مجموع IRPF
-Available=متاح
-Examples=أمثلة
-SendByMail=أرسل عن طريق البريد الالكتروني
-DocumentsNb=ملفات مرتبطة (%s)
 PrintContentArea=وتظهر الصفحة الرئيسية لطباعة ناحية المحتوى
+# MenuManager=Menu manager
 NoMenu=لا القائمة الفرعية
 WarningYouAreInMaintenanceMode=انذار ، كنت في وضع الصيانة ، <b>%s</b> الدخول فقط بحيث يتم السماح لاستخدام التطبيق في الوقت الراهن.
+CoreErrorTitle=نظام خطأ
+CoreErrorMessage=عذرا، حدث خطأ. تحقق من سجلات أو اتصل بمسؤول النظام.
 CreditCard=بطاقة الائتمان
 FieldsWithAreMandatory=حقول إلزامية مع <b>%s</b>
 FieldsWithIsForPublic=<b>%s</b> تظهر الحقول التي تحتوي على قائمة العامة للأعضاء. إذا كنت لا تريد هذا ، والتحقق من "العامة" مربع.
@@ -599,37 +624,6 @@ Hidden=مخفي
 Resources=موارد
 Source=مصدر
 Prefix=بادئة
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:18:02).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:55:27).
-// Reference language: en_US -> ar_SA
-AddLink=إضافة وصلة
-Of=من
-SearchOf=البحث
-AmountByMonth=كمية من شهر
-DatePayment=تاريخ الدفع
-TeraBytes=تيرابايت
-Tb=مرض السل
-LT1ES=تعاود
-LT2ES=IRPF
-OtherStatistics=آخر الإحصاءات
-ActionNotApplicable=لا ينطبق
-ActionsOnMember=أحداث حول هذا العضو
-JanuaryMin=يناير
-FebruaryMin=فبراير
-MarchMin=مارس
-AprilMin=أبريل
-MayMin=قد
-JuneMin=يونيو
-JulyMin=يوليو
-AugustMin=أغسطس
-SeptemberMin=سبتمبر
-OctoberMin=أكتوبر
-NovemberMin=نوفمبر
-DecemberMin=ديسمبر
-CoreErrorTitle=نظام خطأ
-CoreErrorMessage=عذرا، حدث خطأ. تحقق من سجلات أو اتصل بمسؤول النظام.
 Before=قبل
 After=بعد
 IPAddress=عنوان IP
@@ -651,6 +645,25 @@ ByYear=بحلول العام
 ByMonth=من قبل شهر
 ByDay=بعد يوم
 BySalesRepresentative=بواسطة مندوب مبيعات
+# LinkedToSpecificUsers=Linked to a particular user contact
+# DeleteAFile=Delete a file
+# ConfirmDeleteAFile=Are you sure you want to delete file
+# NoResults=No results
+# ModulesSystemTools=Modules tools
+# Test=Test
+# Element=Element
+# NoPhotoYet=No pictures available yet
+# HomeDashboard=Home summary
+# Deductible=Deductible
+# from=from
+# toward=toward
+# Access=Access
+# HelpCopyToClipboard=Use Ctrl+C to copy to clipboard
+# SaveUploadedFileWithMask=Save file on server with name "<strong>%s</strong>" (otherwise "%s")
+# OriginFileName=Original filename
+# SetDemandReason=Set source
+
+# Week day
 Monday=يوم الاثنين
 Tuesday=الثلاثاء
 Wednesday=الأربعاء
@@ -665,4 +678,17 @@ ThursdayMin=ال
 FridayMin=الاب
 SaturdayMin=SA
 SundayMin=سو
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 15:57:59).
+Day1=الاثنين
+Day2=الثلاثاء
+Day3=الأربعاء
+Day4=الخميس
+Day5=جمعة
+Day6=السبت
+Day0=الأحد
+ShortMonday=م
+ShortTuesday=تي
+ShortWednesday=دبليو
+ShortThursday=تي
+ShortFriday=واو
+ShortSaturday=دإ
+ShortSunday=دإ

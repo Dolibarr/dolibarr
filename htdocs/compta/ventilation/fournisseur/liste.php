@@ -74,7 +74,7 @@ if ($result)
     {
       $objp = $db->fetch_object($result);
       $var=!$var;
-      print "<tr $bc[$var]>";
+      print "<tr ".$bc[$var].">";
 
       print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';

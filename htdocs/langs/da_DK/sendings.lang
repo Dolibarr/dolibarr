@@ -1,19 +1,9 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - sendings
 RefSending=Ref. afsendelse
 Sending=Sender
 Sendings=Sendings
+Shipment=Sender
+Shipments=Forsendelser
 Receivings=Receivings
 SendingsArea=Sendings område
 ListOfSendings=Liste over sendings
@@ -23,6 +13,7 @@ LastSendings=Seneste %s sendings
 SearchASending=Søg en sendeorganisation
 StatisticsOfSendings=Statistik over sendings
 NbOfSendings=Antal sendings
+# NumberOfShipmentsByMonth=Number of shipments by month
 SendingCard=Afsendelse kortet
 NewSending=Ny afsendelse
 CreateASending=Opret en sendeorganisation
@@ -38,10 +29,14 @@ DateSendingShort=Dato for afsendelse orden
 SendingsForSameOrder=Sendings for denne ordre
 SendingsAndReceivingForSameOrder=Sendings og receivings for denne ordre
 SendingsToValidate=Henvist til validere
+StatusSendingCanceled=Aflyst
 StatusSendingDraft=Udkast
 StatusSendingValidated=Valideret (produkter til skib eller allerede er afsendt)
+StatusSendingProcessed=Forarbejdet
+StatusSendingCanceledShort=Aflyst
 StatusSendingDraftShort=Udkast
 StatusSendingValidatedShort=Valideret
+StatusSendingProcessedShort=Forarbejdet
 SendingSheet=Afsendelse ark
 Carriers=Carriers
 Carrier=Carrier
@@ -53,39 +48,29 @@ ConfirmCancelSending=Er du sikker på at du vil annullere denne sende?
 GenericTransport=Generic transport
 Enlevement=Fået efter kunde
 DocumentModelSimple=Simpelt dokument model
-WarningNoQtyLeftToSend=Advarsel, ikke produkter som venter på at blive afsendt.
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-StatsOnShipmentsOnlyValidated=Statistik gennemført om overførsel kun valideret
-SendingMethodCATCH=Fangst af kunden
-SendingMethodTRANS=Transporter
-SendingMethodCOLSUI=Colissimo
-DocumentModelSirocco=Simpelt dokument model for levering kvitteringer
-DocumentModelTyphon=Mere komplet dokument model for levering kvitteringer (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-Shipments=Forsendelser
-StatusSendingCanceled=Aflyst
-StatusSendingCanceledShort=Aflyst
 DocumentModelMerou=Merou A5 model
+WarningNoQtyLeftToSend=Advarsel, ikke produkter som venter på at blive afsendt.
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
 DateDeliveryPlanned=Høvlet leveringsdato
 DateReceived=Dato levering modtaget
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:57).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 15:59:19).
-// Reference language: en_US -> da_DK
 SendShippingByEMail=Send forsendelse via e-mail
 SendShippingRef=Send forsendelse %s
 ActionsOnShipping=Arrangementer på forsendelse
 LinkToTrackYourPackage=Link til at spore din pakke
 ShipmentCreationIsDoneFromOrder=For øjeblikket er skabelsen af ​​en ny forsendelse udført af ordrekortet.
+# RelatedShippings=Related shippings
+# ShipmentLine=Shipment line
+# CarrierList=List of transporters
+
+# Sending methods
+SendingMethodCATCH=Fangst af kunden
+SendingMethodTRANS=Transporter
+SendingMethodCOLSUI=Colissimo
+
+# ModelDocument
+DocumentModelSirocco=Simpelt dokument model for levering kvitteringer
+DocumentModelTyphon=Mere komplet dokument model for levering kvitteringer (logo. ..)
+
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER ikke defineret
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:02:11).
+# SumOfProductVolumes=Sum of product volumes
+# SumOfProductWeights=Sum of product weights

@@ -1,124 +1,99 @@
-/*
- * Language code: ro_RO
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:32:52
- */
-
-
-// Date 2009-01-19 21:32:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
-ContractsArea=Contractele zona
-ListOfContracts=Lista de contracte
-LastContracts=Ultima modificare contracte %s
+# Dolibarr language file - Source file is en_US - contracts
+ContractsArea=Zona Contracte
+ListOfContracts=Lista contracte
+LastContracts=Ultimele %s contracte modificare
 AllContracts=Toate contractele
-ContractCard=Contract de carte
-ContractStatus=Contractul de stare
-ContractStatusNotRunning=Nu rulează
-ContractStatusRunning=Rularea
-ContractStatusDraft=Proiect
+ContractCard=Fişă Contract
+ContractStatus=Status Contract
+ContractStatusNotRunning=Fără service
+ContractStatusRunning=În service
+ContractStatusDraft=Nevalidat
 ContractStatusValidated=Validat
 ContractStatusClosed=Închis
-ServiceStatusInitial=Nu rulează
-ServiceStatusRunning=Rularea
-ServiceStatusLate=Rularea, expirat
+ServiceStatusInitial=Inactiv
+ServiceStatusRunning=În service
+ServiceStatusNotLate=În service,nu a expirat
+ServiceStatusNotLateShort=Neexpirat
+ServiceStatusLate=În service, expirat
+ServiceStatusLateShort=Expirat
 ServiceStatusClosed=Închis
-ServicesLegend=Servicii de legenda
+ServicesLegend=Legendă Servicii
 Contracts=Contracte
 Contract=Contract
-NoContracts=Nu contractelor
+NoContracts=Nici un contract
 MenuServices=Servicii
-MenuInactiveServices=Servicii care nu sunt active
-MenuRunningServices=Rularea servicii
-MenuExpiredServices=Expirat servicii
-MenuClosedServices=Închis servicii
-NewContract=Nou contract
-AddContract=Adauga contract
-SearchAContract=Cautati un contract
-DeleteAContract=Ştergeţi un contract
-CloseAContract=Aproape un contract
-ConfirmDeleteAContract=Sunteţi sigur că doriţi să ştergeţi acest contract şi toate serviciile sale?
-ConfirmValidateContract=Sunteţi sigur că doriţi pentru a valida acest contract?
-ConfirmCloseContract=Acest lucru se va închide toate serviciile (activă sau nu). Sunteţi sigur că vreţi să închideţi acest contract?
-ConfirmCloseService=Sunteţi sigur că vreţi să închideţi acest serviciu cu data <b>de %s?</b>
-ValidateAContract=Validate un contract
-ActivateService=Activare serviciu
-ConfirmActivateService=Sunteţi sigur că doriţi să activaţi acest serviciu cu data <b>de %s?</b>
-DateContract=Contract de data
-DateServiceActivate=Data de activare a serviciului
-DateServiceUnactivate=Data de serviciu unactivation
-DateServiceStart=Data de inceput de serviciu
-DateServiceEnd=Data de sfârşit de serviciu
-ShowContract=Arata contract
-ListOfServices=Lista de servicii
-ListOfRunningContractsLines=Lista de rularea contractului linii
-ListOfRunningServices=Lista de servicii care rulează
-NotActivatedServices=Nu activat servicii (printre validate de contracte)
-BoardNotActivatedServices=Servicii pentru a activa în rândul validate de contracte
-LastContracts=Ultima% contracte
-LastActivatedServices=Ultima %s activat servicii
-LastModifiedServices=Ultima %s modificate servicii
-EditServiceLine=Editare serviciu linie
+MenuInactiveServices=Servicii inactive
+MenuRunningServices=Servicii active
+MenuExpiredServices=Servicii expirate
+MenuClosedServices=Servicii închise
+NewContract=Contract nou
+AddContract=Adaugă contract
+SearchAContract=Caută contract
+DeleteAContract=Şterge contract
+CloseAContract=Închide contract
+ConfirmDeleteAContract=Sigur doriţi să ştergeţi acest contract şi toate serviciile sale?
+ConfirmValidateContract=Sigur doriţi să validaţi acest contract  <b>%s</b>?
+ConfirmCloseContract=Acest lucru se va închide toate serviciile (active sau nu). Sigur vreţi să închideţi acest contract?
+ConfirmCloseService=Sigur vreţi să închideţi acest serviciu cu data <b>%s</b> ?
+ValidateAContract=Validează contract
+ActivateService=Activeazăserviciul
+ConfirmActivateService=Sigur doriţi să activaţi acest serviciu cu data<b>%s</b> ?
+RefContract=Referinţă contract
+DateContract=Data Contract
+DateServiceActivate=Data  activare Serviciu
+DateServiceUnactivate=Data  dezactivare Serviciu
+DateServiceStart=Data  inceput  service
+DateServiceEnd=Data  sfârşit servicie
+ShowContract=Afişează contract
+ListOfServices=Lista  servicii
+ListOfInactiveServices=Lista  servicii inactive
+ListOfExpiredServices=Lista  servicii active expirate
+ListOfClosedServices=Lista  servicii închise
+ListOfRunningContractsLines=Lista liniilor contractului in service
+ListOfRunningServices=Lista servicii active
+NotActivatedServices=Servicii  inactive (printre contracte validate  )
+BoardNotActivatedServices=Servicii de activat în contractele validate
+LastContracts=Ultimele %s contracte modificare
+LastActivatedServices=Ultimele %s servicii  activate
+LastModifiedServices=Ultimele %s servicii modificate
+EditServiceLine=Editează  linie serviciu
 ContractStartDate=Data începerii
-ContractEndDate=Data de final
-DateStartPlanned=Planificate data de început
-DateStartPlannedShort=Planificate data de început
-DateEndPlanned=Planificate data de sfârşit
-DateEndPlannedShort=Planificate data de sfârşit
-DateStartReal=Real Data începerii
-DateStartRealShort=Real Data începerii
-DateEndReal=Real data de sfârşit
-DateEndRealShort=Real data de sfârşit
-NbOfServices=Nb de servicii
+ContractEndDate=Data terminării
+DateStartPlanned=Data începerii planificată
+DateStartPlannedShort=Data începerii planificată
+DateEndPlanned=Data terminării planificată
+DateEndPlannedShort=Data terminării planificată
+DateStartReal=Data începerii efectivă
+DateStartRealShort=Data începerii efectivă
+DateEndReal=Data terminăriii efectivă
+DateEndRealShort=Data terminăriii efectivă
+NbOfServices=Nb  servicii
 CloseService=Inchide serviciu
-ServicesNomberShort= %s serviciu (e)
-RunningServices=Rularea servicii
-BoardRunningServices=Expirat execută servicii
-ServiceStatus=Stare de serviciu
-DraftContracts=Schiţe de contracte
-CloseRefusedBecauseOneServiceActive=Contractul nu poate fi închisă după cum există cel puţin un serviciu deschis pe ea
-CloseAllContracts=Închideţi toate contractele
-MoveToAnotherContract=Mutare serviciu într-un alt contract.
-ConfirmMoveToAnotherContract=Am choosed nou contract de ţintă şi de a confirma Vreau să mutaţi acest serviciu în acest contract.
-ConfirmMoveToAnotherContractQuestion=Alegeţi, în care contract existent (de acelaşi terţ), în care doriţi să mutaţi acest serviciu pentru a?
+ServicesNomberShort=%s serviciu (ii)
+RunningServices=Servicii active
+BoardRunningServices=Servicii active şi expirate ăn contract
+ServiceStatus=Status  serviciu
+DraftContracts=Contracte nevalidate
+CloseRefusedBecauseOneServiceActive=Contractul nu poate fi închis după cum există cel puţin un serviciu deschis pe ea
+CloseAllContracts=Închide toateliniile de contracte
+DeleteContractLine=Şterge o linie de contract
+ConfirmDeleteContractLine=Sigur doriţi să ştergeţi această linie de contract ?
+MoveToAnotherContract=Mută serviciu într-un alt contract.
+ConfirmMoveToAnotherContract=Am ales nou contract țintă și confirm mutarea acestui serviciu în acest contract.
+ConfirmMoveToAnotherContractQuestion=Alegeţi, contractul existent (cu acelaşi terţ), în care doriţi să mutaţi acest serviciu ?
+PaymentRenewContractId=Reînnoiţi linie contract  (numărul %s)
+ExpiredSince=Data expirării
+RelatedContracts=Contracte asociate
+NoExpiredServices=Nu expirate servicii active
+ListOfServicesToExpireWithDuration=Lista servicii care expiră în %s zile
+ListOfServicesToExpireWithDurationNeg=Lista serviciilor expirate de mai bine de %s zile
+ListOfServicesToExpire=Lista  servicii care expiră
+NoteListOfYourExpiredServices=Această listă conține numai serviciile pentru terții la care sunteţi reprezentant de vânzării.
+
+##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Reprezentant vanzari de semnare a contractului
 TypeContact_contrat_internal_SALESREPFOLL=Sales reprezentative următoarele-up contract
-TypeContact_contrat_external_BILLING=Factură client de contact
-TypeContact_contrat_external_CUSTOMER=După-up client de contact
-TypeContact_contrat_external_SALESREPSIGN=Semnarea contractului de client de contact
-// Date 2009-01-19 21:32:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-// Reference language: en_US
-ServiceStatusNotLate=Rularea, nu a expirat
-ServiceStatusNotLateShort=Nu expirat
-ServiceStatusLateShort=Expirat
-ListOfInactiveServices=Lista de servicii nu activă
-ListOfExpiredServices=Lista de servicii active expirat
-ListOfClosedServices=Lista de servicii închis
-DeleteContractLine=Ştergeţi un contract de linie
-ConfirmDeleteContractLine=Sunteţi sigur că doriţi să ştergeţi acest contract de linie?
-PaymentRenewContractId=Reînnoiţi contract linie (numărul %s)
-ExpiredSince=Data expirării
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:12:07).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:36:47).
-// Reference language: en_US
-RelatedContracts=contracte conexe
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:37:11).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> ro_RO
-Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON constanta nu a fost definit
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:16:44).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 17:23:15).
-// Reference language: en_US -> ro_RO
-NoExpiredServices=Nu expirate servicii active
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 17:24:24).
+TypeContact_contrat_external_BILLING=Contact client facturare contract
+TypeContact_contrat_external_CUSTOMER=Contact client urmărire contract
+TypeContact_contrat_external_SALESREPSIGN=Contact client semnarecontract
+Error_CONTRACT_ADDON_NotDefined=Constanta  CONTRACT_ADDON nu a fost definită

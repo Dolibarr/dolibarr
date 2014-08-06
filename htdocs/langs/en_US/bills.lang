@@ -1,5 +1,4 @@
-# Dolibarr language file - en_US - bills
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - bills
 Bill=Invoice
 Bills=Invoices
 BillsCustomers=Customer's invoices
@@ -33,7 +32,6 @@ ReplaceInvoice=Replace invoice %s
 ReplacementInvoice=Replacement invoice
 ReplacedByInvoice=Replaced by invoice %s
 ReplacementByInvoice=Replaced by invoice
-CorrectInvoice=Correct invoice %s
 CorrectInvoice=Correct invoice %s
 CorrectionInvoice=Correction invoice
 UsedByInvoice=Used to pay invoice %s
@@ -85,6 +83,7 @@ ClassifyCanceled=Classify 'Abandoned'
 ClassifyClosed=Classify 'Closed'
 CreateBill=Create Invoice
 AddBill=Add invoice or credit note
+AddToDraftInvoices=Add to draft invoice
 DeleteBill=Delete invoice
 SearchACustomerInvoice=Search for a customer invoice
 SearchASupplierInvoice=Search for a supplier invoice
@@ -199,6 +198,7 @@ StandingOrders=Standing orders
 StandingOrder=Standing order
 NoDraftBills=No draft invoices
 NoOtherDraftBills=No other draft invoices
+NoDraftInvoices=No draft invoices
 RefBill=Invoice ref
 ToBill=To bill
 RemainderToBill=Remainder to bill
@@ -383,13 +383,13 @@ PaymentInvoiceRef=Payment invoice %s
 ValidateInvoice=Validate invoice
 Cash=Cash
 Reported=Delayed
-DisabledBecausePayments=Not possible since there is some payments
-CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified payed
+DisabledBecausePayments=Not possible since there are some payments
+CantRemovePaymentWithOneInvoicePaid=Can't remove payment since there is at least one invoice classified paid
 ExpectedToPay=Expected payment
-PayedByThisPayment=Payed by this payment
-ClosePaidInvoicesAutomatically=Classify "Payed" all standard or replacement invoices entirely payed. 
-ClosePaidCreditNotesAutomatically=Classify "Payed" all credit notes entirely paid back. 
-AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Payed".
+PayedByThisPayment=Paid by this payment
+ClosePaidInvoicesAutomatically=Classify "Paid" all standard or replacement invoices entirely paid. 
+ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back. 
+AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
 ToMakePayment=Pay
 ToMakePaymentBack=Pay back
 ListOfYourUnpaidInvoices=List of unpaid invoices
@@ -405,9 +405,10 @@ TypeContact_invoice_supplier_external_BILLING=Supplier invoice contact
 TypeContact_invoice_supplier_external_SHIPPING=Supplier shipping contact
 TypeContact_invoice_supplier_external_SERVICE=Supplier service contact
 # crabe PDF Model
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (Template recommanded)
+PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
 # oursin PDF Model
-PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (Template alternative)
+PDFOursinDescription=Invoice PDF template Oursin. A complete invoice template (alternative Template)
 # NumRef Modules
 TerreNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for credit notes and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.

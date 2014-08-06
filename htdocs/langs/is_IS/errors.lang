@@ -1,20 +1,19 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
+# Dolibarr language file - Source file is en_US - errors
 
+# No errors
+# NoErrorCommitIsDone=No error, we commit
 
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Errors
 Error=Villa
 Errors=Villur
+# ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=Netfang %s  er rangt
 ErrorBadUrl=Url %s  er rangt
 ErrorLoginAlreadyExists=Innskráning %s  er þegar til.
 ErrorGroupAlreadyExists=Group %s  er þegar til.
 ErrorRecordNotFound=Upptaka fannst ekki.
+ErrorFailToCopyFile=Mistókst að afrita skrá <b>'%s'</b> í 'á <b>%s</b> &quot;.
+ErrorFailToRenameFile=Ekki tókst að endurnefna skrána 'á <b>%s'</b> í 'á <b>%s</b> &quot;.
 ErrorFailToDeleteFile=Ekki tókst að fjarlægja skrána <b>' %s '.</b>
 ErrorFailToCreateFile=Ekki tókst að búa til skrána <b>' %s '.</b>
 ErrorFailToRenameDir=Ekki tókst að endurnefna <b>'Mappan %s '</b> í <b>' %s '.</b>
@@ -25,6 +24,7 @@ ErrorThisContactIsAlreadyDefinedAsThisType=Þessi tengiliður er nú þegar skil
 ErrorCashAccountAcceptsOnlyCashMoney=Þessi bankareikningur er reiðufé reikning, svo tekur það greiðslur af gerðinni reiðufé eingöngu.
 ErrorFromToAccountsMustDiffers=Heimild og markmið bankareikninga verður að vera annað.
 ErrorBadThirdPartyName=Bad gildi fyrir þriðja aðila Nafn
+# ErrorProdIdIsMandatory=The %s is mandatory
 ErrorBadCustomerCodeSyntax=Bad setningafræði fyrir kóða viðskiptavina
 ErrorCustomerCodeRequired=Viðskiptavinur númer sem þarf
 ErrorCustomerCodeAlreadyUsed=Viðskiptavinur sem notaður er þegar
@@ -34,7 +34,10 @@ ErrorBadSupplierCodeSyntax=Bad setningafræði fyrir birgi kóða
 ErrorSupplierCodeRequired=Birgir merkjamál þurfa
 ErrorSupplierCodeAlreadyUsed=Birgir sem notaður er þegar
 ErrorBadParameters=Bad breytur
-ErrorFailedToWriteInDir=Tókst ekki að skrifa í möppunni %s 
+ErrorBadValueForParameter=Rangt gildi '%s &quot;fyrir breytu rangt að' %s að '
+ErrorBadImageFormat=Mynd skrá hefur ekki studdur snið
+ErrorBadDateFormat='Á %s' gildi hefur rangt snið dagsetningar
+ErrorFailedToWriteInDir=Tókst ekki að skrifa í möppunni %s
 ErrorFoundBadEmailInFile=Stofna rangt netfang setningafræði fyrir %s  línur í skrá (td línu %s  með email = %s )
 ErrorUserCannotBeDelete=Notandi getur ekki verið eytt. Mega vera það er tengt á Dolibarr aðila.
 ErrorFieldsRequired=Sumir Nauðsynlegir reitir voru ekki fylltir.
@@ -52,12 +55,13 @@ ErrorPartialFile=Skrá fékk ekki alveg við þjóninn.
 ErrorNoTmpDir=Tímabundin directy %s  er ekki til.
 ErrorUploadBlockedByAddon=Hlaða læst með PHP / Apache tappi.
 ErrorFileSizeTooLarge=Skráarstærð er of stór.
+ErrorSizeTooLongForIntType=Stærð of lengi fyrir int tegund (%s tölustafir hámark)
+ErrorSizeTooLongForVarcharType=Stærð of lengi fyrir gerð band (%s stafir hámark)
+# ErrorNoValueForSelectType=Please fill value for select list
+# ErrorNoValueForCheckBoxType=Please fill value for checkbox list
+# ErrorNoValueForRadioType=Please fill value for radio list
+# ErrorBadFormatValueList=The list value cannot have more than one come : <u>%s</u>, but need at least one: llave,valores
 ErrorFieldCanNotContainSpecialCharacters=<b>Akur %s </b> verður ekki innihalda sértákn.
-WarningSafeModeOnCheckExecDir=Aðvörun, PHP valkostur <b>safe_mode</b> er á svo stjórn verður að vera geymd inni í möppu gefur PHP breytu <b>safe_mode_exec_dir.</b>
-WarningAllowUrlFopenMustBeOn=Viðfang <b>allow_url_fopen</b> verður að vera stillt <b>á Virkt</b> í <b>php.ini</b> Filer fyrir að hafa þessa einingu vinna algjörlega. Þú verður að breyta þessari skrá handvirkt.
-WarningBuildScriptNotRunned=<b>Script %s </b> var ekki enn rann til að byggja upp grafík, eða það er engin gögn til að sýna.
-WarningBookmarkAlreadyExists=A bókamerki með þessum titli eða þessa miða (URL) er þegar til.
-WarningPassIsEmpty=Viðvörun Skráð lykilorð er tóm. Þetta er öryggis gat. Þú ættir að setja inn lykilorð til að gagnasafninu og breyta conf.php þinni til að endurspegla þessa.
 ErrorNoAccountancyModuleLoaded=Nei bókhalds mát virkja
 ErrorExportDuplicateProfil=Þetta profil heiti er þegar til fyrir þennan útflutning setja.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP samsvörun er ekki lokið.
@@ -66,19 +70,28 @@ ErrorCantSaveADoneUserWithZeroPercentage=Get ekki vistað aðgerð með "statut 
 ErrorRefAlreadyExists=Ref notað sköpun er þegar til.
 ErrorPleaseTypeBankTransactionReportName=Vinsamlega sláðu banki berst nafn þar sem framkvæmd er greint (Format ÁÁÁÁMM eða YYYYMMDD)
 ErrorRecordHasChildren=Ekki tókst að eyða gögnum þar sem það hefur einhverja barnsins.
-WarningConfFileMustBeReadOnly=Aðvörun, skrá samsk <b>(htdocs / conf / conf.php)</b> er hægt að skrifa of mikið af vefþjóni. Þetta er alvarlegur öryggi gat. Breyta leyfi á skrá til að vera í lesa aðeins ham fyrir stýrikerfi notandi notar netþjóninn. Ef þú notar Windows og FAT snið fyrir diskinn þinn, þú verður að vita að þetta skráarkerfi leyfir ekki að bæta við heimildum á skrá, svo má ekki vera fullkomlega öruggur.
 ErrorModuleRequireJavascript=Javascript þarf ekki að vera óvirkur til að hafa þennan möguleika að vinna. Til að virkja / slökkva Javascript, fara í valmynd Heim-> Uppsetning-> Skjár.
 ErrorPasswordsMustMatch=Bæði tegund lykilorð verður að samsvara hvor öðrum
+ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til að fylgja email <b>%s</b> en veita merkjamál villa <b>%s</b> í skilaboðin, eða jafnvel enn betri með því að bæta skjár afrit af þessari síðu.
 ErrorWrongValueForField=Wrong gildi fyrir reitinn <b>númer %s </b> (gildi <b>' %s '</b> er ekki það sama ríkisstjóratíð <b>reglu %s )</b>
+ErrorFieldValueNotIn=Rangt gildi fyrir sviði númer <b>%s ('%s</b> &quot;gildi er ekki gildi í boði í <b>​​%s</b> svið <b>%s</b> borð)
+ErrorFieldRefNotIn=Rangt gildi fyrir sviði númer <b>%s</b> ('á <b>%s</b> &quot;gildi er ekki <b>%s</b> núverandi dómari)
 ErrorsOnXLines=Villur <b>á %s </b> uppspretta línur
-WarningsOnXLines=Viðvaranir <b>á %s </b> uppspretta línur
 ErrorFileIsInfectedWithAVirus=The antivirus program was not 'fær til setja í gildi the skrá (skrá gæti verið sýkt af veiru)
 ErrorSpecialCharNotAllowedForField=Sérstafir eru ekki leyfðar í reitinn " %s "
-WarningNoDocumentModelActivated=Engin fyrirmynd fyrir kynslóð skjal hefur verið virkjuð. A líkan vilja vera choosed sjálfgefið þar til þú skoðar einingin uppsetningu þína.
 ErrorDatabaseParameterWrong=viðfang <b>' %s </b> Gagnasafn skipulag hefur a gildi ekki samhæft við notkun Dolibarr (verður að hafa <b>gildi' %s </b> ').
 ErrorNumRefModel=Vísun til staðar í gagnagrunninum ( %s ) og er ekki með þessari tala reglu. Fjarlægja færslu eða endurnefna þær tilvísun til að virkja þessa einingu.
 ErrorQtyTooLowForThisSupplier=Magn of lág fyrir þessa söluaðila eða ekki verði skilgreind á þessa vöru fyrir þennan birgir
+ErrorModuleSetupNotComplete=Skipulag á einingu lítur út fyrir að vera uncomplete. Fara á skipulag - einingar til að ljúka.
+ErrorBadMask=Villa á grímu
+ErrorBadMaskFailedToLocatePosOfSequence=Villa, gríma án fjölda röð
+ErrorBadMaskBadRazMonth=Villa, slæmt endurstilla gildi
+ErrorSelectAtLeastOne=Villa. Veldu amk eina færslu.
+ErrorProductWithRefNotExist=Vara við 'á <i>%s'</i> tilvísanir eru ekki til
+ErrorDeleteNotPossibleLineIsConsolidated=Eyða ekki hægt vegna þess að færsla er tengd við banka transation sem er conciliated
+ErrorProdIdAlreadyExist=%s er úthlutað til annars þriðja
 ErrorFailedToSendPassword=Tókst ekki að senda lykilorð
+ErrorFailedToLoadRSSFile=Ekki til að fá RSS straum. Reyndu að bæta stöðugt MAIN_SIMPLEXMLLOAD_DEBUG ef villuskilaboð veitir ekki nægar upplýsingar.
 ErrorPasswordDiffers=Lykilorð ólíkt skaltu slá þau aftur.
 ErrorForbidden=Aðgangur neitun. <br> Þú ert að reyna að komast á síðu, svæði eða lögun án þess að vera í staðfesta setu eða sem er ekki leyft að notandinn þinn.
 ErrorForbidden2=Leyfi fyrir þetta notandanafn er hægt að skilgreina með Dolibarr kerfisstjóra valmynd %s -> %s .
@@ -95,32 +108,39 @@ ErrorFailedToChangePassword=Ekki tókst að breyta lykilorðinu
 ErrorLoginDoesNotExists=Notandi með <b>notandanafn %s </b> fannst ekki.
 ErrorLoginHasNoEmail=Þessi notandi hefur ekki netfang. Aðferð aflýst.
 ErrorBadValueForCode=Bad gerðir gildi fyrir kóða. Prófaðu aftur með nýtt gildi ...
-WarningInstallDirExists=Aðvörun, setja í embætti skrá <b>(htdocs / setja í embætti)</b> enn til staðar. Þetta er alvarlegur öryggi gat. Þú ættir að fjarlægja það eins fljótt og auðið er.
-WarningUntilDirRemoved=Öll öryggi viðvaranir (sýnileg notendum admin eingöngu) verða áfram virkur eins lengi og varnarleysi er til staðar (eða þessi fasti MAIN_REMOVE_INSTALL_WARNING er bætt í Uppsetning-> Annað skipulag).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-ErrorFailToCopyFile=Mistókst að afrita skrá <b>'%s'</b> í 'á <b>%s</b> &quot;.
-ErrorFailToRenameFile=Ekki tókst að endurnefna skrána 'á <b>%s'</b> í 'á <b>%s</b> &quot;.
-ErrorBadValueForParameter=Rangt gildi '%s &quot;fyrir breytu rangt að' %s að '
-ErrorBadImageFormat=Mynd skrá hefur ekki studdur snið
-ErrorBadDateFormat='Á %s' gildi hefur rangt snið dagsetningar
-ErrorSizeTooLongForIntType=Stærð of lengi fyrir int tegund (%s tölustafir hámark)
-ErrorSizeTooLongForVarcharType=Stærð of lengi fyrir gerð band (%s stafir hámark)
-ErrorContactEMail=Tæknilegt villa kom upp. Vinsamlegast hafðu samband við kerfisstjóra til að fylgja email <b>%s</b> en veita merkjamál villa <b>%s</b> í skilaboðin, eða jafnvel enn betri með því að bæta skjár afrit af þessari síðu.
-ErrorFieldValueNotIn=Rangt gildi fyrir sviði númer <b>%s ('%s</b> &quot;gildi er ekki gildi í boði í <b>​​%s</b> svið <b>%s</b> borð)
-ErrorFieldRefNotIn=Rangt gildi fyrir sviði númer <b>%s</b> ('á <b>%s</b> &quot;gildi er ekki <b>%s</b> núverandi dómari)
-ErrorModuleSetupNotComplete=Skipulag á einingu lítur út fyrir að vera uncomplete. Fara á skipulag - einingar til að ljúka.
-ErrorBadMask=Villa á grímu
-ErrorBadMaskFailedToLocatePosOfSequence=Villa, gríma án fjölda röð
-ErrorBadMaskBadRazMonth=Villa, slæmt endurstilla gildi
-ErrorSelectAtLeastOne=Villa. Veldu amk eina færslu.
-ErrorProductWithRefNotExist=Vara við 'á <i>%s'</i> tilvísanir eru ekki til
-ErrorDeleteNotPossibleLineIsConsolidated=Eyða ekki hægt vegna þess að færsla er tengd við banka transation sem er conciliated
-ErrorProdIdAlreadyExist=%s er úthlutað til annars þriðja
-ErrorFailedToLoadRSSFile=Ekki til að fá RSS straum. Reyndu að bæta stöðugt MAIN_SIMPLEXMLLOAD_DEBUG ef villuskilaboð veitir ekki nægar upplýsingar.
 ErrorBothFieldCantBeNegative=Fields %s og %s getur ekki verið bæði neikvæð
 ErrorWebServerUserHasNotPermission=Notandi Reikningur <b>%s</b> notað til að framkvæma vefur framreiðslumaður hefur ekki leyfi til að
 ErrorNoActivatedBarcode=Nei barcode gerð virk
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:27:00).
+# ErrUnzipFails=Failed to unzip %s with ZipArchive
+# ErrNoZipEngine=No engine to unzip %s file in this PHP
+# ErrorFileMustBeADolibarrPackage=The file %s must be a Dolibarr zip package
+# ErrorFileRequired=It takes a package Dolibarr file
+# ErrorPhpCurlNotInstalled=The PHP CURL is not installed, this is essential to talk with Paypal
+# ErrorFailedToAddToMailmanList=Failed to add record %s to Mailman list %s or SPIP base
+# ErrorFailedToRemoveToMailmanList=Failed to remove record %s to Mailman list %s or SPIP base
+# ErrorNewValueCantMatchOldValue=New value can't be equal to old one
+# ErrorFailedToValidatePasswordReset=Failed to reinit password. May be the reinit was already done (this link can be used only one time). If not, try to restart the reinit process.
+# ErrorToConnectToMysqlCheckInstance=Connect to database fails. Check Mysql server is running (in most cases, you can launch it from command line with 'sudo /etc/init.d/mysql start').
+# ErrorFailedToAddContact=Failed to add contact
+# ErrorDateMustBeBeforeToday=The date can not be greater than today
+# ErrorPaymentModeDefinedToWithoutSetup=A payment mode was set to type %s but setup of module Invoice was not completed to define information to show for this payment mode.
+# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+# ErrorWarehouseMustDiffers=Source and target warehouses must differs
+
+# Warnings
+# WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined
+WarningSafeModeOnCheckExecDir=Aðvörun, PHP valkostur <b>safe_mode</b> er á svo stjórn verður að vera geymd inni í möppu gefur PHP breytu <b>safe_mode_exec_dir.</b>
+WarningAllowUrlFopenMustBeOn=Viðfang <b>allow_url_fopen</b> verður að vera stillt <b>á Virkt</b> í <b>php.ini</b> Filer fyrir að hafa þessa einingu vinna algjörlega. Þú verður að breyta þessari skrá handvirkt.
+WarningBuildScriptNotRunned=<b>Script %s </b> var ekki enn rann til að byggja upp grafík, eða það er engin gögn til að sýna.
+WarningBookmarkAlreadyExists=A bókamerki með þessum titli eða þessa miða (URL) er þegar til.
+WarningPassIsEmpty=Viðvörun Skráð lykilorð er tóm. Þetta er öryggis gat. Þú ættir að setja inn lykilorð til að gagnasafninu og breyta conf.php þinni til að endurspegla þessa.
+WarningConfFileMustBeReadOnly=Aðvörun, skrá samsk <b>(htdocs / conf / conf.php)</b> er hægt að skrifa of mikið af vefþjóni. Þetta er alvarlegur öryggi gat. Breyta leyfi á skrá til að vera í lesa aðeins ham fyrir stýrikerfi notandi notar netþjóninn. Ef þú notar Windows og FAT snið fyrir diskinn þinn, þú verður að vita að þetta skráarkerfi leyfir ekki að bæta við heimildum á skrá, svo má ekki vera fullkomlega öruggur.
+WarningsOnXLines=Viðvaranir <b>á %s </b> uppspretta línur
+WarningNoDocumentModelActivated=Engin fyrirmynd fyrir kynslóð skjal hefur verið virkjuð. A líkan vilja vera choosed sjálfgefið þar til þú skoðar einingin uppsetningu þína.
+# WarningLockFileDoesNotExists=Warning, once setup is finished, you must disable install/migrate tools by adding a file <b>install.lock</b> into directory <b>%s</b>. Missing this file is a security hole.
+WarningUntilDirRemoved=Öll öryggi viðvaranir (sýnileg notendum admin eingöngu) verða áfram virkur eins lengi og varnarleysi er til staðar (eða þessi fasti MAIN_REMOVE_INSTALL_WARNING er bætt í Uppsetning-> Annað skipulag).
+# WarningCloseAlways=Warning, closing is done even if amount differs between source and target elements. Enable this feature with caution.
+# WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
+# WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
+# WarningNotRelevant=Irrelevant operation for this dataset

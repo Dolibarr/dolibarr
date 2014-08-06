@@ -1,14 +1,4 @@
-/*
- * Language code: ru_RU
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:30:52
- */
-
-
-// Date 2009-01-19 21:30:52
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Пользователь карточки
 ContactCard=Контакт-карты
 GroupCard=Группа карту
@@ -51,9 +41,14 @@ LoginNotDefined=Логин не определены.
 NameNotDefined=Имя не определено.
 ListOfUsers=Список пользователей
 Administrator=Администратор
+SuperAdministrator=Супер Администратор
+SuperAdministratorDesc=Администратор со всеми правами
+AdministratorDesc=Администратора лица
 DefaultRights=По умолчанию разрешения
 DefaultRightsDesc=Определить здесь умолчанию разрешения, что автоматически предоставляются новые созданные пользователем.
 DolibarrUsers=Dolibarr пользователей
+LastName=Имя
+FirstName=Имя
 ListOfGroups=Список групп
 NewGroup=Новая группа
 CreateGroup=Создать группу
@@ -75,7 +70,12 @@ ListOfGroupsForUser=Список групп для этого пользоват
 UsersToAdd=Пользователи, чтобы добавить к этой группе
 GroupsToAdd=Группы, чтобы добавить к этому пользователю
 NoLogin=Нет входа
+LinkToCompanyContact=Ссылка на сторонние / контакт
+LinkedToDolibarrMember=Ссылка на члена
+LinkedToDolibarrUser=Ссылка на Dolibarr пользователя
+LinkedToDolibarrThirdParty=Ссылка на Dolibarr третья сторона
 CreateDolibarrLogin=Создать аккаунт Dolibarr
+CreateDolibarrThirdParty=Создание третьей стороной
 LoginAccountDisable=Учетная запись отключена, поставить новую регистрационную информацию, чтобы активировать ее.
 LoginAccountDisableInDolibarr=Счет-инвалидов в Dolibarr.
 LoginAccountDisableInLdap=Счет-инвалидов в домене.
@@ -88,8 +88,13 @@ DomainUser=Домен пользователя %s
 Reactivate=Возобновить
 CreateInternalUserDesc=Эта форма позволяет пользователю создаст внутри вашей компании / Фонд. Для создания внешнего пользователя (заказчика, поставщика, ...), использовать кнопку "Создать Dolibarr пользователя" от третьего лица карточку контакта.
 InternalExternalDesc=<b>Внутреннего</b> пользователя является пользователем, который является частью вашей компании / Фонд. <br> <b>Внешний</b> пользователь клиента, поставщика или другого. <br><br> В обоих случаях разрешение определяет права на Dolibarr, а также внешних пользователей могут иметь разные меню менеджера, чем внутреннего пользователя (См. начало - настройки - дисплей)
+PermissionInheritedFromAGroup=Разрешение предоставляется, поскольку унаследовал от одного из пользователей в группы.
+Inherited=Унаследованный
+UserWillBeInternalUser=Созданный пользователь будет внутреннего пользователя (потому что не связаны с определенным третьим лицам)
+UserWillBeExternalUser=Созданный пользователь будет внешний пользователь (из-за связанных с определенной третьей стороны)
 IdPhoneCaller=Идентификатор телефона абонента
 UserLogged=Пользователь% связаны с
+UserLogoff=Пользователь %s выхода
 NewUserCreated=Пользователь %s создали
 NewUserPassword=Смена пароля для %s
 EventUserModified=Пользователь% с измененными
@@ -97,51 +102,19 @@ UserDisabled=Пользователь %s-инвалидов
 UserEnabled=Пользователь %s активированного
 UserDeleted=Пользователь %s удален
 NewGroupCreated=Группа создала %s
-GroupModified=Группа% с измененными
+GroupModified=Группа успешно изменен
 GroupDeleted=Группа удалить %s
 ConfirmCreateContact=Вы уверены, что Ю. хотите создать Dolibarr счета для этого обратиться?
-LoginToCreate=Логин для создания
-// Date 2009-01-19 21:30:52
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-// Reference language: en_US
-SuperAdministrator=Супер Администратор
-SuperAdministratorDesc=Администратор со всеми правами
-LastName=Имя
-FirstName=Имя
-LinkToCompanyContact=Ссылка на сторонние / контакт
-LinkedToDolibarrMember=Ссылка на члена
-LinkedToDolibarrUser=Ссылка на Dolibarr пользователя
-LinkedToDolibarrThirdParty=Ссылка на Dolibarr третья сторона
-CreateDolibarrThirdParty=Создание третьей стороной
 ConfirmCreateLogin=Вы уверены, что хотите создать учетную запись для Dolibarr этот член?
 ConfirmCreateThirdParty=Вы уверены, что хотите создать третью сторону для этого члена?
+LoginToCreate=Логин для создания
 NameToCreate=Имя третьей стороной для создания
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 21:14:36).
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-// Reference language: en_US
-PermissionInheritedFromAGroup=Разрешение предоставляется, поскольку унаследовал от одного из пользователей в группы.
-// STOP - Lines generated via autotranslator.php tool (2009-08-19 20:18:27).
-
-
-// START - Lines generated via autotranslator.php tool (2010-09-04 01:33:40).
-// Reference language: en_US -> ru_RU
-Inherited=Унаследованный
 YourRole=Ваша роль
 YourQuotaOfUsersIsReached=Квота активных пользователей будет достигнута!
-// STOP - Lines generated via autotranslator.php tool (2010-09-04 01:35:37).
-
-
-// START - Lines generated via autotranslator.php tool (2011-08-27 16:56:14).
-// Reference language: en_US -> ru_RU
-AdministratorDesc=Администратора лица
-UserWillBeInternalUser=Созданный пользователь будет внутреннего пользователя (потому что не связаны с определенным третьим лицам)
-UserWillBeExternalUser=Созданный пользователь будет внешний пользователь (из-за связанных с определенной третьей стороны)
-UserLogoff=Пользователь %s выхода
 NbOfUsers=Кол-во пользователей
 DontDowngradeSuperAdmin=Только суперамин может понизить суперамин
-// STOP - Lines generated via autotranslator.php tool (2011-08-27 17:01:38).
+# HierarchicalResponsible=Hierarchical responsible
+# HierarchicView=Hierarchical view
+# UseTypeFieldToChange=Use field Type to change
+# OpenIDURL=OpenID URL
+# LoginUsingOpenID=Use OpenID to login

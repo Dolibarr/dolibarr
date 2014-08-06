@@ -154,14 +154,14 @@ class autoTranslator
 		if (isset($this->_translatedFiles[$file]) && count($this->_translatedFiles[$file])>0)
 		{
 			$fp = fopen($destPath, 'a');
-			fwrite($fp, "\r\n");
-			fwrite($fp, "\r\n");
-			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->_time.").\r\n");
-			fwrite($fp, "// Reference language: ".$this->_refLang." -> ".$my_destlang."\r\n");
+			fwrite($fp, "\n");
+			fwrite($fp, "\n");
+			fwrite($fp, "// START - Lines generated via autotranslator.php tool (".$this->_time.").\n");
+			fwrite($fp, "// Reference language: ".$this->_refLang." -> ".$my_destlang."\n");
 			foreach( $this->_translatedFiles[$file] as $line) {
-				fwrite($fp, $line . "\r\n");
+				fwrite($fp, $line . "\n");
 			}
-			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->_time_end.").\r\n");
+			fwrite($fp, "// STOP - Lines generated via autotranslator.php tool (".$this->_time_end.").\n");
 			fclose($fp);
 		}
 		return;
@@ -177,11 +177,11 @@ class autoTranslator
 	private function createTranslationFile($path,$my_destlang)
 	{
 		$fp = fopen($path, 'w+');
-		fwrite($fp, "/*\r\n");
-		fwrite($fp, " * Language code: {$my_destlang}\r\n");
-		fwrite($fp, " * Automatic generated via autotranslator.php tool\r\n");
-		fwrite($fp, " * Generation date " . $this->_time. "\r\n");
-		fwrite($fp, " */\r\n");
+		fwrite($fp, "/*\n");
+		fwrite($fp, " * Language code: {$my_destlang}\n");
+		fwrite($fp, " * Automatic generated via autotranslator.php tool\n");
+		fwrite($fp, " * Generation date " . $this->_time. "\n");
+		fwrite($fp, " */\n");
 		fclose($fp);
 		return;
 	}

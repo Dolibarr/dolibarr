@@ -1,5 +1,4 @@
-# Dolibarr language file - es_ES - users
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - users
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
 GroupCard=Ficha grupo
@@ -97,12 +96,13 @@ IdPhoneCaller=ID llamante (teléfono)
 UserLogged=Usuario %s conectado
 UserLogoff=Usuario %s desconectado
 NewUserCreated=usuario %s creado
-NewUserPassword=Passord cambiado para %s 
+NewUserPassword=Passord cambiado para %s
 EventUserModified=Usuario %s modificado
 UserDisabled=Usuario %s deshailitado
 UserEnabled=Usuario %s activado
 UserDeleted=Usuario %s eliminado
 NewGroupCreated=Grupo %s creado
+GroupModified=Grupo %s modificado
 GroupDeleted=Grupo %s eliminado
 ConfirmCreateContact=¿Está seguro de querer crear una cuenta Dolibarr para este contacto?
 ConfirmCreateLogin=¿Está seguro de que desea crear una cuenta Dolibarr para este miembro?
@@ -115,3 +115,6 @@ NbOfUsers=Nº de usuarios
 DontDowngradeSuperAdmin=Sólo un superadmin puede degradar un superadmin
 HierarchicalResponsible=Responsable jerárquico
 HierarchicView=Vista jerárquica
+UseTypeFieldToChange=Modificar el campo Tipo para cambiar
+OpenIDURL=Dirección OpenID
+LoginUsingOpenID=Usar OpenID para iniciar sesión

@@ -57,8 +57,7 @@ $action=GETPOST('action','alpha');
 $original_file=GETPOST("file");
 $modulepart=GETPOST('modulepart','alpha');
 $urlsource=GETPOST("urlsource");
-$entity=GETPOST('entity','int');
-if ($entity == '') $entity=1;    // For backward compatibility
+$entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
@@ -98,9 +97,12 @@ else $type=dol_mimetype($original_file);
 // Suppression de la chaine de caractere ../ dans $original_file
 $original_file = str_replace("../","/", $original_file);
 
+// Find the subdirectory name as the reference
+$refname=basename(dirname($original_file)."/");
+
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
-$check_access = dol_check_secure_access_document($modulepart,$original_file,$entity);
+$check_access = dol_check_secure_access_document($modulepart,$original_file,$entity,$refname);
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $original_file              = $check_access['original_file'];
@@ -196,4 +198,3 @@ else					// Open and return file
 
 
 if (is_object($db)) $db->close();
-?>

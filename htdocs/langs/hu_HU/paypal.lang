@@ -1,31 +1,22 @@
-/*
- * Language code: hu_HU
- * Automatic generated via autotranslator.php tool
- * Generation date 2011-10-10 02:45:33
- */
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> hu_HU
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modul beállítása
 PaypalDesc=Ez a modul ajánlat oldalakat, hogy fizetést <a href="http://www.paypal.com" target="_blank">PayPal</a> ügyfelek. Ezt fel lehet használni a szabad fizetés vagy a fizetés egy adott Dolibarr objektum (számla, megrendelés, ...)
-PAYPAL_API_PASSWORD=API jelszó
-PAYPAL_API_SIGNATURE=API aláírás
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ajánlat fizetés &quot;szerves&quot; (hitelkártya + Paypal) vagy a &quot;Paypal&quot; csak
-PAYPAL_CSS_URL=Optionnal Url a CSS stíluslap a fizetési oldalon
-ThisIsTransactionId=Ez a tranzakció id: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot postán
-PAYPAL_IPN_MAIL_ADDRESS=E-mail cím az azonnali értesítést a fizetés (IPN)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 10:47:35).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:13:31).
-// Reference language: en_US -> hu_HU
 PaypalOrCBDoPayment=Fizessen hitelkártyával vagy Paypal
 PaypalDoPayment=Fizetés Paypal
 PaypalCBDoPayment=Fizess bankkártyával
 PAYPAL_API_SANDBOX=Üzemmódban végzett vizsgálat / homokozó
 PAYPAL_API_USER=API felhasználónév
+PAYPAL_API_PASSWORD=API jelszó
+PAYPAL_API_SIGNATURE=API aláírás
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ajánlat fizetés &quot;szerves&quot; (hitelkártya + Paypal) vagy a &quot;Paypal&quot; csak
+# PaypalModeIntegral=Integral
+# PaypalModeOnlyPaypal=PayPal only
+PAYPAL_CSS_URL=Optionnal Url a CSS stíluslap a fizetési oldalon
+ThisIsTransactionId=Ez a tranzakció id: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Add az url a Paypal fizetési amikor a dokumentumot postán
+PAYPAL_IPN_MAIL_ADDRESS=E-mail cím az azonnali értesítést a fizetés (IPN)
+# PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Ön jelenleg a &quot;sandbox&quot; mód
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:14:39).
+# NewPaypalPaymentReceived=New Paypal payment received
+# NewPaypalPaymentFailed=New Paypal payment tried but failed
+# PAYPAL_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)

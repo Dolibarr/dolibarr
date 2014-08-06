@@ -61,9 +61,6 @@ $socid='';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user, $origin, $origin_id);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('expeditioncard'));
-
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 
@@ -80,15 +77,18 @@ if ($id > 0 || ! empty($ref))
 	$ret=$object->fetch($id, $ref);
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('expeditioncard'));
+
 /*
  * Actions
  */
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if ($action == 'add')
 {
     $error=0;
-    
-    $object = new Expedition($db);
 
     $db->begin();
 
@@ -183,7 +183,7 @@ if ($action == 'add')
 
 /*
  * Build a receiving receipt
-*/
+ */
 else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
     $result = $object->create_delivery($user);
@@ -235,8 +235,9 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expe
         exit;
     }
     else
-    {
-        $mesg = $object->error;
+	{
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
     }
 }
 
@@ -296,10 +297,9 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 // Build document
 else if ($action == 'builddoc')	// En get ou en post
 {
-    if (GETPOST('model','alpha'))
-    {
-        $object->setDocModel($user, GETPOST('model','alpha'));
-    }
+
+	// Save last template used to generate document
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
     // Define output language
     $outputlangs = $langs;
@@ -456,7 +456,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -518,7 +518,7 @@ else if ($action == 'classifybilled')
  * View
  */
 
-llxHeader('',$langs->trans('Sending'),'Expedition');
+llxHeader('',$langs->trans('Shipment'),'Expedition');
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -917,216 +917,220 @@ else if ($id || $ref)
 		$soc->fetch($object->socid);
 
 		$head=shipping_prepare_head($object);
-		dol_fiche_head($head, 'shipping', $langs->trans("Sending"), 0, 'sending');
+		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), 0, 'sending');
 
 		dol_htmloutput_mesg($mesg);
 
-
 		/*
 		 * Confirmation de la suppression
-		 */
+		*/
 		if ($action == 'delete')
 		{
-			$ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
-			if ($ret == 'html') print '<br>';
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSending'),$langs->trans("ConfirmDeleteSending",$object->ref),'confirm_delete','',0,1);
+
 		}
 
-	        /*
-             * Confirmation de la validation
-             */
-            if ($action == 'valid')
-            {
-                $objectref = substr($object->ref, 1, 4);
-                if ($objectref == 'PROV')
-                {
-                    $numref = $object->getNextNumRef($soc);
-                }
-                else
-                {
-                    $numref = $object->ref;
-                }
-
-                $text = $langs->trans("ConfirmValidateSending",$numref);
-
-                if (! empty($conf->notification->enabled))
-                {
-                    require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
-                    $notify=new Notify($db);
-                    $text.='<br>';
-                    $text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
-                }
-
-                $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
-                if ($ret == 'html') print '<br>';
-            }
-            /*
-             * Confirmation de l'annulation
-             */
-            if ($action == 'annuler')
-            {
-                $ret=$form->form_confirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
-                if ($ret == 'html') print '<br>';
-            }
-
-            // Calculate true totalWeight and totalVolume for all products
-            // by adding weight and volume of each product line.
-            $totalWeight = '';
-            $totalVolume = '';
-            $weightUnit=0;
-            $volumeUnit=0;
-            for ($i = 0 ; $i < $num_prod ; $i++)
-            {
-                $weightUnit=0;
-                $volumeUnit=0;
-                if (! empty($lines[$i]->weight_units)) $weightUnit = $lines[$i]->weight_units;
-                if (! empty($lines[$i]->volume_units)) $volumeUnit = $lines[$i]->volume_units;
-
-                // TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
-                if ($lines[$i]->weight_units < 50)
-                {
-                    $trueWeightUnit=pow(10,$weightUnit);
-                    $totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped*$trueWeightUnit;
-                }
-                else
-                {
-                    $trueWeightUnit=$weightUnit;
-                    $totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped;
-                }
-                if ($lines[$i]->volume_units < 50)
-                {
-                    //print $lines[$i]->volume."x".$lines[$i]->volume_units."x".($lines[$i]->volume_units < 50)."x".$volumeUnit;
-                    $trueVolumeUnit=pow(10,$volumeUnit);
-                    //print $lines[$i]->volume;
-                    $totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped*$trueVolumeUnit;
-                }
-                else
-                {
-                    $trueVolumeUnit=$volumeUnit;
-                    $totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped;
-                }
-            }
-
-            print '<table class="border" width="100%">';
-
-            $linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
-
-            // Ref
-            print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-            print '<td colspan="3">';
-            print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
-            print '</td></tr>';
-
-            // Customer
-            print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
-            print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-            print "</tr>";
-
-            // Linked documents
-            if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
-            {
-                print '<tr><td>';
-                $objectsrc=new Commande($db);
-                $objectsrc->fetch($object->$typeobject->id);
-                print $langs->trans("RefOrder").'</td>';
-                print '<td colspan="3">';
-                print $objectsrc->getNomUrl(1,'commande');
-                print "</td>\n";
-                print '</tr>';
-            }
-            if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
-            {
-                print '<tr><td>';
-                $objectsrc=new Propal($db);
-                $objectsrc->fetch($object->$typeobject->id);
-                print $langs->trans("RefProposal").'</td>';
-                print '<td colspan="3">';
-                print $objectsrc->getNomUrl(1,'expedition');
-                print "</td>\n";
-                print '</tr>';
-            }
-
-            // Ref customer
-            print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
-            print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
-            print '</tr>';
-
-            // Date creation
-            print '<tr><td>'.$langs->trans("DateCreation").'</td>';
-            print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
-            print '</tr>';
-
-            // Delivery date planned
-            print '<tr><td height="10">';
-            print '<table class="nobordernopadding" width="100%"><tr><td>';
-            print $langs->trans('DateDeliveryPlanned');
-            print '</td>';
-
-            if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
-            print '</tr></table>';
-            print '</td><td colspan="2">';
-            if ($action == 'editdate_livraison')
-            {
-                print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-                print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-                print '<input type="hidden" name="action" value="setdate_livraison">';
-                $form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print '</form>';
-            }
-            else
-            {
-                print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
-            }
-            print '</td>';
-            print '</tr>';
-
-            // Weight
-            print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-            print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
-            print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
-			if ($totalWeight > 0)
-            print '</td></tr>';
-
-            // Width
-            print '<tr><td>'.$form->editfieldkey("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-            print $form->editfieldval("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer);
-            print ($object->trueWidth && $object->width_units!='')?' '.measuring_units_string($object->width_units,"size"):'';
-            print '</td></tr>';
-
-            // Height
-            print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-            print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
-            print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
-            print '</td></tr>';
-
-            // Depth
-            print '<tr><td>'.$form->editfieldkey("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-            print $form->editfieldval("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer);
-            print ($object->trueDepth && $object->depth_units!='')?' '.measuring_units_string($object->depth_units,"size"):'';
-            print '</td></tr>';
-
-            // Volume
-            print '<tr><td>';
-            print $langs->trans("Volume");
-            print '</td>';
-            print '<td colspan="3">';
-            $calculatedVolume=0;
-            if ($object->trueWidth && $object->trueHeight && $object->trueDepth) $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
-            // If sending volume not defined we use sum of products
-            if ($calculatedVolume > 0)
+		/*
+		 * Confirmation de la validation
+		*/
+		if ($action == 'valid')
+		{
+			$objectref = substr($object->ref, 1, 4);
+			if ($objectref == 'PROV')
 			{
-				print $calculatedVolume.' ';
- 		        if ($volumeUnit < 50) print measuring_units_string(0,"volume");
-        	    else print measuring_units_string($volumeUnit,"volume");
-            }
-            if ($totalVolume > 0)
-            {
-            	if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-				print $totalVolume;
-            	if ($calculatedVolume) print ')';
-            }
-            print "</td>\n";
-            print '</tr>';
+				$numref = $object->getNextNumRef($soc);
+			}
+			else
+			{
+				$numref = $object->ref;
+			}
+
+			$text = $langs->trans("ConfirmValidateSending",$numref);
+
+			if (! empty($conf->notification->enabled))
+			{
+				require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+				$notify=new Notify($db);
+				$text.='<br>';
+				$text.=$notify->confirmMessage('SHIPPING_VALIDATE',$object->socid);
+			}
+
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('ValidateSending'),$text,'confirm_valid','',0,1);
+
+		}
+		/*
+		 * Confirmation de l'annulation
+		*/
+		if ($action == 'annuler')
+		{
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('CancelSending'),$langs->trans("ConfirmCancelSending",$object->ref),'confirm_cancel','',0,1);
+
+		}
+
+		// Calculate true totalWeight and totalVolume for all products
+		// by adding weight and volume of each product line.
+		$totalWeight = '';
+		$totalVolume = '';
+		$weightUnit=0;
+		$volumeUnit=0;
+		for ($i = 0 ; $i < $num_prod ; $i++)
+		{
+			$weightUnit=0;
+			$volumeUnit=0;
+			if (! empty($lines[$i]->weight_units)) $weightUnit = $lines[$i]->weight_units;
+			if (! empty($lines[$i]->volume_units)) $volumeUnit = $lines[$i]->volume_units;
+
+			// TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
+			if ($lines[$i]->weight_units < 50)
+			{
+				$trueWeightUnit=pow(10,$weightUnit);
+				$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped*$trueWeightUnit;
+			}
+			else
+			{
+				$trueWeightUnit=$weightUnit;
+				$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped;
+			}
+			if ($lines[$i]->volume_units < 50)
+			{
+				//print $lines[$i]->volume."x".$lines[$i]->volume_units."x".($lines[$i]->volume_units < 50)."x".$volumeUnit;
+				$trueVolumeUnit=pow(10,$volumeUnit);
+				//print $lines[$i]->volume;
+				$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped*$trueVolumeUnit;
+			}
+			else
+			{
+				$trueVolumeUnit=$volumeUnit;
+				$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped;
+			}
+		}
+
+		print '<table class="border" width="100%">';
+
+		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/liste.php">'.$langs->trans("BackToList").'</a>';
+
+		// Ref
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+		print '<td colspan="3">';
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+		print '</td></tr>';
+
+		// Customer
+		print '<tr><td width="20%">'.$langs->trans("Customer").'</td>';
+		print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+		print "</tr>";
+
+		// Linked documents
+		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))
+		{
+			print '<tr><td>';
+			$objectsrc=new Commande($db);
+			$objectsrc->fetch($object->$typeobject->id);
+			print $langs->trans("RefOrder").'</td>';
+			print '<td colspan="3">';
+			print $objectsrc->getNomUrl(1,'commande');
+			print "</td>\n";
+			print '</tr>';
+		}
+		if ($typeobject == 'propal' && $object->$typeobject->id && ! empty($conf->propal->enabled))
+		{
+			print '<tr><td>';
+			$objectsrc=new Propal($db);
+			$objectsrc->fetch($object->$typeobject->id);
+			print $langs->trans("RefProposal").'</td>';
+			print '<td colspan="3">';
+			print $objectsrc->getNomUrl(1,'expedition');
+			print "</td>\n";
+			print '</tr>';
+		}
+
+		// Ref customer
+		print '<tr><td>'.$langs->trans("RefCustomer").'</td>';
+		print '<td colspan="3">'.$object->ref_customer."</a></td>\n";
+		print '</tr>';
+
+		// Date creation
+		print '<tr><td>'.$langs->trans("DateCreation").'</td>';
+		print '<td colspan="3">'.dol_print_date($object->date_creation,"day")."</td>\n";
+		print '</tr>';
+
+		// Delivery date planned
+		print '<tr><td height="10">';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('DateDeliveryPlanned');
+		print '</td>';
+
+		if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="2">';
+		if ($action == 'editdate_livraison')
+		{
+			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input type="hidden" name="action" value="setdate_livraison">';
+			$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		}
+		else
+		{
+			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+		}
+		print '</td>';
+		print '</tr>';
+
+		// Weight
+		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
+		print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+		if ($totalWeight > 0)
+		{
+			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
+			print $totalWeight.' '.measuring_units_string(0,"weight");
+			if (!empty($object->trueWeight)) print ')';
+		}
+		print '</td></tr>';
+
+		// Width
+		print '<tr><td>'.$form->editfieldkey("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print $form->editfieldval("Width",'trueWidth',$object->trueWidth,$object,$user->rights->expedition->creer);
+		print ($object->trueWidth && $object->width_units!='')?' '.measuring_units_string($object->width_units,"size"):'';
+		print '</td></tr>';
+
+		// Height
+		print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
+		print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+		print '</td></tr>';
+
+		// Depth
+		print '<tr><td>'.$form->editfieldkey("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print $form->editfieldval("Depth",'trueDepth',$object->trueDepth,$object,$user->rights->expedition->creer);
+		print ($object->trueDepth && $object->depth_units!='')?' '.measuring_units_string($object->depth_units,"size"):'';
+		print '</td></tr>';
+
+		// Volume
+		print '<tr><td>';
+		print $langs->trans("Volume");
+		print '</td>';
+		print '<td colspan="3">';
+		$calculatedVolume=0;
+		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		// If sending volume not defined we use sum of products
+		if ($calculatedVolume > 0)
+		{
+			print $calculatedVolume.' ';
+			if ($volumeUnit < 50) print measuring_units_string(0,"volume");
+			else print measuring_units_string($volumeUnit,"volume");
+		}
+		if ($totalVolume > 0)
+		{
+			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
+			print $totalVolume.' '.measuring_units_string(0,"volume");
+			if ($calculatedVolume) print ')';
+		}
+		print "</td>\n";
+		print '</tr>';
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td>';
@@ -1325,10 +1329,9 @@ else if ($id || $ref)
 
 	$object->fetchObjectLinked($object->id,$object->element);
 
-
 	/*
 	 *    Boutons actions
-	 */
+	*/
 
 	if (($user->societe_id == 0) && ($action!='presend'))
 	{
@@ -1401,7 +1404,7 @@ else if ($id || $ref)
 
 	/*
 	 * Documents generated
-	 */
+	*/
 	if ($action != 'presend')
 	{
 		print '<table width="100%"><tr><td width="50%" valign="top">';
@@ -1418,7 +1421,7 @@ else if ($id || $ref)
 
 		/*
 		 * Linked object block
-		 */
+		*/
 		$somethingshown=$object->showLinkedObjectBlock();
 
 		if ($genallowed && ! $somethingshown) $somethingshown=1;
@@ -1435,7 +1438,7 @@ else if ($id || $ref)
 
 	/*
 	 * Action presend
-	 */
+	*/
 	if ($action == 'presend')
 	{
 		$ref = dol_sanitizeFileName($object->ref);
@@ -1480,7 +1483,7 @@ else if ($id || $ref)
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
-		$formmail->withto=GETPOST("sendto")?GETOST("sendto"):$liste;
+		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
 		$formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');
@@ -1555,5 +1558,6 @@ else if ($id || $ref)
 
 
 llxFooter();
+
 $db->close();
 ?>

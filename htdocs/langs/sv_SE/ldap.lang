@@ -1,18 +1,4 @@
-/*
- * Language code: sv_SV
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-08-27 09:14:50
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-27 09:14:50).
-// Reference language: en_US
-CHARSET=UTF-8
-// STOP - Lines generated via autotranslator.php tool (2010-08-27 09:18:55).
-
-
-// START - Lines generated via autotranslator.php tool (2010-08-28 13:09:36).
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Lösenord för domän
 YouMustChangePassNextLogon=Lösenord för användare <b>%s</b> på domänen <b>%s</b> måste ändras.
 UserMustChangePassNextLogon=Användaren måste byta lösenord på domänen %s
@@ -41,4 +27,3 @@ MemberSynchronized=Medlem synkroniseras
 ContactSynchronized=Kontakta synkroniseras
 ForceSynchronize=Force synkronisera Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Misslyckades med att läsa LDAP-databas. Kontrollera LDAP-modul setup och databas tillgänglighet.
-// STOP - Lines generated via autotranslator.php tool (2010-08-28 13:10:43).

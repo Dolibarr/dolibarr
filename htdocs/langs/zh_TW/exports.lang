@@ -1,13 +1,4 @@
-/*
- * Language code: zh_TW
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-08 21:22:55
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=匯出區
 ImportArea=匯入區
 NewExport=建立新的匯出
@@ -54,9 +45,9 @@ FormatedExportDesc2=第一步是選擇一個事先定義的資料集，然後選
 FormatedExportDesc3=當欲匯出的資料被選擇完成後，你可以定義匯出文件的格式。
 Sheet=表
 NoImportableData=沒有可匯入的資料（模組沒有此定義允許您匯入）
-FileSuccessfullyBuilt=
-SQLUsedForExport=
-LineId=
+# FileSuccessfullyBuilt=Export file generated
+# SQLUsedForExport=SQL Request used to build export file
+# LineId=Id of line
 LineDescription=說明線
 LineUnitPrice=優惠價線
 LineVATRate=增值稅率線
@@ -73,7 +64,7 @@ ChooseFormatOfFileToImport=利用點選 %s 圖示的方式，選擇欲匯入檔�
 ChooseFileToImport=上傳檔案，然後點選 %s 圖示來選擇欲匯入來源檔案
 SourceFileFormat=來源檔案格式
 FieldsInSourceFile=來源檔案的欄位清單
-FieldsInTargetDatabase=目標欄位清單（*為強制性目標欄位）
+# FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
 Field=欄位
 NoFields=沒有欄位
 MoveField=移動欄位的行號 %s
@@ -104,27 +95,36 @@ TooMuchErrors=還有<b>%的臺詞</b> ，但有錯誤的其他來源，但產量
 TooMuchWarnings=還有<b>%s的</b>線，警告其他來源，但產量一直有限。
 EmptyLine=空行（將被丟棄）
 CorrectErrorBeforeRunningImport=您必須先輸入正確運行前確定的所有錯誤。
+FileWasImported=進口數量<b>%s</b>文件。
 YouCanUseImportIdToFindRecord=你可以找到所有進口領域<b>import_key</b>記錄過濾您的數據庫<b>='%s'的</b> 。
 NbOfLinesOK=行數沒有錯誤，也沒有警告<b>：%s的</b> 。
 NbOfLinesImported=線成功導入數<b>：%s的</b> 。
 DataComeFromNoWhere=值插入來自無處源文件。
 DataComeFromFileFieldNb=值插入來自<b>S</b>的源文件<b>%</b>來自外地的數目。
 DataComeFromIdFoundFromRef=值<b>%</b>來自外地號碼文件<b>的</b> S來源將被用來找到父對象的ID使用（因此，客體<b>%s的</b>具有參考。Dolibarr從源文件必須存在到）。
+DataComeFromIdFoundFromCodeId=代碼將用於從源文件中的字段數<b>%s</b>找到父對象的ID使用（因此，從源文件中的代碼必須存在dictionnary <b>%s）。</b>請註意，如果你知道ID，你也可以使用到源文件，而不是代碼。進口應該在這兩種情況下工作。
 DataIsInsertedInto=未來的數據源文件將被插入到以下領域：
 DataIDSourceIsInsertedInto=標識對象的家長發現使用源文件中的數據，將被插入到下面的字段：
+DataCodeIDSourceIsInsertedInto=ID從父行代碼中發現，將被插入到下面的字段：
 SourceRequired=資料值是強制性的
 SourceExample=可能的資料值範例
-// STOP - Lines generated via autotranslator.php tool (2010-06-08 21:22:55).
-
-
-CSVFormatDesc=<b>逗號分隔</b>檔案格式（csv格式）。 <br>這是一個被[%s]所分隔的存文字格式檔案。如果欄位內容本身含有分隔字元，則此分隔字元會被[%s]所包圍。用來 escape 包圍用的Escape 字元為[%s]。
-
-
-
-FileWasImported=進口數量<b>%s</b>文件。
-DataComeFromIdFoundFromCodeId=代碼將用於從源文件中的字段數<b>%s</b>找到父對象的ID使用（因此，從源文件中的代碼必須存在dictionnary <b>%s）。</b>請註意，如果你知道ID，你也可以使用到源文件，而不是代碼。進口應該在這兩種情況下工作。
-
-DataCodeIDSourceIsInsertedInto=ID從父行代碼中發現，將被插入到下面的字段：
 ExampleAnyRefFoundIntoElement=任何ref元素<b>%s</b>
 ExampleAnyCodeOrIdFoundIntoDictionnary=發現任何代碼（或ID）dictionnary <b>%s</b>
-
+CSVFormatDesc=<b>逗號分隔</b>檔案格式（csv格式）。 <br>這是一個被[%s]所分隔的存文字格式檔案。如果欄位內容本身含有分隔字元，則此分隔字元會被[%s]所包圍。用來 escape 包圍用的Escape 字元為[%s]。
+# Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is native Excel 95 format (BIFF5).
+# Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is native Excel 2007 format (SpreadsheetML).
+# TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
+# ExportFieldAutomaticallyAdded=Field <b>%s</b> was automatically added. It will avoid you to have similar lines to be treated as duplicate records (with this field added, all lines will own their own id and will differ).
+# CsvOptions=Csv Options
+# Separator=Separator
+# Enclosure=Enclosure
+# SuppliersProducts=Suppliers Products
+BankCode=銀行代碼
+DeskCode=臺代碼
+BankAccountNumber=帳號
+BankAccountNumberKey=關鍵
+## filters
+# SelectFilterFields=If you want to filter on some values, just input values here.
+# FilterableFields=Champs Filtrables
+# FilteredFields=Filtered fields
+# FilteredFieldsValues=Value for filter

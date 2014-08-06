@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,8 @@
  *		@param	string	$price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
  *		@param	int		$info_bits					Miscellaneous informations on line
  *		@param	int		$type						0/1=Product/service
- *		@param  string	$seller						Thirdparty seller (we need $seller->country_code property). Provided only if seller is the supplier.
+ *		@param  string	$seller						Thirdparty seller (we need $seller->country_id property). Provided only if seller is the supplier, otherwise $seller will be $mysoc.
+ *		@param  array	$localtaxes_array			Array with localtaxes info (loaded by getLocalTaxesFromRate function).
  *		@return result[ 0=total_ht,
  *						 1=total_vat,
  *						 2=total_ttc,
@@ -63,7 +64,7 @@
  *						14=amount tax1 for total_ht_without_discount,
  *						15=amount tax1 for total_ht_without_discount]
  */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '')
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocaltax1_rate, $uselocaltax2_rate, $remise_percent_global, $price_base_type, $info_bits, $type, $seller = '',$localtaxes_array='')
 {
 	global $conf,$mysoc,$db;
 
@@ -71,9 +72,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 
 	// Clean parameters
 	if (empty($txtva)) $txtva=0;
-	
 	if (empty($seller) || ! is_object($seller))
 	{
+		dol_syslog("calcul_price_total Warning: function is called with parameter seller that is missing", LOG_WARNING);
 		if (! is_object($mysoc))	// mysoc may be not defined (during migration process)
 		{
 			$mysoc=new Societe($db);
@@ -82,9 +83,13 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 		$seller=$mysoc;	// If sell is done to a customer, $seller is not provided, we use $mysoc
 		//var_dump($seller->country_id);exit;
 	}
+	if (empty($localtaxes_array) || ! is_array($localtaxes_array))
+	{
+		dol_syslog("calcul_price_total Warning: function is called with parameter localtaxes_array that is missing", LOG_WARNING);
+	}
 	// Too verbose. Enable for debug only
 	//dol_syslog("calcul_price_total qty=".$qty." pu=".$pu." remiserpercent_ligne=".$remise_percent_ligne." txtva=".$txtva." uselocaltax1_rate=".$uselocaltax1_rate." uselocaltax2_rate=".$uselocaltax2_rate);
-	
+
 	$countryid=$seller->country_id;
 	if ($uselocaltax1_rate < 0) $uselocaltax1_rate=$seller->localtax1_assuj;
 	if ($uselocaltax2_rate < 0) $uselocaltax2_rate=$seller->localtax2_assuj;
@@ -92,26 +97,36 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	// Now we search localtaxes information ourself (rates and types).
 	$localtax1_type=0;
 	$localtax2_type=0;
-	$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
-	$sql.= " WHERE cv.taux = ".$txtva;
-	$sql.= " AND cv.fk_pays = ".$countryid;
-	dol_syslog("calcul_price_total search vat information sql=".$sql);
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-		if ($obj)
-		{
-			$localtax1_rate=$obj->localtax1;
-			$localtax2_rate=$obj->localtax2;
-			$localtax1_type=$obj->localtax1_type;
-			$localtax2_type=$obj->localtax2_type;
-			//var_dump($localtax1_rate.' '.$localtax2_rate.' '.$localtax1_type.' '.$localtax2_type);exit;
-		}
-	}
-	else dol_print_error($db);
 
+	if (is_array($localtaxes_array))
+	{
+		$localtax1_type = $localtaxes_array[0];
+		$localtax1_rate = $localtaxes_array[1];
+		$localtax2_type = $localtaxes_array[2];
+		$localtax2_rate = $localtaxes_array[3];
+	}
+	else
+	{
+		$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
+		$sql.= " WHERE cv.taux = ".$txtva;
+		$sql.= " AND cv.fk_pays = ".$countryid;
+		dol_syslog("calcul_price_total search vat information sql=".$sql);
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$localtax1_rate=$obj->localtax1;
+				$localtax2_rate=$obj->localtax2;
+				$localtax1_type=$obj->localtax1_type;
+				$localtax2_type=$obj->localtax2_type;
+				//var_dump($localtax1_rate.' '.$localtax2_rate.' '.$localtax1_type.' '.$localtax2_type);exit;
+			}
+		}
+		else dol_print_error($db);
+	}
 	// initialize total (may be HT or TTC depending on price_base_type)
 	$tot_sans_remise = $pu * $qty;
 	$tot_avec_remise_ligne = $tot_sans_remise       * (1 - ($remise_percent_ligne / 100));

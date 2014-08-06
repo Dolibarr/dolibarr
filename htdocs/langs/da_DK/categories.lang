@@ -1,22 +1,11 @@
-/*
- * Lince Translation File
- * Filename: 
- * Language code: da_DA
- * Automatic generated via autotranslator.php tool
- * Generation date 2009-01-19 21:26:39
- */
-
-
-// Date 2009-01-19 21:26:39
-// START - Lines generated via autotranslator.php tool.
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - categories
 Category=Kategori
 Categories=Kategorier
 Rubrique=Kategori
 Rubriques=Kategorier
 categories=kategorier
 TheCategorie=Kategorien
+NoCategoryYet=Ingen kategori af denne type skabt
 In=I
 AddIn=Tilføj i
 modify=modificere
@@ -26,6 +15,8 @@ ProductsCategoriesArea=Produkter / Tjenester 'kategorier område
 SuppliersCategoriesArea=Suppliers' kategorier område
 CustomersCategoriesArea=Kundernes kategorier område
 ThirdPartyCategoriesArea=Tredjeparters kategorier område
+MembersCategoriesArea=Medlemmer kategorier område
+# ContactsCategoriesArea=Contacts categories area
 MainCats=Hovedkategorier
 SubCats=Underkategorier
 CatStatistics=Statistik
@@ -58,11 +49,16 @@ ProductIsInCategories=Produkt / service ejer til følgende kategorier
 SupplierIsInCategories=Tredjemand ejer til følgende leverandører kategorier
 CompanyIsInCustomersCategories=Denne tredjepart ejer til følgende kunder / udsigter kategorier
 CompanyIsInSuppliersCategories=Denne tredjepart ejer til følgende leverandører kategorier
+MemberIsInCategories=Dette medlem ejer til følgende medlemmer kategorier
+# ContactIsInCategories=This contact owns to following contacts categories
 ProductHasNoCategory=Dette produkt / service er ikke i alle kategorier
 SupplierHasNoCategory=Denne leverandør er ikke i alle kategorier
 CompanyHasNoCategory=Dette selskab er ikke i alle kategorier
+MemberHasNoCategory=Dette medlem er ikke på nogen kategorier
+# ContactHasNoCategory=This contact is not in any categories
 ClassifyInCategory=Klassificering i kategori
 NoneCategory=Ingen
+# NotCategorized=Without category
 CategoryExistsAtSameLevel=Denne kategori allerede findes på samme sted
 ReturnInProduct=Tilbage til produkt / service kortet
 ReturnInSupplier=Tilbage til leverandøren kortet
@@ -79,38 +75,33 @@ NoCategoriesDefined=Ingen kategori defineret
 SuppliersCategoryShort=Leverandører kategori
 CustomersCategoryShort=Kunder kategori
 ProductsCategoryShort=Produkter kategori
+MembersCategoryShort=Medlemmer kategori
 SuppliersCategoriesShort=Leverandører kategorier
 CustomersCategoriesShort=Kunder kategorier
 CustomersProspectsCategoriesShort=Custo. / prosp. kategorier
 ProductsCategoriesShort=Produkter kategorier
+MembersCategoriesShort=Medlemmer kategorier
+# ContactCategoriesShort=Contacts categories
 ThisCategoryHasNoProduct=Denne kategori indeholder ingen produkt.
 ThisCategoryHasNoSupplier=Denne kategori indeholder ingen leverandør.
 ThisCategoryHasNoCustomer=Denne kategori indeholder ingen kunde.
+ThisCategoryHasNoMember=Denne kategori indeholder ikke et medlem.
+# ThisCategoryHasNoContact=This category does not contain any contact.
 AssignedToCustomer=Henføres til en kunde
 AssignedToTheCustomer=Henføres til kundens
 InternalCategory=Inernal kategori
 CategoryContents=Kategori indhold
 CategId=Kategori-id
-// Date 2009-01-19 21:26:39
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-// Reference language: en_US
-NoCategoryYet=Ingen kategori af denne type skabt
 CatSupList=Liste over leverandør kategorier
 CatCusList=Liste over kunde / udsigt kategorier
 CatProdList=Liste over produkter kategorier
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:39:59).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:19:38).
-// Reference language: en_US
-MembersCategoriesArea=Medlemmer kategorier område
-MemberIsInCategories=Dette medlem ejer til følgende medlemmer kategorier
-MemberHasNoCategory=Dette medlem er ikke på nogen kategorier
-MembersCategoryShort=Medlemmer kategori
-MembersCategoriesShort=Medlemmer kategorier
-ThisCategoryHasNoMember=Denne kategori indeholder ikke et medlem.
 CatMemberList=Liste over medlemmer kategorier
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:19:43).
+# CatContactList=List of contact categories and contact
+# CatSupLinks=Links between suppliers and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatProdLinks=Links between products/services and categories
+# CatMemberLinks=Links between members and categories
+# CatProdLinks=Links between products/services and categories
+# CatCusLinks=Links between customers/prospects and categories
+# CatSupLinks=Links between suppliers and categories
+# DeleteFromCat=Remove from category

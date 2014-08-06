@@ -1,83 +1,80 @@
-/*
- * Language code: et_EE
- * Automatic generated via autotranslator.php tool
- * Generation date 2012-02-29 22:15:30
- */
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 22:15:30).
-// Reference language: en_US -> et_EE
-CHARSET=UTF-8
-Actions=Sündmused
-ActionsArea=Sündmused ala (tegevused ja ülesanded)
-Agenda=Päevakord
-Agendas=Päevakorrad
-Calendar=Kalender
-Calendars=Kalendrid
+# Dolibarr language file - Source file is en_US - agenda
+IdAgenda=Sündmuse ID
+Actions=Tegevused
+ActionsArea=Tegevuste ala (sündmused ja ülesanded)
+Agenda= Päevakava
+Agendas= Päevakavad
+Calendar= Kalender
+Calendars= Kalendrid
 LocalAgenda=Kohalik kalender
-AffectedTo=Mõjutada
-DoneBy=Teha
-Events=Sündmused
-MyEvents=Minu sündmused
-OtherEvents=Muud üritused
-ListOfActions=Sündmuste nimekirja
+AffectedTo= Mõjutatud isik
+DoneBy= Teinud isik
+Events= Tegevused
+EventsNb=Tegevuste arv
+MyEvents=Minu tegevused
+OtherEvents=Muud tegevused
+ListOfActions=Tegevuste nimekiri
 Location=Asukoht
-EventOnFullDay=Üritus terve päev
-SearchAnAction=Otsing sündmus / ülesanne
-MenuToDoActions=Kõik puudulik sündmused
-MenuDoneActions=Kõik lõppenud sündmused
-MenuToDoMyActions=Minu puudulik üritused
-MenuDoneMyActions=Minu lõpetada sündmused
-ListOfEvents=List of Dolibarr sündmused
-ActionsAskedBy=Sündmused teatas
-ActionsToDoBy=Sündmused mõjutada
-ActionsDoneBy=Sündmused teha
-AllMyActions=Kõik minu üritused / ülesanded
-AllActions=Kõik sündmused / ülesanded
+EventOnFullDay=Tegevus kestab kogu/kõik päeva(d)
+SearchAnAction= Otsi tegevust/ülesannet
+MenuToDoActions= Kõik lõpetamata tegevused
+MenuDoneActions= Kõik lõpetatud tegevused
+MenuToDoMyActions= Minu lõpetamata tegevused
+MenuDoneMyActions= Minu lõpetatud tegevused
+ListOfEvents= Dolibarri tegevused
+ActionsAskedBy=Tegevused, mille sisestas
+ActionsToDoBy=Tegevused, mis on seotud
+ActionsDoneBy=Tegevused, mille tegi
+AllMyActions= Kõik minu tegevused/ülesanded
+AllActions= Kõik tegevused/ülesanded
 ViewList=Nimekirja vaade
-ViewCal=Kuu kaupa
-ViewDay=Päeva ülevaade
-ViewWeek=Nädala esitus
-ViewWithPredefinedFilters=Vaata etteantud filtrid
-AutoActions=Automaatne täitmine päevakorda
-AgendaAutoActionDesc=Määratlege siin üritusi, mille jaoks soovite Dolibarr luua automaatselt ürituse kava. Kui midagi on märgitud (vaikimisi), vaid käsitsi tegevused lisatakse päevakorda.
-AgendaSetupOtherDesc=See leht pakub võimalusi ekspordi võimaldamiseks oma Dolibarr üritused arvesse välise kalender (thunderbird, Google Calendar, ...)
-AgendaExtSitesDesc=See leht võimaldab tuvastada väliseid kalendreid näha oma sündmusi sisse Dolibarr päevakorda.
-ActionsEvents=Sündmused, mis Dolibarr loob tegevuse kava automaatselt
-PropalValidatedInDolibarr=Ettepanek %s valideeritud
-InvoiceValidatedInDolibarr=Arve %s valideeritud
-InvoiceBackToDraftInDolibarr=Arve %s minna tagasi eelnõu staatus
-OrderValidatedInDolibarr=Selleks %s valideeritud
-OrderApprovedInDolibarr=Selleks %s heaks
-OrderBackToDraftInDolibarr=Selleks %s minna tagasi eelnõu staatus
-OrderCanceledInDolibarr=Selleks %s tühistatud
-InterventionValidatedInDolibarr=Sekkumine %s valideeritud
-ProposalSentByEMail=Commercial ettepaneku %s saata e-posti
-OrderSentByEMail=Kliendi et %s saata e-posti
-InvoiceSentByEMail=Kliendi arve %s saata e-posti
-SupplierOrderSentByEMail=Tarnija et %s saata e-posti
-SupplierInvoiceSentByEMail=Tarnija arve %s saata e-posti
-ShippingSentByEMail=Shipping %s saata e-posti
-InterventionSentByEMail=Sekkumine %s saata e-posti
-NewCompanyToDolibarr=Kolmanda osapoole loodud
-DateActionPlannedStart=Kavandatav alguskuupäev
-DateActionPlannedEnd=Planeeritud lõppkuupäev
-DateActionDoneStart=Real alguskuupäev
-DateActionDoneEnd=Real lõppkuupäev
-DateActionStart=Alguskuupäev
-DateActionEnd=Lõppkuupäev
-AgendaUrlOptions1=Võite lisada ka järgmisi parameetreid filtreerida väljund:
-AgendaUrlOptions2=<b>login = %s</b> piirata väljund tegevused loodud, mõjutada või teha kasutaja <b>%s.</b>
-AgendaUrlOptions3=<b>logina = %s</b> piirata väljund tegevused loodud kasutaja <b>%s.</b>
-AgendaUrlOptions4=<b>logint = %s</b> piirata väljund meetmed mõjutavad kasutajate <b>%s.</b>
-AgendaUrlOptions5=<b>logind = %s</b> piirata väljundi poolt tehtud toimingute kasutaja <b>%s.</b>
-AgendaShowBirthdayEvents=Näita sünnipäeva kontaktid
-AgendaHideBirthdayEvents=Peida sünnipäev kontaktid
+ViewCal=Kuu vaade
+ViewDay=Päeva vaade
+ViewWeek=Nädala vaade
+ViewWithPredefinedFilters= Näita määratletud filtritega
+AutoActions= Automaatne täitmine
+AgendaAutoActionDesc= Määratle siin need tegevused, mille kohta loob Dolibarr automaatselt päevakavasse tegevuse. Kui midagi pole märgistatud (vaikimisi), siis lisatakse päevakavasse ainult käsitsi lisatud tegevused.
+AgendaSetupOtherDesc= Selle lehe abil saab seadistada tegevuste eksportimise Dolibarrist mõnda välisesse kalendrisse (Thunderbird, Google Calendar jne)
+AgendaExtSitesDesc=See leht võimaldab määratleda väliseid kalendreid, mis saavad oma tegevusi lisada Dolibarri päevakavasse.
+ActionsEvents= Tegevused, mille kohta lisab Dolibarr automaatselt päevakavasse sündmuse.
+PropalValidatedInDolibarr= Pakkumine %s on kinnitatud
+InvoiceValidatedInDolibarr= Arve %s on kinnitatud
+InvoiceBackToDraftInDolibarr=Arve %s on tagasi mustandi staatuses
+InvoiceDeleteDolibarr=Arve %s on kustutatud
+OrderValidatedInDolibarr= Tellimus %s on kinnitatud
+OrderApprovedInDolibarr=Tellimus %s on heaks kiidetud
+OrderBackToDraftInDolibarr=Tellimus %s on muudetud mustandiks
+OrderCanceledInDolibarr=Tellimus %s on tühistatud
+InterventionValidatedInDolibarr=Sekkumine %s on kinnitatud
+ProposalSentByEMail=Pakkumine %s on saadetud e-postiga
+OrderSentByEMail=Tellimus %s on saadetud e-postiga
+InvoiceSentByEMail=Arve %s on saadetud e-postiga
+SupplierOrderSentByEMail=Ostutellimus %s on saadetud e-postiga
+SupplierInvoiceSentByEMail=Ostuarve %s on saadetud e-postiga
+ShippingSentByEMail=Saadetis %s on saadetud e-postiga
+InterventionSentByEMail=Sekkumine %s on saadetud e-postiga
+NewCompanyToDolibarr= Kolmas isik loodud
+DateActionPlannedStart= Plaanitav alguskuupäev
+DateActionPlannedEnd= Plaanitav lõppkuupäev
+DateActionDoneStart= Tegelik alguskuupäev
+DateActionDoneEnd= Tegelik lõppkuupäev
+DateActionStart= Alguskuupäev
+DateActionEnd= Lõppkuupäev
+AgendaUrlOptions1=Otsingutulemuste piiramiseks võib kasutada ka järgmisi parameetreid:
+AgendaUrlOptions2=<b>login=%s</b> tagastab vastusena kasutaja poolt algatatud, talle määratud ja lõpetatud sündmused<b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> tagastab vastusena ainult kasutaja poolt algatatud sündmused<b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> tagastab vastusena ainult kasutajale määratud tegevused <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> tagastab vastusena ainult kasutaja poolt lõpetatud tegevused <b>%s</b>.
+AgendaShowBirthdayEvents=Näita kontaktide sünnipäevi
+AgendaHideBirthdayEvents=Peida kontaktide sünnipäevad
+Busy=Hõivatud
+ExportDataset_event1=Päevakavas olevate tegevuste nimekiri
+
+# External Sites ical
 ExportCal=Ekspordi kalender
-ExtSites=Import välise kalendrid
-ExtSitesEnableThisTool=Näita välised kalendreid sisse päevakorda
-ExtSitesNbOfAgenda=Mitmeid kalendrid
-AgendaExtNb=Kalender nb %s
-ExtSiteUrlAgenda=URL ligi pääseda. ICal fail
-ExtSiteNoLabel=Ei Kirjeldus
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 22:43:48).
+ExtSites=Impordi väline kalender
+ExtSitesEnableThisTool=Näita väliseid kalendreid päevakavas
+ExtSitesNbOfAgenda=Kalendrite arv
+AgendaExtNb=Kalendreid: %s
+ExtSiteUrlAgenda=URL .ical failile ligi pääsemiseks
+ExtSiteNoLabel=Kirjeldus puudub

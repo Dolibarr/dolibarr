@@ -1,29 +1,44 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
+# Dolibarr language file - Source file is en_US - languages
 
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
 Language_ar_AR=Arabic
+Language_ar_SA=Arabíska
+# Language_bg_BG=Bulgarian
 Language_ca_ES=Katalónska
+# Language_cs_CZ=Czech
 Language_da_DA=Danska
+Language_da_DK=Danska
 Language_de_DE=Þýska
+Language_de_AT=Þýska (Austurríki)
+Language_el_GR=Gríska
 Language_en_AU=Enska (Ástralía)
 Language_en_GB=Enska (Bretland)
 Language_en_IN=Enska (Indland)
+Language_en_NZ=Enska (Nýja Sjáland)
+# Language_en_SA=English (Saudi Arabia)
 Language_en_US=Enska (United States)
+# Language_en_ZA=English (South Africa)
 Language_es_ES=Spænska
+Language_es_AR=Spænska (Austria)
+Language_es_HN=Spænska (Hondúras)
+Language_es_MX=Spænska (Mexíkó)
+# Language_es_PY=Spanish (Paraguay)
+# Language_es_PE=Spanish (Peru)
+Language_es_PR=Spænska (Puerto Rico)
+# Language_et_EE=Estonian
+Language_fa_IR=Persneska
 Language_fi_FI=Fins
 Language_fr_BE=Franska (Belgíu)
 Language_fr_CA=Franska (Kanada)
 Language_fr_CH=Franska (Sviss)
 Language_fr_FR=Franska
+# Language_fr_NC=French (New Caledonia)
+# Language_he_IL=Hebrew
+Language_hu_HU=Ungverska
+Language_is_IS=Íslenska
 Language_it_IT=Italien
 Language_ja_JP=Japanska
+# Language_ko_KR=Korean
+# Language_lv_LV=Latvian
 Language_nb_NO=Norska (bokmål)
 Language_nl_BE=Hollenska (Belgíu)
 Language_nl_NL=Hollenska (Holland)
@@ -32,27 +47,12 @@ Language_pt_BR=Portúgalska (Brasilía)
 Language_pt_PT=Portúgalska
 Language_ro_RO=Rúmenska
 Language_ru_RU=Rússneska
+Language_ru_UA=Rússneska (Úkraína)
 Language_tr_TR=Tyrkneska
 Language_sl_SI=Slovenian
-Language_zh_CN=Kínverska
-Language_es_AR=Spænska (Austria)
-Language_is_IS=Íslenska
-Language_is_IS=Íslenska
 Language_sv_SV=Sænska
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-Language_ar_SA=Arabíska
-Language_da_DK=Danska
-Language_de_AT=Þýska (Austurríki)
-Language_el_GR=Gríska
-Language_en_NZ=Enska (Nýja Sjáland)
-Language_es_HN=Spænska (Hondúras)
-Language_es_MX=Spænska (Mexíkó)
-Language_es_PR=Spænska (Puerto Rico)
-Language_fa_IR=Persneska
-Language_hu_HU=Ungverska
-Language_ru_UA=Rússneska (Úkraína)
 Language_sv_SE=Sænska
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:28:08).
+# Language_sk_SK=Slovakian
+# Language_vi_VN=Vietnamese
+Language_zh_CN=Kínverska
+# Language_zh_TW=Chinese (Traditional)

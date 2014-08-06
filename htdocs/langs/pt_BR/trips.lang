@@ -1,9 +1,8 @@
-# Dolibarr language file - pt_BR rev. 0.0 - trips
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - trips
 Trip=Deslocamento
 Trips=Deslocamentos
 TripsAndExpenses=Deslocamentos e Despesas
-TripId=Id de Viagens/Despesas notas
+TripsAndExpensesStatistics=Estatisticas de viagems e despesas 
 TripCard=Ficha de Deslocamento
 AddTrip=Adicionar Deslocamento
 ListOfTrips=Lista de Deslocamentos
@@ -18,5 +17,5 @@ TF_OTHER=Outro
 TF_LUNCH=Alimentação
 TF_TRIP=Viagem
 ListTripsAndExpenses=Lista de viagens e despesas
-
-
+ExpensesArea=Area de viagems e despesas
+SearchATripAndExpense=Buscar para uma viagem ou despesa

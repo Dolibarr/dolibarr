@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-07-17 11:29:16
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:29:16).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - ftp
 FTPClientSetup=FTP Viðskiptavinur mát skipulag
 NewFTPClient=Nýr FTP tengingu skipulag
 FTPArea=FTP svæði
@@ -18,4 +9,4 @@ FailedToConnectToFTPServer=Tókst ekki að tengjast FTP miðlara (miðlara %s, h
 FailedToConnectToFTPServerWithCredentials=Ekki tókst að skrá þig inn á FTP þjóninum með skilgreint tenging / lykilorð
 FTPFailedToRemoveFile=Ekki tókst að fjarlægja skrá <b>%s.</b>
 FTPFailedToRemoveDir=Ekki tókst að fjarlægja skrá <b>%s</b> (Athugaðu heimildir og skrá er tóm).
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:30:03).
+# FTPPassiveMode=Passive mode

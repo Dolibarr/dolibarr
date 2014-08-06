@@ -238,7 +238,7 @@ function facture_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('BILL_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			if ($result < 0) { $error++; $errors=$interface->errors; }
 			// Fin appel triggers
 
 			return 1;

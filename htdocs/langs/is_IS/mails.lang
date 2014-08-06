@@ -1,13 +1,4 @@
-/*
- * Language code: is_IS
- * Automatic generated via autotranslator.php tool
- * Generation date 2010-06-30 00:15:29
- */
-
-
-// START - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-// Reference language: en_US
-CHARSET=UTF-8
+# Dolibarr language file - Source file is en_US - mails
 Mailing=Emailing
 EMailing=Emailing
 Mailings=EMailings
@@ -52,6 +43,10 @@ MailingStatusSentCompletely=Send fullkomlega
 MailingStatusError=Villa
 MailingStatusNotSent=Ekki send
 MailSuccessfulySent=Tölvupóstur hefur verið sendur (frá %s  á %s )
+# MailingSuccessfullyValidated=EMailing successfully validated
+# MailUnsubcribe=Unsubscribe
+# Unsuscribe=Unsubscribe
+# MailingStatusNotContact=Don't contact anymore
 ErrorMailRecipientIsEmpty=Netfang móttakanda er tóm
 WarningNoEMailsAdded=Engin ný Email að bæta við listann viðtakanda.
 ConfirmValidMailing=Ertu viss um að þú viljir að sannprófa þetta póst?
@@ -77,12 +72,28 @@ CloneReceivers=Cloner viðtakendur
 DateLastSend=Dagsetning síðustu sendingu
 DateSending=Date sendingu
 SentTo=Send <b>til %s </b>
+MailingStatusRead=Lesa
+# CheckRead=Read Receipt
+# YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubcribe from mailing list
+# MailtoEMail=Hyper link to email
+# ActivateCheckRead=Allow to use the "Unsubcribe" link
+# ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
+# EMailSentToNRecipients=EMail sent to %s recipients.
+
+# Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Tengiliðir allra þriðja aðila (viðskiptavinur, horfur, birgir, ...)
 MailingModuleDescDolibarrUsers=Allar Dolibarr notandi með tölvupósti
 MailingModuleDescFundationMembers=Stofnun meðlimir með tölvupósti
 MailingModuleDescEmailsFromFile=Tölvupóst frá textaskrá (email; nafn; ættarnafn; athugasemdir)
+# MailingModuleDescEmailsFromUser=EMails from user input (email;lastname;firstname;other)
 MailingModuleDescContactsCategories=Í þriðja aðila með tölvupósti (eftir flokkum)
 MailingModuleDescDolibarrContractsLinesExpired=Í þriðja aðila með línum rann samningur er
+MailingModuleDescContactsByCompanyCategory=Tengiliðir þriðja aðila (af þriðja aðila flokkur)
+# MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
+MailingModuleDescMembersCategories=Foundation aðilum (eftir flokkum)
+MailingModuleDescContactsByFunction=Tengiliðir þriðja aðila (með því að staða / virka)
+
+
 LineInFile=Lína %s  í skrá
 RecipientSelectionModules=Skilgreint beiðnir um val viðtakanda
 MailSelectedRecipients=Valdar viðtakendur
@@ -95,10 +106,10 @@ SearchAMailing=Leita póstlista
 SendMailing=Senda póst
 SendMail=Senda tölvupóst
 SentBy=Sendur
-MailingNeedCommand=Fyrir verðbréf ástæðu að senda póst skal fara fram úr skipuninni. Spyrja þinn stjórnandi að ráðast í eftirfarandi skipun til að senda póst til allra viðtakenda:
+# MailingNeedCommand=For security reason, sending an emailing is better when performed from command line. If you have one, ask your server administrator to launch the following command to send the emailing to all recipients:
 MailingNeedCommand2=Þú getur hins vegar sent þær á netinu með því að bæta breytu MAILING_LIMIT_SENDBYWEB við gildi frá fjölda max tölvupóst þú vilt senda við setu.
-ConfirmSendingEmailing=Ertu viss um að þú viljir senda póst?
-LimitSendingEmailing=Á línu sendingu emailings eru takmarkaður fyrir öryggi og tími ástæða <b>til %s </b> viðtakenda með því að senda fundur.
+# ConfirmSendingEmailing=If you can't or prefer sending them with your www browser, please confirm you are sure you want to send emailing now from your browser ?
+# LimitSendingEmailing=Note: On line sending of emailings are limited for security and timeout reasons to <b>%s</b> recipients by sending session.
 TargetsReset=Hreinsa lista
 ToClearAllRecipientsClickHere=Smelltu hér til að hreinsa viðtakanda lista fyrir þennan póst
 ToAddRecipientsChooseHere=Bæta við viðtakendur með því að velja úr listanum
@@ -106,25 +117,16 @@ NbOfEMailingsReceived=Mass emailings móttekin
 IdRecord=Auðkenni færslu
 DeliveryReceipt=Sending kvittun
 YouCanUseCommaSeparatorForSeveralRecipients=Þú getur notað <b>kommu</b> skiltákn að tilgreina nokkra viðtakendur.
+# TagCheckMail=Track mail opening
+# TagUnsubscribe=Unsubscribe link
+# TagSignature=Signature sending user
+# TagMailtoEmail=Recipient EMail
+
+# Module Notifications
 Notifications=Tilkynningar
 NoNotificationsWillBeSent=Engar tilkynningar í tölvupósti er mjög spennandi fyrir þennan atburð og fyrirtæki
 ANotificationsWillBeSent=1 tilkynning verður send með tölvupósti
-SomeNotificationsWillBeSent= %s  tilkynningar verða sendar í tölvupósti
+SomeNotificationsWillBeSent=%s  tilkynningar verða sendar í tölvupósti
 AddNewNotification=Virkja nýja tilkynningu í tölvupósti beiðni
 ListOfActiveNotifications=Listi alla virka tilkynningu í tölvupósti beiðnir
 ListOfNotificationsDone=Sýna allar tilkynningar í tölvupósti sendi
-// STOP - Lines generated via autotranslator.php tool (2010-06-30 00:15:29).
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> is_IS
-MailingModuleDescContactsByCompanyCategory=Tengiliðir þriðja aðila (af þriðja aðila flokkur)
-MailingModuleDescMembersCategories=Foundation aðilum (eftir flokkum)
-MailingModuleDescContactsByFunction=Tengiliðir þriðja aðila (með því að staða / virka)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:37:19).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:26:19).
-// Reference language: en_US -> is_IS
-MailingStatusRead=Lesa
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:26:36).

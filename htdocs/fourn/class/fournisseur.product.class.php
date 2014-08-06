@@ -40,8 +40,13 @@ class ProductFournisseur extends Product
     var $product_fourn_price_id;  // id of ligne product-supplier
 
     var $id;                      // product id
-    var $fourn_ref;               // ref supplier
-    var $fourn_qty;               // quantity for price
+    var $fourn_ref;               // deprecated
+    var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
+    var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
+
+    var $fourn_qty;               // quantity for price (can be set by get_buyprice)
+    var $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
+
     var $fourn_price;             // price for quantity
     var $fourn_remise_percent;    // discount for quantity (percent)
     var $fourn_remise;            // discount for quantity (amount)
@@ -419,9 +424,10 @@ class ProductFournisseur extends Product
      * 	Load properties for minimum price
      *
      *  @param	int		$prodid	    Product id
+     *  @param	int		$qty		Minimum quantity
      *  @return int					<0 if KO, >0 if OK
      */
-    function find_min_price_product_fournisseur($prodid)
+    function find_min_price_product_fournisseur($prodid, $qty=0)
     {
         global $conf;
 
@@ -444,6 +450,7 @@ class ProductFournisseur extends Product
         $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
         $sql.= " AND pfp.fk_product = ".$prodid;
         $sql.= " AND pfp.fk_soc = s.rowid";
+        if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
         $sql.= " ORDER BY pfp.unitprice";
         $sql.= $this->db->plimit(1);
 
@@ -496,13 +503,15 @@ class ProductFournisseur extends Product
     /**
      *	Display price of product
      *
-     *	@return	string		String with supplier price
+     *  @param	int		$showunitprice	Show "Unit price" into output string
+     *  @param	int		$showsuptitle	Show "Supplier" into output string
+     *	@return	string					String with supplier price
      */
-    function display_price_product_fournisseur()
+    function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1)
     {
         global $langs;
         $langs->load("suppliers");
-        $out=price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; ('.$langs->trans("Supplier").': '.$this->getSocNomUrl(1).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.')';
+        $out=($showunitprice?price($this->fourn_unitprice).' '.$langs->trans("HT").' &nbsp; (':'').($showsuptitle?$langs->trans("Supplier").': ':'').$this->getSocNomUrl(1).' / '.$langs->trans("SupplierRef").': '.$this->fourn_ref.($showunitprice?')':'');
         return $out;
     }
 

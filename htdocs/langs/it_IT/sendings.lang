@@ -1,91 +1,76 @@
-# Dolibarr language file - it_IT - sendings 
-CHARSET=UTF-8
-RefSending				    =Rif. spedizione 
-Sending					    =Spedizione 
-Sendings				    =Spedizioni 
-Receivings				    =Ricezioni 
-SendingsArea				    =Sezione spedizioni 
-ListOfSendings				    =Elenco delle spedizioni
-SendingMethod				    =Metodo di invio 
-SendingReceipt				    =Ricevuta di spedizione
-LastSendings				    =Ultime %s spedizioni
-SearchASending				    =Ricerca di una spedizione 
-StatisticsOfSendings			    =Statistiche spedizioni 
-NbOfSendings				    =Numero di spedizioni 
-SendingCard				    =Scheda di spedizione
-NewSending				    =Nuova spedizione 
-CreateASending				    =Creazione di una spedizione 
-CreateSending				    =Crea una spedizione 
-QtyOrdered				    =Quantità ordinata 
-QtyShipped				    =Quantità spedita 
-QtyToShip				    =Quantità da spedire 
-QtyReceived				    =Quantità ricevuta 
-KeepToShip				    =Ancora da spedire 
-OtherSendingsForSameOrder		    =Altre Spedizioni per questo ordine 
-DateSending				    =Data spedizione 
-SendingsForSameOrder			    =Spedizioni per lo stesso ordine 
-SendingsAndReceivingForSameOrder	    =Spedizioni e ricezioni per lo stesso ordine 
-SendingsToValidate			    =Spedizione da convalidare 
-StatusSendingDraft			    =Bozza 
-StatusSendingValidated			    =Convalidata (prodotti per la spedizione o già spediti) 
-StatusSendingDraftShort			    =Bozza 
-StatusSendingValidatedShort		    =Convalidata 
-SendingSheet				    =Documento di Trasporto (D.d.t.)
-Carriers				    =Vettori 
-Carrier					    =Vettore 
-CarriersArea				    =Sezione vettori 
-NewCarrier				    =Nuovo vettore
-
-
-// Date 2009-01-18 19:41:54
-// START - Lines generated via parser
-// Reference language: en_US
+# Dolibarr language file - Source file is en_US - sendings
+RefSending=Rif. spedizione
+Sending=Spedizione
+Sendings=Spedizioni
+Shipment=Spedizione
+Shipments=Spedizioni
+Receivings=Ricezioni
+SendingsArea=Sezione spedizioni
+ListOfSendings=Elenco delle spedizioni
+SendingMethod=Metodo di invio
+SendingReceipt=Ricevuta di spedizione
+LastSendings=Ultime %s spedizioni
+SearchASending=Ricerca di una spedizione
+StatisticsOfSendings=Statistiche spedizioni
+NbOfSendings=Numero di spedizioni
+# NumberOfShipmentsByMonth=Number of shipments by month
+SendingCard=Scheda di spedizione
+NewSending=Nuova spedizione
+CreateASending=Creazione di una spedizione
+CreateSending=Crea una spedizione
+QtyOrdered=Quantità ordinata
+QtyShipped=Quantità spedita
+QtyToShip=Quantità da spedire
+QtyReceived=Quantità ricevuta
+KeepToShip=Ancora da spedire
+OtherSendingsForSameOrder=Altre Spedizioni per questo ordine
+DateSending=Data spedizione
 DateSendingShort=Data di invio
+SendingsForSameOrder=Spedizioni per lo stesso ordine
+SendingsAndReceivingForSameOrder=Spedizioni e ricezioni per lo stesso ordine
+SendingsToValidate=Spedizione da convalidare
+StatusSendingCanceled=Annullato
+StatusSendingDraft=Bozza
+StatusSendingValidated=Convalidata (prodotti per la spedizione o già spediti)
+StatusSendingProcessed=Processato
+StatusSendingCanceledShort=Annullato
+StatusSendingDraftShort=Bozza
+StatusSendingValidatedShort=Convalidata
+StatusSendingProcessedShort=Processato
+SendingSheet=Documento di Trasporto (D.d.t.)
+Carriers=Vettori
+Carrier=Vettore
+CarriersArea=Sezione vettori
+NewCarrier=Nuovo vettore
 ConfirmDeleteSending=Sei sicuro di voler eliminare questa spedizione?
 ConfirmValidateSending=Sei sicuro di voler convalidare questa spedizione?
 ConfirmCancelSending=Sei sicuro di voler annullare questa spedizione?
 GenericTransport=Trasporto generico
 Enlevement=Ottenuto dal cliente
 DocumentModelSimple=Modello semplice di documento
-WarningNoQtyLeftToSend=Attenzione, non sono rimasti prodotti per la spedizione.
-// Date 2009-01-18 19:41:54
-// STOP - Lines generated via parser
-
-
-// START - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-// Reference language: en_US
-CHARSET=UTF-8
-StatsOnShipmentsOnlyValidated=Statistiche sulle spedizioni (solo convalidate)
-SendingMethodCATCH=Ritiro da parte del Cliente
-SendingMethodTRANS=A cura del mittente
-SendingMethodCOLSUI=Corriere espresso
-DocumentModelSirocco=Semplice modello di documento per le ricevute di consegna
-DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
-// STOP - Lines generated via autotranslator.php tool (2009-08-13 20:49:18).
-
-
-// START - Lines generated via autotranslator.php tool (2010-07-17 11:32:28).
-// Reference language: en_US
-Shipments=Spedizioni
-StatusSendingCanceled=Annullato
-StatusSendingCanceledShort=Annullato
 DocumentModelMerou=Merou modello A5
-DateDeliveryPlanned=data di consegna piallato
+WarningNoQtyLeftToSend=Attenzione, non sono rimasti prodotti per la spedizione.
+# StatsOnShipmentsOnlyValidated=Statistics conducted on shipments only validated. Date used is date of validation of shipment (planed delivery date is not always known).
+DateDeliveryPlanned=Data di consegna prevista
 DateReceived=Data di consegna ricevuto
-// STOP - Lines generated via autotranslator.php tool (2010-07-17 11:32:45).
-
-
-// START - Lines generated via autotranslator.php tool (2011-06-26 15:51:22).
-// Reference language: en_US -> it_IT
 SendShippingByEMail=Invia spedizione via EMail
 SendShippingRef=Invia %s spedizione
 ActionsOnShipping=Acions sulla spedizione
 LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
-Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
-// STOP - Lines generated via autotranslator.php tool (2011-06-26 15:52:29).
-
-
-// START - Lines generated via autotranslator.php tool (2012-02-29 16:32:31).
-// Reference language: en_US -> it_IT
 ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
-// STOP - Lines generated via autotranslator.php tool (2012-02-29 16:33:52).
+RelatedShippings=Spedizioni collegate
+ShipmentLine=Filiera di spedizione
+CarrierList=Elenco dei trasportatori
+
+# Sending methods
+SendingMethodCATCH=Ritiro da parte del Cliente
+SendingMethodTRANS=A cura del mittente
+SendingMethodCOLSUI=Corriere espresso
+
+# ModelDocument
+DocumentModelSirocco=Semplice modello di documento per le ricevute di consegna
+DocumentModelTyphon=Modello più completo di documento per le ricevute di consegna (logo. ..)
+
+Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER costante non definita
+SumOfProductVolumes=Totale volume prodotti
+SumOfProductWeights=Totale peso prodotti

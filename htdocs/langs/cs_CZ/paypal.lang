@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modul nastavení
+PaypalDesc=Tento modul nabízejí stránky, které umožní platby na <a href="http://www.paypal.com" target="_blank">PayPal</a> zákazníky. Toho lze využít pro volný platbu nebo platbu na určitý objekt Dolibarr (faktury, objednávky, ...)
+PaypalOrCBDoPayment=Platit kreditní kartou nebo Paypal
+PaypalDoPayment=Platby pomocí PayPal
+PaypalCBDoPayment=Platit kreditní kartou
+PAYPAL_API_SANDBOX=Režim test / pískoviště
+PAYPAL_API_USER=API uživatelské jméno
+PAYPAL_API_PASSWORD=API heslo
+PAYPAL_API_SIGNATURE=API podpis
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Nabídka platba &quot;integrální&quot; (Credit card + Paypal) nebo &quot;Paypal&quot; pouze
+PaypalModeIntegral=Integrální
+PaypalModeOnlyPaypal=PayPal pouze
+PAYPAL_CSS_URL=Optionnal URL stylů CSS na platební stránky
+ThisIsTransactionId=To je id transakce: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Přidat URL Paypal platby při odeslání dokumentu e-mailem
+PAYPAL_IPN_MAIL_ADDRESS=E-mailová adresa pro okamžité oznámení o platbě (IPN)
+PredefinedMailContentLink=Můžete kliknout na níže uvedený odkaz bezpečné provést platbu (PayPal), pokud se tak již nebylo učiněno. \n\n %s \n\n
+YouAreCurrentlyInSandboxMode=Ty jsou v současné době v &quot;sandbox&quot; módu
+NewPaypalPaymentReceived=Nový Paypal přijaté platby
+NewPaypalPaymentFailed=Nový Paypal platební snažil se ale propadal
+PAYPAL_PAYONLINE_SENDEMAIL=E-mail upozornit po platbě (úspěch nebo ne)

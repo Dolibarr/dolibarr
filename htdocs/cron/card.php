@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013      Florian Henry <florian.henry@open-concpt.pro>
+ * Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- *  \file       cron/card.php
+ *  \file       htdocs/cron/card.php
  *  \ingroup    cron
  *  \brief      Cron Jobs Card
  */
@@ -43,55 +44,66 @@ $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel');
 
 $object = new Cronjob($db);
-if (!empty($id)) {
+if (!empty($id))
+{
 	$result=$object->fetch($id);
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessage($object->error,'errors');
 	}
 }
 
-if(!empty($cancel)) {
-	if (!empty($id)) {
+if(!empty($cancel))
+{
+	if (!empty($id))
+	{
 		$action='';
-	}else {
-		Header("Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
 	}
-
+	else
+	{
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		exit;
+	}
 }
 
 // Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
-
-
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+{
 	$result = $object->delete($user);
 
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessage($object->error,'errors');
 		$action='edit';
-	}else {
-		Header("Location: ".dol_buildpath('/cron/cron/list.php',1).'?status=1');
+	}
+	else
+	{
+		Header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=1');
+		exit;
 	}
 }
 
 // Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute){
-
+if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
+{
 	$result=$object->run_jobs($user->login);
 
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessage($object->error,'errors');
 		$action='';
-	}else {
+	}
+	else
+	{
 		if ($object->lastresult > 0) setEventMessage($langs->trans("JobFinished"),'warnings');
 		else setEventMessage($langs->trans("JobFinished"),'mesgs');
 		$action='';
 	}
-
 }
 
 
-if ($action=='add') {
-
+if ($action=='add')
+{
 	$object->jobtype=GETPOST('jobtype','alpha');
 	$object->label=GETPOST('label','alpha');
 	$object->command=GETPOST('command','alpha');
@@ -108,7 +120,7 @@ if ($action=='add') {
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
 
-	//Adding cron task
+	// Add cron task
 	$result = $object->create($user);
 
 	// test du Resultat de la requete
@@ -123,7 +135,8 @@ if ($action=='add') {
 }
 
 // Save parameters
-if ($action=='update') {
+if ($action=='update')
+{
 	$object->id=$id;
 	$object->jobtype=GETPOST('jobtype');
 	$object->label=GETPOST('label');
@@ -141,7 +154,7 @@ if ($action=='update') {
 	$object->unitfrequency=GETPOST('unitfrequency','int');
 	$object->frequency=$object->unitfrequency * GETPOST('nbfrequency','int');
 
-	//Adding cron task
+	// Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -155,10 +168,11 @@ if ($action=='update') {
 	}
 }
 
-if ($action=='activate') {
+if ($action=='activate')
+{
 	$object->status=1;
 
-	//Adding cron task
+	// Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -172,9 +186,11 @@ if ($action=='activate') {
 	}
 }
 
-if ($action=='inactive') {
+if ($action=='inactive')
+{
 	$object->status=0;
-	//Adding cron task
+
+	// Add cron task
 	$result = $object->update($user);
 
 	// test du Resultat de la requete
@@ -194,12 +210,15 @@ if ($action=='inactive') {
  * View
  */
 
+$form = new Form($db);
+$formCron = new FormCron($db);
+
 llxHeader('',$langs->trans("CronAdd"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
 	$head=cron_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
+	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), 0, 'bill');
 }
 elseif ($action=='create')
 {
@@ -229,19 +248,16 @@ if ($conf->use_javascript_ajax)
 	print '</script>'."\n";
 }
 
-$form = new Form($db);
-$formCron = new FormCron($db);
-
 if ($action == 'delete')
 {
-	$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+
 	$action='';
 }
 
 if ($action == 'execute'){
-	$ret=$form->form_confirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
-	if ($ret == 'html') print '<br>';
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+
 	$action='';
 }
 
@@ -287,11 +303,13 @@ if (($action=="create") || ($action=="edit"))
 
 	print "<tr><td>";
 	print $langs->trans('CronHourStart')."</td><td>";
-	if(!empty($object->datestart)){
+	if(!empty($object->datestart))
+	{
 		$form->select_date($object->datestart,'datestart',1,1,'',"cronform");
 	}
-	else{
-		$form->select_date(dol_now(),'datestart',1,1,'',"cronform");
+	else
+	{
+		$form->select_date('','datestart',1,1,'',"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -441,16 +459,12 @@ if (($action=="create") || ($action=="edit"))
 	print "</td>";
 	print "</tr>\n";
 
-
-	print '<tr><td colspan="2" align="center">';
-	print "<input type=\"submit\" name=\"save\" class=\"button\" value=\"".$langs->trans("Save")."\">";
-	print "<input type=\"submit\" name=\"cancel\" class=\"button\" value=\"".$langs->trans("Cancel")."\">";
-	print "</td>";
-	print "<td>";
-	print "</td>";
-	print "</tr>\n";
-
 	print '</table>';
+
+	print '<div align="center"><br>';
+	print '<input type="submit" name="save" class="button" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+	print "</center>";
 
 	print "</form>\n";
 
@@ -608,5 +622,8 @@ if (($action=="create") || ($action=="edit"))
 	print '<br><br></div>';
 }
 
-$db->close();
+
 llxFooter();
+
+$db->close();
+?>
