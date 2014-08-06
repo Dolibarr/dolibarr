@@ -1307,6 +1307,7 @@ class Holiday extends CommonObject
             } else {
                 // Erreur SQL
                 $this->error="Error ".$this->db->lasterror();
+                dol_syslog(get_class($this)."::verifNbUsers ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
@@ -1347,6 +1348,7 @@ class Holiday extends CommonObject
             } else {
                 // Erreur SQL
                 $this->error="Error ".$this->db->lasterror();
+                dol_syslog(get_class($this)."::verifNbUsers ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
             }
