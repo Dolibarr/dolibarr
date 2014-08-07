@@ -53,7 +53,7 @@ class Project extends CommonObject
     var $statuts_short;
     var $statuts;
     var $oldcopy;
-    
+
 
     /**
      *  Constructor
@@ -147,7 +147,7 @@ class Project extends CommonObject
             dol_syslog(get_class($this)."::create error -2 " . $this->error, LOG_ERR);
             $error++;
         }
-        
+
         //Update extrafield
         if (!$error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -204,9 +204,9 @@ class Project extends CommonObject
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
             $sql.= ", fk_statut = " . $this->statut;
             $sql.= ", public = " . ($this->public ? 1 : 0);
-            $sql.= ", datec=" . ($this->date_c != '' ? $this->db->idate($this->date_c) : 'null');
-            $sql.= ", dateo=" . ($this->date_start != '' ? $this->db->idate($this->date_start) : 'null');
-            $sql.= ", datee=" . ($this->date_end != '' ? $this->db->idate($this->date_end) : 'null');
+            $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
+            $sql.= ", dateo=" . ($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
+            $sql.= ", datee=" . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::Update sql=" . $sql, LOG_DEBUG);
@@ -225,7 +225,7 @@ class Project extends CommonObject
                     }
                     // End call triggers
                 }
-                
+
                 //Update extrafield
                 if (!$error) {
                 	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
@@ -262,6 +262,7 @@ class Project extends CommonObject
             else
             {
                 $this->error = $this->db->lasterror();
+                $this->errors[] = $this->error;
                 dol_syslog(get_class($this)."::Update error -2 " . $this->error, LOG_ERR);
                 $result = -2;
             }
@@ -478,10 +479,10 @@ class Project extends CommonObject
 
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
         $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-        
+
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        
+
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
         $sql.= " WHERE fk_projet=" . $this->id;
 
@@ -493,13 +494,13 @@ class Project extends CommonObject
 
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        
+
         $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_extrafields";
         $sql.= " WHERE fk_object=" . $this->id;
-        
+
         dol_syslog(get_class($this) . "::delete sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
-        
+
         if ($resql)
         {
             // We remove directory
@@ -1277,7 +1278,7 @@ class Project extends CommonObject
 	    }
 	    return $result;
 	}
-	
+
 	 /**
 	  *    Build Select List of element associable to a project
 	  *
@@ -1312,7 +1313,7 @@ class Project extends CommonObject
 		$sql.= " WHERE ".$projectkey." is null";
 		if (!empty($this->societe->id)) {
 			$sql.= " AND fk_soc=".$this->societe->id;
-		} 
+		}
 		$sql.= " ORDER BY ref DESC";
 
 		dol_syslog(get_class($this).'::select_element sql='.$sql,LOG_DEBUG);
@@ -1334,11 +1335,11 @@ class Project extends CommonObject
 				$sellist .='</select>';
 			}
 			return $sellist ;
-			
+
 			$this->db->free($resql);
 		}
 	}
-	
+
 	 /**
 	  *    Associate element to a project
 	  *
@@ -1349,7 +1350,7 @@ class Project extends CommonObject
 	function update_element($TableName, $ElementSelectId)
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$TableName;
-		
+
 		if ($TableName=="actioncomm")
 		{
 			$sql.= " SET fk_project=".$this->id;
@@ -1360,17 +1361,17 @@ class Project extends CommonObject
 			$sql.= " SET fk_projet=".$this->id;
 			$sql.= " WHERE rowid=".$ElementSelectId;
 		}
-		
+
 		dol_syslog(get_class($this)."::update_element sql=" . $sql, LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (!$resql) {
-			$this->error=$this->db->lasterror();	
+			$this->error=$this->db->lasterror();
 			dol_syslog(get_class($this)."::update_element error : " . $this->error, LOG_ERR);
 			return -1;
 		}else {
 			return 1;
 		}
-			
+
 	}
 }
 
