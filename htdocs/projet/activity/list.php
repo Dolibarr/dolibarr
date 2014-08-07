@@ -134,6 +134,9 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$pr
 
 llxHeader("",$title,"");
 
+
+llxHeader("",$title,"");
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Filter on user
