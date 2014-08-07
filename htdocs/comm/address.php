@@ -148,7 +148,7 @@ if ($action == 'add' || $action == 'update')
         {
             $reload = 0;
 	        setEventMessage($object->error, 'errors');
-            $actino= "edit";
+            $action= "edit";
         }
     }
 
