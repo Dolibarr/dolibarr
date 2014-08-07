@@ -15,7 +15,9 @@ Fix: [ bug #1528 ] Leopard Services numeration module description is not transla
 Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas
 Fix: [ bug #1534 ] Unknown error when deleting a product photo under special circumstances
 Fix: Update impayees.php
-Fix: Fix Link product, In list view and label product
+Fix: Link product, In list view and label product
+Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
+Fix: When disabled, all fields to add time into task line must be disabled.
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
