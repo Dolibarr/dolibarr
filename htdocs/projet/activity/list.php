@@ -158,9 +158,12 @@ print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
 
+// By default, we can edit only tasks we are assigned to
+$restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS)?1:0);	 
+
 if (count($tasksarray) > 0)
 {
-	projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
+	projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 }
 else
 {
