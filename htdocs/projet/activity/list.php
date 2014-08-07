@@ -130,7 +130,23 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$pr
 
 llxHeader("",$title,"");
 
+
+llxHeader("",$title,"");
+
+
+llxHeader("",$title,"");
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+
+// Filter on user
+/*	dol_fiche_head('');
+	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
+	print '<td>';
+	if ($mine) print $user->getLoginUrl(1);
+	print '</td>';
+	print '</tr></table>';
+	dol_fiche_end();
+*/
 
 // Filter on user
 /*	dol_fiche_head('');

@@ -222,13 +222,13 @@ foreach ($listofreferent as $key => $value)
 	$classname=$value['class'];
 	$tablename=$value['table'];
 	$qualified=$value['test'];
-	
+
 	if ($qualified)
 	{
 		print '<br>';
 
 		print_titre($langs->trans($title));
-		
+
 		$selectList=$formproject->select_element($tablename,$project->societe->id);
 
 		if (!$selectList || ($selectList<0)) {
