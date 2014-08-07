@@ -16,6 +16,7 @@ Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appli
 Fix: [ bug #1534 ] Unknown error when deleting a product photo under special circumstances
 Fix: Update impayees.php
 Fix: Fix Link product, In list view and label product
+Fix: [ bug #1544 ] Can remove date from invoice
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
