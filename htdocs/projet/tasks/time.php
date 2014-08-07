@@ -65,7 +65,8 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	}
 	if (empty($_POST["userid"]))
 	{
-		setEventMessage($langs->trans('ErrorUserNotAffectedToTask'),'errors');
+		$langs->load("errors");
+		setEventMessage($langs->trans('ErrorUserNotAssignedToTask'),'errors');
 		$error++;
 	}
 
@@ -327,9 +328,13 @@ if ($id > 0 || ! empty($ref))
 
 			// Contributor
 			print '<td class="nowrap">';
-			$contactoftask=$object->getListContactId('internal');
+			$restrictaddtimetocontactoftask=0;
+			if (empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS))
+			{
+				$restrictaddtimetocontactoftask=$object->getListContactId('internal');
+			}
 			print img_object('','user');
-			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$contactoftask);
+			print $form->select_dolusers($_POST["userid"]?$_POST["userid"]:$user->id,'userid',0,'',0,'',$restrictaddtimetocontactoftask);	// Note: If user is not allowed it will be disabled into combo list and userid not posted
 			print '</td>';
 
 			// Note
