@@ -127,7 +127,7 @@ class SqlTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testBank
+     * testSql
      *
      * @return string
      */
@@ -162,4 +162,38 @@ class SqlTest extends PHPUnit_Framework_TestCase
 
         return;
     }
+
+    /**
+     * testInitData
+     *
+     * @return string
+     */
+    public function testInitData()
+    {
+    	global $conf,$user,$langs,$db;
+		$conf=$this->savconf;
+		$user=$this->savuser;
+		$langs=$this->savlangs;
+		$db=$this->savdb;
+
+		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/../dev/initdata');
+		foreach($filesarray as $key => $file)
+		{
+			if (! preg_match('/\.sql$/',$file)) continue;
+
+			print 'Check sql file '.$file."\n";
+			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/../dev/initdata/'.$file);
+
+			$result=strpos($filecontent,'@gmail.com');
+			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a bad key into file '.$file);
+
+			$result=strpos($filecontent,'eldy@');
+			print __METHOD__." Result for checking we don't have personal data = ".$result."\n";
+			$this->assertTrue($result===false, 'Found a bad key into file '.$file);
+		}
+
+        return;
+    }
+
 }
