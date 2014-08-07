@@ -53,6 +53,7 @@ For users:
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - New: [ task #1204 ] add a External reference to contract
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
 
 For translators:
 - Update language files.
