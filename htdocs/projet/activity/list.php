@@ -137,11 +137,14 @@ llxHeader("",$title,"");
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Filter on user
-dol_fiche_head('');
-print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
-print '<td>'.$user->getLoginUrl(1).'</td>';
-print '</tr></table>';
-dol_fiche_end();
+/*	dol_fiche_head('');
+	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
+	print '<td>';
+	if ($mine) print $user->getLoginUrl(1);
+	print '</td>';
+	print '</tr></table>';
+	dol_fiche_end();
+*/
 
 
 dol_htmloutput_mesg($mesg);
@@ -165,9 +168,12 @@ print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
 print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
 
+// By default, we can edit only tasks we are assigned to
+$restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS)?1:0);	 
+
 if (count($tasksarray) > 0)
 {
-	projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine);
+	projectLinesb($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask);
 }
 else
 {
