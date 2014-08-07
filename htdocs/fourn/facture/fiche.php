@@ -756,6 +756,13 @@ elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
     }
 }
 
+// Link invoice to order
+if (GETPOST('linkedOrder')) {
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->add_object_linked('commande', GETPOST('linkedOrder'));
+}
+
 // Add file in email form
 if (GETPOST('addfile'))
 {
@@ -2272,6 +2279,69 @@ else
                  */
                 $somethingshown=$object->showLinkedObjectBlock();
 
+                if (empty($somethingshown) && ! empty($conf->fournisseur->enabled))
+                {
+                	print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+
+                	print '
+						<script type="text/javascript" language="javascript">
+						jQuery(document).ready(function() {
+							jQuery("#linktoorder").click(function() {
+								jQuery("#commande").toggle();
+							});
+						});
+						</script>
+						';
+                	                	
+                	print '<div id="commande" style="display:none">';
+                
+                	$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
+                	$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+                	$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as c";
+                	$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $societe->id;
+             
+                	$resqlorderlist = $db->query($sql);
+                	if ($resqlorderlist) {
+                		$num = $db->num_rows($resqlorderlist);
+                		$i = 0;
+                
+                		print '<form action="" method="POST" name="LinkedOrder">';
+                		print '<table class="noborder">';
+                		print '<tr class="liste_titre">';
+                		print '<td class="nowrap"></td>';
+                		print '<td align="center">' . $langs->trans("Ref") . '</td>';
+                		print '<td align="left">' . $langs->trans("RefSupplier") . '</td>';
+                		print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+                		print '<td align="left">' . $langs->trans("Company") . '</td>';
+                		print '</tr>';
+                		while ($i < $num) {
+                			$objp = $db->fetch_object($resqlorderlist);
+                			if ($objp->socid == $societe->id) {
+                				$var = ! $var;
+                				print '<tr ' . $bc [$var] . '>';
+                				print '<td aling="left">';
+                				print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+                				print '<td align="center">' . $objp->ref . '</td>';
+                				print '<td>' . $objp->ref_supplier . '</td>';
+                				print '<td>' . price($objp->total_ht) . '</td>';
+                				print '<td>' . $objp->name . '</td>';
+                				print '</td>';
+                				print '</tr>';
+                			}
+                
+                			$i ++;
+                		}
+                		print '</table>';
+                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+                		print '</form>';
+                		$db->free($resqlorderlist);
+                	} else {
+                		dol_print_error($db);
+                	}
+                
+                	print '</div>';
+                }
+                                
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
                 //print '</td><td valign="top" width="50%">';
                 //print '<br>';
