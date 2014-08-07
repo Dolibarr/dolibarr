@@ -945,3 +945,17 @@ create table llx_c_email_templates
 UPDATE llx_c_regions SET rowid = 0 where rowid = 1; 
 DELETE FROM llx_c_departements WHERE fk_region NOT IN (select rowid from llx_c_regions) AND fk_region IS NOT NULL AND fk_region <> 0;
 ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_region	FOREIGN KEY (fk_region) REFERENCES llx_c_regions (rowid);
+
+
+CREATE TABLE llx_holiday_types (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  label varchar(45) NOT NULL,
+  description varchar(255) NOT NULL,
+  affect int(1) NOT NULL,
+  delay int(1) NOT NULL,
+  insertAt DATETIME NOT NULL,
+  updateAt DATETIME,
+  deleteAt DATETIME,
+  nbCongesDeducted varchar(255) NOT NULL,
+  nbCongesEveryMonth varchar(255) NOT NULL
+);
