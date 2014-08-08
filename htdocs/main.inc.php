@@ -446,6 +446,9 @@ if (! defined('NOLOGIN'))
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged, to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
                 $dol_tz_string=$_POST["tz_string"];
+                $dol_tz_string=preg_replace('/\s*\(.+\)$/','',$dol_tz_string);
+                $dol_tz_string=preg_replace('/,/','/',$dol_tz_string);
+                $dol_tz_string=preg_replace('/\s/','_',$dol_tz_string);
                 $dol_dst=0;
                 if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
                 {

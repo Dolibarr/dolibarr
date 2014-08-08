@@ -72,8 +72,6 @@ $required_fields=array_unique(array_values(array_filter($required_fields, "dolVa
 
 if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 
-print "***** $script_file ($version) *****\n";
-
 if (! isset($argv[1])) {
 	//print "Usage:  $script_file (nocommitiferror|commitiferror) [id_group]\n";
 	print "Usage:  $script_file (nocommitiferror|commitiferror) [ldapserverhost]\n";
@@ -103,8 +101,7 @@ print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
 print "Mapped LDAP fields=".join(',',$required_fields)."\n";
 print "\n";
-print "Press a key to confirm...";
-$input = trim(fgets(STDIN));
+
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 

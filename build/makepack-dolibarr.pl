@@ -957,12 +957,15 @@ if ($nboftargetok) {
     		"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
     		"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
     	);
+    	use POSIX qw/strftime/;
     	foreach my $file (sort keys %filestoscan)
     	{
     		$found=0;
     		my $filesize = -s $file;
+    		my $filedate = (stat $file)[9];
     		print $file." ".($filesize?"(found)":"(not found)");
     		print ($filesize?" - ".$filesize:"");
+    		print ($filedate?" - ".strftime("%Y-%m-%d %H:%M:%S",localtime($filedate)):"");
     		print "\n";
     	}
 

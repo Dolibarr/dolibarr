@@ -408,7 +408,7 @@ if (empty($action))
     {
         $sql .= ' AND p.rowid='.$db->escape($search_ref);
     }
-    if (! empty($search_account))
+    if (! empty($search_account) && $search_account > 0)
     {
         $sql .= ' AND b.fk_account='.$db->escape($search_account);
     }

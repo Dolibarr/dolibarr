@@ -164,9 +164,10 @@ class FormProjets
 	 *    Build Select List of element associable to a project
 	 *
 	 *    @param	string	$table_element		Table of the element to update
+	 *    @param	int		$socid				socid to filter
 	 *    @return	string						The HTML select list of element
 	 */
-	function select_element($table_element)
+	function select_element($table_element,$socid=0)
 	{
 		global $conf;
 
@@ -193,8 +194,8 @@ class FormProjets
 
 		$sql.= " FROM ".MAIN_DB_PREFIX.$table_element;
 		$sql.= " WHERE ".$projectkey." is null";
-		if (!empty($this->societe->id)) {
-			$sql.= " AND fk_soc=".$this->societe->id;
+		if (!empty($socid)) {
+			$sql.= " AND fk_soc=".$socid;
 		}
 		$sql.= ' AND entity='.getEntity('project');
 		$sql.= " ORDER BY ref DESC";

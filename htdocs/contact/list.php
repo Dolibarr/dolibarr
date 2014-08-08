@@ -172,11 +172,11 @@ if (strlen($search_phone))
 }
 if (strlen($search_phoneper))
 {
-    $sql .= " AND p.phone LIKE '%".$db->escape($search_phoneper)."%'";
+    $sql .= " AND p.phone_perso LIKE '%".$db->escape($search_phoneper)."%'";
 }
 if (strlen($search_phonepro))
 {
-    $sql .= " AND p.phone_perso LIKE '%".$db->escape($search_phonepro)."%'";
+    $sql .= " AND p.phone LIKE '%".$db->escape($search_phonepro)."%'";
 }
 if (strlen($search_phonemob))
 {
