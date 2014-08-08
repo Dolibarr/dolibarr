@@ -107,13 +107,13 @@ if ($id > 0 || ! empty($ref))
         // Type
         print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
         print $object->getLibType();
-        if ($object->type == 1)
+        if ($object->type == Facture::TYPE_REPLACEMENT)
         {
             $facreplaced=new Facture($db);
             $facreplaced->fetch($object->fk_facture_source);
             print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
         }
-        if ($object->type == 2)
+        if ($object->type == Facture::TYPE_CREDIT_NOTE)
         {
             $facusing=new Facture($db);
             $facusing->fetch($object->fk_facture_source);
@@ -155,7 +155,7 @@ if ($id > 0 || ! empty($ref))
         if ($absolute_discount > 0)
         {
             print '. ';
-            if ($object->statut > 0 || $object->type == 2 || $object->type == 3)
+            if ($object->statut > 0 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
                 if ($object->statut == 0)
                 {
@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
                 }
                 else
                 {
-                    if ($object->statut < 1 || $object->type == 2 || $object->type == 3)
+                    if ($object->statut < 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         print '<br>'.$text.'.<br>';
@@ -189,7 +189,7 @@ if ($id > 0 || ! empty($ref))
         {
             if ($absolute_creditnote > 0)    // If not linke will be added later
             {
-                if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+                if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
                 else print '.';
             }
             else print '. ';
@@ -197,9 +197,9 @@ if ($id > 0 || ! empty($ref))
         if ($absolute_creditnote > 0)
         {
             // If validated, we show link "add credit note to payment"
-            if ($object->statut != 1 || $object->type == 2 || $object->type == 3)
+            if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
             {
-                if ($object->statut == 0 && $object->type != 3)
+                if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT)
                 {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
                     print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
@@ -220,7 +220,7 @@ if ($id > 0 || ! empty($ref))
         if (! $absolute_discount && ! $absolute_creditnote)
         {
             print $langs->trans("CompanyHasNoAbsoluteDiscount");
-            if ($object->statut == 0 && $object->type != 2 && $object->type != 3) print ' - '.$addabsolutediscount.'<br>';
+            if ($object->statut == 0 && $object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT) print ' - '.$addabsolutediscount.'<br>';
             else print '. ';
         }
         /*if ($object->statut == 0 && $object->type != 2 && $object->type != 3)
@@ -242,10 +242,10 @@ if ($id > 0 || ! empty($ref))
         print '<table class="nobordernopadding" width="100%"><tr><td>';
         print $langs->trans('DateMaxPayment');
         print '</td>';
-        if ($object->type != 2 && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
+        if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editpaymentterm' && $object->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editpaymentterm&amp;facid='.$object->id.'">'.img_edit($langs->trans('SetDate'),1).'</a></td>';
         print '</tr></table>';
         print '</td><td colspan="5">';
-        if ($object->type != 2)
+        if ($object->type != Facture::TYPE_CREDIT_NOTE)
         {
             if ($action == 'editpaymentterm')
             {
@@ -302,10 +302,10 @@ if ($id > 0 || ! empty($ref))
         $relativepath = $objectref.'/'.$objectref.'.pdf';
         $relativepathdetail = $objectref.'/'.$objectref.'-detail.pdf';
 
-        // Chemin vers png apercus
-        $fileimage = $file.".png";          // Si PDF d'1 page
-        $fileimagebis = $file."-0.png";     // Si PDF de plus d'1 page
-        $relativepathimage = $relativepath.'.png';
+        // Define path to preview pdf file (preview precompiled "file.ext" are "file.ext_preview.png")
+        $fileimage = $file.'_preview.png';          	// If PDF has 1 page
+        $fileimagebis = $file.'_preview-0.pdf.png';     // If PDF has more than one page
+        $relativepathimage = $relativepath.'_preview.png';
 
         $var=true;
 
@@ -341,7 +341,7 @@ if ($id > 0 || ! empty($ref))
             {
                 if (class_exists("Imagick"))
                 {
-                    $ret = dol_convert_file($file);
+                    $ret = dol_convert_file($file,'png',$fileimage);
                     if ($ret < 0) $error++;
                 }
                 else
@@ -420,4 +420,3 @@ elseif (file_exists($fileimagebis))
 $db->close();
 
 llxFooter();
-?>

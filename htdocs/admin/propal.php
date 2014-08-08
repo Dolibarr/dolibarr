@@ -604,4 +604,3 @@ print "</table>\n<br>";
 $db->close();
 
 llxFooter();
-?>

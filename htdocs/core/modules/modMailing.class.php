@@ -164,4 +164,3 @@ class modMailing extends DolibarrModules
     }
 
 }
-?>

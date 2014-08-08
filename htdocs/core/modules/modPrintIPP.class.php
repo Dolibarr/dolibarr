@@ -152,4 +152,3 @@ class modPrintIPP extends DolibarrModules
     }
 
 }
-?>

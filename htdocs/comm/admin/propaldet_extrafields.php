@@ -37,13 +37,13 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
-$langs->load("orders");
+$langs->load("propal");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -73,11 +73,10 @@ llxHeader('',$langs->trans("PropalSetup"));
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PropalSetup"),$linkback,'setup');
-print "<br>\n";
 
 $head = propal_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("ModuleSetup"), 0, 'order');
+dol_fiche_head($head, 'attributeslines', $langs->trans("Proposals"), 0, 'propal');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
@@ -158,4 +157,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

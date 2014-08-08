@@ -25,14 +25,14 @@
 /**
  * Returns an array with the tabs for the "Opensurvey poll" section
  * It loads tabs from modules looking for the entity Opensurveyso
- * 
+ *
  * @param Opensurveysondage $object Current viewing poll
  * @return array Tabs for the opensurvey section
  */
 function opensurvey_prepare_head(Opensurveysondage $object) {
-	
+
 	global $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -40,7 +40,7 @@ function opensurvey_prepare_head(Opensurveysondage $object) {
 	$head[0][1] = $langs->trans("Card");
 	$head[0][2] = 'general';
 	$h++;
-	
+
 	$head[1][0] = 'results.php?id='.$object->id_sondage;
 	$head[1][1] = $langs->trans("SurveyResults");
 	$head[1][2] = 'preview';
@@ -111,12 +111,12 @@ function showlogo()
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=thumbs/'.urlencode($mysoc->logo_small);
 		}
 	}
-	
+
 	if (!$urllogo && (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png')))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/dolibarr_logo.png';
 	}
-	
+
 	print '<div style="text-align:center"><img alt="Logo" id="logosubscribe" title="" src="'.$urllogo.'"/></div>';
 	print '<br>';
 }
@@ -205,14 +205,14 @@ function dol_survey_random($car)
 function ajouter_sondage()
 {
 	global $db, $user;
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
 	$sondage=dol_survey_random(16);
 
 	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
-	
+
 	// Insert survey
 	$opensurveysondage = new Opensurveysondage($db);
 	$opensurveysondage->id_sondage = $sondage;
@@ -226,9 +226,9 @@ function ajouter_sondage()
 	$opensurveysondage->allow_comments = $allow_comments;
 	$opensurveysondage->allow_spy = $allow_spy;
 	$opensurveysondage->sujet = $_SESSION['toutchoix'];
-	
+
 	$res = $opensurveysondage->create($user);
-	
+
 	if ($res < 0) {
 		dol_print_error($db);
 	}
@@ -243,11 +243,9 @@ function ajouter_sondage()
 	unset($_SESSION['toutchoix']);
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
-	
+
 	$urlback=dol_buildpath('/opensurvey/card.php',1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();
 }
-
-?>

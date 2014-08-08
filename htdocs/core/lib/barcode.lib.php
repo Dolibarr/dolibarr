@@ -416,4 +416,3 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
     }
 }
 
-?>

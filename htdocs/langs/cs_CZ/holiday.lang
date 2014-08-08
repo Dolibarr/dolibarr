@@ -8,7 +8,6 @@ NotActiveModCP=Musíte umožnit modul svátky zobrazení této stránky.
 NotConfigModCP=Musíte nakonfigurovat modul dovolenou k zobrazení této stránky. Chcete-li to provést, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">klikněte sem</a> </ a> <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;">.</a>
 NoCPforUser=Nemáte poptávku na dovolenou.
 AddCP=Použít pro dovolenou
-CPErrorSQL=SQL chyba:
 Employe=Zaměstnanec
 DateDebCP=Datum zahájení
 DateFinCP=Datum ukončení
@@ -34,7 +33,6 @@ ReturnCP=Zpět na předchozí stránku
 ErrorUserViewCP=Nejste oprávněn číst toto žádosti o dovolenou.
 InfosCP=Informace o poptávce po prázdninách
 InfosWorkflowCP=Informace Workflow
-DateCreateCP=Datum vytvoření
 RequestByCP=Žádost
 TitreRequestCP=List dovolenou
 NbUseDaysCP=Počet dní dovolené spotřebovaných
@@ -130,7 +128,6 @@ ErrorMailNotSend=Došlo k chybě při odesílání e-mail:
 NoCPforMonth=Ne opustit tento měsíc.
 nbJours=Počet dní
 TitleAdminCP=Konfigurace svátky
-
 #Messages
 Hello=Ahoj
 HolidaysToValidate=Ověřit dovolenou
@@ -143,10 +140,10 @@ HolidaysRefused=Odepření prázdniny
 HolidaysRefusedBody=Vaše žádost o dovolenou pro %s na %s byl zamítnut z těchto důvodů:
 HolidaysCanceled=Zrušené svátky
 HolidaysCanceledBody=Vaše žádost o dovolenou pro %s na %s byla zrušena.
-
-Permission20001=Čtení / zápis / přepis jejich svátky
-Permission20002=Přečtěte si / upravit všechny žádosti dovolenou
-Permission20003=Odstranit svou dovolenou žádosti
-Permission20004=Definujte uživatelům dovolenou
+Permission20000=Read you own holidays
+Permission20001=Create/modify your holidays
+Permission20002=Create/modify holidays for everybody
+Permission20003=Delete holidays requests
+Permission20004=Setup users holidays
 Permission20005=Recenze protokol modifikovaných dovolenou
-Permission20006=Přístup dovolená měsíční zprávu
+Permission20006=Read holidays monthly report

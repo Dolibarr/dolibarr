@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,6 @@
  *	\ingroup    project
  *	\brief      Page of a project task
  */
-
-error_reporting(E_ALL);
-ini_set('display_errors', true);
-ini_set('html_errors', false);
 
 require ("../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -73,7 +69,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	if (empty($_POST["label"]))
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	}
 	if (! $error)
 	{
@@ -87,14 +83,20 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
 		$object->planned_workload = $planned_workload;
-		$object->date_start = dol_mktime(0,0,0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear']);
-		$object->date_end = dol_mktime(0,0,0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear']);
+		$object->date_start = dol_mktime($_POST['dateohour'],$_POST['dateomin'],0,$_POST['dateomonth'],$_POST['dateoday'],$_POST['dateoyear'],'user');
+		$object->date_end = dol_mktime($_POST['dateehour'],$_POST['dateemin'],0,$_POST['dateemonth'],$_POST['dateeday'],$_POST['dateeyear'],'user');
 		$object->progress = $_POST['progress'];
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		$result=$object->update($user);
+		
+		if ($result < 0)
+		{
+		    setEventMessage($object->error,'errors');
+		    setEventMessage($object->errors,'errors');
+		}
 	}
 	else
 	{
@@ -114,13 +116,13 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header("Location: index.php");
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id);
 			exit;
 		}
 		else
 		{
 			$langs->load("errors");
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error), 'errors');
 			$action='';
 		}
 	}
@@ -202,6 +204,8 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		$object->project = dol_clone($projectstatic);
+
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
 		if (! empty($withproject))
@@ -230,7 +234,7 @@ if ($id > 0 || ! empty($ref))
 
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-			print '<tr><td>'.$langs->trans("Company").'</td><td>';
+			print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 			if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
 			else print '&nbsp;';
 			print '</td>';
@@ -244,6 +248,16 @@ if ($id > 0 || ! empty($ref))
 
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
+
+		   	// Date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print dol_print_date($projectstatic->date_start,'day');
+			print '</td></tr>';
+
+			// Date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print dol_print_date($projectstatic->date_end,'day');
+			print '</td></tr>';
 
 			print '</table>';
 
@@ -270,7 +284,7 @@ if ($id > 0 || ! empty($ref))
 		}
 		else
 		{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NoPermission").'">'.$langs->trans('AddTask').'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
 		}
 
 		print '</div>';
@@ -279,8 +293,6 @@ if ($id > 0 || ! empty($ref))
 		// To verify role of users
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$object->getListContactId('internal');
-
-		dol_htmloutput_mesg($mesg);
 
 		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
@@ -313,7 +325,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 
 				// Third party
-				print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+				print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 				if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 				else print '&nbsp;';
 				print '</td></tr>';
@@ -321,17 +333,17 @@ if ($id > 0 || ! empty($ref))
 
 			// Task parent
 			print '<tr><td>'.$langs->trans("ChildOfTask").'</td><td>';
-			print $formother->selectProjectTasks($object->fk_task_parent,$projectstatic->id, 'task_parent', $user->admin?0:1, 0);
+			print $formother->selectProjectTasks($object->fk_task_parent, $projectstatic->id, 'task_parent', ($user->admin?0:1), 0, 0, 0, $object->id);
 			print '</td></tr>';
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print $form->select_date($object->date_start,'dateo');
+			print $form->select_date($object->date_start,'dateo',1,1);
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print $form->select_date($object->date_end?$object->date_end:-1,'datee');
+			print $form->select_date($object->date_end?$object->date_end:-1,'datee',1,1);
 			print '</td></tr>';
 
 			// Planned workload
@@ -407,7 +419,7 @@ if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 
 				// Third party
-				print '<td>'.$langs->trans("Company").'</td><td colspan="3">';
+				print '<td>'.$langs->trans("ThirdParty").'</td><td colspan="3">';
 				if ($projectstatic->societe->id) print $projectstatic->societe->getNomUrl(1);
 				else print '&nbsp;';
 				print '</td></tr>';
@@ -415,12 +427,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="3">';
-			print dol_print_date($object->date_start,'day');
+			print dol_print_date($object->date_start,'dayhour');
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
-			print dol_print_date($object->date_end,'day');
+			print dol_print_date($object->date_end,'dayhour');
 			print '</td></tr>';
 
 			// Planned workload
@@ -429,7 +441,12 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			// Progress
-			print '<tr><td>'.$langs->trans("Progress").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("ProgressDeclared").'</td><td colspan="3">';
+			print $object->progress.' %';
+			print '</td></tr>';
+
+			// Progress
+			print '<tr><td>'.$langs->trans("ProgressCalculated").'</td><td colspan="3">';
 			print $object->progress.' %';
 			print '</td></tr>';
 
@@ -508,4 +525,3 @@ if ($id > 0 || ! empty($ref))
 
 llxFooter();
 $db->close();
-?>

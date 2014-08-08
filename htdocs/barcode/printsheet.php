@@ -32,7 +32,7 @@ $langs->load("admin");
 $langs->load("members");
 $langs->load("errors");
 
-// Choix de l'annee d'impression ou annee courante.
+// Choice of print year or current year.
 $now = dol_now();
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
@@ -57,35 +57,35 @@ $thirdpartytmp=new Societe($db);
 
 if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 {
-	$action='';	// We reset because we dont want to build doc
+	$action='';	// We reset because we don't want to build doc
 	if (GETPOST('productid') > 0)
 	{
 		$producttmp->fetch(GETPOST('productid'));
 		$forbarcode=$producttmp->barcode;
 		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
-	
+
 		if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
-		
+
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), 'warnings');	
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$producttmp->getNomUrl()), 'warnings');
 		}
 	}
 }
 if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty'))
 {
-	$action='';	// We reset because we dont want to build doc
+	$action='';	// We reset because we don't want to build doc
 	if (GETPOST('socid') > 0)
 	{
 		$thirdpartytmp->fetch(GETPOST('socid'));
 		$forbarcode=$thirdpartytmp->barcode;
 		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
-	
+
 		if (empty($fk_barcode_type) && ! empty($conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY)) $fk_barcode_type = $conf->global->GENBARCODE_BARCODETYPE_THIRDPARTY;
-		
+
 		if (empty($forbarcode) || empty($fk_barcode_type))
 		{
-			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), 'warnings');	
+			setEventMessage($langs->trans("DefinitionOfBarCodeForProductNotComplete",$thirdpartytmp->getNomUrl()), 'warnings');
 		}
 	}
 }
@@ -243,6 +243,8 @@ if ($action == 'builddoc')
  * View
  */
 
+if (empty($conf->barcode->enabled)) accessforbidden();
+
 $form=new Form($db);
 
 llxHeader('',$langs->trans("BarCodePrintsheet"));
@@ -268,7 +270,7 @@ print '<div class="tagtable">';
 print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("DescADHERENT_ETIQUETTE_TYPE").' &nbsp; ';
-print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
+print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
 // List of possible labels (defined into $_Avery_Labels variable set into format_cards.lib.php)
 $arrayoflabels=array();
 foreach(array_keys($_Avery_Labels) as $codecards)
@@ -282,7 +284,7 @@ print '</div></div>';
 print '	<div class="tagtr">';
 print '	<div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
 print $langs->trans("NumberOfStickers").' &nbsp; ';
-print '</div><div class="tagtd" style="overflow: hidden; white-space: nowrap; max-width: 300px;">';
+print '</div><div class="tagtd maxwidthonsmartphone" style="overflow: hidden; white-space: nowrap;">';
 print '<input size="4" type="text" name="numberofsticker" value="'.(GETPOST('numberofsticker')?GETPOST('numberofsticker','int'):10).'">';
 print '</div></div>';
 
@@ -329,7 +331,7 @@ jQuery(document).ready(function() {
 	jQuery(".radiobarcodeselect").click(function() {
 		init_selectors();
 	});
-	
+
 	function init_gendoc_button()
 	{
 		if (jQuery("#select_fk_barcode_type").val() > 0 && jQuery("#forbarcode").val())
@@ -417,4 +419,3 @@ print '<br>';
 llxFooter();
 
 $db->close();
-?>

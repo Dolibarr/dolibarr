@@ -26,11 +26,11 @@
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-// For MultiCompany module. 
+// For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_int($entity)) define("DOLENTITY", $entity);
+if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
@@ -74,13 +74,12 @@ if (! empty($conf->global->PAYBOX_PAYONLINE_SENDEMAIL))
 {
 	$sendto=$conf->global->PAYBOX_PAYONLINE_SENDEMAIL;
 	$from=$conf->global->MAILING_EMAIL_FROM;
+
+	$urlback=$_SERVER["REQUEST_URI"];
+	$topic='['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed");
+	$content=$langs->transnoentitiesnoconv("NewPayboxPaymentFailed")."\n".$fulltag;
 	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	$mailfile = new CMailFile(
-		'['.$conf->global->MAIN_APPLICATION_TITLE.'] '.$langs->transnoentitiesnoconv("NewPayboxPaymentFailed"),
-		$sendto,
-		$from,
-		$langs->transnoentitiesnoconv("NewPayboxPaymentFailed")."\n".$fulltag
-	);
+	$mailfile = new CMailFile($topic, $sendto, $from, $content);
 
 	$result=$mailfile->sendfile();
 	if ($result)
@@ -114,4 +113,3 @@ html_print_paybox_footer($mysoc,$langs);
 llxFooterPayBox();
 
 $db->close();
-?>

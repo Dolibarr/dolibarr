@@ -1,18 +1,13 @@
-# Dolibarr language file - nl_BE - trips
+# Dolibarr language file - Source file is en_US - trips
 Trip=Verplaatsing
 Trips=Verplaatsingen
 TripsAndExpenses=Verplaatsingen en kosten
 TripCard=Verplaatsingskaart
-AddTrip=Verplaatsing toevoegen
 ListOfTrips=Lijst van verplaatsingen
 ListOfFees=Lijst van de vergoedingen
 NewTrip=Nieuwe verplaatsing
 CompanyVisited=Bedrijf / partikulier bezocht
-Kilometers=Kilometers
 FeesKilometersOrAmout=Bedrag of kilometers
 DeleteTrip=Verwijderen verplaatsing
 ConfirmDeleteTrip=Weet u zeker dat u deze verplaatsing wilt verwijderen?
-Person=Persoon
-TF_OTHER=Ander
-TF_LUNCH=Lunch
 TF_TRIP=Verplaatsing

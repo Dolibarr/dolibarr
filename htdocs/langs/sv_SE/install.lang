@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - install
 InstallEasy=Följ bara instruktionerna steg för steg.
-MiscellaneousChecks=Förutsättningarna läs
+MiscellaneousChecks=Förutsättningar kontrolleras
 DolibarrWelcome=Välkommen till Dolibarr
 ConfFileExists=Konfigurationsfilen <b>%s</b> finns.
 ConfFileDoesNotExists=Konfigurationsfilen <b>%s</b> finns inte!
 ConfFileDoesNotExistsAndCouldNotBeCreated=Konfigurationsfilen <b>%s</b> finns inte och kunde inte skapas!
 ConfFileCouldBeCreated=Konfigurationsfil <b>%s</b> skulle kunna skapas.
-ConfFileIsNotWritable=Konfigurationsfilen <b>%s</b> är inte skrivbar. Kontrollera behörigheter. För den första installationen, måste din webbserver beviljas för att kunna skriva i denna fil under konfigurationen (&quot;chmod 666&quot; till exempel på en UNIX-liknande OS).
+ConfFileIsNotWritable=Konfigurationsfilen <b>%s</b> är inte skrivbar. Kontrollera behörigheter. För den första installationen, måste din webbserver beviljas för att kunna skriva i denna fil under konfigurationen ("chmod 666" till exempel på en UNIX-liknande OS).
 ConfFileIsWritable=Konfigurationsfilen <b>%s</b> är skrivbar.
 ConfFileReload=Ladda all information från konfigurationsfilen.
 PHPSupportSessions=Detta stöder PHP sessioner.
@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=Gå tillbaka och rätta till felaktiga parametra
 ErrorWrongValueForParameter=Du kan ha skrivit fel värde för parametern &quot;%s&quot;.
 ErrorFailedToCreateDatabase=Misslyckades med att skapa databasen %s.
 ErrorFailedToConnectToDatabase=Det gick inte att ansluta till databasen &quot;%s&quot;.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Databasens version (%s) för gammal. Version %s eller senare krävs.
 ErrorPHPVersionTooLow=PHP version gamla också. Version %s krävs.
 WarningPHPVersionTooLow=PHP version för gammal. Version %s eller flera förväntas. Denna version bör göra det möjligt installera, men stöds inte.
 ErrorConnectedButDatabaseNotFound=Anslutning till servern framgångsrik, men databasen %s finns inte.
 ErrorDatabaseAlreadyExists=Databas &quot;%s&quot; finns redan.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Om databasen inte finns, gå tillbaka och kontrollera alternativet &quot;Create database&quot;.
 IfDatabaseExistsGoBackAndCheckCreate=Om databasen redan finns, gå tillbaka och avmarkera &quot;Skapa databasen&quot; valen.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=För gammal version av webbläsare. Uppgradering av din webbläsare till en sen utgåva av Firefox, Chrome eller Opera är högeligen rekommenderad.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsätta ...
 PleaseBePatient=Ha tålamod ...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Bli lagring av sjöfarten 2
 MigrationFinished=Migration färdiga
 LastStepDesc=<strong>Sista steget:</strong> Definiera här login och lösenord som du planerar att använda för att ansluta till programmet. Tappa inte detta eftersom det är det konto för att administrera alla andra.
 ActivateModule=Aktivera modul %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Klicka här för att visa / redigera avancerade parametrar (expertläge)
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix för denormalized data
 MigrationOrder=Migrering av data för kundens order
 MigrationSupplierOrder=Migrering av data för leverantörens order
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Data migrationsområdet fk_user_resp av llx_projet till
 MigrationProjectTaskTime=Uppdatera tid i sekunder
 MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migreringskategorier
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

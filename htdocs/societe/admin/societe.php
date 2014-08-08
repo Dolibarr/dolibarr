@@ -77,11 +77,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		    setEventMessage($langs->trans("SetupSaved"));
 	    }
 	    else
 	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		    setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 	
@@ -92,11 +92,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
-			$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+			setEventMessage($langs->trans("SetupSaved"));
 		}
 		else
 		{
-			$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+			setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 }
@@ -121,12 +121,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -184,7 +184,7 @@ if ($action == 'setdoc')
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
-    dol_syslog("societe.php ".$sql);
+    dol_syslog("societe.php", LOG_DEBUG);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -192,7 +192,6 @@ if ($action == 'setdoc')
 	}
 	else
 	{
-        dol_syslog("societe.php ".$db->lasterror(), LOG_ERR);
 	    $db->rollback();
 	}
 }
@@ -221,11 +220,11 @@ if ($action=="setaddrefinlist") {
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -298,9 +297,6 @@ print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 $head = societe_admin_prepare_head(null);
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
-
-dol_htmloutput_mesg($mesg);
-
 
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
 
@@ -715,7 +711,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("UseSearchToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -739,7 +735,7 @@ print '</tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("UseSearchToSelectContact").'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("UseSearchToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -765,18 +761,20 @@ print '</tr>';
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("AddRefInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
 if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 {
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"),'switch_on');
-	print '</a></td>';
+
 }
 else
 {
-	print '<td align="center" colspan="2"><a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
-	print '</a></td>';
 }
+print '</a></td>';
 print '</tr>';
 
 
@@ -810,4 +808,3 @@ dol_fiche_end();
 $db->close();
 
 llxFooter();
-?>

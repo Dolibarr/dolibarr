@@ -18,8 +18,7 @@
 /**
  *      \file       htdocs/core/class/cpays.class.php
  *      \ingroup    core
- *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_pays dictionnary
- *					Initialy built by build_class_from_table on 2012-01-17 22:03
+ *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_pays dictionary
  */
 
 // Put here all includes required by your class file
@@ -29,8 +28,7 @@
 
 
 /**
- *      \class      Cpays
- *      \brief      Class to manage dictionnary Countries (used by imports)
+ * 	Class to manage dictionary Countries (used by imports)
  */
 class Cpays // extends CommonObject
 {
@@ -99,7 +97,7 @@ class Cpays // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -160,7 +158,7 @@ class Cpays // extends CommonObject
         if ($id)   $sql.= " WHERE t.rowid = ".$id;
         elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -181,7 +179,6 @@ class Cpays // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -219,7 +216,7 @@ class Cpays // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -275,7 +272,7 @@ class Cpays // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -314,4 +311,3 @@ class Cpays // extends CommonObject
 	}
 
 }
-?>

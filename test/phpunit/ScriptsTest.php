@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/security2.lib.php';
@@ -175,7 +175,7 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($result,'Failed to find bank account with ref BANKDUMMY.');
 		$this->assertEquals($returnvar,255);
 		*/
-        return $result;
+        return '';
     }
 
     /**
@@ -254,4 +254,3 @@ class ScriptsTest extends PHPUnit_Framework_TestCase
     	return $result;
     }
 }
-?>

@@ -46,7 +46,7 @@ print "
 <title>Dolibarr frame for external web site</title>
 </head>
 
-<frameset rows=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
+<frameset ".(empty($conf->global->MAIN_MENU_INVERT)?"rows":"cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
     <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
     <frame name=\"main\" src=\"".$conf->global->EXTERNALSITE_URL."\">
     <noframes>
@@ -69,4 +69,3 @@ print "
 ";
 
 
-?>

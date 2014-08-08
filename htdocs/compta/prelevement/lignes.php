@@ -54,7 +54,7 @@ $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "pl.fk_soc" : GETPOST('sortf
  * View
  */
 
-llxHeader('',$langs->trans("WithdrawalReceipts"));
+llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id)
 {
@@ -63,7 +63,7 @@ if ($prev_id)
 	if ($bon->fetch($prev_id) == 0)
 	{
 		$head = prelevement_prepare_head($bon);
-		dol_fiche_head($head, 'lines', $langs->trans("WithdrawalReceipts"), '', 'payment');
+		dol_fiche_head($head, 'lines', $langs->trans("WithdrawalsReceipts"), '', 'payment');
 
 		print '<table class="border" width="100%">';
 
@@ -221,4 +221,3 @@ else
 $db->close();
 
 llxFooter();
-?>

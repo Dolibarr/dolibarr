@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - ecm
-MenuECM=文件
-DocsMine=我的文件
+MenuECM=文档
+DocsMine=我的文档
 DocsGenerated=生成的文件
 DocsElements=元素文件
 DocsThirdParties=第三方文件

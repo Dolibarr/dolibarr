@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -153,7 +153,7 @@ if (empty($reshook))
 			setEventMessage($cat->errors,'errors');
 		}
 	}
-	
+
 	// Add object into a category
 	if ($parent > 0)
 	{
@@ -310,13 +310,6 @@ if ($socid)
 	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dol_print_phone($soc->phone,$soc->country_code,0,$soc->id,'AC_TEL').'</td>';
 	print '<td>'.$langs->trans('Fax').'</td><td>'.dol_print_phone($soc->fax,$soc->country_code,0,$soc->id,'AC_FAX').'</td></tr>';
 
-	// Assujeti a TVA ou pas
-	print '<tr>';
-	print '<td class="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-	print yn($soc->tva_assuj);
-	print '</td>';
-	print '</tr>';
-
 	print '</table>';
 
 	dol_fiche_end();
@@ -417,7 +410,7 @@ else if ($id || $ref)
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
-		print $form->showrefnav($member,'rowid');
+		print $form->showrefnav($member,'id');
 		print '</td></tr>';
 
         // Login
@@ -631,7 +624,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 
 	print '<br>';
 	print_fiche_titre($title,'','');
-	
+
 	// Form to add record into a category
 	if ($showclassifyform)
 	{
@@ -738,4 +731,3 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 llxFooter();
 
 $db->close();
-?>

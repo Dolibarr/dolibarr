@@ -60,7 +60,7 @@ class modLabel extends DolibarrModules
 		$this->requiredby = array();
 
 		// Config pages
-		$this->config_page_url = array("label.php");
+		// $this->config_page_url = array("label.php");
 
 		// Constants
 		$this->const = array();
@@ -124,4 +124,3 @@ class modLabel extends DolibarrModules
     }
 
 }
-?>

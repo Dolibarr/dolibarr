@@ -110,12 +110,12 @@ class MenuManager
 
     	// Modules system tools
     	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
-    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
+    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
+    		|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
     	{
     		if (empty($user->societe_id))
     		{
-    		    //$newmenu->add("/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ModulesSystemTools"), 0, 1, '', 'home', 'modulesadmintools');
-    			if ($leftmenu=="modulesadmintools" && $user->admin)
+    			if ((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ($leftmenu=="modulesadmintools" && $user->admin))
     			{
     				$langs->load("products");
     				$array_menu_product=array(
@@ -131,9 +131,9 @@ class MenuManager
 			    			'type'=>'left',
 			    			'position'=>20
 			    	);
-			    	array_unshift($tabMenu,$array_menu_product);
-    				//$newmenu->add("/product/admin/product_tools.php?mainmenu=home&leftmenu=modulesadmintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
+			    	array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
     			}
+    			// Main menu title
     			$array_menu_product=array(
 		    		'url'=>"/admin/tools/index.php?mainmenu=home&leftmenu=modulesadmintools",
 		    		'titre'=>$langs->trans("ModulesSystemTools"),
@@ -146,7 +146,7 @@ class MenuManager
 		    		'type'=>'left',
 		    		'position'=>20
 				);
-    			array_unshift($tabMenu,$array_menu_product);
+    			array_unshift($tabMenu,$array_menu_product);	// add at beginning of array
     		}
     	}
 
@@ -158,7 +158,7 @@ class MenuManager
      *  Show menu
      *
      *	@param	string	$mode		'top', 'left', 'jmobile'
-     *  @return	int     			Number of menu entries shown
+     *  @return	void
 	 */
 	function showmenu($mode)
 	{
@@ -172,16 +172,14 @@ class MenuManager
 	        $conf->global->MAIN_SEARCHFORM_CONTACT=0;
         }
 
-        $res='ErrorBadParameterForMode';
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
-        if ($mode == 'top')  $res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
-        if ($mode == 'left') $res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
+        if ($mode == 'top')  print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        if ($mode == 'left') print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
         if ($mode == 'jmobile')
         {
-        	$res=print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+        	print_auguria_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
 
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
@@ -199,7 +197,7 @@ class MenuManager
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
-        			$res=print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
+        			print_left_auguria_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
         			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
@@ -248,9 +246,6 @@ class MenuManager
         }
 
         unset($this->menu);
-
-        return $res;
     }
 }
 
-?>

@@ -138,6 +138,7 @@ abstract class ModeleNumRefPropales
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -233,7 +234,7 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('PROPAL_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
+			if ($result < 0) { $error++; $obj->errors=$interface->errors; }
 			// Fin appel triggers
 
 			return 1;
@@ -253,4 +254,3 @@ function propale_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0,
 	}
 }
 
-?>

@@ -60,7 +60,7 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
 	$row->id = $element_id;
-	$result=$row->line_ajaxorder($newrowordertab);
+	$row->line_ajaxorder($newrowordertab);
 
 	// Reorder line to have position of chilren lines sharing same counter than parent lines
 	// This should be useless because there is no need to have children sharing same counter that parent.
@@ -70,4 +70,3 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	}
 }
 
-?>

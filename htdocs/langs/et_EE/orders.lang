@@ -55,6 +55,7 @@ DraftOrWaitingShipped=Mustand või kinnitatud pole veel saadetud
 MenuOrdersToBill=Saadetud tellimused
 MenuOrdersToBill2=Arve koostamist vajavad tellimused
 SearchOrder=Otsi tellimust
+SearchACustomerOrder=Otsi müügitellimust
 ShipProduct=Saada toode
 Discount=Allahindlus
 CreateOrder=Loo tellimus
@@ -100,7 +101,6 @@ RelatedOrders=Seotud tellimused
 OnProcessOrders=Töötlemisel tellimused
 RefOrder=Tellimuse viide
 RefCustomerOrder=Müügitellimuse viide
-CustomerOrder=Müügitellimus
 RefCustomerOrderShort=Müügitellimuse viide
 SendOrderByMail=Saada tellimus kirjaga
 ActionsOnOrder=Tellimisel toimuvad tegevused
@@ -131,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Konstant COMMANDE_ADDON on määratlemata
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Mooduli faili '%s' laadimine ebaõnnestus
 Error_FailedToLoad_COMMANDE_ADDON_File=Mooduli faili '%s' laadimine ebaõnnestus
 Error_OrderNotChecked=Ühtki tellimust, mille kohta luua arve, pole valitud
-
-
 # Sources
 OrderSource0=Pakkumine
 OrderSource1=Internet
@@ -143,7 +141,6 @@ OrderSource5=Äriline
 OrderSource6=Hoia
 QtyOrdered=Tellitud kogus
 AddDeliveryCostLine=Lisa saatmiskulu rida, mis näitab tellimuse kaal
-
 # Documents models
 PDFEinsteinDescription=Täielik tellimuse mudel (logo jne)
 PDFEdisonDescription=Lihtne tellimuse mude
@@ -154,7 +151,6 @@ OrderByFax=Faks
 OrderByEMail=E-post
 OrderByWWW=Online
 OrderByPhone=Telefon
-
 CreateInvoiceForThisCustomer=Koosta tellimuste kohta arved
 NoOrdersToInvoice=Pole ühtki tellimust, mille kohta arve esitada
 CloseProcessedOrdersAutomatically=Liigita kõik valitud tellimused "Töödeldud".
@@ -164,3 +160,4 @@ Ordered=Tellitud
 OrderCreated=Sinu tellimused on loodud
 OrderFail=Sinu tellimuste loomise ajal tekkis viga
 CreateOrders=Loo tellimused
+ToBillSeveralOrderSelectCustomer=Mitme erineva tellimuse põhjal müügiarve loomiseks klõpsa kõigepealt kliendi kaardile ning seejärel vali "%s".

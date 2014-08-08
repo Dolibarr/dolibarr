@@ -38,7 +38,7 @@ ConfirmCloseService=Ali zares želite zapreti to storitev na dan <b>%s</b> ?
 ValidateAContract=Potrdite pogodbo
 ActivateService=Aktivirajte storitev
 ConfirmActivateService=Ali zares želite aktivirati to storitev na dan <b>%s</b> ?
-# RefContract=Contract reference
+RefContract=Referenca pogodbe
 DateContract=Datum pogodbe
 DateServiceActivate=Datum aktiviranja storitve
 DateServiceUnactivate=Datum deaktiviranja storitve
@@ -85,10 +85,12 @@ PaymentRenewContractId=Obnovi pogodbeno vrstico (številka %s)
 ExpiredSince=Datum poteka
 RelatedContracts=Pogodbe, ki se nanašajo na to
 NoExpiredServices=Ni potekla aktivne službe
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=Seznam storitev, ki potečejo v %s dneh
+ListOfServicesToExpireWithDurationNeg=Seznam storitev, ki potečejo v več kot %s dneh
+ListOfServicesToExpire=Seznam storitev, ki potečejo
+NoteListOfYourExpiredServices=Ta seznam vsebuje samo storitve po pogodbah s partnerji, ki so povezane z referentom.
+StandardContractsTemplate=Predloga standardnih pogodb
+ContactNameAndSignature=Za %s, ime in podpis:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Podpisnik pogodbe

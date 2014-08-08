@@ -64,12 +64,12 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	 */
 	function canBeActivated()
 	{
-		global $conf,$langs;
+		global $conf,$langs,$db;
 
 		$coyymm=''; $max='';
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
 		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -102,7 +102,7 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		global $db,$conf;
 
 		$posindice=8;
-		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max";
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition";
 		$sql.= " WHERE ref like '".$this->prefix."____-%'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -116,13 +116,15 @@ class mod_expedition_safor extends ModelNumRefExpedition
 		}
 		else
 		{
-			dol_syslog("mod_expedition_safor::getNextValue sql=".$sql);
+			dol_syslog("mod_expedition_safor::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
 		$date=time();
 		$yymm = strftime("%y%m",$date);
-		$num = sprintf("%04s",$max+1);
+
+		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s",$max+1);
 
 		dol_syslog("mod_expedition_safor::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
@@ -141,4 +143,3 @@ class mod_expedition_safor extends ModelNumRefExpedition
 	}
 
 }
-?>

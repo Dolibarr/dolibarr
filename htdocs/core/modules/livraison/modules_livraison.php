@@ -139,6 +139,7 @@ abstract class ModeleNumRefDeliveryOrder
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -230,7 +231,7 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('DELIVERY_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) {
-				$error++; $this->errors=$interface->errors;
+				$error++; $obj->errors=$interface->errors;
 			}
 			// Fin appel triggers
 
@@ -251,4 +252,3 @@ function delivery_order_pdf_create($db, $object, $modele, $outputlangs='')
 	}
 }
 
-?>

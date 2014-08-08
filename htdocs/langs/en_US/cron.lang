@@ -1,22 +1,14 @@
 # Dolibarr language file - Source file is en_US - cron
-#
 # About page
-#
 About = About
 CronAbout = About Cron
 CronAboutPage = Cron about page
-
-#
 # Right
-#
 Permission23101 = Read Scheduled task
 Permission23102 = Create/update Scheduled task
 Permission23103 = Delete Scheduled task
 Permission23104 = Execute Scheduled task
-
-#
 # Admin
-#
 CronSetup= Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch cron jobs if required
 OrToLaunchASpecificJob=Or to check and launch a specific job
@@ -24,20 +16,12 @@ KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Command line to launch cron jobs
 CronExplainHowToRunUnix=On Unix environment you should use crontab to run Command line each minutes 
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run Command line each minutes
-
-
-#
 # Menu
-#
 CronJobs=Scheduled jobs
 CronListActive= List of active jobs
 CronListInactive= List of disabled jobs
 CronListActive= List of scheduled jobs
-
-
-#
 # Page list
-#
 CronDateLastRun=Last run
 CronLastOutput=Last run output
 CronLastResult=Last result code
@@ -70,10 +54,7 @@ CronLabel=Description
 CronNbRun=Nb. launch
 CronEach=Every
 JobFinished=Job launched and finished
-
-#
 #Page card
-#
 CronAdd= Add jobs
 CronHourStart= Start Hour and date of task
 CronEvery= And execute task each
@@ -95,20 +76,12 @@ CronObjectHelp=The object name to load. <BR> For exemple to fetch method of Doli
 CronMethodHelp=The object method to launch. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of method is  is <i>fecth</i>
 CronArgsHelp=The method arguments. <BR> For exemple to fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value of paramters can be <i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
-
-#
 # Info
-#
 CronInfoPage=Information
-
-
-#
 # Common
-#
 CronType=Task type
 CronType_method=Call method of a Dolibarr Class
 CronType_command=Shell command
 CronMenu=Cron
 CronCannotLoadClass=Cannot load class %s or object %s
-
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.

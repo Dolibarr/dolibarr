@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=Ga terug en corrigeer de foutief ingestelde waar
 ErrorWrongValueForParameter=U heeft de parameter '%s' mogelijk verkeerd ingesteld.
 ErrorFailedToCreateDatabase=De database '%s' kon niet worden gecreëerd.
 ErrorFailedToConnectToDatabase=Er kon niet verbonden worden met de database '%s'.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Databankversie (%s) te oud. Versie %s of hoger is vereist.
 ErrorPHPVersionTooLow=De geïnstalleerde PHP versie is te oud. Versie %s is nodig.
 WarningPHPVersionTooLow=De geïnstalleerde PHP versie is te oud. Versie %d of hoger wordt verwacht. Deze versie laat installatie toe, maar wordt niet ondersteund.
 ErrorConnectedButDatabaseNotFound=De verbinding met de server kon succesvol worden opgezet, maar de database '%s' is niet gevonden.
 ErrorDatabaseAlreadyExists=Database '%s' bestaat al.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Wanneer de database niet bestaat, ga dan terug en vink de optie "Creëer database" aan.
 IfDatabaseExistsGoBackAndCheckCreate=Wanneer de database al bestaat, ga dan terug en vink "Creëer database" uit.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Browser-versie te oud. Upgrade je browser naar een recente versie; Firefox, Chrome of Opera worden warm aanbevolen.
 PHPVersion=PHP versie
 YouCanContinue=U kunt doorgaan
 PleaseBePatient=Even geduld a.u.b.
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Waardeer de opslag van verzending op 2
 MigrationFinished=Migratie voltooid
 LastStepDesc=<strong>Laatste stap:</strong> Definieer hier de login en het wachtwoord die u wilt gebruiken om verbinding te maken software. Niet los dit als het is de rekening voor alle anderen te beheren.
 ActivateModule=Activeer module %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Klik hier om verder gevorderde parameters te zien of aan te passen. (expert instellingen)
 
 #########
 # upgrade
-#########
 MigrationFixData=Reparatie voor gedenormaliseerde gegevens
 MigrationOrder=Gegevensmigratie van orders van afnemers
 MigrationSupplierOrder=Gegevensmigratie van orders van leveranciers
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Gegevensmigratie veld fk_user_resp van llx_projet naar 
 MigrationProjectTaskTime=Verstreken tijd van de update in seconden
 MigrationActioncommElement=Bijwerken van gegevens over acties
 MigrationPaymentMode=Data migratie voor de betaling mode
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Overzetten van categoriën
+
+ShowNotAvailableOptions=Toon niet beschikbare opties
+HideNotAvailableOptions=Verberg niet beschikbare opties

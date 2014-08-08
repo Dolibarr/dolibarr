@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - trips
+Trip=Putovanje
+Trips=Putovanja
+TripsAndExpenses=Putovanja i troškovi
+TripsAndExpensesStatistics=Statistika putovanja i troškova
+TripCard=Kartica putovanja
+AddTrip=Dodaj putovanje
+ListOfTrips=Lista putovanja
+ListOfFees=Lista naknada
+NewTrip=Novo putovanje
+CompanyVisited=Posjeta kompaniji/fondaciji
+Kilometers=Kilometri
+FeesKilometersOrAmout=Iznos ili kilometri
+DeleteTrip=Obriši putovanje
+ConfirmDeleteTrip=Jeste li sigurni da želite obrisati ovo putovanje?
+TF_OTHER=Ostalo
+TF_LUNCH=Ručak
+TF_TRIP=Putovanje
+ListTripsAndExpenses=Lista putovanja i troškova
+ExpensesArea=Područje za putovanja i troškove
+SearchATripAndExpense=Traži putovanja i troškove

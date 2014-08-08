@@ -39,15 +39,16 @@ $action = GETPOST('action','alpha');
  * Actions
  */
 
-if ($action == 'setbarcodeon')
+if ($action == 'setbarcodeproducton')
 {
-	$res=dolibarr_set_const($db, "BARCODE_ADDON_NUM", GETPOST('value'), 'chaine', 0, '', $conf->entity);
+	$res=dolibarr_set_const($db, "BARCODE_PRODUCT_ADDON_NUM", GETPOST('value'), 'chaine', 0, '', $conf->entity);
 }
-elseif ($action == 'setbarcodeoff')
+elseif ($action == 'setbarcodeproductoff')
 {
-	$res=dolibarr_del_const($db, "BARCODE_ADDON_NUM", $conf->entity);
+	$res=dolibarr_del_const($db, "BARCODE_PRODUCT_ADDON_NUM", $conf->entity);
 }
-else if ($action == 'setcoder')
+
+if ($action == 'setcoder')
 {
 	$coder = GETPOST('coder','alpha');
 	$code_id = GETPOST('code_id','alpha');
@@ -63,7 +64,7 @@ else if ($action == 'update')
 {
 	if (GETPOST('submit_GENBARCODE_LOCATION'))
 	{
-		$location = GETPOST('genbarcodelocation','alpha');
+		$location = GETPOST('GENBARCODE_LOCATION','alpha');
 		$res = dolibarr_set_const($db, "GENBARCODE_LOCATION",$location,'chaine',0,'',$conf->entity);
 	}
 	if (GETPOST('submit_PRODUIT_DEFAULT_BARCODE_TYPE'))
@@ -82,7 +83,7 @@ else if ($action == 'update')
 if ($action == 'setModuleOptions')
 {
     $post_size=count($_POST);
-    
+
     for($i=0;$i < $post_size;$i++)
     {
         if (array_key_exists('param'.$i,$_POST))
@@ -125,7 +126,8 @@ if ($action && $action != 'setcoder' && $action != 'setModuleOptions')
 $form = new Form($db);
 $formbarcode = new FormBarCode($db);
 
-llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
+$help_url='EN:Module_Barcode|FR:Module_Codes_Barre|ES:Módulo Código de barra';
+llxHeader('',$langs->trans("BarcodeSetup"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("BarcodeSetup"),$linkback,'setup');
@@ -201,7 +203,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $sql.= " WHERE entity = ".$conf->entity;
 $sql.= " ORDER BY code";
 
-dol_syslog("admin/barcode.php sql=".$sql);
+dol_syslog("admin/barcode.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -351,74 +353,78 @@ print "</table>\n";
 
 print '<br>';
 
+
+
 // Select barcode numbering module
-
-print_titre($langs->trans("BarCodeNumberManager"));
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
-print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-$dirbarcodenum=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
-
-foreach ($dirbarcodenum as $dirroot)
+if ($conf->produit->enabled)
 {
-	$dir = dol_buildpath($dirroot,0);
+	print_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")");
 
-	$handle = @opendir($dir);
-    if (is_resource($handle))
-    {
-    	while (($file = readdir($handle))!==false)
-    	{
-    		if (preg_match('/^mod_barcode_.*php$/', $file))
-    		{
-    			$file = substr($file, 0, dol_strlen($file)-4);
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td width="140">'.$langs->trans("Name").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("Example").'</td>';
+	print '<td align="center" width="80">'.$langs->trans("Status").'</td>';
+	print '<td align="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
 
-    		    try {
-        			dol_include_once($dirroot.$file.'.php');
-    			}
-    			catch(Exception $e)
-    			{
-    			    dol_syslog($e->getMessage(), LOG_ERR);
-    			}
+	$dirbarcodenum=array_merge(array('/core/modules/barcode/'),$conf->modules_parts['barcode']);
 
-    			$modBarCode = new $file();
-    			$var = !$var;
+	foreach ($dirbarcodenum as $dirroot)
+	{
+		$dir = dol_buildpath($dirroot,0);
 
-    			print '<tr '.$bc[$var].'>';
-    			print '<td>'.$modBarCode->nom."</td><td>\n";
-    			print $modBarCode->info($langs);
-    			print '</td>';
-    			print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
+		$handle = @opendir($dir);
+	    if (is_resource($handle))
+	    {
+	    	while (($file = readdir($handle))!==false)
+	    	{
+	    		if (preg_match('/^mod_barcode_product_.*php$/', $file))
+	    		{
+	    			$file = substr($file, 0, dol_strlen($file)-4);
 
-    			if ($conf->global->BARCODE_ADDON_NUM == "$file")
-    			{
-    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeoff&value='.$file.'">';
-    				print img_picto($langs->trans("Activated"),'switch_on');
-    				print '</a></td>';
-    			}
-    			else
-    			{
-    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeon&value='.$file.'">';
-    				print img_picto($langs->trans("Disabled"),'switch_off');
-    				print '</a></td>';
-    			}
-    			print '<td align="center">';
-    			$s=$modBarCode->getToolTip($langs,null,-1);
-    			print $form->textwithpicto('',$s,1);
-    			print '</td>';
-    			print "</tr>\n";
-    		}
-    	}
-    	closedir($handle);
-    }
+	    		    try {
+	        			dol_include_once($dirroot.$file.'.php');
+	    			}
+	    			catch(Exception $e)
+	    			{
+	    			    dol_syslog($e->getMessage(), LOG_ERR);
+	    			}
+
+	    			$modBarCode = new $file();
+	    			$var = !$var;
+
+	    			print '<tr '.$bc[$var].'>';
+	    			print '<td>'.$modBarCode->nom."</td><td>\n";
+	    			print $modBarCode->info($langs);
+	    			print '</td>';
+	    			print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
+
+	    			if ($conf->global->BARCODE_PRODUCT_ADDON_NUM == "$file")
+	    			{
+	    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&value='.$file.'">';
+	    				print img_picto($langs->trans("Activated"),'switch_on');
+	    				print '</a></td>';
+	    			}
+	    			else
+	    			{
+	    				print '<td align="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&value='.$file.'">';
+	    				print img_picto($langs->trans("Disabled"),'switch_off');
+	    				print '</a></td>';
+	    			}
+	    			print '<td align="center">';
+	    			$s=$modBarCode->getToolTip($langs,null,-1);
+	    			print $form->textwithpicto('',$s,1);
+	    			print '</td>';
+	    			print "</tr>\n";
+	    		}
+	    	}
+	    	closedir($handle);
+	    }
+	}
+	print "</table>\n";
 }
-print "</table>\n";
 
 print '</form>';
 
@@ -427,4 +433,3 @@ print "<br>";
 $db->close();
 
 llxFooter();
-?>

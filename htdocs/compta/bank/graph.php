@@ -41,12 +41,11 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
 $account=$_GET["account"];
 $mode='standard';
 if (isset($_GET["mode"]) && $_GET["mode"] == 'showalltime') $mode='showalltime';
-$mesg = '';
 $error=0;
 
 
@@ -82,7 +81,7 @@ if ($result < 0)
 {
 	$langs->load("errors");
 	$error++;
-	$mesg='<div class="error">'.$langs->trans("ErrorFailedToCreateDir").'</div>';
+	setEventMessage($langs->trans("ErrorFailedToCreateDir"), 'errors');
 }
 else
 {
@@ -756,8 +755,6 @@ else
 $head=bank_prepare_head($acct);
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
 
-if ($mesg) print $mesg.'<br>';
-
 print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
@@ -885,4 +882,3 @@ print "\n</div>\n";
 llxFooter();
 
 $db->close();
-?>

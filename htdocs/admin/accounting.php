@@ -258,4 +258,3 @@ if ($num)
 $db->close();
 
 llxFooter();
-?>

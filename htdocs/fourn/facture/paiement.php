@@ -34,6 +34,7 @@ require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
+$langs->load('compta');
 
 $action     = GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
@@ -232,7 +233,7 @@ if ($action == 'confirm_paiement' && $confirm == 'yes')
 $supplierstatic=new Societe($db);
 $invoicesupplierstatic = new FactureFournisseur($db);
 
-llxHeader();
+llxHeader('',$langs->trans('ListPayment'));
 
 $form=new Form($db);
 
@@ -242,7 +243,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $object->fetch($facid);
 
     $datefacture=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:0):$datefacture);
+    $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom, s.rowid as socid,';
     $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total';
@@ -502,9 +503,6 @@ if (empty($action))
 
         print_barre_liste($langs->trans('SupplierPayments'), $page, 'paiement.php',$paramlist,$sortfield,$sortorder,'',$num);
 
-        if ($mesg) dol_htmloutput_mesg($mesg);
-        if ($errmsg) dol_htmloutput_errors($errmsg);
-
         print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
@@ -586,4 +584,3 @@ if (empty($action))
 $db->close();
 
 llxFooter();
-?>

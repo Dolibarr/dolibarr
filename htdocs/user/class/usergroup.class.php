@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (c) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class UserGroup extends CommonObject
 			$sql.= " WHERE g.rowid = ".$id;
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -113,7 +114,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -146,7 +146,7 @@ class UserGroup extends CommonObject
 		}
 		$sql.= " ORDER BY g.nom";
 
-		dol_syslog(get_class($this)."::listGroupsForUser sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listGroupsForUser", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -169,7 +169,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listGroupsForUser ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -178,9 +177,10 @@ class UserGroup extends CommonObject
 	 * 	Return array of users id for group this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
+	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
 	 * 	@return	array 						Array of users
 	 */
-	function listUsersForGroup($excludefilter='')
+	function listUsersForGroup($excludefilter='', $mode=0)
 	{
 		global $conf, $user;
 
@@ -203,7 +203,7 @@ class UserGroup extends CommonObject
 		}
 		if (! empty($excludefilter)) $sql.=' AND ('.$excludefilter.')';
 
-		dol_syslog(get_class($this)."::listUsersForGroup sql=".$sql,LOG_DEBUG);
+		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -211,11 +211,15 @@ class UserGroup extends CommonObject
 			{
 				if (! array_key_exists($obj->rowid, $ret))
 				{
-					$newuser=new User($this->db);
-					$newuser->fetch($obj->rowid);
-					$ret[$obj->rowid]=$newuser;
+					if ($mode != 1)
+					{
+						$newuser=new User($this->db);
+						$newuser->fetch($obj->rowid);
+						$ret[$obj->rowid]=$newuser;
+					}
+					else $ret[$obj->rowid]=$obj->rowid;
 				}
-				if (! empty($obj->usergroup_entity))
+				if ($mode != 1 && ! empty($obj->usergroup_entity))
 				{
 					$ret[$obj->rowid]->usergroup_entity[]=$obj->usergroup_entity;
 				}
@@ -228,7 +232,6 @@ class UserGroup extends CommonObject
 		else
 		{
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::listUsersForGroup ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -280,7 +283,7 @@ class UserGroup extends CommonObject
 
 			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
 			// TODO A virer quand sera gere par l'appelant
-			if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
+			//if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
 		}
 		else {
 			// Where pour la liste des droits a ajouter
@@ -380,7 +383,7 @@ class UserGroup extends CommonObject
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
 			// TODO A virer quand sera gere par l'appelant
-			if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
+			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		}
 		else {
 			// Where pour la liste des droits a supprimer
@@ -466,7 +469,7 @@ class UserGroup extends CommonObject
 		$sql.= " AND r.perms IS NOT NULL";
 		if ($moduletag) $sql.= " AND r.module = '".$this->db->escape($moduletag)."'";
 
-		dol_syslog(get_class($this).'::getrights sql='.$sql, LOG_DEBUG);
+		dol_syslog(get_class($this).'::getrights', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -541,12 +544,10 @@ class UserGroup extends CommonObject
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('GROUP_DELETE',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('GROUP_DELETE',$user);
+            if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+            // End call triggers
 
 			$this->db->commit();
 			return 1;
@@ -577,6 +578,8 @@ class UserGroup extends CommonObject
 		$entity=$this->entity;
 		if (! empty($conf->multicompany->enabled) && $conf->entity == 1) $entity=$this->entity;
 
+		$this->db->begin();
+		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup (";
 		$sql.= "datec";
 		$sql.= ", nom";
@@ -584,10 +587,10 @@ class UserGroup extends CommonObject
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."'";
 		$sql.= ",'".$this->db->escape($this->nom)."'";
-		$sql.= ",".$entity;
+		$sql.= ",".$this->db->escape($entity);
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -597,20 +600,19 @@ class UserGroup extends CommonObject
 
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('GROUP_CREATE',$user);
+                if ($result < 0) { $error++; $this->db->rollback(); return -1; }            
+                // End call triggers
 			}
 
+			$this->db->commit();
 			return $this->id;
 		}
 		else
 		{
+		    $this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::create ".$this->error,LOG_ERR);
 			return -1;
 		}
 	}
@@ -633,31 +635,40 @@ class UserGroup extends CommonObject
 			$entity=$this->entity;
 		}
 
+		$this->db->begin();
+		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
 		$sql.= " nom = '" . $this->db->escape($this->nom) . "'";
-		$sql.= ", entity = " . $entity;
+		$sql.= ", entity = " . $this->db->escape($entity);
 		$sql.= ", note = '" . $this->db->escape($this->note) . "'";
 		$sql.= " WHERE rowid = " . $this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if (! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('GROUP_MODIFY',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
-			if (! $error) return 1;
-			else return -$error;
+			if (! $error) 
+			{
+			    $this->db->commit();
+			    return 1;
+			}
+			else
+			{
+			    $this->db->rollback();
+			    return -$error;
+			}
 		}
 		else
 		{
+		    $this->db->rollback();
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -667,7 +678,7 @@ class UserGroup extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		string	$info		Info string loaded by _load_ldap_info
+	 *	@param		array	$info		Info array loaded by _load_ldap_info
 	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *									2=Return key only (uid=qqq)
@@ -744,4 +755,3 @@ class UserGroup extends CommonObject
 	}
 }
 
-?>

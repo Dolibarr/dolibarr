@@ -1,122 +1,21 @@
-/*
- * Language code: de_AT
- * Manually translated by eCleaner.sat
- * Generation date 2010-11-16 13:09:12
- */
-
-
-Mailing=
-EMailing=E-Mail-Kampagne
-Mailings=E-Mail-Kampagnen
-EMailings=E-Mail-Kampagne
-MailCard=E-Mail-Kampagnenkarte
-MailTargets=Ziele
-MailRecipients=Empfänger
-MailRecipient=Empfänger
-MailTitle=Titel
-MailFrom=Absender
-MailErrorsTo=Fehler an
-MailReply=Antwort an
-MailTo=Empfänger
-MailCC=Kopie an
-MailCCC=Blindkopie an
-MailTopic=E-Mail-Betreff
-MailText=E-Mail-Text
-MailFile=Angehängte Dateien
-MailMessage=E-Mail-Text
-ShowEMailing=Zeige E-Mail-Kampagne
-ListOfEMailings=Liste der E-Mail-Kampagnen
-NewMailing=Neue E-Mail-Kampagne
-EditMailing=E-Mail-Kampagne bearbeiten
-DeleteMailing=E-Mail-Kampagne löschen
-DeleteAMailing=Löschen einer E-Mail-Kampagne
-PreviewMailing=E-Mail-Kampagnen-Vorschau
-PrepareMailing=E-Mail-Kampagne vorbereiten
-CreateMailing=E-Mail-Kampagne erstellen
-MailingDesc=Auf dieser Seite können Sie E-Mail-Kampagnen an Gruppen versenden
-MailingResult=Ergebnis des E-Mail-Versands
-TestMailing=E-Mail-Kampagne testen
-ValidMailing=E-Mail-Kampagne freigeben
-ApproveMailing=E-Mail-Kampagne bestätigen
-MailingStatusDraft=Entwurf
-MailingStatusValidated=Freigegeben
-MailingStatusApproved=Bestätigt
-MailingStatusSent=Gesendet
-MailingStatusSentPartialy=Teilweise gesendet
-MailingStatusSentCompletely=Vollständig gesendet
-MailingStatusError=Fehler beim Versand
-MailingStatusNotSent=Nicht gesendet
-MailSuccessfulySent=E-Mail-Kampagne erfolgreich versandt (von %s an %s)
-ErrorMailRecipientIsEmpty=Das Empfängerfeld ist leer
-WarningNoEMailsAdded=Keine neuen E-Mail-Adressen für das Hinzufügen zur Empfängerliste.
-ConfirmValidMailing=Möchten Sie diese E-Mail-Kampagne wirklich freigeben?
-ConfirmDeleteMailing=Möchten Sie diese E-Mail-Kampagne wirklich löschen?
-NbOfRecipients=Anzahl der Empfänger
-NbOfUniqueEMails=Zahl der einzigartigen E-Mail-Adressen
-NbOfEMails=Anzahl der E-Mails
-TotalNbOfDistinctRecipients=Anzahl der Empfänger
-NoTargetYet=Noch keine Empfänger ausgewählt (Bitte wechseln Sie zur Registerkarte "Empfänger")
-AddRecipients=Empfänger hinzufügen
-RemoveRecipient=Empfänger entfernen
-CommonSubstitutions=Allgemeine Ersetzungen
-YouCanAddYourOwnPredefindedListHere=Für nähere Informationen zur Erstellung Ihres eigenen E-Mail-Selector-Moduls, lesen Sie bitte die Datei htdocs/core/modules/mailings/README.
-EMailTestSubstitutionReplacedByGenericValues=Im Testmodus werden die Variablen durch generische Werte ersetzt
-MailingAddFile=Diese Datei anhängen
-NoAttachedFiles=Keine angehängten Dateien
-MailingModuleDescContactCompanies=Kontakte aller Partner (Kunden, Leads, Lieferanten, ...)
-MailingModuleDescDolibarrUsers=Alle Systembenutzer mit E-Mail-Adresse
-MailingModuleDescFundationMembers=Alle Stiftungsmitglieder mit E-Mail-Adresse
-MailingModuleDescEmailsFromFile=E-Mail-Adressen aus einer Text-Datei (Format: E-Mail, Vorname, Nachname)
-MailingModuleDescContactsCategories=Partnerkontakte (nach Kategorie)
-LineInFile=Zeile %s in der Datei
-RecipientSelectionModules=Definiert Empfängerauswahlen
-MailSelectedRecipients=Ausgewählte Empfänger
-MailingArea=E-Mail-Kampagnenübersicht
-LastMailings=%s neueste E-Mail-Kampagnen
-TargetsStatistics=Zielstatistiken
-NbOfCompaniesContacts=Einzigartige Partnerkontakte
-MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
-SearchAMailing=Suche E-Mail-Kampagne
-SendMailing=E-Mail-Kampagne versenden
-SendMail=E-Mail versenden
-SentBy=Gesendet von
-MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mail-Kampagnen von der Kommandozeile aus versandt werden. Bitten Sie Ihren Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
-MailingNeedCommand2=Sie können den Versand jedoch auch online starten, indem Sie den Parameter MAILING_LIMIT_SENDBYWEB auf den Wert der pro Sitzung gleichzeitig zu versendenden Mails setzen. Die entsprechenden Einstellungen finden Sie unter Übersicht-Einstellungen-Andere.
-ConfirmSendingEmailing=Möchten Sie diese E-Mail-Kampagne wirklich versenden?<br>Aus Sicherheitsgründen ist der gleichzeitige Versand auf <b>%s</b> Empfänger pro Sitzung beschränkt.
-TargetsReset=Liste leeren
-ToClearAllRecipientsClickHere=Klicken Sie hier, um die Empfängerliste zu leeren
-ToAddRecipientsChooseHere=Fügen Sie Empfänger über die Listenauswahl hinzu
-NbOfEMailingsReceived=Empfangene E-Mail-Kampagnen
-IdRecord=Eintrags ID
-DeliveryReceipt=Zustellbestätigung
-Notifications=Benachrichtigungen
-NoNotificationsWillBeSent=Für dieses Ereignis und diesen Partner sind keine Benachrichtigungen geplant
-ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt
-SomeNotificationsWillBeSent=%s Benachrichtigungen werden per E-Mail versandt
-AddNewNotification=Aktivieren Sie eine neue E-Mail-Benachrichtigungsanfrage
-ListOfActiveNotifications=Liste aller aktiven E-Mail-Benachrichtigungen
-
-AllEMailings=Alle E-Mail-Kampagnen
+# Dolibarr language file - Source file is en_US - mails
 ResetMailing=E-Mail-Kampagne erneut senden
 ConfirmResetMailing=Achtung: Die neuerliche Ausführung der E-Mail-Kampagne <b>%s</b> erlaubt Ihnen den Massenversand von E-Mails zu einem anderen Zeitpunkt. Möchten Sie wirklich fortfahren?
-BadEMail=Ungültige E-Mail-Adresse
 CloneEMailing=E-Mail-Kampagne duplizieren
-ConfirmCloneEMailing=Möchten Sie diese E-Mail-Kampagne wirklich duplizieren?
-CloneContent=Inhalt duplizieren
-CloneReceivers=Empfängerliste duplizieren
-DateLastSend=Datum des letzten Versands
-MailingModuleDescDolibarrContractsLinesExpired=Partner mit abgelaufenen Vertragspositionen
-YouCanUseCommaSeparatorForSeveralRecipients=Trennen Sie mehrere Empfänger mit einem <b>Komma</b>
-
-DateSending=Versanddatum
-SentTo=Versandt an <b>%s</b>
-LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
-ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen
-
-
-// START - Lines generated via autotranslator.php tool (2011-10-10 02:45:33).
-// Reference language: en_US -> de_AT
+ConfirmCloneEMailing=Möchten Sie diese Mailkampagne wirklich duplizieren?
+CloneContent=Nachricht duplizieren
 MailingModuleDescContactsByCompanyCategory=Kontakte Dritter (durch Dritte Kategorie)
 MailingModuleDescMembersCategories=Mitglieder der Stiftung (nach Kategorien)
 MailingModuleDescContactsByFunction=Kontakte von Dritten (nach Position / Funktion)
-// STOP - Lines generated via autotranslator.php tool (2011-10-10 11:30:35).
+MailingArea=E-Mail-Kampagnenübersicht
+LastMailings=%s neueste E-Mail-Kampagnen
+MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
+SearchAMailing=Suche E-Mail-Kampagne
+SendMailing=E-Mail-Kampagne versenden
+MailingNeedCommand=Aus Sicherheitsgründen sollten E-Mail-Kampagnen von der Kommandozeile aus versandt werden. Bitten Sie Ihren Administrator um die Ausführung des folgenden Befehls, um den Versand an alle Empfänger zu starten:
+ConfirmSendingEmailing=Möchten Sie diese E-Mail-Kampagne wirklich versenden?<br>Aus Sicherheitsgründen ist der gleichzeitige Versand auf <b>%s</b> Empfänger pro Sitzung beschränkt.
+LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
+IdRecord=Eintrags ID
+ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt
+ListOfActiveNotifications=Liste aller aktiven E-Mail-Benachrichtigungen
+ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen

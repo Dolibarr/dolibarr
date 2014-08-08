@@ -62,7 +62,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	private function getTitle($action)
 	{
-		global $langs;
+		global $langs,$conf;
 
 		$out='';
 
@@ -145,4 +145,3 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	}
 }
 
-?>

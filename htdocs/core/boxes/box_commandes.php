@@ -144,4 +144,3 @@ class box_commandes extends ModeleBoxes
 
 }
 
-?>

@@ -15,6 +15,11 @@
 *.lang text eol=lf
 *.txt text eol=lf
 *.md text eol=lf
+*.pp text eol=lf
+*.sh text eol=lf
+*.yaml text eol=lf
+
+.bash_aliases text eol=lf
 
 # Denote all files that are truly binary and should not be modified.
 *.bmp binary

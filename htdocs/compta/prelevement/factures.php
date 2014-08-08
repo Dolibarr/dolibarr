@@ -47,7 +47,7 @@ $page = GETPOST('page','int');
 $sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.ref" : GETPOST('sortfield','alpha');
 
-llxHeader('',$langs->trans("WithdrawalReceipts"));
+llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id)
 {
@@ -56,7 +56,7 @@ if ($prev_id)
   	if ($bon->fetch($prev_id) == 0)
     {
     	$head = prelevement_prepare_head($bon);
-      	dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalReceipts"), '', 'payment');
+		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), '', 'payment');
 
       	print '<table class="border" width="100%">';
 
@@ -216,4 +216,3 @@ else
 $db->close();
 
 llxFooter();
-?>

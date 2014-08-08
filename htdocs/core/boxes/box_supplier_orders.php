@@ -148,4 +148,3 @@ class box_supplier_orders extends ModeleBoxes
 
 }
 
-?>

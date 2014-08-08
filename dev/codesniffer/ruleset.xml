@@ -3,12 +3,24 @@
 <ruleset name="Dolibarr">
 	<description>Dolibarr coding standard.</description>
 
+	<exclude-pattern>*/conf.php</exclude-pattern>
+	<exclude-pattern>*/includes/*</exclude-pattern>
+	<exclude-pattern>*/documents/*</exclude-pattern>
+	<exclude-pattern>*/custom/*</exclude-pattern>
+	<exclude-pattern>*/nltechno*</exclude-pattern>
+		
 	<!-- List of all tests -->
 
+	
+	<!-- Rules from Internal Standard -->
+	
 	<rule ref="Internal.NoCodeFound">
 		<severity>0</severity>
 	</rule>
 
+	
+	<!-- Rules from Generic Standard -->
+		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
  
 	<rule ref="Generic.CodeAnalysis.EmptyStatement.NotAllowed">
@@ -45,6 +57,9 @@
 		<properties> <property name="error" value="false"/> </properties>
 		</rule>
 	-->
+
+    <!-- PHP code MUST use only UTF-8 without BOM. -->
+    <rule ref="Generic.Files.ByteOrderMark"/>
 
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">
@@ -140,6 +155,10 @@
 	<!-- Check indent are done with spaces and wiht correct number -->
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
+
+
+
+	<!-- Rules from PEAR Standard -->
 
 	<rule ref="PEAR.Classes.ClassDeclaration" />
 
@@ -257,5 +276,11 @@
     
     <!-- Already found as a Generic rule -->
 	<!-- <rule ref="PEAR.WhiteSpace.ScopeIndent" /> -->
+
+
+	<!-- Rules from Zend Standard-->
+
+    <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
+    <rule ref="Zend.Files.ClosingTag"/>
 
 </ruleset>

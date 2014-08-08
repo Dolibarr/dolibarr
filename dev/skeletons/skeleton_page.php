@@ -139,7 +139,7 @@ if ($action == 'list')
     print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
     print '</tr>';
 
-    dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
+    dol_syslog($script_file, LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -176,4 +176,3 @@ if ($action == 'list')
 // End of page
 llxFooter();
 $db->close();
-?>

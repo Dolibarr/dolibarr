@@ -1,51 +1,41 @@
 # Dolibarr language file - Source file is en_US - marges
 
-# Margin=Margin
-# Margins=Margins
-# TotalMargin=Total Margin
-# MarginOnProducts=Margin / Products
-# MarginOnServices=Margin / Services
-# MarginRate=Margin rate
-# MarkRate=Mark rate
-# DisplayMarginRates=Display margin rates
-# DisplayMarkRates=Display mark rates
-# InputPrice=Input price
-
-# margin=Profit margins management
-# margesSetup=Profit margins management setup
-
-# MarginDetails=Margin details
-
-# ProductMargins=Product margins
-# CustomerMargins=Customer margins
-# AgentMargins=Agent margins
-
-ProductService=المنتج أو الخدمة
-# AllProducts=All products and services
-# ChooseProduct/Service=Choose product or service
-# CommercialAgent=Commercial agent
-
-StartDate=تاريخ البدء
-EndDate=نهاية التاريخ
-Launch=يبدأ
-
-# ForceBuyingPriceIfNull=Force buying price if null
-# ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
-# MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
-# UseDiscountAsProduct=As a product
-# UseDiscountAsService=As a service
-# UseDiscountOnTotal=On subtotal
-# MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Defines if a global discount is treated as a product, a service, or only on subtotal for margin calculation.
-
-# MARGIN_TYPE=Margin type
-# MargeBrute=Raw margin
-# MargeNette=Net margin
-# MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
-
-# CostPrice=Cost price
-# BuyingCost=Cost price
-# UnitCharges=Unit charges
-# Charges=Charges
-
-# AgentContactType=Commercial agent contact type
-# AgentContactTypeDetails=Défine what contact type (linked on invoices) will be used for margin report by commercial agents
+Margin=حاشیه
+Margins=حاشیه
+TotalMargin=حاشیه ها
+MarginOnProducts=حاشیه / محصولات
+MarginOnServices=حاشیه / خدمات
+MarginRate=میزان مارجین
+MarkRate=نرخ علامت گذاری
+DisplayMarginRates=نرخ حاشیه نمایش
+DisplayMarkRates=نرخ علامت گذاری به عنوان صفحه نمایش
+InputPrice=قیمت ورودی
+margin=مدیریت سود
+margesSetup=راه اندازی مدیریت سود
+MarginDetails=جزئیات حاشیه
+ProductMargins=حاشیه های محصولات
+CustomerMargins=حاشیه مشتری
+SalesRepresentativeMargins=فروش حاشیه نماینده
+ProductService=محصولات و خدمات
+AllProducts=همه محصولات و خدمات
+ChooseProduct/Service=انتخاب محصول و یا خدمات
+StartDate=تاریخ شروع
+EndDate=تاریخ پایان
+Launch=شروع
+ForceBuyingPriceIfNull=نیروی قیمت خرید اگر تهی
+ForceBuyingPriceIfNullDetails=اگر "ON"، حاشیه صفر خواهد بود در خط (خرید قیمت = قیمت فروش)، در غیر این صورت ("OFF")، مرگ به قیمت فروش برابر خواهد بود با (قیمت خرید = 0)
+MARGIN_METHODE_FOR_DISCOUNT=روش مارجین برای تخفیف جهانی
+UseDiscountAsProduct=به عنوان یک محصول
+UseDiscountAsService=به عنوان یک سرویس
+UseDiscountOnTotal=در ساب توتال
+MARGIN_METHODE_FOR_DISCOUNT_DETAILS=معرفی می کند اگر تخفیف های جهانی به عنوان یک محصول، سرویس و یا فقط در ساب توتال برای محاسبه حاشیه درمان می شود.
+MARGIN_TYPE=نوع حاشیه
+MargeBrute=حاشیه خام
+MargeNette=حاشیه خالص
+MARGIN_TYPE_DETAILS=حاشیه خام: فروش قیمت - خرید قیمت <br/> حاشیه خالص: فروش قیمت - قیمت تمام شده
+CostPrice=قیمت تمام شده
+BuyingCost=قیمت تمام شده
+UnitCharges=اتهامات واحد
+Charges=عوارض
+AgentContactType=عامل تجاری و نوع تماس
+AgentContactTypeDetails=تعریف نوع آنچه در تماس با (مرتبط در فاکتورها) برای گزارش حاشیه های عامل تجاری استفاده می شود

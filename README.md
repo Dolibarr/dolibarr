@@ -2,7 +2,7 @@
 
 Dolibarr ERP & CRM is a modern software to manage your company or foundation activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).It's an opensource software (wrote with PHP language) designed for small and medium companies, foundation and freelances. You can freely install, use and distribute it as a standalone application or as a web application to use it from every internet access and media.
 
-![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
+![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x400.png)
 
 
 ## LICENSE
@@ -15,7 +15,7 @@ Dolibarr is released under the terms of the GNU General Public License as publis
 
 If you have no technical knowledge, and you are looking for an autoinstaller to install Dolibarr ERP/CRM in few clicks, you must download DoliWamp (the all-in-one package of Dolibarr for Windows), DoliDeb (the all-in-one package of Dolibarr for Debian or Ubuntu) or DoliRpm (the all-in-one package of Dolibarr for Fedora, Redhat, Opensuse, Mandriva or Mageia).
 
-You can download this at: [Official website] (http://www.dolibarr.org/downloads/)
+You can download this at: [Official website] (<http://www.dolibarr.org/downloads/>)
 
 If you already have installed a Web server and a Mysql database, you can install the standard version like this:
 
@@ -113,7 +113,8 @@ See ChangeLog file found into package.
 - Multi-user, with several permissions levels for each feature.
 - Very user friendly and easy to use.
 - Highly customizable: Enable only modules you need, user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one).
-- Works with PHP 5.2.1, MySql 4.1 or PostgreSQL 8.1.
+- Works with PHP 5.3+, MySql 4.1 or PostgreSQL 8.1.
+- Require PHP and Mysql or Postgresql (See exatc versions on http://wiki.dolibarr.org/index.php/Prerequisite).
 - Compatible with all Cloud solutions that match MySql, PHP or PostgreSQL prerequisites.
 - An easy to understand, maintain and code interfaces with your own system information (PHP with no heavy frameworks, trigger and hook architecture).
 - Support countries specific features:
@@ -136,3 +137,15 @@ This is features that Dolibarr does not support completely yet:
 - Dolibarr does not contains Payroll module.
 - Dolibarr does not include any Webmail.
 - Dolibarr can't do coffee (not yet).
+
+
+## SOCIAL NETWORKS
+
+Follow Dolibarr project on
+
+Facebook: <https://www.facebook.com/dolibarr>
+
+Google+: <https://plus.google.com/+DolibarrOrg>
+
+Twitter: <http://www.twitter.com/dolibarr>
+

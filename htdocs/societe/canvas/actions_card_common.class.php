@@ -46,11 +46,11 @@ abstract class ActionsCardCommon
 
 	/**
 	 * 	Instantiation of DAO class
-	 *  TODO This method is useless
 	 *
-	 * 	@return	void
+	 * 	@return	int		0
+	 *  @deprecated		Using getInstanceDao should not be used.
 	 */
-	protected function getInstanceDao()
+	private function getInstanceDao()
 	{
 		if (! is_object($this->object))
 		{
@@ -67,6 +67,7 @@ abstract class ActionsCardCommon
 	            }
 	        }
 		}
+    	return 0;
 	}
 
 	/**
@@ -78,7 +79,7 @@ abstract class ActionsCardCommon
      */
     protected function getObject($id,$ref='')
     {
-    	$ret = $this->getInstanceDao();
+    	//$ret = $this->getInstanceDao();
 
     	$object = new Societe($this->db);
     	if (! empty($id) || ! empty($ref)) $object->fetch($id,$ref);
@@ -119,7 +120,7 @@ abstract class ActionsCardCommon
                 $this->object->particulier		= GETPOST("private");
 
                 $this->object->name				= empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["firstname"].' '.$_POST["lastname"]):trim($_POST["lastname"].' '.$_POST["firstname"]);
-                $this->object->civilite_id		= $_POST["civilite_id"];
+                $this->object->civility_id		= $_POST["civility_id"];
                 // Add non official properties
                 $this->object->name_bis        	= $_POST["lastname"];
                 $this->object->firstname		= $_POST["firstname"];
@@ -215,7 +216,7 @@ abstract class ActionsCardCommon
                             dol_syslog(get_class($this)."::doActions This thirdparty is a personal people",LOG_DEBUG);
                             $contact=new Contact($this->db);
 
-                            $contact->civilite_id   = $this->object->civilite_id;
+                            $contact->civility_id   = $this->object->civility_id;
                             $contact->name          = $this->object->name_bis;
                             $contact->firstname     = $this->object->firstname;
                             $contact->address       = $this->object->address;
@@ -494,7 +495,7 @@ abstract class ActionsCardCommon
             $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
             // State
             if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->country_code);
@@ -704,5 +705,3 @@ abstract class ActionsCardCommon
     }
 
 }
-
-?>

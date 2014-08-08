@@ -1,0 +1,10 @@
+provider TODO -
+  - password should be a property and not a param
+     - what if we tried to log in as that user?
+  - can permissions from list_user_permissions contain whitespace?
+  - what about defaultfor :true?
+  - prefetching for performance
+  - rabbit plugin should require rabbitmq class
+  - rabbitmq class should be renamed server??
+  - service name should default to -server
+  - cannot find stomp package

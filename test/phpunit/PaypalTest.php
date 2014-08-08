@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/paypal/lib/paypal.lib.php';
@@ -143,4 +143,3 @@ class PaypalTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

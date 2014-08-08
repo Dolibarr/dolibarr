@@ -51,6 +51,9 @@ if ($action == "set")
         if (! $res > 0) $error++;
     }
 
+    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
     $account = new Account($db, $id);
 
@@ -119,16 +122,6 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'setup');
 print '<br>';
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/prelevement.php";
-$head[$h][1] = $langs->trans("Withdrawals");
-$head[$h][2] = 'Withdrawal';
-$hselected=$h;
-$h++;
-
-dol_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
-
 print '<form method="post" action="prelevement.php?action=set">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -158,6 +151,13 @@ print '<tr class="impair"><td>'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td align="left">';
 print $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
+
+// ICS
+print '<tr class="impair"><td>'.$langs->trans("ICS").'</td>';
+print '<td align="left">';
+print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="9" ></td>';
+print '</td></tr>';
+
 print '</table>';
 print '<br>';
 
@@ -165,12 +165,16 @@ print '<center><input type="submit" class="button" value="'.$langs->trans("Save"
 
 print '</form>';
 
+dol_fiche_end();
+
 print '<br>';
+
 
 /*
  * Notifications
  */
 
+/* Disable this, there is no trigger with elementtype 'withdraw'
 if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 {
     $langs->load("mails");
@@ -242,43 +246,44 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print '</td>';
 
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
+
+	// List of current notifications for objet_type='withdraw'
+	$sql = "SELECT u.lastname, u.firstname,";
+	$sql.= " nd.rowid, ad.code, ad.label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
+	$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
+	$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
+	$sql.= " WHERE u.rowid = nd.fk_user";
+	$sql.= " AND nd.fk_action = ad.rowid";
+	$sql.= " AND u.entity IN (0,".$conf->entity.")";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+	    $num = $db->num_rows($resql);
+	    $i = 0;
+	    $var = false;
+	    while ($i < $num)
+	    {
+	        $obj = $db->fetch_object($resql);
+	        $var=!$var;
+
+	        print "<tr ".$bc[$var].">";
+	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
+	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
+	        print '<td>'.$label.'</td>';
+	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
+	        print '</tr>';
+	        $i++;
+	    }
+	    $db->free($resql);
+	}
+
+	print '</table>';
+	print '</form>';
 }
-// List of current notifications for objet_type='withdraw'
-$sql = "SELECT u.lastname, u.firstname,";
-$sql.= " nd.rowid, ad.code, ad.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
-$sql.= " ".MAIN_DB_PREFIX."notify_def as nd,";
-$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as ad";
-$sql.= " WHERE u.rowid = nd.fk_user";
-$sql.= " AND nd.fk_action = ad.rowid";
-$sql.= " AND u.entity IN (0,".$conf->entity.")";
-
-$resql = $db->query($sql);
-if ($resql)
-{
-    $num = $db->num_rows($resql);
-    $i = 0;
-    $var = false;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $var=!$var;
-
-        print "<tr ".$bc[$var].">";
-        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
-        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
-        print '<td>'.$label.'</td>';
-        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=deletenotif&amp;notif='.$obj->rowid.'">'.img_delete().'</a></td>';
-        print '</tr>';
-        $i++;
-    }
-    $db->free($resql);
-}
-
-print '</table>';
-print '</form>';
+*/
 
 $db->close();
 
 llxFooter();
-?>

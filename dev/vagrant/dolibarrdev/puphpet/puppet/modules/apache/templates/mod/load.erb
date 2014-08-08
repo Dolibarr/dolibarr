@@ -1,0 +1,7 @@
+<% if @loadfiles -%>
+<% Array(@loadfiles).each do |loadfile| -%>
+LoadFile <%= loadfile %>
+<% end -%>
+
+<% end -%>
+LoadModule <%= @_id %> <%= @_path %>

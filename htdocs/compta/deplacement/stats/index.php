@@ -20,7 +20,7 @@
 /**
  *  \file       htdocs/compta/deplacement/stats/index.php
  *  \ingroup    deplacement
- *  \brief      Page des stats deplacement et notes de frais
+ *  \brief      Page for statistics of module trips and expenses
  */
 
 require '../../../main.inc.php';
@@ -293,4 +293,3 @@ dol_fiche_end();
 llxFooter();
 
 $db->close();
-?>

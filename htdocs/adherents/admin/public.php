@@ -60,11 +60,11 @@ if ($action == 'update')
 
  	if (! $error)
     {
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
     }
 }
 
@@ -84,9 +84,7 @@ print_fiche_titre($langs->trans("MembersSetup"),$linkback,'setup');
 
 $head = member_admin_prepare_head();
 
-dol_fiche_head($head, 'public', $langs->trans("Member"), 0, 'user');
-
-dol_htmloutput_mesg($mesg);
+dol_fiche_head($head, 'public', $langs->trans("Members"), 0, 'user');
 
 if ($conf->use_javascript_ajax)
 {
@@ -206,7 +204,7 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 print '</table>';
 
 print '<center>';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<br><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</center>';
 
 print '</form>';
@@ -231,4 +229,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

@@ -18,12 +18,11 @@ MarginDetails=Detalii Marjă
 
 ProductMargins=Marjă Produs
 CustomerMargins=Marje Client
-AgentMargins=Marje Agent
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Produs sau serviciu
 AllProducts=Toate produsele şi serviciile
 ChooseProduct/Service=Alege produs sau serviciu
-CommercialAgent=Agent comercial
 
 StartDate=Dată început
 EndDate=Dată sfîrşit
@@ -47,5 +46,5 @@ BuyingCost=Preţ de cost
 UnitCharges=Cheluieli unitare
 Charges=Cheltuieli
 
-AgentContactType=Tip contact agent comercial 
+AgentContactType=Tip contact agent comercial
 AgentContactTypeDetails=Defineşte ce tip de contact ( legat pe factură) va fi utilizat pentru raportul marjei pe agenţi comerciali

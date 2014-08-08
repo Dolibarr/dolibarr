@@ -218,7 +218,7 @@ print '<br>';
 
 $head = order_admin_prepare_head(null);
 
-dol_fiche_head($head, 'general', $langs->trans("ModuleSetup"), 0, 'order');
+dol_fiche_head($head, 'general', $langs->trans("Orders"), 0, 'order');
 
 /*
  * Orders Numbering model
@@ -534,4 +534,3 @@ print '<br>';
 llxFooter();
 
 $db->close();
-?>

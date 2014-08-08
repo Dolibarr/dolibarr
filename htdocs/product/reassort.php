@@ -62,7 +62,6 @@ $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ");
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-//$object->getCanvas($id);
 $canvas=GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
@@ -362,4 +361,3 @@ else
 
 llxFooter();
 $db->close();
-?>

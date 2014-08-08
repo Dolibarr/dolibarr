@@ -426,4 +426,3 @@ else	// Show
 
 llxFooter();
 $db->close();
-?>

@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Entrepot extends CommonObject
 {
-	public $element='label';
+	public $element='stock';
 	public $table_element='entrepot';
 
 	var $id;
@@ -89,7 +89,7 @@ class Entrepot extends CommonObject
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (entity, datec, fk_user_author, label)";
 		$sql .= " VALUES (".$conf->entity.",'".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->libelle)."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -158,7 +158,7 @@ class Entrepot extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -169,7 +169,6 @@ class Entrepot extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -187,12 +186,12 @@ class Entrepot extends CommonObject
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
 		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog("Entrepot::delete sql=".$sql);
+		dol_syslog("Entrepot::delete", LOG_DEBUG);
 		$resql1=$this->db->query($sql);
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
 		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog("Entrepot::delete sql=".$sql);
+		dol_syslog("Entrepot::delete", LOG_DEBUG);
 		$resql2=$this->db->query($sql);
 
 		if ($resql1 && $resql2)
@@ -200,13 +199,13 @@ class Entrepot extends CommonObject
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;
 
-			dol_syslog(get_class($this)."::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql1=$this->db->query($sql);
 
 			// Update denormalized fields because we change content of produt_stock
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product p SET p.stock= (SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
 
-			dol_syslog(get_class($this)."::delete sql=".$sql);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql2=$this->db->query($sql);
 
 			if ($resql1 && $resql2)
@@ -218,7 +217,6 @@ class Entrepot extends CommonObject
 			{
 				$this->db->rollback();
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 				return -1;
 			}
 		}
@@ -226,7 +224,6 @@ class Entrepot extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->lasterror();
-			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			return -1;
 		}
 
@@ -258,7 +255,7 @@ class Entrepot extends CommonObject
 			if ($ref) $sql.= " AND label = '".$this->db->escape($ref)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -309,7 +306,7 @@ class Entrepot extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 		$sql.= " WHERE e.rowid = ".$id;
 
-		dol_syslog(get_class($this)."::info sql=".$sql);
+		dol_syslog(get_class($this)."::info", LOG_DEBUG);
 		$result=$this->db->query($sql);
 		if ($result)
 		{
@@ -524,5 +521,31 @@ class Entrepot extends CommonObject
 		return $result;
 	}
 
+	/**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        global $user,$langs,$conf,$mysoc;
+
+        $now=dol_now();
+
+        // Initialize parameters
+        $this->id=0;
+        $this->libelle = 'WAREHOUSE SPECIMEN';
+        $this->description = 'WAREHOUSE SPECIMEN '.dol_print_date($now,'dayhourlog');
+		$this->statut=1;
+        $this->specimen=1;
+		
+		$this->lieu='Location test';
+        $this->address='21 jump street';
+        $this->zip='99999';
+        $this->town='MyTown';
+        $this->country_id=1;
+        $this->country_code='FR';
+    }
 }
-?>

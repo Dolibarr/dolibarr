@@ -36,7 +36,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -59,8 +59,6 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Project");
-
 llxHeader("",$langs->trans("ProjectsSetup"));
 
 
@@ -70,8 +68,9 @@ print_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'setup');
 
 $head = project_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Project"), 0, 'user');
+dol_fiche_head($head, 'attributes', $langs->trans("Projects"), 0, 'project');
 
+$textobject=$langs->transnoentitiesnoconv("Project");
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
@@ -151,4 +150,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

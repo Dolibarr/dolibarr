@@ -25,4 +25,4 @@ LinkToGoldMember=你可以调用由Dolibarr预选您的语言（%s的按一下�
 PossibleLanguages=支持的语言
 MakeADonation=帮助Dolibarr项目，使捐赠
 SubscribeToFoundation=帮助Dolibarr项目，认购的机构
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=使用您的语言的 Dolibarr 官方支持: <br><b><a href="%s" target="_blank">%s</a></b>

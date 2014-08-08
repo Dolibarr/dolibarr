@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->load("banks");
 $langs->load("categories");
 $langs->load("bills");
+$langs->load("companies");
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -42,15 +43,11 @@ if (isset($_GET["account"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
 
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
-
-$mesg='';
-
-
 
 /*
  * View
@@ -114,10 +111,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	print '<br>';
 
-
-	if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
-
 	$solde = $acct->solde(0);
 
 	/*
@@ -160,7 +153,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 	$sql.= " WHERE f.entity = ".$conf->entity;
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";	// Not paid
-	$sql.= " ORDER BY dlr ASC";
+    $sql.= " AND (f.fk_account IN (0, ".$acct->id.") OR f.fk_account IS NULL)"; // Id bank account of invoice
+    $sql.= " ORDER BY dlr ASC";
 
 	// Supplier invoices
 	$sql2= " SELECT 'invoice_supplier' as family, ff.rowid as objid, ff.ref_supplier as ref, (-1*ff.total_ttc) as total_ttc, ff.type, ff.date_lim_reglement as dlr,";
@@ -169,7 +163,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
 	$sql2.= " WHERE ff.entity = ".$conf->entity;
 	$sql2.= " AND ff.paye = 0 AND fk_statut = 1";	// Not paid
-	$sql2.= " ORDER BY dlr ASC";
+    $sql2.= " AND (ff.fk_account IN (0, ".$acct->id.") OR ff.fk_account IS NULL)"; // Id bank account of supplier invoice
+    $sql2.= " ORDER BY dlr ASC";
 
 	// Social contributions
 	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
@@ -348,4 +343,3 @@ else
 $db->close();
 
 llxFooter();
-?>

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID hendelse
 Actions=Handlinger
 ActionsArea=Handlingsområde (Hendelser og oppgaver)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Lokal kalender
 AffectedTo= Relatert til
 DoneBy= Utført av
 Events= Hendelser
-# EventsNb=Number of events
+EventsNb=Antall hendelser
 MyEvents=Mine hendelser
 OtherEvents=Andre arrangementer
 ListOfActions=Oversikt over hendelser
@@ -25,12 +25,15 @@ ListOfEvents= Oversikt over Dolibarr-hendelser
 ActionsAskedBy=Handlinger registrert av
 ActionsToDoBy=Handlinger relatert til
 ActionsDoneBy=Handlinger utført av
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= Alle mine handlinger/oppgaver
 AllActions= Alle handlinger/oppgaver
 ViewList=Vis liste
 ViewCal=Vis kalender
 ViewDay=Dagsvisning
 ViewWeek=Ukesvisning
+ViewPerUser=Per user
 ViewWithPredefinedFilters= Vis med forhåndsdefinerte filtere
 AutoActions= Automatisk utfylling av agenda
 AgendaAutoActionDesc= Her angir du hvilke handlinger du ønsker at Dolibarr automatisk skal registrere i agendaen. Hvis du ikke velger noe (forhåndsinnstilt), vil bare manuelle handlinger bli registrert i agendaen.
@@ -40,9 +43,10 @@ ActionsEvents= Handlinger som Dolibarr automatisk registrerer i agendaen
 PropalValidatedInDolibarr= Tilbud godkjent
 InvoiceValidatedInDolibarr= Faktura godkjent
 InvoiceBackToDraftInDolibarr=Faktura %s gå tilbake til utkast status
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Faktura %s slettet
 OrderValidatedInDolibarr= Ordre godkjent
 OrderApprovedInDolibarr=Bestill %s godkjent
+OrderRefusedInDolibarr=Ordre %s nektet
 OrderBackToDraftInDolibarr=Bestill %s gå tilbake til utkast status
 OrderCanceledInDolibarr=Bestill %s kansellert
 InterventionValidatedInDolibarr=Intervensjon %s validert
@@ -52,7 +56,9 @@ InvoiceSentByEMail=Faktura %s på e-post
 SupplierOrderSentByEMail=Leverandør bestill %s på e-post
 SupplierInvoiceSentByEMail=Leverandørfaktura %s på e-post
 ShippingSentByEMail=Frakt %s på e-post
+ShippingValidated= Shipping %s validert
 InterventionSentByEMail=Intervensjon %s på e-post
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Tredjepart opprettet
 DateActionPlannedStart= Planlagt startdato
 DateActionPlannedEnd= Planlagt sluttdato
@@ -67,8 +73,8 @@ AgendaUrlOptions4=<b>logint=%s</b> for å begrense utvalg til handlinger relater
 AgendaUrlOptions5=<b>logind=%s</b> for å begrense utvalg til handlinger utført av bruker <b>%s</b>.
 AgendaShowBirthdayEvents=Vis fødselsdager
 AgendaHideBirthdayEvents=Skjul fødselsdager
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Opptatt
+ExportDataset_event1=Liste over agenda hendelser
 
 # External Sites ical
 ExportCal=Eksporter kalender

@@ -32,7 +32,6 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't nee
 //if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
 $langs->load('compta');
 
@@ -115,5 +114,4 @@ $toJsonArray['result'] = price($result);		// Return value to user format
 $toJsonArray['resultnum'] = price2num($result);	// Return value to numeric format
 
 // Encode to JSON to return
-echo dol_json_encode($toJsonArray);	// Printing the call's result
-?>
+echo json_encode($toJsonArray);	// Printing the call's result

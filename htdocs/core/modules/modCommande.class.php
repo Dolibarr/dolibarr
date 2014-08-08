@@ -97,7 +97,7 @@ class modCommande extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
-		// Boites
+		// Boxes
 		$this->boxes = array();
 		$this->boxes = array(0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),2=>array('file'=>'box_graph_orders_permonth.php','enabledbydefaulton'=>'Home'));
 
@@ -247,4 +247,3 @@ class modCommande extends DolibarrModules
     }
 
 }
-?>

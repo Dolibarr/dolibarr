@@ -168,4 +168,3 @@ class modPhpbarcode extends ModeleBarCode
 
 }
 
-?>

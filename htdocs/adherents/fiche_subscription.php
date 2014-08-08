@@ -282,8 +282,6 @@ if ($rowid && $action != 'edit')
 
 	dol_fiche_head($head, 'general', $langs->trans("Subscription"), '', 'payment');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
-
     // Confirmation to delete subscription
     if ($action == 'delete')
     {
@@ -393,4 +391,3 @@ if ($rowid && $action != 'edit')
 $db->close();
 
 llxFooter();
-?>

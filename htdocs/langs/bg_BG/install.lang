@@ -12,8 +12,8 @@ ConfFileReload=Презареждане на цялата информация �
 PHPSupportSessions=Това PHP поддържа сесии.
 PHPSupportPOSTGETOk=Това PHP поддържа променливи POST и GET.
 PHPSupportPOSTGETKo=Това е възможно PHP настройка не поддържа променливи POST и / или да получите. Проверете параметър <b>variables_order</b> в php.ini.
-PHPSupportGD=Тази подкрепа PHP GD графични функции.
-PHPSupportUTF8=Тази подкрепа PHP UTF8 функции.
+PHPSupportGD=Това PHP поддържа GD графични функции.
+PHPSupportUTF8=Това PHP поддържа UTF8 функции.
 PHPMemoryOK=PHP макс сесия памет е на <b>%s.</b> Това трябва да бъде достатъчно.
 PHPMemoryTooLow=PHP макс сесия памет е настроен да <b>%s</b> байта. Това трябва да бъде прекалено ниско. Промяна на <b>php.ini</b> да настроите параметър <b>memory_limit</b> най-малко <b>%s</b> байта.
 Recheck=Кликнете тук за по-значима тест
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Upgrade storage of shipping 2
 MigrationFinished=Миграцията завърши
 LastStepDesc=<strong>Последна стъпка:</strong> Определете тук потребителско име и парола, планирате да използвате, за да се свържете с софтуер. Не губят, тъй като това е акаунт за администриране на всички останали.
 ActivateModule=Активиране на модул %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=Решете denormalized данни
 MigrationOrder=Миграция на данни за поръчки на клиента
 MigrationSupplierOrder=Миграция на данни за поръчки на доставчика
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Data Migration поле fk_user_resp на llx_projet ll
 MigrationProjectTaskTime=Актуализация на времето, прекарано в секунда
 MigrationActioncommElement=Актуализиране на данни за действия
 MigrationPaymentMode=Миграция на данни за плащане режим
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

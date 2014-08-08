@@ -112,4 +112,3 @@ print "</table></form>";
 $db->close();
 
 llxFooter();
-?>

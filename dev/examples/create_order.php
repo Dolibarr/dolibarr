@@ -113,4 +113,3 @@ else
 $db->close();
 
 return $error;
-?>

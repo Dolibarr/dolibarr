@@ -1,0 +1,25 @@
+<% if @include_files %><% @include_files.each do |file| -%>
+include <%= file %>;
+<% end -%><% end -%>
+<%# make sure that allow comes before deny by forcing the allow key (if it -%>
+<%# exists) to be first in the output order.  The hash keys also need to be -%>
+<%# sorted so that the ordering is stable. -%>
+<% if @vhost_cfg_append -%><% @vhost_cfg_append.sort_by{ |k, v| k.to_s == 'allow' ? '' : k.to_s }.each do |key,value| -%>
+<% if value.is_a?(Hash) -%><% value.each do |subkey,subvalue| -%>
+<% Array(subvalue).each do |asubvalue| -%>
+  <%= key %> <%= subkey %> <%= asubvalue %>;
+<% end -%>
+<% end -%><% else -%>
+<% Array(value).each do |asubvalue| -%>
+  <%= key %> <%= asubvalue %>;
+<% end -%>
+<% end -%>
+<% end -%><% end -%>
+}
+<% if @rewrite_www_to_non_www -%>
+server {
+  listen                <%= @listen_ip %>:<%= @listen_port %>;
+  server_name           www.<%= @name.gsub(/^www\./, '') %>;
+  rewrite               ^ http://<%= @name.gsub(/^www\./, '') %>$uri permanent;
+}
+<% end -%>

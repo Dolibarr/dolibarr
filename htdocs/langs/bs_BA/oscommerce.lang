@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - oscommerce
+OSCommerce=OS Commerce
+OSCommerceSetup=OS Commerce podešavanje modula
+OSCommerceSetupSaved=OS Commerce postavke snimljene
+OSCommerceServer=OS Commerce server host / IP
+OSCommerceDatabaseName=OS Commerce ime baze podataka
+OSCommercePrefix=OS Commerce prefiks tabela
+OSCommerceUser=OS Commerce login baze podataka

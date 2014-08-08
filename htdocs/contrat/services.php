@@ -107,13 +107,13 @@ if ($search_service)  $sql.= " AND (p.ref LIKE '%".$db->escape($search_service).
 if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
 $filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$filter_op1." ".$db->idate($filter_date1);
-if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$filter_op2." ".$db->idate($filter_date2);
+if (! empty($filter_op1) && $filter_op1 != -1 && $filter_date1 != '') $sql.= " AND date_ouverture_prevue ".$filter_op1." '".$db->idate($filter_date1)."'";
+if (! empty($filter_op2) && $filter_op2 != -1 && $filter_date2 != '') $sql.= " AND date_fin_validite ".$filter_op2." '".$db->idate($filter_date2)."'";
 $sql .= $db->order($sortfield,$sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
 //print $sql;
-dol_syslog("contrat/services.php sql=".$sql);
+dol_syslog("contrat/services.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -274,4 +274,3 @@ else
 $db->close();
 
 llxFooter();
-?>

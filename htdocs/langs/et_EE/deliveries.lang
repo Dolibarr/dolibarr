@@ -23,3 +23,4 @@ GoodStatusDeclaration=Olen ülalloetletud kaubad vastavalt tellimusele kätte sa
 Deliverer=Toimetas kohale:
 Sender=Saatja
 Recipient=Vastuvõtja
+# ErrorStockIsNotEnough=There's not enough stock

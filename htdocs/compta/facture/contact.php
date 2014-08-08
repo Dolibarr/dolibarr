@@ -71,16 +71,16 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
 
-// bascule du statut d'un contact
+// Bascule du statut d'un contact
 else if ($action == 'swapstatut' && $user->rights->facture->creer)
 {
 	if ($object->fetch($id))
@@ -127,7 +127,6 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -179,7 +178,7 @@ if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
 		print "</table>";
 
-		print '</div>';
+		dol_fiche_end();
 
 		print '<br>';
 
@@ -202,4 +201,3 @@ if ($id > 0 || ! empty($ref))
 
 llxFooter();
 $db->close();
-?>

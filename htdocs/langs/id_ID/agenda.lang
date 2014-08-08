@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID event
+Actions=Acara
+ActionsArea=Acara daerah (Tindakan dan tugas)
+Agenda= Agenda
+Agendas= Agenda
+Calendar= Kalender
+Calendars= Kalender
+LocalAgenda=Kalender lokal
+AffectedTo= Ditugaskan untuk
+DoneBy= Dilakukan oleh
+Events= Acara
+EventsNb=Jumlah kejadian
+MyEvents=Acara saya
+OtherEvents=Peristiwa lain
+ListOfActions=Daftar kejadian
+Location=Tempat
+EventOnFullDay=Acara di sepanjang hari (s)
+SearchAnAction= Cari acara / tugas
+MenuToDoActions= Semua peristiwa yang tidak lengkap
+MenuDoneActions= Semua acara dihentikan
+MenuToDoMyActions= Acara lengkap saya
+MenuDoneMyActions= Acara saya dihentikan
+ListOfEvents= Daftar kejadian Dolibarr
+ActionsAskedBy=Acara yang dilaporkan oleh
+ActionsToDoBy=Acara ditugaskan untuk
+ActionsDoneBy=Acara yang dilakukan oleh
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
+AllMyActions= Semua acara saya / tugas
+AllActions= Semua acara / tugas
+ViewList=Tampilan daftar
+ViewCal=Tampilan bulan
+ViewDay=Tampilan hari
+ViewWeek=Tampilan minggu
+ViewPerUser=Per user
+ViewWithPredefinedFilters= Lihat dengan filter yang telah ditetapkan
+AutoActions= Otomatis mengisi
+AgendaAutoActionDesc= Tentukan sini peristiwa yang Anda ingin Dolibarr untuk membuat secara otomatis sebuah acara di agenda. Jika tidak dicentang (secara default), hanya tindakan manual akan dimasukkan dalam agenda.
+AgendaSetupOtherDesc= Halaman ini menyediakan opsi untuk memungkinkan ekspor peristiwa Dolibarr Anda menjadi kalender eksternal (thunderbird, google calendar, ...)
+AgendaExtSitesDesc=Halaman ini memungkinkan untuk menyatakan sumber eksternal dari kalender untuk melihat acara mereka ke dalam agenda Dolibarr.
+ActionsEvents= Acara yang Dolibarr akan membuat tindakan dalam agenda otomatis
+PropalValidatedInDolibarr= Proposal% s divalidasi
+InvoiceValidatedInDolibarr= Invoice %s validated
+InvoiceBackToDraftInDolibarr=Invoice %s go back to draft status
+InvoiceDeleteDolibarr=Invoice %s deleted
+OrderValidatedInDolibarr= Order %s validated
+OrderApprovedInDolibarr=Order %s approved
+OrderRefusedInDolibarr=Order %s refused
+OrderBackToDraftInDolibarr=Order %s go back to draft status
+OrderCanceledInDolibarr=Order %s canceled
+InterventionValidatedInDolibarr=Intervention %s validated
+ProposalSentByEMail=Commercial proposal %s sent by EMail
+OrderSentByEMail=Customer order %s sent by EMail
+InvoiceSentByEMail=Customer invoice %s sent by EMail
+SupplierOrderSentByEMail=Supplier order %s sent by EMail
+SupplierInvoiceSentByEMail=Supplier invoice %s sent by EMail
+ShippingSentByEMail=Shipping %s sent by EMail
+ShippingValidated= Shipping %s validated
+InterventionSentByEMail=Intervention %s sent by EMail
+InterventionClassifiedBilled=Intervention %s classified as Billed
+NewCompanyToDolibarr= Third party created
+DateActionPlannedStart= Planned start date
+DateActionPlannedEnd= Planned end date
+DateActionDoneStart= Real start date
+DateActionDoneEnd= Real end date
+DateActionStart= Start date
+DateActionEnd= End date
+AgendaUrlOptions1=You can also add following parameters to filter output:
+AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by, assigned to or done by user <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions created by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b>.
+AgendaUrlOptions5=<b>logind=%s</b> to restrict output to actions done by user <b>%s</b>.
+AgendaShowBirthdayEvents=Show birthday's contacts
+AgendaHideBirthdayEvents=Hide birthday's contacts
+Busy=Busy
+ExportDataset_event1=List of agenda events
+
+# External Sites ical
+ExportCal=Export calendar
+ExtSites=Import external calendars
+ExtSitesEnableThisTool=Show external calendars into agenda
+ExtSitesNbOfAgenda=Number of calendars
+AgendaExtNb=Calendar nb %s
+ExtSiteUrlAgenda=URL to access .ical file
+ExtSiteNoLabel=No Description

@@ -34,10 +34,10 @@ if (! $user->admin) accessforbidden();
 
 $rowid = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
-$errmesg='';
+
 
 // Define possible position of boxes
-$pos_name = getStaticMember('InfoBox','listOfPages');
+$pos_name = InfoBox::getListOfPagesForBoxes();
 $boxes = array();
 
 
@@ -57,7 +57,7 @@ if ($action == 'add')
 
     $db->begin();
 
-	// Initialize distinctfkuser with all already existing values of fk_user (user that use a personalized view of boxes for pos)
+	// Initialize distinct fkuser with all already existing values of fk_user (user that use a personalized view of boxes for page "pos")
 	$distinctfkuser=array();
 	if (! $error)
 	{
@@ -66,7 +66,7 @@ if ($action == 'add')
 		$sql.= " WHERE param = 'MAIN_BOXES_".$db->escape(GETPOST("pos","alpha"))."' AND value = '1'";
 		$sql.= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
-		dol_syslog("boxes.php search fk_user to activate box for sql=".$sql);
+		dol_syslog("boxes.php search fk_user to activate box for", LOG_DEBUG);
 		if ($resql)
 		{
 		    $num = $db->num_rows($resql);
@@ -80,47 +80,46 @@ if ($action == 'add')
 		}
 		else
 		{
-		    $errmesg=$db->lasterror();
+			setEventMessage($db->lasterror(), 'errors');
 		    $error++;
 		}
 	}
 
+	$distinctfkuser['0']='0';	// Add entry for fk_user = 0. We must use string as key and val
+
 	foreach($distinctfkuser as $fk_user)
 	{
-	    if (! $error && $fk_user != 0)    // We will add fk_user = 0 later.
+	    if (! $error && $fk_user != '')
 	    {
+	    	$nbboxonleft=$nbboxonright=0;
+	    	$sql = "SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE position = ".GETPOST("pos","alpha")." AND fk_user = ".$fk_user." AND entity = ".$conf->entity;
+	        dol_syslog("boxes.php activate box", LOG_DEBUG);
+	        $resql = $db->query($sql);
+	        if ($resql)
+	        {
+	        	while($obj = $db->fetch_object($resql))
+	        	{
+					$boxorder=$obj->box_order;
+					if (preg_match('/A/',$boxorder)) $nbboxonleft++;
+					if (preg_match('/B/',$boxorder)) $nbboxonright++;
+	        	}
+	        }
+	        else dol_print_error($db);
+
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 	        $sql.= "box_id, position, box_order, fk_user, entity";
 	        $sql.= ") values (";
-	        $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", 'A01', ".$fk_user.", ".$conf->entity;
+	        $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
 	        $sql.= ")";
 
-	        dol_syslog("boxes.php activate box sql=".$sql);
+	        dol_syslog("boxes.php activate box", LOG_DEBUG);
 	        $resql = $db->query($sql);
 	        if (! $resql)
 	        {
-		        $errmesg=$db->lasterror();
+		        setEventMessage($db->lasterror(), 'errors');
 	            $error++;
 	        }
 	    }
-	}
-
-	// If value 0 was not included, we add it.
-	if (! $error)
-	{
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
-	    $sql.= "box_id, position, box_order, fk_user, entity";
-	    $sql.= ") values (";
-	    $sql.= GETPOST("boxid","int").", ".GETPOST("pos","alpha").", 'A01', 0, ".$conf->entity;
-	    $sql.= ")";
-
-	    dol_syslog("boxes.php activate box sql=".$sql);
-	    $resql = $db->query($sql);
-        if (! $resql)
-        {
-		    $errmesg=$db->lasterror();
-            $error++;
-        }
 	}
 
 	if (! $error)
@@ -218,9 +217,6 @@ print_fiche_titre($langs->trans("Boxes"),'','setup');
 
 print $langs->trans("BoxesDesc")." ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 
-dol_htmloutput_errors($errmesg);
-
-
 /*
  * Recherche des boites actives par defaut pour chaque position possible
  * On stocke les boites actives par defaut dans $boxes[position][id_boite]=1
@@ -236,7 +232,7 @@ $sql.= " AND b.box_id = bd.rowid";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
-dol_syslog("Search available boxes sql=".$sql, LOG_DEBUG);
+dol_syslog("Search available boxes", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -272,7 +268,7 @@ if ($resql)
 		$sql.= " WHERE entity = ".$conf->entity;
 		$sql.= " AND LENGTH(box_order) <= 2";
 
-		dol_syslog("Execute requests to renumber box order sql=".$sql);
+		dol_syslog("Execute requests to renumber box order", LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result)
 		{
@@ -469,4 +465,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

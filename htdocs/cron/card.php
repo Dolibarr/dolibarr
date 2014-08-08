@@ -269,7 +269,7 @@ if ($action == 'execute'){
 
 if (empty($object->status) && $action != 'create')
 {
-	dol_htmloutput_mesg($langs->trans("CronTaskInactive"),'','warning',1);
+	setEventMessage($langs->trans("CronTaskInactive"), 'warnings');
 }
 
 if (($action=="create") || ($action=="edit"))
@@ -303,11 +303,13 @@ if (($action=="create") || ($action=="edit"))
 
 	print "<tr><td>";
 	print $langs->trans('CronHourStart')."</td><td>";
-	if(!empty($object->datestart)){
+	if(!empty($object->datestart))
+	{
 		$form->select_date($object->datestart,'datestart',1,1,'',"cronform");
 	}
-	else{
-		$form->select_date(dol_now(),'datestart',1,1,'',"cronform");
+	else
+	{
+		$form->select_date('','datestart',1,1,'',"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -624,4 +626,3 @@ if (($action=="create") || ($action=="edit"))
 llxFooter();
 
 $db->close();
-?>

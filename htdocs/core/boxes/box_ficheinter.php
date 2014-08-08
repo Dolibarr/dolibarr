@@ -72,12 +72,14 @@ class box_ficheinter extends ModeleBoxes
 			$sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql.= " WHERE f.fk_soc = s.rowid ";
 			$sql.= " AND f.entity = ".$conf->entity;
-			if (! $user->rights->societe->client->voir)
+			if (! $user->rights->societe->client->voir && !$user->societe_id)
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if($user->societe_id)	$sql.= " AND s.rowid = ".$user->societe_id;
+
 			$sql.= " ORDER BY f.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this).'::loadBox sql='.$sql,LOG_DEBUG);
+			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -153,4 +155,3 @@ class box_ficheinter extends ModeleBoxes
 
 }
 
-?>

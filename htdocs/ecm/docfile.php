@@ -287,4 +287,3 @@ if ($_GET["action"] != 'edit')
 $db->close();
 
 llxFooter();
-?>

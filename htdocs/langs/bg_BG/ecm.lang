@@ -42,7 +42,7 @@ ECMDocsByOrders=Документи, свързани с поръчки на кл
 ECMDocsByContracts=Документи, свързани с договори
 ECMDocsByInvoices=Документи, свързани с клиентите фактури
 ECMDocsByProducts=Документи, свързани с продуктите
-# ECMDocsByProjects=Documents linked to projects
+ECMDocsByProjects=Documents linked to projects
 ECMNoDirectoryYet=Не е създадена директория
 ShowECMSection=Покажи директория
 DeleteSection=Изтриване на директория
@@ -51,5 +51,5 @@ ECMDirectoryForFiles=Относителна директория за файло
 CannotRemoveDirectoryContainsFiles=Премахването не е възможно, защото съдържа файлове
 ECMFileManager=Файлов мениджър
 ECMSelectASection=Изберете директория от лявото дърво ...
-# DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
+DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Refresh" button first to synchronize disk and database to get content of this directory.
 

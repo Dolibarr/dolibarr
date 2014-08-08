@@ -38,7 +38,7 @@ ConfirmCloseService=Weet u zeker dat u de dienst met datum <b>%s</b> wilt sluite
 ValidateAContract=Valideer een contract
 ActivateService=Activeer een contract
 ConfirmActivateService=Weet u zeker dat u de dienst met de datum van <b>%s</b> wilt activeren?
-# RefContract=Contract reference
+RefContract=Contract referentie
 DateContract=Contractdatum
 DateServiceActivate=Datum van de dienstactivering
 DateServiceUnactivate=Datum van dienstdeactivatie
@@ -85,10 +85,12 @@ PaymentRenewContractId=Vernieuwing contractregel (%s)
 ExpiredSince=Verlopen sinds
 RelatedContracts=Gerelateerde contracten
 NoExpiredServices=Geen verlopen actieve diensten
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=Lijst van Diensten te vervallen in %s dagen
+ListOfServicesToExpireWithDurationNeg=Lijst van Diensten van meer dan %s dagen verstreken
+ListOfServicesToExpire=Lijst van Diensten te vervallen
+NoteListOfYourExpiredServices=Deze lijst bevat alleen de diensten van contracten voor relatiesdie zijn gekoppeld aan een vertegenwoordiger.
+StandardContractsTemplate=Standaard contracten sjabloon
+ContactNameAndSignature=Voor %s, naam en handtekening:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Vertegenwoordiger ondertekening contract

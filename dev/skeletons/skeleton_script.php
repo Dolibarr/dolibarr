@@ -57,7 +57,7 @@ if (! $result > 0) { dol_print_error('',$user->error); exit; }
 $user->getrights();
 
 
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 if (! isset($argv[1])) {	// Check parameters
     print "Usage: ".$script_file." param1 param2 ...\n";
 	exit(-1);
@@ -119,7 +119,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."skeleton";
 $sql.= " WHERE field3 = 'xxx'";
 $sql.= " ORDER BY field1 ASC";
 
-dol_syslog($script_file." sql=".$sql, LOG_DEBUG);
+dol_syslog($script_file, LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -164,4 +164,3 @@ else
 $db->close();	// Close $db database opened handler
 
 exit($error);
-?>

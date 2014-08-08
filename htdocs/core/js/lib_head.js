@@ -1,4 +1,4 @@
-// Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 // Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 //
 // This program is free software; you can redistribute it and/or modify
@@ -554,7 +554,9 @@ function newpopup(url,title) {
 	tmp=url;
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
-	var wfeatures="directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width="+l+",height="+h+",left=" + eval("(screen.width - l)/2") + ",top=" + eval("(screen.height - h)/2");
+	var left = (screen.width - l)/2;
+	var top = (screen.height - h)/2;
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
 	fen=window.open(tmp,title,wfeatures);
 	return false;
 }
@@ -808,6 +810,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
             var input = this.input = $( "<input>" )
                 .insertAfter( select )
                 .val( value )
+                .attr('id', 'inputautocomplete'+select.attr('id'))
                 .autocomplete({
                     delay: 0,
                     minLength: this.options.minLengthToAutocomplete,
@@ -899,11 +902,30 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
     });
 })( jQuery );
 
+
+/*
+ * Function to output a dialog bog for copy/paste
+ * 
+ * @param	string	text	Text to put into copy/paste area
+ * @param	string	text2	Text to put under the copy/paste area
+ */
+function copyToClipboard(text,text2) 
+{
+	text = text.replace(/<br>/g,"\n");
+	var newElem = "<textarea id=\"coords\" style=\"border: none; width: 90%; height: 120px;\">"+text+"</textarea><br><br>"+text2;
+	$("#dialog").html(newElem);
+	$("#dialog").dialog();
+	$("#coords").select();
+	return false;
+}
+
+
 /* 
  * Timer for delayed keyup function
  * 
  * TODO Who use this ?
  */
+/*
 (function($){
 	$.widget("ui.onDelayedKeyup", {
 	    _init : function() {
@@ -922,4 +944,4 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	    }
 	});
 })(jQuery);
-
+*/

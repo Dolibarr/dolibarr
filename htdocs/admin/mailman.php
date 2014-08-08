@@ -233,4 +233,3 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
 llxFooter();
 
 $db->close();
-?>

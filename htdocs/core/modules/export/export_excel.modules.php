@@ -68,6 +68,8 @@ class ExportExcel extends ModeleExports
 		$this->label_lib='PhpExcel';
 		$this->version_lib='1.7.2';
 
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+
 		$this->row=0;
 	}
 
@@ -181,14 +183,14 @@ class ExportExcel extends ModeleExports
 
 		    if ($this->id == 'excel2007')
 		    {
-	            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive 
+	            if (! class_exists('ZipArchive'))	// For Excel2007, PHPExcel need ZipArchive
 	            {
 	            	$langs->load("errors");
 	            	$this->error=$langs->trans('ErrorPHPNeedModule','zip');
-	            	return -1;	
+	            	return -1;
 	            }
-		    }            
-            
+		    }
+
             $this->workbook = new PHPExcel();
             $this->workbook->getProperties()->setCreator($user->getFullName($outputlangs).' - Dolibarr '.DOL_VERSION);
             //$this->workbook->getProperties()->setLastModifiedBy('Dolibarr '.DOL_VERSION);
@@ -228,6 +230,8 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_title($array_export_fields_label,$array_selected_sorted,$outputlangs,$array_types)
 	{
+		global $conf;
+
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
 		{
@@ -281,6 +285,8 @@ class ExportExcel extends ModeleExports
 	 */
 	function write_record($array_selected_sorted,$objp,$outputlangs,$array_types)
 	{
+		global $conf;
+
 		// Create a format for the column headings
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
 		{
@@ -398,6 +404,8 @@ class ExportExcel extends ModeleExports
      */
 	function close_file()
 	{
+		global $conf;
+
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     	{
 	        $this->workbook->close();
@@ -452,4 +460,3 @@ class ExportExcel extends ModeleExports
     }
 }
 
-?>

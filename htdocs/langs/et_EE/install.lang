@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Klõpsa siia lisaparameetrite näitamiseks/muutmisek
 
 #########
 # upgrade
-#########
 MigrationFixData=Paranda denormaliseeritud andmed
 MigrationOrder=Kliendi tellimuste andmete migreerimine
 MigrationSupplierOrder=Ostutellimuste andmete migreerimine
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Uuendamiseks kulutatud aeg sekundites
 MigrationActioncommElement=Uuenda tegevuste andmec
 MigrationPaymentMode=Maksete režiimi andmete migreerimine
 MigrationCategorieAssociation=Kategooriate migreerimine
+
+ShowNotAvailableOptions=Näita mitte saadaval olevaid lisavalikuid
+HideNotAvailableOptions=Peida mitte saadaval olevad lisavalikud

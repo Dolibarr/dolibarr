@@ -23,3 +23,4 @@ GoodStatusDeclaration=Forsendelsen er mottatt uten skader,
 Deliverer=Transportør :
 Sender=Avsender
 Recipient=Mottaker
+ErrorStockIsNotEnough=Ikke nok på lager

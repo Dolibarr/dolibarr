@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - admin
+WorkflowSetup=Workflow modulio nustatymas
+WorkflowDesc=Šis modulis yra skirtas modifikuoti automatiniams veiksmams aplikacijoje. Pagal nutylėjimą darbo eiga yra atidaryta (Jūs atliekate veiksmus Jūsų norima seka). Galite įjungti norimus automatinius veiksmus.
+ThereIsNoWorkflowToModify=Čia nėra darbo eigos Jūsų įjungtam moduliui, kurią galėtumėte modifikuoti
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Sukurti kliento užsakymą automatiškai po komercinio pasiūlymo pasirašymo
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Sukurti kliento sąskaitą-faktūrą automatiškai po komercinio pasiūlymo pasirašymo
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Sukurti kliento sąskaitą-faktūrą automatiškai po sutarties patvirtinimo
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Sukurti kliento sąskaitą-faktūrą automatiškai po kliento užsakymo uždarymo
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Priskirti susijusį šaltinio pasiūlymą prie apmokestintų, kai kliento užsakymas nustatomas kaip apmokėtas
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Priskirti susijusį šaltinio kliento užsakymą (-us) prie apmokestinamų, kai kliento sąskaita-faktūra yra nustatoma kaip jau apmokėta
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Priskirti susijusį šaltinio kliento užsakymą (-us) prie apmokestinamų, kai kliento sąskaita-faktūra yra patvirtinama

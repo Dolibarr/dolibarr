@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=事件
 ActionsArea=事件區（事件和任務）
 Agenda= 議程
@@ -10,7 +10,7 @@ LocalAgenda=本地日歷
 AffectedTo= 受影響
 DoneBy= 做的
 Events= 活動
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=我的活動
 OtherEvents=其他活動
 ListOfActions=名單事件
@@ -25,12 +25,15 @@ ListOfEvents= 名單Dolibarr事件
 ActionsAskedBy=記錄操作
 ActionsToDoBy=受影響的行動
 ActionsDoneBy=做的動作
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= 我所有的行動/任務
 AllActions= 所有/任務行動
 ViewList=查看列表
 ViewCal=查看日歷
 ViewDay=日視圖
 ViewWeek=周視圖
+ViewPerUser=Per user
 ViewWithPredefinedFilters= 查看與預定義的篩選器
 AutoActions= 全自動灌裝議程
 AgendaAutoActionDesc= 在此事件定義為要Dolibarr自動創建一個議程的行動。如果沒有被選中（默認情況下），只有手動操作將被列入議程。
@@ -40,9 +43,10 @@ ActionsEvents= 為此Dolibarr活動將創建一個自動行動議程
 PropalValidatedInDolibarr= 建議%s的驗證
 InvoiceValidatedInDolibarr= 發票%s的驗證
 InvoiceBackToDraftInDolibarr=發票的%s去回到草案狀態
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= 採購訂單%s已驗證
 OrderApprovedInDolibarr=為了%s批準
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=為了%s回到草案狀態
 OrderCanceledInDolibarr=為了%s取消
 InterventionValidatedInDolibarr=%s的驗證幹預
@@ -52,7 +56,9 @@ InvoiceSentByEMail=客戶發票通過電子郵件發送%s
 SupplierOrderSentByEMail=供應商的訂單通過電子郵件發送%s
 SupplierInvoiceSentByEMail=供應商的發票通過電子郵件發送%s
 ShippingSentByEMail=通過電子郵件發送的航運%s
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=通過電子郵件發送的幹預%s
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= 第三方創建
 DateActionPlannedStart= 計劃開始日期
 DateActionPlannedEnd= 計劃結束日期
@@ -67,8 +73,8 @@ AgendaUrlOptions4=<b>logint=%s</b>到限制輸出到行動<b>使用者與受影�
 AgendaUrlOptions5=<b>logind=%s</b>到限制輸出到用戶的行為進行由<b>%</b>。
 AgendaShowBirthdayEvents=顯示生日的接觸
 AgendaHideBirthdayEvents=隱藏生日的接觸
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=出口日歷

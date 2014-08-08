@@ -42,7 +42,7 @@ class modDocument extends DolibarrModules
 	function __construct($db)
 	{
 		$this->db = $db;
-		$this->numero = 51;
+		$this->numero = 1510;
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
@@ -80,14 +80,14 @@ class modDocument extends DolibarrModules
 
 		$r=0;
 
-		$this->rights[$r][0] = 511;
+		$this->rights[$r][0] = 1511;
 		$this->rights[$r][1] = 'Lire les documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
-		$this->rights[$r][0] = 512;
+		$this->rights[$r][0] = 1512;
 		$this->rights[$r][1] = 'Supprimer les documents clients';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -132,4 +132,3 @@ class modDocument extends DolibarrModules
     }
 
 }
-?>

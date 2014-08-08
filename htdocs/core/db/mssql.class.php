@@ -30,42 +30,18 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMssql extends DoliDB
 {
-	//! Database handler
-	var $db;
 	//! Database type
 	public $type='mssql';
 	//! Database label
-	static $label='MSSQL';
+	const LABEL='MSSQL';
 	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
 	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	static $versionmin=array(2000);
-	//! Resultset of last request
+	const VERSIONMIN='2000';
+	//! Resultset of last query
 	private $_results;
-	//! 1 si connecte, 0 sinon
-	var $connected;
-	//! 1 si base selectionne, 0 sinon
-	var $database_selected;
-	//! Nom base selectionnee
-	var $database_name;
-	//! Nom user base
-	var $database_user;
-	//! >=1 if a transaction is opened, 0 otherwise
-	var $transaction_opened;
-	//! Derniere requete executee
-	var $lastquery;
-	//! Derniere requete executee avec echec
-	var $lastqueryerror;
-	//! Message erreur mysql
-	var $lasterror;
-	//! Message erreur mysql
-	var $lasterrno;
-
-	var $ok;
-	var $error;
-
 
     /**
 	 *	Constructor.
@@ -198,16 +174,6 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
-	 * Return label of manager
-	 *
-	 * @return			string      Label
-	 */
-	function getLabel()
-	{
-		return $this->label;
-	}
-
-	/**
 	 *	Return version of database server
 	 *
 	 *	@return	        string      Version string
@@ -219,17 +185,6 @@ class DoliDBMssql extends DoliDB
 		return $version['computed'];
 	}
 
-
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-	function getVersionArray()
-	{
-		return explode('.',$this->getVersion());
-	}
-
 	/**
 	 *	Return version of database client driver
 	 *
@@ -237,9 +192,12 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
-	
+
     /**
      *  Close database connexion
      *
@@ -310,15 +268,16 @@ class DoliDBMssql extends DoliDB
 	/**
 	 * Annulation d'une transaction et retour aux anciennes valeurs
 	 *
-	 * @return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+	 * @param	string	$log	Add more log to default log line
+	 * @return	int             1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
 	 */
-	function rollback()
+	function rollback($log='')
 	{
 		if ($this->transaction_opened<=1)
 		{
 			$ret=$this->query("ROLLBACK TRANSACTION");
 			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction",LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
 			return $ret;
 		}
 		else
@@ -390,6 +349,8 @@ class DoliDBMssql extends DoliDB
 
 		//print "<!--".$query."-->";
 
+		dol_syslog('sql='.$query, LOG_DEBUG);
+
 		if (! $this->database_name)
 		{
 			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -411,7 +372,9 @@ class DoliDBMssql extends DoliDB
                 $this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
-                dol_syslog(get_class($this)."::query SQL error: ".$query, LOG_WARNING);
+
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;
@@ -507,55 +470,6 @@ class DoliDBMssql extends DoliDB
 		if (is_resource($resultset)) mssql_free_result($resultset);
 	}
 
-
-	/**
-     *	Define limits and offset of request
-     *
-     *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
-     *	@param	int		$offset     Numero of line from where starting fetch
-     *	@return	string      		String with SQL syntax to add a limit and offset
-	 */
-	function plimit($limit=0,$offset=0)
-	{
-		global $conf;
-        if (empty($limit)) return "";
-		if ($limit < 0) $limit=$conf->liste_limit;
-		if ($offset > 0) return " LIMIT $offset,$limit ";
-		else return " LIMIT $limit ";
-	}
-
-
-	/**
-	 * Define sort criteria of request
-	 *
-	 * @param	string	$sortfield  List of sort fields
-	 * @param	string	$sortorder  Sort order
-	 * @return	string      		String to provide syntax of a sort sql string
-	 * TODO	Mutualized this into a mother class
-	 */
-	function order($sortfield=0,$sortorder=0)
-	{
-		if ($sortfield)
-		{
-			$return='';
-			$fields=explode(',',$sortfield);
-			foreach($fields as $val)
-			{
-				if (! $return) $return.=' ORDER BY ';
-				else $return.=',';
-
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-				if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
-			}
-			return $return;
-		}
-		else
-		{
-			return '';
-		}
-	}
-
-
 	/**
 	 *	Escape a string to insert data
 	 *
@@ -578,75 +492,6 @@ class DoliDBMssql extends DoliDB
 	function idate($param)
 	{
 		return dol_print_date($param,"%Y-%m-%d %H:%M:%S");
-	}
-
-	/**
-	 *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-	 * 	19700101020000 -> 3600 with TZ+1
-	 *
-	 * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-	 *	@return		date				Date TMS
-	 */
-	function jdate($string)
-	{
-		$string=preg_replace('/([^0-9])/i','',$string);
-		$tmp=$string.'000000';
-		$date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
-		return $date;
-	}
-
-	/**
-	 *	Format a SQL IF
-	 *
-	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *	@param	string	$resok          resultat si test egal
-	 *	@param	string	$resko          resultat si test non egal
-	 *	@return	string          		SQL string
-	 */
-	function ifsql($test,$resok,$resko)
-	{
-		return 'IF('.$test.','.$resok.','.$resko.')';
-	}
-
-
-	/**
-	 *	Return last request executed with query()
-	 *
-	 *	@return	string					Last query
-	 */
-	function lastquery()
-	{
-		return $this->lastquery;
-	}
-
-	/**
-	 *	Return last query in error
-	 *
-	 *	@return	    string	lastqueryerror
-	 */
-	function lastqueryerror()
-	{
-		return $this->lastqueryerror;
-	}
-
-	/**
-	 *	Return last error label
-	 *
-	 *	@return	    string	lasterror
-	 */
-	function lasterror()
-	{
-		return $this->lasterror;
-	}
-
-	/**
-	 *	Return last error code
-	 *
-	 *	@return	    string	lasterrno
-	 */
-	function lasterrno()
-	{
-		return $this->lasterrno;
 	}
 
 	/**
@@ -836,6 +681,23 @@ class DoliDBMssql extends DoliDB
 	}
 
 	/**
+	 *	List information of columns into a table.
+	 *
+	 *	@param	string	$table		Name of table
+	 *	@return	array				Tableau des informations des champs de la table
+	 */
+	function DDLInfoTable($table)
+	{
+
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: https://stackoverflow.com/questions/600446/sql-server-how-do-you-return-the-column-names-from-a-table
+
+		$infotables=array();
+		return $infotables;
+	}
+
+	/**
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Nom de la table
@@ -1006,6 +868,24 @@ class DoliDBMssql extends DoliDB
 		else return 1;
 	}
 
+	/**
+	 * 	Create a user and privileges to connect to database (even if database does not exists yet)
+	 *
+	 *	@param	string	$dolibarr_main_db_host 		Ip serveur
+	 *	@param	string	$dolibarr_main_db_user 		Nom user a creer
+	 *	@param	string	$dolibarr_main_db_pass 		Mot de passe user a creer
+	 *	@param	string	$dolibarr_main_db_name		Database name where user must be granted
+	 *	@return	int									<0 if KO, >=0 if OK
+	 */
+	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_name)
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://msdn.microsoft.com/fr-fr/library/ms173463.aspx
+
+		// Always fail for now
+		return -1;
+	}
 
     /**
      *	Return charset used to store data in database
@@ -1014,15 +894,9 @@ class DoliDBMssql extends DoliDB
      */
     function getDefaultCharacterSetDatabase()
 	{
-		/*
-		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
-		 if (!$resql)
-		 {
-		 return $this->forcecharset;
-		 }
-		 $liste=$this->fetch_array($resql);
-		 return $liste['Value'];
-		 */
+		// FIXME: Dummy method
+		// TODO: Implement
+
 		return '';
 	}
 
@@ -1033,25 +907,10 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getListOfCharacterSet()
 	{
-		/*
-		 $resql=$this->query('SHOW CHARSET');
-		 $liste = array();
-		 if ($resql)
-		 {
-			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
-			{
-			$liste[$i]['charset'] = $obj->Charset;
-			$liste[$i]['description'] = $obj->Description;
-			$i++;
-			}
-			$this->free($resql);
-	  } else {
-	  return null;
-	  }
-	  return $liste;
-	  */
-		return ''; // attente debuggage
+		// FIXME: Dummy method
+		// TODO: Implement
+
+		return '';
 	}
 
 	/**
@@ -1077,24 +936,10 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getListOfCollation()
 	{
-		/*
-		 $resql=$this->query('SHOW COLLATION');
-		 $liste = array();
-		 if ($resql)
-			{
-			$i = 0;
-			while ($obj = $this->fetch_object($resql) )
-			{
-			$liste[$i]['collation'] = $obj->Collation;
-			$i++;
-			}
-			$this->free($resql);
-			} else {
-			return null;
-			}
-			return $liste;
-			*/
-		return ''; // attente debugage
+		// FIXME: Dummy method
+		// TODO: Implement
+
+		return '';
 	}
 
 	/**
@@ -1104,6 +949,8 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getPathOfDump()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
 
 	    return '';
 	}
@@ -1115,9 +962,41 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getPathOfRestore()
 	{
+		// FIXME: Dummy method
+		// TODO: Implement
 
 	    return '';
 	}
+
+	/**
+	 * Return value of server parameters
+	 *
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
+	 */
+	function getServerParametersValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: SELECT SERVERPROPERTY
+
+		$result=array();
+		return $result;
+	}
+
+	/**
+	 * Return value of server status
+	 *
+	 * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
+	 */
+	function getServerStatusValues($filter='')
+	{
+		// FIXME: Dummy method
+		// TODO: Implement
+		// May help: http://www.experts-exchange.com/Database/MS-SQL-Server/Q_20971756.html
+
+		return array();
+	}
 }
 
-?>

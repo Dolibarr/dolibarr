@@ -14,10 +14,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 $langs->load("main");
+
+// Object $form must de defined
 
 ?>
 
@@ -105,7 +106,6 @@ $langs->load("main");
 		<p class="note_label">
 			<?php
 				echo $langs->trans("BankToPay"). "<br>";
-				$form = new Form($db);
 				$form->select_comptes($selected,'cashdeskbank',0,$filtre);
 			?>
 		</p>

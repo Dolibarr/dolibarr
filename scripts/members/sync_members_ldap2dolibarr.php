@@ -56,7 +56,7 @@ $forcecommit=0;
  */
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".join(',',$argv));
 
 // List of fields to get from LDAP
@@ -93,16 +93,17 @@ $required_fields = array(
 $required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
 
-if ($argv[3]) $conf->global->LDAP_SERVER_HOST=$argv[2];
-
-print "***** $script_file ($version) *****\n";
-
 if (! isset($argv[2]) || ! is_numeric($argv[2])) {
-    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type [ldapserverhost]\n";
+    print "Usage:  $script_file (nocommitiferror|commitiferror) id_member_type  [--server=ldapserverhost]\n";
 	exit(-1);
 }
+
 $typeid=$argv[2];
-if ($argv[1] == 'commitiferror') $forcecommit=1;
+foreach($argv as $key => $val)
+{
+	if ($val == 'commitiferror') $forcecommit=1;
+	if (preg_match('/--server=([^\s]+)$/',$val,$reg)) $conf->global->LDAP_SERVER_HOST=$reg[1];
+}
 
 print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
@@ -138,8 +139,6 @@ if ($typeid <= 0)
 }
 
 
-print "Press a key to confirm...";
-$input = trim(fgets(STDIN));
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
@@ -341,4 +340,3 @@ function dolValidElement($element)
 	return (trim($element) != '');
 }
 
-?>

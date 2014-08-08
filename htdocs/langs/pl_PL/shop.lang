@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - shop
+FailedConnectDBCheckModuleSetup=Failed to connect to oscommerce database. Check your module setup
 Shop=Sklep
-ShopWeb=Web Shop
-LastOrders=Ostatnie zlecenia
-OnStandBy=W stanie gotowości
-TreatmentInProgress=Leczenie w toku
-LastCustomers=Ostatnia klientów
+ShopWeb=Shop internetowy
+LastOrders=Ostatnie zamówienia
+OnStandBy=Oczekuje
+TreatmentInProgress=W przygotowaniu
+LastCustomers=Ostatni klienci
 OSCommerceShop=Sklep osCommerce
 OSCommerce=OsCommerce
 AddProd=Sprzedaż online

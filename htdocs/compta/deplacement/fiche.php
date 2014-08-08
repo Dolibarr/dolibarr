@@ -44,8 +44,6 @@ $result = restrictedArea($user, 'deplacement', $id,'');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
-$mesg = '';
-
 $object = new Deplacement($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -73,40 +71,10 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         }
         else
         {
-            $mesg=$object->error;
+	        setEventMessage($object->error, 'errors');
         }
     }
 }
-
-/*
-else if ($action == 'unblock' && $user->rights->deplacement->unvalidate)
-{
-    $object->fetch($id);
-    if ($object->fk_statut == '1') 	// Not blocked...
-    {
-        $mesg='<div class="error">'.$langs->trans("Error").'</div>';
-        $action='';
-        $error++;
-    }
-    else
-    {
-        $result = $object->fetch($id);
-
-        $object->fk_statut	= '1';
-
-        $result = $object->update($user);
-
-        if ($result > 0)
-        {
-            header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
-            exit;
-        }
-        else
-        {
-            $mesg=$object->error;
-        }
-    }
-}*/
 
 else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->deplacement->supprimer)
 {
@@ -118,7 +86,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     }
     else
     {
-        $mesg=$object->error;
+	    setEventMessage($object->error, 'errors');
     }
 }
 
@@ -139,17 +107,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
         if (! $object->date)
         {
-            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
             $error++;
         }
         if ($object->type == '-1') 	// Otherwise it is TF_LUNCH,...
         {
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")).'</div>';
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")), 'errors');
             $error++;
         }
 
@@ -164,7 +132,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
             }
             else
             {
-                $mesg=$object->error;
+	            setEventMessage($object->error, 'errors');
                 $action='create';
             }
         }
@@ -204,7 +172,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
         }
         else
         {
-            $mesg=$object->error;
+	        setEventMessage($object->error, 'errors');
         }
     }
     else
@@ -256,8 +224,6 @@ if ($action == 'create')
 
     print_fiche_titre($langs->trans("NewTrip"));
 
-    dol_htmloutput_errors($mesg);
-
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
     print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
@@ -295,19 +261,19 @@ if ($action == 'create')
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
     print $doleditor->Create(1);
 
     print '</td></tr>';
 
     // Private note
-    if (! $user->societe_id)
+    if (empty($user->societe_id))
     {
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
 
-        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+        $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
         print $doleditor->Create(1);
 
         print '</td></tr>';
@@ -329,8 +295,6 @@ else if ($id)
     $result = $object->fetch($id);
     if ($result > 0)
     {
-        dol_htmloutput_mesg($mesg);
-
         $head = trip_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
@@ -391,18 +355,18 @@ else if ($id)
             print '<tr><td valign="top">'.$langs->trans("NotePublic").'</td>';
             print '<td valign="top" colspan="3">';
 
-            $doleditor = new DolEditor('note_public', $object->note_public, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+            $doleditor = new DolEditor('note_public', $object->note_public, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
             print $doleditor->Create(1);
 
             print "</td></tr>";
 
             // Private note
-            if (! $user->societe_id)
+            if (empty($user->societe_id))
             {
                 print '<tr><td valign="top">'.$langs->trans("NotePrivate").'</td>';
                 print '<td valign="top" colspan="3">';
 
-                $doleditor = new DolEditor('note_private', $object->note_private, 600, 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, '100');
                 print $doleditor->Create(1);
 
                 print "</td></tr>";
@@ -573,4 +537,3 @@ else if ($id)
 llxFooter();
 
 $db->close();
-?>

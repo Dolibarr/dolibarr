@@ -25,14 +25,14 @@ ErrorGoBackAndCorrectParameters=Gå tilbage og rette forkerte parametre.
 ErrorWrongValueForParameter=Du kan have indtastet en forkert værdi for parameter ' %s'.
 ErrorFailedToCreateDatabase=Kunne ikke oprette databasen ' %s'.
 ErrorFailedToConnectToDatabase=Det lykkedes ikke at oprette forbindelse til databasen ' %s'.
-# ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
+ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP version for gammel. Version %s er påkrævet.
 WarningPHPVersionTooLow=PHP version for gammel. Version %s eller mere er forventet. Denne version skulle gøre det muligt installere, men er ikke understøttet.
 ErrorConnectedButDatabaseNotFound=Forbindelsen til serveren vellykket men database ' %s' blev ikke fundet.
 ErrorDatabaseAlreadyExists=Database ' %s' eksisterer allerede.
 IfDatabaseNotExistsGoBackAndUncheckCreate=Hvis databasen ikke findes, gå tilbage og tjekke valgmulighed "Opret database".
 IfDatabaseExistsGoBackAndCheckCreate=Hvis database findes allerede, gå tilbage og fjerne markeringen "Opret database" valgmulighed.
-# WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
+WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
 PHPVersion=PHP Version
 YouCanContinue=Du kan fortsætte ...
 PleaseBePatient=Vær tålmodig ...
@@ -154,11 +154,10 @@ MigrationShippingDelivery2=Opgrader opbevaring af shipping 2
 MigrationFinished=Migration er færdig
 LastStepDesc=<strong>Sidste trin:</strong> Definer her login og adgangskode, du planlægger at bruge til at oprette forbindelse til software. Må ikke løse dette, da det er den konto, at administrere alle andre.
 ActivateModule=Aktiver modul %s
-# ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
+ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for kundernes ordrer
 MigrationSupplierOrder=Data migration for leverandører ordrer
@@ -206,4 +205,7 @@ MigrationProjectUserResp=Data migration inden fk_user_resp af llx_projet til llx
 MigrationProjectTaskTime=Update tid i sekunder
 MigrationActioncommElement=Opdatere data om tiltag
 MigrationPaymentMode=Data migration for betaling mode
-# MigrationCategorieAssociation=Migration of categories
+MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

@@ -279,4 +279,3 @@ if ($_GET["socid"])
 $db->close();
 
 llxFooter();
-?>

@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/societe/class/societe.class.php';
 $langs->load("dict");
@@ -333,7 +333,7 @@ class SocieteTest extends PHPUnit_Framework_TestCase
         $this->assertNotEquals($result, '');
 
         $result=$localobject->isInEEC();
-        print __METHOD__." id=".$localobject->id." country_code=".$this->country_code." result=".$result."\n";
+        print __METHOD__." id=".$localobject->id." country_code=".$localobject->country_code." result=".$result."\n";
         $this->assertTrue(true, $result);
 
         $localobject->info($localobject->id);
@@ -456,4 +456,3 @@ class SocieteTest extends PHPUnit_Framework_TestCase
     }
 
 }
-?>

@@ -1,89 +1,143 @@
-﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
+/**
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
+ */
 
-CKEDITOR.plugins.add( 'menu',
-{
-	beforeInit : function( editor )
-	{
+CKEDITOR.plugins.add( 'menu', {
+	requires: 'floatpanel',
+
+	beforeInit: function( editor ) {
 		var groups = editor.config.menu_groups.split( ',' ),
 			groupsOrder = editor._.menuGroups = {},
 			menuItems = editor._.menuItems = {};
 
-		for ( var i = 0 ; i < groups.length ; i++ )
+		for ( var i = 0; i < groups.length; i++ )
 			groupsOrder[ groups[ i ] ] = i + 1;
 
 		/**
 		 * Registers an item group to the editor context menu in order to make it
 		 * possible to associate it with menu items later.
-		 * @name CKEDITOR.editor.prototype.addMenuGroup
+		 *
 		 * @param {String} name Specify a group name.
 		 * @param {Number} [order=100] Define the display sequence of this group
-		 *  	inside the menu. A smaller value gets displayed first.
+		 * inside the menu. A smaller value gets displayed first.
+		 * @member CKEDITOR.editor
 		 */
-		editor.addMenuGroup = function( name, order )
-			{
-				groupsOrder[ name ] = order || 100;
-			};
+		editor.addMenuGroup = function( name, order ) {
+			groupsOrder[ name ] = order || 100;
+		};
 
 		/**
 		 * Adds an item from the specified definition to the editor context menu.
-		 * @name CKEDITOR.editor.prototype.addMenuItem
+		 *
+		 * @method
 		 * @param {String} name The menu item name.
-		 * @param {CKEDITOR.menu.definition} definition The menu item definition.
+		 * @param {Object} definition The menu item definition.
+		 * @member CKEDITOR.editor
 		 */
-		editor.addMenuItem = function( name, definition )
-			{
-				if ( groupsOrder[ definition.group ] )
-					menuItems[ name ] = new CKEDITOR.menuItem( this, name, definition );
-			};
+		editor.addMenuItem = function( name, definition ) {
+			if ( groupsOrder[ definition.group ] )
+				menuItems[ name ] = new CKEDITOR.menuItem( this, name, definition );
+		};
 
 		/**
 		 * Adds one or more items from the specified definition array to the editor context menu.
-		 * @name CKEDITOR.editor.prototype.addMenuItems
-		 * @param {Array} definitions List of definitions for each menu item as if {@link CKEDITOR.editor.addMenuItem} is called.
+		 *
+		 * @method
+		 * @param {Array} definitions List of definitions for each menu item as if {@link #addMenuItem} is called.
+		 * @member CKEDITOR.editor
 		 */
-		editor.addMenuItems = function( definitions )
-			{
-				for ( var itemName in definitions )
-				{
-					this.addMenuItem( itemName, definitions[ itemName ] );
-				}
-			};
+		editor.addMenuItems = function( definitions ) {
+			for ( var itemName in definitions ) {
+				this.addMenuItem( itemName, definitions[ itemName ] );
+			}
+		};
 
 		/**
 		 * Retrieves a particular menu item definition from the editor context menu.
-		 * @name CKEDITOR.editor.prototype.getMenuItem
+		 *
+		 * @method
 		 * @param {String} name The name of the desired menu item.
-		 * @return {CKEDITOR.menu.definition}
+		 * @returns {Object}
+		 * @member CKEDITOR.editor
 		 */
-		editor.getMenuItem = function( name )
-			{
-				return menuItems[ name ];
-			};
+		editor.getMenuItem = function( name ) {
+			return menuItems[ name ];
+		};
 
 		/**
 		 * Removes a particular menu item added before from the editor context menu.
-		 * @name CKEDITOR.editor.prototype.removeMenuItem
-		 * @param {String} name The name of the desired menu item.
+		 *
 		 * @since 3.6.1
+		 * @method
+		 * @param {String} name The name of the desired menu item.
+		 * @member CKEDITOR.editor
 		 */
-		editor.removeMenuItem = function( name )
-			{
-				delete menuItems[ name ];
-			};
-	},
+		editor.removeMenuItem = function( name ) {
+			delete menuItems[ name ];
+		};
+	}
+} );
 
-	requires : [ 'floatpanel' ]
-});
+( function() {
+	var menuItemSource = '<span class="cke_menuitem">' +
+		'<a id="{id}"' +
+		' class="cke_menubutton cke_menubutton__{name} cke_menubutton_{state} {cls}" href="{href}"' +
+		' title="{title}"' +
+		' tabindex="-1"' +
+		'_cke_focus=1' +
+		' hidefocus="true"' +
+		' role="{role}"' +
+		' aria-haspopup="{hasPopup}"' +
+		' aria-disabled="{disabled}"' +
+		' {ariaChecked}';
 
-(function()
-{
-	CKEDITOR.menu = CKEDITOR.tools.createClass(
-	{
-		$ : function( editor, definition )
-		{
+	// Some browsers don't cancel key events in the keydown but in the
+	// keypress.
+	// TODO: Check if really needed for Gecko+Mac.
+	if ( CKEDITOR.env.opera || ( CKEDITOR.env.gecko && CKEDITOR.env.mac ) )
+		menuItemSource += ' onkeypress="return false;"';
+
+	// With Firefox, we need to force the button to redraw, otherwise it
+	// will remain in the focus state.
+	if ( CKEDITOR.env.gecko )
+		menuItemSource += ' onblur="this.style.cssText = this.style.cssText;"';
+
+	// #188
+	menuItemSource += ' onmouseover="CKEDITOR.tools.callFunction({hoverFn},{index});"' +
+			' onmouseout="CKEDITOR.tools.callFunction({moveOutFn},{index});" ' +
+			( CKEDITOR.env.ie ? 'onclick="return false;" onmouseup' : 'onclick' ) +
+				'="CKEDITOR.tools.callFunction({clickFn},{index}); return false;"' +
+			'>';
+
+	menuItemSource +=
+				'<span class="cke_menubutton_inner">' +
+					'<span class="cke_menubutton_icon">' +
+						'<span class="cke_button_icon cke_button__{iconName}_icon" style="{iconStyle}"></span>' +
+					'</span>' +
+					'<span class="cke_menubutton_label">' +
+						'{label}' +
+					'</span>' +
+					'{arrowHtml}' +
+				'</span>' +
+			'</a></span>';
+
+	var menuArrowSource = '<span class="cke_menuarrow">' +
+				'<span>{label}</span>' +
+			'</span>';
+
+	var menuItemTpl = CKEDITOR.addTemplate( 'menuItem', menuItemSource ),
+		menuArrowTpl = CKEDITOR.addTemplate( 'menuArrow', menuArrowSource );
+
+	/**
+	 * @class
+	 * @todo
+	 */
+	CKEDITOR.menu = CKEDITOR.tools.createClass( {
+		/**
+		 * @constructor
+		 */
+		$: function( editor, definition ) {
 			definition = this._.definition = definition || {};
 			this.id = CKEDITOR.tools.getNextId();
 
@@ -93,11 +147,10 @@ CKEDITOR.plugins.add( 'menu',
 
 			this._.level = definition.level || 1;
 
-			var panelDefinition = CKEDITOR.tools.extend( {}, definition.panel,
-			{
-				css : editor.skin.editor.css,
-				level : this._.level - 1,
-				block : {}
+			var panelDefinition = CKEDITOR.tools.extend( {}, definition.panel, {
+				css: [ CKEDITOR.skin.getPath( 'editor' ) ],
+				level: this._.level - 1,
+				block: {}
 			} );
 
 			var attrs = panelDefinition.block.attributes = ( panelDefinition.attributes || {} );
@@ -106,35 +159,23 @@ CKEDITOR.plugins.add( 'menu',
 			this._.panelDefinition = panelDefinition;
 		},
 
-		_ :
-		{
-			onShow : function()
-			{
-				var selection = this.editor.getSelection();
-
-				// Selection will be unavailable after menu shows up
-				// in IE, lock it now.
-				if ( CKEDITOR.env.ie )
-					selection && selection.lock();
-
-				var element = selection && selection.getStartElement(),
-					listeners = this._.listeners,
-					includedItems = [];
+		_: {
+			onShow: function() {
+				var selection = this.editor.getSelection(),
+					start = selection && selection.getStartElement(),
+					path = this.editor.elementPath(),
+					listeners = this._.listeners;
 
 				this.removeAll();
 				// Call all listeners, filling the list of items to be displayed.
-				for ( var i = 0 ; i < listeners.length ; i++ )
-				{
-					var listenerItems = listeners[ i ]( element, selection );
+				for ( var i = 0; i < listeners.length; i++ ) {
+					var listenerItems = listeners[ i ]( start, selection, path );
 
-					if ( listenerItems )
-					{
-						for ( var itemName in listenerItems )
-						{
+					if ( listenerItems ) {
+						for ( var itemName in listenerItems ) {
 							var item = this.editor.getMenuItem( itemName );
 
-							if ( item && ( !item.command || this.editor.getCommand( item.command ).state ) )
-							{
+							if ( item && ( !item.command || this.editor.getCommand( item.command ).state ) ) {
 								item.state = listenerItems[ itemName ];
 								this.add( item );
 							}
@@ -143,9 +184,8 @@ CKEDITOR.plugins.add( 'menu',
 				}
 			},
 
-			onClick : function( item )
-			{
-				this.hide( false );
+			onClick: function( item ) {
+				this.hide();
 
 				if ( item.onClick )
 					item.onClick();
@@ -153,74 +193,49 @@ CKEDITOR.plugins.add( 'menu',
 					this.editor.execCommand( item.command );
 			},
 
-			onEscape : function( keystroke )
-			{
+			onEscape: function( keystroke ) {
 				var parent = this.parent;
-				// 1. If it's sub-menu, restore the last focused item
-				// of upper level menu.
-				// 2. In case of a top-menu, close it.
+				// 1. If it's sub-menu, close it, with focus restored on this.
+				// 2. In case of a top-menu, close it, with focus returned to page.
 				if ( parent )
-				{
-					parent._.panel.hideChild();
-					// Restore parent block item focus.
-					var parentBlock = parent._.panel._.panel._.currentBlock,
-						parentFocusIndex =  parentBlock._.focusIndex;
-					parentBlock._.markItem( parentFocusIndex );
-				}
+					parent._.panel.hideChild( 1 );
 				else if ( keystroke == 27 )
-					this.hide();
+					this.hide( 1 );
 
 				return false;
 			},
 
-			onHide : function()
-			{
-				// Unlock the selection upon first panel closing.
-				if ( CKEDITOR.env.ie && !this.parent )
-				{
-					var selection = this.editor.getSelection();
-					selection && selection.unlock( true );
-				}
-
+			onHide: function() {
 				this.onHide && this.onHide();
 			},
 
-			showSubMenu : function( index )
-			{
+			showSubMenu: function( index ) {
 				var menu = this._.subMenu,
 					item = this.items[ index ],
 					subItemDefs = item.getItems && item.getItems();
 
 				// If this item has no subitems, we just hide the submenu, if
 				// available, and return back.
-				if ( !subItemDefs )
-				{
-					this._.panel.hideChild();
+				if ( !subItemDefs ) {
+					// Hide sub menu with focus returned.
+					this._.panel.hideChild( 1 );
 					return;
 				}
-
-				// Record parent menu focused item first (#3389).
-				var block = this._.panel.getBlock( this.id );
-				block._.focusIndex = index;
 
 				// Create the submenu, if not available, or clean the existing
 				// one.
 				if ( menu )
 					menu.removeAll();
-				else
-				{
-					menu = this._.subMenu = new CKEDITOR.menu( this.editor,
-								   CKEDITOR.tools.extend( {}, this._.definition, { level : this._.level + 1 }, true ) );
+				else {
+					menu = this._.subMenu = new CKEDITOR.menu( this.editor, CKEDITOR.tools.extend( {}, this._.definition, { level: this._.level + 1 }, true ) );
 					menu.parent = this;
 					menu._.onClick = CKEDITOR.tools.bind( this._.onClick, this );
 				}
 
 				// Add all submenu items to the menu.
-				for ( var subItemName in subItemDefs )
-				{
+				for ( var subItemName in subItemDefs ) {
 					var subItem = this.editor.getMenuItem( subItemName );
-					if ( subItem )
-					{
+					if ( subItem ) {
 						subItem.state = subItemDefs[ subItemName ];
 						menu.add( subItem );
 					}
@@ -230,14 +245,21 @@ CKEDITOR.plugins.add( 'menu',
 				var element = this._.panel.getBlock( this.id ).element.getDocument().getById( this.id + String( index ) );
 
 				// Show the submenu.
-				menu.show( element, 2 );
+				// This timeout is needed to give time for the sub-menu get
+				// focus when JAWS is running. (#9844)
+				setTimeout( function() {
+					menu.show( element, 2 );
+				}, 0 );
 			}
 		},
 
-		proto :
-		{
-			add : function( item )
-			{
+		proto: {
+			/**
+			 * Adds an item.
+			 *
+			 * @param item
+			 */
+			add: function( item ) {
 				// Later we may sort the items, but Array#sort is not stable in
 				// some browsers, here we're forcing the original sequence with
 				// 'order' attribute if it hasn't been assigned. (#3868)
@@ -247,19 +269,27 @@ CKEDITOR.plugins.add( 'menu',
 				this.items.push( item );
 			},
 
-			removeAll : function()
-			{
+			/**
+			 * Removes all items.
+			 */
+			removeAll: function() {
 				this.items = [];
 			},
 
-			show : function( offsetParent, corner, offsetX, offsetY )
-			{
+			/**
+			 * Shows the menu in given location.
+			 *
+			 * @param {CKEDITOR.dom.element} offsetParent
+			 * @param {Number} [corner]
+			 * @param {Number} [offsetX]
+			 * @param {Number} [offsetY]
+			 */
+			show: function( offsetParent, corner, offsetX, offsetY ) {
 				// Not for sub menu.
-				if ( !this.parent )
-				{
+				if ( !this.parent ) {
 					this._.onShow();
 					// Don't menu with zero items.
-					if ( ! this.items.length )
+					if ( !this.items.length )
 						return;
 				}
 
@@ -271,94 +301,83 @@ CKEDITOR.plugins.add( 'menu',
 					element = this._.element;
 
 				// Create the floating panel for this menu.
-				if ( !panel )
-				{
-					panel = this._.panel = new CKEDITOR.ui.floatPanel( this.editor,
-						CKEDITOR.document.getBody(),
-						this._.panelDefinition,
-						this._.level );
+				if ( !panel ) {
+					panel = this._.panel = new CKEDITOR.ui.floatPanel( this.editor, CKEDITOR.document.getBody(), this._.panelDefinition, this._.level );
 
-					panel.onEscape = CKEDITOR.tools.bind( function( keystroke )
-					{
+					panel.onEscape = CKEDITOR.tools.bind( function( keystroke ) {
 						if ( this._.onEscape( keystroke ) === false )
 							return false;
-					},
-					this );
+					}, this );
 
-					panel.onHide = CKEDITOR.tools.bind( function()
-					{
+					panel.onShow = function() {
+						// Menu need CSS resets, compensate class name.
+						var holder = panel._.panel.getHolderElement();
+						holder.getParent().addClass( 'cke cke_reset_all' );
+					};
+
+					panel.onHide = CKEDITOR.tools.bind( function() {
 						this._.onHide && this._.onHide();
-					},
-					this );
+					}, this );
 
 					// Create an autosize block inside the panel.
 					var block = panel.addBlock( this.id, this._.panelDefinition.block );
 					block.autoSize = true;
 
 					var keys = block.keys;
-					keys[ 40 ]	= 'next';					// ARROW-DOWN
-					keys[ 9 ]	= 'next';					// TAB
-					keys[ 38 ]	= 'prev';					// ARROW-UP
-					keys[ CKEDITOR.SHIFT + 9 ]	= 'prev';	// SHIFT + TAB
-					keys[ ( editor.lang.dir == 'rtl' ? 37 : 39 ) ]= CKEDITOR.env.ie ? 'mouseup' : 'click';  // ARROW-RIGHT/ARROW-LEFT(rtl)
-					keys[ 32 ]	= CKEDITOR.env.ie ? 'mouseup' : 'click';					// SPACE
-					CKEDITOR.env.ie && ( keys[ 13 ] = 'mouseup' );		// Manage ENTER, since onclick is blocked in IE (#8041).
+					keys[ 40 ] = 'next'; // ARROW-DOWN
+					keys[ 9 ] = 'next'; // TAB
+					keys[ 38 ] = 'prev'; // ARROW-UP
+					keys[ CKEDITOR.SHIFT + 9 ] = 'prev'; // SHIFT + TAB
+					keys[ ( editor.lang.dir == 'rtl' ? 37 : 39 ) ] = CKEDITOR.env.ie ? 'mouseup' : 'click'; // ARROW-RIGHT/ARROW-LEFT(rtl)
+					keys[ 32 ] = CKEDITOR.env.ie ? 'mouseup' : 'click'; // SPACE
+					CKEDITOR.env.ie && ( keys[ 13 ] = 'mouseup' ); // Manage ENTER, since onclick is blocked in IE (#8041).
 
 					element = this._.element = block.element;
-					element.addClass( editor.skinClass );
 
 					var elementDoc = element.getDocument();
 					elementDoc.getBody().setStyle( 'overflow', 'hidden' );
 					elementDoc.getElementsByTag( 'html' ).getItem( 0 ).setStyle( 'overflow', 'hidden' );
 
-					this._.itemOverFn = CKEDITOR.tools.addFunction( function( index )
-						{
-							clearTimeout( this._.showSubTimeout );
-							this._.showSubTimeout = CKEDITOR.tools.setTimeout( this._.showSubMenu, editor.config.menu_subMenuDelay || 400, this, [ index ] );
-						},
-						this );
+					this._.itemOverFn = CKEDITOR.tools.addFunction( function( index ) {
+						clearTimeout( this._.showSubTimeout );
+						this._.showSubTimeout = CKEDITOR.tools.setTimeout( this._.showSubMenu, editor.config.menu_subMenuDelay || 400, this, [ index ] );
+					}, this );
 
-					this._.itemOutFn = CKEDITOR.tools.addFunction( function( index )
-						{
-							clearTimeout( this._.showSubTimeout );
-						},
-						this );
+					this._.itemOutFn = CKEDITOR.tools.addFunction( function( index ) {
+						clearTimeout( this._.showSubTimeout );
+					}, this );
 
-					this._.itemClickFn = CKEDITOR.tools.addFunction( function( index )
-						{
-							var item = this.items[ index ];
+					this._.itemClickFn = CKEDITOR.tools.addFunction( function( index ) {
+						var item = this.items[ index ];
 
-							if ( item.state == CKEDITOR.TRISTATE_DISABLED )
-							{
-								this.hide();
-								return;
-							}
+						if ( item.state == CKEDITOR.TRISTATE_DISABLED ) {
+							this.hide( 1 );
+							return;
+						}
 
-							if ( item.getItems )
-								this._.showSubMenu( index );
-							else
-								this._.onClick( item );
-						},
-						this );
+						if ( item.getItems )
+							this._.showSubMenu( index );
+						else
+							this._.onClick( item );
+					}, this );
 				}
 
 				// Put the items in the right order.
 				sortItems( items );
 
-				var chromeRoot = editor.container.getChild( 1 ),
-					mixedContentClass = chromeRoot.hasClass( 'cke_mixed_dir_content' ) ? ' cke_mixed_dir_content' : '';
+				// Apply the editor mixed direction status to menu.
+				var path = editor.elementPath(),
+					mixedDirCls = ( path && path.direction() != editor.lang.dir ) ? ' cke_mixed_dir_content' : '';
 
 				// Build the HTML that composes the menu and its items.
-				var output = [ '<div class="cke_menu' + mixedContentClass + '" role="presentation">' ];
+				var output = [ '<div class="cke_menu' + mixedDirCls + '" role="presentation">' ];
 
 				var length = items.length,
 					lastGroup = length && items[ 0 ].group;
 
-				for ( var i = 0 ; i < length ; i++ )
-				{
+				for ( var i = 0; i < length; i++ ) {
 					var item = items[ i ];
-					if ( lastGroup != item.group )
-					{
+					if ( lastGroup != item.group ) {
 						output.push( '<div class="cke_menuseparator" role="separator"></div>' );
 						lastGroup = item.group;
 					}
@@ -382,43 +401,55 @@ CKEDITOR.plugins.add( 'menu',
 				editor.fire( 'menuShow', [ panel ] );
 			},
 
-			addListener : function( listenerFn )
-			{
+			/**
+			 * Adds a callback executed on opening the menu. Items
+			 * returned by that callback are added to the menu.
+			 *
+			 * @param {Function} listenerFn
+			 * @param {CKEDITOR.dom.element} listenerFn.startElement The selection start anchor element.
+			 * @param {CKEDITOR.dom.selection} listenerFn.selection The current selection.
+			 * @param {CKEDITOR.dom.elementPath} listenerFn.path The current elements path.
+			 * @param listenerFn.return Object (`commandName` => `state`) of items that should be added to the menu.
+			 */
+			addListener: function( listenerFn ) {
 				this._.listeners.push( listenerFn );
 			},
 
-			hide : function( returnFocus )
-			{
+			/**
+			 * Hides the menu.
+			 *
+			 * @param {Boolean} [returnFocus]
+			 */
+			hide: function( returnFocus ) {
 				this._.onHide && this._.onHide();
 				this._.panel && this._.panel.hide( returnFocus );
 			}
 		}
-	});
+	} );
 
-	function sortItems( items )
-	{
-		items.sort( function( itemA, itemB )
-			{
-				if ( itemA.group < itemB.group )
-					return -1;
-				else if ( itemA.group > itemB.group )
-					return 1;
+	function sortItems( items ) {
+		items.sort( function( itemA, itemB ) {
+			if ( itemA.group < itemB.group )
+				return -1;
+			else if ( itemA.group > itemB.group )
+				return 1;
 
-				return itemA.order < itemB.order ? -1 :
-					itemA.order > itemB.order ? 1 :
-					0;
-			});
+			return itemA.order < itemB.order ? -1 : itemA.order > itemB.order ? 1 : 0;
+		} );
 	}
-	CKEDITOR.menuItem = CKEDITOR.tools.createClass(
-	{
-		$ : function( editor, name, definition )
-		{
+
+	/**
+	 * @class
+	 * @todo
+	 */
+	CKEDITOR.menuItem = CKEDITOR.tools.createClass( {
+		$: function( editor, name, definition ) {
 			CKEDITOR.tools.extend( this, definition,
-				// Defaults
-				{
-					order : 0,
-					className : 'cke_button_' + name
-				});
+			// Defaults
+			{
+				order: 0,
+				className: 'cke_menubutton__' + name
+			} );
 
 			// Transform the group name into its order number.
 			this.group = editor._.menuGroups[ this.group ];
@@ -427,116 +458,88 @@ CKEDITOR.plugins.add( 'menu',
 			this.name = name;
 		},
 
-		proto :
-		{
-			render : function( menu, index, output )
-			{
+		proto: {
+			render: function( menu, index, output ) {
 				var id = menu.id + String( index ),
-					state = ( typeof this.state == 'undefined' ) ? CKEDITOR.TRISTATE_OFF : this.state;
+					state = ( typeof this.state == 'undefined' ) ? CKEDITOR.TRISTATE_OFF : this.state,
+					ariaChecked = '';
 
-				var classes = ' cke_' + (
-					state == CKEDITOR.TRISTATE_ON ? 'on' :
-					state == CKEDITOR.TRISTATE_DISABLED ? 'disabled' :
-					'off' );
+				var stateName = state == CKEDITOR.TRISTATE_ON ? 'on' : state == CKEDITOR.TRISTATE_DISABLED ? 'disabled' : 'off';
 
-				var htmlLabel = this.label;
+				if ( this.role in { menuitemcheckbox: 1, menuitemradio: 1 } )
+					ariaChecked = ' aria-checked="' + ( state == CKEDITOR.TRISTATE_ON ? 'true' : 'false' ) + '"';
 
-				if ( this.className )
-					classes += ' ' + this.className;
+				var hasSubMenu = this.getItems;
+				// ltr: BLACK LEFT-POINTING POINTER
+				// rtl: BLACK RIGHT-POINTING POINTER
+				var arrowLabel = '&#' + ( this.editor.lang.dir == 'rtl' ? '9668' : '9658' ) + ';';
 
-			var hasSubMenu = this.getItems;
+				var iconName = this.name;
+				if ( this.icon && !( /\./ ).test( this.icon ) )
+					iconName = this.icon;
 
-			output.push(
-				'<span class="cke_menuitem' + ( this.icon && this.icon.indexOf( '.png' ) == -1 ? ' cke_noalphafix' : '' ) + '">' +
-				'<a id="', id, '"' +
-					' class="', classes, '" href="javascript:void(\'', ( this.label || '' ).replace( "'", '' ), '\')"' +
-					' title="', this.label, '"' +
-					' tabindex="-1"' +
-					'_cke_focus=1' +
-					' hidefocus="true"' +
-					' role="menuitem"' +
-					( hasSubMenu ? 'aria-haspopup="true"' : '' ) +
-					( state == CKEDITOR.TRISTATE_DISABLED ? 'aria-disabled="true"' : '' ) +
-					( state == CKEDITOR.TRISTATE_ON ? 'aria-pressed="true"' : '' ) );
+				var params = {
+					id: id,
+					name: this.name,
+					iconName: iconName,
+					label: this.label,
+					cls: this.className || '',
+					state: stateName,
+					hasPopup: hasSubMenu ? 'true' : 'false',
+					disabled: state == CKEDITOR.TRISTATE_DISABLED,
+					title: this.label,
+					href: 'javascript:void(\'' + ( this.label || '' ).replace( "'" + '' ) + '\')',
+					hoverFn: menu._.itemOverFn,
+					moveOutFn: menu._.itemOutFn,
+					clickFn: menu._.itemClickFn,
+					index: index,
+					iconStyle: CKEDITOR.skin.getIconStyle( iconName, ( this.editor.lang.dir == 'rtl' ), iconName == this.icon ? null : this.icon, this.iconOffset ),
+					arrowHtml: hasSubMenu ? menuArrowTpl.output( { label : arrowLabel } ) : '',
+					role: this.role ? this.role : 'menuitem',
+					ariaChecked: ariaChecked
+				};
 
-				// Some browsers don't cancel key events in the keydown but in the
-				// keypress.
-				// TODO: Check if really needed for Gecko+Mac.
-				if ( CKEDITOR.env.opera || ( CKEDITOR.env.gecko && CKEDITOR.env.mac ) )
-				{
-					output.push(
-						' onkeypress="return false;"' );
-				}
-
-				// With Firefox, we need to force the button to redraw, otherwise it
-				// will remain in the focus state.
-				if ( CKEDITOR.env.gecko )
-				{
-					output.push(
-						' onblur="this.style.cssText = this.style.cssText;"' );
-				}
-
-				var offset = ( this.iconOffset || 0 ) * -16;
-				output.push(
-//					' onkeydown="return CKEDITOR.ui.button._.keydown(', index, ', event);"' +
-					' onmouseover="CKEDITOR.tools.callFunction(', menu._.itemOverFn, ',', index, ');"' +
-					' onmouseout="CKEDITOR.tools.callFunction(', menu._.itemOutFn, ',', index, ');" ' +
-					( CKEDITOR.env.ie ? 'onclick="return false;" onmouseup' : 'onclick' ) +		// #188
-						'="CKEDITOR.tools.callFunction(', menu._.itemClickFn, ',', index, '); return false;"' +
-					'>' +
-						'<span class="cke_icon_wrapper"><span class="cke_icon"' +
-							( this.icon ? ' style="background-image:url(' + CKEDITOR.getUrl( this.icon ) + ');background-position:0 ' + offset + 'px;"'
-							: '' ) +
-							'></span></span>' +
-						'<span class="cke_label">' );
-
-			if ( hasSubMenu )
-			{
-				output.push(
-							'<span class="cke_menuarrow">',
-								'<span>&#',
-									( this.editor.lang.dir == 'rtl' ?
-										'9668' :	// BLACK LEFT-POINTING POINTER
-										'9658' ),	// BLACK RIGHT-POINTING POINTER
-								';</span>',
-							'</span>' );
+				menuItemTpl.output( params, output );
 			}
-
-				output.push(
-								htmlLabel,
-							'</span>' +
-					'</a>' +
-					'</span>' );
 		}
-		}
-	});
+	} );
 
-})();
+} )();
 
 
 /**
  * The amount of time, in milliseconds, the editor waits before displaying submenu
  * options when moving the mouse over options that contain submenus, like the
  * "Cell Properties" entry for tables.
- * @type Number
- * @default 400
- * @example
- * // Remove the submenu delay.
- * config.menu_subMenuDelay = 0;
+ *
+ *		// Remove the submenu delay.
+ *		config.menu_subMenuDelay = 0;
+ *
+ * @cfg {Number} [menu_subMenuDelay=400]
+ * @member CKEDITOR.config
+ */
+
+/**
+ * Fired when a menu is shown.
+ *
+ * @event menuShow
+ * @member CKEDITOR.editor
+ * @param {CKEDITOR.editor} editor This editor instance.
+ * @param {CKEDITOR.ui.panel[]} data
  */
 
 /**
  * A comma separated list of items group names to be displayed in the context
  * menu. The order of items will reflect the order specified in this list if
  * no priority was defined in the groups.
- * @type String
- * @default 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea'
- * @example
- * config.menu_groups = 'clipboard,table,anchor,link,image';
+ *
+ *		config.menu_groups = 'clipboard,table,anchor,link,image';
+ *
+ * @cfg {String} [menu_groups=see source]
+ * @member CKEDITOR.config
  */
-CKEDITOR.config.menu_groups =
-	'clipboard,' +
+CKEDITOR.config.menu_groups = 'clipboard,' +
 	'form,' +
-	'tablecell,tablecellproperties,tablerow,tablecolumn,table,'+
+	'tablecell,tablecellproperties,tablerow,tablecolumn,table,' +
 	'anchor,link,image,flash,' +
 	'checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea,div';

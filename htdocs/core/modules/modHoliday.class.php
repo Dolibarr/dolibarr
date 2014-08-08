@@ -134,42 +134,42 @@ class modHoliday extends DolibarrModules
 		$r=0;
 
 		$this->rights[$r][0] = 20001; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Lire/créer/modifier ses demandes de congés payés';	// Permission label
+		$this->rights[$r][1] = 'Create/modify your own holidays';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20002; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Lire/créer/modifier toutes les demandes de congés payés';	// Permission label
+		$this->rights[$r][1] = 'Create/modify hollidays for everybody';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'lire_tous';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][4] = 'write_all';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20003; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Supprimer des demandes de congés payés';	// Permission label
+		$this->rights[$r][1] = 'Delete holidays';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20004; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Définir les congés payés des utilisateurs';	// Permission label
+		$this->rights[$r][1] = 'Setup holidays of users';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'define_holiday';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20005; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Voir les logs de modification des congés payés';	// Permission label
+		$this->rights[$r][1] = 'See logs for holidays requests';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'view_log';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20006; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Accéder au rapport mensuel des congés payés';	// Permission label
+		$this->rights[$r][1] = 'Read holidays monthly report';	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'month_report';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
@@ -179,7 +179,7 @@ class modHoliday extends DolibarrModules
 		$this->menus = array();			// List of menus to add
 		$r=0;
 
-		
+
 		/* Move to HRM menu
 		// Add here entries to declare new menus
 		$this->menu[$r]=array(	'fk_menu'=>0,			// Put 0 if this is a top menu
@@ -261,7 +261,7 @@ class modHoliday extends DolibarrModules
 								'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 */
-		
+
 		// Exports
 		$r=1;
 
@@ -311,4 +311,3 @@ class modHoliday extends DolibarrModules
 
 }
 
-?>

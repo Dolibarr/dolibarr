@@ -1206,11 +1206,8 @@ class SMTPs
 		{
 			// Since this is an actual multi-part message
 			// We need to define a content message Boundary
-			// NOTE: This was 'multipart/alternative', but Windows based
-			//       mail servers have issues with this.
-			/*
-			 * TODO  Investigate "nested" boundary message parts
-			*/
+			// NOTE: This was 'multipart/alternative', but Windows based mail servers have issues with this.
+
 			//$content = 'Content-Type: multipart/related; boundary="' . $this->_getBoundary() . '"'   . "\r\n";
 			$content = 'Content-Type: multipart/mixed; boundary="' . $this->_getBoundary('mixed') . '"'   . "\r\n";
 
@@ -1803,4 +1800,3 @@ class SMTPs
  *
  */
 
-?>

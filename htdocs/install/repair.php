@@ -313,7 +313,7 @@ if (GETPOST('purge'))
 
         print '<tr><td colspan="2">Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','\.meta$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1);
+        $filearray=dol_dir_list($upload_dir,"files",1,'',array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview\.png)$','^temp$','^payments$','^CVS$','^thumbs$'),'',SORT_DESC,1);
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'invoice')
@@ -434,4 +434,3 @@ if ($db->connected) $db->close();
 
 // Return code if ran from command line
 if (! $ok && isset($argv[1])) exit(1);
-?>

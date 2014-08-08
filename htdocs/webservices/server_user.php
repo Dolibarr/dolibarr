@@ -181,7 +181,8 @@ $thirdpartywithuser_fields = array(
 	'tva_intra' => array('name'=>'tva_intra','type'=>'xsd:string'),
 	// 	For user
 	'login' => array('name'=>'login','type'=>'xsd:string'),
-	'password' => array('name'=>'password','type'=>'xsd:string')
+	'password' => array('name'=>'password','type'=>'xsd:string'),
+	'group_id' => array('name'=>'group_id','type'=>'xsd:string')
 );
 
 //Retreive all extrafield for contact
@@ -523,6 +524,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 				}
 				else
 				{
+					$db->begin();
 					/*
 					 * Company creation
 					 */
@@ -533,6 +535,25 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 					$thirdparty->town=$thirdpartywithuser['town'];
 					$thirdparty->country_id=$thirdpartywithuser['country_id'];
 					$thirdparty->country_code=$thirdpartywithuser['country_code'];
+
+					// find the country id by code
+					$langs->load("dict");
+
+					$sql = "SELECT rowid";
+					$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+					$sql.= " WHERE active = 1";
+					$sql.= " AND code='".$thirdparty->country_code."'";
+
+					$resql=$db->query($sql);
+					if ($resql)
+					{
+						$num = $db->num_rows($resql);
+						if ($num)
+						{
+							$obj = $db->fetch_object($resql);
+							$thirdparty->country_id      = $obj->rowid;
+						}
+					}
 					$thirdparty->phone=$thirdpartywithuser['phone'];
 					$thirdparty->fax=$thirdpartywithuser['fax'];
 					$thirdparty->email=$thirdpartywithuser['email'];
@@ -562,7 +583,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->socid = $thirdparty->id;
 						$contact->lastname = $thirdpartywithuser['name'];
 						$contact->firstname = $thirdpartywithuser['firstname'];
-						$contact->civilite_id = $thirdparty->civilite_id;
+						$contact->civility_id = $thirdparty->civility_id;
 						$contact->address = $thirdparty->address;
 						$contact->zip = $thirdparty->zip;
 						$contact->town = $thirdparty->town;
@@ -570,6 +591,9 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
+						$contact->statut = 1;
+						$contact->country_id = $thirdparty->country_id;
+						$contact->country_code = $thirdparty->country_code;
 
 						//Retreive all extrafield for thirdsparty
 						// fetch optionals attributes and labels
@@ -591,33 +615,29 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 							*
 							*/
 							$edituser = new User($db);
-							$db->begin();
 
 							$id = $edituser->create_from_contact($contact,$thirdpartywithuser["login"]);
 							if ($id > 0)
 							{
-								$edituser->setPassword($user,trim($thirdpartywithuser['password']));
+								$edituser->setPassword($fuser,trim($thirdpartywithuser['password']));
+
+								if($thirdpartywithuser['group_id'] > 0 )
+									$edituser->SetInGroup($thirdpartywithuser['group_id'],$conf->entity);
 							}
 							else
 							{
 								$error++;
-								$errorcode='NOT_CREATE'; $errorlabel='Object not create : no contact found or create';
+								$errorcode='NOT_CREATE'; $errorlabel='Object not create : '.$edituser->error;
 							}
-
-
-							if (! $error && $id > 0)
-							{
-								$db->commit();
-							}
-							else
-							{
-								$db->rollback();
-								$error++;
-								$errorcode='NOT_CREATE'; $errorlabel='Contact not create';
-							}
+						}
+						else
+						{
+							$error++;
+							$errorcode='NOT_CREATE'; $errorlabel='Object not create : '.$contact->error;
 						}
 
 						if(!$error) {
+							$db->commit();
 							$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>'SUCCESS'),'id'=>$socid_return);
 							$error=0;
 						}
@@ -645,6 +665,7 @@ function createUserFromThirdparty($authentication,$thirdpartywithuser)
 
 	if ($error)
 	{
+		$db->rollback();
 		$objectresp = array(
 		'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel)
 		);
@@ -736,4 +757,3 @@ function setUserPassword($authentication,$shortuser) {
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
 
-?>

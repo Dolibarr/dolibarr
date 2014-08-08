@@ -144,4 +144,3 @@ if ($_GET["id"])
 $db->close();
 
 llxFooter();
-?>

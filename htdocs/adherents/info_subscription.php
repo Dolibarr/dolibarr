@@ -80,4 +80,3 @@ print '</div>';
 $db->close();
 
 llxFooter();
-?>

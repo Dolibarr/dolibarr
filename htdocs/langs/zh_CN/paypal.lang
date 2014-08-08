@@ -20,3 +20,6 @@ YouAreCurrentlyInSandboxMode=您目前在“沙箱”模式
 NewPaypalPaymentReceived=收到新的支付宝付款
 NewPaypalPaymentFailed=新的支付宝付款尝试，但未能成功
 PAYPAL_PAYONLINE_SENDEMAIL=电子邮件提醒后付款（成功与否）
+ReturnURLAfterPayment=付款后返回网页地址
+ValidationOfPaypalPaymentFailed=Paypal（支付宝）付款验证失败
+PaypalConfirmPaymentPageWasCalledButFailed=Paypal（支付宝）清求付款确认页面，但确认失败

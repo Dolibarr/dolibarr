@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Esdeveniments
 ActionsArea=Àrea d'esdeveniments (accions i tasques)
 Agenda= Agenda
@@ -25,12 +25,15 @@ ListOfEvents= Llistat d'esdeveniments Dolibarr
 ActionsAskedBy=Esdeveniments registrats per
 ActionsToDoBy=Esdeveniments assignats a
 ActionsDoneBy=Esdeveniments realitzats per
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= Tots els meus esdeveniments/tasques
 AllActions= Tots els esdeveniments/tasques
 ViewList=Vista llistat
 ViewCal=Vista mensual
 ViewDay=Vista diària
 ViewWeek=Vista setmanal
+ViewPerUser=Per user
 ViewWithPredefinedFilters= Veure amb els filtres predefinits
 AutoActions= Inclusió automàtica a l'agenda
 AgendaAutoActionDesc= Indiqueu en aquesta pestanya els esdeveniments per els que desitja que Dolibarr creu automàticament una acció a l'agenda. Si no es marca cap cas (per defecte), només les accions manuals s'han d'incloure en l'agenda.
@@ -43,6 +46,7 @@ InvoiceBackToDraftInDolibarr=Factura %s tornada a borrador
 InvoiceDeleteDolibarr=Factura %s eliminada
 OrderValidatedInDolibarr= Comanda %s validada
 OrderApprovedInDolibarr=Comanda %s aprovada
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Comanda %s tordada a borrador
 OrderCanceledInDolibarr=Commanda %s anul·lada
 InterventionValidatedInDolibarr=Intervenció %s validada
@@ -52,7 +56,9 @@ InvoiceSentByEMail=Factura a client %s enviada per e-mail
 SupplierOrderSentByEMail=Comanda a proveïdor %s enviada per e-mail
 SupplierInvoiceSentByEMail=Factura de proveïdor %s enviada per e-mail
 ShippingSentByEMail=Expedició %s enviada per e-mail
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervenció %s enviada per e-mail
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Tercer creat
 DateActionPlannedStart= Data d'inici prevista
 DateActionPlannedEnd= Data fi prevista
@@ -68,7 +74,7 @@ AgendaUrlOptions5=<b>logind=%s</b> per a restringir insercions a accions realitz
 AgendaShowBirthdayEvents=Mostra aniversari dels contactes
 AgendaHideBirthdayEvents=Amaga aniversari dels contacte
 Busy=Ocupat
-# ExportDataset_event1=List of agenda events
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Exportar calendari

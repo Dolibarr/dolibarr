@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - admin
+WorkflowSetup=Postavke workflow modula
+WorkflowDesc=Ovaj modul je dizajniran za mijenjanje ponašanja automatskih akcija u aplikaciji. Po defaultu, workflow je otvoren (sami pravite redoslijed). Možete omogućiti automatske akcije za koje ste zainteresovani.
+ThereIsNoWorkflowToModify=Nema workflow-a koji možete mijenjati za modul koji ste aktivirali.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Kreiraj narudžbu za kupca automatski nakon potpisivanja poslovnog prijedloga
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Kreiraj fakturu kupca automatski nakon potpisivanja poslovnog prijedloga
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Kreiraj fakturu kupca automatski nakon potvrđivanja ugovora
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Kreiraj fakturu za kupca automatski nakon zatvaranja narudžbe kupca
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Označiti povezani izvorni prijedlog kao naplaćen odmah nakon plaćanja narudžbe za kupca
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Označiti povezanu izvornu narudžbu(e) kao plaćene kada je faktura za kupca postavljena kao plaćena.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Označiti povezanu izvornu narudžbu(e) kao plaćene kada je faktura za kupca postavljena kao potvrđena.

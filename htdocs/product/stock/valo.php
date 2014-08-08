@@ -108,12 +108,12 @@ if ($result)
             print '<td>'.$objp->lieu.'</td>';
             // PMP value
             print '<td align="right">';
-            if (price2num($objp->estimatedvalue,'MT')) print price(price2num($objp->estimatedvalue,'MT'));
+            if (price2num($objp->estimatedvalue,'MT')) print price(price2num($objp->estimatedvalue,'MT'),1);
             else print '';
             print '</td>';
             // Selling value
             print '<td align="right">';
-            if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue,'MT'));
+            if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($objp->sellvalue,'MT'),1);
             else print $langs->trans("Variable");
             print '</td>';
             // Status
@@ -162,4 +162,3 @@ else
 llxFooter();
 
 $db->close();
-?>

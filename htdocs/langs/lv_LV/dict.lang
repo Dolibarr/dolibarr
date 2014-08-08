@@ -253,23 +253,22 @@ CivilityMR=Kungs
 CivilityMLE=Ms
 CivilityMTRE=Meistars
 CivilityDR=Doktors
-
 ##### Currencies #####
 Currencyeuros=Eiro
 CurrencyAUD=AU dolāri
 CurrencySingAUD=AU dolārs
-CurrencyCAD=CAN dolāri
-CurrencySingCAD=CAN dolārs
+CurrencyCAD=Kanādas dolāri
+CurrencySingCAD=Kanādas dolārs
 CurrencyCHF=Šveices franks
 CurrencySingCHF=Šveices franks
 CurrencyEUR=Eiro
 CurrencySingEUR=Eiro
 CurrencyFRF=Francijas franki
 CurrencySingFRF=Francijas franks
-CurrencyGBP=GB mārciņas
-CurrencySingGBP=GB mārciņa
+CurrencyGBP=Lielbritānijas mārciņas
+CurrencySingGBP=Lielbritānijas mārciņa
 CurrencyINR=Indijas rūpijas
-CurrencySingINR=Indijas rūpiju
+CurrencySingINR=Indijas rūpija
 CurrencyMAD=Dirhams
 CurrencySingMAD=Dirhams
 CurrencyMGA=Ariary
@@ -290,10 +289,8 @@ CurrencyXOF=CFA franki BCEAO
 CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=KZP franki
 CurrencySingXPF=CFP Franc
-
 CurrencyCentSingEUR=cents
 CurrencyThousandthSingTND=tūkstošais
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internets
 DemandReasonTypeSRC_CAMP_MAIL=Pasta kampaņu
@@ -306,7 +303,6 @@ DemandReasonTypeSRC_WOM=No mutes mutē
 DemandReasonTypeSRC_PARTNER=Partneris
 DemandReasonTypeSRC_EMPLOYEE=Darbinieks
 DemandReasonTypeSRC_SPONSORING=Sponsorēšana
-
 #### Paper formats ####
 PaperFormatEU4A0=Formāts 4A0
 PaperFormatEU2A0=Formāts 2A0

@@ -50,7 +50,7 @@ if (! $user->admin)
 
 if ($action == 'delete')
 {
-	$file=$conf->admin->dir_output.'/backup/'.GETPOST('urlfile');
+	$file=$conf->admin->dir_output.'/'.GETPOST('urlfile');
     $ret=dol_delete_file($file, 1);
     if ($ret) setEventMessage($langs->trans("FileWasRemoved", GETPOST('urlfile')));
     else setEventMessage($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), 'errors');
@@ -65,7 +65,7 @@ if ($action == 'delete')
 $form=new Form($db);
 $formfile = new FormFile($db);
 
-$label=getStaticMember($db, 'label');
+$label=$db::LABEL;
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);
@@ -433,4 +433,3 @@ print '<br>';
 llxFooter();
 
 $db->close();
-?>

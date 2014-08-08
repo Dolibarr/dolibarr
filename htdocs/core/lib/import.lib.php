@@ -53,4 +53,3 @@ function import_prepare_head($param, $maxstep=0)
 	return $head;
 }
 
-?>

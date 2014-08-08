@@ -210,6 +210,15 @@ if ($search_user > 0)
 
 
 $sql.= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+
 $sql.= $db->plimit($limit + 1,$offset);
 $result=$db->query($sql);
 
@@ -236,7 +245,7 @@ if ($result)
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
 	if ($search_town)		 $param.='&search_town='.$search_town;
-	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
+	print_barre_liste($langs->trans('ListOfProposals').' '.($socid?'- '.$soc->nom:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -276,7 +285,7 @@ if ($result)
 	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
@@ -289,25 +298,28 @@ if ($result)
 	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" size="16" name="search_societe" value="'.$search_societe.'">';
+	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
-	print '<td class="liste_titre"><input class="flat" type="text" size="16" name="search_town" value="'.$search_town.'"></td>';
+	print '<td class="liste_titre"><input class="flat" type="text" size="10" name="search_town" value="'.$search_town.'"></td>';
+	// Date
 	print '<td class="liste_titre" colspan="1" align="center">';
-	print $langs->trans('Month').': <input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-	print '&nbsp;'.$langs->trans('Year').': ';
+	//print $langs->trans('Month').': ';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
 	$formother->select_year($syear,'year',1, 20, 5);
 	print '</td>';
 	print '<td class="liste_titre" colspan="1">&nbsp;</td>';
+	// Amount
 	print '<td class="liste_titre" align="center">';
 	print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'">';
 	print '</td>';
-
-	print '<td class="liste_titre" align="right">';
+	// Author
+	print '<td class="liste_titre" align="center">';
 	print '<input class="flat" size="10" type="text" name="search_author" value="'.$search_author.'">';
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$formpropal->select_propal_statut($viewstatut,1);
+	$formpropal->selectProposalStatus($viewstatut,1);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
@@ -376,15 +388,8 @@ if ($result)
 
 		// Date proposal
 		print '<td align="center">';
-		$y = dol_print_date($db->jdate($objp->dp),'%Y');
-		$m = dol_print_date($db->jdate($objp->dp),'%m');
-		$mt= dol_print_date($db->jdate($objp->dp),'%b');
-		$d = dol_print_date($db->jdate($objp->dp),'%d');
-		print $d."\n";
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-		print $mt."</a>\n";
-		print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-		print $y."</a></td>\n";
+		print dol_print_date($db->jdate($obj->dp), 'day');
+		print "</td>\n";
 
 		// Date end validity
 		if ($objp->dfv)
@@ -450,4 +455,3 @@ else
 // End of page
 llxFooter();
 $db->close();
-?>

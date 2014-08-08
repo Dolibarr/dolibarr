@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarrmodule.pl
 # \brief        Package builder (tgz, zip, rpm, deb, exe)
-# \author       (c)2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 #----------------------------------------------------------------------------
 
 use Cwd;
@@ -20,8 +20,8 @@ $GROUP="ldestailleur";
 
 
 use vars qw/ $REVISION $VERSION /;
-$REVISION='1.20';
-$VERSION="1.0 (build $REVISION)";
+$REVISION='1.0';
+$VERSION="3.5 (build $REVISION)";
 
 
 
@@ -245,18 +245,30 @@ foreach my $PROJECT (@PROJECTLIST) {
 				if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
 			    while(<IN>)
 			    {
-			    	if ($_ =~ /^#/) { next; }	# Do not process comments
+			    	$entry=$_;
+			    	
+			    	if ($entry =~ /^#/) { next; }	# Do not process comments
 					
-					$_ =~ s/\n//;
-			    	$_ =~ /^(.*)\/[^\/]+/;
+					$entry =~ s/\n//;
+
+			    	if ($entry =~ /^!(.*)$/)		# Exclude so remove file/dir
+			    	{
+			    		print "Remove $BUILDROOT/$PROJECTLC/$1\n";
+			    		$ret=`rm -fr "$BUILDROOT/$PROJECTLC/"$1`;
+		    		    if ($? != 0) { die "Failed to delete a file to exclude declared into makepack-".$PROJECT.".conf file (Fails on line ".$entry.")\n"; }
+		    		    next; 
+			    	}
+					
+					$entry =~ /^(.*)\/[^\/]+/;
 			    	print "Create directory $BUILDROOT/$PROJECTLC/$1\n";
 			    	$ret=`mkdir -p "$BUILDROOT/$PROJECTLC/$1"`;
-			    	if ($_ !~ /version\-/)
+			    	if ($entry !~ /version\-/)
 			    	{
-			    	    print "Copy $SOURCE/$_ into $BUILDROOT/$PROJECTLC/$_\n";
-		    		    $ret=`cp -pr "$SOURCE/$_" "$BUILDROOT/$PROJECTLC/$_"`;
-		    		    if ($? != 0) { die "Failed to make copy of a file declared into makepack-".$PROJECT.".conf file (Fails on line ".$_.")\n"; } 
+			    	    print "Copy $SOURCE/$entry into $BUILDROOT/$PROJECTLC/$entry\n";
+		    		    $ret=`cp -pr "$SOURCE/$entry" "$BUILDROOT/$PROJECTLC/$entry"`;
+		    		    if ($? != 0) { die "Failed to make copy of a file declared into makepack-".$PROJECT.".conf file (Fails on line ".$entry.")\n"; } 
 			    	}
+			    	
 				}	
 				close IN;
 				

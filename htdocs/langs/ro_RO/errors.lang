@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=Ncio eroare, dăm commit
-
 # Errors
 Error=Eroare
 Errors=Erori
@@ -26,8 +25,11 @@ ErrorFromToAccountsMustDiffers=Sursa obiective şi conturi bancare trebuie să f
 ErrorBadThirdPartyName=Bad valoarea de terţă parte nume
 ErrorProdIdIsMandatory=%s este obligatoriu
 ErrorBadCustomerCodeSyntax=Bad sintaxă pentru codul de client
+ErrorBadBarCodeSyntax=Bad syntax for bar code
 ErrorCustomerCodeRequired=Clientul codul necesar
+ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Clientul codul folosit deja
+ErrorBarCodeAlreadyUsed=Bar code already used
 ErrorPrefixRequired=Prefix necesare
 ErrorUrlNotValid=Site-ul este incorect adresa
 ErrorBadSupplierCodeSyntax=Bad sintaxă pentru furnizor cod
@@ -37,7 +39,7 @@ ErrorBadParameters=Bad parametrii
 ErrorBadValueForParameter=Valoarea greşită &quot;%s&quot; incorecte &quot;pentru parametrul de %s
 ErrorBadImageFormat=Fişier de imagine nu are un format acceptat
 ErrorBadDateFormat=&quot;%s&quot; Valoarea are formatul de dată greşit
-# ErrorWrongDate=Date is not correct!
+ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=Nu a reuşit să scrie în directorul %s
 ErrorFoundBadEmailInFile=Found incorrect email syntax for %s lines in file (example line %s with email=Found incorecte de email sintaxă pentru %s linii în fişier (de exemplu linia de e-mail cu %s= %s)
 ErrorUserCannotBeDelete=Utilizatorul nu poate fi şters. Mai fi ce este asociată pe Dolibarr entităţi.
@@ -63,15 +65,16 @@ ErrorNoValueForCheckBoxType=Completaţi valorile pentru lista checkbox
 ErrorNoValueForRadioType=Completaţi valorile pentru lista radio
 ErrorBadFormatValueList=Valorile din lista nu pot aveae mai mult de o virgulă: <b>% s </ b>, dar trebuie să aibă cel puțin una: cheie, valoare
 ErrorFieldCanNotContainSpecialCharacters=<b>Câmp %s</b> trebuie să nu conţine caractere speciale.
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=Nu activat modul de contabilitate
-# ErrorExportDuplicateProfil=This profile name already exists for this export set.
+ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=Dolibarr-LDAP de potrivire nu este completă.
 ErrorLDAPMakeManualTest=A. Ldif fişier a fost generat în directorul %s. Încercaţi să încărcaţi manual de la linia de comandă pentru a avea mai multe informatii cu privire la erori.
 ErrorCantSaveADoneUserWithZeroPercentage=Nu se poate salva o acţiune cu "statut nu a început" în cazul în domeniu "realizat de către" este, de asemenea, completat.
 ErrorRefAlreadyExists=Ref utilizate pentru crearea există deja.
 ErrorPleaseTypeBankTransactionReportName=Vă rugăm să scrieţi numele băncii primirea în cazul în care tranzacţia este raportate (Format YYYYMM sau YYYYMMDD)
 ErrorRecordHasChildren=Nu a reuşit să ştergeţi înregistrări, deoarece acesta are unele Childs.
-# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
+ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript nu trebuie să fie dezactivate pentru a avea această facilitate de lucru. Pentru a activa / dezactiva Javascript, du-te la meniul Home-> Configurare-> Display.
 ErrorPasswordsMustMatch=Ambele parolele tastate trebuie să se potrivească reciproc
 ErrorContactEMail=O eroare de tehnică avut loc. Vă rugăm, contactaţi administratorul de a urma <b>%s</b> de e-mail ro oferi <b>%s</b> cod de eroare în mesajul Dvs., sau chiar mai bine prin adăugarea o copie ecran a acestei pagini.
@@ -129,7 +132,10 @@ ErrorPaymentModeDefinedToWithoutSetup=Un modul de plată a fost setat la tipul% 
 ErrorPHPNeedModule=Eroare, PHP trebuie să aibă modul <b>%s</b> instalat pentru a utiliza această funcţionalitate.
 ErrorOpenIDSetupNotComplete=Trebuie setat fișier de configurare Dolibarr pentru a permite autentificarea OpenID, dar URL-ul serviciului OpenID nu este definit în constanta %s
 ErrorWarehouseMustDiffers=Depozitul sursă și țintă trebuie să difere
-# ErrorBadFormat=Bad format!
+ErrorBadFormat=Bad format!
+ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
 
 # Warnings
 WarningMandatorySetupNotComplete=Parametri de setare obligatorii nu sunt încă definiţi
@@ -147,3 +153,4 @@ WarningCloseAlways=Atenţie, închiderea are loc chiar dacă suma diferă. Nu ac
 WarningUsingThisBoxSlowDown=Atenție, folosind această casetă încetiniţi serios toate paginile ce arată caseta.
 WarningClickToDialUserSetupNotComplete=Setările informațiilor ClickToDial pentru userul dvs. nu sunt complete (vezi tabul ClickToDial pe fişal dvs. de utilizator).
 WarningNotRelevant=Operaţiuni irelevante pentru acest dataset
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

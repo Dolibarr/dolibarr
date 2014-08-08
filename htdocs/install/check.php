@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<b>'.$langs->trans("MiscellaneousChecks")."</b>:<br>\n";
+print '<h3>'.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -73,12 +74,12 @@ if (! empty($useragent))
 if (versioncompare(versionphparray(),array(4,3,10)) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.3.10');
-	$checksok=0;
+	$checksok=0;	// 0=error, 1=warning
 }
-else if (versioncompare(versionphparray(),array(5,2,0)) < 0)    // Minimum supported (warning if lower)
+else if (versioncompare(versionphparray(),array(5,3,0)) < 0)    // Minimum supported (error if lower)
 {
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("WarningPHPVersionTooLow",'5.2.0');
-    $checksok=1;
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.3.0');
+    $checksok=0;	// 0=error, 1=warning
 }
 else
 {
@@ -151,10 +152,11 @@ if ($memmaxorig != '')
 	preg_match('/([0-9]+)([a-zA-Z]*)/i',$memmax,$reg);
 	if ($reg[2])
 	{
+		if (strtoupper($reg[2]) == 'G') $memmax=$reg[1]*1024*1024*1024;
 		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
 		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
 	}
-	if ($memmax >= $memrequired)
+	if ($memmax >= $memrequired || $memmax == -1)
 	{
 		print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
 	}
@@ -206,19 +208,18 @@ else
 		{
 			@fwrite($fp, '<?php');
 			@fputs($fp,"\n");
-			@fputs($fp,"?>");
 			fclose($fp);
 		}
 		else dolibarr_install_syslog("failed to create a new file ".$conffile." into current dir ".getcwd().". Check permission.", LOG_ERR);
 	}
 
-	// First install, on ne peut pas upgrader
+	// First install, we can't upgrade
 	$allowupgrade=0;
 }
 
 
 
-// Si fichier absent et n'a pu etre cree
+// File is missng and can't be created
 if (! file_exists($conffile))
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ConfFileDoesNotExistsAndCouldNotBeCreated",$conffiletoshow);
@@ -231,7 +232,7 @@ if (! file_exists($conffile))
 }
 else
 {
-	// Si fichier present mais ne peut etre modifie
+	// File exists but can't be modified
 	if (!is_writable($conffile))
 	{
 		if ($confexists)
@@ -248,7 +249,7 @@ else
 
 		$allowinstall=0;
 	}
-	// Si fichier present et peut etre modifie
+	// File exists and can be modified
 	else
 	{
 		if ($confexists)
@@ -267,12 +268,12 @@ else
 	}
 	print "<br>\n";
 
-	// Si prerequis ok, on affiche le bouton pour passer a l'etape suivante
+	// Requirements ok, we display the next step button
 	if ($checksok)
 	{
 		$ok=0;
 
-		// Try to create db connexion
+		// Try to create db connection
 		if (file_exists($conffile))
 		{
 			include_once $conffile;
@@ -332,39 +333,45 @@ else
 		print $langs->trans("InstallEasy")." ";
 		print $langs->trans("ChooseYourSetupMode");
 
+        print '<br /><br />';
 
 		$foundrecommandedchoice=0;
 
-
-		// Array of install choices
-		print '<table width="100%" class="listofchoices">';
+        $available_choices = array();
+        $notavailable_choices = array();
 
 		// Show first install line
-		print '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
-		print '</td>';
-		print '<td class="listofchoices">';
-		print $langs->trans("FreshInstallDesc");
+		$choice = '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("FreshInstall").'</b>';
+		$choice .= '</td>';
+		$choice .= '<td class="listofchoices">';
+		$choice .= $langs->trans("FreshInstallDesc");
 		if (empty($dolibarr_main_db_host))	// This means install process was not run
 		{
-			print '<br>';
+            $choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-			print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
+			$choice .= '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></center>';
 			// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
 			$foundrecommandedchoice=1;	// To show only once
 		}
-		print '</td>';
-		print '<td class="listofchoices" align="center">';
+
+        $choice .= '</td>';
+        $choice .= '<td class="listofchoices" align="center">';
 		if ($allowinstall)
 		{
-			print '<a class="button" href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+            $choice .= '<a class="button" href="fileconf.php?selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
 		}
 		else
 		{
-			print $langs->trans("InstallNotAllowed");
+            $choice .= $langs->trans("InstallNotAllowed");
 		}
-		print '</td>';
-		print '</tr>'."\n";
+        $choice .= '</td>';
+        $choice .= '</tr>'."\n";
 
+        if ($allowinstall) {
+            $available_choices[] = $choice;
+        } else {
+            $notavailable_choices[] = $choice;
+        }
 
 		// Show upgrade lines
 		$allowupgrade=true;
@@ -387,72 +394,144 @@ else
 								array('from'=>'3.2.0', 'to'=>'3.3.0'),
 								array('from'=>'3.3.0', 'to'=>'3.4.0'),
 								array('from'=>'3.4.0', 'to'=>'3.5.0'),
-								array('from'=>'3.5.0', 'to'=>'3.6.0')
+								array('from'=>'3.5.0', 'to'=>'3.6.0'),
+								array('from'=>'3.6.0', 'to'=>'3.7.0')
 		);
 
 		$count=0;
 		foreach ($migrationscript as $migarray)
 		{
+
+            $choice = '';
+
 			$count++;
-            $versionfrom=$migarray['from'];
+            $recommended_choice = false;
+            $version=DOL_VERSION;
+			$versionfrom=$migarray['from'];
             $versionto=$migarray['to'];
-            $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
-            $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
+            $versionarray=preg_split('/[\.-]/',$version);
             $dolibarrversionfromarray=preg_split('/[\.-]/',$versionfrom);
             $dolibarrversiontoarray=preg_split('/[\.-]/',$versionto);
-            $version=preg_split('/[\.-]/',DOL_VERSION);
+            // Define string newversionxxx that are used for text to show
+            $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.*',$versionfrom);
+            $newversionto=preg_replace('/(\.[0-9]+)$/i','.*',$versionto);
             $newversionfrombis='';
-            if (versioncompare($dolibarrversiontoarray,$version) < -2) $newversionfrombis=' '.$langs->trans("or").' '.$versionto;
-			print '<tr class="listofchoices"><td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
-			print '<td class="listofchoices">';
-			print $langs->trans("UpgradeDesc");
-			if ($ok)
-			{
-				if (count($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and a version x.y already available
-				{
-					// Now we check if this is the first qualified choice
-					if ($allowupgrade && empty($foundrecommandedchoice) && versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0)
-					{
-						print '<br>';
-						//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-						print '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
-						if ($count < count($migarray))	// There is other choices after
-						{
-							print $langs->trans("MigrateIsDoneStepByStep",DOL_VERSION);
-						}
-						print '</center>';
-						// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
-						$foundrecommandedchoice=1;	// To show only once
-					}
-				}
-				else {
-					// We can not recommand a choice.
-					// A version of install may be known, but we need last upgrade.
-				}
-			}
-			print '</td>';
-			print '<td class="listofchoices" align="center">';
+            if (versioncompare($dolibarrversiontoarray,$versionarray) < -2)	// From x.y.z -> x.y.z+1
+            {
+            	$newversionfrombis=' '.$langs->trans("or").' '.$versionto;
+            }
+
+            if ($ok)
+            {
+                if (count($dolibarrlastupgradeversionarray) >= 2)	// If a database access is available and last upgrade version is known
+                {
+                    // Now we check if this is the first qualified choice
+                    if ($allowupgrade && empty($foundrecommandedchoice) &&
+                        (versioncompare($dolibarrversiontoarray,$dolibarrlastupgradeversionarray) > 0 || versioncompare($dolibarrversiontoarray,$versionarray) < -2)
+                    )
+                    {
+                        $foundrecommandedchoice=1;	// To show only once
+                        $recommended_choice = true;
+                    }
+                }
+                else {
+                    // We can not recommand a choice.
+                    // A version of install may be known, but we need last upgrade.
+                }
+            }
+
+            $choice .= '<tr class="listofchoices '.($recommended_choice ? 'choiceselected' : '').'">';
+            $choice .= '<td class="listofchoices nowrap" align="center"><b>'.$langs->trans("Upgrade").'<br>'.$newversionfrom.$newversionfrombis.' -> '.$newversionto.'</b></td>';
+            $choice .= '<td class="listofchoices">';
+            $choice .= $langs->trans("UpgradeDesc");
+
+            if ($recommended_choice)
+            {
+                $choice .= '<br>';
+                //print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
+                $choice .= '<center><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
+                if ($count < count($migarray))	// There is other choices after
+                {
+                    print $langs->trans("MigrateIsDoneStepByStep",DOL_VERSION);
+                }
+                $choice .= '</center>';
+            }
+
+            $choice .= '</td>';
+            $choice .= '<td class="listofchoices" align="center">';
 			if ($allowupgrade)
 			{
 				// If it's not last updagre script, action = upgrade_tmp, if last action = upgrade
-				print '<a class="button" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+                $choice .= '<a class="button" href="upgrade.php?action=upgrade'.($count<count($migrationscript)?'_'.$versionto:'').'&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 			}
 			else
 			{
-				print $langs->trans("NotAvailable");
+                $choice .= $langs->trans("NotAvailable");
 			}
-			print '</td>';
-			print '</tr>'."\n";
+            $choice .= '</td>';
+            $choice .= '</tr>'."\n";
+
+            if ($allowupgrade) {
+                $available_choices[] = $choice;
+            } else {
+                $notavailable_choices[] = $choice;
+            }
 		}
 
-		print '</table>';
-		print "\n";
+		// If there is no choice at all, we show all of them.
+		if (empty($available_choices))
+		{
+			$available_choices=$notavailable_choices;
+			$notavailable_choices=array();
+		}
+
+        // Array of install choices
+        print '<table width="100%" class="listofchoices">';
+        foreach ($available_choices as $choice) {
+            print $choice;
+        }
+
+        print '</table>';
+
+        if (count($notavailable_choices)) {
+
+            print '<br />';
+            print '<div id="AShowChoices">';
+            print '<img src="../theme/eldy/img/1downarrow.png"> <a href="#">'.$langs->trans('ShowNotAvailableOptions').'</a>';
+            print '</div>';
+
+            print '<div id="navail_choices" style="display:none">';
+            print '<br />';
+            print '<table width="100%" class="listofchoices">';
+            foreach ($notavailable_choices as $choice) {
+                print $choice;
+            }
+
+            print '</table>';
+            print '</div>';
+        }
+
 	}
 
 }
 
+print '<script type="text/javascript">
 
+$("div#AShowChoices a").click(function() {
 
-pFooter(1);	// 1 car ne doit jamais afficher bouton Suivant
+    $("div#navail_choices").toggle();
 
-?>
+    if ($("div#navail_choices").css("display") == "none") {
+        $(this).text("'.$langs->trans('ShowNotAvailableOptions').'");
+        $(this).parent().children("img").attr("src", "../theme/eldy/img/1downarrow.png");
+    } else {
+        $(this).text("'.$langs->trans('HideNotAvailableOptions').'");
+        $(this).parent().children("img").attr("src", "../theme/eldy/img/1uparrow.png");
+    }
+
+});
+
+</script>';
+
+pFooter(true);	// Never display next button
+

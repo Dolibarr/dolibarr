@@ -12,7 +12,7 @@ ConfFileReload=重新载入配置文件的所有信息。
 PHPSupportSessions=这个PHP支持会议。
 PHPSupportPOSTGETOk=这个PHP支持的变量的POST和GET。
 PHPSupportPOSTGETKo=有可能你的PHP安装程序不支持变量POST和/或GET。检查你的php.ini中参数<b>的变数</b> 。
-PHPSupportGD=这个PHP支持广东的图形功能。
+PHPSupportGD=这个PHP支持GD图形功能。
 PHPSupportUTF8=这个PHP支持UTF8的功能。
 PHPMemoryOK=您的PHP最大会话内存设置为<b>%s。</b>这应该是足够的。
 PHPMemoryTooLow=您的PHP最大会话内存设置为<b>%s</b>字节。这应该是太低了。改变你的<b>php.ini中</b>设置<b>memory_limit的</b>参数至少<b>%s</b>字节。
@@ -27,7 +27,7 @@ ErrorFailedToCreateDatabase=无法创建数据库'%s'的。
 ErrorFailedToConnectToDatabase=无法连接到数据库'%s'的。
 ErrorDatabaseVersionTooLow=数据库版本 (%s) 太低了，需要 %s 版或更高版本。
 ErrorPHPVersionTooLow=PHP的版本太旧。版本%s是必需的。
-WarningPHPVersionTooLow=PHP版本太旧。预计或以上版本%s。这个版本应该允许安装，但不支持。
+WarningPHPVersionTooLow=PHP版本太旧。希望使用 %s 或更高版本。这个版本应该允许安装，但不再被支持。
 ErrorConnectedButDatabaseNotFound=连接到数据库服务器的成功，但'%s'不存在。
 ErrorDatabaseAlreadyExists=数据库'%s'已经存在。
 IfDatabaseNotExistsGoBackAndUncheckCreate=如果数据库不存在，请返回并检查选择“创建数据库”。
@@ -75,7 +75,7 @@ UserCreation=用户创建
 CreateDatabaseObjects=数据库对象的创建
 ReferenceDataLoading=数据加载参考
 TablesAndPrimaryKeysCreation=创建表和主键
-CreateTableAndPrimaryKey=创建表%s的
+CreateTableAndPrimaryKey=创建表%s
 CreateOtherKeysForTable=创建外键和索引的表%s
 OtherKeysCreation=外键和索引创建
 FunctionsCreation=创造功能
@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=点击此处显示/编辑高级参数（专家模式
 
 #########
 # upgrade
-#########
 MigrationFixData=修正了非规范化数据
 MigrationOrder=数据迁移的客户的订单
 MigrationSupplierOrder=数据迁移对供应商的订单
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=更新时间花费在几秒钟内
 MigrationActioncommElement=在行动上的更新数据
 MigrationPaymentMode=付款方式的数据迁移
 MigrationCategorieAssociation=迁移类别
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

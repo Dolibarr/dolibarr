@@ -217,4 +217,3 @@ if ($langs->file_exists("html/spam.html",0)) {
 llxFooter();
 
 $db->close();
-?>

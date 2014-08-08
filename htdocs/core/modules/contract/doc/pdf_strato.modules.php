@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/core/modules/contract/doc/pdf_strato.modules.php
  *	\ingroup    ficheinter
- *	\brief      Fichier de la classe permettant de generer les fiches d'intervention au modele Strato
+ *	\brief      Strato contracts template class file
  */
 require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -64,7 +64,7 @@ class pdf_strato extends ModelePDFContract
 
 		$this->db = $db;
 		$this->name = 'strato';
-		$this->description = $langs->trans("DocumentModelStandard");
+		$this->description = $langs->trans("StandardContractsTemplate");
 
 		// Dimension page pour format A4
 		$this->type = 'pdf';
@@ -96,13 +96,13 @@ class pdf_strato extends ModelePDFContract
 	/**
      *  Function to build pdf onto disk
      *
-     *  @param		int		$object				Id of object to generate
-     *  @param		object	$outputlangs		Lang output object
-     *  @param		string	$srctemplatepath	Full path of source filename for generator using a template file
-     *  @param		int		$hidedetails		Do not show line details
-     *  @param		int		$hidedesc			Do not show desc
-     *  @param		int		$hideref			Do not show ref
-     *  @return     int             			1=OK, 0=KO
+     *  @param		CommonObject	$object				Id of object to generate
+     *  @param		object			$outputlangs		Lang output object
+     *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
+     *  @param		int				$hidedetails		Do not show line details
+     *  @param		int				$hidedesc			Do not show desc
+     *  @param		int				$hideref			Do not show ref
+     *  @return		int									1=OK, 0=KO
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
@@ -121,10 +121,18 @@ class pdf_strato extends ModelePDFContract
 		{
             $object->fetch_thirdparty();
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->contrat->dir_output;
-			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
-			$file = $dir . "/" . $objectref . ".pdf";
+			// Definition of $dir and $file
+			if ($object->specimen)
+			{
+				$dir = $conf->contrat->dir_output;
+				$file = $dir . "/SPECIMEN.pdf";
+			}
+			else
+			{
+				$objectref = dol_sanitizeFileName($object->ref);
+				$dir = $conf->contrat->dir_output . "/" . $objectref;
+				$file = $dir . "/" . $objectref . ".pdf";
+			}
 
 			if (! file_exists($dir))
 			{
@@ -162,10 +170,10 @@ class pdf_strato extends ModelePDFContract
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("InterventionCard"));
+				$pdf->SetSubject($outputlangs->transnoentities("ContractCard"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("InterventionCard"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ContractCard"));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -244,6 +252,7 @@ class pdf_strato extends ModelePDFContract
 					$valide = $objectligne->id ? $objectligne->fetch($objectligne->id) : 0;
 					if ($valide > 0 || $object->specimen)
 					{
+						$curX = $this->posxdesc-1;
 						$curY = $nexY;
 						$pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 						$pdf->SetTextColor(0,0,0);
@@ -398,13 +407,13 @@ class pdf_strato extends ModelePDFContract
 		if (empty($hidebottom))
 		{
 			$pdf->SetXY(20,230);
-			$pdf->MultiCell(66,5, $outputlangs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+			$pdf->MultiCell(66,5, $outputlangs->transnoentities("ContactNameAndSignature", $this->emetteur->name),0,'L',0);
 
 			$pdf->SetXY(20,235);
 			$pdf->MultiCell(80,25, '', 1);
 
 			$pdf->SetXY(110,230);
-			$pdf->MultiCell(80,5, $outputlangs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+			$pdf->MultiCell(80,5, $outputlangs->transnoentities("ContactNameAndSignature", $this->recipient->name),0,'L',0);
 
 			$pdf->SetXY(110,235);
 			$pdf->MultiCell(80,25, '', 1);
@@ -555,11 +564,11 @@ class pdf_strato extends ModelePDFContract
 				// On peut utiliser le nom de la societe du contact
 				if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->client->nom;
-				$carac_client_name=$outputlangs->convToOutputCharset($socname);
+				$this->recipient->name=$outputlangs->convToOutputCharset($socname);
 			}
 			else
 			{
-				$carac_client_name=$outputlangs->convToOutputCharset($object->client->nom);
+				$this->recipient->name=$outputlangs->convToOutputCharset($object->client->nom);
 			}
 
 			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');
@@ -581,11 +590,11 @@ class pdf_strato extends ModelePDFContract
 			// Show recipient name
 			$pdf->SetXY($posx+2,$posy+3);
 			$pdf->SetFont('','B', $default_font_size);
-			$pdf->MultiCell($widthrecbox, 4, $carac_client_name, 0, 'L');
+			$pdf->MultiCell($widthrecbox, 4, $this->recipient->name, 0, 'L');
 
 			// Show recipient information
 			$pdf->SetFont('','', $default_font_size - 1);
-			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($carac_client_name,50)*4));
+			$pdf->SetXY($posx+2,$posy+4+(dol_nboflines_bis($this->recipient->name,50)*4));
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, 'L');
 		}
 	}
@@ -606,4 +615,3 @@ class pdf_strato extends ModelePDFContract
 
 }
 
-?>

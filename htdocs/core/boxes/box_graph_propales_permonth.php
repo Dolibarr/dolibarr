@@ -81,6 +81,12 @@ class box_graph_propales_permonth extends ModeleBoxes
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
+		$dir=''; 	// We don't need a path because image file will not be saved into disk
+		$prefix='';
+		$socid=0;
+		if ($user->societe_id) $socid=$user->societe_id;
+		if (! $user->rights->societe->client->voir || $socid) $prefix.='private-'.$user->id.'-';	// If user has no permission to see all, output dir is specific to user
+
 		if ($user->rights->propal->lire)
 		{
 			$param_year='DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
@@ -89,7 +95,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
-			if (GETPOST('DOL_AUTOSET_COOKIE'))
+			$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 			{
 				$endyear=GETPOST($param_year,'int');
 				$shownb=GETPOST($param_shownb,'alpha');
@@ -97,8 +104,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 			}
 			else
 			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-				$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
@@ -107,12 +113,10 @@ class box_graph_propales_permonth extends ModeleBoxes
 			$nowarray=dol_getdate(dol_now(),true);
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
-			$mode='customer';
-			$userid=0;
 			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
-			$stats = new PropaleStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			$stats = new PropaleStats($this->db, $socid, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
@@ -120,9 +124,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$data1 = $stats->getNbByMonthWithPrevYear($endyear,$startyear,(GETPOST('action')==$refreshaction?-1:(3600*24)));
 				$datatype1 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 
-				$filenamenb = $dir."/propalsnbinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsnbinyear-'.$year.'.png';
+				$filenamenb = $dir."/".$prefix."propalsnbinyear-".$endyear.".png";
+				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsnbinyear-'.$endyear.'.png';
 
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
@@ -161,9 +164,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$datatype2 = array_pad(array(), ($endyear-$startyear+1), 'bars');
 				//$datatype2 = array('lines','bars');
 
-				$filenamenb = $dir."/propalsamountinyear-".$year.".png";
-				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$year.'.png';
-				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$year.'.png';
+				$filenamenb = $dir."/".$prefix."propalsamountinyear-".$endyear.".png";
+				if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&amp;file=propalsamountinyear-'.$endyear.'.png';
+				if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstatssupplier&amp;file=propalsamountinyear-'.$endyear.'.png';
 
 				$px2 = new DolGraph();
 				$mesg = $px2->isGraphKo();
@@ -195,6 +198,12 @@ class box_graph_propales_permonth extends ModeleBoxes
 				}
 			}
 
+			if (empty($conf->use_javascript_ajax))
+			{
+				$langs->load("errors");
+				$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
+			}
+
 			if (! $mesg)
 			{
 				$stringtoshow='';
@@ -214,7 +223,7 @@ class box_graph_propales_permonth extends ModeleBoxes
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfProposalsByMonthHT");
 				$stringtoshow.='<br>';
 				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)
@@ -264,4 +273,3 @@ class box_graph_propales_permonth extends ModeleBoxes
 
 }
 
-?>

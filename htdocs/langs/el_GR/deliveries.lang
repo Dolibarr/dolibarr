@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
-Delivery=Διανομή
-Deliveries=Διανομές
-DeliveryCard=Καρτέλα διανομής
+Delivery=Παράδοση
+Deliveries=Παραδώσεις
+DeliveryCard=Καρτέλα παράδοσης
 DeliveryOrder=Παράδοση παραγγελίας
 DeliveryOrders=Παράδοση παραγγελιών
 DeliveryDate=Ημερ. παράδοσης
@@ -10,10 +10,10 @@ CreateDeliveryOrder=Δημιουργία παράδοσης παραγγελία
 QtyDelivered=Ποσότητα που παραδόθηκε
 SetDeliveryDate=Ορισμός ημερ. αποστολής
 ValidateDeliveryReceipt=Επικύρωση παράδοσης παραλαβής
-ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
-DeleteDeliveryReceipt=Διαγραφή αποδεικτικό παράδοσης
+ValidateDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να επικυρώσετε την απόδειξη αυτής της παράδοσης;
+DeleteDeliveryReceipt=Διαγραφή αποδεικτικού παράδοσης
 DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε να διαγράψετε <b>%s</b> παραλαβής παράδοσης;
-DeliveryMethod=Μέθοδος διανομής
+DeliveryMethod=Μέθοδος παράδοσης
 TrackingNumber=Αριθμός παρακολούθησης
 DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
 # merou PDF model
@@ -23,3 +23,4 @@ GoodStatusDeclaration=Παραδόθηκαν τα παραπάνω σε καλή
 Deliverer=Διανομέας :
 Sender=Αποστολέας
 Recipient=Παραλήπτης
+# ErrorStockIsNotEnough=There's not enough stock

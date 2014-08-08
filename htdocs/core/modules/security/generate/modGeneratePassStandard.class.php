@@ -129,4 +129,3 @@ class modGeneratePassStandard extends ModeleGenPassword
 	}
 }
 
-?>

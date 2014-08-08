@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID gebeurtenis
 Actions=Acties
 ActionsArea=Actieoverzicht (Gebeurtenissen en taken)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Lokale kalender
 AffectedTo= Geaffecteerden
 DoneBy= Gedaan door
 Events= Gebeurtenissen
-# EventsNb=Number of events
+EventsNb=Aantal gebeurtenissen
 MyEvents=Mijn evenementen
 OtherEvents=Andere evenementen
 ListOfActions=Gebeurtenissenlijst
@@ -25,12 +25,15 @@ ListOfEvents= Dolibarr gebeurtenissenlijst
 ActionsAskedBy=Acties geregistreerd door
 ActionsToDoBy=Acties toegewezen aan
 ActionsDoneBy=Acties gedaan door
+ActionsForUser=Evenementen voor gebruiker
+ActionsForUsersGroup=Evenementen voor alle gebruikers van de groep
 AllMyActions= Al mijn acties / taken
 AllActions= Alle acties / taken
 ViewList=Bekijk de lijst
 ViewCal=Bekijk kalender
 ViewDay=Dag te bekijken
 ViewWeek=Weekweergave
+ViewPerUser=Per gebruiker
 ViewWithPredefinedFilters= Bekijk met voorgedefinieerde filters
 AutoActions= Automatisch invullen van de agenda
 AgendaAutoActionDesc= Stel hier de gebeurtenissen in waarvoor u wilt dat Dolibarr automatische een afspraak in de agenda creëert. Als er niets is aangevinkt (standaard), zullen alleen handmatige acties worden opgenomen in de agenda.
@@ -40,9 +43,10 @@ ActionsEvents= Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken i
 PropalValidatedInDolibarr= Voorstel %s gevalideerd
 InvoiceValidatedInDolibarr= Factuur %s gevalideerd
 InvoiceBackToDraftInDolibarr=Factuur %s ga terug naar ontwerp van de status van
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Factuur %s verwijderd
 OrderValidatedInDolibarr= Opdracht %s gevalideerd
 OrderApprovedInDolibarr=Bestel %s goedgekeurd
+OrderRefusedInDolibarr=Order %s is geweigerd
 OrderBackToDraftInDolibarr=Bestel %s terug te gaan naar ontwerp-status
 OrderCanceledInDolibarr=Bestel %s geannuleerd
 InterventionValidatedInDolibarr=Interventie %s gevalideerd
@@ -52,7 +56,9 @@ InvoiceSentByEMail=Afnemersfactuur %s verzonden per e-mail
 SupplierOrderSentByEMail=Leveranciersopdracht %s verzonden per e-mail
 SupplierInvoiceSentByEMail=Leveranciersfactuur %s verzonden per e-mail
 ShippingSentByEMail=Verzendkosten %s per e-mail
+ShippingValidated= Verzending %s is gevalideerd
 InterventionSentByEMail=Interventie %s per e-mail
+InterventionClassifiedBilled=Interventie %s geclassificeerd als gefactureerd
 NewCompanyToDolibarr= Derde aangemaakt
 DateActionPlannedStart= Geplande startdatum
 DateActionPlannedEnd= Geplande einddatum
@@ -67,8 +73,8 @@ AgendaUrlOptions4=<b>login=%s</b> om uitvoer van acties toegewezen aan gebruiker
 AgendaUrlOptions5=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Bezig
+ExportDataset_event1=Lijst van agenda-gebeurtenissen
 
 # External Sites ical
 ExportCal=Export kalender

@@ -79,7 +79,7 @@ function fichinter_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->ficheinter->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Documents");
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -119,7 +119,7 @@ function fichinter_admin_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'fichinter_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -128,10 +128,9 @@ function fichinter_admin_prepare_head()
 
 
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'fichinter_admin','remove');
+	complete_head_from_modules($conf,$langs,null,$head,$h,'fichinter_admin','remove');
 
 		return $head;
 }
 
 
-?>

@@ -67,7 +67,7 @@ if ($action == 'setvalue' && $user->admin)
     if (! $error)
   	{
   		$db->commit();
-  		$mesg='<div class="ok">'.$langs->trans("SetupSaved").'</div>';
+	    setEventMessage($langs->trans("SetupSaved"));
   	}
   	else
   	{
@@ -93,16 +93,6 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print_fiche_titre($langs->trans("PayBoxSetup"),$linkback,'setup');
 
-$h = 0;
-$head = array();
-
-$head[$h][0] = DOL_URL_ROOT."/paybox/admin/paybox.php";
-$head[$h][1] = $langs->trans("Account");
-$head[$h][2] = 'payboxaccount';
-$h++;
-
-dol_fiche_head($head, 'payboxaccount', '');
-
 print $langs->trans("PayBoxDesc")."<br>\n";
 
 print '<br>';
@@ -112,7 +102,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 $var=true;
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
@@ -205,10 +195,7 @@ print '<input size="32" type="email" name="PAYBOX_PAYONLINE_SENDEMAIL" value="'.
 print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
 print '</td></tr>';
 
-print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-print '</table></form>';
-
-dol_fiche_end();
+print '</table><br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center></form>';
 
 print '<br><br>';
 
@@ -240,9 +227,6 @@ if (! empty($conf->adherent->enabled))
 print "<br>";
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
 
-dol_htmloutput_mesg($mesg);
-
 $db->close();
-
+dol_fiche_end();
 llxFooter();
-?>

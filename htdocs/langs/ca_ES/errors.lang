@@ -2,7 +2,6 @@
 
 # No errors
 NoErrorCommitIsDone=Sense errors, és vàlid
-
 # Errors
 Error=Error
 Errors=Errors
@@ -26,8 +25,11 @@ ErrorFromToAccountsMustDiffers=El compte origen i destinació han de ser diferen
 ErrorBadThirdPartyName=Nom de tercer incorrecte
 ErrorProdIdIsMandatory=El %s es obligatori
 ErrorBadCustomerCodeSyntax=La sintaxi del codi client és incorrecta
+ErrorBadBarCodeSyntax=Bad syntax for bar code
 ErrorCustomerCodeRequired=Codi client obligatori
+ErrorBarCodeRequired=Bar code required
 ErrorCustomerCodeAlreadyUsed=Codi de client ja utilitzat
+ErrorBarCodeAlreadyUsed=Bar code already used
 ErrorPrefixRequired=Prefix obligatori
 ErrorUrlNotValid=L'adreça del lloc web és incorrecta
 ErrorBadSupplierCodeSyntax=La sintaxi del codi proveïdor és incorrecta
@@ -37,7 +39,7 @@ ErrorBadParameters=Paràmetres incorrectes
 ErrorBadValueForParameter=Valor '%s' incorrecte per al paràmetre '%s'
 ErrorBadImageFormat=La imatge no té un format reconegut
 ErrorBadDateFormat=El valor '%s' té un format de data no reconegut
-# ErrorWrongDate=Date is not correct!
+ErrorWrongDate=Date is not correct!
 ErrorFailedToWriteInDir=No es pot escriure a la carpeta %s
 ErrorFoundBadEmailInFile=Trobada sintaxi incorrecta en email a %s línies en fitxer (exemple linia %s amb email=%s)
 ErrorUserCannotBeDelete=L'usuari no pot ser eliminat. Potser estigui associat a elements de Dolibarr.
@@ -63,15 +65,16 @@ ErrorNoValueForCheckBoxType=Els valors de la llista han de ser indicats
 ErrorNoValueForRadioType=Els valors de la llista han de ser indicats
 ErrorBadFormatValueList=Els valors de la llista no peudo contenir més d'una coma: <u>%s </u>, però necessita una: clau, valors
 ErrorFieldCanNotContainSpecialCharacters=El camp <b>%s</b> no ha de contenir caràcters especials
+ErrorFieldCanNotContainSpecialNorUpperCharacters=Field <b>%s</b> must not contains special characters, nor upper case characters.
 ErrorNoAccountancyModuleLoaded=Mòdul de comptabilitat no activat
-# ErrorExportDuplicateProfil=This profile name already exists for this export set.
+ErrorExportDuplicateProfil=This profile name already exists for this export set.
 ErrorLDAPSetupNotComplete=La configuració Dolibarr-LDAP és incompleta.
 ErrorLDAPMakeManualTest=S'ha creat un arxiu .ldif a la carpeta %s. Tracti de carregar manualment aquest arxiu des de la línia de comandes per obtenir més informació sobre l'error.
 ErrorCantSaveADoneUserWithZeroPercentage=No es pot canviar una acció al estat no començada si teniu un usuari realitzant de l'acció.
 ErrorRefAlreadyExists=La referència utilitzada per a la creació ja existeix
 ErrorPleaseTypeBankTransactionReportName=Introduïu el nom del registre bancari sobre el qual l'escrit està constatat (format AAAAMM o AAAMMJJ)
 ErrorRecordHasChildren=No es pot esborrar el registre perquè té registrses fills.
-# ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
+ErrorRecordIsUsedCantDelete=Can't delete record. It is already used or included into other object.
 ErrorModuleRequireJavascript=Javascript ha d'estar activat per a que aquesta opció pugui utilitzar-se. Per activar/desactivar JavaScript, aneu al menú Inici->Configuració->Entorn.
 ErrorPasswordsMustMatch=Les 2 contrasenyes indicades s'han de correspondre
 ErrorContactEMail=S'ha produït un error tècnic. Contacti amb l'administrador al e-mail <b>%s</b>, indicant el codi d'error <b>%s</b> en el seu missatge, o pot també adjuntar una còpia de pantalla d'aquesta pàgina.
@@ -126,10 +129,13 @@ ErrorToConnectToMysqlCheckInstance=Error de connexió amb el servidor de la base
 ErrorFailedToAddContact=Error en l'addició del contacte
 ErrorDateMustBeBeforeToday=La data no pot ser superior a avui
 ErrorPaymentModeDefinedToWithoutSetup=S'ha establert la forma de pagament al tipus %s però a la configuració del mòdul de factures no s'ha indicat la informació per mostrar aquesta forma de pagament.
-# ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
-# ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
-# ErrorWarehouseMustDiffers=Source and target warehouses must differs
-# ErrorBadFormat=Bad format!
+ErrorPHPNeedModule=Error, your PHP must have module <b>%s</b> installed to use this feature.
+ErrorOpenIDSetupNotComplete=You setup Dolibarr config file to allow OpenID authentication, but URL of OpenID service is not defined into constant %s
+ErrorWarehouseMustDiffers=Source and target warehouses must differs
+ErrorBadFormat=Bad format!
+ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s.
+ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
+ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
 
 # Warnings
 WarningMandatorySetupNotComplete=Els paràmetres obligatoris de configuració no estan encara definits
@@ -147,3 +153,4 @@ WarningCloseAlways=Avís, el tancament és realitzat encara que la quantitat tot
 WarningUsingThisBoxSlowDown=Atenció, l'ús d'aquest panell provoca serioses alentiments en les pàgines que mostren aquest panell.
 WarningClickToDialUserSetupNotComplete=La configuració de ClickToDial per al compte d'usuari no està completa (vegeu la pestanya ClickToDial en la seva fitxa d'usuari)
 WarningNotRelevant=Operació irrellevant per a aquest conjunt de dades
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

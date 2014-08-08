@@ -126,7 +126,7 @@ class dolprintIPP
      */
     function list_jobs($module)
     {
-        global $conf,$db;
+        global $conf, $db, $bc;
         include_once DOL_DOCUMENT_ROOT.'/includes/printipp/CupsPrintIPP.php';
         $ipp = new CupsPrintIPP();
         $ipp->setLog(DOL_DATA_ROOT.'/printipp.log','file',3); // logging very verbose
@@ -201,4 +201,3 @@ class dolprintIPP
         return $ipp->printer_attributes;
     }
 }
-?>

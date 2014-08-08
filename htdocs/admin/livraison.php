@@ -412,7 +412,7 @@ foreach ($dirmodels as $reldir)
                     // Info
                     $htmltooltip =    ''.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
                     $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
-                    $htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
+                    $htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
                     $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
                     print '<td align="center">';
                     print $form->textwithpicto('',$htmltooltip,1,0);
@@ -461,4 +461,3 @@ print '</table>';
 $db->close();
 
 llxFooter();
-?>

@@ -69,13 +69,11 @@ function get_tz_array()
  */
 function getServerTimeZoneString()
 {
-    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
-    else return '';
+    return @date_default_timezone_get();
 }
 
 /**
  * Return server timezone int.
- * If $conf->global->MAIN_OLD_DATE is set or PHP too old, we use old behaviour: All convertions does not take care of dayling saving time.
  *
  * @param	string	$refgmtdate		Reference period for timezone (timezone differs on winter and summer. May be 'now', 'winter' or 'summer')
  * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
@@ -83,7 +81,7 @@ function getServerTimeZoneString()
 function getServerTimeZoneInt($refgmtdate='now')
 {
     global $conf;
-    if (method_exists('DateTimeZone','getOffset') && empty($conf->global->MAIN_OLD_DATE))
+    if (method_exists('DateTimeZone','getOffset'))
     {
         // Method 1 (include daylight)
         $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
@@ -97,11 +95,13 @@ function getServerTimeZoneInt($refgmtdate='now')
     }
     else
     {
+    	dol_print_error('','PHP version must be 5.3+');
+    	/*
         // Method 2 (does not include daylight, not supported by adodb)
         if ($refgmtdate == 'now')
         {
             if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use new PHP with not MAIN_OLD_DATE.
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref=dol_print_date($gmtnow,'%m'); $dayref=dol_print_date($gmtnow,'%d');
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= $gmtnow && $gmtnow < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
@@ -111,7 +111,7 @@ function getServerTimeZoneInt($refgmtdate='now')
         elseif ($refgmtdate == 'summer')
         {
             if (ini_get("date.timezone")=='UTC') return 0;
-            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client. Fix is to use new PHP with not MAIN_OLD_DATE.
+            // We don't know server timezone string, so we don't know location, so we can't guess daylight. We assume we use same than client but this may be a bug.
             $gmtnow=dol_now('gmt'); $yearref=dol_print_date($gmtnow,'%Y'); $monthref='08'; $dayref='01';
             if (dol_stringtotime($_SESSION['dol_dst_first']) <= dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) && dol_stringtotime($yearref.'-'.$monthref.'-'.$dayref) < dol_stringtotime($_SESSION['dol_dst_second'])) $daylight=1;
             else $daylight=0;
@@ -119,48 +119,11 @@ function getServerTimeZoneInt($refgmtdate='now')
             return 'unknown';    // For true result
         }
         else $tmp=dol_mktime(0,0,0,1,1,1970);
+        */
     }
     $tz=round(($tmp<0?1:-1)*abs($tmp/3600));
     return $tz;
 }
-
-/**
- * Return server timezone string
- *
- * @return string			Parent company timezone string ('Europe/Paris')
- *
-function getParentCompanyTimeZoneString()
-{
-    if (function_exists('date_default_timezone_get')) return date_default_timezone_get();
-    else return '';
-}
-*/
-
-/**
- * Return parent company timezone int.
- * If $conf->global->MAIN_NEW_DATE is set, we use new behaviour: All convertions take care of dayling saving time.
- *
- * @param	string	$refgmtdate		Reference date for timezone (timezone differs on winter and summer)
- * @return 	int						An offset in hour (+1 for Europe/Paris on winter and +2 for Europe/Paris on summer)
- *
-function getParentCompanyTimeZoneInt($refgmtdate='now')
-{
-    global $conf;
-    if (class_exists('DateTime') && empty($conf->global->MAIN_OLD_DATE))
-    {
-        // Method 1 (include daylight)
-        $localtz = new DateTimeZone(getParentCompanyTimeZoneString());
-        $localdt = new DateTime($refgmtdate, $localtz);
-        $tmp=-1*$localtz->getOffset($localdt);
-    }
-    else
-    {
-        // Method 2 (does not include daylight)
-        $tmp=dol_mktime(0,0,0,1,1,1970);
-    }
-    $tz=($tmp<0?1:-1)*abs($tmp/3600);
-    return $tz;
-}*/
 
 
 /**
@@ -476,10 +439,10 @@ function dol_get_next_week($day, $week, $month, $year)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		mixed		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *                          			Exemple: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, after a dol_print_date will return 1970-01-01 00:00:00
  *                          			Exemple: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, after a dol_print_date will return 1970-01-01 00:00:00
- *  @return		timestamp				Date for first day
+ *  @return		int						Date for first day
  */
 function dol_get_first_day($year,$month=1,$gm=false)
 {
@@ -491,8 +454,8 @@ function dol_get_first_day($year,$month=1,$gm=false)
  *
  *	@param		int			$year		Year
  * 	@param		int			$month		Month
- * 	@param		boolean		$gm			False = Return date to compare with server TZ, True to compare with GM date.
- *	@return		timestamp				Date for first day
+ * 	@param		boolean		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
+ *	@return		int						Date for first day
  */
 function dol_get_last_day($year,$month=12,$gm=false)
 {
@@ -518,7 +481,7 @@ function dol_get_last_day($year,$month=12,$gm=false)
  *	@param		int		$day		Day
  * 	@param		int		$month		Month
  *  @param		int		$year		Year
- * 	@param		int		$gm			False = Return date to compare with server TZ, True to compare with GM date.
+ * 	@param		int		$gm			False or 0 or 'server' = Return date to compare with server TZ, True or 1 to compare with GM date.
  *	@return		array				year,month, week,first_day,prev_year,prev_month,prev_day
  */
 function dol_get_first_day_week($day,$month,$year,$gm=false)
@@ -585,11 +548,11 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 }
 
 /**
- *	Fonction retournant le nombre de jour feries samedis et dimanches entre 2 dates entrees en timestamp
+ *	Fonction retournant le nombre de jour feries, samedis et dimanches entre 2 dates entrees en timestamp. Dates must be UTC with hour, day, min to 0
  *	Called by function num_open_day
  *
- *	@param	    timestamp	$timestampStart     Timestamp de debut
- *	@param	    timestamp	$timestampEnd       Timestamp de fin
+ *	@param	    int			$timestampStart     Timestamp de debut
+ *	@param	    int			$timestampEnd       Timestamp de fin
  *  @param      string		$countrycode        Country code
  *	@return   	int								Nombre de jours feries
  */
@@ -597,7 +560,10 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 {
 	$nbFerie = 0;
 
-	while ($timestampStart != $timestampEnd)
+	// Check to ensure we use correct parameters
+	if ((($timestampEnd - $timestampStart) % 86400) != 0) return 'ErrorDates must use same hour and be GMT dates';
+
+	while ($timestampStart < $timestampEnd)		// Loop end when equals
 	{
 		$ferie=false;
 		$countryfound=0;
@@ -693,6 +659,49 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
 			//Samedi (6) et dimanche (0)
 		}
+		
+		if ($countrycode == 'ES')
+		{
+			$countryfound=1;
+
+			// Definition des dates feriees fixes
+			if($jour == 1 && $mois == 1)   $ferie=true; // Año nuevo
+			if($jour == 6 && $mois == 1)   $ferie=true; // Día Reyes
+			if($jour == 1 && $mois == 5)   $ferie=true; // 1 Mayo
+			if($jour == 15 && $mois == 8)  $ferie=true; // 15 Agosto
+			if($jour == 12 && $mois == 10)  $ferie=true; // Día Hispanidad
+			if($jour == 1 && $mois == 11)  $ferie=true; // 1 noviembre
+			if($jour == 6 && $mois == 12) $ferie=true; // Constitución
+			if($jour == 8 && $mois == 12)  $ferie=true; // Inmaculada
+			if($jour == 25 && $mois == 12) $ferie=true; // 25 diciembre
+
+			// Calcul día de Pascua
+			$date_paques = easter_date($annee);
+			$jour_paques = date("d", $date_paques);
+			$mois_paques = date("m", $date_paques);
+			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
+			// Paques
+
+			// Viernes Santo
+            $date_viernes = mktime(
+                date("H", $date_paques),
+                date("i", $date_paques),
+                date("s", $date_paques),
+                date("m", $date_paques),
+                date("d", $date_paques) -2,
+                date("Y", $date_paques)
+            );
+			$jour_viernes = date("d", $date_viernes);
+			$mois_viernes = date("m", $date_viernes);
+			if($jour_viernes == $jour && $mois_viernes == $mois) $ferie=true;
+			//Viernes Santo
+
+			// Calul des samedis et dimanches
+			$jour_julien = unixtojd($timestampStart);
+			$jour_semaine = jddayofweek($jour_julien, 0);
+			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
+			//Samedi (6) et dimanche (0)
+		}
 
 		// Cas pays non defini
 		if (! $countryfound)
@@ -707,20 +716,20 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 		// On incremente compteur
 		if ($ferie) $nbFerie++;
 
-		// Incrementation du nombre de jour (on avance dans la boucle)
+		// Increase number of days (on go up into loop)
 		$jour++;
-		$timestampStart=mktime(0,0,0,$mois,$jour,$annee);
+		$timestampStart=dol_mktime(0,0,0,$mois,$jour,$annee,1);	// Generate GMT date for next day
 	}
 
 	return $nbFerie;
 }
 
 /**
- *	Fonction retournant le nombre de jour entre deux dates
+ *	Function to return number of days between two dates (date must be UTC date !)
  *  Example: 2012-01-01 2012-01-02 => 1 if lastday=0, 2 if lastday=1
  *
- *	@param	   timestamp	$timestampStart     Timestamp de debut
- *	@param	   timestamp	$timestampEnd       Timestamp de fin
+ *	@param	   int			$timestampStart     Timestamp start UTC
+ *	@param	   int			$timestampEnd       Timestamp end UTC
  *	@param     int			$lastday            Last day is included, 0: non, 1:oui
  *	@return    int								Number of days
  */
@@ -745,9 +754,9 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 /**
  *	Function to return number of working days (and text of units) between two dates (working days)
  *
- *	@param	   	timestamp	$timestampStart     Timestamp for start date
- *	@param	   	timestamp	$timestampEnd       Timestamp for end date
- *	@param     	int			$inhour             0: return number of days, 1: return number of hours (72h max)
+ *	@param	   	int			$timestampStart     Timestamp for start date (date must be UTC to avoid calculation errors)
+ *	@param	   	int			$timestampEnd       Timestamp for end date (date must be UTC to avoid calculation errors)
+ *	@param     	int			$inhour             0: return number of days, 1: return number of hours
  *	@param		int			$lastday            We include last day, 0: no, 1:yes
  *  @param		int			$halfday			Tag to define half day when holiday start and end
  *	@return    	int								Number of days or hours
@@ -765,7 +774,6 @@ function num_open_day($timestampStart, $timestampEnd, $inhour=0, $lastday=0, $ha
 	//print 'num_open_day timestampStart='.$timestampStart.' timestampEnd='.$timestampEnd.' bit='.$lastday;
 	if ($timestampStart < $timestampEnd)
 	{
-		//print num_between_day($timestampStart, $timestampEnd, $lastday).' - '.num_public_holiday($timestampStart, $timestampEnd);
 		$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $lastday) - num_public_holiday($timestampStart, $timestampEnd, $lastday);
 		$nbOpenDay.= " " . $langs->trans("Days");
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = $nbOpenDay*24 . $langs->trans("HourShort");
@@ -812,4 +820,3 @@ function monthArray($outputlangs)
     return $montharray;
 }
 
-?>

@@ -130,7 +130,7 @@ if ($id)
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td width="20%">'.$langs->trans("WithdrawalReceipts").'</td><td>';
+		print '<tr><td width="20%">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
 		print '<a href="fiche.php?id='.$lipre->bon_rowid.'">'.$lipre->bon_ref.'</a></td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec,'day').'</td></tr>';
 		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
@@ -330,4 +330,3 @@ if ($id)
 llxFooter();
 
 $db->close();
-?>

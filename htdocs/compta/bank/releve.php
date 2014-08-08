@@ -189,7 +189,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -211,7 +211,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -277,7 +277,6 @@ else
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
-	dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -310,7 +309,12 @@ else
 			print "</td>\n";
 
 			// Type and num
-			print '<td class="nowrap">'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
+            if ($objp->fk_type == 'SOLD') {
+                $type_label='&nbsp;';
+            } else {
+                $type_label=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$objp->fk_type;
+            }
+			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
 
 			// Description
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
@@ -486,4 +490,3 @@ else
 $db->close();
 
 llxFooter();
-?>

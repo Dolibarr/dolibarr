@@ -53,7 +53,7 @@ switch ($action)
 
 		$invoice=new Facture($db);
 		$invoice->date=dol_now();
-		$invoice->type=0;
+		$invoice->type= Facture::TYPE_STANDARD;
 		$num=$invoice->getNextNumRef($company);
 
 		$obj_facturation->numInvoice($num);
@@ -207,7 +207,7 @@ switch ($action)
 		$invoice->total_ht=$obj_facturation->prixTotalHt();
 		$invoice->total_tva=$obj_facturation->montantTva();
 		$invoice->total_ttc=$obj_facturation->prixTotalTtc();
-		$invoice->note=$note;
+		$invoice->note_private=$note;
 		$invoice->cond_reglement_id=$cond_reglement_id;
 		$invoice->mode_reglement_id=$mode_reglement_id;
 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
@@ -301,4 +301,3 @@ switch ($action)
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
 
 header('Location: '.$redirection);
-?>

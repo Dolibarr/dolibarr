@@ -1,0 +1,11 @@
+<% if @suphp_engine == 'on' -%>
+<% if @suphp_addhandler -%>
+  suPHP_AddHandler <%= @suphp_addhandler %>
+<% end -%>
+<% if @suphp_engine -%>
+  suPHP_Engine <%= @suphp_engine %>
+<% end -%>
+<% if @suphp_configpath -%>
+  suPHP_ConfigPath "<%= @suphp_configpath %>"
+<% end -%>
+<% end -%>

@@ -38,7 +38,7 @@ ConfirmCloseService=هل أنت متأكد من أن وثيقة مع هذه ال
 ValidateAContract=مصادقة على العقود
 ActivateService=تفعيل الخدمة
 ConfirmActivateService=هل أنت متأكد من تفعيل هذه الخدمة في تاريخ <b>٪ ق؟</b>
-# RefContract=Contract reference
+RefContract=Contract reference
 DateContract=تاريخ العقد
 DateServiceActivate=تاريخ تفعيل الخدمة
 DateServiceUnactivate=تاريخ خدمة unactivation
@@ -85,10 +85,12 @@ PaymentRenewContractId=تجديد العقد الخط (رقم ٪)
 ExpiredSince=تاريخ الانتهاء
 RelatedContracts=العقود ذات الصلة
 NoExpiredServices=أي نوع من الخدمات انتهت نشط
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=ممثل مبيعات توقيع العقد

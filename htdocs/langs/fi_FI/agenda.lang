@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Toimet
 ActionsArea=Toimien alueella (tapahtumat ja tehtävät)
 Agenda= Agenda
@@ -10,7 +10,7 @@ LocalAgenda=Paikallinen kalenteri
 AffectedTo= Vaikuttaa
 DoneBy= Tekemiäni
 Events= Tapahtumat
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=My tapahtumia
 OtherEvents=Muut tapahtumat
 ListOfActions=Luettelo tapahtumista
@@ -25,12 +25,15 @@ ListOfEvents= Luettelo Dolibarr tapahtumat
 ActionsAskedBy=Toimet kirjattava
 ActionsToDoBy=Toimet vaikuttaa
 ActionsDoneBy=Toimet tehdään
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= Kaikki toimet / tehtävät
 AllActions= Toutes les actions / tehtävät
 ViewList=Näytä lista
 ViewCal=Näytä kalenteri
 ViewDay=Päivä näkymä
 ViewWeek=Viikkonäkymä
+ViewPerUser=Per user
 ViewWithPredefinedFilters= Näytä ennalta suodattimet
 AutoActions= Automaattinen täyttö Esityslistan
 AgendaAutoActionDesc= Määritä tässä tapahtumia joihin haluat Dolibarr luoda automaattisesti toimia asialistalla. Jos mitään ei tarkastettu (oletuksena), vain ruumiillisen toimien on oltava mukana esityslistalla.
@@ -40,9 +43,10 @@ ActionsEvents= Tapahtumat, joista Dolibarr luo toimia esityslistan automaattises
 PropalValidatedInDolibarr= Ehdotus validoitava
 InvoiceValidatedInDolibarr= Laskun validoitava
 InvoiceBackToDraftInDolibarr=Laskun %s palata luonnos tila
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Tilaa validoitava
 OrderApprovedInDolibarr=Tilaa %s hyväksytty
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Tilaa %s palata luonnos tila
 OrderCanceledInDolibarr=Tilaus %s peruutettu
 InterventionValidatedInDolibarr=Intervention %s validoitu
@@ -52,7 +56,9 @@ InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
 SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
 SupplierInvoiceSentByEMail=Toimittaja lasku %s lähetetään sähköpostilla
 ShippingSentByEMail=Toimitus %s lähetetään sähköpostilla
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Intervention %s lähetetään sähköpostilla
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Kolmannen osapuolen luonut
 DateActionPlannedStart= SUUNNITELTU ALKAMISPÄIVÄ
 DateActionPlannedEnd= Suunniteltu lopetuspäivämäärää
@@ -67,8 +73,8 @@ AgendaUrlOptions4=<b>logint=<b>logint= %s</b> rajoittaa tuotannon toimet vaikutt
 AgendaUrlOptions5=<b>logind=<b>sisäänkirj= %s</b> rajoittaa tuotannon toimet tehdään <b>käyttäjän %s.</b>
 AgendaShowBirthdayEvents=Näytä syntymäpäivä yhteyksiä
 AgendaHideBirthdayEvents=Piilota syntymäpäivä yhteyksiä
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Vie kalenteri

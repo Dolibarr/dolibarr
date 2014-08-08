@@ -144,4 +144,3 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	}
 }
 
-?>

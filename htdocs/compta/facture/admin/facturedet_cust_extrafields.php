@@ -38,7 +38,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -76,7 +76,7 @@ $head = invoice_admin_prepare_head(null);
 dol_fiche_head($head, 'attributeslines', $langs->trans("Invoices"), 0, 'invoice');
 
 
-print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
+print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br><br>'."\n";
 
 // Load attribute_label
 $extrafields->fetch_name_optionals_label($elementtype);
@@ -156,4 +156,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

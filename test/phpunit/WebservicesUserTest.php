@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
 require_once(NUSOAP_PATH.'/nusoap.php');        // Include SOAP
@@ -118,11 +118,11 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSUserXxx
+     * testWSUserGetUser
      *
      * @return int
      */
-    public function testWSUserXxx()
+    public function testWSUserGetUser()
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -130,8 +130,8 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
 
-    	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
-    	$WS_METHOD  = 'xxx';
+    	$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_user.php';
+    	$WS_METHOD  = 'getUser';
     	$ns='http://www.dolibarr.org/ns/';
 
     	// Set the WebService URL
@@ -152,28 +152,63 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
     	'entity'=>'');
 
     	// Test URL
-    	if ($WS_METHOD)
-    	{
-    		$parameters = array('authentication'=>$authentication);
-    		print __METHOD__."Call method ".$WS_METHOD."\n";
+    	$result='';
+    	$parameters = array('authentication'=>$authentication,'ref'=>'admin');
+    	print __METHOD__."Call method ".$WS_METHOD."\n";
+    	try {
     		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
-    		if (! $result)
-    		{
-    			//var_dump($soapclient);
-    			print $soapclient->error_str;
-    			print "<br>\n\n";
-    			print $soapclient->request;
-    			print "<br>\n\n";
-    			print $soapclient->response;
-    			exit;
-    		}
+    	}
+    	catch(SoapFault $exception)
+    	{
+    		echo $exception;
+    		$result=0;
+    	}
+    	if (! empty($result['faultstring']))
+    	{
+    		print $result['faultstring']."\n";
+    		$result=0;
+    	}
+    	if (! $result)
+    	{
+    		//var_dump($soapclient);
+    		print $soapclient->error_str;
+    		print "\n<br>\n";
+    		print $soapclient->request;
+    		print "\n<br>\n";
+    		print $soapclient->response;
+    		print "\n";
     	}
 
     	print __METHOD__." result=".$result."\n";
-    	//$this->assertEquals('OK',$result['result']['result_code']);
+    	$this->assertEquals('OK',$result['result']['result_code']);
+
+    	// Test URL
+    	$result='';
+    	$parameters = array('authentication'=>$authentication,'ref'=>'refthatdoesnotexists');
+    	print __METHOD__."Call method ".$WS_METHOD."\n";
+    	try {
+    		$result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
+    	}
+    	catch(SoapFault $exception)
+    	{
+    		echo $exception;
+    		$result=0;
+    	}
+    	if (! $result || ! empty($result['faultstring']))
+    	{
+    		//var_dump($soapclient);
+    		print $soapclient->error_str;
+    		print "\n<br>\n";
+    		print $soapclient->request;
+    		print "\n<br>\n";
+    		print $soapclient->response;
+    		print "\n";
+    	}
+
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('NOT_FOUND',$result['result']['result_code']);
 
     	return $result;
     }
 
 }
-?>

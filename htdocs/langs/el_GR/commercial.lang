@@ -71,6 +71,7 @@ ActionAC_FAX=Αποστολή FAX
 ActionAC_PROP=Αποστολή προσφορας με email
 ActionAC_EMAIL=Αποστολή email
 ActionAC_RDV=Συναντήσεις
+ActionAC_INT=Παρέμβαση on site
 ActionAC_FAC=Αποστολή Τιμολογίου στον πελάτη με email
 ActionAC_REL=Αποστολή Τιμολογίου στον πελάτη με email (υπενθύμιση)
 ActionAC_CLO=Κλείσιμο

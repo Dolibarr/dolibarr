@@ -204,7 +204,7 @@ print "<br>";
 
 $head=contract_admin_prepare_head();
 
-dol_fiche_head($head, 'contract', $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'contract', $langs->trans("Contracts"), 0, 'contract');
 
 /*
  * Contracts Numbering model
@@ -518,4 +518,3 @@ print '<br>';
 $db->close();
 
 llxFooter();
-?>

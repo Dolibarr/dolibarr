@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Remy Younes          <ryounes@gmail.com>
  * Copyright (C) 2012-2013 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
- * Copyright (C) 2011-2012 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2011-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,13 +66,13 @@ $pagenext = $page + 1;
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('admin'));
 
-// This page is a generic page to edit dictionnaries
-// Put here declaration of dictionnaries properties
+// This page is a generic page to edit dictionaries
+// Put here declaration of dictionaries properties
 
-// Sort order to show dictionnary (0 is space). All other dictionnaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,25,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23);
+// Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
+$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,25,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23,0,26);
 
-// Name of SQL tables of dictionnaries
+// Name of SQL tables of dictionaries
 $tabname=array();
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
 $tabname[2] = MAIN_DB_PREFIX."c_departements";
@@ -99,53 +99,55 @@ $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
 $tabname[23]= MAIN_DB_PREFIX."accountingaccount";
 $tabname[24]= MAIN_DB_PREFIX."accounting_system";
 $tabname[25]= MAIN_DB_PREFIX."c_revenuestamp";
+$tabname[26]= MAIN_DB_PREFIX."c_type_resource";
 
 // Dictionary labels
 $tablib=array();
-$tablib[1] = "DictionnaryCompanyJuridicalType";
-$tablib[2] = "DictionnaryCanton";
-$tablib[3] = "DictionnaryRegion";
-$tablib[4] = "DictionnaryCountry";
-$tablib[5] = "DictionnaryCivility";
-$tablib[6] = "DictionnaryActions";
-$tablib[7] = "DictionnarySocialContributions";
-$tablib[8] = "DictionnaryCompanyType";
-$tablib[9] = "DictionnaryCurrency";
-$tablib[10]= "DictionnaryVAT";
-$tablib[11]= "DictionnaryTypeContact";
-$tablib[12]= "DictionnaryPaymentConditions";
-$tablib[13]= "DictionnaryPaymentModes";
-$tablib[14]= "DictionnaryEcotaxe";
-$tablib[15]= "DictionnaryPaperFormat";
-$tablib[16]= "DictionnaryProspectLevel";
-$tablib[17]= "DictionnaryFees";
-$tablib[18]= "DictionnarySendingMethods";
-$tablib[19]= "DictionnaryStaff";
-$tablib[20]= "DictionnaryOrderMethods";
-$tablib[21]= "DictionnaryAvailability";
-$tablib[22]= "DictionnarySource";
-$tablib[23]= "DictionnaryAccountancyplan";
-$tablib[24]= "DictionnaryAccountancysystem";
-$tablib[25]= "DictionnaryRevenueStamp";
+$tablib[1] = "DictionaryCompanyJuridicalType";
+$tablib[2] = "DictionaryCanton";
+$tablib[3] = "DictionaryRegion";
+$tablib[4] = "DictionaryCountry";
+$tablib[5] = "DictionaryCivility";
+$tablib[6] = "DictionaryActions";
+$tablib[7] = "DictionarySocialContributions";
+$tablib[8] = "DictionaryCompanyType";
+$tablib[9] = "DictionaryCurrency";
+$tablib[10]= "DictionaryVAT";
+$tablib[11]= "DictionaryTypeContact";
+$tablib[12]= "DictionaryPaymentConditions";
+$tablib[13]= "DictionaryPaymentModes";
+$tablib[14]= "DictionaryEcotaxe";
+$tablib[15]= "DictionaryPaperFormat";
+$tablib[16]= "DictionaryProspectLevel";
+$tablib[17]= "DictionaryFees";
+$tablib[18]= "DictionarySendingMethods";
+$tablib[19]= "DictionaryStaff";
+$tablib[20]= "DictionaryOrderMethods";
+$tablib[21]= "DictionaryAvailability";
+$tablib[22]= "DictionarySource";
+$tablib[23]= "DictionaryAccountancyplan";
+$tablib[24]= "DictionaryAccountancysystem";
+$tablib[25]= "DictionaryRevenueStamp";
+$tablib[26]= "DictionaryResourceType";
 
-// Requete pour extraction des donnees des dictionnaires
+// Requests to extract data
 $tabsql=array();
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as country_code, p.libelle as country, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, p.code as country_code, p.libelle as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code, nom as libelle, r.fk_pays as country_id, p.code as country_code, p.libelle as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, p.code as country_code, p.libelle as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, p.code as country_code, p.libelle as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
-$tabsql[8] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_typent";
+$tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country as country_id, p.code as country_code, p.libelle as country, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON t.fk_country=p.rowid";
 $tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
 $tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
-$tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
+$tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active, accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, p.code as country_code, p.libelle as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
-$tabsql[16]= "SELECT code, label as libelle, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
+$tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, tracking, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
@@ -155,8 +157,9 @@ $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[23]= "SELECT rowid   as rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number as accountancy_code, account_parent, label, active FROM ".MAIN_DB_PREFIX."accountingaccount";
 $tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, p.code as country_code, p.libelle as pays, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_pays as p WHERE s.fk_pays=p.rowid and p.active=1";
 $tabsql[25]= "SELECT t.rowid, t.taux, p.libelle as country, p.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_pays as p WHERE t.fk_pays=p.rowid";
+$tabsql[26]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
 
-// Critere de tri du dictionnaire
+// Criteria to sort dictionaries
 $tabsqlsort=array();
 $tabsqlsort[1] ="country ASC, code ASC";
 $tabsqlsort[2] ="country ASC, code ASC";
@@ -165,7 +168,7 @@ $tabsqlsort[4] ="code ASC";
 $tabsqlsort[5] ="libelle ASC";
 $tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] ="country ASC, code ASC, a.libelle ASC";
-$tabsqlsort[8] ="libelle ASC";
+$tabsqlsort[8] ="country DESC, libelle ASC";
 $tabsqlsort[9] ="label ASC";
 $tabsqlsort[10]="country ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
@@ -183,6 +186,7 @@ $tabsqlsort[22]="code ASC, label ASC";
 $tabsqlsort[23]="fk_pcg_version ASC, accountancy_code ASC";
 $tabsqlsort[24]="pcg_version ASC";
 $tabsqlsort[25]="country ASC, taux ASC";
+$tabsqlsort[26]="code ASC,label ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -193,15 +197,15 @@ $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,country_id,country,accountancy_code,deductible";
-$tabfield[8] = "code,libelle";
+$tabfield[8] = "code,libelle,country_id,country";
 $tabfield[9] = "code,label,unicode";
 $tabfield[10]= "country_id,country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
-$tabfield[13]= "code,libelle,type";
+$tabfield[13]= "code,libelle,type,accountancy_code";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
-$tabfield[16]= "code,libelle";
+$tabfield[16]= "code,libelle,sortorder";
 $tabfield[17]= "code,libelle";
 $tabfield[18]= "code,libelle,tracking";
 $tabfield[19]= "code,libelle";
@@ -211,6 +215,7 @@ $tabfield[22]= "code,label";
 $tabfield[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
 $tabfield[24]= "pcg_version,country_id,country,label";
 $tabfield[25]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[26]= "code,label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -221,15 +226,15 @@ $tabfieldvalue[4] = "code,libelle";
 $tabfieldvalue[5] = "code,libelle";
 $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
-$tabfieldvalue[8] = "code,libelle";
+$tabfieldvalue[8] = "code,libelle,country";
 $tabfieldvalue[9] = "code,label,unicode";
 $tabfieldvalue[10]= "country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
-$tabfieldvalue[13]= "code,libelle,type";
+$tabfieldvalue[13]= "code,libelle,type,accountancy_code";
 $tabfieldvalue[14]= "code,libelle,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
-$tabfieldvalue[16]= "code,libelle";
+$tabfieldvalue[16]= "code,libelle,sortorder";
 $tabfieldvalue[17]= "code,libelle";
 $tabfieldvalue[18]= "code,libelle,tracking";
 $tabfieldvalue[19]= "code,libelle";
@@ -239,6 +244,7 @@ $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
 $tabfieldvalue[24]= "pcg_version,country,label";
 $tabfieldvalue[25]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[26]= "code,label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -249,15 +255,15 @@ $tabfieldinsert[4] = "code,libelle";
 $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
-$tabfieldinsert[8] = "code,libelle";
+$tabfieldinsert[8] = "code,libelle,fk_country";
 $tabfieldinsert[9] = "code_iso,label,unicode";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
-$tabfieldinsert[13]= "code,libelle,type";
+$tabfieldinsert[13]= "code,libelle,type,accountancy_code";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
-$tabfieldinsert[16]= "code,label";
+$tabfieldinsert[16]= "code,label,sortorder";
 $tabfieldinsert[17]= "code,libelle";
 $tabfieldinsert[18]= "code,libelle,tracking";
 $tabfieldinsert[19]= "code,libelle";
@@ -267,6 +273,7 @@ $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[23]= "fk_pcg_version,account_number,account_parent,pcg_type,pcg_subtype,label";
 $tabfieldinsert[24]= "pcg_version,fk_pays,label";
 $tabfieldinsert[25]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[26]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -297,8 +304,9 @@ $tabrowid[22]= "rowid";
 $tabrowid[23]= "";
 $tabrowid[24]= "";
 $tabrowid[25]= "";
+$tabrowid[25]= "";
 
-// Condition to show dictionnary in setup page
+// Condition to show dictionary in setup page
 $tabcond=array();
 $tabcond[1] = true;
 $tabcond[2] = true;
@@ -322,9 +330,10 @@ $tabcond[19]= ! empty($conf->societe->enabled);
 $tabcond[20]= ! empty($conf->fournisseur->enabled);
 $tabcond[21]= ! empty($conf->propal->enabled);
 $tabcond[22]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled));
-$tabcond[23]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy plan should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
-$tabcond[24]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionnary editor.
+$tabcond[23]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy plan should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionary editor.
+$tabcond[24]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionary editor.
 $tabcond[25]= true;
+$tabcond[26]= ! empty($conf->resource->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -353,12 +362,42 @@ $tabhelp[22] = array();
 $tabhelp[23] = array();
 $tabhelp[24] = array();
 $tabhelp[25] = array();
+$tabhelp[26] = array();
+
+// List of check for fields (NOT USED YET)
+$tabfieldcheck=array();
+$tabfieldcheck[1]  = array();
+$tabfieldcheck[2]  = array();
+$tabfieldcheck[3]  = array();
+$tabfieldcheck[4]  = array();
+$tabfieldcheck[5]  = array();
+$tabfieldcheck[6]  = array();
+$tabfieldcheck[7]  = array();
+$tabfieldcheck[8]  = array();
+$tabfieldcheck[9]  = array();
+$tabfieldcheck[10] = array();
+$tabfieldcheck[11] = array();
+$tabfieldcheck[12] = array();
+$tabfieldcheck[13] = array();
+$tabfieldcheck[14] = array();
+$tabfieldcheck[15] = array();
+$tabfieldcheck[16] = array();
+$tabfieldcheck[17] = array();
+$tabfieldcheck[18] = array();
+$tabfieldcheck[19] = array();
+$tabfieldcheck[20] = array();
+$tabfieldcheck[21] = array();
+$tabfieldcheck[22] = array();
+$tabfieldcheck[23] = array();
+$tabfieldcheck[24] = array();
+$tabfieldcheck[25] = array();
+$tabfieldcheck[26] = array();
 
 // Complete all arrays with entries found into modules
-complete_dictionnary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp);
+complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
 
 
-// Define elementList and sourceList (used for dictionnary "type of contacts")
+// Define elementList and sourceList (used for dictionary "type of contacts")
 $elementList = array();
 $sourceList=array();
 if ($id == 11)
@@ -389,7 +428,7 @@ if ($id == 11)
 	);
 }
 
-// Define localtax_typeList (used for dictionnary "c_tva")
+// Define localtax_typeList (used for dictionary "c_tva")
 $localtax_typeList = array();
 if ($id == 10)
 {
@@ -418,7 +457,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if ($value == 'country' && in_array('region_id',$listfield)) continue;		// For region page, we do not require the country input
+        if ($value == 'country' && in_array($tablib[$id],array('DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryRegion','DictionaryCompanyType'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ((! isset($_POST[$value]) || $_POST[$value]=='')
@@ -440,6 +480,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
             if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
+            if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
 
             setEventMessage($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)),'errors');
         }
@@ -462,9 +503,17 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br />';
 	    }*/
     }
-    if (isset($_POST["country"]) && $_POST["country"]=='0') {
-        $ok=0;
-        setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
+    if (isset($_POST["country"]) && $_POST["country"]=='0')
+    {
+    	if (in_array($tablib[$id],array('DictionaryCompanyType')))
+    	{
+    		$_POST["country"]='';
+    	}
+    	else
+    	{
+        	$ok=0;
+        	setEventMessage($langs->transnoentities("ErrorFieldRequired",$langs->transnoentities("Country")),'errors');
+    	}
     }
 
 	// Clean some parameters
@@ -517,13 +566,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
         $sql.=",1)";
 
-        dol_syslog("actionadd sql=".$sql);
+        dol_syslog("actionadd", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            //$oldid=$id;
-            //$_POST=array('id'=>$oldid);	// Clean $_POST array, we keep only
-            //$_GET["id"]=$_POST["id"];   // Force affichage dictionnaire en cours d'edition
+            $_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {
@@ -567,7 +614,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
 
-        dol_syslog("actionmodify sql=".$sql);
+        dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
         $resql = $db->query($sql);
         if (! $resql)
@@ -590,7 +637,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     $sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
 
-    dol_syslog("delete sql=".$sql);
+    dol_syslog("delete", LOG_DEBUG);
     $result = $db->query($sql);
     if (! $result)
     {
@@ -655,18 +702,18 @@ $formadmin=new FormAdmin($db);
 
 llxHeader();
 
-$titre=$langs->trans("DictionnarySetup");
+$titre=$langs->trans("DictionarySetup");
 $linkback='';
 if ($id)
 {
     $titre.=' - '.$langs->trans($tablib[$id]);
-    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionnaryList").'</a>';
+    $linkback='<a href="'.$_SERVER['PHP_SELF'].'">'.$langs->trans("BackToDictionaryList").'</a>';
 }
 print_fiche_titre($titre,$linkback,'setup');
 
 if (empty($id))
 {
-    print $langs->trans("DictionnaryDesc");
+    print $langs->trans("DictionaryDesc");
     print " ".$langs->trans("OnlyActiveElementsAreShown")."<br>\n";
 }
 print "<br>\n";
@@ -679,7 +726,7 @@ if ($action == 'delete')
 }
 
 /*
- * Show a dictionnary
+ * Show a dictionary
  */
 if ($id)
 {
@@ -767,10 +814,11 @@ if ($id)
             if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountparent"); }
             if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
             if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
+            if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
-            	if (! empty($tabhelp[$id][$value]) && preg_match('/http:/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.'</a>';
+            	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
             	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
             	else print $valuetoshow;
                 print '</td>';
@@ -816,7 +864,7 @@ if ($id)
     print '</form>';
 
     // List of available values in database
-    dol_syslog("htdocs/admin/dict sql=".$sql, LOG_DEBUG);
+    dol_syslog("htdocs/admin/dict", LOG_DEBUG);
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -881,10 +929,11 @@ if ($id)
                 if ($fieldlist[$field]=='accountancy_code'){ $valuetoshow=$langs->trans("AccountancyCode"); }
                 if ($fieldlist[$field]=='accountancy_code_sell'){ $valuetoshow=$langs->trans("AccountancyCodeSell"); $sortable=0; }
                 if ($fieldlist[$field]=='accountancy_code_buy'){ $valuetoshow=$langs->trans("AccountancyCodeBuy"); $sortable=0; }
-				        if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
+				if ($fieldlist[$field]=='fk_pcg_version')  { $valuetoshow=$langs->trans("Pcg_version"); }
                 if ($fieldlist[$field]=='account_parent')  { $valuetoshow=$langs->trans("Accountsparent"); }
                 if ($fieldlist[$field]=='pcg_type')        { $valuetoshow=$langs->trans("Pcg_type"); }
                 if ($fieldlist[$field]=='pcg_subtype')     { $valuetoshow=$langs->trans("Pcg_subtype"); }
+                if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
                 // Affiche nom du champ
                 if ($showfield)
                 {
@@ -1140,7 +1189,7 @@ if ($id)
 else
 {
     /*
-     * Show list of dictionnary to show
+     * Show list of dictionary to show
      */
 
     $var=true;
@@ -1148,7 +1197,7 @@ else
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     //print '<td>'.$langs->trans("Module").'</td>';
-    print '<td colspan="2">'.$langs->trans("Dictionnary").'</td>';
+    print '<td colspan="2">'.$langs->trans("Dictionary").'</td>';
     print '<td>'.$langs->trans("Table").'</td>';
     print '</tr>';
 
@@ -1181,7 +1230,7 @@ else
             print '<td>';
             /*if (empty($tabcond[$i]))
              {
-             print info_admin($langs->trans("DictionnaryDisabledSinceNoModuleNeedIt"),1);
+             print info_admin($langs->trans("DictionaryDisabledSinceNoModuleNeedIt"),1);
              }*/
             print '</td>';
             print '<td>'.$tabname[$i].'</td></tr>';
@@ -1324,4 +1373,3 @@ function fieldList($fieldlist,$obj='',$tabname='')
 	}
 }
 
-?>

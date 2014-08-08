@@ -1,8 +1,7 @@
-# Dolibarr language file - nl_BE - exports
+# Dolibarr language file - Source file is en_US - exports
 ExportsArea=Export gebied
 ImportArea=Import gebied
 NewExport=Nieuwe exportmogelijkheden
-NewImport=Nieuwe import
 ExportableDatas=Exportable dataset
 ImportableDatas=Importable dataset
 SelectExportDataSet=Kies dataset die u wilt exporteren ...
@@ -11,7 +10,6 @@ SaveExportModel=Bewaar dit uitvoer-profiel als u van plan bent om het later te h
 ExportModelName=Export profielnaam
 ExportModelSaved=Export profiel opgeslagen onder de naam <b>%s</b>.
 ExportableFields=Exportable velden
-ExportedFields=Geëxporteerde velden
 DatasetToExport=Dataset te exporteren
 Dataset=Dataset
 ChooseFieldsOrdersAndTitle=Kies velden Om ...
@@ -21,8 +19,6 @@ ChooseExportFormat=Kies exportformaat
 NowClickToGenerateToBuildExportFile=Nu, klik op "Genereer" om het exportbestand te creëren
 AvailableFormats=Formaten beschikbaar
 LibraryUsed=Librairie
-LibraryVersion=Versie
-Step=Stap
 FormatedImport=Import-assistent
 FormatedImportDesc1=Dit gebied maakt het mogelijk om persoonlijke gegevens te importeren, met behulp van een assistent om u te helpen in het proces, zonder technische kennis.
 FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.

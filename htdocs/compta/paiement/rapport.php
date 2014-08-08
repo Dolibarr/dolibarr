@@ -168,4 +168,3 @@ if ($year)
 llxFooter();
 
 $db->close();
-?>

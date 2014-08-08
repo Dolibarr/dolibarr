@@ -42,4 +42,3 @@ if (empty($conf->holiday->enabled))
     exit();
 }
 
-?>

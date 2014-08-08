@@ -9,4 +9,4 @@ FailedToConnectToFTPServer=فشل الاتصال بخادم بروتوكول ن�
 FailedToConnectToFTPServerWithCredentials=فشل في تسجيل الدخول إلى خادم بروتوكول نقل الملفات مع تعريف الدخول / كلمة المرور
 FTPFailedToRemoveFile=فشل لإزالة <b>%s</b> الملف.
 FTPFailedToRemoveDir=فشل لإزالة <b>%s</b> الدليل (راجع الأذونات وهذا الدليل فارغ).
-# FTPPassiveMode=Passive mode
+FTPPassiveMode=Passive mode

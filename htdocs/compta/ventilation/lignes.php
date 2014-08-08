@@ -139,4 +139,3 @@ print "</table></form>";
 
 llxFooter();
 $db->close();
-?>

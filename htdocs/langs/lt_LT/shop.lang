@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - shop
+FailedConnectDBCheckModuleSetup=Failed to connect to oscommerce database. Check your module setup
+Shop=Parduotuvė
+ShopWeb=Interneto parduotuvė
+LastOrders=Paskutiniai užsakymai
+OnStandBy=Budėjimo režimu
+TreatmentInProgress=Apdorojimas vyksta
+LastCustomers=Naujausi klientai
+OSCommerceShop=OSCommerce parduotuvė
+OSCommerce=OSCommerce
+AddProd=Parduoti internete

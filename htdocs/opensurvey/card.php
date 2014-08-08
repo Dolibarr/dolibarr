@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 require_once('../main.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
 require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
@@ -63,7 +64,7 @@ if ($action == 'delete_confirm')
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 	$result=$object->delete($user,'',$numsondage);
 
 	header('Location: '.dol_buildpath('/opensurvey/list.php',1));
@@ -127,7 +128,7 @@ if (GETPOST('ajoutcomment'))
 		$comment_user = GETPOST('commentuser');
 
 		$resql = $object->addComment($comment, $comment_user);
-		
+
 		if (! $resql)
 		{
 			setEventMessage($langs->trans('ErrorInsertingComment'), 'errors');
@@ -141,12 +142,12 @@ if ($idcomment)
 {
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
-	
+
 	$resql = $object->deleteComment($idcomment);
 }
 
 if ($action == 'edit') {
-	
+
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 }
@@ -216,23 +217,22 @@ if ($action == 'edit')
 else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
-// Author
-print '<tr><td>';
-print $langs->trans("Author") .'</td><td colspan="2">';
-if ($object->fk_user_creat) {
-	print $userstatic->getLoginUrl(1);
-} else {
-	print dol_htmlentities($object->nom_admin);
-}
-print '</td></tr>';
-
 // Description
-print '<tr><td>'.$langs->trans("Description") .'</td><td colspan="2">';
+print '<tr><td valign="top">'.$langs->trans("Description") .'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	print '<textarea name="nouveauxcommentaires" rows="7" cols="80">'.  dol_htmlentities($object->commentaires).'</textarea>'."\n";
+	$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120);
+	$doleditor->Create(0,'');
 }
-else print dol_nl2br(dol_htmlentities($object->commentaires));
+else
+{
+	if (empty($conf->fckeditor->enabled)) print dol_htmlentitiesbr($object->commentaires);
+	else
+	{
+		$doleditor=new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires),'',120,'dolibarr_notes','In',1,1,1,ROWS_7,120,1);
+		$doleditor->Create(0,'');
+	}
+}
 print '</td></tr>';
 
 // EMail
@@ -243,7 +243,7 @@ if (!$object->fk_user_creat) {
 	{
 		print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
 	}
-	else print dol_print_email($object->mail_admin);
+	else print dol_print_email($object->mail_admin, 0, 0, 1);
 	print '</td></tr>';
 }
 
@@ -255,7 +255,7 @@ if ($action == 'edit')
 }
 else {
 	print yn($object->mailsonde);
-	
+
 	//If option is active and linked user does not have an email, we show a warning
 	if ($object->fk_user_creat && $object->mailsonde) {
 		if (!$userstatic->email) {
@@ -289,6 +289,15 @@ if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object-
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 
+// Author
+print '<tr><td>';
+print $langs->trans("Author") .'</td><td colspan="2">';
+if ($object->fk_user_creat) {
+	print $userstatic->getLoginUrl(1);
+} else {
+	print dol_htmlentities($object->nom_admin);
+}
+print '</td></tr>';
 
 // Link
 print '<tr><td>'.img_picto('','object_globe.png').' '.$langs->trans("UrlForSurvey",'').'</td><td colspan="2">';
@@ -317,7 +326,7 @@ dol_fiche_end();
 print '<div class="tabsAction">';
 
 if ($action != 'edit' && $user->rights->opensurvey->write) {
-	
+
 	//Modify button
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id=' . $numsondage . '">'.$langs->trans("Modify") . '</a>';
 
@@ -349,7 +358,7 @@ if ($comments) {
 		if ($user->rights->opensurvey->write) {
 			print '<a href="'.dol_buildpath('/opensurvey/card.php',1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
 		}
-		
+
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
 }
@@ -373,7 +382,8 @@ if ($object->allow_comments) {
 
 print '</form>';
 
+print '<br>';
+
 llxFooterSurvey();
 
 $db->close();
-?>

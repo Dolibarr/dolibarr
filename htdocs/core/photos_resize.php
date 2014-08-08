@@ -128,11 +128,8 @@ if ($mesg) print '<div class="error">'.$mesg.'</div>';
 $infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
-print $langs->trans("CurrentInformationOnImage").':';
-print '<ul>
-   <li>'.$langs->trans("Width").': '.$width.' px</li>
-   <li>'.$langs->trans("Height").': '.$height.' px</li>
-   </ul>';
+print $langs->trans("CurrentInformationOnImage").': ';
+print $langs->trans("Width").': <strong>'.$width.'</strong> x '.$langs->trans("Height").': <strong>'.$height.'</strong><br>';
 
 print '<br>'."\n";
 
@@ -142,58 +139,68 @@ print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" meth
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px <br> ';
+print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px  &nbsp; '.$langs->trans("or").' &nbsp; ';
 print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br>';
 print '<input type="hidden" name="file" value="'.$_GET['file'].'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<br><input class="button" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
-print '</fieldset>';
-print '<br></form>';
+print '</fieldset>'."\n";
+print '</form>';
+print '<br>'."\n";
 
 /*
- * Recadrage d'une image
+ * Crop image
  */
 
 print '<br>'."\n";
 
 if (! empty($conf->use_javascript_ajax))
 {
-
-$infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
-$height=$infoarray['height'];
-$width=$infoarray['width'];
-
-print '<!-- Form to crop -->'."\n";
-print '<fieldset id="redim_file">';
-print '<legend>'.$langs->trans("Recenter").'</legend>';
-print $langs->trans("DefineNewAreaToPick").'...<br>';
-print '<br><center>';
-print '<div style="border: 1px solid #888888; width: '.$width.'px;"><img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" /></div>';
-print '</center><br>';
-print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post" onsubmit="return checkCoords();">
-      <div class="jc_coords">
-         '.$langs->trans("NewSizeAfterCropping").':
-         <label>X1 <input type="text" size="4" id="x" name="x" /></label>
-         <label>Y1 <input type="text" size="4" id="y" name="y" /></label>
-         <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
-         <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label>
-         <label>W <input type="text" size="4" id="w" name="w" /></label>
-         <label>H <input type="text" size="4" id="h" name="h" /></label>
-      </div>
-
-      <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
-      <input type="hidden" id="action" name="action" value="confirm_crop" />
-      <input type="hidden" id="product" name="product" value="'.$id.'" />
-	  <input type="hidden" name="id" value="'.$id.'" />
-      <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
-   </form>';
-print '</fieldset>';
-
+	$infoarray=dol_getImageSize($dir."/".urldecode($_GET["file"]));
+	$height=$infoarray['height'];
+	$width=$infoarray['width'];
+	$widthforcrop=$width; $refsizeforcrop='orig'; $ratioforcrop=1;
+	if (! empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth']/2)))
+	{
+		$widthforcrop=min(round($_SESSION['dol_screenwidth']/2),$widthforcrop);
+		$refsizeforcrop='screenwidth';
+		$ratioforcrop=2;
+	}
+	
+	print '<!-- Form to crop -->'."\n";
+	print '<fieldset id="redim_file">';
+	print '<legend>'.$langs->trans("Recenter").'</legend>';
+	print $langs->trans("DefineNewAreaToPick").'...<br>';
+	print '<br><center>';
+	print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+	print '</div>';
+	print '</center><br>';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post" onsubmit="return checkCoords();">
+	      <div class="jc_coords">
+	         '.$langs->trans("NewSizeAfterCropping").':
+	         <label>X1 <input type="text" size="4" id="x" name="x" /></label>
+	         <label>Y1 <input type="text" size="4" id="y" name="y" /></label>
+	         <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
+	         <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label>
+	         <label>W <input type="text" size="4" id="w" name="w" /></label>
+	         <label>H <input type="text" size="4" id="h" name="h" /></label>
+	      </div>
+	
+	      <input type="hidden" id="file" name="file" value="'.urlencode($original_file).'" />
+	      <input type="hidden" id="action" name="action" value="confirm_crop" />
+	      <input type="hidden" id="product" name="product" value="'.$id.'" />
+	      <input type="hidden" id="refsizeforcrop" name="refsizeforcrop" value="'.$refsizeforcrop.'" />
+	      <input type="hidden" id="ratioforcrop" name="ratioforcrop" value="'.$ratioforcrop.'" />
+	      <input type="hidden" name="id" value="'.$id.'" />
+	      <br><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Recenter")).'" />
+	   </form>'."\n";
+	print '</fieldset>'."\n";
+	print '<br>';
 }
 
 
 llxFooter();
 $db->close();
-?>

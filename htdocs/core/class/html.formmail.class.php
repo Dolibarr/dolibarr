@@ -35,7 +35,7 @@ class FormMail
 {
     var $db;
 
-    var $withform;
+    var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
 
     var $fromname;
     var $frommail;
@@ -58,7 +58,8 @@ class FormMail
     var $withreplytoreadonly;
     var $withtoreadonly;
     var $withtoccreadonly;
-    var $withtopicreadonly;
+	var $withtocccreadonly;
+	var $withtopicreadonly;
     var $withfilereadonly;
     var $withdeliveryreceipt;
     var $withcancel;
@@ -76,7 +77,7 @@ class FormMail
      *  @param	DoliDB	$db      Database handler
      */
     function __construct($db)
-    {    	
+    {
         $this->db = $db;
 
         $this->withform=1;
@@ -95,12 +96,13 @@ class FormMail
         $this->withreplytoreadonly=1;
         $this->withtoreadonly=0;
         $this->withtoccreadonly=0;
+	    $this->withtocccreadonly=0;
         $this->witherrorstoreadonly=0;
         $this->withtopicreadonly=0;
         $this->withfilereadonly=0;
         $this->withbodyreadonly=0;
         $this->withdeliveryreceiptreadonly=0;
-        $this->withfckeditor=0;
+        $this->withfckeditor=-1;	// -1 = Auto
 
         return 1;
     }
@@ -217,7 +219,9 @@ class FormMail
      */
     function get_form($addfileaction='addfile',$removefileaction='removefile')
     {
-        global $conf, $langs, $user, $hookmanager;
+        global $conf, $langs, $user, $hookmanager, $form;
+
+        if (! is_object($form)) $form=new Form($this->db);
 
         $langs->load("other");
         $langs->load("mails");
@@ -246,10 +250,8 @@ class FormMail
         	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
         	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
 
-        	$form=new Form($this->db);
-
         	$out.= "\n<!-- Debut form mail -->\n";
-        	if ($this->withform)
+        	if ($this->withform == 1)
         	{
         		$out.= '<form method="POST" name="mailform" enctype="multipart/form-data" action="'.$this->param["returnurl"].'">'."\n";
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
@@ -437,7 +439,7 @@ class FormMail
         		}
         		$out.= "</td></tr>\n";
         	}
-
+        	 
         	// CCC
         	if (! empty($this->withtoccc) || is_array($this->withtoccc))
         	{
@@ -457,7 +459,12 @@ class FormMail
         				$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
         			}
         		}
-        		//if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
+
+        		$showinfobcc='';
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+        		if ($showinfobcc) $out.=' + '.$showinfobcc;
         		$out.= "</td></tr>\n";
         	}
 
@@ -472,7 +479,11 @@ class FormMail
         		}
         		else
         		{
-        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:0), 1);
+        			$defaultvaluefordeliveryreceipt=0;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
+        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
         		}
 
         		$out.= "</td></tr>\n";
@@ -503,39 +514,47 @@ class FormMail
         	{
         		$out.= '<tr>';
         		$out.= '<td width="180">'.$langs->trans("MailFile").'</td>';
+
         		$out.= '<td>';
-        		// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
-        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
-        		$out.= '<script type="text/javascript" language="javascript">';
-        		$out.= 'jQuery(document).ready(function () {';
-        		$out.= '    jQuery(".removedfile").click(function() {';
-        		$out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
-        		$out.= '    });';
-        		$out.= '})';
-        		$out.= '</script>'."\n";
-        		if (count($listofpaths))
+        		if (is_numeric($this->withfile))
         		{
-        			foreach($listofpaths as $key => $val)
-        			{
-        				$out.= '<div id="attachfile_'.$key.'">';
-        				$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
-        				if (! $this->withfilereadonly)
-        				{
-        					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
-        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
-        				}
-        				$out.= '<br></div>';
-        			}
+	        		// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
+	        		$out.= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
+	        		$out.= '<script type="text/javascript" language="javascript">';
+	        		$out.= 'jQuery(document).ready(function () {';
+	        		$out.= '    jQuery(".removedfile").click(function() {';
+	        		$out.= '        jQuery(".removedfilehidden").val(jQuery(this).val());';
+	        		$out.= '    });';
+	        		$out.= '})';
+	        		$out.= '</script>'."\n";
+	        		if (count($listofpaths))
+	        		{
+	        			foreach($listofpaths as $key => $val)
+	        			{
+	        				$out.= '<div id="attachfile_'.$key.'">';
+	        				$out.= img_mime($listofnames[$key]).' '.$listofnames[$key];
+	        				if (! $this->withfilereadonly)
+	        				{
+	        					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
+	        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
+	        				}
+	        				$out.= '<br></div>';
+	        			}
+	        		}
+	        		else
+	        		{
+	        			$out.= $langs->trans("NoAttachedFiles").'<br>';
+	        		}
+	        		if ($this->withfile == 2)	// Can add other files
+	        		{
+	        			$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
+	        			$out.= ' ';
+	        			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+	        		}
         		}
         		else
         		{
-        			$out.= $langs->trans("NoAttachedFiles").'<br>';
-        		}
-        		if ($this->withfile == 2)	// Can add other files
-        		{
-        			$out.= '<input type="file" class="flat" id="addedfile" name="addedfile" value="'.$langs->trans("Upload").'" />';
-        			$out.= ' ';
-        			$out.= '<input type="submit" class="button" id="'.$addfileaction.'" name="'.$addfileaction.'" value="'.$langs->trans("MailingAddFile").'" />';
+        			$out.=$this->withfile;
         		}
         		$out.= "</td></tr>\n";
         	}
@@ -544,17 +563,31 @@ class FormMail
         	if (! empty($this->withbody))
         	{
         		$defaultmessage="";
+        		
+        		// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $this->param['langsmodels'];
+        		
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('other');
+				}
+				
 
-        		// TODO    A partir du type, proposer liste de messages dans table llx_models
-        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-        		elseif (! is_numeric($this->withbody))                      { $defaultmessage=$this->withbody; }
+        		// TODO    A partir du type, proposer liste de messages dans table llx_c_email_template
+        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
+        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
+        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
+        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
+        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
+        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
+        		elseif (! is_numeric($this->withbody))						{ $defaultmessage=$this->withbody; }
 
         		// Complete substitution array
         		if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_ADD_PAYMENT_URL))
@@ -566,26 +599,33 @@ class FormMail
         			if ($this->param["models"]=='order_send')
         			{
         				$url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']);
-        				$this->substit['__PERSONALIZED__']=$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url);
+        				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         			if ($this->param["models"]=='facture_send')
         			{
         				$url=getPaypalPaymentUrl(0,'invoice',$this->substit['__FACREF__']);
-        				$this->substit['__PERSONALIZED__']=$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url);
+        				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         		}
 
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
-				
+
 				// Deal with format differences between message and signature (text / HTML)
 				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {
 					$this->substit['__SIGNATURE__'] = dol_nl2br($this->substit['__SIGNATURE__']);
 				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
 				}
-				
-        		$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+
+
         		if (isset($_POST["message"])) $defaultmessage=$_POST["message"];
+				else
+				{
+					$defaultmessage=make_substitutions($defaultmessage,$this->substit);
+					// Clean first \n and br (to avoid empty line when CONTACTCIVNAME is empty)
+					$defaultmessage=preg_replace("/^(<br>)+/","",$defaultmessage);
+					$defaultmessage=preg_replace("/^\n+/","",$defaultmessage);
+				}
 
         		$out.= '<tr>';
         		$out.= '<td width="180" valign="top">'.$langs->trans("MailText").'</td>';
@@ -601,16 +641,19 @@ class FormMail
 
         			// Editor wysiwyg
         			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        			if (!empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
-        				$this->withfckeditor=1;
+        			if ($this->withfckeditor == -1)
+        			{
+        				if (! empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $this->withfckeditor=1;
+						else $this->withfckeditor=0;
         			}
+
         			$doleditor=new DolEditor('message',$defaultmessage,'',280,$this->ckeditortoolbar,'In',true,true,$this->withfckeditor,8,72);
         			$out.= $doleditor->Create(1);
         		}
         		$out.= "</td></tr>\n";
         	}
 
-        	if (! empty($this->withform))
+        	if ($this->withform == 1 || $this->withform == -1)
         	{
         		$out.= '<tr><td align="center" colspan="2"><center>';
         		$out.= '<input class="button" type="submit" id="sendmail" name="sendmail" value="'.$langs->trans("SendMail").'"';
@@ -630,7 +673,7 @@ class FormMail
 
         	$out.= '</table>'."\n";
 
-        	if (! empty($this->withform)) $out.= '</form>'."\n";
+        	if ($this->withform == 1) $out.= '</form>'."\n";
         	$out.= "<!-- Fin form mail -->\n";
 
         	return $out;
@@ -638,4 +681,3 @@ class FormMail
     }
 }
 
-?>

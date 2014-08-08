@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert 
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for customer's orders
 MigrationSupplierOrder=Data migration for supplier's orders
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Update time spent in seconds
 MigrationActioncommElement=Update data on actions
 MigrationPaymentMode=Data migration for payment mode
 MigrationCategorieAssociation=Migration of categories
+
+ShowNotAvailableOptions=Show not available options
+HideNotAvailableOptions=Hide not available options

@@ -61,7 +61,7 @@ $listofvoters=explode(',',$_SESSION["savevoter"]);
 if (GETPOST('ajoutcomment'))
 {
 	if (!$canbemodified) accessforbidden();
-	
+
 	$error=0;
 
 	if (! GETPOST('comment'))
@@ -81,16 +81,16 @@ if (GETPOST('ajoutcomment'))
 		$comment_user = GETPOST('commentuser');
 
 		$resql = $object->addComment($comment, $comment_user);
-		
+
 		if (! $resql) dol_print_error($db);
 	}
 }
 
 // Add vote
-if (isset($_POST["boutonp"]))
+if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// boutonp for chrom, boutonp_x for firefox
 {
 	if (!$canbemodified) accessforbidden();
-	
+
 	//Si le nom est bien entré
 	if (GETPOST('nom'))
 	{
@@ -110,7 +110,7 @@ if (isset($_POST["boutonp"]))
 			}
 		}
 
-		$nom=substr($_POST["nom"],0,64);
+		$nom=substr(GETPOST("nom"),0,64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
@@ -138,18 +138,18 @@ if (isset($_POST["boutonp"]))
 					if ($object->fk_user_creat) {
 						$userstatic = new User($db);
 						$userstatic->fetch($object->fk_user_creat);
-						
+
 						$email = $userstatic->email;
 					} else {
 						$email = $object->mail_admin;
 					}
-					
+
 					//Linked user may not have an email set
 					if ($email) {
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-						
+
 						$body = $langs->trans('EmailSomeoneVoted', $nom, getUrlSondage($numsondage, true));
-						
+
 						$cmailfile=new CMailFile("[".MAIN_APPLICATION_TITLE."] ".$langs->trans("Poll").': '.$object->titre, $email, $conf->global->MAIN_MAIL_EMAIL_FROM, $body);
 						$result=$cmailfile->sendfile();
 					}
@@ -192,11 +192,11 @@ if ($testmodifier)
 	for ($i=0;$i<$nbcolonnes;$i++)
 	{
 		//var_dump($_POST["choix$i"]);
-		if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1')
+		if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '1')
 		{
 			$nouveauchoix.="1";
 		}
-		else if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+		else if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
 		{
 			$nouveauchoix.="2";
 		}
@@ -204,7 +204,7 @@ if ($testmodifier)
 			$nouveauchoix.="0";
 		}
 	}
-	
+
 	if (!$canbemodified) accessforbidden();
 
 	$idtomodify=$_POST["idtomodify".$modifier];
@@ -212,7 +212,6 @@ if ($testmodifier)
 	$sql.= " SET reponses = '".$db->escape($nouveauchoix)."'";
 	$sql.= " WHERE id_users = '".$db->escape($idtomodify)."'";
 
-	dol_syslog("sql=".$sql);
 	$resql = $db->query($sql);
 	if (! $resql) dol_print_error($db);
 }
@@ -222,7 +221,7 @@ $idcomment=GETPOST('deletecomment','int');
 if ($idcomment)
 {
 	if (!$canbemodified) accessforbidden();
-	
+
 	$resql = $object->deleteComment($idcomment);
 }
 
@@ -257,13 +256,12 @@ print '<div class="corps"> '."\n";
 
 //affichage du titre du sondage
 $titre=str_replace("\\","",$object->titre);
-print '<strong>'.dol_htmlentities($titre).'</strong><br>'."\n";
+print '<strong>'.dol_htmlentities($titre).'</strong><br><br>'."\n";
 
 //affichage des commentaires du sondage
 if ($object->commentaires)
 {
-	$commentaires=dol_nl2br(dol_htmlentities($object->commentaires));
-	print $commentaires;
+	print dol_htmlentitiesbr($object->commentaires);
 	print '<br>'."\n";
 }
 
@@ -271,7 +269,7 @@ print '</div>'."\n";
 
 //The survey has expired, users can't vote or do any action
 if (!$canbemodified) {
-	
+
 	print '<div style="text-align: center"><p>'.$langs->trans('SurveyExpiredInfo').'</p></div>';
 	llxFooterSurvey();
 
@@ -394,7 +392,6 @@ $compteur = 0;
 $sql ="SELECT id_users, nom, id_sondage, reponses";
 $sql.=" FROM ".MAIN_DB_PREFIX."opensurvey_user_studs";
 $sql.=" WHERE id_sondage = '".$db->escape($numsondage)."'";
-dol_syslog('sql='.$sql);
 $resql=$db->query($sql);
 if (! $resql)
 {
@@ -714,7 +711,7 @@ $comments = $object->getComments();
 if ($comments)
 {
 	print "<br><b>" . $langs->trans("CommentsOfVoters") . ":</b><br>\n";
-	
+
 	foreach ($comments as $obj) {
 		print '<div class="comment"><span class="usercomment">';
 		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
@@ -742,4 +739,3 @@ print '<a name="bas"></a>'."\n";
 llxFooterSurvey();
 
 $db->close();
-?>

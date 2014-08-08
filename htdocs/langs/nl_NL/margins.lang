@@ -10,25 +10,18 @@ MarkRate=Markerings verhouding
 DisplayMarginRates=Toon Marge Verhouding
 DisplayMarkRates=Toon Markeringsverhouding
 InputPrice=Voer Prijs in
-
 margin=Winst marge management
 margesSetup=Winst marge management setup
-
 MarginDetails=Marge details
-
 ProductMargins=Product marge
 CustomerMargins=Klant marges
-AgentMargins=Acc. Manager marges
-
+SalesRepresentativeMargins=Vertegenwoordiger marges
 ProductService=Trainning of Dienst
 AllProducts=Alle Trainingen en Diensten
 ChooseProduct/Service=Kies Training of Dienst
-CommercialAgent=Commerciel Agent
-
 StartDate=Start datum
 EndDate=Eind datum
 Launch=Start
-
 ForceBuyingPriceIfNull=Forceer een inkoopprijs indien null
 ForceBuyingPriceIfNullDetails=indien "ON", marge wodt nul   (inkoopprijs = verkoopprijs), anders("OFF"), marge is gelijk verkoopprijs (inkoopprijs = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Marge methode voor globale discounts
@@ -36,16 +29,13 @@ UseDiscountAsProduct=Als een training
 UseDiscountAsService=Als een dienst
 UseDiscountOnTotal=Op subtotaal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieert als een globale discount wordt behandelt als een training, een dienst, of alleen een subtotaal voor marge berekening.
-
 MARGIN_TYPE=Marge type
 MargeBrute=Groffe marge
 MargeNette=Netto marge
 MARGIN_TYPE_DETAILS=Groffe marge : Verkoopprijs - Inkoopprijs<br/>Netto marge : Verkoopprijs - Kostprijs
-
 CostPrice=Kostprijs
 BuyingCost=Kostprijs
 UnitCharges=Unit toeslag
 Charges=Toeslag
-
 AgentContactType=Contact type used voor commissie
 AgentContactTypeDetails=Definieer het contact type (gelinked op facturen) wordt geassocieerd met commercieel agent

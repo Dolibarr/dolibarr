@@ -122,4 +122,3 @@ class modLdap extends DolibarrModules
     }
 
 }
-?>

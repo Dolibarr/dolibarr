@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("cateogries");
+$langs->load("categories");
 
 $action=GETPOST("action");
 
@@ -70,15 +70,18 @@ if (preg_match('/del_(.*)/',$action,$reg))
  * View
  */
 
-llxHeader('',$langs->trans("CategoriesSetup"));
+$help_url='EN:Module Categories|FR:Module Catégories|ES:Módulo Categorías';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+
+llxHeader('',$langs->trans("Categories"),$help_url);
 
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CategoriesSetup"),'','setup');
+print_fiche_titre($langs->trans("CategoriesSetup"),$linkback,'setup');
 
 
 $head=categoriesadmin_prepare_head();
 
-dol_fiche_head($head, 'setup', $langs->trans("Security"));
+dol_fiche_head($head, 'setup', $langs->trans("Categories"), 0, 'category');
 
 
 print '<table class="noborder" width="100%">';
@@ -95,7 +98,7 @@ $form = new Form($db);
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
 
 print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax)

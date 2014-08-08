@@ -1,43 +1,48 @@
-﻿/*
-Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
-For licensing, see LICENSE.html or http://ckeditor.com/license
-*/
+﻿/**
+ * @license Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.md or http://ckeditor.com/license
+ */
 
-(function()
-{
+ 'use strict';
+
+( function() {
 
 	/**
-	 * A lightweight representation of HTML text.
-	 * @constructor
-	 * @example
+	 * A lightweight representation of HTML CDATA.
+	 *
+	 * @class
+	 * @extends CKEDITOR.htmlParser.node
+	 * @constructor Creates a cdata class instance.
+	 * @param {String} value The CDATA section value.
 	 */
-	CKEDITOR.htmlParser.cdata = function( value )
-	{
+	CKEDITOR.htmlParser.cdata = function( value ) {
 		/**
 		 * The CDATA value.
-		 * @type String
-		 * @example
+		 *
+		 * @property {String}
 		 */
 		this.value = value;
 	};
 
-	CKEDITOR.htmlParser.cdata.prototype =
-	{
+	CKEDITOR.htmlParser.cdata.prototype = CKEDITOR.tools.extend( new CKEDITOR.htmlParser.node(), {
 		/**
 		 * CDATA has the same type as {@link CKEDITOR.htmlParser.text} This is
-		 * a constant value set to {@link CKEDITOR.NODE_TEXT}.
-		 * @type Number
-		 * @example
+		 * a constant value set to {@link CKEDITOR#NODE_TEXT}.
+		 *
+		 * @readonly
+		 * @property {Number} [=CKEDITOR.NODE_TEXT]
 		 */
-		type : CKEDITOR.NODE_TEXT,
+		type: CKEDITOR.NODE_TEXT,
+
+		filter: function() {},
 
 		/**
-		 * Writes write the CDATA with no special manipulations.
-		 * @param {CKEDITOR.htmlWriter} writer The writer to which write the HTML.
+		 * Writes the CDATA with no special manipulations.
+		 *
+		 * @param {CKEDITOR.htmlParser.basicWriter} writer The writer to which write the HTML.
 		 */
-		writeHtml : function( writer )
-		{
+		writeHtml: function( writer ) {
 			writer.write( this.value );
 		}
-	};
-})();
+	} );
+} )();

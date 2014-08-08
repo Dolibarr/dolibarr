@@ -25,6 +25,15 @@
  *	\brief      Include to show main page for cashdesk module
  */
 
+
+
+
+/*
+ * View
+ */
+
+$form=new Form($db);
+
 // Get list of articles (in warehouse '$conf_fkentrepot' if defined and stock module enabled)
 if ( GETPOST('filtre') ) {
 
@@ -56,7 +65,7 @@ if ( GETPOST('filtre') ) {
 	else $sql.= ")";
 	$sql.= " ORDER BY label";
 
-	dol_syslog("facturation.php sql=".$sql);
+	dol_syslog("facturation.php", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -182,5 +191,3 @@ $obj_facturation->paiementLe('RESET');
 
 // Affichage des templates
 require ('tpl/facturation1.tpl.php');
-
-?>

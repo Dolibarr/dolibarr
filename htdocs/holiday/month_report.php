@@ -61,8 +61,8 @@ if(empty($year)) {
 }
 
 $sql = "SELECT cp.rowid, cp.fk_user, cp.date_debut, cp.date_fin, cp.halfday";
-$sql.= " FROM llx_holiday cp";
-$sql.= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
+$sql.= " FROM " . MAIN_DB_PREFIX . "holiday cp";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "user u ON cp.fk_user = u.rowid";
 $sql.= " WHERE cp.statut = 3";	// Approved
 // TODO Use BETWEEN instead of date_format
 $sql.= " AND (date_format(cp.date_debut, '%Y-%c') = '$year-$month' OR date_format(cp.date_fin, '%Y-%c') = '$year-$month')";
@@ -119,13 +119,8 @@ if($num == '0') {
 
 		$start_date=$db->jdate($holiday['date_debut']);
 		$end_date=$db->jdate($holiday['date_fin']);
-		/*if(substr($holiday['date_debut'],5,2)==$month-1){
-			$holiday['date_debut'] = date('Y-'.$month.'-01');
-		}
-
-		if(substr($holiday['date_fin'],5,2)==$month+1){
-			$holiday['date_fin'] = date('Y-'.$month.'-t');
-		}*/
+		$start_date_gmt=$db->jdate($holiday['date_debut'],1);
+		$end_date_gmt=$db->jdate($holiday['date_fin'],1);
 
 		print '<tr '.$bc[$var].'>';
 		print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
@@ -135,7 +130,7 @@ if($num == '0') {
 		print '<td>'.dol_print_date($end_date,'day');
 		print '</td>';
 		print '<td align="right">';
-		$nbopenedday=num_open_day($start_date, $end_date, 0, 1, $holiday['halfday']);
+		$nbopenedday=num_open_day($start_date_gmt, $end_date_gmt, 0, 1, $holiday['halfday']);
 		print $nbopenedday;
 		print '</td>';
 		print '</tr>';
@@ -148,4 +143,3 @@ print '</div>';
 llxFooter();
 
 $db->close();
-?>

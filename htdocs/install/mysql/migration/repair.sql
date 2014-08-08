@@ -3,8 +3,13 @@
 -- when current version is 2.6.0 or higher. 
 --
 
-
 -- Requests to clean corrupted database
+
+
+-- delete foreign key that should never exists
+ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_currency;
+ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_fk_currency;
+ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_currency;
 
 delete from llx_facturedet where fk_facture in (select rowid from llx_facture where facnumber in ('(PROV)','ErrorBadMask'));
 delete from llx_facture where facnumber in ('(PROV)','ErrorBadMask');
@@ -50,6 +55,19 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
 
+-- Fix: delete category child with no category parent.
+drop table tmp_categorie;
+create table tmp_categorie as select * from llx_categorie; 
+-- select * from llx_categorie where fk_parent not in (select rowid from tmp_categorie) and fk_parent is not null and fk_parent <> 0;
+delete from llx_categorie where fk_parent not in (select rowid from tmp_categorie) and fk_parent is not null and fk_parent <> 0;
+drop table tmp_categorie;
+-- Fix: delete orphelin category.
+delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
+delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
+
+
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
 delete from llx_livraisondet where fk_livraison not in (select fk_target from llx_element_element where targettype = 'delivery') AND fk_livraison not in (select fk_source from llx_element_element where sourcetype = 'delivery');
 delete from llx_livraison    where rowid not in (select fk_target from llx_element_element where targettype = 'delivery') AND rowid not in (select fk_source from llx_element_element where sourcetype = 'delivery');
@@ -60,8 +78,9 @@ UPDATE llx_product SET canvas = NULL where canvas = 'service@product';
 
 DELETE FROM llx_boxes where box_id NOT IN (SELECT rowid FROM llx_boxes_def);
 
+update llx_document_model set nom = 'typhon' where (nom = '' OR nom is null) and type = 'delivery';
 DELETE FROM llx_document_model WHERE nom ='elevement' AND type='delivery';
-DELETE FROM llx_document_model WHERE nom ='' AND type='delivery';
+
 
 -- Fix: It seems this is missing for some users
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 1,  'AC_TEL',     'system', 'Phone call'							,NULL, 2);
@@ -84,13 +103,78 @@ UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps
 -- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid;
 -- VPGSQL8.2 DELETE FROM llx_boxes_def as T1 WHERE rowid NOT IN (SELECT min(rowid) FROM llx_boxes_def GROUP BY file, entity, note);
 
+-- We delete old entries into menu for module margin (pb with margin and margins)
+-- VMYSQL DELETE from llx_menu where module = 'margin' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
+-- VMYSQL DELETE from llx_menu where module = 'margins' and url = '/margin/index.php' and not exists (select * from llx_const where name = 'MAIN_MODULE_MARGIN' or name = 'MAIN_MODULE_MARGINS');
 
--- Requests to clean old tables or fields
+
+ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
+
+
+-- Fix: deprecated tag to new one
+update llx_opensurvey_sondage set format = 'D' where format = 'D+';
+update llx_opensurvey_sondage set format = 'A' where format = 'A+';
+
+
+-- ALTER TABLE llx_facture_fourn ALTER COLUMN fk_cond_reglement DROP NOT NULL;
+
+
+update llx_product set barcode = null where barcode in ('', '-1', '0');
+update llx_societe set barcode = null where barcode in ('', '-1', '0');
+
+
+-- Sequence to removed duplicated values of barcode in llx_product. Use serveral times if you still have duplicate.
+drop table tmp_product_double;
+--select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2;
+create table tmp_product_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_product where barcode is not null group by barcode having count(rowid) >= 2);
+--select * from tmp_product_double;
+update llx_product set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_product_double);
+drop table tmp_product_double;
+
+
+-- Sequence to removed duplicated values of barcode in llx_societe. Use serveral times if you still have duplicate.
+drop table tmp_societe_double;
+--select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2;
+create table tmp_societe_double as (select barcode, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_societe where barcode is not null group by barcode having count(rowid) >= 2);
+--select * from tmp_societe_double;
+update llx_societe set barcode = null where (rowid, barcode) in (select max_rowid, barcode from tmp_societe_double);
+drop table tmp_societe_double;
+
+
+UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid
+
+
+UPDATE llx_actioncomm set fk_user_action = fk_user_done where fk_user_done > 0 and (fk_user_action is null or fk_user_action = 0);
+UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author > 0 and (fk_user_action is null or fk_user_action = 0);
+
+
+
+-- Requests to clean old tables or external modules tables
 
 -- DROP TABLE llx_c_methode_commande_fournisseur;
 -- DROP TABLE llx_c_source;
+-- DROP TABLE llx_congespayes;
+-- DROP TABLE llx_congespayes_config;
+-- DROP TABLE llx_congespayes_log;
+-- DROP TABLE llx_congespayes_events;
+-- DROP TABLE llx_congespayes_users;
+-- DROP TABLE llx_compta;
+-- DROP TABLE llx_compta_compte_generaux;
+-- DROP TABLE llx_compta_account;
+-- DROP TABLE llx_cabinetmed*;
 -- DROP TABLE llx_cond_reglement;
 -- DROP TABLE llx_expedition_methode;
 -- DROP TABLE llx_product_fournisseur;
--- ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_product_fournisseur;
-ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur;
+-- DROP TABLE llx_element_rang;
+-- DROP TABLE llx_dolicloud_customers;
+-- DROP TABLE llx_dolicloud_emailstemplates;
+-- DROP TABLE llx_dolicloud_stats;
+-- DROP TABLE llx_submitew_message;
+-- DROP TABLE llx_submitew_targets;
+-- DROP TABLE llx_submitew_targets_param;
+-- DROP TABLE llx_pos_cash;
+-- DROP TABLE llx_pos_control_cash;
+-- DROP TABLE llx_pos_facture;
+-- DROP TABLE llx_pos_moviments;
+-- DROP TABLE llx_pos_ticketdet;
+

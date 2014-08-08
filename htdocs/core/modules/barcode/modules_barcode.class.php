@@ -25,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
- *	Parent class for barcode document modules
+ *	Parent class for barcode document models
  */
 abstract class ModeleBarCode
 {
@@ -33,9 +33,9 @@ abstract class ModeleBarCode
 
 
 	/**
-	 * Return if a module can be used or not
+	 * Return if a model can be used or not
 	 *
-	 * @return		boolean     true if module can be used
+	 * @return		boolean     true if model can be used
 	 */
 	function isEnabled()
 	{
@@ -46,16 +46,16 @@ abstract class ModeleBarCode
 
 
 /**
- *	Parent class for barcode numbering modules
+ *	Parent class for barcode numbering models
  */
 abstract class ModeleNumRefBarCode
 {
 	var $error='';
 
-    /**     Renvoi la description par defaut du modele de numerotation
+    /**     Return default description of numbering model
      *
      *		@param	Translate	$langs		Object langs
-     *      @return string      			Texte descripif
+     *      @return string      			Descriptive text
      */
     function info($langs)
     {
@@ -63,17 +63,17 @@ abstract class ModeleNumRefBarCode
         return $langs->trans("NoDescription");
     }
 	
-    /**     Renvoi nom module
+    /**     Return model name
      *
      *		@param	Translate	$langs		Object langs
-     *      @return string      			Nom du module
+     *      @return string      			Model name
      */
     function getNom($langs)
     {
         return $this->nom;
     }
 	
-    /**     Renvoi un exemple de numerotation
+    /**     Return a numbering example 
      *
      *		@param	Translate	$langs		Object langs
      *      @return string      			Example
@@ -109,6 +109,7 @@ abstract class ModeleNumRefBarCode
         if ($this->version == 'development') return $langs->trans("VersionDevelopment");
         if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
         if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
         return $langs->trans("NotAvailable");
     }
 	
@@ -173,4 +174,3 @@ abstract class ModeleNumRefBarCode
     
 }
 
-?>

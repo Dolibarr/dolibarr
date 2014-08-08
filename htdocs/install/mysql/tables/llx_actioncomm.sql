@@ -30,7 +30,7 @@ create table llx_actioncomm
   datea				datetime,						-- deprecated
   datea2			datetime,						-- deprecated
 
-  fk_action			integer,						-- type of action (optionnal link with llx_c_actioncomm or null)
+  fk_action			integer,						-- type of action (optional link with llx_c_actioncomm or null)
   code				varchar(32) NULL,				-- code of action for automatic action
   label				varchar(128) NOT NULL,			-- label/title of event
   
@@ -45,9 +45,9 @@ create table llx_actioncomm
   fk_parent			integer NOT NULL default 0,
 
   fk_user_action	integer,						-- user id of owner of action (currently also user id of actor that must do action. In future, actors assigned to action will be an array into table llx_actioncomm_resources)
+  transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_resources)
 
-  transparency      integer,						-- transparency (ical standard). used to say if people assigned to event are busy or not by event (in future version, this field is deprecated and will be stored into table llx_actioncomm_resources)
-  fk_user_done		integer,						-- user id of people that has made action (deprecated)
+  fk_user_done		integer,						-- user id of user that has made action (deprecated)
   
   priority			smallint,
   fulldayevent		smallint NOT NULL default 0,

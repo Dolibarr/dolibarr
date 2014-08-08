@@ -65,7 +65,7 @@ class Bookmark
         $sql.= " WHERE rowid = ".$id;
         $sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog("Bookmark::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Bookmark::fetch", LOG_DEBUG);
         $resql  = $this->db->query($sql);
         if ($resql)
         {
@@ -116,14 +116,14 @@ class Bookmark
         if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
         $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
-        $sql.= " ".$this->db->idate($now).",";
+        $sql.= " '".$this->db->idate($now)."',";
         $sql.= " '".$this->url."', '".$this->target."',";
         $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
         $sql.= ", '".$conf->entity."'";
         if ($this->fk_soc) $sql.=",".$this->fk_soc;
         $sql.= ")";
 
-        dol_syslog("Bookmark::update sql=".$sql, LOG_DEBUG);
+        dol_syslog("Bookmark::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -173,7 +173,7 @@ class Bookmark
         $sql.= " ,position = '".$this->position."'";
         $sql.= " WHERE rowid = ".$this->id;
 
-        dol_syslog("Bookmark::update sql=".$sql, LOG_DEBUG);
+        dol_syslog("Bookmark::update", LOG_DEBUG);
         if ($this->db->query($sql))
         {
             return 1;
@@ -196,7 +196,7 @@ class Bookmark
         $sql  = "DELETE FROM ".MAIN_DB_PREFIX."bookmark";
         $sql .= " WHERE rowid = ".$id;
 
-        dol_syslog("Bookmark::remove sql=".$sql, LOG_DEBUG);
+        dol_syslog("Bookmark::remove", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -211,4 +211,3 @@ class Bookmark
     }
 
 }
-?>

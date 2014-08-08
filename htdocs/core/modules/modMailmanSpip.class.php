@@ -111,4 +111,3 @@ class modMailmanSpip extends DolibarrModules
     }
 
 }
-?>

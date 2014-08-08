@@ -38,7 +38,7 @@ class pdf_paiement
 	 */
 	function __construct($db)
 	{
-		global $langs;
+		global $langs,$conf;
 		$langs->load("bills");
 		$langs->load("compta");
 
@@ -156,7 +156,7 @@ class pdf_paiement
 		if (! empty($socid)) $sql .= " AND s.rowid = ".$socid;
 		$sql.= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
-		dol_syslog(get_class($this)."::write_file sql=".$sql);
+		dol_syslog(get_class($this)."::write_file", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -361,4 +361,3 @@ class pdf_paiement
 
 }
 
-?>

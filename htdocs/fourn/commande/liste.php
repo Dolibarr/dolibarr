@@ -1,8 +1,10 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,18 +31,20 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 
 $langs->load("orders");
+$langs->load("sendings");
 
-$sref=GETPOST('search_ref');
-$snom=GETPOST('search_nom');
-$suser=GETPOST('search_user');
-$sttc=GETPOST('search_ttc');
+
 $search_ref=GETPOST('search_ref');
+$search_refsupp=GETPOST('search_refsupp');
 $search_nom=GETPOST('search_nom');
 $search_user=GETPOST('search_user');
 $search_ttc=GETPOST('search_ttc');
 $sall=GETPOST('search_all');
+$search_status=GETPOST('search_status','int');
+if ($search_status == '') $search_status=-1;
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
@@ -69,6 +73,7 @@ llxHeader('',$title);
 
 $commandestatic=new CommandeFournisseur($db);
 $formfile = new FormFile($db);
+$formorder = new FormOrder($db);
 
 
 if ($sortorder == "") $sortorder="DESC";
@@ -81,7 +86,7 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
+$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -91,21 +96,21 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON cf.fk_user_author = u.rowid";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
 $sql.= " AND cf.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($sref)
+if ($search_ref)
 {
-	$sql .= natural_search('cf.ref', $sref);
+	$sql .= natural_search('cf.ref', $search_ref);
 }
-if ($snom)
+if ($search_nom)
 {
-	$sql .= natural_search('s.nom', $snom);
+	$sql .= natural_search('s.nom', $search_nom);
 }
-if ($suser)
+if ($search_user)
 {
-	$sql.= " AND u.login LIKE '%".$db->escape($suser)."%'";
+	$sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 }
-if ($sttc)
+if ($search_ttc)
 {
-	$sql .= " AND total_ttc = ".price2num($sttc);
+	$sql .= " AND total_ttc = ".price2num($search_ttc);
 }
 if ($sall)
 {
@@ -113,12 +118,30 @@ if ($sall)
 }
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
-if (GETPOST('statut'))
+//Required triple check because statut=0 means draft filter
+if (GETPOST('statut', 'int') !== '')
 {
-	$sql .= " AND fk_statut =".GETPOST('statut','int');
+	$sql .= " AND fk_statut IN (".GETPOST('statut').")";
+}
+if ($search_refsupp)
+{
+	$sql.= " AND (cf.ref_supplier LIKE '%".$db->escape($search_refsupp)."%')";
+}
+if ($search_status >= 0)
+{
+	if ($search_status == 6 || $search_status == 7) $sql.=" AND fk_statut IN (6,7)";
+	else $sql.=" AND fk_statut = ".$search_status;
 }
 
-$sql.= " ORDER BY $sortfield $sortorder ";
+$sql.= $db->order($sortfield,$sortorder);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -129,29 +152,41 @@ if ($resql)
 	$i = 0;
 
 	$param="";
-	if ($search_ref)   $param.="&search_ref=".$search_ref;
-	if ($search_nom)   $param.="&search_nom=".$search_nom;
-	if ($search_user)  $param.="&search_user=".$search_user;
-	if ($search_ttc)   $param.="&search_ttc=".$search_ttc;
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+	if ($search_ref)	$param.="&search_ref=".$search_ref;
+	if ($search_nom)	$param.="&search_nom=".$search_nom;
+	if ($search_user)	$param.="&search_user=".$search_user;
+	if ($search_ttc)	$param.="&search_ttc=".$search_ttc;
+	if ($search_refsupp) $param.="&search_refsupp=".$search_refsupp;
+	if ($socid)			$param.="&socid=".$socid;
+	if ($search_status >= 0)  $param.="&search_status=".$search_status;
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"cf.ref_supplier","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateDeliveryPlanned'),$_SERVER["PHP_SELF"],'cf.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$sref.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$snom.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$suser.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$sttc.'"></td>';
-	print '<td colspan="2" class="liste_titre" align="right">';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ref" value="'.$search_ref.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_refsupp" value="'.$search_refsupp.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$search_user.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
+	print '</td>';
+	print '<td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 	print '</tr>';
@@ -174,6 +209,10 @@ if ($resql)
 		$filedir=$conf->fournisseur->dir_output.'/commande' . '/' . dol_sanitizeFileName($obj->ref);
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td>'."\n";
+
+		// Ref Supplier
+		print '<td>'.$obj->ref_supplier.'</td>'."\n";
+
 
 		// Company
 		print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
@@ -202,8 +241,14 @@ if ($resql)
 		}
 		print '</td>';
 
+		// Delivery date
+		print '<td align="right">';
+		print dol_print_date($db->jdate($obj->date_livraison), 'day');
+		print '</td>';
+
+
 		// Statut
-		print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
+		print '<td align="right" colspan="2">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';
 
 		print "</tr>\n";
 		$i++;
@@ -221,4 +266,3 @@ else
 
 llxFooter();
 $db->close();
-?>

@@ -110,7 +110,7 @@ if ($action == 'edit')	// Edit
 
 
     // Misc options
-    print_fiche_titre($langs->trans("DictionnaryPaperFormat"),'','').'<br>';
+    print_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
@@ -120,7 +120,7 @@ if ($action == 'edit')	// Edit
 
     // Show pdf format
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionaryPaperFormat").'</td><td>';
     print $formadmin->select_paper_format($selected,'MAIN_PDF_FORMAT');
     print '</td></tr>';
 
@@ -262,14 +262,14 @@ else	// Show
     $var=true;
 
     // Misc options
-    print_fiche_titre($langs->trans("DictionnaryPaperFormat"),'','').'<br>';
+    print_fiche_titre($langs->trans("DictionaryPaperFormat"),'','').'<br>';
 	$var=true;
     print '<table summary="more" class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td width="200px">'.$langs->trans("Value").'</td></tr>';
 
     // Show pdf format
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionnaryPaperFormat").'</td><td>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("DictionaryPaperFormat").'</td><td>';
 
     $pdfformatlabel='';
     if (empty($conf->global->MAIN_PDF_FORMAT))
@@ -522,4 +522,3 @@ else	// Show
 llxFooter();
 
 $db->close();
-?>

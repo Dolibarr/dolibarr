@@ -61,7 +61,8 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 
     if ($result > 0 && $id > 0)
     {
-  		$result = $object->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+    	$idfortaskuser=GETPOST("contactid")>0?GETPOST("contactid"):GETPOST("userid");
+  		$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
     }
 
 	if ($result >= 0)
@@ -74,11 +75,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -156,6 +157,8 @@ if ($id > 0 || ! empty($ref))
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->societe->fetch($projectstatic->socid);
 
+		$object->project = dol_clone($projectstatic);
+
 		$userWrite  = $projectstatic->restrictedProjectArea($user,'write');
 
 		if ($withproject)
@@ -184,7 +187,7 @@ if ($id > 0 || ! empty($ref))
 
     		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
 
-    		print '<tr><td>'.$langs->trans("Company").'</td><td>';
+    		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
     		if (! empty($projectstatic->societe->id)) print $projectstatic->societe->getNomUrl(1);
     		else print '&nbsp;';
     		print '</td>';
@@ -199,6 +202,16 @@ if ($id > 0 || ! empty($ref))
     		// Statut
     		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
 
+		   	// Date start
+			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+			print dol_print_date($projectstatic->date_start,'day');
+			print '</td></tr>';
+
+			// Date end
+			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+			print dol_print_date($projectstatic->date_end,'day');
+			print '</td></tr>';
+
     		print '</table>';
 
     		dol_fiche_end();
@@ -209,8 +222,6 @@ if ($id > 0 || ! empty($ref))
 		// To verify role of users
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$object->getListContactId('internal');
-
-		dol_htmloutput_mesg($mesg);
 
 		$head = task_prepare_head($object);
 		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), 0, 'projecttask');
@@ -232,7 +243,7 @@ if ($id > 0 || ! empty($ref))
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	    print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
@@ -246,7 +257,7 @@ if ($id > 0 || ! empty($ref))
     		print '</td></tr>';
 
     		// Customer
-    		print "<tr><td>".$langs->trans("Company")."</td>";
+    		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
     		print '<td colspan="3">';
     		if ($projectstatic->societe->id > 0) print $projectstatic->societe->getNomUrl(1);
     		else print '&nbsp;';
@@ -260,7 +271,17 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Lignes de contacts
 		 */
-		print '<br><table class="noborder" width="100%">';
+		print '<br>';
+/*
+		// Contacts lines (modules that overwrite templates must declare this into descriptor)
+		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
+		foreach($dirtpls as $reldir)
+		{
+		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
+		    if ($res) break;
+		}
+*/
+		print '<table class="noborder" width="100%">';
 
 		/*
 		 * Ajouter une ligne de contact
@@ -270,7 +291,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
-			print '<td>'.$langs->trans("Company").'</td>';
+			print '<td>'.$langs->trans("ThirdParty").'</td>';
 			print '<td>'.$langs->trans("ProjectContact").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
@@ -283,7 +304,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
-			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr ".$bc[$var].">";
@@ -317,6 +338,7 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="hidden" name="action" value="addcontact">';
 				print '<input type="hidden" name="source" value="external">';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
+				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
@@ -326,20 +348,22 @@ if ($id > 0 || ! empty($ref))
 				print '</td>';
 
 				print '<td colspan="1">';
+				$events=array();
+				$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+
 				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
 				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany',$thirdpartyofproject);
+				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, $events, '&withproject='.$withproject);
 				print '</td>';
 
 				print '<td colspan="1">';
 				$contactofproject=$projectstatic->getListContactId('external');
 				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
-				if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 				print '</td>';
 				print '<td>';
 				$formcompany->selectTypeContact($object, '', 'type','external','rowid');
 				print '</td>';
-				print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
 				if (! $nbofcontacts) print ' disabled="disabled"';
 				print '></td>';
 				print '</tr>';
@@ -351,7 +375,7 @@ if ($id > 0 || ! empty($ref))
 		// Liste des contacts lies
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
-		print '<td>'.$langs->trans("Company").'</td>';
+		print '<td>'.$langs->trans("ThirdParty").'</td>';
 		print '<td>'.$langs->trans("ProjectContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
@@ -442,6 +466,7 @@ if ($id > 0 || ! empty($ref))
 			}
 		}
 		print "</table>";
+
 	}
 	else
 	{
@@ -453,4 +478,3 @@ if ($id > 0 || ! empty($ref))
 llxFooter();
 
 $db->close();
-?>

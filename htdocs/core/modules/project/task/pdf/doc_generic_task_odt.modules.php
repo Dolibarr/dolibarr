@@ -323,7 +323,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
@@ -333,33 +333,23 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
-		$texte.= '<table><tr><td>';
+		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
-		$texte.= '</td>';
-		$texte.= '<td align="center">&nbsp; ';
+		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
+		$texte.= '<br></div></div>';
 
 		// Scan directories
 		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 		$texte.= '</td>';
 
-
-		$texte.= '<td valign="top" rowspan="2">';
+		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';
-
-		/*$texte.= '<tr>';
-		 $texte.= '<td align="center">';
-		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';*/
 
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -431,7 +421,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			{
 				//print "srctemplatepath=".$srctemplatepath;	// Src filename
 				$newfile=basename($srctemplatepath);
-				$newfiletmp=preg_replace('/\.odt/i','',$newfile);
+				$newfiletmp=preg_replace('/\.(ods|odt)/i','',$newfile);
 				$newfiletmp=preg_replace('/template_/i','',$newfiletmp);
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
 				$newfiletmp=$objectref.'_'.$newfiletmp;
@@ -536,7 +526,6 @@ class doc_generic_task_odt extends ModelePDFTask
 						else	// Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
-							$odfHandler->setVarsHeadFooter($key, $value, true, 'UTF-8');
 						}
 					}
 					catch(OdfException $e)
@@ -573,7 +562,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					if (!empty($project->fk_soc)) $socid = $project->fk_soc;
 
 					$tmparray=$this->get_substitutionarray_tasks($object,$outputlangs);
-					complete_substitutions_array($tmparray, $outputlangs, $task);
+					complete_substitutions_array($tmparray, $outputlangs, $object);
 					foreach($tmparray as $key => $val)
 					{
 						try
@@ -693,7 +682,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listtasksfiles = $odfHandler->setSegment('tasksfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($project->ref).'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
 
 
 					foreach ($filearray as $filedetail)
@@ -735,7 +724,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					$listlines = $odfHandler->setSegment('projectfiles');
 
 					$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($object->ref);
-					$filearray=dol_dir_list($upload_dir,"files",0,'','\.meta$','name',SORT_ASC,1);
+					$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$','name',SORT_ASC,1);
 
 
 					foreach ($filearray as $filedetail)
@@ -848,4 +837,3 @@ class doc_generic_task_odt extends ModelePDFTask
 	}
 
 }
-?>

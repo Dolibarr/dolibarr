@@ -134,6 +134,7 @@ abstract class ModeleThirdPartyCode
         if ($this->version == 'development') return $langs->trans("VersionDevelopment");
         if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
         if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
         return $langs->trans("NotAvailable");
     }
 
@@ -303,6 +304,7 @@ abstract class ModeleAccountancyCode
         if ($this->version == 'development') return $langs->trans("VersionDevelopment");
         if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
         if ($this->version == 'dolibarr') return DOL_VERSION;
+        if ($this->version) return $this->version;
         return $langs->trans("NotAvailable");
     }
 
@@ -353,6 +355,8 @@ abstract class ModeleAccountancyCode
      */
     function get_code($db, $societe, $type='')
     {
+	    global $langs;
+
         return $langs->trans("NotAvailable");
     }
 }
@@ -374,6 +378,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
 {
     global $conf,$langs,$user;
     $langs->load("bills");
+	$error=0;
 
     $dir = DOL_DOCUMENT_ROOT . "/core/modules/societe/doc";
     $srctemplatepath='';
@@ -422,7 +427,7 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
             $interface=new Interfaces($db);
             $result=$interface->run_triggers('COMPANY_BUILDDOC',$object,$user,$langs,$conf);
             if ($result < 0) {
-            	$error++; $this->errors=$interface->errors;
+            	$error++; $obj->errors=$interface->errors;
             }
             // Fin appel triggers
 
@@ -444,4 +449,3 @@ function thirdparty_doc_create($db, $object, $message, $modele, $outputlangs)
 }
 
 
-?>

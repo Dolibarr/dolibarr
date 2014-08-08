@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011		Juanjo Menent <jmenent@2byte.es>
+/* Copyright (C) 2011-2014		Juanjo Menent <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ $langs->load("compta");
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
+$ltt=$_REQUEST["localTaxType"];
 
 /*
  * View
@@ -40,11 +41,11 @@ llxHeader();
 
 $localtax_static = new Localtax($db);
 
-print_fiche_titre($langs->transcountry("LT2Payments",$mysoc->country_code));
+print_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code));
 
 $sql = "SELECT rowid, amount, label, f.datev as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";
-$sql.= " WHERE f.entity = ".$conf->entity;
+$sql.= " WHERE f.entity = ".$conf->entity." AND localtaxtype=".$ltt;
 $sql.= " ORDER BY dm DESC";
 
 $result = $db->query($sql);
@@ -94,4 +95,3 @@ else
 $db->close();
 
 llxFooter();
-?>

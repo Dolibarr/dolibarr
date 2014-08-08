@@ -117,4 +117,3 @@ class modImport extends DolibarrModules
     }
 
 }
-?>

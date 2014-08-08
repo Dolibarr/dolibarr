@@ -210,4 +210,3 @@ if ($format == 'rss')
 llxHeaderVierge();
 print '<div class="error">'.$agenda->error.'</div>';
 llxFooterVierge();
-?>

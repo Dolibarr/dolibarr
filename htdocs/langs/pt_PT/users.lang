@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=HRM area
 UserCard=Ficha de Utilizador
 ContactCard=Ficha de Contacto
 GroupCard=Ficha de Grupo
@@ -86,7 +87,7 @@ MyInformations=A Minha Informação
 ExportDataset_user_1=Utilizadores e Atributos
 DomainUser=Utilizador de Domínio
 Reactivate=Reactivar
-CreateInternalUserDesc=Esta janela permite criar um utilizador interno da sua Empresa/Instituição. Para criar um utilizador externo (cliente, fornecedor...) use o botão ' Criar Utilizador' que se encontra na ficha de contacto do terceiro em questão.
+CreateInternalUserDesc=This form allows you to create an user internal to your company/foundation. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
 InternalExternalDesc=Um utilizador <b>interno</b> é um utilizador que pertenece à sua Empresa/Instituição.<br>Um utilizador <b>externo</b> é um utilizador cliente, fornecedor ou outro.<br><br>Nos 2 casos, as permissões de utilizadores definem os direitos de acesso, mas o utilizador externo pode além disso ter  um gestor de menus diferente do utilizador interno (ver Inicio - configuração - visualização)
 PermissionInheritedFromAGroup=A permissão dá-se já que o herda de um grupo ao qual pertenece o utilizador.
 Inherited=Herdado
@@ -116,5 +117,5 @@ DontDowngradeSuperAdmin=Apenas um superadmin pode desclassificar um superadmin
 HierarchicalResponsible=Responsabilidade Hierárquica
 HierarchicView=Vista Hierárquica
 UseTypeFieldToChange=Use Tipo de Campo para mudar
-# OpenIDURL=OpenID URL
-# LoginUsingOpenID=Use OpenID to login
+OpenIDURL=Endereço OpenID
+LoginUsingOpenID=Utilizar OpenID para autenticação

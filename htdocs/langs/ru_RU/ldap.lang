@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Пароль домена
-YouMustChangePassNextLogon=Пароль <b>пользователя %s</b> на <b>домене %s</b> должен быть изменен.
+DomainPassword=Пароль для домена
+YouMustChangePassNextLogon=Пароль пользователя <b>%s</b> на домене <b>%s</b> должен быть изменен.
 UserMustChangePassNextLogon=Пользователь должен изменить пароль на домене %s
 LdapUacf_NORMAL_ACCOUNT=Учетная запись пользователя
-LdapUacf_DONT_EXPIRE_PASSWORD=Солк действия пароля не ограничен
+LdapUacf_DONT_EXPIRE_PASSWORD=Срок действия пароля не ограничен
 LdapUacf_ACCOUNTDISABLE=Аккаунт отключен в домене %s
 LDAPInformationsForThisContact=Информация в базе данных LDAP для этого контакта
 LDAPInformationsForThisUser=Информация в базе данных LDAP для этого пользователя

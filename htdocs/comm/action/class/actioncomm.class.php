@@ -58,15 +58,15 @@ class ActionComm extends CommonObject
     var $percentage;    // Percentage
     var $location;      // Location
 	var $transparency;	// Transparency (ical standard). Used to say if people assigned to event are busy or not by event. 0=available, 1=busy, 2=busy (refused events)
-    var $priority;      // Free text ('' By default)
+    var $priority;      // Small int (0 By default)
     var $note;          // Description
 
     var $usertodo;		// Object user that must do action
     var $userdone;	 	// Object user that did action
 
-    var $societe;		// Company linked to action (optionnal)
-    var $contact;		// Contact linked tot action (optionnal)
-    var $fk_project;	// Id of project (optionnal)
+    var $societe;		// Company linked to action (optional)
+    var $contact;		// Contact linked to action (optional)
+    var $fk_project;	// Id of project (optional)
 
 
     // Properties for links to other objects
@@ -116,7 +116,7 @@ class ActionComm extends CommonObject
         $this->location=dol_trunc(trim($this->location),128);
         $this->note=dol_htmlcleanlastbr(trim($this->note));
         if (empty($this->percentage))   $this->percentage = 0;
-        if (empty($this->priority))     $this->priority = 0;
+        if (empty($this->priority) || ! is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->fulldayevent)) $this->fulldayevent = 0;
         if (empty($this->punctual))     $this->punctual = 0;
         if (empty($this->transparency)) $this->transparency = 0;
@@ -143,7 +143,7 @@ class ActionComm extends CommonObject
             }
             else if ($result == 0)
             {
-                $this->error='Failed to get record with code '.$this->type_code.' from dictionnary "type of events"';
+                $this->error='Failed to get record with code '.$this->type_code.' from dictionary "type of events"';
                 return -1;
             }
             else
@@ -202,7 +202,7 @@ class ActionComm extends CommonObject
         $sql.= $conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::add sql=".$sql);
+        dol_syslog(get_class($this)."::add", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -227,14 +227,10 @@ class ActionComm extends CommonObject
 
             if (! $error && ! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ACTION_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('ACTION_CREATE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
             }
 
             if (! $error)
@@ -252,7 +248,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::add ".$this->error,LOG_ERR);
             return -1;
         }
 
@@ -292,7 +287,7 @@ class ActionComm extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
         $sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -369,7 +364,7 @@ class ActionComm extends CommonObject
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm";
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         $res=$this->db->query($sql);
         if ($res < 0) {
         	$this->error=$this->db->lasterror();
@@ -390,14 +385,10 @@ class ActionComm extends CommonObject
         {
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ACTION_DELETE',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('ACTION_DELETE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
             }
 
             if (! $error)
@@ -415,7 +406,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::delete ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -438,7 +428,7 @@ class ActionComm extends CommonObject
         $this->label=trim($this->label);
         $this->note=trim($this->note);
         if (empty($this->percentage))    $this->percentage = 0;
-        if (empty($this->priority))      $this->priority = 0;
+        if (empty($this->priority) || ! is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->transparency))  $this->transparency = 0;
         if (empty($this->fulldayevent))  $this->fulldayevent = 0;
         if ($this->percentage > 100) $this->percentage = 100;
@@ -477,7 +467,7 @@ class ActionComm extends CommonObject
         $sql.= ", fk_user_done=".($this->userdone->id > 0 ? "'".$this->userdone->id."'":"null");
         $sql.= " WHERE id=".$this->id;
 
-        dol_syslog(get_class($this)."::update sql=".$sql);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         if ($this->db->query($sql))
         {
 
@@ -500,14 +490,10 @@ class ActionComm extends CommonObject
 
             if (! $notrigger)
             {
-                // Appel des triggers
-                include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('ACTION_MODIFY',$this,$user,$langs,$conf);
-                if ($result < 0) {
-                    $error++; $this->errors=$interface->errors;
-                }
-                // Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('ACTION_MODIFY',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
             }
 
             if (! $error)
@@ -526,7 +512,6 @@ class ActionComm extends CommonObject
         {
             $this->db->rollback();
             $this->error=$this->db->lasterror();
-            dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -558,7 +543,7 @@ class ActionComm extends CommonObject
         }
         if (! empty($filter)) $sql.= $filter;
 
-        dol_syslog(get_class()."::getActions sql=".$sql);
+        dol_syslog(get_class()."::getActions", LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -644,7 +629,7 @@ class ActionComm extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
         $sql.= ' WHERE a.id = '.$id;
 
-        dol_syslog(get_class($this)."::info sql=".$sql);
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {
@@ -825,7 +810,7 @@ class ActionComm extends CommonObject
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php");
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
         require_once (DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
-        
+
         dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
         // Check parameters
@@ -930,7 +915,7 @@ class ActionComm extends CommonObject
             $sql.= " ORDER by datep";
             //print $sql;exit;
 
-            dol_syslog(get_class($this)."::build_exportfile select events sql=".$sql);
+            dol_syslog(get_class($this)."::build_exportfile select events", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -976,7 +961,6 @@ class ActionComm extends CommonObject
             else
             {
                 $this->error=$this->db->lasterror();
-                dol_syslog(get_class($this)."::build_exportfile ".$this->db->lasterror(), LOG_ERR);
                 return -1;
             }
 
@@ -1064,10 +1048,9 @@ class ActionComm extends CommonObject
         $this->percentage=0;
         $this->location='Location';
         $this->transparency=0;
-        $this->priority='Priority X';
+        $this->priority=1;
         $this->note = 'Note';
     }
 
 }
 
-?>

@@ -6,45 +6,44 @@ TotalMargin=Margem total
 MarginOnProducts=Margem / Produtos
 MarginOnServices=Margem / Serviços
 MarginRate=Taxa de margem
-# MarkRate=Mark rate
-# DisplayMarginRates=Display margin rates
-# DisplayMarkRates=Display mark rates
-# InputPrice=Input price
+MarkRate=Mark rate
+DisplayMarginRates=Display margin rates
+DisplayMarkRates=Display mark rates
+InputPrice=Input price
 
-# margin=Profit margins management
-# margesSetup=Profit margins management setup
+margin=Profit margins management
+margesSetup=Profit margins management setup
 
-# MarginDetails=Margin details
+MarginDetails=Detalhes da margem
 
-# ProductMargins=Product margins
-# CustomerMargins=Customer margins
-# AgentMargins=Agent margins
+ProductMargins=Margens do produto
+CustomerMargins=Margens do cliente
+SalesRepresentativeMargins=Sales representative margins
 
 ProductService=Produto ou Serviço
-# AllProducts=All products and services
-# ChooseProduct/Service=Choose product or service
-# CommercialAgent=Commercial agent
+AllProducts=Todos os produtos e serviços
+ChooseProduct/Service=Escolher produto ou serviço
 
 StartDate=Data de Início
 EndDate=Data Fim
 Launch=Iniciar
 
-# ForceBuyingPriceIfNull=Force buying price if null
-# ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
-# MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
+ForceBuyingPriceIfNull=Force buying price if null
+ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
+MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
 UseDiscountAsProduct=Como um produto
 UseDiscountAsService=Como um serviço
 UseDiscountOnTotal=No subtotal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Define se um desconto global é tratado como um produto, um serviço, ou apenas no subtotal para cálculo de margem
 
-# MARGIN_TYPE=Margin type
-# MargeBrute=Raw margin
-# MargeNette=Net margin
-# MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
+MARGIN_TYPE=Tipo de margem
+MargeBrute=Raw margin
+MargeNette=Net margin
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
 
 CostPrice=Preço de custo
 BuyingCost=Preço de custo
-# UnitCharges=Unit charges
+UnitCharges=Custos unitários
 Charges=Custos
 
 AgentContactType=Tipo de contacto usado para comissionamento

@@ -117,4 +117,3 @@ class modGeoIPMaxmind extends DolibarrModules
     }
 
 }
-?>

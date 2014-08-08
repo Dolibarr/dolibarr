@@ -79,6 +79,14 @@ MailtoEMail=Hyper link către email
 ActivateCheckRead=Permite utiliyarea linkului  "Dezabonare"
 ActivateCheckReadKey=Utilizaţi cheia pentru a cripta URL-ul folosit pentru funcţiunile "Confirmare de citire" și "Dezabonare"
 EMailSentToNRecipients=EMail trimis la %s destinatari.
+XTargetsAdded=<b>%s</b> recipients added into target list
+EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+SendRemind=Send reminder by EMails
+RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No EMail reminder sent
+ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=De contact ale tuturor părţilor terţe (client, perspectiva, furnizor, ...)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Date de contact ale terţilor (de că
 MailingModuleDescContactsByCategory=Contacte/adrese ale terţilor după caegorie
 MailingModuleDescMembersCategories=Membrii fundaţiei (pe categorii)
 MailingModuleDescContactsByFunction=Date de contact ale terţilor (de poziţie / funcţie)
-
-
 LineInFile=Linia %s în fişierul
 RecipientSelectionModules=Definit pentru cererile beneficiarilor de selecţie
 MailSelectedRecipients=Selectat destinatarii
@@ -114,6 +120,7 @@ TargetsReset=Cer senin lista
 ToClearAllRecipientsClickHere=Pentru a goli beneficiarilor lista pentru acest email-uri, faceţi clic pe butonul
 ToAddRecipientsChooseHere=Pentru a adăuga destinatari, alegeţi din aceste liste
 NbOfEMailingsReceived=Mass emailings primit
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID-ul de înregistrare
 DeliveryReceipt=Livrarea Chitanţă
 YouCanUseCommaSeparatorForSeveralRecipients=Aveţi posibilitatea de a utiliza <b>comma</b> separator pentru a specifica mai mulţi destinatari.
@@ -121,7 +128,6 @@ TagCheckMail=Urmăreşte deschiderea emailului
 TagUnsubscribe=Link Dezabonare
 TagSignature=Semnătura utilizator expeditor
 TagMailtoEmail=Recipient EMail
-
 # Module Notifications
 Notifications=Anunturi
 NoNotificationsWillBeSent=Nu notificări prin email sunt planificate pentru acest eveniment şi a companiei

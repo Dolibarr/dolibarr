@@ -79,6 +79,14 @@ MailtoEMail=mailto email (hyperlink)
 ActivateCheckRead=Activar confirmació de lectura i opció de Desubscripció
 ActivateCheckReadKey=Clau usada per xifrar la URL de la confirmació de lectura i la funció de desubscripció
 EMailSentToNRecipients=E-Mail enviat a %s destinataris.
+XTargetsAdded=<b>%s</b> recipients added into target list
+EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+SendRemind=Send reminder by EMails
+RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No EMail reminder sent
+ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contactes de tercers (clients potencials, clients, proveïdors ...)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Contactes de tercers (per categoria d
 MailingModuleDescContactsByCategory=Contactes/adreces de tercers per categoria
 MailingModuleDescMembersCategories=Membres (per categoria)
 MailingModuleDescContactsByFunction=Contactes de tercers (per lloc/funció)
-
-
 LineInFile=Línea %s en archiu
 RecipientSelectionModules=Mòduls de selecció dels destinataris
 MailSelectedRecipients=Destinataris seleccionats
@@ -114,6 +120,7 @@ TargetsReset=Buidar llista
 ToClearAllRecipientsClickHere=Per buidar la llista dels destinataris d'aquest E-Mailing, feu clic al botó
 ToAddRecipientsChooseHere=Per afegir destinataris, escolliu els que figuren en les llistes a continuació
 NbOfEMailingsReceived=E-Mailings en massa rebuts
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID registre
 DeliveryReceipt=Justificant de recepció
 YouCanUseCommaSeparatorForSeveralRecipients=Podeu usar el caràcter de separació <b>coma</b> per especificar múltiples destinataris.
@@ -121,7 +128,6 @@ TagCheckMail=Seguiment de l'obertura del email
 TagUnsubscribe=Link de Desubscripció
 TagSignature=Signatura de l'usuari remitent
 TagMailtoEmail=Email del destinatario
-
 # Module Notifications
 Notifications=Notificacions
 NoNotificationsWillBeSent=Cap notificació per e-mail està prevista per a aquest esdeveniment i empresa

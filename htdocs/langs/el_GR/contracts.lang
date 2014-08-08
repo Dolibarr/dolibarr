@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=Λίστα των Υπηρεσιών λήγε
 ListOfServicesToExpireWithDurationNeg=Κατάλογος των υπηρεσιών έληξε από περισσότερες, από %s ημέρες
 ListOfServicesToExpire=Κατάλογος Υπηρεσιών προς λήξει
 NoteListOfYourExpiredServices=Αυτή η λίστα περιέχει μόνο τις υπηρεσίες των συμβάσεων για λογαριασμό ΠΕΛ./ΠΡΟΜ. που συνδέονται ως εκπρόσωπος πώληση.
+StandardContractsTemplate=Οι πρότυπες συμβάσεις
+ContactNameAndSignature=Για %s, το όνομα και η υπογραφή:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Σύμβαση πώλησης υπογραφή εκπροσώπου

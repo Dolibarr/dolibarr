@@ -228,4 +228,3 @@ if (empty($action) || $action == 'delete_section')
 // End of page
 llxFooter();
 $db->close();
-?>

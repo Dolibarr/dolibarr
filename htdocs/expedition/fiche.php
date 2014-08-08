@@ -6,6 +6,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))  requi
 if (! empty($conf->propal->enabled))   require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->stock->enabled))    require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 $langs->load("sendings");
 $langs->load("companies");
@@ -48,6 +50,7 @@ $langs->load('orders');
 $langs->load('stocks');
 $langs->load('other');
 $langs->load('propal');
+if (! empty($conf->productbatch->enabled)) $langs->load('productbatch');
 
 $origin		= GETPOST('origin','alpha')?GETPOST('origin','alpha'):'expedition';   // Example: commande, propal
 $origin_id 	= GETPOST('id','int')?GETPOST('id','int'):'';
@@ -126,7 +129,31 @@ if ($action == 'add')
     for ($i = 0; $i < $num; $i++)
     {
         $qty = "qtyl".$i;
-        if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+		$j=0;
+		$sub_qty=array();
+		$subtotalqty=0;
+		$idl="idl".$i;
+		$batch="batchl".$i."_0";
+		if (isset($_POST[$batch])) {
+			//shipment line with batch-enable product
+			$qty .= '_'.$j;
+			while (isset($_POST[$batch])) {
+				$sub_qty[$j]['q']=GETPOST($qty,'int');
+				$sub_qty[$j]['id_batch']=GETPOST($batch,'int');
+				$subtotalqty+=$sub_qty[$j]['q'];
+				$j++;
+				$batch="batchl".$i."_".$j;
+				$qty = "qtyl".$i.'_'.$j;
+
+			}
+			$batch_line[$i]['detail']=$sub_qty;
+			$batch_line[$i]['qty']=$subtotalqty;
+			$batch_line[$i]['ix_l']=GETPOST($idl,'int');
+			$totalqty+=$subtotalqty;
+		} else {
+			//Standard product
+			if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
+		}
     }
 
     if ($totalqty > 0)
@@ -135,20 +162,31 @@ if ($action == 'add')
         for ($i = 0; $i < $num; $i++)
         {
             $qty = "qtyl".$i;
-            if (GETPOST($qty,'int') > 0)
-            {
-                $ent = "entl".$i;
-                $idl = "idl".$i;
-                $entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-				if ($entrepot_id < 0) $entrepot_id='';
+			if (! isset($batch_line[$i])) {
+				if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
+				{
+					$ent = "entl".$i;
+					$idl = "idl".$i;
+					$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+					if ($entrepot_id < 0) $entrepot_id='';
 
-                $ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
-                if ($ret < 0)
-                {
-                    $mesg='<div class="error">'.$object->error.'</div>';
-                    $error++;
-                }
-            }
+					$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'));
+					if ($ret < 0)
+					{
+						$mesg='<div class="error">'.$object->error.'</div>';
+						$error++;
+					}
+				}
+			} else {
+				if ($batch_line[$i]['qty']>0) {
+					$ret=$object->addline_batch($batch_line[$i]);
+					if ($ret < 0)
+					{
+						$mesg='<div class="error">'.$object->error.'</div>';
+						$error++;
+					}
+				}
+			}
         }
 
         if (! $error)
@@ -183,7 +221,7 @@ if ($action == 'add')
 
 /*
  * Build a receiving receipt
-*/
+ */
 else if ($action == 'create_delivery' && $conf->livraison_bon->enabled && $user->rights->expedition->livraison->creer)
 {
     $result = $object->create_delivery($user);
@@ -203,26 +241,34 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     $object->fetch_thirdparty();
 
     $result = $object->valid($user);
-
-    // Define output language
-    $outputlangs = $langs;
-    $newlang='';
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-    {
-        $ret=$object->fetch($id);    // Reload to get new records
-        $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
-    }
+    
     if ($result < 0)
     {
-        dol_print_error($db,$result);
-        exit;
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
+    }
+    else
+    {
+        // Define output language
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+        }
+        if ($result < 0)
+        {
+            dol_print_error($db,$result);
+            exit;
+        }
     }
 }
 
@@ -235,8 +281,9 @@ else if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expe
         exit;
     }
     else
-    {
-        $mesg = $object->error;
+	{
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
     }
 }
 
@@ -274,9 +321,15 @@ else if ($action == 'settrackingnumber' || $action == 'settrackingurl'
 
     if ($action == 'settrackingnumber')		$object->tracking_number = trim(GETPOST('trackingnumber','alpha'));
     if ($action == 'settrackingurl')		$object->tracking_url = trim(GETPOST('trackingurl','int'));
-    if ($action == 'settrueWeight')			$object->trueWeight = trim(GETPOST('trueWeight','int'));
+    if ($action == 'settrueWeight')	{
+    	$object->trueWeight = trim(GETPOST('trueWeight','int'));
+		$object->weight_units = GETPOST('weight_units','int');
+    }
     if ($action == 'settrueWidth')			$object->trueWidth = trim(GETPOST('trueWidth','int'));
-    if ($action == 'settrueHeight')			$object->trueHeight = trim(GETPOST('trueHeight','int'));
+    if ($action == 'settrueHeight'){
+    				$object->trueHeight = trim(GETPOST('trueHeight','int'));
+					$object->size_units = GETPOST('size_units','int');
+	}
     if ($action == 'settrueDepth')			$object->trueDepth = trim(GETPOST('trueDepth','int'));
     if ($action == 'setshipping_method_id')	$object->shipping_method_id = trim(GETPOST('shipping_method_id','int'));
 
@@ -455,7 +508,7 @@ if ($action == 'send' && ! GETPOST('addfile','alpha') && ! GETPOST('removedfile'
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('SHIPPING_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) {
-                            $error++; $this->errors=$interface->errors;
+                            $error++; $object->errors=$interface->errors;
                         }
                         // Fin appel triggers
 
@@ -711,12 +764,18 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("QtyToShip");
+				if (empty($conf->productbatch->enabled)) {
                 print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
                 print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+				}
                 print '</td>';
                 if (! empty($conf->stock->enabled))
                 {
+					if (empty($conf->productbatch->enabled)) {
                     print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Stock").'</td>';
+					} else {
+						print '<td align="left">'.$langs->trans("Warehouse").' / '.$langs->trans("Batch").' / '.$langs->trans("Stock").'</td>';
+					}
                 }
                 print "</tr>\n";
             }
@@ -812,67 +871,91 @@ if ($action == 'create')
                     if (($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES)) || $defaultqty < 0) $defaultqty=0;
                 }
 
-                // Quantity to send
-                print '<td align="center">';
-                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                {
-                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
-                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
-                }
-                else print $langs->trans("NA");
-                print '</td>';
+                if (empty($conf->productbatch->enabled) ||  ! ($product->hasbatch() and is_object($product->stock_warehouse[GETPOST('entrepot_id','int')])))
+				{
+	                // Quantity to send
+	                print '<td align="center">';
+	                if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                {
+	                    print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+	                    print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$defaultqty.'">';
+	                }
+	                else print $langs->trans("NA");
+	                print '</td>';
 
-                // Stock
-                if (! empty($conf->stock->enabled))
-                {
-                    print '<td align="left">';
-                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
-                    {
-                        // Show warehouse combo list
-                    	$ent = "entl".$indiceAsked;
-                    	$idl = "idl".$indiceAsked;
-                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
-                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
-                        {
-                            //print $stock.' '.$quantityToBeDelivered;
-                            if ($stock < $quantityToBeDelivered)
-                            {
-                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
-                            }
-                        }
-                    }
-                    else
-                    {
-                        print $langs->trans("Service");
-                    }
-                    print '</td>';
-                }
+	                // Stock
+	                if (! empty($conf->stock->enabled))
+	                {
+	                    print '<td align="left">';
+	                    if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+	                    {
+	                        // Show warehouse combo list
+	                    	$ent = "entl".$indiceAsked;
+	                    	$idl = "idl".$indiceAsked;
+	                    	$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+	                        print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+	                    	if ($tmpentrepot_id > 0 && $tmpentrepot_id == GETPOST('entrepot_id','int'))
+	                        {
+	                            //print $stock.' '.$quantityToBeDelivered;
+	                            if ($stock < $quantityToBeDelivered)
+	                            {
+	                                print ' '.img_warning($langs->trans("StockTooLow"));	// Stock too low for entrepot_id but we may have change warehouse
+	                            }
+	                        }
+	                    }
+	                    else
+	                    {
+	                        print $langs->trans("Service");
+	                    }
+	                    print '</td>';
+	                }
 
-                print "</tr>\n";
+	                print "</tr>\n";
 
-                // Show subproducts of product
-                if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
-                {
-                    $product->get_sousproduits_arbo();
-                    $prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-                    if(count($prods_arbo) > 0)
-                    {
-                        foreach($prods_arbo as $key => $value)
-                        {
-                            //print $value[0];
-                            $img='';
-                            if ($value['stock'] < $value['stock_alert'])
-                            {
-                                $img=img_warning($langs->trans("StockTooLow"));
-                            }
-                            print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
-                                <a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
-                                </a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-                                <td align=\"center\">".$value['stock']." ".$img."</td></tr>";
-                        }
-                    }
-                }
+	                // Show subproducts of product
+					if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
+					{
+						$product->get_sousproduits_arbo();
+						$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
+						if(count($prods_arbo) > 0)
+						{
+							foreach($prods_arbo as $key => $value)
+							{
+								//print $value[0];
+								$img='';
+								if ($value['stock'] < $value['stock_alert'])
+								{
+									$img=img_warning($langs->trans("StockTooLow"));
+								}
+								print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									<a href=\"".DOL_URL_ROOT."/product/fiche.php?id=".$value['id']."\">".$value['fullpath']."
+									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
+									<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+							}
+						}
+					}
+				} else {
+					print '<td></td><td></td></tr>';
+					$subj=0;
+					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+					foreach ($product->stock_warehouse[GETPOST('entrepot_id','int')]->detail_batch as $dbatch) {
+						//var_dump($dbatch);
+						$substock=$dbatch->qty +0 ;
+						print '<tr><td colspan="3" ></td><td align="center">';
+						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.min($defaultqty,$substock).'">';
+						print '</td>';
+
+						print '<td align="left">';
+						print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
+						print $langs->trans("DetailBatchFormat", dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->batch, $dbatch->qty);
+						if ($defaultqty<=0) {
+							$defaultqty=0;
+						} else {
+							$defaultqty -=min($defaultqty,$substock);
+						}
+						$subj++;
+					}
+				}
 
                 $indiceAsked++;
             }
@@ -1073,15 +1156,32 @@ else if ($id || $ref)
 		}
 		else
 		{
-			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhourtext') : '&nbsp;';
+			print $object->date_delivery ? dol_print_date($object->date_delivery,'dayhour') : '&nbsp;';
 		}
 		print '</td>';
 		print '</tr>';
 
 		// Weight
 		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
-		print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+
+		if($action=='edittrueWeight') {
+
+			print '<form name="settrueweight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input name="action" value="settrueWeight" type="hidden">';
+			print '<input name="id" value="'.$object->id.'" type="hidden">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input id="trueWeight" name="trueWeight" value="'.$object->trueWeight.'" type="text">';
+			print $formproduct->select_measuring_units("weight_units","weight",$object->weight_units);
+			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print '</form>';
+
+		}
+		else {
+			print $object->trueWeight;
+			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
+		}
+
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
@@ -1098,8 +1198,26 @@ else if ($id || $ref)
 
 		// Height
 		print '<tr><td>'.$form->editfieldkey("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
-		print $form->editfieldval("Height",'trueHeight',$object->trueHeight,$object,$user->rights->expedition->creer);
-		print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+		if($action=='edittrueHeight') {
+
+			print '<form name="settrueHeight" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<input name="action" value="settrueHeight" type="hidden">';
+			print '<input name="id" value="'.$object->id.'" type="hidden">';
+			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			print '<input id="trueHeight" name="trueHeight" value="'.$object->trueHeight.'" type="text">';
+			print $formproduct->select_measuring_units("size_units","size",$object->size_units);
+			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
+			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
+			print '</form>';
+
+		}
+		else {
+			print $object->trueHeight;
+			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
+
+		}
+
+
 		print '</td></tr>';
 
 		// Depth
@@ -1206,6 +1324,11 @@ else if ($id || $ref)
 		if (! empty($conf->stock->enabled))
 		{
 			print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
+		}
+
+		if (! empty($conf->productbatch->enabled))
+		{
+			print '<td align="left">'.$langs->trans("Batch").'</td>';
 		}
 
 		print "</tr>\n";
@@ -1315,6 +1438,20 @@ else if ($id || $ref)
 				print '</td>';
 			}
 
+			// Batch number managment
+			if (! empty($conf->productbatch->enabled)) {
+				if (isset($lines[$i]->detail_batch) ) {
+					print '<td align="center">';
+					$detail = '';
+					foreach ($lines[$i]->detail_batch as $dbatch) {
+						$detail.= $langs->trans("DetailBatchFormat",dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->batch,$dbatch->dluo_qty).'<br/>';
+					}
+					print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
+					print '</td>';
+				} else {
+					print '<td></td>';
+				}
+			}
 			print "</tr>";
 
 			$var=!$var;
@@ -1444,21 +1581,25 @@ else if ($id || $ref)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
+		
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('sendings');
+		}
 
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-
 			$result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
@@ -1475,6 +1616,7 @@ else if ($id || $ref)
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
@@ -1485,7 +1627,7 @@ else if ($id || $ref)
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');
+		$formmail->withtopic=$outputlangs->trans('SendShippingRef','__SHIPPINGREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -1542,7 +1684,7 @@ else if ($id || $ref)
 		}
 
 		// Show form
-		$formmail->show_form();
+		print $formmail->get_form();
 
 		print '<br>';
 	}
@@ -1559,4 +1701,3 @@ else if ($id || $ref)
 llxFooter();
 
 $db->close();
-?>

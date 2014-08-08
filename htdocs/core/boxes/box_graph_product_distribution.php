@@ -86,7 +86,8 @@ class box_graph_product_distribution extends ModeleBoxes
 		$param_showinvoicenb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showinvoicenb';
 		$param_showpropalnb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showpropalnb';
 		$param_showordernb='DOLUSERCOOKIE_box_'.$this->boxcode.'_showordernb';
-		if (GETPOST('DOL_AUTOSET_COOKIE'))
+		$autosetarray=preg_split("/[,;:]+/",GETPOST('DOL_AUTOSET_COOKIE'));
+		if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode,$autosetarray))
 		{
 			$year=GETPOST($param_year,'int');
 			$showinvoicenb=GETPOST($param_showinvoicenb,'alpha');
@@ -95,8 +96,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		}
 		else
 		{
-			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-			$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+			$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 			$year=$tmparray['year'];
 			$showinvoicenb=$tmparray['showinvoicenb'];
 			$showpropalnb=$tmparray['showpropalnb'];
@@ -115,9 +115,9 @@ class box_graph_product_distribution extends ModeleBoxes
 		if ($showpropalnb)  $nbofgraph++;
 		if ($showordernb)   $nbofgraph++;
 
-		$paramtitle=$langs->trans("Products").'/'.$langs->trans("Services");
-		if (empty($conf->produit->enabled)) $paramtitle=$langs->trans("Services");
-		if (empty($conf->service->enabled)) $paramtitle=$langs->trans("Products");
+		$paramtitle=$langs->transnoentitiesnoconv("Products").'/'.$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->produit->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Services");
+		if (empty($conf->service->enabled)) $paramtitle=$langs->transnoentitiesnoconv("Products");
 
 		$socid=empty($user->societe_id)?0:$user->societe_id;
 		$userid=0;	// No filter on user creation
@@ -300,6 +300,12 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 		}
 
+		if (empty($conf->use_javascript_ajax))
+		{
+			$langs->load("errors");
+			$mesg=$langs->trans("WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs");
+		}
+
 		if (! $mesg)
 		{
 			$stringtoshow='';
@@ -330,7 +336,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			}
 			$stringtoshow.='<br>';
 			$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$year.'">';
-			$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+			$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto('','refresh.png','','',1).'">';
 			$stringtoshow.='</form>';
 			$stringtoshow.='</div>';
 
@@ -386,4 +392,3 @@ class box_graph_product_distribution extends ModeleBoxes
 
 }
 
-?>

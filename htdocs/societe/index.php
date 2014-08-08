@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C)      2014 Charles-Fr Benke	<charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,17 +66,17 @@ print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
 print "<tr ".$bc[false]."><td>";
-print $langs->trans("Name").':</td><td><input class="flat" type="text" size="14" name="search_nom_only"></td>';
+print '<label for="search_nom_only">'.$langs->trans("Name").'</label>:</td><td><input class="flat" type="text" size="14" name="search_nom_only" id="search_nom_only"></td>';
 print '<td rowspan="'.$rowspan.'"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 if (! empty($conf->barcode->enabled))
 {
 	print "<tr ".$bc[false]."><td>";
-	print $langs->trans("BarCode").':</td><td><input class="flat" type="text" size="14" name="sbarcode"></td>';
+	print '<label for="sbarcode">'.$langs->trans("BarCode").'</label>:</td><td><input class="flat" type="text" size="14" name="sbarcode" id="sbarcode"></td>';
 	//print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 	print '</tr>';
 }
 print "<tr ".$bc[false]."><td>";
-print $langs->trans("Other").':</td><td><input class="flat" type="text" size="14" name="search_all"></td>';
+print '<label for="search_all">'.$langs->trans("Other").'</label>:</td><td><input class="flat" type="text" size="14" name="search_all" id="search_all"></td>';
 //print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 print '</tr>';
 
@@ -158,6 +159,66 @@ print $total;
 print '</td></tr>';
 print '</table>';
 
+if (! empty($conf->categorie->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	$elementtype = 'societe';
+	print '<br>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
+	print '<tr><td align="center">';
+	$sql = "SELECT c.label, count(*) as nb";
+	$sql.= " FROM ".MAIN_DB_PREFIX."categorie_societe as cs";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
+	$sql.= " WHERE c.type = 2";
+	$sql.= " AND c.entity IN (".getEntity('category',1).")";
+	$sql.= " GROUP BY c.label";
+	$total=0;
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$i=0;
+		if (! empty($conf->use_javascript_ajax) )
+		{
+			$dataseries=array();
+			$rest=0;
+			$nbmax=10;
+
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+				if ($i < $nbmax)
+					$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				else
+					$rest+=$obj->nb;
+				$total+=$obj->nb;
+				$i++;
+			}
+			if ($i > $nbmax)
+				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
+			$data=array('series'=>$dataseries);
+			dol_print_graph('statscategclient',300,180,$data,1,'pie',0);
+		}
+		else
+		{
+			$var=true;
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+				$var=!$var;
+				print '<tr $bc[$var]><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				$total+=$obj->nb;
+				$i++;
+			}
+		}
+	}
+	print '</td></tr>';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
+	print $total;
+	print '</td></tr>';
+	print '</table>';
+}
 
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -262,4 +323,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

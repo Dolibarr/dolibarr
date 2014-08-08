@@ -9,7 +9,7 @@ Calendars= Ημερολόγια
 LocalAgenda=Τοπικό ημερολόγιο
 AffectedTo= Ανάθεση σε
 DoneBy= Έγινε από
-Events= Γεγονότα
+Events= Ενέργειες
 EventsNb=Αριθμός γεγονότων
 MyEvents=Τα γεγονότα μου
 OtherEvents=Άλλα γεγονότα
@@ -25,25 +25,29 @@ ListOfEvents= Λίστα γεγονότων του Dolibarr
 ActionsAskedBy=Ενέργειες που καταχωρήθηκαν από
 ActionsToDoBy=Ενέργειες που ανατέθηκαν σε
 ActionsDoneBy=Ενέργειες που ολοκληρώθηκαν από
+ActionsForUser=Γεγονότα για τον χρήστη
+ActionsForUsersGroup=Γεγονότα όλων των χρηστών της ομάδας
 AllMyActions= Όλες οι ενέργειες/εργασίες μου
 AllActions= Όλες οι ενέργειες/εργασίες
 ViewList=Εμφάνιση Λίστας
 ViewCal=Μηνιαία προβολή
 ViewDay=Προβολή ημέρας
 ViewWeek=Προβολή εβδομάδας
+ViewPerUser=Ανά χρήστη
 ViewWithPredefinedFilters= Εμφάνιση με προκαθορισμένα φίλτρα
 AutoActions= Αυτόματη συμπλήρωση ημερολογίου
-AgendaAutoActionDesc= Εδώ ορίζετε γεγονότα για το οποία θέλετε το  Dolibarr να δημιουργεί αυτόματα μια ενέργεια στην ατζέντα.Αν τίποτα δεν είναι τσεκαρισμένο (προεπιλογή), τότε, μόνο χειροκίνητες ενέργειες θα συμπεριληφθούν στην ατζέντα.
-AgendaSetupOtherDesc= Αυτή η σελίδα, σας επιτρέπει να ρυθμίσετε άλλες παραμέτρους του αρθρώματος της ατζέντας (ημερολόγιο)
+AgendaAutoActionDesc= Εδώ ορίζετε γεγονότα για το οποία θέλετε το  Dolibarr να δημιουργεί αυτόματα μια ενέργεια στην ατζέντα. Αν τίποτα δεν είναι τσεκαρισμένο (προεπιλογή), τότε, μόνο χειροκίνητες ενέργειες θα συμπεριληφθούν στην ατζέντα.
+AgendaSetupOtherDesc= Αυτή η σελίδα παρέχει επιλογές για να καταστεί δυνατή η εξαγωγή των δικών σας εκδηλώσεων Dolibarr σε ένα εξωτερικό ημερολόγιο (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Αυτή η σελίδα σας επιτρέπει να ρυθμίσετε εξωτερικά ημερολόγια.
-ActionsEvents= Γεγονότα για τα οποία θα δημιουργηθεί εγγραφή στο ημερολόγιο, αυτόματα
+ActionsEvents= Γεγονότα για τα οποία θα δημιουργήσουν εγγραφή στο ημερολόγιο, αυτόματα
 PropalValidatedInDolibarr= Η πρόταση %s επικυρώθηκε
 InvoiceValidatedInDolibarr= Το τιμολόγιο %s επικυρώθηκε
-InvoiceBackToDraftInDolibarr=Τιμολόγιο %s επιστρέψει στην κατάσταση του σχεδίου
+InvoiceBackToDraftInDolibarr=Τιμολόγιο %s θα επιστρέψει στην κατάσταση του σχεδίου
 InvoiceDeleteDolibarr=Τιμολόγιο %s διαγράφεται
 OrderValidatedInDolibarr= Η παραγγελία %s επικυρώθηκε
-OrderApprovedInDolibarr=%s Παραγγελία εγκρίθηκε
-OrderBackToDraftInDolibarr=Παραγγελία %s να επιστρέψει στην κατάσταση σχέδιο
+OrderApprovedInDolibarr=Παραγγελία %s εγκρίθηκε
+OrderRefusedInDolibarr=Παραγγελία %s απορριφθεί
+OrderBackToDraftInDolibarr=Παραγγελία %s θα επιστρέψει στην κατάσταση σχέδιο
 OrderCanceledInDolibarr=Παραγγελία %s ακυρώθηκε
 InterventionValidatedInDolibarr=Η παρέμβαση %s επικυρώθηκε
 ProposalSentByEMail=Η εμπορική πρόταση %s στάλθηκε με e-mail
@@ -52,7 +56,9 @@ InvoiceSentByEMail=Το τιμολόγιο του πελάτη %s εστάλη �
 SupplierOrderSentByEMail=Η παραγγελία προμηθευτή %s στάλθηκε με e-mail
 SupplierInvoiceSentByEMail=Το τιμολόγιο προμηθευτή %s στάλθηκε με e-mail
 ShippingSentByEMail=Αποστολές %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+ShippingValidated= Αποστολές %s επικυρωθεί
 InterventionSentByEMail=Παρέμβαση %s αποστέλλονται με ηλεκτρονικό ταχυδρομείο
+InterventionClassifiedBilled=Παρέμβαση %s ταξινόμηση ως τιμολογημένα
 NewCompanyToDolibarr= Το στοιχείο δημιουργήθηκε
 DateActionPlannedStart= Προγρ/σμένη ημερομηνία έναρξης
 DateActionPlannedEnd= Προγρ/σμένη ημερομηνία λήξης
@@ -60,8 +66,8 @@ DateActionDoneStart= Πραγματική ημερομηνία έναρξης
 DateActionDoneEnd= Πραγματική ημερομηνία λήξης
 DateActionStart= Ημερομηνία έναρξης
 DateActionEnd= Ημερομηνία λήξης
-AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε το αποτέλεσμα:
-AgendaUrlOptions2=<b>login=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν που έγιναν από τον χρήστη <b>%s</b>.
+AgendaUrlOptions1=Μπορείτε ακόμη να προσθέσετε τις ακόλουθες παραμέτρους για να φιλτράρετε τα αποτέλεσμα:
+AgendaUrlOptions2=<b>login=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν και έγιναν από τον χρήστη <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που δημιουργήθηκαν από τον χρήστη<b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που αφορούν τον χρήστη<b>%s</b>.
 AgendaUrlOptions5=<b>logind=%s</b> για να περιορίσετε τα αποτελέσματα σε ενέργειες που έγιναν από τον χρήστη <b>%s</b>.
@@ -72,9 +78,9 @@ ExportDataset_event1=Κατάλογος των εκδηλώσεων
 
 # External Sites ical
 ExportCal=Εξαγωγή ημερολογίου
-ExtSites=Εξωτερικά Ημερολόγια
+ExtSites=Εισαγωγή εξωτερικών ημερολογίων
 ExtSitesEnableThisTool=Εμφάνιση εξωτερικών ημερολογίων στην ατζέντα
 ExtSitesNbOfAgenda=Αριθμός ημερολογίων
 AgendaExtNb=Ημερολόγιο nb %s
-ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση. ICal αρχείο
+ExtSiteUrlAgenda=URL για να αποκτήσετε πρόσβαση στο .ical αρχείο
 ExtSiteNoLabel=Χωρίς Περιγραφή

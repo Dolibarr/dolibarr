@@ -3,6 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
+ * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,6 +186,17 @@ print "<td align=\"right\">".$vatcust."</td>";
 print "</tr>\n";
 
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+
+$action = "tvaclient";
+$object = &$coll_list;
+$parameters["mode"] = $modetax;
+$parameters["start"] = $date_start;
+$parameters["end"] = $date_end;
+$parameters["direction"] = 'sell';
+// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('externalbalance'));
+$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 if (is_array($coll_list))
 {
 	$var=true;
@@ -263,6 +275,9 @@ print "</tr>\n";
 $company_static=new Societe($db);
 
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
+
+$parameters["direction"] = 'buy';
+$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if (is_array($coll_list))
 {
 	$var=true;
@@ -339,4 +354,3 @@ print '</table>';
 llxFooter();
 
 $db->close();
-?>

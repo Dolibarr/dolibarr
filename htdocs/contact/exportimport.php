@@ -110,4 +110,3 @@ print '</a>';
 $db->close();
 
 llxFooter();
-?>

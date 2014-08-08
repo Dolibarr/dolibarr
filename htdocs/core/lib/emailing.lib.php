@@ -60,4 +60,3 @@ function emailing_prepare_head($object)
 	return $head;
 }
 
-?>

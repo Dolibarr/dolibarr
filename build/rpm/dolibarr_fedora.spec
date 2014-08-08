@@ -103,6 +103,7 @@ cui hai bisogno ed essere facile da usare.
 %{__cp} -pr build/tgz/*     $RPM_BUILD_ROOT%{_datadir}/%{name}/build/tgz
 %{__cp} -pr htdocs  $RPM_BUILD_ROOT%{_datadir}/%{name}
 %{__cp} -pr scripts $RPM_BUILD_ROOT%{_datadir}/%{name}
+%{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/ckeditor/_source  
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/adodbtime  
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/nusoap
 %{__rm} -rf $RPM_BUILD_ROOT%{_datadir}/%{name}/htdocs/includes/fonts
@@ -194,6 +195,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/product
 %_datadir/dolibarr/htdocs/projet
 %_datadir/dolibarr/htdocs/public
+%_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
@@ -331,5 +333,23 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
-* Mon Dec 30 2013 Laurent Destailleur 3.6.0-0.2.b
+* Wed Jul 15 2014 Laurent Destailleur 3.6.0-0.3
+- Upstream release
+
+* Tue Jul 8 2014 Laurent Destailleur 3.5.5-0.3
+- Upstream release
+
+* Tue Jul 1 2014 Laurent Destailleur 3.5.4-0.3
+- Upstream release
+
+* Fri May 2 2014 Laurent Destailleur 3.5.3-0.3
+- Upstream release
+
+* Fri Feb 14 2014 Laurent Destailleur 3.5.2-0.3
+- Upstream release
+
+* Fri Feb 7 2014 Laurent Destailleur 3.5.1-0.3
+- Upstream release
+
+* Mon Dec 30 2013 Laurent Destailleur 3.5.0-0.3
 - Initial version (#723326)

@@ -43,7 +43,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -76,7 +76,7 @@ print "<br>\n";
 
 $head = order_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("ModuleSetup"), 0, 'order');
+dol_fiche_head($head, 'attributeslines', $langs->trans("Orders"), 0, 'order');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
@@ -157,4 +157,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

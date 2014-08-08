@@ -79,6 +79,14 @@ MailtoEMail=Hyper link to email
 ActivateCheckRead=Allow to use the "Unsubcribe" link
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
+XTargetsAdded=<b>%s</b> recipients added into target list
+EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+SendRemind=Send reminder by EMails
+RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No EMail reminder sent
+ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts/addresses of all third parties (customer, prospect, supplier, ...)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Contacts/addresses of third parties (
 MailingModuleDescContactsByCategory=Contacts/addresses of third parties by category
 MailingModuleDescMembersCategories=Foundation members (by categories)
 MailingModuleDescContactsByFunction=Contacts/addresses of third parties (by position/function)
-
-
 LineInFile=Line %s in file
 RecipientSelectionModules=Defined requests for recipient's selection
 MailSelectedRecipients=Selected recipients
@@ -114,6 +120,7 @@ TargetsReset=Clear list
 ToClearAllRecipientsClickHere=Click here to clear the recipient list for this emailing
 ToAddRecipientsChooseHere=Add recipients by choosing from the lists
 NbOfEMailingsReceived=Mass emailings received
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID record
 DeliveryReceipt=Delivery Receipt
 YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separator to specify several recipients.
@@ -121,7 +128,6 @@ TagCheckMail=Track mail opening
 TagUnsubscribe=Unsubscribe link
 TagSignature=Signature sending user
 TagMailtoEmail=Recipient EMail
-
 # Module Notifications
 Notifications=Notifications
 NoNotificationsWillBeSent=No email notifications are planned for this event and company

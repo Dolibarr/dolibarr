@@ -242,4 +242,3 @@ $hookmanager->executeHooks('getPasswordForgottenPageOptions',$parameters);    //
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
 
-?>

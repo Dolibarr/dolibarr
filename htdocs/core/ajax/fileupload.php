@@ -80,4 +80,3 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
 $db->close();
 
-?>

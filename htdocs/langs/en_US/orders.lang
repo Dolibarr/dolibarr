@@ -55,6 +55,7 @@ DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Orders delivered
 MenuOrdersToBill2=Orders to bill
 SearchOrder=Search order
+SearchACustomerOrder=Search a customer order
 ShipProduct=Ship product
 Discount=Discount
 CreateOrder=Create Order
@@ -100,7 +101,6 @@ RelatedOrders=Related orders
 OnProcessOrders=In process orders
 RefOrder=Ref. order
 RefCustomerOrder=Ref. customer order
-CustomerOrder=Customer order
 RefCustomerOrderShort=Ref. cust. order
 SendOrderByMail=Send order by mail
 ActionsOnOrder=Events on order
@@ -131,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file '%s'
 Error_OrderNotChecked=No orders to invoice selected
-
-
 # Sources
 OrderSource0=Commercial proposal
 OrderSource1=Internet
@@ -143,7 +141,6 @@ OrderSource5=Commercial
 OrderSource6=Store
 QtyOrdered=Qty ordered
 AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
-
 # Documents models
 PDFEinsteinDescription=A complete order model (logo...)
 PDFEdisonDescription=A simple order model
@@ -154,7 +151,6 @@ OrderByFax=Fax
 OrderByEMail=EMail
 OrderByWWW=Online
 OrderByPhone=Phone
-
 CreateInvoiceForThisCustomer=Bill orders
 NoOrdersToInvoice=No orders billable
 CloseProcessedOrdersAutomatically=Classify "Processed" all selected orders. 
@@ -164,3 +160,4 @@ Ordered=Ordered
 OrderCreated=Your orders have been created
 OrderFail=An error happened during your orders creation
 CreateOrders=Create orders
+ToBillSeveralOrderSelectCustomer=To create an invoice for several orders, click first onto customer, then choose "%s".

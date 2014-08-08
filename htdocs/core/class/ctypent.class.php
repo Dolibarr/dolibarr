@@ -18,14 +18,12 @@
 /**
  *      \file       htdocs/core/class/ctypent.class.php
  *      \ingroup    core
- *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionnary
- *					Initialy built by build_class_from_table on 2012-01-17 16:24
+ *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionary
  */
 
 
 /**
- *      \class      Ctypent
- *      \brief      Class of dictionnary type of thirdparty (used by imports)
+ *	Class of dictionary type of thirdparty (used by imports)
  */
 class Ctypent // extends CommonObject
 {
@@ -104,7 +102,7 @@ class Ctypent // extends CommonObject
 
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -158,14 +156,15 @@ class Ctypent // extends CommonObject
         $sql = "SELECT";
 		$sql.= " t.id,";
 		$sql.= " t.code,";
-		$sql.= " t.libelle,";
+		$sql.= " t.libelle as label,";
+		$sql.= " t.fk_country as country_id,";
 		$sql.= " t.active,";
 		$sql.= " t.module";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_typent as t";
         if ($id)   $sql.= " WHERE t.id = ".$id;
         elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -175,7 +174,8 @@ class Ctypent // extends CommonObject
 
                 $this->id    = $obj->id;
 				$this->code = $obj->code;
-				$this->libelle = $obj->libelle;
+				$this->libelle = $obj->label;
+				$this->country_id = $obj->country_id;
 				$this->active = $obj->active;
 				$this->module = $obj->module;
             }
@@ -186,7 +186,6 @@ class Ctypent // extends CommonObject
         else
         {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
         }
     }
@@ -224,7 +223,7 @@ class Ctypent // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -280,7 +279,7 @@ class Ctypent // extends CommonObject
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -319,4 +318,3 @@ class Ctypent // extends CommonObject
 	}
 
 }
-?>

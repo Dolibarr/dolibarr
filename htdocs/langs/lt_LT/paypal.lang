@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - paypal
+PaypalSetup=PayPal modulio nustatymas
+PaypalDesc=Šis modulis siūlo tinklapius mokėjimui <a href="http://www.paypal.com" target="_blank">per PayPal</a> klientams. Tai gali būti naudojama nemokamam mokėjimui arba tam tikro specifinio Dolibarr objekto mokėjimui (sąskaitos-faktūros, užsakymai, ...)
+PaypalOrCBDoPayment=Mokėkite kreditine kortele arba per Paypal
+PaypalDoPayment=Mokėkite per PayPal
+PaypalCBDoPayment=Mokėkite kreditine kortele
+PAYPAL_API_SANDBOX=Režimas testas/smėlio dėžė (Sandbox)
+PAYPAL_API_USER=API vartotojo vardas
+PAYPAL_API_PASSWORD=API slaptažodis
+PAYPAL_API_SIGNATURE=API parašas
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Siūlyti mokėjimą "integruotas" (kredito kortelė+PayPal) arba tik PayPal
+PaypalModeIntegral=Integruotas
+PaypalModeOnlyPaypal=Tik PayPal
+PAYPAL_CSS_URL=Pasirenkamas URL CSS stiliaus lapas mokėjimo puslapyje
+ThisIsTransactionId=Tai operacijos ID: <b>%s</b>
+PAYPAL_ADD_PAYMENT_URL=Pridėti PayPal mokėjimo URL, kai siunčiate dokumentą paštu
+PAYPAL_IPN_MAIL_ADDRESS=E-pašto adresas neatidėliojamam pranešimui apie mokėjimą (IPN)
+PredefinedMailContentLink=Jūs galite spustelėti ant saugios nuorodos žemiau, kad atlikti mokėjimą (PayPal), jei tai dar nėra padaryta.\n\n%s\n\n
+YouAreCurrentlyInSandboxMode=Jūs šiuo metu esate "smėlio dėžės" režime (sandbox)
+NewPaypalPaymentReceived=Gautas naujas Paypal mokėjimas
+NewPaypalPaymentFailed=Bandyta atlikti naują PayPal mokėjimą, bet nepavyko
+PAYPAL_PAYONLINE_SENDEMAIL=E-paštas įspėjimui po mokėjimo (sėkmingas ar ne)
+ReturnURLAfterPayment=Grįžti į URL po apmokėjimo
+ValidationOfPaypalPaymentFailed=Nepavykusio PayPal mokėjimo patvirtinimas
+PaypalConfirmPaymentPageWasCalledButFailed=PayPal mokėjimo patvirtinimo puslapis buvo iškviestas Paypal, bet patvirtinimas nepavyko

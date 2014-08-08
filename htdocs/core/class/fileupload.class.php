@@ -329,14 +329,14 @@ class FileUpload
 			$file->error = 'minFileSize';
 			return false;
 		}
-		if (is_int($this->options['max_number_of_files']) && (
+		if (is_numeric($this->options['max_number_of_files']) && (
 				count($this->getFileObjects()) >= $this->options['max_number_of_files'])
 		) {
 			$file->error = 'maxNumberOfFiles';
 			return false;
 		}
 		list($img_width, $img_height) = @getimagesize($uploaded_file);
-		if (is_int($img_width)) {
+		if (is_numeric($img_width)) {
 			if ($this->options['max_width'] && $img_width > $this->options['max_width'] ||
 					$this->options['max_height'] && $img_height > $this->options['max_height']) {
 				$file->error = 'maxResolution';
@@ -558,7 +558,8 @@ class FileUpload
                 isset($_SERVER['HTTP_X_FILE_NAME']) ? $_SERVER['HTTP_X_FILE_NAME'] : (isset($upload['name']) ? $upload['name'] : null),
                 isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : (isset($upload['size']) ? $upload['size'] : null),
                 isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : (isset($upload['type']) ? $upload['type'] : null),
-                isset($upload['error']) ? $upload['error'] : null
+                isset($upload['error']) ? $upload['error'] : null,
+                0
             );
 		}
 		header('Vary: Accept');

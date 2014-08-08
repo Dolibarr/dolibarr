@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - interventions
+Intervention=Intervencija
+Interventions=Intervencije
+InterventionCard=Kartica intervencija
+NewIntervention=Nova intervencija
+AddIntervention=Dodaj intervenciju
+ListOfInterventions=Lista intervencija
+EditIntervention=Izimijeni intervenciju
+ActionsOnFicheInter=Akcije na intervencijama
+LastInterventions=Zadnjih %s intervencija
+AllInterventions=Sve intervencije
+CreateDraftIntervention=Kreiraj nacrt
+CustomerDoesNotHavePrefix=Kupac nema prefiks
+InterventionContact=Kontakt za intervenciju
+DeleteIntervention=Obriši intervenciju
+ValidateIntervention=Potvrdi intervenciju
+ModifyIntervention=Izmijeni intervenciju
+DeleteInterventionLine=Obriši tekst intervencije
+ConfirmDeleteIntervention=Jeste li sigurni da želite obrisati ovu intervenciju?
+ConfirmValidateIntervention=Jeste li sigurni da želite potvrditi ovu intervenciju pod nazivom <b>%s</b> ?
+ConfirmModifyIntervention=Jeste li sigurni da želite izmijeniti ovu intervenciju?
+ConfirmDeleteInterventionLine=Jeste li sigurni da želite obrisati ovaj tekst intervencije?
+NameAndSignatureOfInternalContact=Ime i potpis servisera:
+NameAndSignatureOfExternalContact=Ime i potpis kupca:
+DocumentModelStandard=Standardni dokument za intervencije
+InterventionCardsAndInterventionLines=Intervencije i tekstovi intervencija
+ClassifyBilled=Klasifikuj "Fakturisane"
+StatusInterInvoiced=Fakturisano
+RelatedInterventions=Povezane intervencije
+ShowIntervention=Prikaži intervenciju
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Predstavnik koji kontroliše intervenciju
+TypeContact_fichinter_internal_INTERVENING=Serviser
+TypeContact_fichinter_external_BILLING=Kontakt kupca za fakturianje
+TypeContact_fichinter_external_CUSTOMER=Kontakt kupca za kontrolu
+# Modele numérotation
+ArcticNumRefModelDesc1=Opšti model broja
+ArcticNumRefModelError=Neuspjelo aktiviranje
+PacificNumRefModelDesc1=Vratiti broj sa formatom %syymm-nnnn, gdje je yy godina, mm mjesec i nnnn niz bez prekida i bez vraćanja za 0.
+PacificNumRefModelError=Kartica intervencije koja počinje sa $syymm već postoji i nije kompatibilna sa ovim modelom nizda. Odstrani ili promijeni da bi se modul mogao aktivirati.
+PrintProductsOnFichinter=Isprintaj proizvode sa kartice intervencije
+PrintProductsOnFichinterDetails=za intervencije generisano sa narudžbi

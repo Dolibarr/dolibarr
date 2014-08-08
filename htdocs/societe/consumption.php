@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013 Philippe Berthet     <berthet@systune.be>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
  *
  * Version V1.1 Initial version of Philippe Berthet
@@ -67,7 +67,12 @@ if (GETPOST("button_removefilter"))
 }
 // Customer or supplier selected in drop box
 $thirdTypeSelect = GETPOST("third_select_id");
-$type_element = GETPOST('type_element')?GETPOST('type_element'):'invoice';
+if ($conf->facture->enabled && $user->rights->facture->lire)
+	$type_element = 'invoice';
+elseif ($conf->commande->enabled && $user->rights->commande->lire)
+	$type_element = 'order';
+$type_element = GETPOST('type_element')?GETPOST('type_element'):$type_element;
+
 
 $langs->load("companies");
 $langs->load("bills");
@@ -126,8 +131,8 @@ if ($object->client)
 	$obj = $db->fetch_object($resql);
 	$nbFactsClient = $obj->nb;
 	$thirdTypeArray['customer']=$langs->trans("customer");
-	if ($conf->facture->enabled) $elementTypeArray['invoice']=$langs->trans('Invoices');
-	if ($conf->commande->enabled) $elementTypeArray['order']=$langs->trans('Orders');
+	if($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->trans('Invoices');
+	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->trans('Orders');
 }
 
 if ($object->fournisseur)
@@ -144,8 +149,8 @@ if ($object->fournisseur)
 	$obj = $db->fetch_object($resql);
 	$nbCmdsFourn = $obj->nb;
 	$thirdTypeArray['supplier']=$langs->trans("supplier");
-	if ($conf->fournisseur->enabled) $elementTypeArray['supplier_invoice']=$langs->trans('SuppliersInvoices');
-	if ($conf->fournisseur->enabled) $elementTypeArray['supplier_order']=$langs->trans('SuppliersOrders');
+	if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire) $elementTypeArray['supplier_invoice']=$langs->trans('SuppliersInvoices');
+	if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire) $elementTypeArray['supplier_order']=$langs->trans('SuppliersOrders');
 }
 print '</table>';
 
@@ -176,7 +181,7 @@ if ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, "1" as doc_type, c.date_commande as datePrint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as datePrint, ';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
@@ -189,7 +194,7 @@ if ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, "1" as doc_type, f.datef as datePrint, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as datePrint, ';
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture_fourn = f.rowid";
@@ -201,7 +206,7 @@ if ($type_element == 'supplier_order')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic=new CommandeFournisseur($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, "1" as doc_type, c.date_valid as datePrint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as datePrint, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
@@ -245,7 +250,6 @@ print_barre_liste($langs->trans('ProductsIntoElements', $typeElementString.' '.$
 
 if ($sql_select)
 {
-	dol_syslog("sql=".$sql);
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
 }
@@ -443,15 +447,6 @@ else {
 print "</table>";
 print "</form>";
 
-
-/*
- * Errors
- */
-
-dol_htmloutput_errors($warning);
-dol_htmloutput_errors($error,$errors);
-
 llxFooter();
 
 $db->close();
-?>

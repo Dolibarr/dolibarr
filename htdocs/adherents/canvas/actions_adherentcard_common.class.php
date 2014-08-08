@@ -46,7 +46,8 @@ abstract class ActionsAdherentCardCommon
 	/**
 	 * 	Instantiation of DAO class
 	 *
-	 * 	@return	void
+	 * 	@return	int		0
+	 *  @deprecated		Using getInstanceDao should not be used.
 	 */
 	private function getInstanceDao()
 	{
@@ -65,6 +66,7 @@ abstract class ActionsAdherentCardCommon
 	            }
 	        }
 		}
+		return 0;
 	}
 
 	/**
@@ -271,7 +273,7 @@ abstract class ActionsAdherentCardCommon
         	}
 
         	// Civility
-        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civilite_id);
+        	$this->tpl['select_civility'] = $formcompany->select_civility($this->object->civility_id);
 
         	// Predefined with third party
         	if ((isset($objsoc->typent_code) && $objsoc->typent_code == 'TE_PRIVATE'))
@@ -296,7 +298,7 @@ abstract class ActionsAdherentCardCommon
             $this->tpl['select_country'] = $form->select_country($this->object->country_id,'country_id');
             $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            if ($user->admin) $this->tpl['info_admin'] = info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 
             // State
             if ($this->object->country_id) $this->tpl['select_state'] = $formcompany->select_state($this->object->state_id,$this->object->country_code);
@@ -368,7 +370,7 @@ abstract class ActionsAdherentCardCommon
             require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
         	$login=dol_buildlogin($this->object->lastname, $this->object->firstname);
 
-       		$generated_password=getRandomPassword('');
+       		$generated_password=getRandomPassword(false);
         	$password=$generated_password;
 
         	// Create a form array
@@ -395,7 +397,7 @@ abstract class ActionsAdherentCardCommon
         $this->object->fk_soc				=	$_POST["fk_soc"];
         $this->object->lastname				=	$_POST["lastname"];
         $this->object->firstname			= 	$_POST["firstname"];
-        $this->object->civilite_id			= 	$_POST["civilite_id"];
+        $this->object->civility_id			= 	$_POST["civility_id"];
         $this->object->address				=	$_POST["address"];
         $this->object->zip					=	$_POST["zipcode"];
         $this->object->town					=	$_POST["town"];
@@ -427,4 +429,3 @@ abstract class ActionsAdherentCardCommon
 
 }
 
-?>

@@ -36,4 +36,5 @@ BankToPay=Conta corrente
 ShowCompany=Mostrar empresa
 ShowStock=Mostrar armazém
 DeleteArticle=Clique para remover este artigo
-# FilterRefOrLabelOrBC=Search (Ref/Label)
+FilterRefOrLabelOrBC=Procurar (Ref/Etiqueta)
+# UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so user that use POS need to have permission to edit stock.

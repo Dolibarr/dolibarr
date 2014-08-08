@@ -37,3 +37,4 @@ ShowCompany=Firma göster
 ShowStock=Depo göster
 DeleteArticle=Bu malı kaldırmak için tıkla
 FilterRefOrLabelOrBC=Ara (Ref/Etiket)
+UserNeedPermissionToEditStockToUsePos=Fatura oluştururken stok arttırmanız istenir, böylece POS kullanan kullanıcı stok düzenlemek için izne gereksinim duyar.

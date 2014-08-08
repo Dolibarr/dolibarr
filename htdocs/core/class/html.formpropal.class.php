@@ -49,14 +49,14 @@ class FormPropal
      *    @param	int		$short		Use short labels
      *    @return	void
      */
-    function select_propal_statut($selected='',$short=0)
+    function selectProposalStatus($selected='',$short=0)
     {
         global $langs;
 
         $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
         $sql .= " WHERE active = 1";
 
-        dol_syslog(get_class($this)."::select_propal_statut sql=".$sql);
+        dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -102,4 +102,3 @@ class FormPropal
 
 }
 
-?>

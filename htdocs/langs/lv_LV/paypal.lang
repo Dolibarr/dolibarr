@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - paypal
-PaypalSetup=PayPal modulis uzstādīšana
+PaypalSetup=PayPal moduļa iestatīšana
 PaypalDesc=Šis modulis piedāvā lapas, lai ļautu maksājumu ar <a href="http://www.paypal.com" target="_blank">PayPal</a> klienti. To var izmantot par brīvu maksājumu vai maksājumu par konkrētu Dolibarr objektu (rēķins, rīkojums, ...)
 PaypalOrCBDoPayment=Maksāt ar kredītkarti vai Paypal
 PaypalDoPayment=Maksāt ar Paypal
@@ -16,7 +16,10 @@ ThisIsTransactionId=Tas ir id darījuma: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Pievieno url Paypal maksājumu, kad jūs sūtīt dokumentu pa pastu
 PAYPAL_IPN_MAIL_ADDRESS=E-pasta adrese instant paziņojumu par maksājumu (IPN)
 PredefinedMailContentLink=Jūs varat noklikšķināt uz drošu saites zemāk, lai padarītu jūsu maksājumu (PayPal), ja tas jau nav izdarīts. \n\n %s \n\n
-YouAreCurrentlyInSandboxMode=Jūs pašlaik ir &quot;smilšu&quot; režīmā
+YouAreCurrentlyInSandboxMode=Jūs pašlaik esat "smilšu" režīmā
 NewPaypalPaymentReceived=Jauns Paypal maksājums saņemts
 NewPaypalPaymentFailed=Jauns Paypal maksājumu mēģināju, bet neizdevās
 PAYPAL_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
+ReturnURLAfterPayment=Return URL after payment
+ValidationOfPaypalPaymentFailed=Paypal rēķina apmaksas pārbaude neizdevās
+PaypalConfirmPaymentPageWasCalledButFailed=Payment confirmation page for Paypal was called by Paypal but confirmation failed

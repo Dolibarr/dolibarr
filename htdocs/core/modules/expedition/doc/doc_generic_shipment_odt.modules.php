@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -87,91 +88,6 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 
 	/**
-	 * Define array with couple substitution key => substitution value
-	 *
-	 * @param   Object			$object             Main object to use as data source
-	 * @param   Translate		$outputlangs        Lang object to use for output
-	 * @return	array								Array of substitution
-	 */
-	function get_substitutionarray_object($object,$outputlangs)
-	{
-		global $conf;
-
-		$resarray=array(
-			'object_id'=>$object->id,
-			'object_ref'=>$object->ref,
-			'object_ref_ext'=>$object->ref_ext,
-			'object_ref_customer'=>$object->ref_client,
-	        'object_hour'=>dol_print_date($object->date,'hour'),
-			'object_date'=>dol_print_date($object->date,'day'),
-			'object_date_delivery'=>dol_print_date($object->date_livraison,'dayhour'),
-			'object_date_creation'=>dol_print_date($object->date_creation,'day'),
-			'object_date_modification'=>(! empty($object->date_modification)?dol_print_date($object->date_modification,'day'):''),
-			'object_date_validation'=>(! empty($object->date_validation)?dol_print_date($object->date_validation,'dayhour'):''),
-			'object_date_delivery_planed'=>(! empty($object->date_livraison)?dol_print_date($object->date_livraison,'day'):''),
-			'object_date_close'=>dol_print_date($object->date_cloture,'dayhour'),
-			'object_payment_mode_code'=>$object->mode_reglement_code,
-			'object_payment_mode'=>($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code)!='PaymentType'.$object->mode_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code):$object->mode_reglement),
-			'object_payment_term_code'=>$object->cond_reglement_code,
-			'object_payment_term'=>($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code)!='PaymentCondition'.$object->cond_reglement_code?$outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code):$object->cond_reglement),
-
-			'object_total_ht_locale'=>price($object->total_ht, 0, $outputlangs),
-			'object_total_vat_locale'=>price($object->total_tva, 0, $outputlangs),
-			'object_total_localtax1_locale'=>price($object->total_localtax1, 0, $outputlangs),
-			'object_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
-			'object_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
-			'object_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
-			'object_total_ht'=>price2num($object->total_ht),
-			'object_total_vat'=>price2num($object->total_tva),
-			'object_total_localtax1'=>price2num($object->total_localtax1),
-			'object_total_localtax2'=>price2num($object->total_localtax2),
-			'object_total_ttc'=>price2num($object->total_ttc),
-			'object_total_discount_ht' => price2num($object->getTotalDiscount()),
-
-			'object_vatrate'=>vatrate($object->tva),
-			'object_note_private'=>$object->note,
-			'object_note'=>$object->note_public,
-		);
-
-		// Add vat by rates
-		foreach ($object->lines as $line)
-		{
-			if (empty($resarray['object_total_vat_'.$line->tva_tx])) $resarray['object_total_vat_'.$line->tva_tx]=0;
-			$resarray['object_total_vat_'.$line->tva_tx]+=$line->total_tva;
-		}
-
-		return $resarray;
-	}
-
-	/**
-	 *	Define array with couple substitution key => substitution value
-	 *
-	 *	@param  array			$line				Array of lines
-	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
-	 */
-	function get_substitutionarray_lines($line,$outputlangs)
-	{
-		global $conf;
-
-		return array(
-		'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
-		'line_product_ref'=>$line->product_ref,
-		'line_product_label'=>$line->product_label,
-		'line_desc'=>$line->desc,
-		'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-		'line_up'=>price($line->subprice, 0, $outputlangs),
-		'line_qty'=>$line->qty,
-		'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-		'line_price_ht'=>price($line->total_ht, 0, $outputlangs),
-		'line_price_ttc'=>price($line->total_ttc, 0, $outputlangs),
-		'line_price_vat'=>price($line->total_tva, 0, $outputlangs),
-		'line_date_start'=>$line->date_start,
-		'line_date_end'=>$line->date_end
-		);
-	}
-
-	/**
 	 *	Return description of a module
 	 *
 	 *	@param	Translate	$langs      Lang object to use for output
@@ -208,7 +124,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 			if (! is_dir($tmpdir)) $texttitle.=img_warning($langs->trans("ErrorDirNotFound",$tmpdir),0);
 			else
 			{
-				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.odt');
+				$tmpfiles=dol_dir_list($tmpdir,'files',0,'\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles=array_merge($listoffiles,$tmpfiles);
 			}
 		}
@@ -218,33 +134,23 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
 		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
-		$texte.= '<table><tr><td>';
+		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->EXPEDITION_ADDON_PDF_ODT_PATH;
 		$texte.= '</textarea>';
-		$texte.= '</td>';
-		$texte.= '<td align="center">&nbsp; ';
+		$texte.= '</div><div style="display: inline-block; vertical-align: middle;">';
 		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
+		$texte.= '<br></div></div>';
 
 		// Scan directories
 		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
 		$texte.= '</td>';
 
-
-		$texte.= '<td valign="top" rowspan="2">';
+		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
 		$texte.= $langs->trans("ExampleOfDirectoriesForModelGen");
 		$texte.= '</td>';
 		$texte.= '</tr>';
-
-		/*$texte.= '<tr>';
-		 $texte.= '<td align="center">';
-		$texte.= '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button">';
-		$texte.= '</td>';
-		$texte.= '</tr>';*/
 
 		$texte.= '</table>';
 		$texte.= '</form>';
@@ -595,4 +501,3 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 }
 
-?>

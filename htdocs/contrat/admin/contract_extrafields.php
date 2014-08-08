@@ -39,7 +39,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -72,8 +72,9 @@ print_fiche_titre($langs->trans("ContractsSetup"),$linkback,'setup');
 print '<br>';
 $head=contract_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("ModuleSetup"), 0, 'contrat');
+dol_fiche_head($head, 'attributes', $langs->trans("Contracts"), 0, 'contract');
 
+$textobject = $langs->transnoentitiesnoconv('Contracts');
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
 print '<br>';
@@ -156,4 +157,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

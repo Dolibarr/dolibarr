@@ -132,6 +132,7 @@ abstract class ModeleNumRefSuppliersOrders
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -230,7 +231,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 			$interface=new Interfaces($db);
 			$result=$interface->run_triggers('ORDER_SUPPLIER_BUILDDOC',$object,$user,$langs,$conf);
 			if ($result < 0) { 
-				$error++; $this->errors=$interface->errors; 
+				$error++; $obj->errors=$interface->errors;
 			}
 			// End calls triggers
 
@@ -258,4 +259,3 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 	}
 }
 
-?>

@@ -79,11 +79,11 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+			setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
 		}
 		else
 		{
-			$mesg = '<div class="error">'.$object->error.'</div>';
+			setEventMessage($object->error, 'errors');
 		}
 	}
 }
@@ -137,7 +137,6 @@ $userstatic=new User($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-dol_htmloutput_mesg($mesg);
 
 if ($id > 0 || ! empty($ref))
 {
@@ -177,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
 
 		// Customer
-		print "<tr><td>".$langs->trans("Company")."</td>";
+		print "<tr><td>".$langs->trans("ThirdParty")."</td>";
 		print '<td colspan="3">';
 		if ($object->societe->id > 0) print $object->societe->getNomUrl(1);
 		else print '&nbsp;';
@@ -192,6 +191,16 @@ if ($id > 0 || ! empty($ref))
 		// Statut
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
+	   	// Date start
+		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+		print dol_print_date($object->date_start,'day');
+		print '</td></tr>';
+
+		// Date end
+		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+		print dol_print_date($object->date_end,'day');
+		print '</td></tr>';
+
 		print "</table>";
 
 		print '</div>';
@@ -202,7 +211,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			$res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 			if ($res) break;
-		}		
+		}
 	}
 	else
 	{
@@ -213,4 +222,3 @@ if ($id > 0 || ! empty($ref))
 llxFooter();
 
 $db->close();
-?>

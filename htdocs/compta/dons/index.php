@@ -181,8 +181,8 @@ if ($resql)
 
             print '<td class="nobordernopadding">';
             print $obj->societe;
-            print ($obj->societe && $obj->nom?' / ':'');
-            print dolGetFirstLastname($obj->nom,$obj->firstname);
+            print ($obj->societe && ($obj->lastname || $obj->firstname)?' / ':'');
+            print dolGetFirstLastname($obj->lastname,$obj->firstname);
             print '</td>';
 
             print '<td align="right" class="nobordernopadding">';
@@ -209,4 +209,3 @@ print '</td></tr></table>';
 llxFooter();
 
 $db->close();
-?>

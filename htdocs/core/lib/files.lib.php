@@ -39,16 +39,16 @@ function dol_basename($pathfile)
  *  Scan a directory and return a list of files/directories.
  *  Content for string is UTF8 and dir separator is "/".
  *
- *  @param	string	$path        	Starting path from which to search
- *  @param	string	$types        	Can be "directories", "files", or "all"
- *  @param	int		$recursive		Determines whether subdirectories are searched
- *  @param	string	$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- *  @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.'))
- *  @param	string	$sortcriteria	Sort criteria ("","fullname","name","date","size")
- *  @param	string	$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *	@param	int		$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
- *  @param	int		$nohook			Disable all hooks
- *  @return	array					Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
+ *  @param	string		$path        	Starting path from which to search
+ *  @param	string		$types        	Can be "directories", "files", or "all"
+ *  @param	int			$recursive		Determines whether subdirectories are searched
+ *  @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ *  @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.'))
+ *  @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
+ *  @param	string		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+ *	@param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like date and size to be loaded (slower), 2=Force load of date only, 3=Force load of size only
+ *  @param	int			$nohook			Disable all hooks
+ *  @return	array						Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file')
  */
 function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="name", $sortorder=SORT_ASC, $mode=0, $nohook=false)
 {
@@ -510,6 +510,12 @@ function dol_copy($srcfile, $destfile, $newmask=0, $overwriteifexists=1)
 	    return -3;
 	}
 	if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+	if (empty($newmask))	// This should no happen
+	{
+		dol_syslog("Warning: dol_copy called with empty value for newmask and no default value defined", LOG_WARNING);
+		$newmask='0664';
+	}
+
 	@chmod($newpathofdestfile, octdec($newmask));
 
 	return 1;
@@ -716,7 +722,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
- *  @return boolean         		True if file is deleted, False if error
+ *  @return boolean         		True if file is deleted (or if glob is used and there's nothing to delete), False if error
  */
 function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
 {
@@ -761,8 +767,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 			{
 				foreach ($listofdir as $filename)
 				{
-					if ($nophperrors) $ok=@unlink($filename);  // The unlink encapsulated by dolibarr
-					else $ok=unlink($filename);  // The unlink encapsulated by dolibarr
+					if ($nophperrors) $ok=@unlink($filename);
+					else $ok=unlink($filename);
 					if ($ok) dol_syslog("Removed file ".$filename, LOG_DEBUG);
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 				}
@@ -771,8 +777,8 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 		}
 		else
 		{
-			if ($nophperrors) $ok=@unlink($file_osencoded);        // The unlink encapsulated by dolibarr
-			else $ok=unlink($file_osencoded);        // The unlink encapsulated by dolibarr
+			if ($nophperrors) $ok=@unlink($file_osencoded);
+			else $ok=unlink($file_osencoded);
 			if ($ok) dol_syslog("Removed file ".$file_osencoded, LOG_DEBUG);
 			else dol_syslog("Failed to remove file ".$file_osencoded, LOG_WARNING);
 		}
@@ -873,7 +879,7 @@ function dol_delete_preview($object)
 	{
 		if ( ! dol_delete_file($file,1) )
 		{
-			$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+			$object->error=$langs->trans("ErrorFailedToOpenFile",$file);
 			return 0;
 		}
 	}
@@ -887,7 +893,7 @@ function dol_delete_preview($object)
 			{
 				if ( ! dol_delete_file($preview,1) )
 				{
-					$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+					$object->error=$langs->trans("ErrorFailedToOpenFile",$preview);
 					return 0;
 				}
 			}
@@ -1142,26 +1148,29 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 }
 
 /**
- * 	Convert an image file into antoher format.
+ * 	Convert an image file into anoher format.
  *  This need Imagick php extension.
  *
- *  @param	string	$file       Input file name
- *  @param  string	$ext        Extension of target file
+ *  @param	string	$fileinput  Input file name
+ *  @param  string	$ext        Format of target file (It is also extension added to file if fileoutput is not provided).
+ *  @param	string	$fileoutput	Output filename
  *  @return	int					<0 if KO, >0 if OK
  */
-function dol_convert_file($file,$ext='png')
+function dol_convert_file($fileinput,$ext='png',$fileoutput='')
 {
 	global $langs;
 
 	$image=new Imagick();
-	$ret = $image->readImage($file);
+	$ret = $image->readImage($fileinput);
 	if ($ret)
 	{
 		$ret = $image->setImageFormat($ext);
 		if ($ret)
 		{
+			if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
+
 			$count = $image->getNumberImages();
-			$ret = $image->writeImages($file . "." . $ext, true);
+			$ret = $image->writeImages($fileoutput, true);
 			if ($ret) return $count;
 			else return -3;
 		}
@@ -1273,13 +1282,13 @@ function dol_uncompress($inputfile,$outputdir)
 /**
  * Return file(s) into a directory (by default most recent)
  *
- * @param 	string	$dir			Directory to scan
- * @param	string	$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	string	$excludefilter  Array of Regex for exclude filter (example: array('\.meta$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
- * @param	int		$nohook			Disable all hooks
- * @return	string					Full path to most recent file
+ * @param 	string		$dir			Directory to scan
+ * @param	string		$regexfilter	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview\.png)$','^\.')). This regex value must be escaped for '/', since this char is used for preg_match function
+ * @param	int			$nohook			Disable all hooks
+ * @return	string						Full path to most recent file
  */
-function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('\.meta$','^\.'),$nohook=false)
+function dol_most_recent_file($dir,$regexfilter='',$excludefilter=array('(\.meta|_preview\.png)$','^\.'),$nohook=false)
 {
     $tmparray=dol_dir_list($dir,'files',0,$regexfilter,$excludefilter,'date',SORT_DESC,'',$nohook);
     return $tmparray[0];
@@ -1564,6 +1573,25 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->projet->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
+	else if ($modulepart == 'project_task')
+	{
+		if ($fuser->rights->projet->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->projet->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."projet WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
+	// Wrapping for interventions
+	else if ($modulepart == 'fichinter')
+	{
+		if ($fuser->rights->ficheinter->lire || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		$original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+	}
 
 	// Wrapping pour les commandes fournisseurs
 	else if ($modulepart == 'commande_fournisseur' || $modulepart == 'order_supplier')
@@ -1740,7 +1768,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	{
 		$accessallowed=1;
 		$dir='files';
-		if ($type == 'application/x-bittorrent') $dir='torrents';
+		if (dol_mimetype($original_file) == 'application/x-bittorrent') $dir='torrents';
 		$original_file=$conf->bittorrent->dir_output.'/'.$dir.'/'.$original_file;
 	}
 
@@ -1786,6 +1814,12 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		else
 		{
+			if (empty($conf->$modulepart->dir_output))	// modulepart not supported
+			{
+				dol_print_error('','Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
+				exit;
+			}
+
 			$perm=GETPOST('perm');
 			$subperm=GETPOST('subperm');
 			if ($perm || $subperm)
@@ -1830,4 +1864,3 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 
 	return $ret;
 }
-?>

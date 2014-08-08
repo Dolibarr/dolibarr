@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2008 Laurent Destailleur   <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
@@ -97,10 +97,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxcomm=112;
+		$this->posxcomm=900;
 		//$this->posxtva=112;
 		//$this->posxup=126;
-		$this->posxqty=174;
+		$this->posxqty=140;
+		$this->posxremainingqty=165;
 		//$this->posxdiscount=162;
 		//$this->postotalht=174;
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -197,16 +198,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $tplidx = $pdf->importPage(1);
                 }
 
-				// Complete object by loading several other informations
+				// We get the shipment that is the origin of delivery receipt
 				$expedition=new Expedition($this->db);
-				$result = $expedition->fetch($object->expedition_id);
-
+				$result = $expedition->fetch($object->origin_id);
+				// Now we get the order that is origin of shipment
 				$commande = new Commande($this->db);
 				if ($expedition->origin == 'commande')
 				{
 					$commande->fetch($expedition->origin_id);
 				}
-				$object->commande=$commande;
+				$object->commande=$commande;	// We set order of shipment onto delivery.
+				$object->commande->loadExpeditions();
 
 
 				$pdf->Open();
@@ -223,15 +225,24 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 
 				/*
-				 // Positionne $this->atleastonediscount si on a au moins une remise
-				 for ($i = 0 ; $i < $nblines ; $i++)
-				 {
-				 if ($object->lines[$i]->remise_percent)
-				 {
-				 $this->atleastonediscount++;
-				 }
-				 }
-				 */
+				// Positionne $this->atleastonediscount si on a au moins une remise
+				for ($i = 0 ; $i < $nblines ; $i++)
+				{
+				 	if ($object->lines[$i]->remise_percent)
+				 	{
+				 		$this->atleastonediscount++;
+				 	}
+				}
+ 				if (empty($this->atleastonediscount))
+				{
+					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
+					$this->posxtva+=($this->postotalht - $this->posxdiscount);
+					$this->posxup+=($this->postotalht - $this->posxdiscount);
+					$this->posxqty+=($this->postotalht - $this->posxdiscount);
+					$this->posxdiscount+=($this->postotalht - $this->posxdiscount);
+					//$this->postotalht;
+				}
+				*/
 
 				// New page
 				$pdf->AddPage();
@@ -307,7 +318,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     			$pdf->AddPage('','',true);
                     			if (! empty($tplidx)) $pdf->useTemplate($tplidx);
                     			if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-                    			$pdf->setPage($pagenb+1);
+                    			$pdf->setPage($pageposafter+1);
                     		}
                     	}
                     	else
@@ -346,7 +357,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Quantity
 					//$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					
+					// Remaining to ship
+					$pdf->SetXY($this->posxremainingqty, $curY);
+					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
+					$pdf->MultiCell($this->page_largeur-$this->marge_droite - $this->posxremainingqty, 3, $qtyRemaining, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY($this->posxdiscount, $curY);
@@ -370,6 +386,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Add line
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
+						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
@@ -428,7 +445,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				}
 
 				// Affiche zone infos
-				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
@@ -596,7 +613,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetXY($this->posxdesc-1, $tab_top+1);
 			$pdf->MultiCell($this->posxcomm - $this->posxdesc,2, $outputlangs->transnoentities("Designation"),'','L');
 		}
-
+	
 		// Modif SEB pour avoir une col en plus pour les commentaires clients
 		$pdf->line($this->posxcomm, $tab_top, $this->posxcomm, $tab_top + $tab_height);
 		if (empty($hidetop)) {
@@ -605,12 +622,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 
 		// Qty
-		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		$pdf->line($this->posxqty, $tab_top, $this->posxqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+			$pdf->SetXY($this->posxqty, $tab_top+1);
+			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','C');
 		}
 
+		// Remain to ship
+		$pdf->line($this->posxremainingqty, $tab_top, $this->posxremainingqty, $tab_top + $tab_height);
+		if (empty($hidetop)) {
+			$pdf->SetXY($this->posxremainingqty, $tab_top+1);
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShip"),'','C');
+		}
 	}
 
 	/**
@@ -675,7 +698,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->SetTextColor(0,0,60);
 		if ($object->date_valid)
 		{
-			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date(($object->date_delivery?$object->date_delivery:$date->valid),"%d %b %Y",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date($object->date_delivery,"%d %b %Y",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
@@ -770,9 +793,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 			// Client destinataire
 			$posy=42;
+			$posx=102;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 			$pdf->SetTextColor(0,0,0);
 			$pdf->SetFont('','', $default_font_size - 2);
-			$pdf->SetXY(102,$posy-5);
+			$pdf->SetXY($posx,$posy-5);
 			$pdf->MultiCell(80,5, $outputlangs->transnoentities("DeliveryAddress").":", 0, 'L');
 
 			// If SHIPPING contact defined on order, we use it
@@ -804,7 +829,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if ($this->page_largeur < 210) $widthrecbox=84;	// To work with US executive format
 			$posy=42;
 			$posx=$this->page_largeur-$this->marge_droite-$widthrecbox;
-			//if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
+			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->marge_gauche;
 
 			// Show recipient frame
 			$pdf->SetTextColor(0,0,0);
@@ -843,4 +868,3 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 }
 
-?>

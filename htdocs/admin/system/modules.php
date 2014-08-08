@@ -106,8 +106,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';
-print '<td align="center">'.$langs->trans("Id Module").'</td>';
-print '<td>'.$langs->trans("Id Permissions").'</td>';
+print '<td align="center">'.$langs->trans("IdModule").'</td>';
+print '<td>'.$langs->trans("IdPermissions").'</td>';
 print '</tr>';
 $var=false;
 $sortorder=$modules_names;
@@ -159,4 +159,3 @@ foreach($rights_ids as $right_id)
 
 llxFooter();
 $db->close();
-?>

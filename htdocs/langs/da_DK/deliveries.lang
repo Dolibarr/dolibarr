@@ -23,3 +23,4 @@ GoodStatusDeclaration=Har modtaget varerne over i god stand,
 Deliverer=Befrier:
 Sender=Sender
 Recipient=Recipient
+# ErrorStockIsNotEnough=There's not enough stock

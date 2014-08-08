@@ -149,7 +149,9 @@ class modCron extends DolibarrModules
      */
     function init($options='')
     {
-        // Prevent pb of modules not correctly disabled
+	    $sql = array();
+
+	    // Prevent pb of modules not correctly disabled
         //$this->remove($options);
 
         return $this->_init($sql,$options);
@@ -171,4 +173,3 @@ class modCron extends DolibarrModules
     }
 
 }
-?>

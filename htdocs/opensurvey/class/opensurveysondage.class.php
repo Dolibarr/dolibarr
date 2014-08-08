@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García	    <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,21 +44,21 @@ class Opensurveysondage extends CommonObject
 
 	var $id_sondage;
 	var $commentaires;
-	
+
 	var $mail_admin;
 	var $nom_admin;
-	
+
 	/**
 	 * Id of user author of the poll
 	 * @var int
 	 */
 	public $fk_user_creat;
-	
+
 	var $titre;
 	var $date_fin='';
 	var $format;
 	var $mailsonde;
-	
+
 	public $sujet;
 
 	/**
@@ -66,7 +66,7 @@ class Opensurveysondage extends CommonObject
 	 * @var bool
 	 */
 	public $allow_comments;
-	
+
 	/**
 	 * Allow users see others vote
 	 * @var bool
@@ -100,7 +100,12 @@ class Opensurveysondage extends CommonObject
 		$this->cleanParameters();
 
 		// Check parameters
-		// Put here code to add control on parameters values
+		if (! $this->date_fin > 0)
+		{
+			$this->error='BadValueForEndDate';
+			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
+			return -1;
+		}
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_sondage(";
@@ -127,12 +132,12 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".$this->db->escape($this->allow_comments).",";
 		$sql.= " ".$this->db->escape($this->allow_spy).",";
 		$sql.= " '".$this->db->escape($this->sujet)."'";
-		
+
 		$sql.= ")";
-		
+
 		$this->db->begin();
 
-	   	dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
+	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -141,16 +146,14 @@ class Opensurveysondage extends CommonObject
 			if (! $notrigger)
 			{
 				global $langs, $conf;
-				
-	            //// Call triggers
-	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('OPENSURVEY_CREATE',$this,$user,$langs,$conf);
-	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+
+                // Call trigger
+                $result=$this->call_trigger('OPENSURVEY_CREATE',$user);
+                if ($result < 0) $error++;          
+                // End call triggers
 			}
         }
-		
+
         // Commit or rollback
         if ($error)
 		{
@@ -181,7 +184,7 @@ class Opensurveysondage extends CommonObject
     {
     	$sql = "SELECT";
 		$sql.= " t.id_sondage,";
-		$sql.= " t.commentaires,";
+		$sql.= " t.commentaires as description,";
 		$sql.= " t.mail_admin,";
 		$sql.= " t.nom_admin,";
 		$sql.= " t.fk_user_creat,";
@@ -196,7 +199,7 @@ class Opensurveysondage extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as t";
         $sql.= " WHERE t.id_sondage = '".$this->db->escape($numsurvey)."'";
 
-    	dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -207,8 +210,9 @@ class Opensurveysondage extends CommonObject
 				$this->id_sondage = $obj->id_sondage;
 				//For compatibility
 				$this->ref = $this->id_sondage;
-				
-				$this->commentaires = $obj->commentaires;
+
+				$this->commentaires = $obj->description;	// deprecated
+				$this->description = $obj->description;
 				$this->mail_admin = $obj->mail_admin;
 				$this->nom_admin = $obj->nom_admin;
 				$this->titre = $obj->titre;
@@ -236,7 +240,6 @@ class Opensurveysondage extends CommonObject
         else
        {
       	    $this->error="Error ".$this->db->lasterror();
-            dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             $ret=-1;
         }
 
@@ -275,12 +278,12 @@ class Opensurveysondage extends CommonObject
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
 		$sql.= " allow_comments=".$this->db->escape($this->allow_comments).",";
 		$sql.= " allow_spy=".$this->db->escape($this->allow_spy);
-		
+
 		$sql.= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::update sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
     	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -338,12 +341,10 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-		        //// Call triggers
-		        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        $interface=new Interfaces($this->db);
-		        $result=$interface->run_triggers('OPENSURVEY_DELETE',$this,$user,$langs,$conf);
-		        if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
+                // Call trigger
+                $result=$this->call_trigger('OPENSURVEY_DELETE',$user);
+                if ($result < 0) $error++;          
+                // End call triggers
 			}
 		}
 
@@ -351,16 +352,16 @@ class Opensurveysondage extends CommonObject
 		{
 
 			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_comments WHERE id_sondage = '".$this->db->escape($numsondage)."'";
-			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			$sql='DELETE FROM '.MAIN_DB_PREFIX."opensurvey_user_studs WHERE id_sondage = '".$this->db->escape($numsondage)."'";
-			dol_syslog(get_class($this)."::delete sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."opensurvey_sondage";
     		$sql.= " WHERE id_sondage = '".$this->db->escape($numsondage)."'";
 
-    		dol_syslog(get_class($this)."::delete sql=".$sql);
+    		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
@@ -437,75 +438,74 @@ class Opensurveysondage extends CommonObject
 
 	/**
 	 * Returns all comments for the current opensurvey poll
-	 * 
+	 *
 	 * @return Object[]
 	 */
 	public function getComments() {
-		
+
 		$sql = 'SELECT id_comment, usercomment, comment';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_comments';
 		$sql.= " WHERE id_sondage='".$this->db->escape($this->id_sondage)."'";
 		$sql.= " ORDER BY id_comment";
 		$resql = $this->db->query($sql);
-		
+
 		$num_rows=$this->db->num_rows($resql);
-		
+
 		$comments = array();
-		
+
 		if ($num_rows > 0) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$comments[] = $obj;
 			}
 		}
-		
+
 		return $comments;
 	}
-	
+
 	/**
 	 * Adds a comment to the poll
-	 * 
+	 *
 	 * @param string $comment Comment content
 	 * @param string $comment_user Comment author
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
 	public function addComment($comment, $comment_user) {
-		
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment)";
 		$sql.= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."')";
 		$resql = $this->db->query($sql);
-		dol_syslog("sql=".$sql);
-		
+
 		if (!$resql) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Deletes a comment of the poll
-	 * 
+	 *
 	 * @param int $id_comment Id of the comment
 	 * @return boolean False in case of the query fails, true if it was successful
 	 */
 	public function deleteComment($id_comment) {
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'opensurvey_comments WHERE id_comment = '.$id_comment.' AND id_sondage = '.$this->id_sondage;
 		$resql = $this->db->query($sql);
-		
+
 		if (!$resql) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Cleans all the class variables before doing an update or an insert
-	 * 
+	 *
 	 * @return void
 	 */
 	private function cleanParameters() {
-		
+
 		$this->id_sondage = trim($this->id_sondage);
 		$this->commentaires = trim($this->commentaires);
 		$this->mail_admin = trim($this->mail_admin);
@@ -518,4 +518,3 @@ class Opensurveysondage extends CommonObject
 		$this->sujet = trim($this->sujet);
 	}
 }
-?>

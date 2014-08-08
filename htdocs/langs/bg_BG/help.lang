@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Форум/Wiki поддръжка
-EMailSupport=Поддръжка по e-mail
+EMailSupport=Поддръжка по имейл
 RemoteControlSupport=Онлайн в реално време / дистанционна поддръжка
 OtherSupport=Друга поддръжка
 ToSeeListOfAvailableRessources=За да се свържете/вижте наличните ресурси:
@@ -25,4 +25,4 @@ LinkToGoldMember=Можете да се обадите на треньора, п
 PossibleLanguages=Поддържани езици
 MakeADonation=Помогнете на проекта Dolibarr, направете дарение
 SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

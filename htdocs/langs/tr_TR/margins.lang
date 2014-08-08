@@ -10,25 +10,18 @@ MarkRate=Yayınlanmış fiyat
 DisplayMarginRates=Oran değerlerini göster
 DisplayMarkRates=Yayınlanmış fiyatları göster
 InputPrice=Giriş fiyatı
-
 margin=Kar oranı yönetimi
 margesSetup=Kar oranı yönetimi ayarı
-
 MarginDetails=Oran ayrıntıları
-
 ProductMargins=Ürün oranları
 CustomerMargins=Müşteri oranları
-AgentMargins=Temsilci oranları
-
+SalesRepresentativeMargins=Satış temsilcisi oranları
 ProductService=Ürün veya Hizmet
 AllProducts=Bütün ürün ve hizmetler
 ChooseProduct/Service=Ürün veya hizmet seç
-CommercialAgent=Ticari temsilci
-
 StartDate=İlk tarih
 EndDate=Son tarih
 Launch=Başlat
-
 ForceBuyingPriceIfNull=Boşsa alış fiyatına zorla
 ForceBuyingPriceIfNullDetails=eğr "AÇIK" sa, if "ON", oran satırda sıfır olacaktır (alış fiyatı = Satış fiyatı), aksi durumda ("KAPALI"), oran satış fiyatına eşit olacaktır (alış fiyatı = 0)
 MARGIN_METHODE_FOR_DISCOUNT=Genel indirimler için oran yöntemi
@@ -36,16 +29,13 @@ UseDiscountAsProduct=Ürün olarak
 UseDiscountAsService=Hizmet olarak
 UseDiscountOnTotal=Ara toplamla
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Genel bir indirimin, oran hesaplaması için bir ürün, hizmet ya da yalnızca ara toplam olarak mı değerlendirildiğini tanımlayın.
-
 MARGIN_TYPE=Oran türü
 MargeBrute=Ham oran
 MargeNette=Net oran
 MARGIN_TYPE_DETAILS=Ham oran : Satış fiyatı - Alış fiyatı<br/>Net oran : Satış fiyatı - Maliyet fiyatı
-
 CostPrice=Maliyet fiyatı
 BuyingCost=Maliyet fiyatı
 UnitCharges=Birim masrafları
 Charges=Masraflar
-
 AgentContactType=Ticari temsilci ilgili tipi
 AgentContactTypeDetails=Ticari temsilciler tarafından oran raporları ile ilişkilendirilecek kişi türünü (faturalarla bağlantılı) tanımlayın

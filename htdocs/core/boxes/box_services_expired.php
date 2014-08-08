@@ -152,4 +152,3 @@ class box_services_expired extends ModeleBoxes
 
  }
 
-?>

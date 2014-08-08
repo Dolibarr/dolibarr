@@ -60,12 +60,10 @@ print_fiche_titre($langs->trans("OrdersArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search form
- */
+// Search customer orders
 $var=false;
 print '<table class="noborder nohover" width="100%">';
-print '<form method="post" action="liste.php">';
+print '<form method="post" action="'.DOL_URL_ROOT.'/commande/liste.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchOrder").'</td></tr>';
 print '<tr '.$bc[$var].'><td>';
@@ -431,4 +429,3 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
-?>

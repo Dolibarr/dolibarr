@@ -46,6 +46,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
+$mode=GETPOST('mode');
+
 
 /*
  * View
@@ -154,7 +156,6 @@ if (! $mesg)
 $data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg='';
-if (! isset($mode)) $mode=''; // TODO $mode not defined ?
 if (!$user->rights->societe->client->voir || $user->societe_id)
 {
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
@@ -262,7 +263,6 @@ $oldyear=0;
 foreach ($data as $val)
 {
     $year = $val['year'];
-    //print $avg; // TODO $avg not defined ?
     while (! empty($year) && $oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
@@ -311,4 +311,3 @@ dol_fiche_end();
 llxFooter();
 
 $db->close();
-?>

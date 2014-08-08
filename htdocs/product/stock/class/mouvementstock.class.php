@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
+ * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +28,7 @@
 /**
  *	Class to manage stock movements
  */
-class MouvementStock
+class MouvementStock extends CommonObject
 {
     var $error;
     var $db;
@@ -55,9 +56,13 @@ class MouvementStock
 	 *	@param		int		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string	$label			Label of stock movement
 	 *	@param		string	$datem			Force date of movement
+	 *	@param		date	$eatby			eat-by date
+	 *	@param		date	$sellby			sell-by date
+	 *	@param		string	$batch			batch number
+	 *	@param		boolean	$skip_sellby	If set to true, stock mouvement is done without impacting batch record
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='')
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $datem='',$eatby='',$sellby='',$batch='',$skip_sellby=false)
 	{
 		global $conf, $langs;
 
@@ -89,14 +94,25 @@ class MouvementStock
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
+			if(!empty($this->origin)) {
+				$origintype = $this->origin->element;
+				$fk_origin = $this->origin->id;
+			} else {
+				$origintype = '';
+				$fk_origin = 0;
+			}
+			
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price)";
+			$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, label, price, fk_origin, origintype)";
 			$sql.= " VALUES ('".$this->db->idate($now)."', ".$fk_product.", ".$entrepot_id.", ".$qty.", ".$type.",";
 			$sql.= " ".$user->id.",";
 			$sql.= " '".$this->db->escape($label)."',";
-			$sql.= " '".price2num($price)."')";
+			$sql.= " '".price2num($price)."',";
+			$sql.= " '".$fk_origin."',";
+			$sql.= " '".$origintype."'";
+			$sql.= ")";
 
-			dol_syslog(get_class($this)."::_create sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -105,7 +121,6 @@ class MouvementStock
 			else
 			{
 				$this->error=$this->db->lasterror();
-				dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 				$error = -1;
 			}
 
@@ -122,7 +137,7 @@ class MouvementStock
 				$sql = "SELECT rowid, reel, pmp FROM ".MAIN_DB_PREFIX."product_stock";
 				$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -132,13 +147,13 @@ class MouvementStock
 						$num = 1;
 						$oldqtywarehouse = $obj->reel;
 						$oldpmpwarehouse = $obj->pmp;
+						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
 				}
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create echec update ".$this->error, LOG_ERR);
 					$error = -2;
 				}
 			}
@@ -186,14 +201,23 @@ class MouvementStock
 					$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -3;
+				} else if(empty($fk_product_stock)){
+					$fk_product_stock = $this->db->last_insert_id(MAIN_DB_PREFIX."product_stock");
 				}
+
+				}
+
+			// Update detail stock for sell-by date
+			if (($product->hasbatch()) && (! $error) && (! $skip_sellby)){
+				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby,'sellby'=>$sellby,'batchnumber'=>$batch);
+				$result=$this->_create_batch($param_batch, $qty);
+				if ($result<0) $error++;
 			}
 
 			if (! $error)
@@ -203,12 +227,11 @@ class MouvementStock
 				// May be this request is better:
 				// UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
-				dol_syslog(get_class($this)."::_create sql=".$sql);
+				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::_create ".$this->error, LOG_ERR);
 					$error = -4;
 				}
 			}
@@ -222,23 +245,23 @@ class MouvementStock
 
 		if ($movestock && ! $error)
 		{
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($this->db);
 
 			$this->product_id = $fk_product;
 			$this->entrepot_id = $entrepot_id;
 			$this->qty = $qty;
 
-			$result=$interface->run_triggers('STOCK_MOVEMENT',$this,$user,$langs,$conf);
-			if ($result < 0) { $error++; $this->errors=$interface->errors; }
-			// Fin appel triggers
+            // Call trigger
+            $result=$this->call_trigger('STOCK_MOVEMENT',$user);
+            if ($result < 0) $error++;          
+            // End call triggers
+            
+            //FIXME: Restore previous value of product_id,  entrepot_id, qty if trigger fail
 		}
 
 		if (! $error)
 		{
 			$this->db->commit();
-			return 1;
+			return $mvid;
 		}
 		else
 		{
@@ -271,7 +294,7 @@ class MouvementStock
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = ".$idProduct;
 
-		dol_syslog(get_class($this)."::_createSubProduct sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::_createSubProduct", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -286,7 +309,6 @@ class MouvementStock
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::_createSubProduct ".$this->error, LOG_ERR);
 			$error = -2;
 		}
 
@@ -314,9 +336,21 @@ class MouvementStock
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem);
+		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, $datem,'','','',true);
 	}
 
+	/**
+	 *	Decrease stock for batch record
+	 *
+	 * 	@param		int		$id_stock_dluo		Id product_dluo
+	 * 	@param		int		$qty			Quantity
+	 * 	@return		int						<0 if KO, >0 if OK
+	 */
+	function livraison_batch($id_stock_dluo, $qty)
+	{
+		$ret=$this->_create_batch($id_stock_dluo, (0 - $qty));
+		return $ret;
+	}
 
 	/**
 	 *	Increase stock for product and subproducts
@@ -327,11 +361,14 @@ class MouvementStock
 	 * 	@param		int		$qty			Quantity
 	 * 	@param		int		$price			Price
 	 * 	@param		string	$label			Label of stock movement
+	 *	@param		date	$eatby			eat-by date
+	 *	@param		date	$sellby			sell-by date
+	 *	@param		string	$batch			batch number
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='')
+	function reception($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $eatby='', $sellby='', $batch='')
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, '', $eatby, $sellby, $batch);
 	}
 
 
@@ -370,7 +407,7 @@ class MouvementStock
 		$sql.= ' WHERE fk_product = '.$productidselected;
 		$sql.= " AND datem < '".$this->db->idate($datebefore)."'";
 		
-		dol_syslog(get_class($this).__METHOD__.' sql='.$sql);
+		dol_syslog(get_class($this).__METHOD__.'', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -384,6 +421,89 @@ class MouvementStock
 			return -1;
 		}
 	}
+
+	/**
+	 * Create or update batch record
+	 *
+	 * @param	variant		$dluo	Could be either int if id of product_batch or array with at leat fk_product_stock
+	 * @param	int			$qty	Quantity of product with batch number
+	 * @return 	int   				<0 if KO, else return productbatch id
+	 */
+	function _create_batch($dluo, $qty ) {
+		$pdluo=New Productbatch($this->db);
+		
+		//Try to find an existing record with batch same batch number or id
+		if (is_numeric($dluo)) {
+			$result=$pdluo->fetch($dluo);
+		} else if (is_array($dluo)) {
+			if (isset($dluo['fk_product_stock'])) {
+				$vfk_product_stock=$dluo['fk_product_stock'];
+				$veatby = $dluo['eatby'];
+				$vsellby = $dluo['sellby'];
+				$vbatchnumber = $dluo['batchnumber'];
+				$result = $pdluo->find($vfk_product_stock,$veatby,$vsellby,$vbatchnumber);
+			} else {
+				dol_syslog(get_class($this)."::_create_batch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				$result = -1;
+			}
+		} else {
+			dol_syslog(get_class($this)."::_create_batch error invalid param dluo".$error, LOG_ERR);
+			$result =  -1;
+		}
+
+		//batch record found so we update it
+		if ($result>0) {
+			if ($pdluo->id >0) {
+				$pdluo->qty +=$qty;
+				if ($pdluo->qty == 0) {
+					$result=$pdluo->delete(0,1);
+				} else {
+					$result=$pdluo->update(0,1);
+				}
+			} else {
+				$pdluo->fk_product_stock=$vfk_product_stock;
+				$pdluo->qty = $qty;
+				$pdluo->eatby = $veatby;
+				$pdluo->sellby = $vsellby;
+				$pdluo->batch = $vbatchnumber;
+				$result=$pdluo->create(0,1);
+			}
+			return $result;
+		} else {
+			return -1;
+		}
+
+	}
 	
+	function get_origin($fk_origin, $origintype) {
+		switch ($origintype) {
+			case 'commande':
+				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+				$origin = new Commande($this->db);
+				break;
+			case 'shipping':
+				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+				$origin = new Expedition($this->db);
+				break;
+			case 'facture':
+				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+				$origin = new Facture($this->db);
+				break;
+			case 'order_supplier':
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+				$origin = new CommandeFournisseur($this->db);
+				break;
+			case 'invoice_supplier':
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+				$origin = new FactureFournisseur($this->db);
+				break;
+			
+			default:
+				return '';
+				break;
+		}
+		
+		$origin->fetch($fk_origin);
+		return $origin->getNomUrl(1);
+	}
 }
-?>

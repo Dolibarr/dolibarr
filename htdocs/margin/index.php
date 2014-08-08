@@ -23,4 +23,3 @@
 
 require 'productMargins.php';
 
-?>

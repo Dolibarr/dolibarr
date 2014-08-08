@@ -158,7 +158,6 @@ ShowEditTechnicalParameters=Κάντε κλικ εδώ για να δείτε/ε
 
 #########
 # upgrade
-#########
 MigrationFixData=Fix for denormalized data
 MigrationOrder=Data migration for customer's orders
 MigrationSupplierOrder=Data migration for supplier's orders
@@ -207,3 +206,6 @@ MigrationProjectTaskTime=Update time spent in seconds
 MigrationActioncommElement=Ενημέρωση στοιχεία για τις δράσεις
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
 MigrationCategorieAssociation=Μετακίνηση των κατηγοριών
+
+ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
+HideNotAvailableOptions=Απόκρυψη μη μη διαθέσιμων επιλογών

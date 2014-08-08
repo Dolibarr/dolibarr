@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
@@ -217,12 +217,15 @@ if ($action == 'create')
 			if ($num)
 			{
 				print '<tr class="liste_titre">';
-				print '<td width="54%">'.$langs->trans("Description").'</td>';
-				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
-				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td width="12%" align="right">'.$langs->trans("CurrentProductPrice").'</td>';
+				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td align="center">'.$langs->trans("VAT").'</td>';
+				print '<td align="center">'.$langs->trans("Qty").'</td>';
+				print '<td>'.$langs->trans("ReductionShort").'</td>';
+				print '<td align="right">'.$langs->trans("TotalHT").'</td>';
+				print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
+				print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
+				print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">'.$langs->trans("CurrentProductPrice").'</td>';
 				print "</tr>\n";
 			}
 			$var=True;
@@ -288,9 +291,13 @@ if ($action == 'create')
 					print "</td>\n";
 				}
 
-
+				// Vat rate
 				print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
+
+				// Qty
 				print '<td align="center">'.$objp->qty.'</td>';
+
+				// Percent
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -300,9 +307,19 @@ if ($action == 'create')
 					print '<td>&nbsp;</td>';
 				}
 
+				// Total HT
+				print '<td align="right">'.price($objp->total_ht)."</td>\n";
+
+				// Total VAT
+				print '<td align="right">'.price($objp->total_vat)."</td>\n";
+
+				// Total TTC
+				print '<td align="right">'.price($objp->total_ttc)."</td>\n";
+
+				// Total Unit price
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
-				// Price of product
+				// Current price of product
 				if (empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					if ($objp->fk_product > 0)
@@ -385,13 +402,13 @@ else
 			print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
 			print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-			print '<td align="right" colspan="2"><b>'.price($object->total_ht).'</b></td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+			print '<td colspan="3"><b>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</b></td>';
+			print '</tr>';
 
-			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td align="right" colspan="2">'.price($object->total_tva).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($object->total_ttc).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
+			print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
+			print '</tr>';
+			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td colspan="3">'.price($object->total_ttc,'',$langs,1,-1,-1,$conf->currency).'</td>';
+			print '</tr>';
 
 			// Payment term
 			print '<tr><td>'.$langs->trans("PaymentConditions").'</td><td colspan="3">';
@@ -603,4 +620,3 @@ else
 llxFooter();
 
 $db->close();
-?>

@@ -55,6 +55,7 @@ DraftOrWaitingShipped=Taslak veya onaylanmış henüz sevkedilmemiş
 MenuOrdersToBill=Teslim edilen siparişler
 MenuOrdersToBill2=Faturalanacak siparişler
 SearchOrder=Sipariş ara
+SearchACustomerOrder=Müşteri siparişi ara
 ShipProduct=Ürünü sevket
 Discount=İndirim
 CreateOrder=Sipariş oluştur
@@ -100,7 +101,6 @@ RelatedOrders=İlgili siparişler
 OnProcessOrders=İşlemdeki siparişler
 RefOrder=Sipariş ref.
 RefCustomerOrder=Müşteri sipariş ref.
-CustomerOrder=Müşteri siparişi
 RefCustomerOrderShort=Müşt. Sipariş ref.
 SendOrderByMail=Siparişi postayla gönder
 ActionsOnOrder=Sipariş eylemleri
@@ -131,8 +131,6 @@ Error_COMMANDE_ADDON_NotDefined=Sabit COMMANDE_ADDON tanımlanmamış
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Modül dosyası %s yüklenemedi
 Error_FailedToLoad_COMMANDE_ADDON_File=Modül dosyası %s yüklenemedi
 Error_OrderNotChecked=Faturalanacak seçilmiş sipariş yok
-
-
 # Sources
 OrderSource0=Teklif
 OrderSource1=Internet
@@ -143,7 +141,6 @@ OrderSource5=Reklam
 OrderSource6=Mağaza
 QtyOrdered=Sipariş miktarı
 AddDeliveryCostLine=Siparişin ağırlığını belirten bir teslimat satırı ekleyin
-
 # Documents models
 PDFEinsteinDescription=Bir tam sipariş modeli (logo. ..)
 PDFEdisonDescription=Basit bir sipariş modeli
@@ -154,7 +151,6 @@ OrderByFax=Faks
 OrderByEMail=Eposta
 OrderByWWW=Çevrimiçi
 OrderByPhone=Telefon
-
 CreateInvoiceForThisCustomer=Sipariş Faturala
 NoOrdersToInvoice=Faturalanabilir sipariş yok
 CloseProcessedOrdersAutomatically=Seçilen tüm siparişleri "İşlendi" olarak sınıflandır.
@@ -164,3 +160,4 @@ Ordered=Sipariş verildi
 OrderCreated=Siparişleriniz oluşturulmuştur
 OrderFail=Siparişiniz oluşturulması sırasında hata oluştu
 CreateOrders=Sipariş oluştur
+ToBillSeveralOrderSelectCustomer=Birden çok siparişe fatura oluşturmak için, önce müşteriye tıkla, sonra "%s" seç

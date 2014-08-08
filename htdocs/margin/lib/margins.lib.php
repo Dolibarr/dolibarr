@@ -73,7 +73,7 @@ function marges_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/margin/agentMargins.php";
-	$head[$h][1] = $langs->trans("AgentMargins");
+	$head[$h][1] = $langs->trans("SalesRepresentativeMargins");
 	$head[$h][2] = 'agentMargins';
 	$h++;
 
@@ -102,7 +102,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	if ($fk_pa > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$product = new ProductFournisseur($db);
-		if ($product->fetch_product_fournisseur_price($fk_pa)) 
+		if ($product->fetch_product_fournisseur_price($fk_pa))
 		{
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 			if ($conf->global->MARGIN_TYPE == "2" && $product->fourn_unitcharges > 0)
@@ -113,11 +113,11 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 			$paht_ret = $paht;
 		}
 	}
-	else 
+	else
 	{
 		$paht_ret	= $paht;
 	}
-	
+
 	// Calculate selling unit price including line discount
 	// We don't use calculate_price, because this function is dedicated to calculation of total with accuracy of total. We need an accuracy of a unit price.
 	// Also we must not apply rounding on non decimal rule defined by option MAIN_ROUNDING_RULE_TOT
@@ -139,4 +139,3 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 
 	return array($paht_ret, $marge_tx_ret, $marque_tx_ret);
 }
-?>

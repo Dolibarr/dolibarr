@@ -79,6 +79,14 @@ MailtoEMail=Écrire un e-mail (lien)
 ActivateCheckRead=Permettre l'utilisation du lien de désinscription
 ActivateCheckReadKey=Clé de sécurité permettant le chiffrement des URL utilisées dans les fonctions d'accusé de lecture et de désinscription
 EMailSentToNRecipients=Email envoyé à %s destinataires.
+XTargetsAdded=<b>%s</b> destinataires ajoutés dans la liste cible
+EachInvoiceWillBeAttachedToEmail=Un document utilisant le modèle par défaut de facture sera généré et attaché à l'email.
+MailTopicSendRemindUnpaidInvoices=Rappel de la facture %s (%s)
+SendRemind=Envoyer relance par EMail
+RemindSent=%s relance(s) envoyée(s)
+AllRecipientSelectedForRemind=Tous les tiers sélectionnés et qui ont un email défini (notez qu'un email par facture sera envoyé)
+NoRemindSent=Aucun EMail de relance envoyé
+ResultOfMassSending=Résultat de l'envoi de la relance en masse par EMail
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Contacts de tiers (prospects, clients, fournisseurs…)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Contacts de tiers (par catégorie de 
 MailingModuleDescContactsByCategory=Contacts de tiers par catégorie de contact
 MailingModuleDescMembersCategories=Adhérents (par catégorie)
 MailingModuleDescContactsByFunction=Contacts de tiers (par poste/fonction)
-
-
 LineInFile=Ligne %s du fichier
 RecipientSelectionModules=Modules de sélection des destinataires
 MailSelectedRecipients=Destinataires sélectionnés
@@ -114,6 +120,7 @@ TargetsReset=Vider liste
 ToClearAllRecipientsClickHere=Pour vider la liste des destinataires de cet emailing, cliquez sur le bouton
 ToAddRecipientsChooseHere=Pour ajouter des destinataires, choisir dans les listes ci-dessous
 NbOfEMailingsReceived=Emailings de masse reçus
+NbOfEMailingsSend=EMailings de masse envoyés
 IdRecord=ID enregistrement
 DeliveryReceipt=Accusé de réception
 YouCanUseCommaSeparatorForSeveralRecipients=Vous pouvez utiliser le caractère de séparation <b>virgule</b> pour spécifier plusieurs destinataires.
@@ -121,7 +128,6 @@ TagCheckMail=Suivre l'ouverture de l'email
 TagUnsubscribe=Lien de désinscription
 TagSignature=Signature utilisateur émetteur
 TagMailtoEmail=Email destinataire
-
 # Module Notifications
 Notifications=Notifications
 NoNotificationsWillBeSent=Aucune notification par email n'est prévue pour cet événement et société

@@ -13,14 +13,19 @@ then
 	echo "This push local files to transifex."
 	echo "Note:  If you push a language file (not source), file will be skipped if transifex file is newer."
 	echo "       Using -f will overwrite translation but not memory."
-	echo "Usage: txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f] [--no-interactive]"
+	echo "Usage: ./dev/translation/txpush.sh (source|all|xx_XX) [-r dolibarr.file] [-f] [--no-interactive]"
 	exit
 fi
 
+if [ ! -d ".tx" ]
+then
+	echo "Script must be ran from root directory of project with command ./dev/translation/txpush.sh"
+	exit
+fi
 
 if [ "x$1" = "xall" ]
 then
-	for fic in ar_SA bg_BG ca_ES cs_CZ da_DK de_DE el_GR es_ES et_EE fa_IR fi_FI fr_FR he_IL hu_HU is_IS it_IT ja_JP ko_KR lv_LV nb_NO nl_NL pl_PL pt_PT ro_RO ru_RU ru_UA sk_SK sl_SI sv_SE tr_TR uz_UZ vi_VN zh_CN zh_TW
+	for fic in ar_SA bg_BG bs_BA ca_ES cs_CZ da_DK de_DE el_GR es_ES et_EE eu_ES fa_IR fi_FI fr_FR he_IL hr_HR hu_HU id_ID is_IS it_IT ja_JP ko_KR lt_LT lv_LV mk_MK nb_NO nl_NL pl_PL pt_PT ro_RO ru_RU ru_UA sk_SK sl_SI sq_AL sv_SE th_TH tr_TR uk_UA uz_UZ vi_VN zh_CN zh_TW
 	do
 		echo "tx push --skip -t -l $fic $2 $3"
 		tx push --skip -t -l $fic $2 $3

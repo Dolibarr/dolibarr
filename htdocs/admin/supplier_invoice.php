@@ -200,7 +200,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'invoice', $langs->trans("ModuleSetup"));
+dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
 
 
 // Supplier invoice numbering module
@@ -372,9 +372,14 @@ foreach ($dirmodels as $reldir)
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
 
+	                require_once $dir.'/'.$file;
+	                $module = new $classname($db, new FactureFournisseur($db));
+
                     $var=!$var;
                     print "<tr ".$bc[$var].">\n";
-                    print "<td>".$name."</td>\n";
+                    print "<td>";
+	                print (empty($module->name)?$name:$module->name);
+	                print "</td>\n";
                     print "<td>\n";
                     require_once $dir.$file;
                     $module = new $classname($db,$specimenthirdparty);
@@ -469,4 +474,3 @@ print '</form>';
 
 $db->close();
 llxFooter();
-?>

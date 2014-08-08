@@ -33,7 +33,16 @@ $langs->load("mails");
 $langs->load("other");
 $langs->load("errors");
 
+$action=GETPOST('action','alpha');
+
 if (! $user->admin) accessforbidden();
+
+$usersignature=$user->signature;
+// For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
+if ($action == 'test' || $action == 'send')
+{
+	$usersignature=dol_string_nohtmltag($usersignature);
+}
 
 $substitutionarrayfortest=array(
 '__LOGIN__' => $user->login,
@@ -41,12 +50,11 @@ $substitutionarrayfortest=array(
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
-'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$user->signature:''),
+'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),
 //'__PERSONALIZED__' => 'TESTPersonalized'	// Hiden because not used yet
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
-$action=GETPOST('action');
 
 
 /*
@@ -132,7 +140,7 @@ if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
 if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GETPOST('addfilehtml') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
 {
 	$error=0;
-	
+
 	$email_from='';
 	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
 	if (! empty($_POST["frommail"])) $email_from.='<'.$_POST["frommail"].'>';
@@ -144,12 +152,12 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 	$deliveryreceipt= $_POST["deliveryreceipt"];
-	
+
 	//Check if we have to decode HTML
 	if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401))) {
 		$body=dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401);
 	}
-	
+
 	// Create form object
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
@@ -645,9 +653,13 @@ else
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort",$server,$port).'</div>';
 		else
 		{
-			print '<div class="error">'.$langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
-			if ($mail->error) print ' - '.$mail->error;
-			print '</div>';
+			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort",$server,$port);
+
+			if ($mail->error) {
+				$errormsg .= ' - '.$mail->error;
+			}
+
+			setEventMessage($errormsg, 'errors');
 		}
 		print '<br>';
 	}
@@ -693,7 +705,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		$formmail->show_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
+		print $formmail->get_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
 
 		print '<br>';
 	}
@@ -703,4 +715,3 @@ else
 llxFooter();
 
 $db->close();
-?>

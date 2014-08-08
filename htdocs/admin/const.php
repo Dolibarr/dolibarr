@@ -38,7 +38,7 @@ $action=GETPOST('action','alpha');
 $update=GETPOST('update','alpha');
 $delete=GETPOST('delete');	// Do not use alpha here
 $debug=GETPOST('debug','int');
-$consts=GETPOST('const');
+$consts=GETPOST('const','array');
 $constname=GETPOST('constname','alpha');
 $constvalue=GETPOST('constvalue');
 $constnote=GETPOST('constnote','alpha');
@@ -233,7 +233,7 @@ if (empty($user->entity) && $debug) {} // to force for superadmin
 elseif ($user->entity || empty($conf->multicompany->enabled)) $sql.= " AND visible = 1";
 $sql.= " ORDER BY entity, name ASC";
 
-dol_syslog("Const::listConstant sql=".$sql);
+dol_syslog("Const::listConstant", LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {
@@ -313,4 +313,3 @@ print "</form>\n";
 llxFooter();
 
 $db->close();
-?>

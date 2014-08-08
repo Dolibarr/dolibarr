@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
-# IdAgenda=ID event
+IdAgenda=ID event
 Actions=Actions
 ActionsArea=Actions svæði (Viðburðir og verkefni)
 Agenda= Dagskrá
@@ -10,7 +10,7 @@ LocalAgenda=Staðbundin dagbók
 AffectedTo= Áhrifum á
 DoneBy= Lokið við
 Events= Viðburðir
-# EventsNb=Number of events
+EventsNb=Number of events
 MyEvents=Viðburðir mín
 OtherEvents=Aðrir viðburðir
 ListOfActions=Listi yfir atburði
@@ -25,12 +25,15 @@ ListOfEvents= Listi yfir Dolibarr viðburðir
 ActionsAskedBy=Actions skráð
 ActionsToDoBy=Actions áhrif til
 ActionsDoneBy=Actions gert með því að
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
 AllMyActions= Allar aðgerðir mínar / verkefni
 AllActions= Allar aðgerðir / verkefni
 ViewList=Skoða lista
 ViewCal=Skoða dagatal
 ViewDay=Dagsskjár
 ViewWeek=Vikuskjár
+ViewPerUser=Per user
 ViewWithPredefinedFilters= View með fyrirfram skilgreindum filters
 AutoActions= Sjálfvirk fyllingu dagskrá
 AgendaAutoActionDesc= Veldu hér viðburðir sem þú vilt Dolibarr að búa sjálfvirkt til aðgerða á dagskrá. Ef ekkert er valið (sjálfgefið), verður eingöngu handvirk aðgerð að koma fram í dagskrá.
@@ -40,9 +43,10 @@ ActionsEvents= Viðburðir sem Dolibarr vilja búa til aðgerða á dagskrá sj�
 PropalValidatedInDolibarr= Tillaga %s  staðfestar
 InvoiceValidatedInDolibarr= Invoice %s  staðfestar
 InvoiceBackToDraftInDolibarr=Vörureikningi %s fara aftur til drög að stöðu
-# InvoiceDeleteDolibarr=Invoice %s deleted
+InvoiceDeleteDolibarr=Invoice %s deleted
 OrderValidatedInDolibarr= Panta %s  staðfestar
 OrderApprovedInDolibarr=Panta %s samþykkt
+OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Panta %s fara aftur til drög að stöðu
 OrderCanceledInDolibarr=Panta %s niður
 InterventionValidatedInDolibarr=Intervention %s  staðfestar
@@ -52,7 +56,9 @@ InvoiceSentByEMail=Viðskiptavinur vörureikningi %s send með tölvupósti
 SupplierOrderSentByEMail=Birgir röð %s send með tölvupósti
 SupplierInvoiceSentByEMail=Birgir vörureikningi %s send með tölvupósti
 ShippingSentByEMail=Sendingarmáti %s send með tölvupósti
+ShippingValidated= Shipping %s validated
 InterventionSentByEMail=Inngrip %s send með tölvupósti
+InterventionClassifiedBilled=Intervention %s classified as Billed
 NewCompanyToDolibarr= Í þriðja aðila til
 DateActionPlannedStart= Fyrirhugaður upphafsdagur
 DateActionPlannedEnd= Áætlaðir lokadagur
@@ -67,8 +73,8 @@ AgendaUrlOptions4=<b>logint = %s </b> til að takmarka framleiðsla til aðgerð
 AgendaUrlOptions5=<b>logind = %s </b> til að takmarka framleiðsla til aðgerða gert með <b>notandann %s .</b>
 AgendaShowBirthdayEvents=tengiliði Sýna afmæli's
 AgendaHideBirthdayEvents=tengiliðir Fela afmæli's
-# Busy=Busy
-# ExportDataset_event1=List of agenda events
+Busy=Busy
+ExportDataset_event1=List of agenda events
 
 # External Sites ical
 ExportCal=Útflutningur dagbók

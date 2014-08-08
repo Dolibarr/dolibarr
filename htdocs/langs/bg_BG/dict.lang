@@ -6,7 +6,7 @@ CountryES=Испания
 CountryDE=Германия
 CountryCH=Швейцария
 CountryGB=Великобритания
-# CountryUK=United Kingdom
+CountryUK=Обединено Кралство
 CountryIE=Ирландия
 CountryCN=Китай
 CountryTN=Тунис
@@ -248,12 +248,11 @@ CountryBL=Сен Бартелеми
 CountryMF=Saint Martin
 
 ##### Civilities #####
-CivilityMME=Госпожа
-CivilityMR=Господин
-CivilityMLE=Госпожица
+CivilityMME=Г-жа
+CivilityMR=Г-н
+CivilityMLE=Г-ца
 CivilityMTRE=Майстор
-CivilityDR=Лекар
-
+CivilityDR=Доктор
 ##### Currencies #####
 Currencyeuros=Евро
 CurrencyAUD=АС долара
@@ -281,7 +280,7 @@ CurrencySingNOK=Норвежка крона
 CurrencyTND=Тунизийски динара
 CurrencySingTND=Тунизийски динар
 CurrencyUSD=Щатски долари
-CurrencySingUSD=САЩ долар
+CurrencySingUSD=Щатски долар
 CurrencyUAH=Хривня
 CurrencySingUAH=Хривня
 CurrencyXAF=CFA франка BEAC
@@ -290,15 +289,13 @@ CurrencyXOF=CFA франкове BCEAO
 CurrencySingXOF=CFA франк BCEAO
 CurrencyXPF=ОПОР франкове
 CurrencySingXPF=CFP франк
-
 CurrencyCentSingEUR=цент
 CurrencyThousandthSingTND=хиляден
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Интернет
-DemandReasonTypeSRC_CAMP_MAIL=Mailing кампания
-DemandReasonTypeSRC_CAMP_EMAIL=Електронната поща кампания
-DemandReasonTypeSRC_CAMP_PHO=Телефон кампания
+DemandReasonTypeSRC_CAMP_MAIL=Пощенска кампания
+DemandReasonTypeSRC_CAMP_EMAIL=Кампания по имейл
+DemandReasonTypeSRC_CAMP_PHO=Телефонна кампания
 DemandReasonTypeSRC_CAMP_FAX=Факс кампания
 DemandReasonTypeSRC_COMM=Търговския контакт
 DemandReasonTypeSRC_SHOP=Магазин за контакт
@@ -306,24 +303,23 @@ DemandReasonTypeSRC_WOM=Дума на устата
 DemandReasonTypeSRC_PARTNER=Партньор
 DemandReasonTypeSRC_EMPLOYEE=Служителите
 DemandReasonTypeSRC_SPONSORING=Спонсорство
-
 #### Paper formats ####
-# PaperFormatEU4A0=Format 4A0
-# PaperFormatEU2A0=Format 2A0
-# PaperFormatEUA0=Format A0
-# PaperFormatEUA1=Format A1
-# PaperFormatEUA2=Format A2
-# PaperFormatEUA3=Format A3
-# PaperFormatEUA4=Format A4
-# PaperFormatEUA5=Format A5
-# PaperFormatEUA6=Format A6
-# PaperFormatUSLETTER=Format Letter US
-# PaperFormatUSLEGAL=Format Legal US
-# PaperFormatUSEXECUTIVE=Format Executive US
-# PaperFormatUSLEDGER=Format Ledger/Tabloid
-# PaperFormatCAP1=Format P1 Canada
-# PaperFormatCAP2=Format P2 Canada
-# PaperFormatCAP3=Format P3 Canada
-# PaperFormatCAP4=Format P4 Canada
-# PaperFormatCAP5=Format P5 Canada
-# PaperFormatCAP6=Format P6 Canada
+PaperFormatEU4A0=Формат 4A0
+PaperFormatEU2A0=Формат 2A0
+PaperFormatEUA0=Формат A0
+PaperFormatEUA1=Формат A1
+PaperFormatEUA2=Формат A2
+PaperFormatEUA3=Формат A3
+PaperFormatEUA4=Формат A4
+PaperFormatEUA5=Формат A5
+PaperFormatEUA6=Формат A6
+PaperFormatUSLETTER=Format Letter US
+PaperFormatUSLEGAL=Format Legal US
+PaperFormatUSEXECUTIVE=Format Executive US
+PaperFormatUSLEDGER=Format Ledger/Tabloid
+PaperFormatCAP1=Format P1 Canada
+PaperFormatCAP2=Format P2 Canada
+PaperFormatCAP3=Format P3 Canada
+PaperFormatCAP4=Format P4 Canada
+PaperFormatCAP5=Format P5 Canada
+PaperFormatCAP6=Format P6 Canada

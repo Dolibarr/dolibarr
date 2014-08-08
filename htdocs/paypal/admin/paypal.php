@@ -116,7 +116,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
 
-print '<table class="nobordernopadding" width="100%">';
+print '<table class="noborder" width="100%">';
 
 $var=true;
 print '<tr class="liste_titre">';
@@ -230,9 +230,9 @@ print $langs->trans("SecurityTokenIsUnique").'</td><td>';
 print $form->selectyesno("PAYPAL_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYPAL_SECURITY_TOKEN)?0:$conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE),1);
 print '</td></tr>';
 
-print '<tr><td colspan="2" align="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
-
 print '</table>';
+
+print '<br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
 
 print '</form>';
 
@@ -386,4 +386,3 @@ if (! empty($conf->use_javascript_ajax))
 
 llxFooter();
 $db->close();
-?>

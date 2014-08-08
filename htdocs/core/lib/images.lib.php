@@ -658,7 +658,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 
 	// actual
 	$sectionHeight = round(($actualValue / $maximumValue) * $height);
-	$totalHeight = $totalHeight + $sectionHeight;
+	$totalHeight = $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
 		$section = $formSection;
@@ -669,7 +669,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 
 	// pending
 	$sectionHeight = round(($pendingValue / $maximumValue) * $height);
-	$totalHeight = $totalHeight + $sectionHeight;
+	$totalHeight += $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
 		$section = $formSection;
@@ -680,7 +680,7 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 
 	// intent
 	$sectionHeight = round(($intentValue / $maximumValue) * $height);
-	$totalHeight = $totalHeight + $sectionHeight;
+	$totalHeight += $sectionHeight;
 	if ( $sectionHeight > 0 )
 	{
 		$section = $formSection;
@@ -705,4 +705,3 @@ function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 	return $thermometer . $formLegenda;
 }
 
-?>

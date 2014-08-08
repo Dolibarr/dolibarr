@@ -7,29 +7,17 @@ export DH_OPTIONS=-v
 #export DH_COMPAT=7    # This is the debhelper compatability version to use, now defined into compat file
 
 
-# use dpatch
-include /usr/share/dpatch/dpatch.make
-
-
-configure:
+%:
 	dh $@
 
-build: patch
-	dh $@
+override_dh_auto_clean:
+# Do nothing. Added to disable launchpad to use bugged dh_auto_clean search for ant
 
-build-arch: patch
-	dh $@
-
-build-indep: patch
-	dh $@
-
-binary:
-	dh $@
-
-binary-indep:
-	dh $@
+override_dh_auto_build:
+# Do nothing. Added to disable launchpad to use bugged dh_auto_build search for ant
 	
-clean:
+override_dh_install:
+	dh_install
 	# Delete files
 	rm -f  .buildpath
 	rm -fr .cache
@@ -41,7 +29,6 @@ clean:
 	rm -f  build.xml
 	rm -f  quickbuild.xml
 	rm -f  pom.xml
-	rm -f  README.md
 
 	rm -f  htdocs/install/mssql/README
 	rm -f  htdocs/install/mysql/README
@@ -119,7 +106,16 @@ clean:
 	rm -f  htdocs/includes/phpexcel/license.txt
 	rm -f  htdocs/includes/tcpdf/LICENSE.TXT
 
-	dh $@
+	# Drop unwanted executable permissions
+	find debian/dolibarr/usr/share/dolibarr/htdocs -type f -print0 | \
+	     xargs -0 chmod 644
+	# Add missing executable permissions
+	find debian/dolibarr/usr/share/dolibarr/scripts -type f -name '*.php' -print0 | \
+	     xargs -0 chmod 755
 
-binary-arch:
+override_dh_fixperms:
+	dh_fixperms
+	# Give rights to the webserver on the upload directory
+	chown www-data:www-data debian/dolibarr/var/lib/dolibarr/documents
+	chmod 2775 debian/dolibarr/var/lib/dolibarr/documents
 	

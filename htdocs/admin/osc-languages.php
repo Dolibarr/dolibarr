@@ -88,4 +88,3 @@ print "</TABLE>";
 $db->close();
 
 llxFooter();
-?>

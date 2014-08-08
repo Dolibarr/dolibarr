@@ -17,7 +17,7 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
 --
--- Liste des modeles de document disponibles
+-- Table with list of document templates for document generation (odt/pdf/...)
 -- ===================================================================
 
 create table llx_document_model

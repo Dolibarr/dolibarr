@@ -77,8 +77,7 @@ class modBanque extends DolibarrModules
 		$this->const = array();
 
 		// Boites
-		$this->boxes = array();
-		$this->boxes[0][1] = "box_comptes.php";
+		$this->boxes = array(0=>array('file'=>'box_comptes.php','enabledbydefaulton'=>'Home'));
 
 		// Permissions
 		$this->rights = array();
@@ -160,7 +159,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .=' WHERE ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' AND ba.entity = '.$conf->entity;
 		$this->export_sql_order[$r] =' ORDER BY b.datev, b.num_releve';
-		
+
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Bordereaux remise Chq/Fact';
@@ -227,4 +226,3 @@ class modBanque extends DolibarrModules
     }
 
 }
-?>

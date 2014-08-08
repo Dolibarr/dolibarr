@@ -28,7 +28,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Classe de description et activation du module Barcode
+ *	Class to describe Barcode
  */
 class modBarcode extends DolibarrModules
 {
@@ -77,22 +77,16 @@ class modBarcode extends DolibarrModules
 		$this->rights_class = 'barcode';
 
 		$this->rights[1][0] = 300; // id de la permission
-		$this->rights[1][1] = 'Lire les codes barres'; // libelle de la permission
+		$this->rights[1][1] = 'Read barcodes'; // libelle de la permission
 		$this->rights[1][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
-		$this->rights[1][4] = 'lire';
+		$this->rights[1][4] = 'lire_advance';
 
 		$this->rights[2][0] = 301; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les codes barres'; // libelle de la permission
+		$this->rights[2][1] = 'Create/modify barcodes'; // libelle de la permission
 		$this->rights[2][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[2][4] = 'creer';
-
-		$this->rights[4][0] = 302; // id de la permission
-		$this->rights[4][1] = 'Supprimer les codes barres'; // libelle de la permission
-		$this->rights[4][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
-		$this->rights[4][4] = 'supprimer';
+		$this->rights[2][4] = 'creer_advance';
 
         // Main menu entries
         $r=0;
@@ -101,14 +95,26 @@ class modBarcode extends DolibarrModules
         						'leftmenu'=>'barcodeprint',
         						'type'=>'left',			                // This is a Left menu entry
 						        'titre'=>'BarCodePrintsheet',
-						        'url'=>'/barcode/printsheet.php',
+						        'url'=>'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint',
 						        'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
 						        'enabled'=>'$conf->barcode->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
         				        'perms'=>'1',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
-        $r++;
+		$r++;
+
+		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'type'=>'left',			                // This is a Left menu entry
+								'titre'=>'MassBarcodeInit',
+								'url'=>'/barcode/codeinit.php?mainmenu=home&leftmenu=modulesadmintools',
+								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>300,
+								'enabled'=>'$conf->barcode->enabled && $leftmenu=="modulesadmintools"',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'target'=>'',
+								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+		$r++;
 	}
 
 
@@ -153,4 +159,3 @@ class modBarcode extends DolibarrModules
     }
 
 }
-?>

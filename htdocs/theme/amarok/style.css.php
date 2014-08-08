@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2012	Nicolas Péré			<nicolas@amarok2.net>
- * Copyright (C) 2012	Xavier Peyronnet		<xavier.peyronnet@free.fr>
- * Copyright (C) 2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+/* Copyright (C) 2012       Nicolas Péré			<nicolas@amarok2.net>
+ * Copyright (C) 2012       Xavier Peyronnet		<xavier.peyronnet@free.fr>
+ * Copyright (C) 2012       Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2013-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,10 +44,10 @@ require_once '../../main.inc.php';
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
 if (empty($user->id) && ! empty($_SESSION['dol_login'])) $user->fetch('',$_SESSION['dol_login']);
 
+
 // Define css type
 header('Content-type: text/css');
-// Important: Following code is to avoid page request by browser and PHP CPU at
-// each Dolibarr page access.
+// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
 
@@ -59,16 +59,13 @@ if (GETPOST('theme')) $conf->theme=GETPOST('theme');  // If theme was forced on 
 $langs->load("main",0,1);
 $right=($langs->trans("DIRECTION")=='rtl'?'left':'right');
 $left=($langs->trans("DIRECTION")=='rtl'?'right':'left');
-$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'12';
-$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'11';
 
 $path='';    		// This value may be used in future for external module to overwrite theme
 $theme='amarok';	// Value of theme
 if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) { $path='/'.$conf->global->MAIN_OVERWRITE_THEME_RES; $theme=$conf->global->MAIN_OVERWRITE_THEME_RES; }
 
-// Define image path files
+// Define image path files and other constants
 $fontlist='helvetica,arial,tahoma,verdana';    //$fontlist='Verdana,Helvetica,Arial,sans-serif';
-//'/theme/auguria/img/menus/trtitle.png';
 $img_liste_titre=dol_buildpath($path.'/theme/'.$theme.'/img/menus/trtitle.png',1);
 $img_button=dol_buildpath($path.'/theme/'.$theme.'/img/button_bg.png',1);
 $dol_hide_topmenu=$conf->dol_hide_topmenu;
@@ -112,8 +109,8 @@ $colorbacklinepair2='255,255,255';    // line pair
 $colorbacklinepairhover=(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9)).','.(230+round(($isred+$isgreen+$isblue)/9));
 $colorbackbody='#f5f5f5';
 $colortext='40,40,40';
-$fontsize=empty($conf->dol_optimize_smallscreen)?'12':'14';
-$fontsizesmaller=empty($conf->dol_optimize_smallscreen)?'11':'14';
+$fontsize='12';
+$fontsizesmaller='11';
 
 $colorback1          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$conf->global->THEME_ELDY_TOPMENU_BACK1)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorback1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorback2          =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$conf->global->THEME_ELDY_TOPMENU_BACK2)        :(empty($user->conf->THEME_ELDY_TOPMENU_BACK2)?$colorback2:$user->conf->THEME_ELDY_TOPMENU_BACK2);
@@ -198,9 +195,7 @@ body {
 	background-color: <?php print $colorbackbody; ?>;
 <?php } ?>
 	color:#232323;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size:<?php print $fontsize ?>px;
-	<?php } ?>
    	font-family:<?php print $fontlist ?>;
     <?php print 'direction:'.$langs->trans("DIRECTION").";\n"; ?>
 }
@@ -219,7 +214,7 @@ a:hover, a:active {
 <?php if (empty($dol_use_jmobile)) { ?>
 
 input, input.flat, textarea, textarea.flat, form.flat select, select.flat {
-	padding: 1px;
+	padding: 2px;
 }
 input, textarea {
     font-size:<?php print $fontsize ?>px;
@@ -474,6 +469,7 @@ form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
 	width:190px;
 	max-width:190px;
+	max-height:100px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
@@ -577,8 +573,6 @@ div.login_block table {
 
 div.login {
 	white-space:nowrap;
-	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
-	/* margin:0px 0px 0px 8px; */
 	font-weight:bold;
 	float: right;
 }
@@ -593,7 +587,6 @@ div.login {
 }
 
 img.login, img.printer, img.entity {
-	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
 	margin:2px 0px 0px 0px;
 	text-decoration:none;
 	color: white;
@@ -1005,13 +998,14 @@ a.tab:hover {color:#333333;}
 /* ============================================================================== */
 
 #id-container {
-  display: table;
-  table-layout: fixed;
+	margin-bottom: 6px;
+	display: table;
+	table-layout: fixed;
 }
 #id-right, #id-left {
-  display: table-cell;
-  float: none;
-  vertical-align: top;
+	display: table-cell;
+	float: none;
+	vertical-align: top;
 }
 #id-<?php echo $right; ?> {
 	width: 100%;
@@ -1131,6 +1125,13 @@ table a, div.tagtable a {
 	vertical-align:middle;
 }
 
+.paddingrightonly {
+	border-collapse: collapse;
+	border: 0px;
+	margin-left: 0px;
+	padding-<?php print $left; ?>: 0px !important;
+	padding-<?php print $right; ?>: 4px !important;
+}
 .nocellnopadd {
 	list-style-type:none;
 	margin:0px;
@@ -1517,6 +1518,8 @@ table.valid {
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
+
+img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-title {
     margin:0 !important;
@@ -1944,7 +1947,7 @@ a.none, a.none:active, a.none:visited, a.none:hover {
 .ui-button-icon-only .ui-button-text { height:8px; }
 .ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding:2px 0px 6px 0px; }
 .ui-button-text { line-height:1em !important; }
-.ui-autocomplete-input { margin:0; padding:1px; }
+.ui-autocomplete-input { margin:0; }
 
 
 /* ============================================================================== */
@@ -2110,6 +2113,14 @@ div.jnotify-background {
 .sorting_desc { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc.png',1); ?>') no-repeat center right; }
 .sorting_asc_disabled  { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_asc_disabled',1); ?>') no-repeat center right; }
 .sorting_desc_disabled { background: url('<?php echo dol_buildpath('/theme/'.$theme.'/img/sort_desc_disabled',1); ?>') no-repeat center right; }
+.paginate_disabled_previous:hover, .paginate_enabled_previous:hover, .paginate_disabled_next:hover, .paginate_enabled_next:hover
+{
+	font-weight: normal;
+}
+.paginate_enabled_previous:hover, .paginate_enabled_next:hover
+{
+	text-decoration: underline !important;
+}
 
 
 /* ============================================================================== */
@@ -2127,9 +2138,7 @@ li.ui-li-divider .ui-link {
 	padding-left: 10px;
 	padding-right: 10px;
 	white-space: normal;
-	<?php if (empty($dol_use_jmobile) || 1==1) { ?>
 	font-size: <?php print $fontsize ?>px;
-	<?php } ?>
 }
 .ui-btn-icon-right .ui-btn-inner {
 	padding-right: 34px;
@@ -2263,4 +2272,3 @@ ul.ulmenu {
 
 <?php
 if (is_object($db)) $db->close();
-?>

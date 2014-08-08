@@ -119,4 +119,3 @@ class modWebServices extends DolibarrModules
     }
 
 }
-?>

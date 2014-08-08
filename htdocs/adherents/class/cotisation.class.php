@@ -34,9 +34,11 @@ class Cotisation extends CommonObject
 	public $table_element='cotisation';
 
 	var $id;
-	var $datec;
-	var $datem;
-	var $dateh;				// Subscription start date
+	var $ref;
+
+	var $datec;				// Date creation
+	var $datem;				// Date modification
+	var $dateh;				// Subscription start date (date subscription)
 	var $datef;				// Subscription end date
 	var $fk_adherent;
 	var $amount;
@@ -80,7 +82,7 @@ class Cotisation extends CommonObject
 		$sql.= " '".$this->db->idate($this->datef)."',";
 		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
 
-		dol_syslog(get_class($this)."::create sql=".$sql);
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -89,7 +91,6 @@ class Cotisation extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog($this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -105,13 +106,13 @@ class Cotisation extends CommonObject
 	{
         $sql ="SELECT rowid, fk_adherent, datec,";
 		$sql.=" tms,";
-		$sql.=" dateadh,";
+		$sql.=" dateadh as dateh,";
 		$sql.=" datef,";
 		$sql.=" cotisation, note, fk_bank";
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -125,7 +126,7 @@ class Cotisation extends CommonObject
 				$this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $this->db->jdate($obj->datec);
 				$this->datem          = $this->db->jdate($obj->tms);
-				$this->dateh          = $this->db->jdate($obj->dateadh);
+				$this->dateh          = $this->db->jdate($obj->dateh);
 				$this->datef          = $this->db->jdate($obj->datef);
 				$this->amount         = $obj->cotisation;
 				$this->note           = $obj->note;
@@ -166,7 +167,7 @@ class Cotisation extends CommonObject
 		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null');
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dol_syslog(get_class($this)."::update sql=".$sql);
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -181,7 +182,6 @@ class Cotisation extends CommonObject
 		{
 			$this->db->rollback();
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -205,7 +205,7 @@ class Cotisation extends CommonObject
 		$this->db->begin();
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -312,4 +312,3 @@ class Cotisation extends CommonObject
 		}
 	}
 }
-?>

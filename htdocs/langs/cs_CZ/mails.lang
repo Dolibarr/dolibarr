@@ -79,6 +79,14 @@ MailtoEMail=Hyper odkaz na e-mail
 ActivateCheckRead=Nechá se použít &quot;&quot; Unsubcribe odkaz
 ActivateCheckReadKey=Tlačítko slouží pro šifrování URL využití pro &quot;přečtení&quot; a &quot;Unsubcribe&quot; funkce
 EMailSentToNRecipients=Email byl odeslán na %s příjemcům.
+XTargetsAdded=<b>%s</b> recipients added into target list
+EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+SendRemind=Send reminder by EMails
+RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No EMail reminder sent
+ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Kontakty / adresy všech třetích stran (zákazník, vyhlídka, dodavatel, ...)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Kontakty / adresy třetích stran (t�
 MailingModuleDescContactsByCategory=Kontakty / adresy třetích stran podle kategorie
 MailingModuleDescMembersCategories=Členy Nadace (podle kategorií)
 MailingModuleDescContactsByFunction=Kontakty / adresy třetím stranám (podle pozice / funkce)
-
-
 LineInFile=Linka %s v souboru
 RecipientSelectionModules=Definované požadavky na výběr příjemce
 MailSelectedRecipients=Vybrané příjemci
@@ -114,6 +120,7 @@ TargetsReset=Vymazat seznam
 ToClearAllRecipientsClickHere=Klikněte zde pro vymazání seznamu příjemců tohoto rozesílání
 ToAddRecipientsChooseHere=Přidejte příjemce výběrem ze seznamu
 NbOfEMailingsReceived=Hromadné emailings obdržel
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=ID záznamu
 DeliveryReceipt=Potvrzení o doručení
 YouCanUseCommaSeparatorForSeveralRecipients=Můžete použít <b>čárkový</b> oddělovač zadat více příjemců.
@@ -121,7 +128,6 @@ TagCheckMail=Sledování zásilek otevření
 TagUnsubscribe=Odhlásit odkaz
 TagSignature=Podpis zasílání uživatele
 TagMailtoEmail=E-mail příjemce
-
 # Module Notifications
 Notifications=Upozornění
 NoNotificationsWillBeSent=Žádné oznámení e-mailem jsou plánovány pro tuto událost a společnost

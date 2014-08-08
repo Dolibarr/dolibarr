@@ -23,3 +23,4 @@ GoodStatusDeclaration=Už zboží obdržel výše v dobrém stavu,
 Deliverer=Doručovatel:
 Sender=Odesílatel
 Recipient=Příjemce
+# ErrorStockIsNotEnough=There's not enough stock

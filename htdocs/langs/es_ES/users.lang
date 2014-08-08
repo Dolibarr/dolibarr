@@ -1,10 +1,11 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=Área Recursos humanos
 UserCard=Ficha usuario
 ContactCard=Ficha contacto
 GroupCard=Ficha grupo
 NoContactCard=No hay ficha entre los contactos
 Permission=Derecho
-Permissions=Derechos
+Permissions=Permisos
 EditPassword=Modificar contraseña
 SendNewPassword=Enviar nueva contraseña
 ReinitPassword=Generar nueva contraseña
@@ -86,7 +87,7 @@ MyInformations=Mi información
 ExportDataset_user_1=Usuarios Dolibarr y atributos
 DomainUser=Usuario de dominio
 Reactivate=Reactivar
-CreateInternalUserDesc=Esta pantalla permite crear un usuario interno de su empresa/institución. Para crear un usuario externo (cliente, proveedor...) utilice el botón "Crear una cuenta de usuario" que se encuentra en la ficha de contacto del tercero en cuestión.
+CreateInternalUserDesc=Este formulario le permite crear un usuario interno para su empresa/asociación. Para crear un usuario externo (cliente, proveedor, etc), use el botón "Crear una cuenta de usuario" desde una ficha de un contacto del tercero.
 InternalExternalDesc=Un usuario <b>interno</b> es un usuario que pertenece a su empresa/institución.<br>Un usuario <b>externo</b> es un usuario cliente, proveedor u otro.<br><br>En los 2 casos, los permisos de usuarios definen los derechos de acceso, pero el usuario externo puede además tener  un gestor de menús diferente al usuario interno (véase Inicio - Configuración - Visualización)
 PermissionInheritedFromAGroup=El permiso se concede ya que lo hereda de un grupo al cual pertenece el usuario.
 Inherited=Heredado

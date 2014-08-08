@@ -3,7 +3,7 @@ ContractsArea=Договори област
 ListOfContracts=Списък на договорите
 LastContracts=Последните %s променени договори
 AllContracts=Всички договори
-ContractCard=Договор карта
+ContractCard=Карта на договор
 ContractStatus=Договор статус
 ContractStatusNotRunning=Не работи
 ContractStatusRunning=Бягане
@@ -85,10 +85,12 @@ PaymentRenewContractId=Поднови договора линия (брой %s)
 ExpiredSince=Срок на годност
 RelatedContracts=Подобни договори
 NoExpiredServices=Не изтекъл активни услуги
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=List of Services to expire in %s days
+ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
+ListOfServicesToExpire=List of Services to expire
+NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Търговски представител подписване на договора

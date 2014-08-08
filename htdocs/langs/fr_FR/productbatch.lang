@@ -1,0 +1,19 @@
+# ProductBATCH language file - fr_FR - ProductBATCH
+CHARSET= UTF-8
+ProductStatusOnBatch= Gérer
+ProductStatusNotOnBatch= Non gérer
+ProductStatusOnBatchShort= Gérer
+ProductStatusNotOnBatchShort= Non gérer
+Batch=Lot
+atleast1batchfield= DLC ou DLUO ou Numéro de lot
+batch_number= Numéro de lot
+l_eatby= DLC
+l_sellby= DLUO
+DetailBatchNumber= Détails des lots
+DetailBatchFormat= C:%s UO: %s LOT: %s (Qté : %d)
+printBatch= Lot: %s
+printEatby= DLC: %s
+printSellby= DLUO: %s
+printQty= Qté: %d
+AddDispatchBatchLine=Ajouter une ligne de dispatch
+BatchDefaultNumber= Indéfini

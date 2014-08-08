@@ -58,4 +58,3 @@ function printippadmin_prepare_head()
     return $head;
 }
 
-?>

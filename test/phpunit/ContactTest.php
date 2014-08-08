@@ -25,7 +25,7 @@
 
 global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-require_once 'PHPUnit/Autoload.php';
+//require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/contact/class/contact.class.php';
 $langs->load("dict");
@@ -404,4 +404,3 @@ class ContactTest extends PHPUnit_Framework_TestCase
         return $localobjectadd->id;
     }
 }
-?>

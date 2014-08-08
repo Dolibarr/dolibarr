@@ -37,14 +37,14 @@ if (!$user->admin)
 
 $langs->load("admin");
 $langs->load("other");
-$langs->load("orders");
+$langs->load("bills");
 $langs->load("suppliers");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
@@ -67,7 +67,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("SuppliersInvoices");
+$textobject=$langs->transnoentitiesnoconv("BillsSuppliers");
 
 llxHeader('',$langs->trans("SuppliersSetup"));
 
@@ -77,7 +77,7 @@ print "<br>\n";
 
 $head = supplierorder_admin_prepare_head(null);
 
-dol_fiche_head($head, 'supplierinvoice', $langs->trans("ModuleSetup"), 0, 'invoice');
+dol_fiche_head($head, 'supplierinvoice', $langs->trans("Suppliers"), 0, 'company');
 
 
 print $langs->trans("DefineHereComplementaryAttributes",$textobject).'<br>'."\n";
@@ -158,4 +158,3 @@ if ($action == 'edit' && ! empty($attrname))
 llxFooter();
 
 $db->close();
-?>

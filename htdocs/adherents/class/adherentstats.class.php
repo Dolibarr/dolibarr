@@ -179,4 +179,3 @@ class AdherentStats extends Stats
 	}
 
 }
-?>

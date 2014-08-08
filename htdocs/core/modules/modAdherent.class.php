@@ -92,9 +92,7 @@ class modAdherent extends DolibarrModules
 
         // Boxes
         //-------
-        $this->boxes = array();
-        $r=0;
-        $this->boxes[$r][1] = "box_members.php";
+        $this->boxes = array(0=>array('file'=>'box_members.php','enabledbydefaulton'=>'Home'));
 
         // Permissions
         //------------
@@ -264,4 +262,3 @@ class modAdherent extends DolibarrModules
     }
 
 }
-?>

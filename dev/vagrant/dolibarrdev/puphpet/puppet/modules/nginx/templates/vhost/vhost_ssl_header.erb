@@ -1,0 +1,84 @@
+server {
+  listen       <%= @listen_ip %>:<%= @ssl_port %> ssl<% if @spdy == 'on' %> spdy<% end %><% if @listen_options %> <%= @listen_options %><% end %>;
+  <% if @ipv6_enable && (defined? @ipaddress6) %>
+  listen [<%= @ipv6_listen_ip %>]:<%= @ssl_port %> ssl<% if @spdy == 'on' %> spdy<% end %><% if @ipv6_listen_options %> <%= @ipv6_listen_options %><% end %>;
+  <% end %>
+  server_name  <%= @rewrite_www_to_non_www ? @name.gsub(/^www\./, '') : @server_name.join(" ") %>;
+
+  ssl on;
+
+  ssl_certificate           <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/<%= @name.gsub(' ', '_') %>.crt;
+  ssl_certificate_key       <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/<%= @name.gsub(' ', '_') %>.key;
+<% if defined? @ssl_dhparam -%>
+  ssl_dhparam               <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/<%= @name.gsub(' ', '_') %>.dh.pem;
+<% end -%>
+  ssl_session_cache         <%= @ssl_cache %>;
+  ssl_session_timeout       5m;
+  ssl_protocols             <%= @ssl_protocols %>;
+  ssl_ciphers               <%= @ssl_ciphers %>;
+  ssl_prefer_server_ciphers on;
+<% if @ssl_stapling -%>
+  ssl_stapling              on;
+<% end -%>
+<% if defined? @ssl_stapling_file -%>
+  ssl_stapling_file         <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/<%= @name.gsub(' ', '_') %>.ocsp.resp;
+<% end -%>
+<% if defined? @ssl_stapling_responder -%>
+  ssl_stapling_responder    <%= @ssl_stapling_responder %>;
+<% end -%>
+<% if @ssl_stapling_verify -%>
+  ssl_stapling_verify       on;
+<% end -%>
+<% if defined? @ssl_trusted_cert -%>
+  ssl_trusted_certificate   <%= scope.lookupvar('nginx::params::nx_conf_dir') %>/<%= @name.gsub(' ', '_') %>.trusted.crt;
+<% end -%>
+<% if defined? @resolver -%>
+  resolver                  <%= @resolver %>;
+<% end -%>
+<% if defined? @auth_basic -%>
+  auth_basic                "<%= @auth_basic %>";
+<% end -%>
+<% if defined? @auth_basic_user_file -%>
+  auth_basic_user_file      "<%= @auth_basic_user_file %>";
+<% end -%>
+<% if @index_files.count > 0 -%>
+    index <% Array(@index_files).each do |i| %> <%= i %><% end %>;
+<% end -%>
+
+  access_log            <%= @ssl_access_log %>;
+  error_log             <%= @ssl_error_log %>;
+  
+<% if @vhost_cfg_prepend -%><% @vhost_cfg_prepend.sort_by{ |k, v| k.to_s == 'allow' ? '' : k.to_s }.each do |key,value| -%>
+<% if value.is_a?(Hash) -%><% value.each do |subkey,subvalue| -%>
+<% Array(subvalue).each do |asubvalue| -%>
+  <%= key %> <%= subkey %> <%= asubvalue %>;
+<% end -%>
+<% end -%><% else -%>
+<% Array(value).each do |asubvalue| -%>
+  <%= key %> <%= asubvalue %>;
+<% end -%>
+<% end -%>
+<% end -%><% end -%>
+<% if @vhost_cfg_ssl_prepend -%><% @vhost_cfg_ssl_prepend.sort_by{ |k, v| k.to_s == 'allow' ? '' : k.to_s }.each do |key,value| -%>
+<% if value.is_a?(Hash) -%><% value.each do |subkey,subvalue| -%>
+<% Array(subvalue).each do |asubvalue| -%>
+  <%= key %> <%= subkey %> <%= asubvalue %>;
+<% end -%>
+<% end -%><% else -%>
+<% Array(value).each do |asubvalue| -%>
+  <%= key %> <%= asubvalue %>;
+<% end -%>
+<% end -%>
+<% end -%><% end -%>
+<% if @root -%>
+  root <%= @root %>;
+<% end -%>
+<% if @passenger_cgi_param -%><% @passenger_cgi_param.each do |key,value| -%>
+  passenger_set_cgi_param  <%= key %> <%= value %>;
+<% end -%><% end -%>
+<% @proxy_set_header.each do |header| -%>
+  proxy_set_header        <%= header %>;
+<% end -%>
+<% if @add_header -%><% @add_header.each do |key,value| -%>
+  add_header              <%= key %> <%= value %>;
+<% end -%><% end -%>

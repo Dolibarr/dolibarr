@@ -1,0 +1,86 @@
+# Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID događaja
+Actions=Događaji
+ActionsArea=Područje za događaje (akcije i zadaci)
+Agenda= Agenda
+Agendas= Agende
+Calendar= Kalendar
+Calendars= Kalendari
+LocalAgenda=Lokalni kalendar
+AffectedTo= Dodijeljeno korisniku
+DoneBy= Učinio/la
+Events= Događaji
+EventsNb=Broj događaja
+MyEvents=Moj događaji
+OtherEvents=Ostali događaji
+ListOfActions=Lista događaja
+Location=Lokacija
+EventOnFullDay=Događaj za cijeli dan(e)
+SearchAnAction= Traži događaj/zadatak
+MenuToDoActions= Svi nepotpuni događaji
+MenuDoneActions= Sve završeni događaji
+MenuToDoMyActions= Moji nepotpuni događaji
+MenuDoneMyActions= Moji završeni događaji
+ListOfEvents= Lista Dolibarr događaja
+ActionsAskedBy=Događaje izvijestio/la
+ActionsToDoBy=Događaji dodijeljeni korisniku
+ActionsDoneBy=Događaji završeni od strane korisnika
+ActionsForUser=Events for user
+ActionsForUsersGroup=Events for all users of group
+AllMyActions= Svi moji događaji/zadaci
+AllActions= Svi događaji/zadaci
+ViewList=Lista
+ViewCal=Mjesečni pregled
+ViewDay=Dnevni pregled
+ViewWeek=Sedmični pregled
+ViewPerUser=Per user
+ViewWithPredefinedFilters= Pogledaj sa unaprijed definiranim filterima
+AutoActions= Automatsko popunjavanje
+AgendaAutoActionDesc= Ovdje definirajte događaje za koje želite da Dolibarr automatski kreira događaj u agendi. Ukoliko se ništa ne provjerava (po defaultu), samo manualne akcije će biti uključeni u dnevni red.
+AgendaSetupOtherDesc= Ova stranica pruža mogućnosti izvoza svojih Dolibarr događaja u eksterni kalendar (Thunderbird, Google Calendar, ...)
+AgendaExtSitesDesc=Ova stranica omogućava definisanje eksternih izvora kalendara da vidite svoje događaje u Dolibarr agendi.
+ActionsEvents= Događaji za koje će Dolibarr stvoriti akciju u dnevni red automatski
+PropalValidatedInDolibarr= Prijedlog %s potvrđen
+InvoiceValidatedInDolibarr= Faktura %s potvrđena
+InvoiceBackToDraftInDolibarr=Faktura %s vraćena u status izrade
+InvoiceDeleteDolibarr=Faktura %s obrisana
+OrderValidatedInDolibarr= Narudžba %s potvrđena
+OrderApprovedInDolibarr=Narudžba %s odobrena
+OrderRefusedInDolibarr=Order %s refused
+OrderBackToDraftInDolibarr=NArudžbu %s vratiti u status izrade
+OrderCanceledInDolibarr=Narudžba %s otkazana
+InterventionValidatedInDolibarr=Intervencija %s potvrđena
+ProposalSentByEMail=Poslovni prijedlog %s poslan putem e-maila
+OrderSentByEMail=Narudžba za kupca %s poslana putem e-maila
+InvoiceSentByEMail=Fakture za kupca %s poslana putem e-maila
+SupplierOrderSentByEMail=Narudžba za dobavljača %s poslan putem e-maila
+SupplierInvoiceSentByEMail=Predračun dobavljača %s poslan putem e-maila
+ShippingSentByEMail=Dostava %s poslana putem e-maila
+ShippingValidated= Shipping %s validated
+InterventionSentByEMail=Intervencija %s poslana putem e-maila
+InterventionClassifiedBilled=Intervention %s classified as Billed
+NewCompanyToDolibarr= Trća stranka kreirana
+DateActionPlannedStart= Planirani datum početka
+DateActionPlannedEnd= Planirani datum završetka
+DateActionDoneStart= Pravi datum početka
+DateActionDoneEnd= Pravi datum završetka
+DateActionStart= Datum početka
+DateActionEnd= Datum završetka
+AgendaUrlOptions1=Također možete dodati sljedeće parametre za filtriranje prikazanog:
+AgendaUrlOptions2=<b>login =%s</b> ​​da se ograniči prikaz na akcije kreiranje, dodiljene ili završene od strane korisnika <b>%s.</b>
+AgendaUrlOptions3=<b>logina=%s</b> ​​da se ograniči prikaz na akcije kreirane od strane korisnika <b>%s.</b>
+AgendaUrlOptions4=<b>logint=%s</b> ​​da se ograniči prikaz na akcije dodijeljene korisniku <b>%s.</b>
+AgendaUrlOptions5=<b>logind=%s</b> ​​da se ograniči prikaz na akcije završene os strane korisnika <b>%s.</b>
+AgendaShowBirthdayEvents=Prikaži rođendane kontakata
+AgendaHideBirthdayEvents=Sakrij rođendane kontakata
+Busy=Zauzet
+ExportDataset_event1=Lista događaja u agendi
+
+# External Sites ical
+ExportCal=Export kalendara
+ExtSites=Import eksternih kalendara
+ExtSitesEnableThisTool=Prikaži eksterne kalendare u agendi
+ExtSitesNbOfAgenda=Broj kalendara
+AgendaExtNb=Kalendar broj %s
+ExtSiteUrlAgenda=URL za pristup .ical fajla
+ExtSiteNoLabel=Nema opisa

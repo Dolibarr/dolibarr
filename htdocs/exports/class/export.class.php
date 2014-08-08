@@ -430,30 +430,25 @@ class Export
 	 *
 	 *      @param		string	$TypeField		Type of Field to filter
 	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
-	 *      TODO replace by translation
 	 */
 	function genDocFilter($TypeField)
 	{
+        global $langs;
+
 		$szMsg='';
 		$InfoFieldList = explode(":", $TypeField);
 		// build the input field on depend of the type of file
 		switch ($InfoFieldList[0]) {
 			case 'Text':
-				$szMsg="% permet de remplacer un ou plusieurs caract&egrave;res dans la chaine";
+				$szMsg= $langs->trans('ExportStringFilter');
 				break;
 			case 'Date':
-				$szMsg ="'AAAA' 'AAAAMM' 'AAAAMMJJ' : filtre sur une ann&eacute;e/mois/jour <br>";
-				$szMsg.="'AAAA+AAAA' 'AAAAMM+AAAAMM' 'AAAAMMJJ+AAAAMMJJ': filtre sur une plage d'ann&eacute;e/mois/jour <br>";
-				$szMsg.="'&gt;AAAA' '&gt;AAAAMM' '&gt;AAAAMMJJ' filtre sur les ann&eacute;e/mois/jour suivants <br>";
-				$szMsg.="'&lsaquo;AAAA' '&lsaquo;AAAAMM' '&lsaquo;AAAAMMJJ' filtre sur les ann&eacute;e/mois/jour pr&eacute;c&eacute;dent <br>";
+				$szMsg = $langs->trans('ExportDateFilter');
 				break;
 			case 'Duree':
 				break;
 			case 'Numeric':
-				$szMsg ="'NNNNN' filtre sur une valeur <br>";
-				$szMsg.="'NNNNN+NNNNN' filtre sur une plage de valeur<br>";
-				$szMsg.="'&lsaquo;NNNNN' filtre sur les valeurs inf&eacute;rieurs<br>";
-				$szMsg.="'&gt;NNNNN' filtre sur les valeurs sup&eacute;rieurs<br>";
+				$szMsg = $langs->trans('ExportNumericFilter');
 				break;
 			case 'Boolean':
 				break;
@@ -524,7 +519,7 @@ class Export
 
 		// Run the sql
 		$this->sqlusedforexport=$sql;
-		dol_syslog(get_class($this)."::".__FUNCTION__." sql=".$sql);
+		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -597,7 +592,6 @@ class Export
 		else
 		{
 			$this->error=$this->db->error()." - sql=".$sql;
-			dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -633,7 +627,7 @@ class Export
 		$sql.= (! empty($filter)?"'".$filter."'":"null");
 		$sql.= ")";
 
-		dol_syslog("Export::create sql=".$sql, LOG_DEBUG);
+		dol_syslog("Export::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -644,7 +638,6 @@ class Export
 		{
 			$this->error=$this->db->lasterror();
 			$this->errno=$this->db->lasterrno();
-			dol_syslog("Export::create error ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -662,7 +655,7 @@ class Export
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
 		$sql.= ' WHERE em.rowid = '.$id;
 
-		dol_syslog("Export::fetch sql=".$sql, LOG_DEBUG);
+		dol_syslog("Export::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -711,7 +704,7 @@ class Export
 
 		$this->db->begin();
 
-		dol_syslog(get_class($this)."::delete sql=".$sql);
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -806,4 +799,3 @@ class Export
 
 }
 
-?>

@@ -8,7 +8,6 @@ NotActiveModCP=Bu sayfayı görmek için tatiller modülünü etkinleştirmelisi
 NotConfigModCP=Bu sayfayı görmek için tatiller modülünü etkinleştirmelisiniz. Bunu yapmak için, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> buraya tıklayın </ a>.
 NoCPforUser=Bir tatil isteğiniz yok.
 AddCP=Tatil için başvur
-CPErrorSQL=Bir SQL hatası oluştu:
 Employe=Çalışan
 DateDebCP=Başlama tarihi
 DateFinCP=Bitiş tarihi
@@ -34,7 +33,6 @@ ReturnCP=Önceki sayfaya dön
 ErrorUserViewCP=Tatil isteklerini okumaya yetkili değilsiniz.
 InfosCP=Tatil isteği bilgileri
 InfosWorkflowCP=Bilgi işakışı
-DateCreateCP=Oluşturma tarihi
 RequestByCP=İsteyen
 TitreRequestCP=Tatil tablosu
 NbUseDaysCP=Harcanan tatil günleri
@@ -130,7 +128,6 @@ ErrorMailNotSend=Eposta gönderilirken bir hata oluştu:
 NoCPforMonth=Bu ay hiç izin yok.
 nbJours=Gün sayısı
 TitleAdminCP=Tatillerin Yapılandırması
-
 #Messages
 Hello=Merhaba
 HolidaysToValidate=Tatil doğrula
@@ -143,10 +140,10 @@ HolidaysRefused=Tatil reddedildi
 HolidaysRefusedBody=%s tarihinden %s tarihine kadar olan tatil isteğiniz aşağıdaki nedenden dolayı reddeilmiştir :
 HolidaysCanceled=İptal edilen tatiller
 HolidaysCanceledBody=%s tarihinden %s tarihine kadar olan tatil isteğiniz iptal edilmiştir.
-
-Permission20001=Tatilleri oku/oluştur/değiştir
-Permission20002=Bütün tatil isteklerini oku/değiştir
+Permission20000=Tatillerinizi okuyun
+Permission20001=Tatilini oluştur/değiştir
+Permission20002=herkes için tatilleri oluştur/değiştir
 Permission20003=Tatil isteklerini sil
-Permission20004=Kullanıcı tatillerini tanımla
+Permission20004=Kullanıcıların tatillerini tanımla
 Permission20005=Değiştirilen tatil kayıtlarını incele
-Permission20006=Aylık tatil raporuna erişim
+Permission20006=Aylık tatil raporlarını oku

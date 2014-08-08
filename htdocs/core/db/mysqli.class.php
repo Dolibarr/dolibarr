@@ -31,42 +31,14 @@ require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
  */
 class DoliDBMysqli extends DoliDB
 {
-    //! Database handler
-    var $db;
     //! Database type
     public $type='mysqli';
     //! Database label
-    static $label='MySQL';
-    //! Charset used to force charset when creating database
-    var $forcecharset='utf8';	// latin1, utf8. Can't be static as it may be forced with a dynamic value
-    //! Collate used to force collate when creating database
-    var $forcecollate='utf8_general_ci';	// latin1_swedish_ci, utf8_general_ci. Can't be static as it may be forced with a dynamic value
+    const LABEL='MySQL';
     //! Version min database
-    static $versionmin=array(4,1,0);
-	//! Resultset of last request
+    const VERSIONMIN='4.1.0';
+	//! Resultset of last query
 	private $_results;
-    //! 1 if connected, 0 else
-    var $connected;
-    //! 1 if database selected, 0 else
-    var $database_selected;
-    //! Database name selected
-    var $database_name;
-    //! Nom user base
-    var $database_user;
-	//! >=1 if a transaction is opened, 0 otherwise
-    var $transaction_opened;
-    //! Last executed request
-    var $lastquery;
-    //! Last failed executed request
-    var $lastqueryerror;
-    //! Message erreur mysql
-    var $lasterror;
-    //! Message erreur mysql
-    var $lasterrno;
-
-    var $ok;
-    var $error;
-
 
     /**
 	 *	Constructor.
@@ -84,9 +56,9 @@ class DoliDBMysqli extends DoliDB
     {
         global $conf,$langs;
 
-        // TODO error in strict mode (static property for "$forcecharset" and "$forcecollate")
-        //if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
-        //if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
+        // Note that having "static" property for "$forcecharset" and "$forcecollate" will make error here in strict mode, so they are not static
+        if (! empty($conf->db->character_set)) $this->forcecharset=$conf->db->character_set;
+        if (! empty($conf->db->dolibarr_main_db_collation)) $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 
         $this->database_user=$user;
 
@@ -243,16 +215,6 @@ class DoliDBMysqli extends DoliDB
         return mysqli_get_server_info($this->db);
     }
 
-	/**
-	 *	Return version of database server into an array
-	 *
-	 *	@return	        array  		Version array
-	 */
-    function getVersionArray()
-    {
-        return explode('.',$this->getVersion());
-    }
-
     /**
      *	Return version of database client driver
      *
@@ -262,7 +224,7 @@ class DoliDBMysqli extends DoliDB
     {
     	return mysqli_get_client_info($this->db);
     }
-    
+
 
     /**
      *  Close database connexion
@@ -281,82 +243,6 @@ class DoliDBMysqli extends DoliDB
         return false;
     }
 
-
-    /**
-	 * Start transaction
-	 *
-	 * @return	    int         1 if transaction successfuly opened or already opened, 0 if error
-     */
-    function begin()
-    {
-        if (! $this->transaction_opened)
-        {
-            $ret=$this->query("BEGIN");
-            if ($ret)
-            {
-                $this->transaction_opened++;
-                dol_syslog("BEGIN Transaction",LOG_DEBUG);
-				dol_syslog('',0,1);
-            }
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened++;
-			dol_syslog('',0,1);
-            return 1;
-        }
-    }
-
-    /**
-     * Validate a database transaction
-     *
-     * @param	string	$log		Add more log to default log line
-     * @return	int         		1 if validation is OK or transaction level no started, 0 if ERROR
-     */
-    function commit($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("COMMIT");
-            if ($ret)
-            {
-                $this->transaction_opened=0;
-                dol_syslog("COMMIT Transaction".($log?' '.$log:''),LOG_DEBUG);
-            }
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
-     *	Annulation d'une transaction et retour aux anciennes valeurs
-     *
-     * 	@param	string	$log		Add more log to default log line
-     * 	@return	int         		1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-     */
-    function rollback($log='')
-    {
-		dol_syslog('',0,-1);
-    	if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("ROLLBACK");
-            $this->transaction_opened=0;
-            dol_syslog("ROLLBACK Transaction".($log?' '.$log:''),LOG_DEBUG);
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
     /**
      * 	Execute a SQL request and return the resultset
      *
@@ -369,6 +255,9 @@ class DoliDBMysqli extends DoliDB
     function query($query,$usesavepoint=0,$type='auto')
     {
         $query = trim($query);
+
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
         if (! $this->database_name)
         {
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -387,7 +276,9 @@ class DoliDBMysqli extends DoliDB
                 $this->lastqueryerror = $query;
                 $this->lasterror = $this->error();
                 $this->lasterrno = $this->errno();
-                dol_syslog(get_class($this)."::query SQL error: ".$query." ".$this->lasterrno, LOG_WARNING);
+
+	            dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+	            dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
             }
             $this->lastquery=$query;
             $this->_results = $ret;
@@ -490,55 +381,6 @@ class DoliDBMysqli extends DoliDB
         if (is_object($resultset)) mysqli_free_result($resultset);
     }
 
-
-    /**
-     *	Define limits and offset of request
-     *
-     *	@param	int		$limit      Maximum number of lines returned (-1=conf->liste_limit, 0=no limit)
-     *	@param	int		$offset     Numero of line from where starting fetch
-     *	@return	string      		String with SQL syntax to add a limit and offset
-     */
-    function plimit($limit=0,$offset=0)
-    {
-        global $conf;
-        if (empty($limit)) return "";
-        if ($limit < 0) $limit=$conf->liste_limit;
-        if ($offset > 0) return " LIMIT $offset,$limit ";
-        else return " LIMIT $limit ";
-    }
-
-
-    /**
-     * Define sort criteria of request
-     *
-     * @param	string	$sortfield  List of sort fields
-     * @param	string	$sortorder  Sort order
-     * @return	string      		String to provide syntax of a sort sql string
-     * TODO	Mutualized this into a mother class
-     */
-    function order($sortfield=0,$sortorder=0)
-    {
-        if ($sortfield)
-        {
-            $return='';
-            $fields=explode(',',$sortfield);
-            foreach($fields as $val)
-            {
-                if (! $return) $return.=' ORDER BY ';
-                else $return.=',';
-
-				$return.=preg_replace('/[^0-9a-z_\.]/i','',$val);
-                if ($sortorder) $return.=' '.preg_replace('/[^0-9a-z]/i','',$sortorder);
-            }
-            return $return;
-        }
-        else
-        {
-            return '';
-        }
-    }
-
-
     /**
      *	Escape a string to insert data
      *
@@ -548,87 +390,6 @@ class DoliDBMysqli extends DoliDB
     function escape($stringtoencode)
     {
         return addslashes($stringtoencode);
-    }
-
-    /**
-	 *   Convert (by PHP) a GM Timestamp date into a string date with PHP server TZ to insert into a date field.
-     *   Function to use to build INSERT, UPDATE or WHERE predica
-     *
-     *   @param	    string	$param      Date TMS to convert
-     *   @return	string      		Date in a string YYYYMMDDHHMMSS
-     */
-    function idate($param)
-    {
-        return dol_print_date($param,"%Y%m%d%H%M%S");
-    }
-
-    /**
-     *	Convert (by PHP) a PHP server TZ string date into a GM Timestamps date
-     * 	19700101020000 -> 3600 with TZ+1
-     *
-     * 	@param		string	$string		Date in a string (YYYYMMDDHHMMSS, YYYYMMDD, YYYY-MM-DD HH:MM:SS)
-     *	@return		date				Date TMS
-     */
-    function jdate($string)
-    {
-        $string=preg_replace('/([^0-9])/i','',$string);
-        $tmp=$string.'000000';
-        $date=dol_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
-        return $date;
-    }
-
-    /**
-     *  Format a SQL IF
-     *
-	 *	@param	string	$test           Test string (example: 'cd.statut=0', 'field IS NULL')
-	 *	@param	string	$resok          resultat si test egal
-	 *	@param	string	$resko          resultat si test non egal
-     *	@return	string          		SQL string
-     */
-    function ifsql($test,$resok,$resko)
-    {
-        return 'IF('.$test.','.$resok.','.$resko.')';
-    }
-
-
-    /**
-	 *	Return last request executed with query()
-	 *
-	 *	@return	string					Last query
-     */
-    function lastquery()
-    {
-        return $this->lastquery;
-    }
-
-    /**
-     *	Renvoie la derniere requete en erreur
-     *
-     *	@return	    string	lastqueryerror
-     */
-    function lastqueryerror()
-    {
-        return $this->lastqueryerror;
-    }
-
-    /**
-     *	Renvoie le libelle derniere erreur
-     *
-     *	@return	    string	lasterror
-     */
-    function lasterror()
-    {
-        return $this->lasterror;
-    }
-
-    /**
-     *	Renvoie le code derniere erreur
-     *
-     *	@return	    string	lasterrno
-     */
-    function lasterrno()
-    {
-        return $this->lasterrno;
     }
 
     /**
@@ -650,6 +411,7 @@ class DoliDBMysqli extends DoliDB
             1006 => 'DB_ERROR_CANNOT_CREATE',
             1007 => 'DB_ERROR_ALREADY_EXISTS',
             1008 => 'DB_ERROR_CANNOT_DROP',
+            1022 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
             1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
             1044 => 'DB_ERROR_ACCESSDENIED',
             1046 => 'DB_ERROR_NODBSELECTED',
@@ -979,7 +741,7 @@ class DoliDBMysqli extends DoliDB
     {
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
         // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-        $sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
+        $sql= "ALTER TABLE ".$table." ADD `".$field_name."` ";
         $sql.= $field_desc['type'];
         if(preg_match("/^[^\s]/i",$field_desc['value']))
         if (! in_array($field_desc['type'],array('date','datetime')))
@@ -1072,25 +834,25 @@ class DoliDBMysqli extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
-            return -1;
+            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS')
+            {
+            	return -1;
+            }
         }
         $sql = "GRANT ALL PRIVILEGES ON ".$this->escape($dolibarr_main_db_name).".* TO '".$this->escape($dolibarr_main_db_user)."'@'".$this->escape($dolibarr_main_db_host)."' IDENTIFIED BY '".$this->escape($dolibarr_main_db_pass)."'";
         dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);	// No sql to avoid password in log
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
         $sql="FLUSH Privileges";
 
-        dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql);
+        dol_syslog(get_class($this)."::DDLCreateUser", LOG_DEBUG);
         $resql=$this->query($sql);
         if (! $resql)
         {
-            dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_ERR);
             return -1;
         }
 
@@ -1221,48 +983,45 @@ class DoliDBMysqli extends DoliDB
     }
 
     /**
-     *	Return value of server parameters
+     * Return value of server parameters
      *
-     * 	@param	string	$filter		Filter list on a particular value
-     * 	@return	string				Value for parameter
+     * @param	string	$filter		Filter list on a particular value
+	 * @return	array				Array of key-values (key=>value)
      */
     function getServerParametersValues($filter='')
     {
         $result=array();
 
         $sql='SHOW VARIABLES';
-        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {
-            $obj=$this->fetch_object($resql);
-            $result[$obj->Variable_name]=$obj->Value;
+        	while($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
 
         return $result;
     }
 
     /**
-     *	Return value of server status
+     * Return value of server status (current indicators on memory, cache...)
      *
-     * 	@param	string	$filter		Filter list on a particular value
-     * 	@return	string				Value for parameter
+     * @param	string	$filter		Filter list on a particular value
+	 * @return  array				Array of key-values (key=>value)
      */
     function getServerStatusValues($filter='')
     {
         $result=array();
 
         $sql='SHOW STATUS';
-        if ($filter) $sql.=" LIKE '".addslashes($filter)."'";
+        if ($filter) $sql.=" LIKE '".$this->escape($filter)."'";
         $resql=$this->query($sql);
         if ($resql)
         {
-            $obj=$this->fetch_object($resql);
-            $result[$obj->Variable_name]=$obj->Value;
+            while($obj=$this->fetch_object($resql)) $result[$obj->Variable_name]=$obj->Value;
         }
 
         return $result;
     }
 }
 
-?>

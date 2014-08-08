@@ -23,3 +23,4 @@ GoodStatusDeclaration=Potrjujem prejem zgornjega blaga v dobrem stanju,
 Deliverer=Dostavil :
 Sender=Pošiljatelj
 Recipient=Prejemnik
+ErrorStockIsNotEnough=Zaloga je premajhna

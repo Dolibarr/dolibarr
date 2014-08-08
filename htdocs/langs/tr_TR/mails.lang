@@ -79,6 +79,14 @@ MailtoEMail=Eposta hiper bağlantısı
 ActivateCheckRead="Alıcı oku" izleyicisini ve "Aboneliği kaldır" linkinin kullanılmasına izin ver
 ActivateCheckReadKey=Key use to encrypt URL use for "Read Receipt" and "Unsubcribe" feature
 EMailSentToNRecipients=EMail sent to %s recipients.
+XTargetsAdded=<b>%s</b> alıcılar listesine eklendi
+EachInvoiceWillBeAttachedToEmail=Varsayılan fatura belgesi şablonu kullanan bir belge oluşturulacak ve her epostaya eklenecektir.
+MailTopicSendRemindUnpaidInvoices=%s (%s) faturası için anımsatma
+SendRemind=Anımsatmayı Eposta ile gönder
+RemindSent=%s anımsatma(lar) gönderildi
+AllRecipientSelectedForRemind=Tüm üçüncü partiler seçilmiş ve bir eposta ayarlanmışsa (fatura başına bir posta gönderileceğini unutmayın)
+NoRemindSent=Gönderile Eposta anımsatması yok
+ResultOfMassSending=Toplu Eposta anımsatması gönderme sonucu
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=Tüm üçüncü partilerin kişileri (müşteri, aday, tedarikçi, ...)
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=Üçüncü parti kişileri (üçünc�
 MailingModuleDescContactsByCategory=Kategoriye göre üçüncü parti kişileri/adresleri
 MailingModuleDescMembersCategories=Kurum üyeleri (kategoriye göre)
 MailingModuleDescContactsByFunction=Üçüncü parti kişileri (konumuna/görevine göre)
-
-
 LineInFile=Satır %s dosyası
 RecipientSelectionModules=Alıcıların seçimine göre tanımlanmış istekler
 MailSelectedRecipients=Seçilen alıcılar
@@ -114,6 +120,7 @@ TargetsReset=Listeyi temizle
 ToClearAllRecipientsClickHere=Bu e-posta Alıcı listesini temizlemek için burayı tıkla
 ToAddRecipientsChooseHere=Listeden seçerek alıcıları ekle
 NbOfEMailingsReceived=Alınan toplu Epostalar
+NbOfEMailingsSend=Toplu eposta gönderildi
 IdRecord=Kimlik kayıtı
 DeliveryReceipt=Teslim makbuzu
 YouCanUseCommaSeparatorForSeveralRecipients=Birçok alıcı belirtmek için <b>virgül</b> ayırıcısını kullanabilirsiniz.
@@ -121,7 +128,6 @@ TagCheckMail=Eposta açılışlarını izle
 TagUnsubscribe=Aboneliğini kaldır bağlantısı
 TagSignature=Gönderen kullanıcı imzası
 TagMailtoEmail=Alıcı epostası
-
 # Module Notifications
 Notifications=Bildirimler
 NoNotificationsWillBeSent=Bu eylem ve firma için hiçbir Eposta bildirimi planlanmamış

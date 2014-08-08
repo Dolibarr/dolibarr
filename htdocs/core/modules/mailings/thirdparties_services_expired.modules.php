@@ -39,6 +39,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     function __construct($db)
     {
+    	global $conf;
+    	
         $this->db=$db;
 
         $this->arrayofproducts=array();
@@ -46,7 +48,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         // List of services
         $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
         $sql.= " WHERE entity IN (".getEntity('product', 1).")";
-        $sql.= " AND fk_product_type = 1";
+        if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $sql.= " AND fk_product_type = 1";	// By default, only services
         $sql.= " ORDER BY ref";
         $result=$this->db->query($sql);
         if ($result)
@@ -123,7 +125,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
                 {
                     $cibles[$j] = array(
 					'email' => $obj->email,
-					'lastname' => $obj->lastname,
+					'lastname' => $obj->name,	// For thirdparties, lastname must be name
+                    'firstname' => '',			// For thirdparties, firstname is ''
 					'other' =>
                     ('StartDate='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
                     ('EndDate='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
@@ -142,8 +145,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
         }
         else
         {
-            dol_syslog($this->db->error());
-            $this->error=$this->db->error();
+            dol_syslog($this->db->lasterror());
+            $this->error=$this->db->lasterror();
             return -1;
         }
 
@@ -193,7 +196,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
         $sql.= " AND p.ref IN ('".join("','",$this->arrayofproducts)."')";
         $sql.= " AND cd.date_fin_validite < '".$this->db->idate($now)."'";
-        //print $sql;
+
         $a=parent::getNbOfRecipients($sql);
 
         return $a;
@@ -239,4 +242,3 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 }
 
-?>

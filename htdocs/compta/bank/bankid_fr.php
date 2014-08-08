@@ -35,6 +35,7 @@ $langs->load("bills");
 
 $action=GETPOST('action');
 $id=GETPOST('id');
+$ref=GETPOST('ref');
 
 // Security check
 if (isset($_GET["id"]) || isset($_GET["ref"]))
@@ -43,7 +44,7 @@ if (isset($_GET["id"]) || isset($_GET["ref"]))
 }
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque',$id,'bank_account','','',$fieldid);
+$result=restrictedArea($user,'banque',$id,'bank_account&bank_account','','',$fieldid);
 
 
 /*
@@ -79,7 +80,7 @@ if ($action == 'update' && ! $_POST["cancel"])
 		}
 		else
 		{
-			$message='<div class="error">'.$account->error.'</div>';
+			setEventMessage($account->error, 'errors');
 			$action='edit';     // Force chargement page edition
 		}
 	}
@@ -88,8 +89,9 @@ if ($action == 'update' && ! $_POST["cancel"])
 if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->banque->configurer)
 {
 	// Modification
-	$account = new Account($db, $_GET["id"]);
-	$account->delete($_GET["id"]);
+	$account = new Account($db);
+	$account->fetch($id);
+	$account->delete();
 
 	header("Location: ".DOL_URL_ROOT."/compta/bank/index.php");
 	exit;
@@ -304,8 +306,6 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 	print_fiche_titre($langs->trans("EditFinancialAccount"));
 	print "<br>";
 
-	dol_htmloutput_mesg($message);
-
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$account->id.'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="update">';
@@ -423,10 +423,10 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 
 		// IBAN
 		print '<tr><td valign="top">'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3"><input size="26" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans($bickey).'</td>';
-		print '<td colspan="3"><input size="12" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
+		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
@@ -460,4 +460,3 @@ if ($_GET["id"] && $action == 'edit' && $user->rights->banque->configurer)
 llxFooter();
 
 $db->close();
-?>

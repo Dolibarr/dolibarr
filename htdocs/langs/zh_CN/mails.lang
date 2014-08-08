@@ -79,6 +79,14 @@ MailtoEMail=超链接的电子邮件
 ActivateCheckRead=允许使用“取消订阅”链接
 ActivateCheckReadKey=“读回执”和“取消订阅”功能键用于加密URL使用
 EMailSentToNRecipients=电子邮件发送到 %s 的收件人。
+XTargetsAdded=<b>%s</b> recipients added into target list
+EachInvoiceWillBeAttachedToEmail=A document using default invoice document template will be created and attached to each email.
+MailTopicSendRemindUnpaidInvoices=Reminder of invoice %s (%s)
+SendRemind=Send reminder by EMails
+RemindSent=%s reminder(s) sent
+AllRecipientSelectedForRemind=All thirdparties selected and if an email is set (note that one mail per invoice will be sent)
+NoRemindSent=No EMail reminder sent
+ResultOfMassSending=Result of mass EMail reminders sending
 
 # Libelle des modules de liste de destinataires mailing
 MailingModuleDescContactCompanies=所有第三方（联系客户，潜在客户，供应商，...）
@@ -92,8 +100,6 @@ MailingModuleDescContactsByCompanyCategory=联系第三方（第三方类）
 MailingModuleDescContactsByCategory=第三方联系人/地址按类别
 MailingModuleDescMembersCategories=基金会的成员（按类别）
 MailingModuleDescContactsByFunction=第三方联系（职位/职务）
-
-
 LineInFile=在文件%s的线
 RecipientSelectionModules=为收件人的选择定义的要求
 MailSelectedRecipients=选择收件人
@@ -114,6 +120,7 @@ TargetsReset=清除名单
 ToClearAllRecipientsClickHere=点击这里以清除此电子邮件的收件人列表
 ToAddRecipientsChooseHere=添加从名单中选择收件人
 NbOfEMailingsReceived=收到群众emailings
+NbOfEMailingsSend=Mass emailings sent
 IdRecord=编号记录
 DeliveryReceipt=送达回执
 YouCanUseCommaSeparatorForSeveralRecipients=您可以使用<b>逗号</b>分隔符指定多个收件人。
@@ -121,7 +128,6 @@ TagCheckMail=追踪邮件打开
 TagUnsubscribe=退订链接
 TagSignature=签名发送给用户
 TagMailtoEmail=收件人电子邮件
-
 # Module Notifications
 Notifications=通知
 NoNotificationsWillBeSent=没有电子邮件通知此事件的计划和公司

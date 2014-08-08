@@ -38,7 +38,7 @@ ConfirmCloseService=Er du sikker på at du vil lukke denne tjenesten med datoen 
 ValidateAContract=Goskjenn en kontrakt
 ActivateService=Aktiver tjeneste
 ConfirmActivateService=Er du sikker på at du vil aktivere denne tjensten med datoen <b>%s</b> ?
-# RefContract=Contract reference
+RefContract=Kontraktsreferanse
 DateContract=Kontraktsdato
 DateServiceActivate=Dato for aktivering av tjenste
 DateServiceUnactivate=Dato for deaktivering av tjeneste
@@ -85,10 +85,12 @@ PaymentRenewContractId=Forny kontrakt linje (antall %s)
 ExpiredSince=Utløpsdato
 RelatedContracts=Relaterte kontrakter
 NoExpiredServices=Ingen utgåtte aktive tjenester
-# ListOfServicesToExpireWithDuration=List of Services to expire in %s days
-# ListOfServicesToExpireWithDurationNeg=List of Services expired from more than %s days
-# ListOfServicesToExpire=List of Services to expire
-# NoteListOfYourExpiredServices=This list contains only services of contracts for third parties you are linked to as a sale representative.
+ListOfServicesToExpireWithDuration=Liste over tjenester som utløper innen %s dager
+ListOfServicesToExpireWithDurationNeg=Liste over tjenester utløpt fra mer enn %s dager
+ListOfServicesToExpire=Liste over utløpende tjenester
+NoteListOfYourExpiredServices=Denne listen inneholder kun tjenester av kontrakter for tredjeparter du er koblet til som salgsrepresentant.
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Salgsrepresentant som signerer kontrakten

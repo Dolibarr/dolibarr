@@ -156,4 +156,3 @@ class modCashDesk extends DolibarrModules
   	}
 
 }
-?>

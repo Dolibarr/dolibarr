@@ -58,7 +58,7 @@ $shipment=new Expedition($db);
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.date_delivery, e.date_expedition, e.fk_statut";
+$sql = "SELECT e.rowid, e.ref, e.date_delivery as date_expedition, l.date_delivery as date_livraison, e.fk_statut";
 $sql.= ", s.nom as socname, s.rowid as socid";
 $sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
@@ -67,6 +67,8 @@ if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no p
 }
 $sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target AND ee.targettype = 'delivery'";
 $sql.= " WHERE e.entity = ".$conf->entity;
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
@@ -104,7 +106,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Ref"),"liste.php","e.ref","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom", "", $param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDeliveryPlanned"),"liste.php","e.date_delivery","",$param, 'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateReceived"),"liste.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+	if($conf->livraison_bon->enabled) {
+		print_liste_field_titre($langs->trans("DateReceived"),"liste.php","e.date_expedition","",$param, 'align="center"',$sortfield,$sortorder);
+	}
 	print_liste_field_titre($langs->trans("Status"),"liste.php","e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 	$var=True;
@@ -129,16 +133,18 @@ if ($resql)
 		print '</td>';
 		// Date delivery  planed
 		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_delivery),"day");
+		print dol_print_date($db->jdate($objp->date_expedition),"day");
 		/*$now = time();
 		if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 )
 		{
 		}*/
 		print "</td>\n";
-		// Date real
-		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_expedition),"day");
-		print "</td>\n";
+		if($conf->livraison_bon->enabled) {
+			// Date real
+			print "<td align=\"center\">";
+			print dol_print_date($db->jdate($objp->date_livraison),"day");
+			print "</td>\n";
+		}
 
 		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
 		print "</tr>\n";
@@ -157,4 +163,3 @@ else
 $db->close();
 
 llxFooter();
-?>

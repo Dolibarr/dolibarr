@@ -60,7 +60,7 @@ if (! $sortfield) $sortfield="p.rowid";
  * 	View
  */
 
-llxHeader('',$langs->trans("ListPayment"));
+llxHeader('', $langs->trans('ListPayment'));
 
 $form=new Form($db);
 
@@ -239,4 +239,3 @@ else
 $db->close();
 
 llxFooter();
-?>

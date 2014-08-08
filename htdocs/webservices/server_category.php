@@ -302,4 +302,3 @@ function getCategory($authentication,$id)
 // Return the results.
 $server->service($HTTP_RAW_POST_DATA);
 
-?>

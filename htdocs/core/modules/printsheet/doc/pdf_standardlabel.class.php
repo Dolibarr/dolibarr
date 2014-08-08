@@ -157,6 +157,12 @@ class pdf_standardlabel
 			}
 		}
 
+		// Define photo
+		if (! empty($photo))
+		{
+			if (! is_readable($photo)) $photo='';
+		}
+
 		// Define background image
 		$backgroundimage='';
 
@@ -537,4 +543,3 @@ class pdf_standardlabel
         return 1;
     }
 }
-?>

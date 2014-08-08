@@ -120,7 +120,7 @@ function product_prepare_head($object, $user)
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
     $head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -357,5 +357,3 @@ function measuring_units_string($unit,$measuring_style='')
 
 	return $measuring_units[$unit];
 }
-
-?>

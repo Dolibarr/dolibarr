@@ -20,3 +20,6 @@ YouAreCurrentlyInSandboxMode=Şu anda "Sandbox" modundasınız
 NewPaypalPaymentReceived=Yeni PayPal ödemesi alındı
 NewPaypalPaymentFailed=Yeni PayPal ödemesi denendi ancak başarısız oldu
 PAYPAL_PAYONLINE_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
+ReturnURLAfterPayment=Ödemen sonra URL ye dön
+ValidationOfPaypalPaymentFailed=Paypal ödemesi doğrulaması başarısız
+PaypalConfirmPaymentPageWasCalledButFailed=Paypal için ödeme onayı sayfası Patpal tarafından çağrıldı ancak onay başarısız

@@ -87,9 +87,8 @@ class modFicheinter extends DolibarrModules
         $this->const[$r][2] = "pacific";
         $r++;
 
-        // Boites
-        $this->boxes = array();
-        $this->boxes[0][1] = "box_ficheinter.php";
+        // Boxes
+        $this->boxes = array(0=>array('file'=>'box_ficheinter.php','enabledbydefaulton'=>'Home'));
 
         // Permissions
         $this->rights = array();
@@ -193,4 +192,3 @@ class modFicheinter extends DolibarrModules
     }
 
 }
-?>

@@ -473,4 +473,3 @@ function dolibarr_install_syslog($message, $level=LOG_DEBUG)
     dol_syslog($message,$level);
 }
 
-?>

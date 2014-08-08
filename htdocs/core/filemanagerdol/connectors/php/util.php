@@ -51,7 +51,7 @@ function RemoveFromEnd($sourceString, $charToRemove)
 /**
  * FindBadUtf8
  *
- * @param 	unknown_type $string		String
+ * @param 	string $string		String
  * @return	boolean
  */
 function FindBadUtf8($string)
@@ -208,27 +208,25 @@ function IsImageValid( $filePath, $extension )
 		return -1;
 	}
 
-	$imageCheckExtensions = array('gif', 'jpeg', 'jpg', 'png', 'swf', 'psd', 'bmp', 'iff');
-
-	// version_compare is available since PHP4 >= 4.0.7
-	if ( function_exists('version_compare') ) {
-		$sCurrentVersion = phpversion();
-		if ( version_compare($sCurrentVersion, "4.2.0") >= 0 ) {
-			$imageCheckExtensions[] = "tiff";
-			$imageCheckExtensions[] = "tif";
-		}
-		if ( version_compare($sCurrentVersion, "4.3.0") >= 0 ) {
-			$imageCheckExtensions[] = "swc";
-		}
-		if ( version_compare($sCurrentVersion, "4.3.2") >= 0 ) {
-			$imageCheckExtensions[] = "jpc";
-			$imageCheckExtensions[] = "jp2";
-			$imageCheckExtensions[] = "jpx";
-			$imageCheckExtensions[] = "jb2";
-			$imageCheckExtensions[] = "xbm";
-			$imageCheckExtensions[] = "wbmp";
-		}
-	}
+	$imageCheckExtensions = array(
+        'gif',
+        'jpeg',
+        'jpg',
+        'png',
+        'swf',
+        'psd',
+        'bmp',
+        'iff',
+        'tiff',
+        'tif',
+        'swc',
+        'jpc',
+        'jp2',
+        'jpx',
+        'jb2',
+        'xbm',
+        'wbmp'
+    );
 
 	if (!in_array($extension, $imageCheckExtensions) ) {
 		return true;
@@ -241,4 +239,3 @@ function IsImageValid( $filePath, $extension )
 	return true;
 }
 
-?>

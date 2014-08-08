@@ -23,6 +23,7 @@
  *   \brief			Fichier de la classe de gestion des triggers
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/triggers/DolibarrTriggers.class.php';
 
 /**
  *   Class to manage triggers
@@ -102,7 +103,7 @@ class Interfaces
                         if (in_array($modName,$modules))
                         {
                             $langs->load("errors");
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/"),LOG_ERR);
+                            dol_syslog(get_class($this)."::run_triggers action=".$action." ".$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/core/triggers/"), LOG_ERR);
                             continue;
                         }
                         else
@@ -123,7 +124,7 @@ class Interfaces
 
                         if (! $qualified)
                         {
-                            dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled",LOG_INFO);
+                            dol_syslog(get_class($this)."::run_triggers action=".$action." Triggers for file '".$file."' need module to be enabled", LOG_DEBUG);
                             continue;
                         }
 
@@ -148,9 +149,23 @@ class Interfaces
             $objMod = new $modName($this->db);
             if ($objMod)
             {
-                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch triggers for file '".$files[$key]."'",LOG_INFO);
+            	$result=0;
 
-                $result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
+				if (method_exists($objMod, 'runTrigger'))	// New method to implement
+				{
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_INFO);
+	                $result=$objMod->runTrigger($action,$object,$user,$langs,$conf);
+				}
+				elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
+				{
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." Launch run_trigger for file '".$files[$key]."'", LOG_INFO);
+					$result=$objMod->run_trigger($action,$object,$user,$langs,$conf);
+				}
+				else
+				{
+	                dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
+				}
+
                 if ($result > 0)
                 {
                     // Action OK
@@ -167,13 +182,13 @@ class Interfaces
                     // Action KO
                     $nbtotal++;
                     $nbko++;
-                    if (! empty($objMod->error))  $this->errors[]=$objMod->error;
                     if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
+                    else if (! empty($objMod->error))  $this->errors[]=$objMod->error;
                 }
             }
             else
-            {
-                dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'",LOG_ERR);
+			{
+                dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }
 
@@ -270,7 +285,7 @@ class Interfaces
 				print 'Error: A trigger file was found but its class "'.$modName.'" was not found.'."<br>\n";
             	continue;
             }
-            
+
             $objMod = new $modName($this->db);
 
             // Define disabledbyname and disabledbymodule
@@ -321,4 +336,3 @@ class Interfaces
     }
 
 }
-?>

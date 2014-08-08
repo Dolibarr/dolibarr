@@ -86,7 +86,7 @@ function facture_prepare_head($object)
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$upload_dir = $conf->facture->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/document.php?facid='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
@@ -132,13 +132,10 @@ function invoice_admin_prepare_head($object)
 	$head[$h][2] = 'attributes';
 	$h++;
 
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// FIXME This feature will works when form for predefined and free product will be merged, otherwise there is duplicate fields with same name
-    {
 	$head[$h][0] = DOL_URL_ROOT.'/compta/facture/admin/facturedet_cust_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
 	$head[$h][2] = 'attributeslines';
 	$h++;
-    }
 
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'invoice_admin','remove');
 
@@ -147,4 +144,3 @@ function invoice_admin_prepare_head($object)
 
 
 
-?>

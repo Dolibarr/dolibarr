@@ -237,8 +237,6 @@ if ($action == 'create')
 
 	print_fiche_titre($langs->trans("NewMemberType"));
 
-	if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="border" width="100%">';
@@ -411,11 +409,11 @@ if ($rowid > 0)
 		}
 		if ($filter == 'uptodate')
 		{
-		    $sql.=" AND datefin >= ".$db->idate($now);
+		    $sql.=" AND datefin >= '".$db->idate($now)."'";
 		}
 		if ($filter == 'outofdate')
 		{
-		    $sql.=" AND datefin < ".$db->idate($now);
+		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
 		// Count total nb of records
 		$nbtotalofrecords = 0;
@@ -690,4 +688,3 @@ if ($rowid > 0)
 $db->close();
 
 llxFooter();
-?>

@@ -173,7 +173,7 @@ if ($id > 0)
 	$user_id = $fuser->id;
 }
 // Récupération des congés payés de l'utilisateur ou de tous les users
-if (!$user->rights->holiday->lire_tous || $id > 0)
+if (!$user->rights->holiday->write_all || $id > 0)
 {
 	$holiday_payes = $holiday->fetchByUser($user_id,$order,$filter);
 }
@@ -186,10 +186,7 @@ if ($holiday_payes == '-1')
 {
     print_fiche_titre($langs->trans('CPTitreMenu'));
 
-    print '<div class="tabBar">';
-    print '<span>'.$langs->trans('CPErrorSQL');
-    print ' '.$holiday->error.'</span>';
-    print '</div>';
+    dol_print_error($db, $langs->trans('Error').' '.$holiday->error);
     exit();
 }
 
@@ -233,7 +230,7 @@ else
 {
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, "", $num);
 
-	print '<div class="tabBar">';
+	dol_fiche_head('');
 }
 
 
@@ -248,8 +245,8 @@ if ($id > 0)
 	print '</br>';
 }
 else {
-	print '</div>';
-} 
+	dol_fiche_end();
+}
 
 print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 print '<table class="noborder" width="100%;">';
@@ -278,7 +275,7 @@ $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
 
 // UTILISATEUR
-if($user->rights->holiday->lire_tous) {
+if($user->rights->holiday->write_all) {
     print '<td class="liste_titre" align="left">';
     $form->select_users($search_employe,"search_employe",1,"",0,'');
     print '</td>';
@@ -287,7 +284,7 @@ if($user->rights->holiday->lire_tous) {
 }
 
 // VALIDEUR
-if($user->rights->holiday->lire_tous)
+if($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre" align="left">';
 
@@ -299,7 +296,7 @@ if($user->rights->holiday->lire_tous)
     $form->select_users($search_valideur,"search_valideur",1,"",0,$valideurarray,'');
     print '</td>';
 }
-else 
+else
 {
     print '<td class="liste_titre">&nbsp;</td>';
 }
@@ -366,7 +363,7 @@ if (! empty($holiday->holiday))
 		print '<td align="center">'.dol_print_date($infos_CP['date_debut'],'day').'</td>';
 		print '<td align="center">'.dol_print_date($infos_CP['date_fin'],'day').'</td>';
 		print '<td align="right">';
-		$nbopenedday=num_open_day($infos_CP['date_debut'], $infos_CP['date_fin'], 0, 1, $infos_CP['halfday']);
+		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);
 		print $nbopenedday.' '.$langs->trans('DurationDays');
 		print '<td align="right" colspan="2">'.$holidaystatic->LibStatut($infos_CP['statut'],5).'</td>';
 		print '</tr>'."\n";
@@ -396,4 +393,3 @@ if ($user_id == $user->id)
 llxFooter();
 
 $db->close();
-?>

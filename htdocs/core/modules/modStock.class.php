@@ -66,7 +66,7 @@ class modStock extends DolibarrModules
 
 		// Dependencies
 		$this->depends = array("modProduct");
-		$this->requiredby = array();
+		$this->requiredby = array("modProductBatch");
 		$this->langfiles = array("stocks");
 
 		// Constants
@@ -154,7 +154,7 @@ class modStock extends DolibarrModules
 		);
 
 		$this->import_convertvalue_array[$r]=array(
-				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cpays.class.php','class'=>'Cpays','method'=>'fetch','dict'=>'DictionnaryCountry')
+				'e.fk_pays'=>array('rule'=>'fetchidfromcodeid','classfile'=>'/core/class/cpays.class.php','class'=>'Cpays','method'=>'fetch','dict'=>'DictionaryCountry')
 		);
 		$this->import_regex_array[$r]=array('e.statut'=>'^[0|1]');
 		$this->import_examplevalues_array[$r]=array('e.label'=>"ALM001",
@@ -211,4 +211,3 @@ class modStock extends DolibarrModules
     }
 
 }
-?>

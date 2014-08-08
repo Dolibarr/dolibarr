@@ -1,0 +1,13 @@
+language: ruby
+rvm:
+  - 1.9.3
+before_script:
+after_script:
+script: "bundle exec rake spec"
+env:
+  - PUPPET_VERSION=2.7.23
+  - PUPPET_VERSION=3.0.2
+  - PUPPET_VERSION=3.2.4
+  - PUPPET_VERSION=3.3.0
+notifications:
+  email: false

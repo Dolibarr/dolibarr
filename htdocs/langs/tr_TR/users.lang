@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
+HRMArea=İnsan Kaynakları Yönetim Alanı
 UserCard=Kullanıcı kartı
 ContactCard=Kişi kartı
 GroupCard=Grup kartı
@@ -86,7 +87,7 @@ MyInformations=Verilerim
 ExportDataset_user_1=Dolibarr kullanıcıları ve özellikleri
 DomainUser=Etki alanı kullanıcısı %s
 Reactivate=Yeniden etkinleştir
-CreateInternalUserDesc=Bu form firmanıza/derneğinize bir iç kullanıcı oluşturmanızı sağlar. Bir dış kullanıcı oluşturmak için (müşteri, tedarikçi,…) üçüncü parti kişi kartındaki 'Dolibarr kullanıcısı oluştur' düğmesini kullanın.
+CreateInternalUserDesc=This form allows you to create an user internal to your company/foundation. To create an external user (customer, supplier, ...), use the button 'Create Dolibarr user' from third party's contact card.
 InternalExternalDesc=Bir <b>iç</b> kullanıcı firmanızın/derneğinizin bir parçasıdır. <br>Bir<b>dış</b> kullanıcı bir müşteri, tedarikçi veya bir başkasıdır.<br><br>Her iki durumda da, izinler Dolibarr’daki hakları tanımlar, aynı zamanda dış kullanıcı iç kullanıcıdan farklı bir menü yöeticisine sahiptir (Giriş->Kurulum->Görünüm’e bakın)
 PermissionInheritedFromAGroup=İzin hak tanındı çünkü bir kullanıcının grubundan intikal etti.
 Inherited=İntikal eden

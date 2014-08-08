@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,11 +58,10 @@ $originid=GETPOST('originid','int');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions&allactions', 'fk_soc', 'id');
+$result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 if ($user->societe_id && $socid) $result = restrictedArea($user,'societe',$socid);
 
 $error=GETPOST("error");
-$mesg='';
 
 $cactioncomm = new CActionComm($db);
 $object = new ActionComm($db);
@@ -116,14 +115,14 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("DateEnd")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
 	}
 
 	if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && ! GETPOST('label'))
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Title")), 'errors');
 	}
 
 	// Initialisation objet cactioncomm
@@ -131,7 +130,7 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Type")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
 	}
 	else
 	{
@@ -201,20 +200,14 @@ if ($action == 'add_action')
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")).'</div>';
-	}
-	if (! empty($datea) && GETPOST('percentage') == 0)
-	{
-		$error++;
-		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorStatusCantBeZeroIfStarted").'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateEnd")), 'errors');
 	}
 
 	if (! GETPOST('apyear') && ! GETPOST('adyear'))
 	{
 		$error++;
 		$action = 'create';
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -261,8 +254,10 @@ if ($action == 'add_action')
 		{
 			$db->rollback();
 			$langs->load("errors");
-			$error=$langs->trans($object->error);
-			setEventMessage($error,'errors');
+
+			if (! empty($object->error)) setEventMessage($langs->trans($object->error), 'errors');
+			if (count($object->errors)) setEventMessage($object->errors, 'errors');
+
 			$action = 'create';
 		}
 	}
@@ -287,8 +282,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == 'yes')
 		}
 		else
 		{
-			$mesg=$object->error;
-			setEventMessage($mesg,'errors');
+			setEventMessage($object->error,'errors');
 		}
 	}
 }
@@ -399,7 +393,7 @@ $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
 
 $form = new Form($db);
-$htmlactions = new FormActions($db);
+$formactions = new FormActions($db);
 
 if ($action == 'create')
 {
@@ -463,15 +457,13 @@ if ($action == 'create')
 	if (GETPOST("actioncode") == 'AC_RDV') print_fiche_titre($langs->trans("AddActionRendezVous"));
 	else print_fiche_titre($langs->trans("AddAnAction"));
 
-	dol_htmloutput_mesg($mesg);
-
 	print '<table class="border" width="100%">';
 
 	// Type d'action actifs
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$htmlactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 		print '</td></tr>';
 	}
 	else print '<input type="hidden" name="actioncode" value="AC_OTH">';
@@ -516,11 +508,17 @@ if ($action == 'create')
 		if (GETPOST("afaire") == 1) $percent=0;
 		else if (GETPOST("afaire") == 2) $percent=100;
 	}
-	$htmlactions->form_select_status_action('formaction',$percent,1,'complete');
+	$formactions->form_select_status_action('formaction',$percent,1,'complete');
 	print '</td></tr>';
 
     // Location
     print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+
+	// Assigned to
+	$var=false;
+	print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
+	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -528,15 +526,9 @@ if ($action == 'create')
 
 	print '<table class="border" width="100%">';
 
-	// Assigned to
-	$var=false;
-	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
-	$form->select_users(GETPOST("affectedto")?GETPOST("affectedto"):(! empty($object->usertodo->id) && $object->usertodo->id > 0 ? $object->usertodo->id : $user->id),'affectedto',1);
-	print '</td></tr>';
-
 	// Busy
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
-	print '<input id="transparency" type="checkbox" name="transparency" value="'.$object->transparency.'">';
+	print '<input id="transparency" type="checkbox" name="transparency"'.(((! isset($_GET['transparency']) && ! isset($_POST['transparency'])) || GETPOST('transparency'))?' checked="checked"':'').'>';
 	print '</td></tr>';
 
 	// Realised by
@@ -649,10 +641,6 @@ if ($id > 0)
 	{
 		dol_htmloutput_errors($error);
 	}
-	if ($mesg)
-	{
-		dol_htmloutput_mesg($mesg);
-	}
 
 	$result=$object->fetch($id);
 	$object->fetch_optionals($id,$extralabels);
@@ -744,7 +732,7 @@ if ($id > 0)
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
 			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
-			$htmlactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+			$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
 			print '</td></tr>';
 		}
 
@@ -770,21 +758,21 @@ if ($id > 0)
 		// Status
 		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
 		$percent=GETPOST("percentage")?GETPOST("percentage"):$object->percentage;
-		$htmlactions->form_select_status_action('formaction',$percent,1);
+		$formactions->form_select_status_action('formaction',$percent,1);
 		print '</td></tr>';
 
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
 
-		print '</table><br><br><table class="border" width="100%">';
-
 		// Assigned to
-		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		print $form->select_dolusers($object->usertodo->id>0?$object->usertodo->id:-1,'affectedto',1);
 		print '</td></tr>';
 
+        print '</table><br><br><table class="border" width="100%">';
+
 		// Busy
-		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td>';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td>';
 		print '<input id="transparency" type="checkbox" name="transparency"'.($object->transparency?' checked="checked"':'').'">';
 		print '</td></tr>';
 
@@ -861,7 +849,6 @@ if ($id > 0)
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
-
 		}
 
 		print '</table>';
@@ -952,15 +939,15 @@ if ($id > 0)
         // Location
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
 
-		print '</table><br><br><table class="border" width="100%">';
-
 		// Assigned to
 		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
 		if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
+		print '</table><br><br><table class="border" width="100%">';
+
 		// Busy
-		print '<tr><td class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("Busy").'</td><td colspan="3">';
 		if ($object->usertodo->id > 0) print yn(($object->transparency > 0)?1:0);	// We show nothing if event is assigned to nobody
 		print '</td></tr>';
 
@@ -1054,7 +1041,7 @@ if ($id > 0)
 				print $extrafields->showOutputField($key,$value);
 				print "</td></tr>\n";
 			}
-			print '</table><br><br>';
+			print '</table>';
 		}
 
 		dol_fiche_end();
@@ -1102,4 +1089,3 @@ if ($id > 0)
 llxFooter();
 
 $db->close();
-?>

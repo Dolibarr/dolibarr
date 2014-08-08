@@ -68,7 +68,6 @@ $limit = $conf->liste_limit;
 
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-//$object->getCanvas($id);
 $canvas=GETPOST("canvas");
 $objcanvas='';
 if (! empty($canvas))
@@ -189,10 +188,18 @@ else
     $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte";
     $sql .= ', p.desiredstock';
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+
+    $nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+		$result = $db->query($sql);
+		$nbtotalofrecords = $db->num_rows($result);
+	}
+
     $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
-    dol_syslog("product:list.php: sql=".$sql);
+    dol_syslog("product:list.php:", LOG_DEBUG);
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -223,13 +230,16 @@ else
     	llxHeader('',$title,$helpurl,'');
 
     	// Displays product removal confirmation
-    	if (GETPOST('delprod'))	dol_htmloutput_mesg($langs->trans("ProductDeleted",GETPOST('delprod')));
+    	if (GETPOST('delprod'))	{
+		    setEventMessage($langs->trans("ProductDeleted", GETPOST('delprod')));
+	    }
 
     	$param="&amp;sref=".$sref.($sbarcode?"&amp;sbarcode=".$sbarcode:"")."&amp;snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy;
     	$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     	$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     	$param.=isset($type)?"&amp;type=".$type:"";
-    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+
+    	print_barre_liste($texte, $page, "liste.php", $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 
     	if (! empty($catid))
     	{
@@ -260,7 +270,7 @@ else
     	}
     	else
     	{
-    		print '<form action="liste.php" method="post" name="formulaire">';
+    		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
     		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     		print '<input type="hidden" name="action" value="list">';
     		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -277,7 +287,7 @@ else
     	 	if (empty($conf->global->PRODUIT_MULTIPRICES)) $colspan++;
     	 	if ($user->rights->fournisseur->lire) $colspan++;
     	 	if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1) $colspan+=2;
-    	 	
+
     		if (! empty($conf->categorie->enabled))
     		{
     		 	$moreforfilter.=$langs->trans('Categories'). ': ';
@@ -360,11 +370,20 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
+    		else
+    		{
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    			print '<td class="liste_titre">';
+    			print '&nbsp;';
+    			print '</td>';
+    		}
 
-    		print '<td align="center">';  		
+    		print '<td align="center">';
             print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
             print '</td >';
-            
+
             print '<td align="center">';
             print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
             print '</td>';
@@ -421,18 +440,22 @@ else
     				print '<td>'.$objp->barcode.'</td>';
     			}
 
-    			// Date
+    			// Modification Date
     			print '<td align="center">'.dol_print_date($db->jdate($objp->datem),'day')."</td>\n";
 
     			// Duration
     			if (! empty($conf->service->enabled) && $type != 0)
     			{
     				print '<td align="center">';
-    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-    				else print $objp->duration;
+    				if (preg_match('/([0-9]+)[a-z]/i',$objp->duration))
+    				{
+	    				if (preg_match('/([0-9]+)y/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
+	    				elseif (preg_match('/([0-9]+)m/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
+	    				elseif (preg_match('/([0-9]+)w/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
+	    				elseif (preg_match('/([0-9]+)d/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
+	    				//elseif (preg_match('/([0-9]+)h/i',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
+	    				else print $objp->duration;
+    				}
     				print '</td>';
     			}
 
@@ -446,7 +469,8 @@ else
     			}
 
     			// Better buy price
-    			if ($user->rights->produit->creer) {
+    			if ($user->rights->produit->creer)
+    			{
         			print  '<td align="right">';
         			if ($objp->minsellprice != '')
         			{
@@ -481,7 +505,12 @@ else
     				}
     				else
     				{
-    					print '<td>&nbsp;</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
+		    			print '<td>';
+		    			print '&nbsp;';
+		    			print '</td>';
     				}
     			}
 
@@ -492,7 +521,7 @@ else
                 print '<td align="center" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
 
                 print '<td>&nbsp;</td>';
-                
+
                 print "</tr>\n";
     			$i++;
     		}
@@ -501,7 +530,7 @@ else
     		$param.=($fourn_id?"&amp;fourn_id=".$fourn_id:"");
     		$param.=($search_categ?"&amp;search_categ=".$search_categ:"");
     		$param.=isset($type)?"&amp;type=".$type:"";
-    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num);
+    		print_barre_liste('', $page, "liste.php", $param, $sortfield, $sortorder,'',$num,$nbtotalofrecords);
 
     		$db->free($resql);
 
@@ -518,4 +547,3 @@ else
 
 llxFooter();
 $db->close();
-?>

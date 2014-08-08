@@ -130,4 +130,3 @@ class mod_contract_magre extends ModelNumRefContracts
 
 }
 
-?>

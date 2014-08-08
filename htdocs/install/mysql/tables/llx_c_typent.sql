@@ -19,9 +19,10 @@
 
 create table llx_c_typent
 (
-  id        integer      PRIMARY KEY,
-  code      varchar(12)  NOT NULL,
-  libelle   varchar(30),
-  active    tinyint DEFAULT 1   NOT NULL,
-  module    varchar(32) NULL
+  id         integer      PRIMARY KEY,
+  code       varchar(12)  NOT NULL,
+  libelle    varchar(30),
+  fk_country integer NULL,		-- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
+  active     tinyint DEFAULT 1   NOT NULL,
+  module     varchar(32) NULL
 )ENGINE=innodb;

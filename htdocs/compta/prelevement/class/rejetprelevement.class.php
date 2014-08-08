@@ -104,7 +104,7 @@ class RejetPrelevement
 		$sql.= ", '".$this->db->idate($date_rejet)."'";
 		$sql.= ", ".$motif;
 		$sql.= ", ".$user->id;
-		$sql.= ", ".$this->db->idate($now);
+		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".$facturation;
 		$sql.= ")";
 
@@ -357,4 +357,3 @@ class RejetPrelevement
 
 }
 
-?>

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ class modCategorie extends DolibarrModules
 		$this->depends = array();
 
 		// Config pages
-		$this->config_page_url = array();
+		$this->config_page_url = array('categorie.php@categories');
 		$this->langfiles = array("products","companies","categories");
 
 		// Constantes
@@ -181,7 +181,7 @@ class modCategorie extends DolibarrModules
 			'u.label' => "Label",
 			'u.description' => "Description",
 			'p.rowid' => 'ContactId',
-			'p.civilite' => 'Civitity',
+			'p.civilite' => 'Civility',
 			'p.lastname' => 'LastName',
 			'p.firstname' => 'Firstname',
 			'p.address' => 'Address',
@@ -349,4 +349,3 @@ class modCategorie extends DolibarrModules
     }
 
 }
-?>

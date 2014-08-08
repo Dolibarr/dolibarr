@@ -89,6 +89,8 @@ ListOfServicesToExpireWithDuration=%s päeva pärast aeguvate teenuste nimekiri
 ListOfServicesToExpireWithDurationNeg=Teenuste nimekiri, mis aegusid rohkem kui %s päeva tagasi
 ListOfServicesToExpire=Aeguvate teenuste nimekiri
 NoteListOfYourExpiredServices=See nimekiri sisaldab vaid nende lepingute teenuseid, millega seotud kolmandate isikute kohta oled märgitud müügiesindajaks
+StandardContractsTemplate=Standard contracts template
+ContactNameAndSignature=For %s, name and signature:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Lepingu allkirjastanud müügiesindaja

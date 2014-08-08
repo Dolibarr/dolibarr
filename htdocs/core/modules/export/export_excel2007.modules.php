@@ -47,7 +47,6 @@ class ExportExcel2007 extends ExportExcel
 	var $col;
     var $file;          // To save filename
 
-
 	/**
 	 *	Constructor
 	 *
@@ -69,6 +68,8 @@ class ExportExcel2007 extends ExportExcel
 		$this->label_lib='PhpExcel';
 		$this->version_lib='1.7.2';
 
+		$this->disabled = (in_array(constant('PHPEXCEL_PATH'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
+
 		$this->row=0;
 	}
 
@@ -80,6 +81,8 @@ class ExportExcel2007 extends ExportExcel
      */
 	function close_file()
 	{
+		global $conf;
+
 		if (! empty($conf->global->MAIN_USE_PHP_WRITEEXCEL))
     	{
 	        $this->workbook->close();
@@ -97,4 +100,3 @@ class ExportExcel2007 extends ExportExcel
 
 }
 
-?>
