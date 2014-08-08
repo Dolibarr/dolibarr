@@ -1,9 +1,8 @@
-CHARSET=UTF-8
-LinkANewFile=Enlazar un nuevo archivo/documento
-LinkedFiles=Archivos y documentos enlazados
-NoLinkFound=No hay enlaces asociados
-LinkComplete=El archivo se ha enlazado correctamente
-ErrorFileNotLinked=El archivo no ha podido ser enlazado
-LinkRemoved=Ha sido eliminado el enlace %s
-ErrorFailedToDeleteLink=Imposible eliminar el enlace '<b>%s</b>'
-ErrorFailedToUpdateLink=Imposible actualizar el enlace '<b>%s</b>'
+LinkANewFile=Vincular un nuevo archivo/documento
+LinkedFiles=Archivos y documentos vinculados
+NoLinkFound=Sin enlaces registrados
+LinkComplete=El archivo ha sido vinculado correctamente
+ErrorFileNotLinked=El archivo no ha podido ser vinculado
+LinkRemoved=El vínculo %s ha sido eliminado
+ErrorFailedToDeleteLink= Error al eliminar el vínculo '<b>%s</b>'
+ErrorFailedToUpdateLink= Error al actualizar el vínculo '<b>%s</b>'
