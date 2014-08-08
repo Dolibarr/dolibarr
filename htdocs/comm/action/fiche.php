@@ -401,7 +401,7 @@ if ($action == 'mupdate')
         exit;
     }
 
-    $datep=dol_mktime($shour, $smin, 0,substr($newdate,13,2) , substr($newdate,15,2), substr($newdate,9,4));
+    $datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
     if ($datep!=$object->datep)
     { 
         if (!empty($object->datef))

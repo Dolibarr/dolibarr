@@ -1277,7 +1277,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 
                         // Show title
                         if ($event->type_code == 'ICALEVENT') print dol_trunc($event->libelle,$maxnbofchar);
-                        else print $event->getNomUrl(0,$maxnbofchar,'cal_event id_'.$event->id);
+                        else print $event->getNomUrl(0,$maxnbofchar,'cal_event');
 
                         if ($event->type_code == 'ICALEVENT') print '<br>('.dol_trunc($event->icalname,$maxnbofchar).')';
 
