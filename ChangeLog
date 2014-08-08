@@ -56,6 +56,7 @@ For users:
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - New: [ task #1204 ] add a External reference to contract
+- New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
 
 For translators:
 - Update language files.
