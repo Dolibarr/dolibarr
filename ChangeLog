@@ -37,7 +37,7 @@ For users:
        Use accesskey on form search.
 - New: Intervention documents are now available in ECM module
 - New: Add attachments on user card + in ECM module
-- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.       
+- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -59,6 +59,7 @@ For users:
 
 For translators:
 - Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
 - New: getBrowserInfo can return type of layout (classic/phone/tablet)
