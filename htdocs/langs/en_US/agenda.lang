@@ -75,7 +75,8 @@ AgendaShowBirthdayEvents=Show birthday's contacts
 AgendaHideBirthdayEvents=Hide birthday's contacts
 Busy=Busy
 ExportDataset_event1=List of agenda events
-
+DefaultWorkingDays=Default working days range in week (Example: 1-5, 1-6)
+DefaultWorkingHours=Default working hours in day (Example: 9-18)
 # External Sites ical
 ExportCal=Export calendar
 ExtSites=Import external calendars
