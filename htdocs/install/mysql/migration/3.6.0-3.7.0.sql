@@ -959,3 +959,6 @@ CREATE TABLE llx_holiday_types (
   nbCongesDeducted varchar(255) NOT NULL,
   nbCongesEveryMonth varchar(255) NOT NULL
 );
+
+ALTER TABLE llx_c_type_fees CHANGE libelle label VARCHAR(30);
+ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
