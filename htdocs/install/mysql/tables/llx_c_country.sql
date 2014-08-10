@@ -17,11 +17,11 @@
 --
 -- ========================================================================
 
-create table llx_c_pays
+create table llx_c_country
 (
   rowid    integer            PRIMARY KEY,
   code     varchar(2)         NOT NULL,
   code_iso varchar(3)         ,
-  libelle  varchar(50)        NOT NULL,
+  label    varchar(50)        NOT NULL,
   active   tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

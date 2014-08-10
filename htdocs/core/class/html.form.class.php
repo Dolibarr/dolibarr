@@ -455,19 +455,6 @@ class Form
      *  @param	string	$selected       Id or Code or Label of preselected country
      *  @param  string	$htmlname       Name of html select object
      *  @param  string	$htmloption     Options html on select object
-     *  @return	void
-     */
-    function select_pays($selected='',$htmlname='country_id',$htmloption='')
-    {
-        print $this->select_country($selected,$htmlname,$htmloption);
-    }
-
-    /**
-     *  Return combo list of activated countries, into language of user
-     *
-     *  @param	string	$selected       Id or Code or Label of preselected country
-     *  @param  string	$htmlname       Name of html select object
-     *  @param  string	$htmloption     Options html on select object
      *  @param	string	$maxlength		Max length for labels (0=no limit)
      *  @return string           		HTML string with select
      */
@@ -481,8 +468,8 @@ class Form
         $countryArray=array();
         $label=array();
 
-        $sql = "SELECT rowid, code as code_iso, libelle as label";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+        $sql = "SELECT rowid, code as code_iso, label";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_country";
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
 
@@ -490,7 +477,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            $out.= '<select id="select'.$htmlname.'" class="flat selectpays" name="'.$htmlname.'" '.$htmloption.'>';
+            $out.= '<select id="select'.$htmlname.'" class="flat selectcountry" name="'.$htmlname.'" '.$htmloption.'>';
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
@@ -3436,10 +3423,10 @@ class Form
     	if ($num > 0) return $num;    // Cache deja charge
 
     	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-    	$sql.= " WHERE t.fk_pays = p.rowid";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+    	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active = 1";
-    	$sql.= " AND p.code IN (".$country_code.")";
+    	$sql.= " AND c.code IN (".$country_code.")";
     	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
     	$resql=$this->db->query($sql);
@@ -3523,14 +3510,14 @@ class Form
         //exit;
 
         // Define list of countries to use to search VAT rates to show
-        // First we defined code_pays to use to find list
+        // First we defined code_country to use to find list
         if (is_object($societe_vendeuse))
         {
-            $code_pays="'".$societe_vendeuse->country_code."'";
+            $code_country="'".$societe_vendeuse->country_code."'";
         }
         else
        {
-            $code_pays="'".$mysoc->country_code."'";   // Pour compatibilite ascendente
+            $code_country="'".$mysoc->country_code."'";   // Pour compatibilite ascendente
         }
         if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
         {
@@ -3541,12 +3528,12 @@ class Form
                 {
                     if ($type == 1) // We know product is a service
                     {
-                        $code_pays.=",'".$societe_acheteuse->country_code."'";
+                        $code_country.=",'".$societe_acheteuse->country_code."'";
                     }
                 }
                 else if (! $idprod)  // We don't know type of product
                 {
-                    $code_pays.=",'".$societe_acheteuse->country_code."'";
+                    $code_country.=",'".$societe_acheteuse->country_code."'";
                 }
                 else
                 {
@@ -3554,14 +3541,14 @@ class Form
                     $prodstatic->fetch($idprod);
                     if ($prodstatic->type == 1)   // We know product is a service
                     {
-                        $code_pays.=",'".$societe_acheteuse->country_code."'";
+                        $code_country.=",'".$societe_acheteuse->country_code."'";
                     }
                 }
             }
         }
 
         // Now we get list
-        $num = $this->load_cache_vatrates($code_pays);
+        $num = $this->load_cache_vatrates($code_country);
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
