@@ -64,6 +64,7 @@ $userid=GETPOST('userid','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
+$search_paymentmode=GETPOST('search_paymentmode','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
 $search_status=GETPOST('search_status','alpha');
@@ -142,7 +143,7 @@ if (! $sall) $sql = 'SELECT';
 else $sql = 'SELECT DISTINCT';
 $sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
-$sql.= ' f.paye as paye, f.fk_statut,';
+$sql.= ' f.paye as paye, f.fk_statut, f.fk_mode_reglement, ';
 $sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -185,6 +186,10 @@ if ($search_refcustomer)
 if ($search_societe)
 {
     $sql .= natural_search('s.nom', $search_societe);
+}
+if ($search_paymentmode)
+{
+    $sql.= ' AND f.fk_mode_reglement = '.$search_paymentmode;
 }
 if ($search_montant_ht)
 {
@@ -260,6 +265,7 @@ if ($resql)
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
     if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
+	if ($search_societe)     $param.='&search_paymentmode=' .$search_paymentmode;
     if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
     if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
@@ -288,7 +294,7 @@ if ($resql)
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="10">';
+        print '<td class="liste_titre" colspan="11">';
         print $moreforfilter;
         print '</td></tr>';
     }
@@ -299,6 +305,7 @@ if ($resql)
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('PaymentMode'),$_SERVER['PHP_SELF'],'f.fk_mode_reglement','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountVAT'),$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
@@ -322,6 +329,10 @@ if ($resql)
     print '</td>';
     print '<td class="liste_titre" align="left">&nbsp;</td>';
     print '<td class="liste_titre" align="left"><input class="flat" type="text" name="search_societe" value="'.$search_societe.'"></td>';
+	print '<td class="liste_titre" align="left">';
+	$form->select_types_paiements($search_paymentmode, 'search_paymentmode');
+	print '</td>';
+	
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ht" value="'.$search_montant_ht.'"></td>';
     print '<td class="liste_titre" align="right">&nbsp;</td>';
     print '<td class="liste_titre" align="right"><input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$search_montant_ttc.'"></td>';
@@ -402,6 +413,11 @@ if ($resql)
             $thirdparty->client=$objp->client;
             $thirdparty->code_client=$objp->code_client;
             print $thirdparty->getNomUrl(1,'customer');
+            print '</td>';
+
+            // Payment mode
+            print '<td>';
+            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none');
             print '</td>';
 
             print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';
