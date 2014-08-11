@@ -1497,7 +1497,7 @@ else
         print '</tr>';
 
         // Logo+barcode
-        $rowspan=4;
+        $rowspan=6;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
@@ -1588,12 +1588,12 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
         print '</td></tr>';
 
         // Web
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_url($object->url);
         print '</td></tr>';
 
