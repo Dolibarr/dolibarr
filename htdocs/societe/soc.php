@@ -1423,7 +1423,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td>'.$langs->trans("Logo").'</td>';
             print '<td colspan="3">';
-            if ($object->logo) print $form->showphoto('societe',$object,50);
+            if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
