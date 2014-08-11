@@ -43,7 +43,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=getStaticMember(get_class($extrafields),'type2label');
+$tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
 foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 

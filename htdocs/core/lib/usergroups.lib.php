@@ -88,10 +88,24 @@ function user_prepare_head($object)
     //Info on users is visible only by internal user
     if (empty($user->societe_id))
     {
-    	$head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
-    	$head[$h][1] = $langs->trans("Note");
-    	$head[$h][2] = 'note';
-    	$h++;
+		// Notes
+        $nbNote = 0;
+        if(!empty($object->note)) $nbNote++;
+        $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Note");
+		if($nbNote > 0) $head[$h][1].= ' ('.$nbNote.')';
+        $head[$h][2] = 'note';
+        $h++;
+
+        // Attached files
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        $upload_dir = $conf->user->dir_output . "/" . $object->id;
+        $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+        $head[$h][0] = DOL_URL_ROOT.'/user/document.php?userid='.$object->id;
+        $head[$h][1] = $langs->trans("Documents");
+        if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+        $head[$h][2] = 'document';
+        $h++;
 
     	$head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$object->id;
     	$head[$h][1] = $langs->trans("Info");

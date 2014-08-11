@@ -70,7 +70,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 				{
 	                // We store HOURS in seconds
 	                if($matches[2]=='hour') $timespent_duration[$id] += $time*60*60;
-	
+
 	                // We store MINUTES in seconds
 	                if($matches[2]=='min') $timespent_duration[$id] += $time*60;
 				}
@@ -88,9 +88,9 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 	        $task->timespent_date = dol_mktime(12,0,0,$_POST["{$key}month"],$_POST["{$key}day"],$_POST["{$key}year"]);
 	        $task->addTimeSpent($user);
     	}
-    	
+
     	setEventMessage($langs->trans("RecordSaved"));
-    	
+
         // Redirect to avoid submit twice on back
         header('Location: '.$_SERVER["PHP_SELF"].'?id='.$projectid.($mode?'&mode='.$mode:''));
         exit;
@@ -100,6 +100,8 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 	    setEventMessage($langs->trans("ErrorTimeSpentIsEmpty"), 'errors');
     }
 }
+
+
 
 /*
  * View
@@ -112,7 +114,6 @@ $taskstatic = new Task($db);
 
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
-
 
 //$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // Return all project i have permission on. I want my tasks and some of my task may be on a public projet that is not my project
@@ -131,6 +132,25 @@ $tasksrole=$taskstatic->getUserRolesForProjectsOrTasks(0,$user,($project->id?$pr
 llxHeader("",$title,"");
 
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
+
+// Show description of content
+if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
+else
+{
+	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
+	else print $langs->trans("ProjectsPublicTakDesc").'<br><br>';
+}
+
+
+// Filter on user
+/*	dol_fiche_head('');
+	print '<table class="border" width="100%"><tr><td width="25%">'.$langs->trans("User").'</td>';
+	print '<td>';
+	if ($mine) print $user->getLoginUrl(1);
+	print '</td>';
+	print '</tr></table>';
+	dol_fiche_end();
+*/
 
 // Filter on user
 /*	dol_fiche_head('');
@@ -161,7 +181,7 @@ print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
-$restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS)?1:0);	 
+$restricteditformytask=(empty($conf->global->PROJECT_TIME_ON_ALL_TASKS_MY_PROJECTS)?1:0);
 
 if (count($tasksarray) > 0)
 {
