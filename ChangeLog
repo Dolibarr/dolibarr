@@ -62,7 +62,8 @@ For translators:
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
-- New: getBrowserInfo can return type of layout (classic/phone/tablet)
+- New: Select list of users can return user into hierarchy.
+- New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
 - New: Add hook "searchAgendaFrom".
 - New: Add trigger DON_UPDATE, DON_DELETE
 - New: Add country iso code on 3 chars into table of countries.
@@ -77,7 +78,7 @@ For developers:
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
-- Change the way parameters are provides to scripts sync_xxx_ldap2dolibarr.php  
+- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php  
  
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
