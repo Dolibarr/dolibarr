@@ -1109,11 +1109,12 @@ class Form
      *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
-     *  @param  array	$include        Array list of users id to include
+     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	string	$morefilter		Add more filters into sql request
      * 	@return	string					HTML select string
      */
     function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0)
@@ -1127,7 +1128,21 @@ class Form
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
         // Permettre l'inclusion d'utilisateurs
         if (is_array($include))	$includeUsers = implode("','",$include);
-
+		else if ($include == 'hierarchy') 
+		{
+			// Build list includeUsers to have only hierarchy
+			$userid=$user->id;
+			$include=array();
+			if (empty($user->users) || ! is_array($user->users)) $user->get_full_tree();
+			foreach($user->users as $key => $val)
+			{
+				if (preg_match('/_'.$userid.'/',$val['fullpath'])) $include[]=$val['id'];
+			}
+			$includeUsers = implode("','",$include);
+			//var_dump($includeUsers);exit;
+			//var_dump($user->users);exit;
+		}
+		
         $out='';
 
         // On recherche les utilisateurs
@@ -1159,7 +1174,8 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
-        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
+        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut <> 0";
+        if (! empty($morefilter)) $sql.=$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
 
         dol_syslog(get_class($this)."::select_dolusers sql=".$sql);
