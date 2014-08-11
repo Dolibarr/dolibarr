@@ -802,14 +802,15 @@ function dol_delete_dir($dir,$nophperrors=0)
 }
 
 /**
- *  Remove a directory $dir and its subdirectories
+ *  Remove a directory $dir and its subdirectories (or only files and subdirectories) 
  *
  *  @param	string	$dir            Dir to delete
  *  @param  int		$count          Counter to count nb of deleted elements
  *  @param  int		$nophperrors    Disable all PHP output errors
+ *  @param	int		$onlysub		Delete only files and subdir, not main directory 
  *  @return int             		Number of files and directory removed
  */
-function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
+function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0,$onlysub=0)
 {
     dol_syslog("functions.lib:dol_delete_dir_recursive ".$dir,LOG_DEBUG);
     if (dol_is_dir($dir))
@@ -836,9 +837,13 @@ function dol_delete_dir_recursive($dir,$count=0,$nophperrors=0)
                 }
             }
             closedir($handle);
-            dol_delete_dir($dir,$nophperrors);
-            $count++;
-            //echo "removing $dir<br>\n";
+            
+            if (empty($onlysub))
+            {
+	            dol_delete_dir($dir,$nophperrors);
+    	        $count++;
+        	    //echo "removing $dir<br>\n";
+            }
         }
     }
 
