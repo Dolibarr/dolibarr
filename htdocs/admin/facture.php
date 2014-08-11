@@ -261,6 +261,24 @@ if ($action == 'setforcedate')
     }
 }
 
+if ($action == 'set_FACTURE_SORTING_NUMBER')
+{
+	$forcedate = GETPOST('FACTURE_SORTING_NUMBER','alpha');
+
+	$res = dolibarr_set_const($db, "FACTURE_SORTING_NUMBER",$forcedate,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
+}
+
 
 /*
  * View
@@ -760,6 +778,20 @@ print '<input type="hidden" name="action" value="set_FACTURE_DRAFT_WATERMARK" />
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("WatermarkOnDraftBill").'<br>';
 print '<input size="50" class="flat" type="text" name="FACTURE_DRAFT_WATERMARK" value="'.$conf->global->FACTURE_DRAFT_WATERMARK.'" />';
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
+// Replace sorting method
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="set_FACTURE_SORTING_NUMBER" />';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("SortingFactureOnNumber");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("FACTURE_SORTING_NUMBER",$conf->global->FACTURE_SORTING_NUMBER,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

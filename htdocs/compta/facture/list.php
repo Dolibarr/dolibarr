@@ -63,7 +63,6 @@ $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
-//$search_refnumber=GETPOST('search_refnumber', 'alpha');
 $search_refcustomer=GETPOST('search_refcustomer','alpha');
 $search_societe=GETPOST('search_societe','alpha');
 $search_montant_ht=GETPOST('search_montant_ht','alpha');
@@ -295,14 +294,17 @@ if ($resql)
     if ($moreforfilter)
     {
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" colspan="11">';
+        print '<td class="liste_titre" colspan="10">';
         print $moreforfilter;
         print '</td></tr>';
     }
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('NumFacture'),$_SERVER['PHP_SELF'],'numfacture','',$param,'align="center"',$sortfield,$sortorder);
+	if (!empty($conf->global->FACTURE_SORTING_NUMBER)){
+		print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'numfacture','',$param,'',$sortfield,$sortorder);
+	}else{
+		print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
+	}
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
@@ -319,9 +321,6 @@ if ($resql)
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
-    print '</td>';
-    print '<td class="liste_titre" align="center">';
-    //print '<input class="flat" size="6" type="text" name="search_refnumber" value="'.$search_refnumber.'">';
     print '</td>';
     print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
@@ -385,11 +384,6 @@ if ($resql)
             print '</table>';
             print "</td>\n";
 
-            // Numero facture
-            print '<td align="center" class="nobordernopadding nowrap">';
-			print $objp->numfacture;
-            print '</td>';
-
 			// Customer ref
 			print '<td class="nowrap">';
 			print $objp->ref_client;
@@ -442,7 +436,7 @@ if ($resql)
         {
             // Print total
             print '<tr class="liste_total">';
-            print '<td class="liste_total" colspan="5" align="left">'.$langs->trans('Total').'</td>';
+            print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
             print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';
