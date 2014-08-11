@@ -218,7 +218,7 @@ class modCategorie extends DolibarrModules
 			'p.zip' => 'contact',
 			'p.town' => 'contact',
 			'country.code' => 'contact',
-			'country.libelle' => 'contact',
+			'country.label' => 'contact',
 			'p.birthday' => 'contact',
 			'p.poste' => 'contact',
 			'p.phone' => 'contact',
