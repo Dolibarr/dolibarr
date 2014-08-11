@@ -188,7 +188,7 @@ class modCategorie extends DolibarrModules
 			'p.zip' => 'Zip',
 			'p.town' => 'Town',
 			'country.code' => 'CountryCode',
-			'country.libelle' => 'Country',
+			'country.label' => 'Country',
 			'p.birthday' => 'DateToBirth',
 			'p.poste' => 'PostOrFunction',
 			'p.phone' => 'Phone',
