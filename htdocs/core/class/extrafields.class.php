@@ -971,10 +971,10 @@ class ExtraFields
 				$value='';	// value was used, so now we reste it to use it to build final output
 
 				$obj = $this->db->fetch_object($resql);
-				
+
 				// Several field into label (eq table:code|libelle:rowid)
 				$fields_label = explode('|',$InfoFieldList[1]);
-				
+
 				if(is_array($fields_label))
 				{
 					foreach ($fields_label as $field_toshow)
