@@ -300,11 +300,7 @@ if ($resql)
     }
 
     print '<tr class="liste_titre">';
-	if (!empty($conf->global->FACTURE_SORTING_NUMBER)){
-		print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'numfacture','',$param,'',$sortfield,$sortorder);
-	}else{
-		print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
-	}
+	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],empty($conf->global->FACTURE_SORTING_NUMBER) ? 'f.facnumber' : 'numfacture' ,'',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
