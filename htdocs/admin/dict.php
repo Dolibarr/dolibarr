@@ -78,7 +78,7 @@ $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
 $tabname[2] = MAIN_DB_PREFIX."c_departements";
 $tabname[3] = MAIN_DB_PREFIX."c_regions";
 $tabname[4] = MAIN_DB_PREFIX."c_pays";
-$tabname[5] = MAIN_DB_PREFIX."c_civilite";
+$tabname[5] = MAIN_DB_PREFIX."c_civility";
 $tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
 $tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
 $tabname[8] = MAIN_DB_PREFIX."c_typent";
@@ -136,7 +136,7 @@ $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.code as country_code
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code, d.nom as libelle, d.fk_region as region_id, r.nom as region, p.code as country_code, p.libelle as country, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, r.code_region as code, r.nom as libelle, r.fk_pays as country_id, p.code as country_code, p.libelle as country, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
-$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
+$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.label, c.active FROM ".MAIN_DB_PREFIX."c_civility AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active, a.module, a.position FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, p.code as country_code, p.libelle as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_pays as p WHERE a.fk_pays=p.rowid and p.active=1";
 $tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country as country_id, p.code as country_code, p.libelle as country, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON t.fk_country=p.rowid";
@@ -165,7 +165,7 @@ $tabsqlsort[1] ="country ASC, code ASC";
 $tabsqlsort[2] ="country ASC, code ASC";
 $tabsqlsort[3] ="country ASC, code ASC";
 $tabsqlsort[4] ="code ASC";
-$tabsqlsort[5] ="libelle ASC";
+$tabsqlsort[5] ="label ASC";
 $tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] ="country ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="country DESC, libelle ASC";
@@ -194,7 +194,7 @@ $tabfield[1] = "code,libelle,country";
 $tabfield[2] = "code,libelle,region_id,region,country";   // "code,libelle,region,country_code-country"
 $tabfield[3] = "code,libelle,country_id,country";
 $tabfield[4] = "code,libelle";
-$tabfield[5] = "code,libelle";
+$tabfield[5] = "code,label";
 $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,country_id,country,accountancy_code,deductible";
 $tabfield[8] = "code,libelle,country_id,country";
@@ -223,7 +223,7 @@ $tabfieldvalue[1] = "code,libelle,country";
 $tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
 $tabfieldvalue[3] = "code,libelle,country";
 $tabfieldvalue[4] = "code,libelle";
-$tabfieldvalue[5] = "code,libelle";
+$tabfieldvalue[5] = "code,label";
 $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[8] = "code,libelle,country";
@@ -252,7 +252,7 @@ $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
 $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,libelle";
-$tabfieldinsert[5] = "code,civilite";
+$tabfieldinsert[5] = "code,label";
 $tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[8] = "code,libelle,fk_country";
@@ -1044,7 +1044,7 @@ if ($id)
                                 $key=$langs->trans(strtoupper($obj->code));
                                 $valuetoshow=($key != strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_civilite') {
+                            else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_civility') {
                                 $key=$langs->trans("Civility".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code)?$key:$obj->$fieldlist[$field]);
                             }

@@ -363,7 +363,7 @@ class Translate
         }
         else if (preg_match('/^Civility([0-9A-Z]+)$/i',$key,$reg))
         {
-            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civilite','code','civilite');
+            $newstr=$this->getLabelFromKey($db,$reg[1],'c_civility','code','label');
         }
         else if (preg_match('/^OrderSource([0-9A-Z]+)$/i',$key,$reg))
         {

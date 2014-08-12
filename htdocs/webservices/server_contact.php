@@ -491,7 +491,7 @@ function getContactsForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.civilite as civility_id, c.lastname, c.firstname, c.statut,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.civility as civility_id, c.lastname, c.firstname, c.statut,";
 		$sql.= " c.address, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";

@@ -367,7 +367,7 @@ class FormCompany
 
 		$out='';
 
-		$sql = "SELECT rowid, code, civilite as civility_label, active FROM ".MAIN_DB_PREFIX."c_civilite";
+		$sql = "SELECT rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql.= " WHERE active = 1";
 
 		dol_syslog("Form::select_civility", LOG_DEBUG);
@@ -392,7 +392,7 @@ class FormCompany
 						$out.= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civility_label!='-'?$obj->civility_label:''));
+					$out.= ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label!='-'?$obj->label:''));
 					$out.= '</option>';
 					$i++;
 				}

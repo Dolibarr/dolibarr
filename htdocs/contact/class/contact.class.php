@@ -249,7 +249,7 @@ class Contact extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
 		if ($this->socid > 0) $sql .= " fk_soc='".$this->db->escape($this->socid)."',";
 		else if ($this->socid == -1) $sql .= " fk_soc=null,";
-		$sql .= "  civilite='".$this->db->escape($this->civility_id)."'";
+		$sql .= "  civility='".$this->db->escape($this->civility_id)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
 		$sql .= ", address='".$this->db->escape($this->address)."'";
@@ -498,7 +498,7 @@ class Contact extends CommonObject
 
 		$langs->load("companies");
 
-		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civilite as civility_id, c.lastname, c.firstname,";
+		$sql = "SELECT c.rowid, c.fk_soc, c.ref_ext, c.civility as civility_id, c.lastname, c.firstname,";
 		$sql.= " c.address, c.statut, c.zip, c.town,";
 		$sql.= " c.fk_pays as country_id,";
 		$sql.= " c.fk_departement,";
@@ -911,7 +911,7 @@ class Contact extends CommonObject
 
 		$code=(! empty($this->civility_id)?$this->civility_id:(! empty($this->civility_id)?$this->civility_id:''));
 		if (empty($code)) return '';
-        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
+        return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
 	}
 
 	/**

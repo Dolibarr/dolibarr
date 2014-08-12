@@ -77,7 +77,7 @@ class mailing_contacts4 extends MailingTargets
 
         // La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
-        $sql.= " sp.lastname, sp.firstname, sp.civilite as civility_id,";
+        $sql.= " sp.lastname, sp.firstname, sp.civility as civility_id,";
         $sql.= " s.nom as companyname";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
         if ($filtersarray[0] <> 'all')$sql.= " INNER JOIN ".MAIN_DB_PREFIX."categorie_contact as cs ON cs.fk_socpeople=sp.rowid";

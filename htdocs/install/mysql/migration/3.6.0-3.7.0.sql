@@ -959,3 +959,11 @@ CREATE TABLE llx_holiday_types (
   nbCongesDeducted varchar(255) NOT NULL,
   nbCongesEveryMonth varchar(255) NOT NULL
 );
+
+-- Change on table c_civilite
+ALTER TABLE llx_c_civilite RENAME TO llx_c_civility;
+ALTER TABLE llx_c_civility CHANGE civilite label VARCHAR(50);
+ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
+ALTER TABLE llx_adherent CHANGE civilite civility VARCHAR(6);
+ALTER TABLE llx_socpeople CHANGE civilite civility VARCHAR(6);
+ALTER TABLE llx_user CHANGE civilite civility VARCHAR(6);

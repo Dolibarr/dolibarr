@@ -425,7 +425,7 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-        $sql.= " civilite = ".(!is_null($this->civility_id)?"'".$this->civility_id."'":"null");
+        $sql.= " civility = ".(!is_null($this->civility_id)?"'".$this->civility_id."'":"null");
         $sql.= ", firstname = ".($this->firstname?"'".$this->db->escape($this->firstname)."'":"null");
         $sql.= ", lastname=" .($this->lastname?"'".$this->db->escape($this->lastname)."'":"null");
         $sql.= ", login="   .($this->login?"'".$this->db->escape($this->login)."'":"null");
@@ -1048,7 +1048,7 @@ class Adherent extends CommonObject
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.ref_ext, d.civilite as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
+        $sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note,";
         $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
@@ -1539,7 +1539,7 @@ class Adherent extends CommonObject
 
     	$code=(empty($this->civility_id)?'':$this->civility_id);
     	if (empty($code)) return '';
-    	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civilite", "code", "civilite", $code);
+    	return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
     }
 
     /**

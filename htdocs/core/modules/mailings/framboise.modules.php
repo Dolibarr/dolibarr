@@ -64,7 +64,7 @@ class mailing_framboise extends MailingTargets
 
 		// Select the members from category
 		$sql = "SELECT a.rowid as id, a.email as email, a.lastname, null as fk_contact, a.firstname,";
-		$sql.= " a.datefin, a.civilite as civility_id, a.login, a.societe,";	// Other fields
+		$sql.= " a.datefin, a.civility as civility_id, a.login, a.societe,";	// Other fields
 		if ($_POST['filter']) $sql.= " c.label";
 		else $sql.=" null as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a";
