@@ -743,13 +743,28 @@ class Contrat extends CommonObject
 
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 
-			// Mise a jour ref
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-			if ($this->db->query($sql))
+			
+			// Load object modContract
+			$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+			if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
 			{
-				if ($this->id)
+				$module = substr($module, 0, dol_strlen($module)-4);
+			}
+			$result=dol_include_once('/core/modules/contract/'.$module.'.php');
+			if ($result > 0)
+			{
+				$modCodeContract = new $module();
+			}
+
+			if (!empty($modCodeContract->code_auto)) {
+				// Mise a jour ref
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."contrat SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+				if ($this->db->query($sql))
 				{
-					$this->ref="(PROV".$this->id.")";
+					if ($this->id)
+					{
+						$this->ref="(PROV".$this->id.")";
+					}
 				}
 			}
 
