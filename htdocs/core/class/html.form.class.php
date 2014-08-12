@@ -804,7 +804,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+            if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
             {
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$out.= ajax_combobox($htmlname, $events, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
@@ -1008,6 +1008,7 @@ class Form
 
             if ($conf->use_javascript_ajax && $conf->global->CONTACT_USE_SEARCH_TO_SELECT && ! $forcecombo && ! $options_only)
             {
+				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
             	$out.= ajax_combobox($htmlname, $events, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
             }
 
@@ -1114,15 +1115,16 @@ class Form
      *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *  @param  array	$exclude        Array list of users id to exclude
      * 	@param	int		$disabled		If select list must be disabled
-     *  @param  array	$include        Array list of users id to include
+     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
      * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
      *  @param	int		$force_entity	0 or Id of environment to force
      *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
      *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	string	$morefilter		Add more filters into sql request
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
-    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0)
+    function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
     {
         global $conf,$user,$langs;
 
@@ -1133,7 +1135,21 @@ class Form
         if (is_array($exclude))	$excludeUsers = implode("','",$exclude);
         // Permettre l'inclusion d'utilisateurs
         if (is_array($include))	$includeUsers = implode("','",$include);
-
+		else if ($include == 'hierarchy') 
+		{
+			// Build list includeUsers to have only hierarchy
+			$userid=$user->id;
+			$include=array();
+			if (empty($user->users) || ! is_array($user->users)) $user->get_full_tree();
+			foreach($user->users as $key => $val)
+			{
+				if (preg_match('/_'.$userid.'/',$val['fullpath'])) $include[]=$val['id'];
+			}
+			$includeUsers = implode("','",$include);
+			//var_dump($includeUsers);exit;
+			//var_dump($user->users);exit;
+		}
+		
         $out='';
 
         // On recherche les utilisateurs
@@ -1165,7 +1181,8 @@ class Form
         if (! empty($user->societe_id)) $sql.= " AND u.fk_societe = ".$user->societe_id;
         if (is_array($exclude) && $excludeUsers) $sql.= " AND u.rowid NOT IN ('".$excludeUsers."')";
         if (is_array($include) && $includeUsers) $sql.= " AND u.rowid IN ('".$includeUsers."')";
-        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
+        if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut <> 0";
+        if (! empty($morefilter)) $sql.=$morefilter;
         $sql.= " ORDER BY u.lastname ASC";
 
         dol_syslog(get_class($this)."::select_dolusers", LOG_DEBUG);
@@ -2420,6 +2437,95 @@ class Form
     }
 
     /**
+     *  Return a HTML select list of shipping mode
+     *
+     *  @param	string	$selected          Id shipping mode pre-selected
+     *  @param  string	$htmlname          Name of select zone
+     *  @param  string	$filtre            To filter list
+     *  @param  int		$useempty          1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  string	$moreattrib        To add more attribute on select
+     * 	@return	void
+     */
+    function selectShippingMethod($selected='',$htmlname='shipping_method_id',$filtre='',$useempty=0,$moreattrib='')
+    {
+        global $langs, $conf, $user;
+
+        $langs->load("admin");
+        $langs->load("deliveries");
+
+        $sql = "SELECT rowid, code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode";
+        $sql.= " WHERE active = 1";
+        if ($filtre) $sql.=" AND ".$filtre;
+        $sql.= " ORDER BY libelle ASC";
+        
+        dol_syslog(get_class($this)."::selectShippingMode", LOG_DEBUG);
+        $result = $this->db->query($sql);
+        if ($result) {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            if ($num) {
+                print '<select id="select'.$htmlname.'" class="flat selectshippingmethod" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
+                if ($useempty == 1 || ($useempty == 2 && $num > 1)) {
+                    print '<option value="-1">&nbsp;</option>';
+                }
+                while ($i < $num) {
+                    $obj = $this->db->fetch_object($result);
+                    if ($selected == $obj->rowid) {
+                        print '<option value="'.$obj->rowid.'" selected="selected">';
+                    } else {
+                        print '<option value="'.$obj->rowid.'">';
+                    }
+                    print $langs->trans("SendingMethod".strtoupper($obj->code));
+                    print '</option>';
+                    $i++;
+                }
+                print "</select>";
+                if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionnarySetup"),1);
+            } else {
+                print $langs->trans("NoShippingMethodDefined");
+            }
+        } else {
+            dol_print_error($this->db);
+        }
+    }
+    
+    /**
+     *    Display form to select shipping mode
+     *
+     *    @param	string	$page        Page
+     *    @param    int		$selected    Id of shipping mode
+     *    @param    string	$htmlname    Name of select html field
+     *    @param    int		$addempty    1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *    @return	void
+     */
+    function formSelectShippingMethod($page, $selected='', $htmlname='shipping_method_id', $addempty=0)
+    {
+        global $langs, $db;
+
+        $langs->load("deliveries");
+
+        if ($htmlname != "none") {
+            print '<form method="POST" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setshippingmethod">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->selectShippingMethod($selected, $htmlname, '', $addempty);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            print '</tr></table></form>';
+        } else {
+            if ($selected) {
+                $code=$langs->getLabelFromKey($db, $selected, 'c_shipment_mode', 'rowid', 'code');
+                print $langs->trans("SendingMethod".strtoupper($code));
+            } else {
+                print "&nbsp;";
+            }
+        }
+    }
+
+    /**
      *  Return a HTML select list of bank accounts
      *
      *  @param	string	$selected          Id account pre-selected
@@ -2512,7 +2618,7 @@ class Form
                 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
                 $bankstatic=new Account($this->db);
                 $bankstatic->fetch($selected);
-                print $bankstatic->label.' ('.$bankstatic->currency_code.')';
+                print $this->textwithpicto($bankstatic->label,$langs->trans("AccountCurrency").'&nbsp;'.$bankstatic->currency_code);
             } else {
                 print "&nbsp;";
             }
@@ -2849,7 +2955,7 @@ class Form
      *    Show a form to select a project
      *
      *    @param	int		$page        Page
-     *    @param	int		$socid       Id third party
+     *    @param	int		$socid       Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
      *    @param    int		$selected    Id pre-selected project
      *    @param    string	$htmlname    Name of select field
      *    @return	void
@@ -3809,7 +3915,7 @@ class Form
         }
         elseif ($typehour=='text')
         {
-        	print '<input type="text" size="3" name="'.$prefix.'hour" class="flat" value="'.((int) $hourSelected).'">';
+        	print '<input type="text" size="3" name="'.$prefix.'hour"'.($disabled?' disabled="disabled"':'').' class="flat" value="'.((int) $hourSelected).'">';
         }
         print $langs->trans('Hours');
 
@@ -4093,7 +4199,7 @@ class Form
             $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
         }
 
-        $ret.=$object->$fieldref;
+        $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;

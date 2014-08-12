@@ -558,22 +558,26 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
      */
     public function testImgPicto()
     {
-        $s=img_picto('alt','user');
+        $s=img_picto('title','user');
         print __METHOD__." s=".$s."\n";
         $this->assertContains('theme',$s,'testImgPicto1');
 
-    	$s=img_picto('alt','img.png','style="float: right"',0);
+    	$s=img_picto('title','img.png','style="float: right"',0);
         print __METHOD__." s=".$s."\n";
         $this->assertContains('theme',$s,'testImgPicto2');
         $this->assertContains('style="float: right"',$s,'testImgPicto2');
 
-        $s=img_picto('alt','/fullpath/img.png','',1);
+        $s=img_picto('title','/fullpath/img.png','',1);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals($s,'<img src="/fullpath/img.png" border="0" alt="alt" title="alt">','testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto3');
 
-        $s=img_picto('alt','/fullpath/img.png','',true);
+        $s=img_picto('title','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals($s,'<img src="/fullpath/img.png" border="0" alt="alt" title="alt">','testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="" title="title">',$s,'testImgPicto4');
+
+        $s=img_picto('title:alt','/fullpath/img.png','',true);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals('<img src="/fullpath/img.png" border="0" alt="alt" title="title">',$s,'testImgPicto5');
     }
 
     /**
@@ -782,5 +786,27 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         print __METHOD__." tmp=".json_encode($tmp)."\n";
         $this->assertEquals('{"AA":"B\/B","CC":"","EE":"FF","HH":"GG;"}',json_encode($tmp));
     }
+
+	/**
+	 * dol_nl2br
+	 *
+	 * @return void
+	 */
+	public function testDolNl2Br() {
+
+		//String to encode
+		$string = "a\na";
+
+		$this->assertEquals(dol_nl2br($string), "a<br>\na");
+
+		//With $forxml parameter
+		$this->assertEquals(dol_nl2br($string, 0, 1), "a<br />\na");
+
+		//Replacing \n by br
+		$this->assertEquals(dol_nl2br($string, 1), "a<br>a");
+
+		//With $forxml parameter
+		$this->assertEquals(dol_nl2br($string, 1, 1), "a<br />a");
+	}
 
 }

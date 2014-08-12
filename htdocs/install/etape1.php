@@ -256,8 +256,6 @@ if (! $error && $db->connected)
 {
     if (! empty($_POST["db_create_database"]))	// If we create database, we force default value
     {
-    	//$defaultCharacterSet=getStaticMember(get_class($db),'forcecharset');
-    	//$defaultDBSortingCollation=getStaticMember(get_class($db),'forcecollate');
     	$defaultCharacterSet=$db->forcecharset;
     	$defaultDBSortingCollation=$db->forcecollate;
     }

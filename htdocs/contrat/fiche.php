@@ -6,6 +6,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,7 +207,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
     	$object->fk_project					= GETPOST('projectid','int');
     	$object->remise_percent				= GETPOST('remise_percent','alpha');
     	$object->ref						= GETPOST('ref','alpha');
-    	$object->ref_supplier				= GETPOST('ref_supplier','alpha');
+    	$object->ref_customer				= GETPOST('ref_customer','alpha');
 
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
 	    if ($_POST['origin'] && $_POST['originid'])
@@ -276,7 +277,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 									$outputlangs = $langs;
 									$newlang='';
 									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-									if (empty($newlang)) $newlang=$srcobject->client->default_lang;
+									if (empty($newlang)) $newlang=$srcobject->thirdparty->default_lang;
 									if (! empty($newlang))
 									{
 										$outputlangs = new Translate("",$conf);
@@ -421,6 +422,10 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
             $tva_tx = get_default_tva($mysoc,$object->thirdparty,$prod->id);
             $tva_npr = get_default_npr($mysoc,$object->thirdparty,$prod->id);
+            $pu_ht = $prod->price;
+            $pu_ttc = $prod->price_ttc;
+            $price_min = $prod->price_min;
+            $price_base_type = $prod->price_base_type;
 
             // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES && $object->thirdparty->price_level)
@@ -430,13 +435,24 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
                 $price_min = $prod->multiprices_min[$object->thirdparty->price_level];
                 $price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
             }
-            else
-            {
-                $pu_ht = $prod->price;
-                $pu_ttc = $prod->price_ttc;
-                $price_min = $prod->price_min;
-                $price_base_type = $prod->price_base_type;
-            }
+        	elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+			{
+				require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+
+				$prodcustprice = new Productcustomerprice($db);
+
+				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
+
+				$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+				if ($result) {
+					if (count($prodcustprice->lines) > 0) {
+						$pu_ht = price($prodcustprice->lines [0]->price);
+						$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
+						$price_base_type = $prodcustprice->lines [0]->price_base_type;
+						$prod->tva_tx = $prodcustprice->lines [0]->tva_tx;
+					}
+				}
+			}
 
             // On reevalue prix selon taux tva car taux tva transaction peut etre different
             // de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -713,17 +729,17 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		$action = 'edit_extras';
 		setEventMessage($object->error,'errors');
 	}
-} elseif ($action=='setref_supplier') {
+} elseif ($action=='setref_customer') {
 	$result = $object->fetch($id);
 	if ($result < 0) {
 		setEventMessage($object->errors,'errors');
 	}
-	$object->ref_supplier=GETPOST('ref_supplier','alpha');
+	$object->ref_customer=GETPOST('ref_customer','alpha');
 	
 	$result = $object->update($user);
 	if ($result < 0) {
 		setEventMessage($object->errors,'errors');
-		$action='editref_supplier';
+		$action='editref_customer';
 	} else {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
@@ -878,7 +894,7 @@ if ($action == 'create')
 	
 	// Ref Int
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
-	print '<td colspan="2"><input type="text" siez="5" name="ref_supplier" id="ref_supplier" value="'.GETPOST('ref_supplier','alpha').'"></td></tr>';
+	print '<td colspan="2"><input type="text" siez="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';
@@ -1069,9 +1085,9 @@ else
 
         print '<tr>';
 		print '<td  width="20%">';
-		print $form->editfieldkey("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print $form->editfieldval("RefCustomer",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 

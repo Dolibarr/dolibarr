@@ -74,6 +74,9 @@ class Categorie extends CommonObject
 	function fetch($id,$label='')
 	{
 		global $conf;
+		
+		// Check parameters
+		if (empty($id) && empty($label)) return -1;
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
@@ -84,7 +87,7 @@ class Categorie extends CommonObject
 
 		else
 		{
-			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity=".$conf->entity;;
+			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -134,7 +137,7 @@ class Categorie extends CommonObject
 	 *          					-3 : categorie invalide
 	 * 								-4 : category already exists
 	 */
-	function create($user='')
+	function create($user)
 	{
 		global $conf,$langs,$hookmanager;
 		$langs->load('categories');
@@ -334,6 +337,9 @@ class Categorie extends CommonObject
 		global $conf,$langs;
 
 		$error=0;
+
+        // Clean parameters
+		$this->fk_parent = ($this->fk_parent != "" ? intval($this->fk_parent) : 0);
 
 		dol_syslog(get_class($this)."::remove");
 

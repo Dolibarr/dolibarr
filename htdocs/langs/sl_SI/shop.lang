@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - shop
-FailedConnectDBCheckModuleSetup=Failed to connect to oscommerce database. Check your module setup
+FailedConnectDBCheckModuleSetup=Povezava z bazo podatkov oscommerce ni uspela. Preverite nastavitve modula
 Shop=Trgovina
 ShopWeb=Spletna trgovina
 LastOrders=Zadnja naročila

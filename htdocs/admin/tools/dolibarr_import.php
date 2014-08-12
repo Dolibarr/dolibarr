@@ -38,7 +38,7 @@ $showpass=GETPOST('showpass');
  * View
  */
 
-$label=getStaticMember($db, 'label');
+$label=$db::LABEL;
 
 $help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
 llxHeader('','',$help_url);

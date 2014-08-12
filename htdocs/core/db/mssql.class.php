@@ -33,13 +33,13 @@ class DoliDBMssql extends DoliDB
 	//! Database type
 	public $type='mssql';
 	//! Database label
-	static $label='MSSQL';
+	const LABEL='MSSQL';
 	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
 	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	static $versionmin=array(2000);
+	const VERSIONMIN='2000';
 	//! Resultset of last query
 	private $_results;
 
@@ -349,6 +349,8 @@ class DoliDBMssql extends DoliDB
 
 		//print "<!--".$query."-->";
 
+		dol_syslog('sql='.$query, LOG_DEBUG);
+
 		if (! $this->database_name)
 		{
 			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -358,8 +360,6 @@ class DoliDBMssql extends DoliDB
 		{
 			$ret = mssql_query($query, $this->db);
 		}
-
-		dol_syslog('sql='.$query, LOG_DEBUG);
 
 		if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
 		{

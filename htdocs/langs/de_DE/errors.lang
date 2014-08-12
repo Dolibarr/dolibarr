@@ -135,7 +135,7 @@ ErrorWarehouseMustDiffers=Quell- und Ziel-Lager müssen unterschiedlich sein
 ErrorBadFormat=Falsches Format!
 ErrorPaymentDateLowerThanInvoiceDate=Zahlungsdatum (%s) darf nicht vor Rechnungsdatum (%s) liegen für Rechnung %s.
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
-ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+ErrorThereIsSomeDeliveries=Fehler: Lieferung(en) zu dieser Sendung vorhanden. Löschen nicht möglich.
 
 # Warnings
 WarningMandatorySetupNotComplete=Zwingend notwendige Parameter sind noch nicht definiert
@@ -153,3 +153,4 @@ WarningCloseAlways=Warning, closing is done even if amount differs between sourc
 WarningUsingThisBoxSlowDown=Warnung: Der Einsatz dieser Box verlangsamt sämtliche Seiten mit dieser Box spürbar.
 WarningClickToDialUserSetupNotComplete=Die ClickToDial-Informationen für Ihren Benutzer sind nicht vollständig (siehe Registerkarte ClickToDial auf Ihrer Benutzerkarte).
 WarningNotRelevant=Irrelevant operation for this dataset
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

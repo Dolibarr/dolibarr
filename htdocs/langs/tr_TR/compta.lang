@@ -4,7 +4,7 @@ AccountancyCard=Muhasebe kartı
 Treasury=Maliye
 MenuFinancial=Mali
 TaxModuleSetupToModifyRules=Hesaplama kurallarını değiştirmek için <a href="%s">Vergi modülü ayarları</a> na git
-TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
+TaxModuleSetupToModifyRulesLT=Hesaplama kurallarını değiştirmek için <a href="%s">Firma ayarları</a>na git
 OptionMode=Muhasebe seçeneği
 OptionModeTrue=Gelir-Gider seçeneği
 OptionModeVirtual=Alacak-Borç seçeneği
@@ -12,7 +12,7 @@ OptionModeTrueDesc=Bu bağlamda, ciro ödemeler üzerinden (ödeme tarihi) hesap
 OptionModeVirtualDesc=Bu bağlamda, ciro faturalar üzerinden (doğrulama tarihi) hesaplanır.  Bu faturalar işlendiğinde, ödenmiş ya da ödenmemiş olmasına bakılmadan, ciro listesinde görüntülenir.
 FeatureIsSupportedInInOutModeOnly=Özellik yalnızca ALACAKLAR-BORÇLAR muhasebe modunda geçerlidir (Muhasebe modülü yapılandırmasına bak)
 VATReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar vergi modülü kurulumu tarafından tanımlanan kurallar kullanılarak hesaplanır.
-LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
+LTReportBuildWithOptionDefinedInModule=Burada gösterilen tutarlar Firma ayarları tarafından tanımlanan kurallar kullanılarak hesaplanır.
 Param=Ayarlar
 RemainingAmountPayment=Kalan ödeme tutarı:
 AmountToBeCharged=Ödenecek toplam tutar:
@@ -124,11 +124,11 @@ CalcModeVATEngagement=Mod <b>%sKDV, gelirler-giderler%s için</b>.
 CalcModeDebt=Mod <b>%sAlacaklar-Borçlar, taahhüt hesabı%s için</b>.
 CalcModeEngagement=Mod <b>%sAlacaklar-Borçlar, kasa hesabı%s için</b>.
 CalcModeLT1= Mode <b>%sRE on customer invoices - suppliers invoices%s</b>
-CalcModeLT1Debt=Modo <b>%sRE on customer invoices%s</b>
-CalcModeLT1Rec= Modo <b>%sRE on suppliers invoices%s</b>
-CalcModeLT2= Modo <b>%sIRPF on customer invoices - suppliers invoices%s</b>
-CalcModeLT2Debt=Modo <b>%sIRPF on customer invoices%s</b>
-CalcModeLT2Rec= Modo <b>%sIRPF on suppliers invoices%s</b>
+CalcModeLT1Debt=Mode <b>%sRE on customer invoices%s</b>
+CalcModeLT1Rec= Mode <b>%sRE on suppliers invoices%s</b>
+CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
+CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
+CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
 AnnualSummaryDueDebtMode=Gelir ve gider bilançosu, yıllık özet
 AnnualSummaryInputOutputMode=Gelir ve gider bilançosu, yıllık özet
 AnnualByCompaniesDueDebtMode=Gelir ve gider bilançosu, üçüncü şahıslara göre ayrıntılı, <b>%sAlacaklar-Borçlar%s</b> söz konusu <b>Taahhüt hesabı</b> modu.

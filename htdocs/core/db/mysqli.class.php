@@ -34,9 +34,9 @@ class DoliDBMysqli extends DoliDB
     //! Database type
     public $type='mysqli';
     //! Database label
-    static $label='MySQL';
+    const LABEL='MySQL';
     //! Version min database
-    static $versionmin=array(4,1,0);
+    const VERSIONMIN='4.1.0';
 	//! Resultset of last query
 	private $_results;
 
@@ -255,6 +255,9 @@ class DoliDBMysqli extends DoliDB
     function query($query,$usesavepoint=0,$type='auto')
     {
         $query = trim($query);
+
+	    dol_syslog('sql='.$query, LOG_DEBUG);
+
         if (! $this->database_name)
         {
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -264,8 +267,6 @@ class DoliDBMysqli extends DoliDB
         {
             $ret = mysqli_query($this->db,$query);
         }
-
-	    dol_syslog('sql='.$query, LOG_DEBUG);
 
         if (! preg_match("/^COMMIT/i",$query) && ! preg_match("/^ROLLBACK/i",$query))
         {
@@ -833,7 +834,7 @@ class DoliDBMysqli extends DoliDB
         $resql=$this->query($sql);
         if (! $resql)
         {
-            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS') 
+            if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS')
             {
             	return -1;
             }

@@ -672,9 +672,12 @@ HelpCopyToClipboard=Utilizați Ctrl + C pentru a copia în clipboard
 SaveUploadedFileWithMask=Salvați fișierul pe server cu numele "<strong>%s</strong>" (altfel"%s")
 OriginFileName=Nume fişier original
 SetDemandReason=Setează sursa
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Vezi notițe
 XMoreLines=%s linii(e) ascunse
 PublicUrl=URL Public
+AddBox=Add box
 
 # Week day
 Monday=Luni

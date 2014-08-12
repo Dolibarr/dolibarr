@@ -153,3 +153,4 @@ WarningCloseAlways=Warning, closing is done even if amount differs between sourc
 WarningUsingThisBoxSlowDown=Warning, using this box slow down seriously all pages showing the box.
 WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your user are not complete (see tab ClickToDial onto your user card).
 WarningNotRelevant=Irrelevant operation for this dataset
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

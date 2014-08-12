@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,6 +59,8 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_BUTTON_HIDE_UNAUTHORIZED", $_POST["MAIN_BUTTON_HIDE_UNAUTHORIZED"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_START_WEEK",         $_POST["MAIN_START_WEEK"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_DAYS",  $_POST["MAIN_DEFAULT_WORKING_DAYS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DEFAULT_WORKING_HOURS", $_POST["MAIN_DEFAULT_WORKING_HOURS"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SHOW_LOGO",          $_POST["MAIN_SHOW_LOGO"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_FIRSTNAME_NAME_POSITION",          $_POST["MAIN_FIRSTNAME_NAME_POSITION"],'chaine',0,'',$conf->entity);
 
@@ -171,13 +173,13 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Taille max des listes
+	// Max size of lists
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMaxSizeList").'</td><td><input class="flat" name="main_size_liste_limit" size="4" value="' . $conf->global->MAIN_SIZE_LISTE_LIMIT . '"></td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Desactivation javascript et ajax
+    // Disable javascript and ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
     print $form->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
@@ -204,7 +206,23 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-    // Firstname/Name
+    // DefaultWorkingDays
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+    print '<input type="text" name="MAIN_DEFAULT_WORKING_DAYS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5').'">';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+    // DefaultWorkingHours
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+    print '<input type="text" name="MAIN_DEFAULT_WORKING_HOURS" size="5" value="'.(isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18').'">';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+	// Firstname/Name
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FirstnameNamePosition").'</td><td>';
 	$array=array(0=>$langs->trans("Firstname").' '.$langs->trans("Lastname"),1=>$langs->trans("Lastname").' '.$langs->trans("Firstname"));
@@ -360,6 +378,22 @@ else	// Show
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("WeekStartOnDay").'</td><td>';
     print $langs->trans("Day".(isset($conf->global->MAIN_START_WEEK)?$conf->global->MAIN_START_WEEK:'1'));
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+    // DefaultWorkingDays
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingDays").'</td><td>';
+    print isset($conf->global->MAIN_DEFAULT_WORKING_DAYS)?$conf->global->MAIN_DEFAULT_WORKING_DAYS:'1-5';
+    print '</td>';
+	print '<td width="20">&nbsp;</td>';
+	print '</tr>';
+
+    // DefaultWorkingHours
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultWorkingHours").'</td><td>';
+    print isset($conf->global->MAIN_DEFAULT_WORKING_HOURS)?$conf->global->MAIN_DEFAULT_WORKING_HOURS:'9-18';
     print '</td>';
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';

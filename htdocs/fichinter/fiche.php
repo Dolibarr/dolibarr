@@ -1645,15 +1645,16 @@ else if ($id > 0 || ! empty($ref))
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
 			$newlang = $object->client->default_lang;
 
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('interventions');
+		}
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			if (! empty($newlang))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-
 			$result=fichinter_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
@@ -1681,7 +1682,7 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->trans('SendInterventionRef','__FICHINTERREF__');
+		$formmail->withtopic=$outputlangs->trans('SendInterventionRef','__FICHINTERREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;

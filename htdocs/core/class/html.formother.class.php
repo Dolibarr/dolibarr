@@ -491,7 +491,7 @@ class FormOther
                 {
                     if ($lines[$i]->fk_project != $lastprojectid)	// Break found on project
                     {
-                        if ($i > 0 && $conf->browser->firefox) print '<option value="0" disabled="disabled">----------</option>';
+                        if ($i > 0) print '<option value="0" disabled="disabled">----------</option>';
                         print '<option value="'.$lines[$i]->fk_project.'_0"';
                         if ($selectedproject == $lines[$i]->fk_project) print ' selected="selected"';
                         print '>';	// Project -> Task
@@ -927,6 +927,7 @@ class FormOther
         $arrayboxtoactivatelabel=array();
         if (! empty($user->conf->$confuserzone))
         {
+        	$boxorder='';
         	$langs->load("boxes");	// Load label of boxes
         	foreach($boxactivated as $box)
         	{
@@ -935,8 +936,23 @@ class FormOther
         		if (preg_match('/graph/',$box->class)) $label.=' ('.$langs->trans("Graph").')';
         		$arrayboxtoactivatelabel[$box->id]=$label;			// We keep only boxes not shown for user, to show into combo list
         	}
-			// Class Form must have been already loaded
-            $selectboxlist=Form::selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
+            foreach($boxidactivatedforuser as $boxid)
+        	{
+       			if (empty($boxorder)) $boxorder.='A:';
+  				$boxorder.=$boxid.',';
+        	}
+
+        	//var_dump($boxidactivatedforuser);
+
+        	// Class Form must have been already loaded
+			$selectboxlist.='<form name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
+			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
+			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
+			$selectboxlist.='<input type="hidden" name="boxorder" value="'.$boxorder.'">';
+			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel,'',1);
+            if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
+            $selectboxlist.='</form>';
         }
 
         // Javascript code for dynamic actions

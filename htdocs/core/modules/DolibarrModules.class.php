@@ -523,8 +523,10 @@ abstract class DolibarrModules
 
         if (is_array($this->boxes))
         {
-            foreach ($this->boxes as $key => $value)
-            {
+            $pos_name = InfoBox::getListOfPagesForBoxes();
+
+			foreach ($this->boxes as $key => $value)
+			{
                 $file  = isset($this->boxes[$key]['file'])?$this->boxes[$key]['file']:'';
                 $note  = isset($this->boxes[$key]['note'])?$this->boxes[$key]['note']:'';
                 $enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton'])?$this->boxes[$key]['enabledbydefaulton']:'Home';
@@ -564,7 +566,6 @@ abstract class DolibarrModules
                         {
                             $lastid=$this->db->last_insert_id(MAIN_DB_PREFIX."boxes_def","rowid");
 
-                            $pos_name = getStaticMember('InfoBox','listOfPages');
                             foreach ($pos_name as $key2 => $val2)
                             {
                             	//print 'key2='.$key2.'-val2='.$val2."<br>\n";
@@ -852,6 +853,7 @@ abstract class DolibarrModules
 
         dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
         $resql=$this->db->query($sql_del);
+
         if ($resql)
         {
             $obj=$this->db->fetch_object($resql);
@@ -870,45 +872,57 @@ abstract class DolibarrModules
 
                     if (empty($r_type)) $r_type='w';
 
-                    if (dol_strlen($r_perms) )
+	                // Search if perm already present
+    	            $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
+        	        $sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
+					$resqlselect=$this->db->query($sql);
+
+					$obj = $this->db->fetch_object($resqlselect);
+                    if ($obj->nb == 0)
                     {
-                        if (dol_strlen($r_subperms) )
-                        {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-                            $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-                            $sql.= " VALUES ";
-                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
-                        }
-                        else
-                        {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-                            $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
-                            $sql.= " VALUES ";
-                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
-                        }
-                    }
-                    else
-                    {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-                        $sql .= " (id, entity, libelle, module, type, bydefault)";
-                        $sql .= " VALUES ";
-                        $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+	                    if (dol_strlen($r_perms) )
+	                    {
+	                        if (dol_strlen($r_subperms) )
+	                        {
+	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+	                            $sql.= " VALUES ";
+	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+	                        }
+	                        else
+	                        {
+	                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+	                            $sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+	                            $sql.= " VALUES ";
+	                            $sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+	                        }
+	                    }
+	                    else
+						{
+	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+	                        $sql .= " (id, entity, libelle, module, type, bydefault)";
+	                        $sql .= " VALUES ";
+	                        $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
+	                    }
+
+                    	$resqlinsert=$this->db->query($sql,1);
+
+	                    if (! $resqlinsert)
+	                    {
+	                        if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+	                        {
+	                            $this->error=$this->db->lasterror();
+	                            $err++;
+	                            break;
+	                        }
+	                        else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+
+	                    }
+
+	                    $this->db->free($resqlinsert);
                     }
 
-                    dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
-                    $resqlinsert=$this->db->query($sql,1);
-                    if (! $resqlinsert)
-                    {
-                        if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
-                        {
-                            $this->error=$this->db->lasterror();
-                            $err++;
-                            break;
-                        }
-                        else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
-
-                    }
-                    $this->db->free($resqlinsert);
+                    $this->db->free($resqlselect);
 
                     // If we want to init permissions on admin users
                     if ($reinitadminperms)

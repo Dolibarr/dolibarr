@@ -761,8 +761,9 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
         else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        //var_dump($cp->getConfCP('nbHolidayDeducted'));
         $nb_holiday = $cp->getCPforUser($user->id) / $cp->getConfCP('nbHolidayDeducted');
-        print ' &nbsp; <span>'.$langs->trans('SoldeCPUser', round($nb_holiday,0)).'</span>';
+        print ' &nbsp; <span>'.$langs->trans('SoldeCPUser', round($nb_holiday,2)).'</span>';
         print '</td>';
         print '</tr>';
         print '<tr>';
@@ -1070,7 +1071,7 @@ else
                     // Liste des utiliseurs du groupes choisi dans la config
                     $idGroupValid = $cp->getConfCP('userGroup');
 
-                    $validator = new UserGroup($db,$idGroupValid);
+                    $validator = new UserGroup($db);
                     $valideur = $validator->listUsersForGroup('',1);
 
                     print '<td>';

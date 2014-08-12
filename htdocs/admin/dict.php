@@ -364,8 +364,37 @@ $tabhelp[24] = array();
 $tabhelp[25] = array();
 $tabhelp[26] = array();
 
+// List of check for fields (NOT USED YET)
+$tabfieldcheck=array();
+$tabfieldcheck[1]  = array();
+$tabfieldcheck[2]  = array();
+$tabfieldcheck[3]  = array();
+$tabfieldcheck[4]  = array();
+$tabfieldcheck[5]  = array();
+$tabfieldcheck[6]  = array();
+$tabfieldcheck[7]  = array();
+$tabfieldcheck[8]  = array();
+$tabfieldcheck[9]  = array();
+$tabfieldcheck[10] = array();
+$tabfieldcheck[11] = array();
+$tabfieldcheck[12] = array();
+$tabfieldcheck[13] = array();
+$tabfieldcheck[14] = array();
+$tabfieldcheck[15] = array();
+$tabfieldcheck[16] = array();
+$tabfieldcheck[17] = array();
+$tabfieldcheck[18] = array();
+$tabfieldcheck[19] = array();
+$tabfieldcheck[20] = array();
+$tabfieldcheck[21] = array();
+$tabfieldcheck[22] = array();
+$tabfieldcheck[23] = array();
+$tabfieldcheck[24] = array();
+$tabfieldcheck[25] = array();
+$tabfieldcheck[26] = array();
+
 // Complete all arrays with entries found into modules
-complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp);
+complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
 
 
 // Define elementList and sourceList (used for dictionary "type of contacts")
@@ -789,7 +818,7 @@ if ($id)
             if ($valuetoshow != '')
             {
                 print '<td align="'.$align.'">';
-            	if (! empty($tabhelp[$id][$value]) && preg_match('/http:/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.'</a>';
+            	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
             	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
             	else print $valuetoshow;
                 print '</td>';

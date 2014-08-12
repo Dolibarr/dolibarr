@@ -7,6 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,6 +85,9 @@ $permissionnote=$user->rights->fournisseur->facture->creer;	// Used by the inclu
 /*
  * Actions
  */
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
@@ -800,6 +804,13 @@ elseif ($action == 'reopen' && $user->rights->fournisseur->facture->creer)
     }
 }
 
+// Link invoice to order
+if (GETPOST('linkedOrder')) {
+	$object->fetch($id);
+	$object->fetch_thirdparty();
+	$result = $object->add_object_linked('commande', GETPOST('linkedOrder'));
+}
+
 // Add file in email form
 if (GETPOST('addfile'))
 {
@@ -1326,18 +1337,8 @@ if ($action == 'create')
     $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
     print '</td></tr>';
 
-	// Project
-	if (! empty($conf->projet->enabled))
-	{
-		$formproject=new FormProjets($db);
-
-		$langs->load('projects');
-		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$formproject->select_projects(-1, $projectid, 'projectid');
-		print '</td></tr>';
-	}
-
-    print '<tr><td>'.$langs->trans('NotePublic').'</td>';
+	// Public note
+	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
     $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
@@ -1476,7 +1477,7 @@ else
         // Confirmation de la suppression d'une ligne produit
         if ($action == 'confirm_delete_line')
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_delete_line', '', 1, 1);
         }
 
         // Clone confirmation
@@ -1488,7 +1489,7 @@ else
             //array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1)
             );
             // Paiement incomplet. On demande si motif = escompte ou autre
-            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes', 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneInvoice'),$langs->trans('ConfirmCloneInvoice',$object->ref),'confirm_clone',$formquestion,'yes', 1);
         }
 
         // Confirmation de la validation
@@ -1544,23 +1545,31 @@ else
                 array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1)));
             }
 
-            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, 1, 1, 240);
 
         }
 
         // Confirmation set paid
         if ($action == 'paid')
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', 0, 1);
 
         }
 
         // Confirmation de la suppression de la facture fournisseur
         if ($action == 'delete')
         {
-            print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
 
         }
+
+		if (!$formconfirm) {
+			$parameters=array('lineid'=>$lineid);
+			$formconfirm=$hookmanager->executeHooks('formConfirm',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		}
+
+		// Print form confirm
+		print $formconfirm;
 
 
         /**
@@ -1850,11 +1859,11 @@ else
             print '</td><td colspan="3">';
             if ($action == 'classify')
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,'projectid');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,'none');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
             }
             print '</td>';
             print '</tr>';
@@ -2221,6 +2230,69 @@ else
                  */
                 $somethingshown=$object->showLinkedObjectBlock();
 
+                if (empty($somethingshown) && ! empty($conf->fournisseur->enabled))
+                {
+                	print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+
+                	print '
+						<script type="text/javascript" language="javascript">
+						jQuery(document).ready(function() {
+							jQuery("#linktoorder").click(function() {
+								jQuery("#commande").toggle();
+							});
+						});
+						</script>
+						';
+
+                	print '<div id="commande" style="display:none">';
+
+                	$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
+                	$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+                	$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as c";
+                	$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $societe->id;
+
+                	$resqlorderlist = $db->query($sql);
+                	if ($resqlorderlist) {
+                		$num = $db->num_rows($resqlorderlist);
+                		$i = 0;
+
+                		print '<form action="" method="POST" name="LinkedOrder">';
+                		print '<table class="noborder">';
+                		print '<tr class="liste_titre">';
+                		print '<td class="nowrap"></td>';
+                		print '<td align="center">' . $langs->trans("Ref") . '</td>';
+                		print '<td align="left">' . $langs->trans("RefSupplier") . '</td>';
+                		print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+                		print '<td align="left">' . $langs->trans("Company") . '</td>';
+                		print '</tr>';
+                		while ($i < $num) {
+                			$objp = $db->fetch_object($resqlorderlist);
+                			if ($objp->socid == $societe->id) {
+                				$var = ! $var;
+                				print '<tr ' . $bc [$var] . '>';
+                				print '<td aling="left">';
+                				print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+                				print '<td align="center">' . $objp->ref . '</td>';
+                				print '<td>' . $objp->ref_supplier . '</td>';
+                				print '<td>' . price($objp->total_ht) . '</td>';
+                				print '<td>' . $objp->name . '</td>';
+                				print '</td>';
+                				print '</tr>';
+                			}
+
+                			$i ++;
+                		}
+                		print '</table>';
+                		print '<br><center><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"></center>';
+                		print '</form>';
+                		$db->free($resqlorderlist);
+                	} else {
+                		dol_print_error($db);
+                	}
+
+                	print '</div>';
+                }
+
 				print '</div><div class="fichehalfright"><div class="ficheaddleft">';
                 //print '</td><td valign="top" width="50%">';
                 //print '<br>';
@@ -2252,15 +2324,16 @@ else
             if ($conf->global->MAIN_MULTILANGS && empty($newlang))
             	$newlang = $object->client->default_lang;
 
+            if (!empty($newlang))
+            {
+                $outputlangs = new Translate('', $conf);
+                $outputlangs->setDefaultLang($newlang);
+                $outputlangs->load('bills');
+            }
+
             // Build document if it not exists
             if (! $file || ! is_readable($file))
             {
-                if (! empty($newlang))
-                {
-                    $outputlangs = new Translate("",$conf);
-                    $outputlangs->setDefaultLang($newlang);
-                }
-
                 $result=supplier_invoice_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
                 if ($result <= 0)
                 {
@@ -2288,7 +2361,7 @@ else
 			$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 			$formmail->withtocc=$liste;
             $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-            $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
+            $formmail->withtopic=$outputlangs->trans('SendBillRef','__FACREF__');
             $formmail->withfile=2;
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;

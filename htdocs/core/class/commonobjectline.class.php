@@ -28,6 +28,34 @@
  */
 abstract class CommonObjectLine
 {
+    /**
+     * Call trigger based on this instance
+     * NB: Error from trigger are stacked in interface->errors
+     * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
+     *
+     * @param   string    $trigger_name   trigger's name to execute
+     * @param   User      $user           Object user
+     * @return  int                       Result of run_triggers
+     */
+    function call_trigger($trigger_name, $user)
+    {
+    	global $langs,$conf;
 
+    	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+    	$interface=new Interfaces($this->db);
+    	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
+    	if ($result < 0)
+    	{
+    		if (!empty($this->errors))
+    		{
+    			$this->errors=array_merge($this->errors,$interface->errors);
+    		}
+    		else
+    		{
+    			$this->errors=$interface->errors;
+    		}
+    	}
+    	return $result;
+    }
 }
 

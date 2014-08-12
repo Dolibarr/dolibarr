@@ -22,7 +22,7 @@
 create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
-  nom                      varchar(60),                                -- company reference name
+  nom                      varchar(60),                                -- company reference name (should be smae length than adherent.societe)
   entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
 
   ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)

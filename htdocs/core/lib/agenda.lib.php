@@ -77,11 +77,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td><td class="nowrap maxwidthonsmartphone">';
 		//print ' &nbsp;';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
-		print ajax_combobox('usertodo');
+		if (! empty($conf->use_javascript_ajax))
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			print ajax_combobox('usertodo');
+		}
 		print ' &nbsp; '.$langs->trans("or") . ' ';
 		print $langs->trans("ActionsForUsersGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
-		print ajax_combobox('usergroup');
+		if (! empty($conf->use_javascript_ajax))
+		{
+			print ajax_combobox('usergroup');
+		}
 		print '</td></tr>';
 
 		/*print '<tr>';
@@ -419,10 +426,15 @@ function actions_prepare_head($object)
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
-	$head[$h][1] = $langs->trans('Documents');
-	$head[$h][2] = 'documents';
-	$h++;
+    // Attached files
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    $upload_dir = $conf->agenda->dir_output . "/" . $object->id;
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
+    $head[$h][1] = $langs->trans("Documents");
+	if($nbFiles > 0) $head[$h][1].= ' ('.$nbFiles.')';
+    $head[$h][2] = 'documents';
+    $h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Info');

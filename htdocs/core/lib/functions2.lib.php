@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -394,12 +395,12 @@ function isValidMailDomain($mail)
  *  <http[s]> :// [user[:pass]@] hostname [port] [/path] [?getquery] [anchor]
  *
  *	@param	string	$url		Url
- *  @param  int		$http		1: verify http, 0: not verify http
- *  @param  int		$pass		1: verify user and pass, 0: not verify user and pass
- *  @param  int		$port		1: verify port, 0: not verify port
- *  @param  int		$path		1: verify path, 0: not verify path
- *  @param  int		$query		1: verify query, 0: not verify query
- *  @param  int		$anchor		1: verify anchor, 0: not verify anchor
+ *  @param  int		$http		1: verify http is provided, 0: not verify http
+ *  @param  int		$pass		1: verify user and pass is provided, 0: not verify user and pass
+ *  @param  int		$port		1: verify port is provided, 0: not verify port
+ *  @param  int		$path		1: verify a path is provided "/" or "/..." or "/.../", 0: not verify path
+ *  @param  int		$query		1: verify query is provided, 0: not verify query
+ *  @param  int		$anchor		1: verify anchor is provided, 0: not verify anchor
  *	@return int					1=Check is OK, 0=Check is KO
  */
 function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
@@ -414,9 +415,9 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     if ($pass) $urlregex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)";
 
     // HOSTNAME OR IP
-    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // http://x = allowed (ex. http://localhost, http://routerlogin)
-    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // http://x.x = minimum
-    $urlregex .= "([a-z0-9+\$_-]+\.)*[a-z0-9+\$_-]{2,3}";  // http://x.xx(x) = minimum
+    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)*";  // x allowed (ex. http://localhost, http://routerlogin)
+    //$urlregex .= "[a-z0-9+\$_-]+(\.[a-z0-9+\$_-]+)+";  // x.x
+    $urlregex .= "([a-z0-9+\$_\\\:-])+(\.[a-z0-9+\$_-][a-z0-9+\$_-]+)*";  // x ou x.xx (2 x ou plus)
     //use only one of the above
 
     // PORT
@@ -433,7 +434,7 @@ function isValidUrl($url,$http=0,$pass=0,$port=0,$path=0,$query=0,$anchor=0)
     {
         $ValidUrl = 1;
     }
-    //print $urlregex.' - '.$url.' - '.$ValidUrl;exit;
+    //print $urlregex.' - '.$url.' - '.$ValidUrl;
 
     return $ValidUrl;
 }
@@ -1363,20 +1364,24 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 /**
  * This function evaluates a string that should be a valid IPv4
  *
- * @param	string		$ip			IP Address
- * @return	It returns 0 if $ip is not a valid IPv4
- * 			It returns 1 if $ip is a valid IPv4 and is a public IP
- * 			It returns 2 if $ip is a valid IPv4 and is a private lan IP
+ * @param	string $ip IP Address
+ * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */
 function is_ip($ip)
 {
-    if (!preg_match("/^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/", $ip)) return 0;
-    if (sprintf("%u",ip2long($ip)) == sprintf("%u",ip2long('255.255.255.255'))) return 0;
-    if (sprintf("%u",ip2long('10.0.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('10.255.255.255'))) return 2;
-    if (sprintf("%u",ip2long('172.16.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('172.31.255.255'))) return 2;
-    if (sprintf("%u",ip2long('192.168.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('192.168.255.255'))) return 2;
-    if (sprintf("%u",ip2long('169.254.0.0')) <= sprintf("%u",ip2long($ip)) and sprintf("%u",ip2long($ip)) <= sprintf("%u",ip2long('169.254.255.255'))) return 2;
-    return 1;
+	// First we test if it is a valid IPv4
+	if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+
+		// Then we test if it is a private range
+		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) return 2;
+
+		// Then we test if it is a reserved range
+		if (! filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE)) return 0;
+
+		return 1;
+	}
+
+	return 0;
 }
 
 /**

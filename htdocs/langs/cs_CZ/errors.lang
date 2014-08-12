@@ -153,3 +153,4 @@ WarningCloseAlways=Pozor, zavírání se provádí, i když částka liší zdro
 WarningUsingThisBoxSlowDown=Upozornění Při použití tohoto políčka zpomalit vážně všechny stránky zobrazující krabici.
 WarningClickToDialUserSetupNotComplete=Nastavení ClickToDial informací pro uživatele si nejsou kompletní (viz tab ClickToDial na vaše uživatelské karty).
 WarningNotRelevant=Nerozhoduje provoz v našem souboru
+WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Feature disabled when display setup is optimized for blind person or text browsers.

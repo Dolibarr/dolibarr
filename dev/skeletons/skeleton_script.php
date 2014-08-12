@@ -57,7 +57,7 @@ if (! $result > 0) { dol_print_error('',$user->error); exit; }
 $user->getrights();
 
 
-print "***** ".$script_file." (".$version.") pid=".getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 if (! isset($argv[1])) {	// Check parameters
     print "Usage: ".$script_file." param1 param2 ...\n";
 	exit(-1);

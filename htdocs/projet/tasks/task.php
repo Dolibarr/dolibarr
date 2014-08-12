@@ -116,7 +116,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header("Location: index.php");
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id);
 			exit;
 		}
 		else

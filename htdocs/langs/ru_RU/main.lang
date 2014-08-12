@@ -672,9 +672,12 @@ HelpCopyToClipboard=Для копировани в буфер обмена ис�
 SaveUploadedFileWithMask=Сохранить файл на сервер под именем "<strong>%s</strong>" (иначе "%s")
 OriginFileName=Изначальное имя файла
 SetDemandReason=Установить источник
+SetBankAccount=Define Bank Account
+AccountCurrency=Account Currency
 ViewPrivateNote=Посмотреть заметки
 XMoreLines=%s строк(и) скрыто
 PublicUrl=Public URL
+AddBox=Add box
 
 # Week day
 Monday=Понедельник

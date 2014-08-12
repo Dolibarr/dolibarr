@@ -5,6 +5,11 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Intervention documents are now available in ECM module.
+- New: Can attach supplier order to a customer order.
+- New: Supervisor is now visible into user list. 
+- New: Add user of creation and validation on invoice export.
+- New: Add info page about browser.
 - New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
        on uploaded file names. 
 - New: No more dependency between contract and service module.
@@ -24,9 +29,15 @@ For users:
        a list of thirdparty types specific to a country (like argentina that
        need type A or B).
 - New: Can force a specific bank account onto an invoice/order.
-- New: First changes for accessibility.
 - New: Home page of project area shows list of draft project (like other main page).
 - New: Can search on project ref or string from project main page (like other main page).
+- New: First change to match accessibility rules: http://www.w3.org/TR/WCAG10-HTML-TECHS/
+       Differentiate text and img.
+       Use label into quick search form.
+       Use accesskey on form search.
+- New: Intervention documents are now available in ECM module
+- New: Add attachments on user card + in ECM module
+- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -43,13 +54,16 @@ For users:
 - Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
-- New: [ task #1204 ] add a Supplier reference to contract
-- New: Invoice clone clone invoice contact
+- Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+- New: [ task #1204 ] add a External reference to contract
 
 For translators:
 - Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
+- New: Select list of users can return user into hierarchy.
+- New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
 - New: Add hook "searchAgendaFrom".
 - New: Add trigger DON_UPDATE, DON_DELETE
 - New: Add country iso code on 3 chars into table of countries.
@@ -57,11 +71,13 @@ For developers:
 - LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
 - New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
 - New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
+- New: Added hook "formConfirm" and "doActions" for supplier invoice card.
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
-- Change the way parameters are provides to scripts sync_xxx_ldap2dolibarr.php  
+- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php  
  
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
@@ -104,7 +120,8 @@ For users:
 - New: More options to create a credit note (can be filled autatically according to remain to pay).
 - New: Can define custom fields for categories.
 - New: Prepare generation of SEPA files into module withdrawal.
-- New: Can filter on status for supplier order.
+- New: [ task #1164 ] Add "Ref. supplier" search box in supplier orders
+- New: [ task #1345 ] Can filter on status for supplier order.
 - New: Add option FACTURE_SENDBYEMAIL_FOR_ALL_STATUS to allow to send invoice by email 
        whatever is its status.
 - New: Add filter date in bank writing list page.
@@ -135,6 +152,7 @@ For users:
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
 - Fix: [ bug #1471 ] Several PHP warnings when intercepting USER_CREATE trigger.
 - Fix: [ bug #1517 ] Packages sizes.
+- Fix: [ bug #1521 ] The second order's page from a provider shows all orders
 
 For translators:
 - Update language files.
@@ -175,6 +193,22 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Remove add_photo_web() that is ot used anymore by core code.
 
 
+***** ChangeLog for 3.5.5 compared to 3.5.4 *****
+Fix: Holiday module was broken. Initializaion of amount of holidays failed.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: Fusion PDF button on unpaid invoice is no more displayed 
+Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click)
+Fix: Pb when showing log list of holiday module with some mysql versions.
+Fix: Error with bad timezone pushed by some browsers.
+Fix: shipping list SQL request was not filtering on shipping element
+Fix: debian package provided by dolibarr team must use embedded libraries.
+Fix: [ bug #1528 ] Leopard Services numeration module description is not translated.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas
+Fix: [ bug #1534 ] Unknown error when deleting a product photo under special circumstances
+Fix: Update impayees.php
+Fix: Link product, In list view and label product
+Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
+Fix: When disabled, all fields to add time into task line must be disabled.
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
@@ -484,6 +518,7 @@ Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
 Fix: Agenda and Banks module were not working with multicompany module
 Fix: [ bug #1317 ] Removing a category does not remove all child categories
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).

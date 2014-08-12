@@ -416,6 +416,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/spec`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/test`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/uml`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/dev/vagrant`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/dev/xdebug`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/dev/dolibarr_changes.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/dev/README`;
@@ -959,8 +960,8 @@ if ($nboftargetok) {
     	}
     }
 
-    # Build package for each target
-    #------------------------------
+    # Publish package for each target
+    #--------------------------------
     foreach my $target (keys %CHOOSEDPUBLISH) 
     {
         if ($CHOOSEDPUBLISH{$target} < 0) { next; }
@@ -973,12 +974,15 @@ if ($nboftargetok) {
     		"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
     		"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
     	);
+    	use POSIX qw/strftime/;
     	foreach my $file (sort keys %filestoscansf)
     	{
     		$found=0;
     		my $filesize = -s $file;
+    		my $filedate = (stat $file)[9];
     		print $file." ".($filesize?"(found)":"(not found)");
     		print ($filesize?" - ".$filesize:"");
+    		print ($filedate?" - ".strftime("%Y-%m-%d %H:%M:%S",localtime($filedate)):"");
     		print "\n";
     	}
 
@@ -1035,9 +1039,7 @@ if ($nboftargetok) {
 				print "$command\n";	
 				my $ret=`$command 2>&1`;
 				print "$ret\n";
-	    		
 	    	}
-
     	}
     }    
 }

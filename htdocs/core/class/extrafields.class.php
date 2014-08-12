@@ -673,7 +673,7 @@ class ExtraFields
 		elseif ($type == 'select')
 		{
 			$out = '';
-			if ($conf->use_javascript_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && ! $forcecombo)
+			if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
 			{
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				$out.= ajax_combobox('options_'.$key.$keyprefix, array(), $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
@@ -942,7 +942,7 @@ class ExtraFields
 			$selectkey="rowid";
 			$keyList='rowid';
 
-			if (count($InfoFieldList)==3)
+			if (count($InfoFieldList)>=3)
 			{
 				$selectkey = $InfoFieldList[2];
 				$keyList=$InfoFieldList[2].' as rowid';
@@ -978,7 +978,7 @@ class ExtraFields
 				{
 					foreach ($fields_label as $field_toshow)
 					{
-						$translabel=$langs->trans($field_toshow);
+						$translabel=$langs->trans($obj->field_toshow);
 						if ($translabel!=$field_toshow) {
 							$value.=dol_trunc($translabel,18).' ';
 						}else {

@@ -2176,8 +2176,8 @@ class User extends CommonObject
 		// Load array[child]=parent
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE fk_user != 0";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE fk_user <> 0";
+		$sql.= " AND entity IN (".getEntity('user',1).")";
 
 		dol_syslog(get_class($this)."::load_parentof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -2217,7 +2217,7 @@ class User extends CommonObject
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
 		$this->load_parentof();
-
+		
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -2306,13 +2306,13 @@ class User extends CommonObject
 
 		// Define fullpath and fullname
 		$this->users[$id_user]['fullpath'] = '_'.$id_user;
-		$this->users[$id_user]['fullname'] = $this->users[$id_user]['label'];
+		$this->users[$id_user]['fullname'] = $this->users[$id_user]['lastname'];
 		$i=0; $cursor_user=$id_user;
 
-		while ((empty($protection) || $i < $protection) && ! empty($this->parentof[$cursor_user]))
+		while ((empty($protection) || $i < $protection) && ! empty($this->parentof[$cursor_user]))	// Loop on each parent, one after one
 		{
 			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
-			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['label'].' >> '.$this->users[$id_user]['fullname'];
+			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['lastname'].' >> '.$this->users[$id_user]['fullname'];
 			$i++; $cursor_user=$this->parentof[$cursor_user];
 		}
 

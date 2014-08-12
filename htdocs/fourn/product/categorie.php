@@ -52,14 +52,14 @@ if ($_GET["id"])
   //on veut supprimer une cat�gorie
   if ($_REQUEST["cat"])
     {
-      $cat = new Categorie($db,$_REQUEST["cat"]);
+      $cat = new Categorie($db);
       $cat->del_product($product);
     }
 
   //on veut ajouter une cat�gorie
   if (isset($_REQUEST["add_cat"]) && $_REQUEST["add_cat"]>=0)
     {
-      $cat = new Categorie($db,$_REQUEST["add_cat"]);
+      $cat = new Categorie($db);
       $cat->add_product($product);
     }
 

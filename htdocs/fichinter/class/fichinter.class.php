@@ -24,6 +24,7 @@
  * 	\brief      Fichier de la classe des gestion des fiches interventions
  */
 require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 
 
 /**
@@ -958,7 +959,7 @@ class Fichinter extends CommonObject
 	{
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql.= ' WHERE fk_fichinter = '.$this->id;
+		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC' ;
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -998,7 +999,7 @@ class Fichinter extends CommonObject
 /**
  *	Classe permettant la gestion des lignes d'intervention
  */
-class FichinterLigne
+class FichinterLigne extends CommonObjectLine
 {
 	var $db;
 	var $error;

@@ -149,7 +149,7 @@ if ($resql)
 	if (isset($catid))
 	{
 		print "<div id='ways'>";
-		$c = new Categorie($db, $catid);
+		$c = new Categorie($db);
 		$ways = $c->print_all_ways(' &gt; ','fourn/product/liste.php');
 		print " &gt; ".$ways[0]."<br>\n";
 		print "</div><br>";

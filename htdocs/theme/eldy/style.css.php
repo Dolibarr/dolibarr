@@ -207,6 +207,8 @@ print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
 print 'dol_no_mouse_hover='.$dol_no_mouse_hover."\n";
 print 'dol_use_jmobile='.$dol_use_jmobile."\n";
+print 'dol_screenwidth='.$_SESSION['dol_screenwidth']."\n";
+print 'dol_screenheight='.$_SESSION['dol_screenheight']."\n";
 print '*/'."\n";
 
 if (! empty($conf->dol_optimize_smallscreen)) $fontsize=11;
@@ -458,25 +460,25 @@ div.fichecenter {
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
 }
 div.fichethirdleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 35%;\n"; } ?>
-	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 35%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px;\n"; } ?>
 }
 div.fichetwothirdright {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 65%;\n"; } ?>
-	<?php if (! empty($conf->dol_optimize_smallscreen)) { print "padding-bottom: 6px\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 65%;\n"; } ?>
+	<?php if ($conf->browser->layout == 'phone') { print "padding-bottom: 6px\n"; } ?>
 }
 div.fichehalfleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$left.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$left.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
 div.fichehalfright {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "float: ".$right.";\n"; } ?>
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "width: 50%;\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "float: ".$right.";\n"; } ?>
+	<?php if ($conf->browser->layout != 'phone')   { print "width: 50%;\n"; } ?>
 }
 div.ficheaddleft {
-	<?php if (empty($conf->dol_optimize_smallscreen))   { print "padding-".$left.": 16px;\n"; }
+	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
 .containercenter {
@@ -490,18 +492,9 @@ margin : 0px auto;
 /* ============================================================================== */
 
 <?php
-if (! empty($conf->dol_optimize_smallscreen))
-{
-	$minwidthtmenu=0;
-	$heightmenu=19;
-	$heightmenu2=19;
-}
-else
-{
-	$minwidthtmenu=66;
-	$heightmenu=52;
-	$heightmenu2=40;
-}
+$minwidthtmenu=66;
+$heightmenu=52;
+$heightmenu2=40;
 ?>
 
 div#tmenu_tooltip {
@@ -579,7 +572,6 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-    /* height: <?php print $heightmenu; ?>px; */
 	box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important;
 }
 ul.tmenu li {
@@ -623,11 +615,13 @@ li.tmenusel, li.tmenu:hover {
 .tmenuend .tmenuleft { width: 0px; }
 div.tmenuleft
 {
-	width: 5px;
 	float: <?php print $left; ?>;
-    height: <?php print $heightmenu+4; ?>px;
-	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
 	margin-top: 0px;
+	<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+	width: 5px;
+	height: <?php print $heightmenu+4; ?>px;
+	background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 0 no-repeat;
+	<?php } ?>
 }
 div.tmenucenter
 {
@@ -640,7 +634,6 @@ div.tmenucenter
 .mainmenuaspan
 {
 	padding-right: 4px;
-	/*text-shadow: 1px 1px 1px #DDD;*/
 }
 
 div.mainmenu {
@@ -652,7 +645,8 @@ div.mainmenu {
 	min-width: 40px;
 }
 
-<?php if (empty($conf->dol_optimize_smallscreen)) { ?>
+/* Do not load menu img if hidden to save bandwidth */
+<?php if (empty($dol_hide_topmenu)) { ?>
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
@@ -798,7 +792,7 @@ foreach($mainmenuusedarray as $val)
 ?>
 
 <?php
-}	// End test if not phone
+}	// End test if $dol_hide_topmenu
 ?>
 
 .tmenuimage {
@@ -868,6 +862,7 @@ table.login_table tr td table.none tr td {
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {
@@ -1651,11 +1646,10 @@ table.noborder, table.formdoc, div.noborder {
 	border-bottom-style: solid;
 
 	margin: 0px 0px 2px 0px;
-	/*padding: 1px 2px 1px 2px;*/
 
-	-moz-box-shadow: 3px 3px 4px #DDD;
-	-webkit-box-shadow: 3px 3px 4px #DDD;
-	box-shadow: 3px 3px 4px #DDD;
+	-moz-box-shadow: 2px 2px 4px #DDD;
+	-webkit-box-shadow: 2px 2px 4px #DDD;
+	box-shadow: 2px 2px 4px #DDD;
 
 	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
@@ -2073,6 +2067,44 @@ div.titre {
 #divsubscribe { width: 700px; }
 #tablesubscribe { width: 100%; }
 
+
+/*
+ * Effect Postit
+ */
+.effectpostit
+{
+  position: relative;
+}
+.effectpostit:before, .effectpostit:after
+{
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width:300px;
+  background: #777;
+  -webkit-box-shadow: 0 15px 10px #777;
+  -moz-box-shadow: 0 15px 10px #777;
+  box-shadow: 0 15px 10px #777;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -ms-transform: rotate(-3deg);
+  transform: rotate(-3deg);
+}
+.effectpostit:after
+{
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
 
 
 
@@ -2533,6 +2565,41 @@ a.cke_dialog_ui_button
 
 
 /* ============================================================================== */
+/*  Holiday                                                                       */
+/* ============================================================================== */
+
+#types .btn {
+    cursor: pointer;
+}
+
+#types .btn-primary {
+    font-weight: bold;
+}
+
+#types form {
+    padding: 20px;
+}
+
+#types label {
+    display:inline-block;
+    width:100px;
+    margin-right: 20px;
+    padding: 4px;
+    text-align: right;
+    vertical-align: top;
+}
+
+#types input.text, #types textarea {
+    width: 400px;
+}
+
+#types textarea {
+    height: 100px;
+}
+
+
+
+/* ============================================================================== */
 /*  JSGantt                                                                       */
 /* ============================================================================== */
 
@@ -2708,6 +2775,12 @@ div.dolEventError h1, div.dolEventError h2 {
 /* For jquery plugin combobox */
 /* Disable this. It breaks wrapping of boxes
 .ui-corner-all { white-space: nowrap; } */
+
+.ui-state-disabled, .ui-widget-content .ui-state-disabled, .ui-widget-header .ui-state-disabled, .paginate_button_disabled {
+	opacity: .35;
+	filter: Alpha(Opacity=35);
+	background-image: none;
+}
 
 
 /* ============================================================================== */
