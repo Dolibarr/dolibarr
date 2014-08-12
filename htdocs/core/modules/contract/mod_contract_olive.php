@@ -43,10 +43,11 @@ class mod_contract_olive extends ModelNumRefContracts
 	var $code_auto = 0; 	                // Numerotation automatique
 
 
-	/**		Return description of module
+	/**		
+	 *	Return description of module
 	 *
-	 * 		@param	Translate	$langs	Object langs
-	 * 		@return string      		Description of module
+	 *	@param	Translate	$langs	Object langs
+	 *	@return string      		Description of module
 	 */
 	function info()
 	{
@@ -59,7 +60,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	product		$objproduct		Object product
+	 * @param	Societe		$objsoc		Object thirdparty
 	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string					Return next value
 	 */
