@@ -244,8 +244,6 @@ $hookmanager=new HookManager($db);
 
 if (! defined('MAIN_LABEL_MENTION_NPR') ) define('MAIN_LABEL_MENTION_NPR','NPR');
 
-// We force feature to help debug
-//$conf->global->MAIN_JS_ON_PAYMENT=0;
 
 // We force FPDF
 if (! empty($dolibarr_pdf_force_fpdf)) $conf->global->MAIN_USE_FPDF=$dolibarr_pdf_force_fpdf;

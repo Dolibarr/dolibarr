@@ -332,7 +332,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print $langs->trans('Invoices').'<br>';
 
 						if(!empty($conf->global->FAC_AUTO_FILLJS)){
-							//Addjs for AutoFill
+							//Add js for AutoFill
 							print "\n".'<script type="text/javascript" language="javascript">';
 							print ' $(document).ready(function () {';
 							print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
@@ -382,7 +382,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
 							if(!empty($conf->global->FAC_AUTO_FILLJS))
-								print img_picto("Auto fill",'1rightarrow_selected', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'"); // TODO ADD lang
+								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print "</td></tr>\n";
 	                        $total+=$objp->total_ht;
