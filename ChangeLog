@@ -57,6 +57,7 @@ For users:
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 - New: [ task #1204 ] add a External reference to contract
 - New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
+- New: Enable supplier price log table
 
 For translators:
 - Update language files.
