@@ -46,7 +46,6 @@ class mod_contract_olive extends ModelNumRefContracts
 	/**		
 	 *	Return description of module
 	 *
-	 *	@param	Translate	$langs	Object langs
 	 *	@return string      		Description of module
 	 */
 	function info()
@@ -61,7 +60,7 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * Return an example of result returned by getNextValue
 	 *
 	 * @param	Societe		$objsoc		Object thirdparty
-	 * @param	int			$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	Contrat		$contract	Object contract
 	 * @return	string					Return next value
 	 */
 	function getNextValue($objsoc,$contract)
