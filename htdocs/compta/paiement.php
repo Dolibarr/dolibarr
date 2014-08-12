@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -379,7 +380,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				//Add js for AutoFill
 				print ' $(document).ready(function () {';
 				print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
-								$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value"));
+								$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
 							});';
 				print '	});'."\n";
 			}
