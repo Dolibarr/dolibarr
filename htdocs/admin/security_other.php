@@ -105,6 +105,13 @@ else if ($action == 'MAIN_ANTIVIRUS_PARAM')
     if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
     else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
+else if ($action == 'MAIN_SECURITY_HIDDENNUMVER')
+{
+	if (! dolibarr_set_const($db, "MAIN_SECURITY_HIDDENNUMVER", $_POST["MAIN_SECURITY_HIDDENNUMVER"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+}
+
+
 
 // Delete file
 else if ($action == 'delete')
@@ -176,6 +183,28 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
+
+// Hidde version number
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("HiddeNumVersion").'</td>'; // TODO add lag
+print '<td align="right">';
+if (! empty($conf->use_javascript_ajax))
+{
+	print ajax_constantonoff('MAIN_SECURITY_HIDDENNUMVER');
+}
+else
+{
+	if (empty($conf->global->MAIN_SECURITY_HIDDENNUMVER))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_HIDDENNUMVER">'.img_picto($langs->trans("Disabled"),'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_HIDDENNUMVER">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+	}
+}
+print '</td></tr>';
 
 // Enable Captcha code
 $var=!$var;
