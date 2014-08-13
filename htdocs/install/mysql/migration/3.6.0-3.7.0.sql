@@ -125,6 +125,7 @@ create table llx_accounting_fiscalyear
 )ENGINE=innodb;
 
 ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
+ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30) after ref_ext;
 
 ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
@@ -942,7 +943,7 @@ create table llx_c_email_templates
 )ENGINE=innodb;
 
 
-UPDATE llx_c_regions SET rowid = 0 where rowid = 1; 
+UPDATE llx_c_regions SET rowid = 0 where rowid = 1;
 DELETE FROM llx_c_departements WHERE fk_region NOT IN (select rowid from llx_c_regions) AND fk_region IS NOT NULL AND fk_region <> 0;
 ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_region	FOREIGN KEY (fk_region) REFERENCES llx_c_regions (rowid);
 

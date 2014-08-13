@@ -263,9 +263,9 @@ class ProductFournisseur extends Product
 		                $error++;
 		            }
 
-		            /*if (! $error)
+		            if (! $error  && !empty($cong->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
 		            {
-		                // Ajoute modif dans table log
+		                // Add record into log table
 		                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
 		                $sql.= "datec, fk_product_fournisseur,fk_user,price,quantity)";
 		                $sql.= "values('".$this->db->idate($now)."',";
@@ -281,7 +281,7 @@ class ProductFournisseur extends Product
 		                    $error++;
 		                }
 		            }
-					*/
+					
 
 		            if (! $error)
 		            {
