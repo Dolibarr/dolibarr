@@ -5,6 +5,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -328,9 +329,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                {
 	                    $i = 0;
 	                    print '<br>';
-
 	                    print $langs->trans('Invoices').'<br>';
-	                    print '<table class="noborder" width="100%">';
+
+						if(!empty($conf->global->FAC_AUTO_FILLJS)){
+							//Add js for AutoFill
+							print "\n".'<script type="text/javascript" language="javascript">';
+							print ' $(document).ready(function () {';
+							print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+											$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value"));
+										});';
+							print '	});'."\n";
+							print '	</script>'."\n";
+						}
+						print '<table class="noborder" width="100%">';
 	                    print '<tr class="liste_titre">';
 	                    print '<td>'.$langs->trans('Ref').'</td>';
 	                    print '<td>'.$langs->trans('RefSupplier').'</td>';
@@ -370,8 +381,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        print '<td align="right">'.price($objp->total_ttc - $objp->am).'</td>';
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
+							if(!empty($conf->global->FAC_AUTO_FILLJS))
+								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
-	                        print "</td></tr>\n";
+							print "</td></tr>\n";
 	                        $total+=$objp->total_ht;
 	                        $total_ttc+=$objp->total_ttc;
 	                        $totalrecu+=$objp->am;
