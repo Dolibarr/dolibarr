@@ -38,6 +38,10 @@ For users:
 - New: Intervention documents are now available in ECM module
 - New: Add attachments on user card + in ECM module
 - New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
+- New: [ task #1204 ] add a External reference to contract
+- New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
+- New: Enable supplier price log table
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -55,9 +59,6 @@ For users:
 - Fix: [ bug #1506, #1507 ] ECM trigger error problem
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
-- New: [ task #1204 ] add a External reference to contract
-- New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
-- New: Enable supplier price log table
 
 For translators:
 - Update language files.

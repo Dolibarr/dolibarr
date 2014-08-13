@@ -295,6 +295,8 @@ TotalOfTwoDiscountMustEqualsOriginal=La somme du montant des 2 nouvelles réduct
 ConfirmRemoveDiscount=Êtes-vous sûr de vouloir supprimer cette réduction ?
 RelatedBill=Facture associée
 RelatedBills=Factures associées
+LatestRelatedBill=Dernière facture associée
+WarningBillExist=Attention, il existe déjà une ou plusieurs factures
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
