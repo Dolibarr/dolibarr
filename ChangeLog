@@ -18,6 +18,7 @@ Fix: Update impayees.php
 Fix: Link product, In list view and label product
 Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
 Fix: When disabled, all fields to add time into task line must be disabled.
+Fix: Missing include files.lib.php in some pages ti use dol_delete_recursive
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.
