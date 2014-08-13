@@ -27,4 +27,4 @@ CREATE TABLE llx_holiday_types (
   deleteAt DATETIME,
   nbCongesDeducted varchar(255) NOT NULL,
   nbCongesEveryMonth varchar(255) NOT NULL
-);
+) ENGINE=innodb;

@@ -139,25 +139,31 @@ class SqlTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/install/mysql/tables');
-		foreach($filesarray as $key => $file)
+		$listofsqldir = array(DOL_DOCUMENT_ROOT.'/install/mysql/tables', DOL_DOCUMENT_ROOT.'/install/mysql/migration');
+
+		foreach ($listofsqldir as $dir)
 		{
-			if (! preg_match('/\.sql$/',$file)) continue;
+			print 'Process dir '.$dir."\n";
+			$filesarray = scandir($dir);
+			foreach($filesarray as $key => $file)
+			{
+				if (! preg_match('/\.sql$/',$file)) continue;
 
-			print 'Check sql file '.$file."\n";
-			$filecontent=file_get_contents(DOL_DOCUMENT_ROOT.'/install/mysql/tables/'.$file);
+				print 'Check sql file '.$file."\n";
+				$filecontent=file_get_contents($dir.'/'.$file);
 
-			$result=strpos($filecontent,'`');
-			print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
-			$this->assertTrue($result===false, 'Found ON back quote. Bad.');
+				$result=strpos($filecontent,'`');
+				print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
+				$this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
-			$result=strpos($filecontent,'int(');
-			print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-			$this->assertTrue($result===false, 'Found int(x) instead of integer. Bad.');
+				$result=strpos($filecontent,'int(');
+				print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
 
-			$result=strpos($filecontent,'ON DELETE CASCADE');
-			print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
-			$this->assertTrue($result===false, 'Found ON DELETE CASCADE. Bad.');
+				$result=strpos($filecontent,'ON DELETE CASCADE');
+				print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
+				$this->assertTrue($result===false, 'Found ON DELETE CASCADE into '.$file.'. Bad.');
+			}
 		}
 
         return;

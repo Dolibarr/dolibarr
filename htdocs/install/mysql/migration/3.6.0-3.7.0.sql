@@ -68,7 +68,7 @@ ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_da
 -- Localtaxes by thirds
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
-ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint(4) after entity;
+ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
 
@@ -940,7 +940,7 @@ create table llx_c_email_templates
   position        smallint,					      -- Position
   topic			  text,                           -- Predefined topic
   content         text                            -- Predefined text
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 
 UPDATE llx_c_regions SET rowid = 0 where rowid = 1;
@@ -952,11 +952,11 @@ CREATE TABLE llx_holiday_types (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   label varchar(45) NOT NULL,
   description varchar(255) NOT NULL,
-  affect int(1) NOT NULL,
-  delay int(1) NOT NULL,
+  affect integer NOT NULL,
+  delay integer NOT NULL,
   insertAt DATETIME NOT NULL,
   updateAt DATETIME,
   deleteAt DATETIME,
   nbCongesDeducted varchar(255) NOT NULL,
   nbCongesEveryMonth varchar(255) NOT NULL
-);
+) ENGINE=innodb;
