@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2013      Teddy Andreotti       <125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,6 +146,7 @@ $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom, s.rowid as socid, s.code_client, s.client ';
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
+$sql.=", SUBSTRING_INDEX(f.facnumber,'-', -1) as numfacture"; //Return numero facture
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
@@ -177,6 +179,10 @@ if ($filtre)
 if ($search_ref)
 {
     $sql .= natural_search('f.facnumber', $search_ref);
+}
+if ($search_refnumber)
+{
+    $sql .= natural_search('numfacture', $search_refnumber);
 }
 if ($search_refcustomer)
 {
@@ -225,7 +231,7 @@ if (! $sall)
 }
 else
 {
-    $sql .= natural_search(array('s.nom', 'f.facnumber', 'f.note_public', 'fd.description'), $sall);
+    $sql .= natural_search(array('s.nom', 'f.facnumber', 'numfacture', 'f.note_public', 'fd.description'), $sall);
 }
 $sql.= ' ORDER BY ';
 $listfield=explode(',',$sortfield);
@@ -294,7 +300,7 @@ if ($resql)
     }
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],empty($conf->global->FACTURE_SORTING_NUMBER) ? 'f.facnumber' : 'numfacture' ,'',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateDue"),$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
@@ -312,7 +318,7 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-	print '<td class="liste_titre">';
+    print '<td class="liste_titre">';
 	print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
 	print '</td>';
     print '<td class="liste_titre" align="center">';
@@ -354,12 +360,10 @@ if ($resql)
             $paiement = $facturestatic->getSommePaiement();
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-
             print '<td class="nobordernopadding nowrap">';
             print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
             print $objp->increment;
             print '</td>';
-
             print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
             if (! empty($objp->note_private))
             {
@@ -374,7 +378,6 @@ if ($resql)
 			print '</td>';
             print '</tr>';
             print '</table>';
-
             print "</td>\n";
 
 			// Customer ref
@@ -429,7 +432,7 @@ if ($resql)
         {
             // Print total
             print '<tr class="liste_total">';
-            print '<td class="liste_total" colspan="5" align="left">'.$langs->trans('Total').'</td>';
+            print '<td class="liste_total" colspan="4" align="left">'.$langs->trans('Total').'</td>';
             print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
             print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';

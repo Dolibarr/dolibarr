@@ -1114,6 +1114,7 @@ CreditNotePDFModules=Modèles de documents des avoirs
 CreditNote=Avoir
 CreditNotes=Avoirs
 ForceInvoiceDate=Forcer la date de facturation à la date de validation
+SortingFactureOnNumber=Tri par numéro de facture
 DisableRepeatable=Désactiver les factures récurrentes
 SuggestedPaymentModesIfNotDefinedInInvoice=Mode de paiement suggéré par défaut si non défini au niveau de la facture
 EnableEditDeleteValidInvoice=Activer la possibilité de rééditer/supprimer une facture validée sans paiement
