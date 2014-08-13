@@ -481,7 +481,7 @@ class Form
         $countryArray=array();
         $label=array();
 
-        $sql = "SELECT rowid, code as code_iso, libelle as label";
+        $sql = "SELECT rowid, code as code_iso, code_iso as code_iso3, libelle as label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
         $sql.= " WHERE active = 1";
         //$sql.= " ORDER BY code ASC";
@@ -502,6 +502,7 @@ class Form
                     $obj = $this->db->fetch_object($resql);
                     $countryArray[$i]['rowid'] 		= $obj->rowid;
                     $countryArray[$i]['code_iso'] 	= $obj->code_iso;
+                    $countryArray[$i]['code_iso3'] 	= $obj->code_iso3;
                     $countryArray[$i]['label']		= ($obj->code_iso && $langs->transnoentitiesnoconv("Country".$obj->code_iso)!="Country".$obj->code_iso?$langs->transnoentitiesnoconv("Country".$obj->code_iso):($obj->label!='-'?$obj->label:''));
                     $label[$i] = dol_string_unaccent($countryArray[$i]['label']);
                     $i++;
@@ -512,7 +513,7 @@ class Form
                 foreach ($countryArray as $row)
                 {
                     //print 'rr'.$selected.'-'.$row['label'].'-'.$row['code_iso'].'<br>';
-                    if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['label']) )
+                    if ($selected && $selected != '-1' && ($selected == $row['rowid'] || $selected == $row['code_iso'] || $selected == $row['code_iso3'] || $selected == $row['label']) )
                     {
                         $foundselected=true;
                         $out.= '<option value="'.$row['rowid'].'" selected="selected">';
@@ -683,7 +684,7 @@ class Form
      * 	@param		int			$forcecombo				Force to use combo box
      *  @return		string								Return select box for thirdparty.
      */
-    function select_thirdparty($selected='', $htmlname='productid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
+    function select_thirdparty($selected='', $htmlname='socid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
     {
     	global $langs,$conf;
 

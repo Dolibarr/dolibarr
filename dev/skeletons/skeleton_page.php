@@ -70,17 +70,38 @@ if ($user->societe_id > 0)
 
 if ($action == 'add')
 {
+	$error=0;
+	
 	$object=new Skeleton_Class($db);
-	$object->prop1=$_POST["field1"];
-	$object->prop2=$_POST["field2"];
-	$result=$object->create($user);
-	if ($result > 0)
+	/* object_prop_getpost_prop */
+	$object->prop1=GETPOST("field1");
+	$object->prop2=GETPOST("field2");
+
+	if (empty($object->ref))
 	{
-		// Creation OK
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),'errors');
 	}
+	
+	if (! $error)
 	{
-		// Creation KO
-		$mesg=$object->error;
+		$result=$object->create($user);
+		if ($result > 0)
+		{
+			// Creation OK
+			header("Location: ".dol_buildpath('/mymodule/list.php',1));
+			exit;
+		}
+		{
+			// Creation KO
+			if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
+			else  setEventMessage($object->error, 'errors');
+			$action='create';
+		}
+	}
+	else
+	{
+		$action='create';
 	}
 }
 
@@ -145,21 +166,18 @@ if ($action == 'list')
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
+        while ($i < $num)
         {
-            while ($i < $num)
+            $obj = $db->fetch_object($resql);
+            if ($obj)
             {
-                $obj = $db->fetch_object($resql);
-                if ($obj)
-                {
-                    // You can use here results
-                    print '<tr><td>';
-                    print $obj->field1;
-                    print $obj->field2;
-                    print '</td></tr>';
-                }
-                $i++;
+                // You can use here results
+                print '<tr><td>';
+                print $obj->field1;
+                print $obj->field2;
+                print '</td></tr>';
             }
+            $i++;
         }
     }
     else
