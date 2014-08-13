@@ -82,7 +82,9 @@ For developers:
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
-- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php  
+- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
+- Some field into database wwere renamed from "libelle" to "label".
+- Table llx_c_pays were renamed into llx_c_country.  
  
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
