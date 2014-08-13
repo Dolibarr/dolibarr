@@ -331,7 +331,7 @@ if ($conf->use_javascript_ajax)
 	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
 	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
 	$s.='jQuery(".family_birthday").toggle();' . "\n";
-	if ($action=="show_week" || $action=="show_month" || empty($action)) 
+	if ($action=="show_week" || $action=="show_month" || empty($action))
 	{
     	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
     	$s.='var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
@@ -943,7 +943,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     echo '<input type="hidden" name="newdate" id="newdate">' ;
     echo '</form>';
-    
+
 }
 elseif ($action == 'show_week') // View by week
 {
@@ -1175,14 +1175,15 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                   	}
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
-                    if (empty($event->fulldayevent)) 
+                    // Defined style to disable drag and drop feature
+                    if (empty($event->fulldayevent))
                     {
                         if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
                         {
                             $tmpyearend    = date('Y',$event->date_end_in_calendar);
                             $tmpmonthend   = date('m',$event->date_end_in_calendar);
                             $tmpdayend     = date('d',$event->date_end_in_calendar);
-                            if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+                            if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour)
                             {
                                 $cssclass.= " unsortable";
                             }
@@ -1192,7 +1193,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             $cssclass.= " unsortable";
                         }
                     }
-                             
+
                     // Show rect of event
                     print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
                     print '<ul class="cal_event"><li class="cal_event">';
@@ -1362,9 +1363,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         // TODO Loop on each element of day $ymd and start to toggle once $maxprint has been reached
         print 'jQuery(".family_mytasks_day_'.$ymd.'").toggle();';
         print '}'."\n";
-        
+
         print '});'."\n";
-        
+
         print '</script>'."\n";
     }
 
