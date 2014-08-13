@@ -38,10 +38,11 @@ For users:
 - New: Intervention documents are now available in ECM module
 - New: Add attachments on user card + in ECM module
 - New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
-- New: [ task #1204 ] add a External reference to contract
 - New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
 - New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
 - New: Enable supplier price log table
+- New: [ task #1204 ] add a External reference to contract
+- New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem

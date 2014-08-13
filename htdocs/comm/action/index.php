@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -330,7 +331,12 @@ if ($conf->use_javascript_ajax)
 	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
 	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
 	$s.='jQuery(".family_birthday").toggle();' . "\n";
-	$s.='});' . "\n";
+	if ($action=="show_week" || $action=="show_month" || empty($action)) 
+	{
+    	$s.='jQuery( "td.sortable" ).sortable({connectWith: ".sortable",placeholder: "ui-state-highlight",items: "div:not(.unsortable)", receive: function( event, ui ) {';
+    	$s.='var frm=jQuery("#move_event");frm.attr("action",ui.item.find("a.cal_event").attr("href")).children("#newdate").val(jQuery(event.target).closest("div").attr("id"));frm.submit();}});'."\n";
+	}
+  	$s.='});' . "\n";
 	$s.='</script>' . "\n";
 	if (! empty($conf->use_javascript_ajax))
 	{
@@ -932,6 +938,12 @@ if (empty($action) || $action == 'show_month')      // View by month
         echo " </tr>\n";
     }
     echo "</table>\n";
+    echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
+    echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+    echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    echo '<input type="hidden" name="newdate" id="newdate">' ;
+    echo '</form>';
+    
 }
 elseif ($action == 'show_week') // View by week
 {
@@ -992,6 +1004,11 @@ elseif ($action == 'show_week') // View by week
     echo " </tr>\n";
 
     echo "</table>\n";
+    echo '<form id="move_event" action="" method="POST"><input type="hidden" name="action" value="mupdate">';
+    echo '<input type="hidden" name="backtopage" value="'.$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'].'">';
+    echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    echo '<input type="hidden" name="newdate" id="newdate">' ;
+    echo '</form>';
 }
 else    // View by day
 {
@@ -1089,7 +1106,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         print '</a>';
     }
     print '</td></tr>';
-    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="nowrap" style="padding-bottom: 2px;">';
+    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="nowrap sortable" style="padding-bottom: 2px;">';
 
     //$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
@@ -1134,9 +1151,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     		$numicals[dol_string_nospecial($event->icalname)]++;
                     	}
                     	$color=$event->icalcolor;
-                    	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other');
+                    	$cssclass=(! empty($event->icalname)?'family_'.dol_string_nospecial($event->icalname):'family_other unsortable');
                     }
-                    else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]); }
+                    else if ($event->type_code == 'BIRTHDAY')  { $numbirthday++; $colorindex=2; $cssclass='family_birthday unsortable'; $color=sprintf("%02x%02x%02x",$theme_datacolor[$colorindex][0],$theme_datacolor[$colorindex][1],$theme_datacolor[$colorindex][2]); }
                     else { $numother++; $cssclass='family_other'; }
                     if ($color == -1)	// Color was not forced. Set color according to color index.
                     {
@@ -1158,6 +1175,24 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                   	}
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
+                    if (empty($event->fulldayevent)) 
+                    {
+                        if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
+                        {
+                            $tmpyearend    = date('Y',$event->date_end_in_calendar);
+                            $tmpmonthend   = date('m',$event->date_end_in_calendar);
+                            $tmpdayend     = date('d',$event->date_end_in_calendar);
+                            if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
+                            {
+                                $cssclass.= " unsortable";
+                            }
+                        }
+                        if ($event->type_code =='AC_OTH_AUTO')
+                        {
+                            $cssclass.= " unsortable";
+                        }
+                    }
+                             
                     // Show rect of event
                     print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
                     print '<ul class="cal_event"><li class="cal_event">';
@@ -1327,8 +1362,9 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         // TODO Loop on each element of day $ymd and start to toggle once $maxprint has been reached
         print 'jQuery(".family_mytasks_day_'.$ymd.'").toggle();';
         print '}'."\n";
-
+        
         print '});'."\n";
+        
         print '</script>'."\n";
     }
 
