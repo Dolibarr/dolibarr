@@ -25,6 +25,9 @@ if (GETPOST('dol_optimize_smallscreen')) $conf->dol_optimize_smallscreen=1;
 if (GETPOST('dol_no_mouse_hover')) $conf->dol_no_mouse_hover=1;
 if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 
+// If we force to use jmobile, then we reenable javascript
+if (! empty($conf->dol_use_jmobile)) $conf->use_javascript_ajax=1;
+
 print top_htmlhead('',$langs->trans('Login').' '.$title);
 ?>
 <!-- BEGIN PHP TEMPLATE PASSWORDFORGOTTEN.TPL.PHP -->

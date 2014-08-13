@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - shop
-FailedConnectDBCheckModuleSetup=Failed to connect to oscommerce database. Check your module setup
+FailedConnectDBCheckModuleSetup=Connessione al database di oscommerce fallita. Controlla le impostazioni di setup del tuo modulo.
 Shop=Negozio
 ShopWeb=Negozio online
 LastOrders=Ultimi ordini

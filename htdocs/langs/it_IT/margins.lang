@@ -10,24 +10,18 @@ MarkRate=Percentuale di ricarico
 DisplayMarginRates=Visualizza i tassi di margine
 DisplayMarkRates=Mostra le percentuali di ricarico
 InputPrice=Prezzo di ingresso
-
 margin=Gestione margini di profitto
 margesSetup=Configurazione gestione margini di profitto
-
 MarginDetails=Specifiche del margine
-
 ProductMargins=Margini per prodotto
 CustomerMargins=Margini per cliente
-SalesRepresentativeMargins=Sales representative margins
-
+SalesRepresentativeMargins=Margini di vendita del rappresentante
 ProductService=Prodotto o servizio
 AllProducts=Tutti i prodotti e servizi
 ChooseProduct/Service=Scegli prodotto o servizio
-
 StartDate=Data di avvio
 EndDate=Data di fine
 Launch=Avvio
-
 ForceBuyingPriceIfNull=Forza il prezzo di acquisto se vuoto
 ForceBuyingPriceIfNullDetails=se "ON", il margine sarà zero (prezzo di acquisto=prezzo di vendita), nel caso contrario ("OFF"), il margine sarà uguale al prezzo di vendita (prezzo di acquisto=0)
 MARGIN_METHODE_FOR_DISCOUNT=Metodo di margine per sconti globali
@@ -35,16 +29,13 @@ UseDiscountAsProduct=Come prodotto
 UseDiscountAsService=Come servizio
 UseDiscountOnTotal=Sul subtotale
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definisce se, ai fini del calcolo del margine, uno sconto globale debba essere trattato come un prodotto, un servizio o usato solo sul subtotale.
-
 MARGIN_TYPE=Tipo di margine
 MargeBrute=Margine lordo
 MargeNette=Margine netto
 MARGIN_TYPE_DETAILS=Margine lordo = Prezzo di vendita - Prezzo di acquisto<br/>Margine netto = Prezzo di vendita - Prezzo di costo
-
 CostPrice=Prezzo di costo
 BuyingCost=Prezzo di costo
 UnitCharges=Carico unitario
 Charges=Carichi
-
 AgentContactType=Tipo di contatto per i mandati di vendita
 AgentContactTypeDetails=Definisci che tipo di contatto (connesso alle fatture) associare agli agenti commerciali

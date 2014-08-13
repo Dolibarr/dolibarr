@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=منطقه قرارداد
 ListOfContracts=فهرست قرارداد
-LastContracts=تاریخ و زمان آخرین%s در قرارداد اصلاح شده
+LastContracts=تاریخ و زمان آخرین٪ s در قرارداد اصلاح شده
 AllContracts=همه قراردادها
 ContractCard=کارت قرارداد
 ContractStatus=وضعیت قرارداد
@@ -32,12 +32,12 @@ SearchAContract=جستجوی یک قرارداد
 DeleteAContract=حذف یک قرارداد
 CloseAContract=بستن یک قرارداد
 ConfirmDeleteAContract=آیا مطمئن هستید که می خواهید این قرارداد و تمام خدمات خود را حذف کنید؟
-ConfirmValidateContract=آیا مطمئن هستید که می خواهید به اعتبار این قرارداد با <b>نام%s را؟</b>
+ConfirmValidateContract=آیا مطمئن هستید که می خواهید به اعتبار این قرارداد با <b>نام٪ s را؟</b>
 ConfirmCloseContract=این همه خدمات (فعال یا نه) نزدیک است. آیا مطمئن هستید که می خواهید برای بستن این قرارداد؟
-ConfirmCloseService=آیا مطمئن هستید که می خواهید برای بستن این سرویس با تاریخ <b>از%s؟</b>
+ConfirmCloseService=آیا مطمئن هستید که می خواهید برای بستن این سرویس با تاریخ <b>از٪ s؟</b>
 ValidateAContract=اعتبار قرارداد
 ActivateService=فعال خدمات
-ConfirmActivateService=آیا مطمئن هستید که می خواهید برای فعال سازی این سرویس با تاریخ <b>از%s؟</b>
+ConfirmActivateService=آیا مطمئن هستید که می خواهید برای فعال سازی این سرویس با تاریخ <b>از٪ s؟</b>
 RefContract=قرارداد مرجع
 DateContract=تاریخ قرارداد
 DateServiceActivate=تاریخ فعال سازی سرویس
@@ -53,8 +53,8 @@ ListOfRunningContractsLines=فهرست در حال اجرا خطوط قرارد�
 ListOfRunningServices=لیست خدمات در حال اجرا
 NotActivatedServices=خدمات غیر فعال (در قرارداد اعتبار)
 BoardNotActivatedServices=خدمات برای فعال سازی در قرارداد اعتبار
-LastContracts=تاریخ و زمان آخرین%s در قرارداد اصلاح شده
-LastActivatedServices=تاریخ و زمان آخرین%s به خدمات فعال
+LastContracts=تاریخ و زمان آخرین٪ s در قرارداد اصلاح شده
+LastActivatedServices=تاریخ و زمان آخرین٪ s به خدمات فعال
 LastModifiedServices=تاریخ و زمان آخرین٪ بازدید کنندگان خدمات اصلاح شده
 EditServiceLine=خط ویرایش خدمات
 ContractStartDate=تاریخ شروع
@@ -85,12 +85,12 @@ PaymentRenewContractId=تمدید قرارداد خط (تعداد٪ بازدید
 ExpiredSince=تاریخ انقضا
 RelatedContracts=قراردادهای مرتبط
 NoExpiredServices=بدون خدمات فعال منقضی شده
-ListOfServicesToExpireWithDuration=فهرست خدمات به پایان می رسد در%s روز
-ListOfServicesToExpireWithDurationNeg=فهرست خدمات تمام شده از بیش از%s روز
+ListOfServicesToExpireWithDuration=فهرست خدمات به پایان می رسد در٪ s روز
+ListOfServicesToExpireWithDurationNeg=فهرست خدمات تمام شده از بیش از٪ s روز
 ListOfServicesToExpire=فهرست خدمات دات کام
 NoteListOfYourExpiredServices=این لیست فقط شامل خدمات قرارداد برای اشخاص ثالث به شما به عنوان یک نماینده فروش مرتبط است.
-StandardContractsTemplate=Standard contracts template
-ContactNameAndSignature=For %s, name and signature:
+StandardContractsTemplate=قراردادهای استاندارد قالب
+ContactNameAndSignature=برای٪ s، نام و امضا:
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=نمایندگی فروش امضای قرارداد
