@@ -72,6 +72,13 @@ ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
 
+-- Change on table c_pays
+ALTER TABLE llx_c_pays RENAME TO llx_c_country;
+
+ALTER TABLE llx_c_country CHANGE libelle label VARCHAR(50);
+
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country (rowid);
+ALTER TABLE llx_c_regions ADD CONSTRAINT fk_c_regions_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country (rowid);
 
 
 -- Added missing relations of llx_product
@@ -81,7 +88,7 @@ ALTER TABLE llx_product MODIFY COLUMN fk_country INTEGER NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_country SET DEFAULT NULL;
 UPDATE llx_product SET fk_country = NULL WHERE fk_country = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_pays (rowid);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_country (rowid);
 -- fk_user_author
 ALTER TABLE llx_product MODIFY COLUMN fk_user_author INTEGER NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_user_author DROP NOT NULL;

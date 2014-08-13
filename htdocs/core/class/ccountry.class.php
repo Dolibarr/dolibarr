@@ -16,9 +16,9 @@
  */
 
 /**
- *      \file       htdocs/core/class/cpays.class.php
+ *      \file       htdocs/core/class/ccountry.class.php
  *      \ingroup    core
- *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_pays dictionary
+ *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_country dictionary
  */
 
 // Put here all includes required by your class file
@@ -30,18 +30,18 @@
 /**
  * 	Class to manage dictionary Countries (used by imports)
  */
-class Cpays // extends CommonObject
+class Ccountry // extends CommonObject
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
-	//var $element='cpays';			//!< Id that identify managed objects
-	//var $table_element='cpays';	//!< Name of table without prefix where object is stored
+	//var $element='ccountry';			//!< Id that identify managed objects
+	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
 
     var $id;
 	var $code;
 	var $code_iso;
-	var $libelle;
+	var $label;
 	var $active;
 
 
@@ -74,24 +74,24 @@ class Cpays // extends CommonObject
 		// Clean parameters
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->code_iso)) $this->code_iso=trim($this->code_iso);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->active)) $this->active=trim($this->active);
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_pays(";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_country(";
 		$sql.= "rowid,";
 		$sql.= "code,";
 		$sql.= "code_iso,";
-		$sql.= "libelle,";
+		$sql.= "label,";
 		$sql.= "active";
         $sql.= ") VALUES (";
 		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->code_iso)?'NULL':"'".$this->db->escape($this->code_iso)."'").",";
-		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
+		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
 		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'")."";
 		$sql.= ")";
 
@@ -103,7 +103,7 @@ class Cpays // extends CommonObject
 
 		if (! $error)
         {
-            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_pays");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_country");
 
 			if (! $notrigger)
 			{
@@ -152,9 +152,9 @@ class Cpays // extends CommonObject
 		$sql.= " t.rowid,";
 		$sql.= " t.code,";
 		$sql.= " t.code_iso,";
-		$sql.= " t.libelle,";
+		$sql.= " t.label,";
 		$sql.= " t.active";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_pays as t";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_country as t";
         if ($id)   $sql.= " WHERE t.rowid = ".$id;
         elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
 
@@ -169,7 +169,7 @@ class Cpays // extends CommonObject
                 $this->id    = $obj->rowid;
 				$this->code = $obj->code;
 				$this->code_iso = $obj->code_iso;
-				$this->libelle = $obj->libelle;
+				$this->label = $obj->label;
 				$this->active = $obj->active;
             }
             $this->db->free($resql);
@@ -199,7 +199,7 @@ class Cpays // extends CommonObject
 		// Clean parameters
 		if (isset($this->code)) $this->code=trim($this->code);
 		if (isset($this->code_iso)) $this->code_iso=trim($this->code_iso);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
+		if (isset($this->label)) $this->label=trim($this->label);
 		if (isset($this->active)) $this->active=trim($this->active);
 
 
@@ -207,10 +207,10 @@ class Cpays // extends CommonObject
 		// Put here code to add control on parameters values
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX."c_pays SET";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."c_country SET";
 		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
 		$sql.= " code_iso=".(isset($this->code_iso)?"'".$this->db->escape($this->code_iso)."'":"null").",";
-		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
+		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " active=".(isset($this->active)?$this->active:"null")."";
         $sql.= " WHERE rowid=".$this->id;
 
@@ -267,7 +267,7 @@ class Cpays // extends CommonObject
 		global $conf, $langs;
 		$error=0;
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_pays";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_country";
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();

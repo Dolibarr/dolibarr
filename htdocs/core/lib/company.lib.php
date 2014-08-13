@@ -262,10 +262,10 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     if (! is_object($dbtouse)) $dbtouse=$db;
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
-    $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
     if (is_numeric($searchkey)) $sql.= " WHERE rowid=".$searchkey;
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
-    else $sql.= " WHERE libelle='".$db->escape($searchlabel)."'";
+    else $sql.= " WHERE label='".$db->escape($searchlabel)."'";
 
     dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
@@ -274,7 +274,7 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
         $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
-            $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
+            $label=((! empty($obj->label) && $obj->label!='-')?$obj->label:'');
             if (is_object($outputlangs))
             {
                 $outputlangs->load("dict");

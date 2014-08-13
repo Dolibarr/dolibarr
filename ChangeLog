@@ -75,8 +75,9 @@ For developers:
 - LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
 - New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
 - New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
-- New: Added hook "formConfirm" and "doActions" for supplier invoice card.
-- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card.
+- New: Added hook "formConfirm" and "doActions" for supplier invoice card
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
+- New: renamed table llx_c_pays to llx_c_country & libelle field to label
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
