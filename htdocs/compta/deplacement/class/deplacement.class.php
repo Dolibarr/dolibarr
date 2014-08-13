@@ -377,7 +377,7 @@ class Deplacement extends CommonObject
 
 	   $ret=array();
 
-        $sql = "SELECT id, code, libelle as label";
+        $sql = "SELECT id, code, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees";
         $sql.= " WHERE active = ".$active;
 
