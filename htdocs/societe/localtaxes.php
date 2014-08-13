@@ -197,10 +197,10 @@ if ($socid)
 
 
 	$sql  = "SELECT DISTINCT t.rowid, t.note, t.taux, t.localtax1, t.localtax2, t.recuperableonly";
-	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql.= " WHERE t.fk_pays = p.rowid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql.= " WHERE t.fk_pays = c.rowid";
 	$sql.= " AND t.active = 1";
-	$sql.= " AND p.code IN ('".$mysoc->country_code."')";
+	$sql.= " AND c.code IN ('".$mysoc->country_code."')";
 	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
 
 	$resql=$db->query($sql);

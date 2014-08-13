@@ -164,10 +164,10 @@ class FormOther
         global $langs;
 
         $sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
-        $sql.= " p.libelle as pays";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
-        $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
-        $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
+        $sql.= " c.label as country";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
+        $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
+        $sql.= " ORDER BY country, e.organization ASC, e.code ASC";
 
     	dol_syslog(get_class($this).'::select_ecotaxes', LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -223,9 +223,9 @@ class FormOther
     	$out='';
 
     	$sql = "SELECT r.taux";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_pays as p";
-    	$sql.= " WHERE r.active = 1 AND r.fk_pays = p.rowid";
-    	$sql.= " AND p.code = '".$country_code."'";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
+    	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
+    	$sql.= " AND c.code = '".$country_code."'";
 
     	dol_syslog(get_class($this).'::select_revenue_stamp', LOG_DEBUG);
     	$resql=$this->db->query($sql);

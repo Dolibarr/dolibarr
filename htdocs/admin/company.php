@@ -318,7 +318,7 @@ if ($action == 'edit' || $action == 'updateedit')
     // Country
     $var=!$var;
     print '<tr '.$bc[$var].'><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-    //if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+    //if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
     print $form->select_country($mysoc->country_id,'country_id');
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>'."\n";
