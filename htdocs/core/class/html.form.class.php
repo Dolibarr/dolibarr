@@ -606,7 +606,7 @@ class Form
 
         if (count($this->cache_types_fees)) return 0;    // Cache already load
 
-        $sql = "SELECT c.code, c.libelle as label";
+        $sql = "SELECT c.code, c.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
         $sql.= " ORDER BY lower(c.libelle) ASC";
 

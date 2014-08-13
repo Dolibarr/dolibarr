@@ -148,7 +148,7 @@ $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active, accountanc
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, p.code as country_code, p.libelle as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
-$tabsql[17]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_fees";
+$tabsql[17]= "SELECT id      as rowid, code, label, accountancy_code, active FROM ".MAIN_DB_PREFIX."c_type_fees";
 $tabsql[18]= "SELECT rowid   as rowid, code, libelle, tracking, active FROM ".MAIN_DB_PREFIX."c_shipment_mode";
 $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_effectif";
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
@@ -206,7 +206,7 @@ $tabfield[13]= "code,libelle,type,accountancy_code";
 $tabfield[14]= "code,libelle,price,organization,country_id,country";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle,sortorder";
-$tabfield[17]= "code,libelle";
+$tabfield[17]= "code,label,accountancy_code";
 $tabfield[18]= "code,libelle,tracking";
 $tabfield[19]= "code,libelle";
 $tabfield[20]= "code,libelle";
@@ -235,7 +235,7 @@ $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
 $tabfieldvalue[14]= "code,libelle,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
 $tabfieldvalue[16]= "code,libelle,sortorder";
-$tabfieldvalue[17]= "code,libelle";
+$tabfieldvalue[17]= "code,label,accountancy_code";
 $tabfieldvalue[18]= "code,libelle,tracking";
 $tabfieldvalue[19]= "code,libelle";
 $tabfieldvalue[20]= "code,libelle";
@@ -264,7 +264,7 @@ $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label,sortorder";
-$tabfieldinsert[17]= "code,libelle";
+$tabfieldinsert[17]= "code,label,accountancy_code";
 $tabfieldinsert[18]= "code,libelle,tracking";
 $tabfieldinsert[19]= "code,libelle";
 $tabfieldinsert[20]= "code,libelle";
@@ -1082,7 +1082,7 @@ if ($id)
                                 $key = $langs->trans('PaperFormat'.strtoupper($obj->code));
                                 $valuetoshow = ($obj->code && $key != 'PaperFormat'.strtoupper($obj->code) ? $key : $obj->$fieldlist[$field]);
                             }
-                            else if ($fieldlist[$field] == 'libelle' && $tabname[$id] == MAIN_DB_PREFIX.'c_type_fees')
+                            else if ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_type_fees')
                             {
                                 $langs->load('trips');
                                 $key = $langs->trans(strtoupper($obj->code));
