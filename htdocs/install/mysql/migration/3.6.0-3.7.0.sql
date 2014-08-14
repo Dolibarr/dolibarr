@@ -961,6 +961,7 @@ CREATE TABLE llx_holiday_types (
 );
 
 -- Change on table c_civilite
+DROP INDEX uk_c_civilite ON llx_c_civilite;
 ALTER TABLE llx_c_civilite RENAME TO llx_c_civility;
 ALTER TABLE llx_c_civility CHANGE civilite label VARCHAR(50);
 ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
