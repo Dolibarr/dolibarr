@@ -421,7 +421,7 @@ if ($id == 11)
 			'fichinter'         => $langs->trans('InterventionCard'),
 			'agenda'			=> $langs->trans('Agenda')
 	);
-	if (! empty($conf->global->MAIN_SUPPORT_CONTACT_TYPE_FOR_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
+	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 	$sourceList = array(
 			'internal' => $langs->trans('Internal'),
 			'external' => $langs->trans('External')
