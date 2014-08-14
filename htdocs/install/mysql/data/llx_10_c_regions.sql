@@ -32,6 +32,7 @@
 -- Regions
 --
 
+SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 
 -- Regions France (id country=1)
@@ -61,6 +62,7 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 124, 1,  91,'34172',2,'Languedoc-Roussillon');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 125, 1,  93,'13055',0,'Provence-Alpes-Côte d''Azur');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 126, 1,  94,'2A004',0,'Corse');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 127, 1,   6,'97601',0,'Mayotte');
 
 -- Regions Belgium (id country=2)
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values ( 201, 2, 201,     '',1,'Flandre');
