@@ -598,10 +598,10 @@ abstract class CommonObject
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty)) return 0;
 
         $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:$this->fk_soc);
+        $result=$thirdparty->fetch(isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty));
         $this->client = $thirdparty;  // deprecated
         $this->thirdparty = $thirdparty;
 
