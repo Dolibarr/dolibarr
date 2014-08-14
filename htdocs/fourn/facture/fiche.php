@@ -432,7 +432,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                     $label = $_POST['label'.$i];
                     $amountht  = price2num($_POST['amount'.$i]);
                     $amountttc = price2num($_POST['amountttc'.$i]);
-                    $tauxtva   = price2num($_POST['tauxtva'.$i]);
+                    $ratetva   = price2num($_POST['ratetva'.$i]);
                     $qty = $_POST['qty'.$i];
                     $fk_product = $_POST['fk_product'.$i];
                     if ($label)
@@ -450,7 +450,7 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                         $product=new Product($db);
                         $product->fetch($_POST['idprod'.$i]);
 
-                        $ret=$object->addline($label, $amount, $tauxtva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
+                        $ret=$object->addline($label, $amount, $ratetva, $product->localtax1_tx, $product->localtax2_tx, $qty, $fk_product, $remise_percent, '', '', '', 0, $price_base);
                         if ($ret < 0) $error++;
                     }
                 }
@@ -522,11 +522,11 @@ elseif ($action == 'update_line' && $user->rights->fournisseur->facture->creer)
 
         }
 
-        $localtax1tx= get_localtax($_POST['tauxtva'], 1, $mysoc,$object->thirdparty);
-        $localtax2tx= get_localtax($_POST['tauxtva'], 2, $mysoc,$object->thirdparty);
+        $localtax1tx= get_localtax($_POST['ratetva'], 1, $mysoc,$object->thirdparty);
+        $localtax2tx= get_localtax($_POST['ratetva'], 2, $mysoc,$object->thirdparty);
         $remise_percent=GETPOST('remise_percent');
 
-        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('tauxtva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
+        $result=$object->updateline(GETPOST('lineid'), $label, $pu, GETPOST('ratetva'), $localtax1tx, $localtax2tx, GETPOST('qty'), GETPOST('idprod'), $price_base_type, 0, $type, $remise_percent);
         if ($result >= 0)
         {
             unset($_POST['label']);
@@ -1404,12 +1404,12 @@ if ($action == 'create')
             for ($i = 1 ; $i < 9 ; $i++)
             {
                 $value_qty = '1';
-                $value_tauxtva = '';
+                $value_ratetva = '';
                 print '<tr><td>'.$i.'</td>';
                 print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
                 print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
                 print '<td align="right">';
-                print $form->load_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
+                print $form->load_tva('ratetva'.$i,$value_ratetva,$societe,$mysoc);
                 print '</td>';
                 print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
                 print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
@@ -1989,7 +1989,7 @@ else
 
                 // VAT
                 print '<td align="right">';
-                print $form->load_tva('tauxtva',$object->lines[$i]->tva_tx,$societe,$mysoc);
+                print $form->load_tva('ratetva',$object->lines[$i]->tva_tx,$societe,$mysoc);
                 print '</td>';
 
                 // Unit price

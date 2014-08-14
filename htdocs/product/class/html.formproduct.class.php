@@ -34,8 +34,8 @@ class FormProduct
 	// Cache arrays
 	var $cache_warehouses=array();
 
-	var $tva_taux_value;
-	var $tva_taux_libelle;
+	var $tva_rate_value;
+	var $tva_rate_libelle;
 
 
 	/**

@@ -99,7 +99,7 @@ class Facturation
         $product = new Product($db);
         $product->fetch($this->id);
 
-        $sql = "SELECT taux";
+        $sql = "SELECT rate";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
         $sql.= " WHERE rowid = ".$this->tva();
 
@@ -109,7 +109,7 @@ class Facturation
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
-            $vat_rate=$obj->taux;
+            $vat_rate=$obj->rate;
             //var_dump($vat_rate);exit;
         }
         else

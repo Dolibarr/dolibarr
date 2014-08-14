@@ -176,7 +176,7 @@ switch ($action)
 	        }
 			$tab_article = $ret;
 
-			$res = $db->query('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$tab_liste[$i]['fk_tva']);
+			$res = $db->query('SELECT rate FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$tab_liste[$i]['fk_tva']);
 			$ret=array();
 			$tab = $db->fetch_array($res);
 			foreach ( $tab as $cle => $valeur )
@@ -188,8 +188,8 @@ switch ($action)
 			$invoiceline=new FactureLigne($db);
 			$invoiceline->fk_product=$tab_liste[$i]['fk_article'];
 			$invoiceline->desc=$tab_article['label'];
-			$invoiceline->tva_tx=empty($tab_tva['taux'])?0:$tab_tva['taux'];	// works even if vat_rate is ''
-			//$invoiceline->tva_tx=$tab_tva['taux'];
+			$invoiceline->tva_tx=empty($tab_tva['rate'])?0:$tab_tva['rate'];	// works even if vat_rate is ''
+			//$invoiceline->tva_tx=$tab_tva['rate'];
 			$invoiceline->qty=$tab_liste[$i]['qte'];
 			$invoiceline->remise_percent=$tab_liste[$i]['remise_percent'];
 			$invoiceline->price=$tab_article['price'];

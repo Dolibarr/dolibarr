@@ -154,7 +154,7 @@ global $mysoc;
 $ret=array();
 $i=0;
 
-$sql = "SELECT t.rowid, t.taux";
+$sql = "SELECT t.rowid, t.rate";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
 $sql.= ", ".MAIN_DB_PREFIX."c_country as c";
 $sql.= " WHERE t.fk_pays = c.rowid";

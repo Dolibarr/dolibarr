@@ -970,3 +970,8 @@ CREATE TABLE llx_holiday_types (
 
 ALTER TABLE llx_c_type_fees CHANGE libelle label VARCHAR(30);
 ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
+
+DROP INDEX uk_c_tva_id ON llx_c_tva;
+ALTER TABLE llx_c_tva CHANGE taux rate double NOT NULL;
+ALTER TABLE llx_c_revenuestamp CHANGE taux rate double NOT NULL;
+ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, rate, recuperableonly);

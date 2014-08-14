@@ -27,4 +27,4 @@
 delete from llx_c_revenuestamp;
 
 -- TUNISIA (id country=10) --
-insert into llx_c_revenuestamp(rowid,fk_pays,taux,note,active) values (101, 10, 0.4, 'Revenue stamp tunisia', 1);
+insert into llx_c_revenuestamp(rowid,fk_pays,rate,note,active) values (101, 10, 0.4, 'Revenue stamp tunisia', 1);

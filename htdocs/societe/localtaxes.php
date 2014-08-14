@@ -196,12 +196,12 @@ if ($socid)
 	print "</tr>\n";
 
 
-	$sql  = "SELECT DISTINCT t.rowid, t.note, t.taux, t.localtax1, t.localtax2, t.recuperableonly";
+	$sql  = "SELECT DISTINCT t.rowid, t.note, t.rate, t.localtax1, t.localtax2, t.recuperableonly";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
 	$sql.= " WHERE t.fk_pays = c.rowid";
 	$sql.= " AND t.active = 1";
 	$sql.= " AND c.code IN ('".$mysoc->country_code."')";
-	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+	$sql.= " ORDER BY t.rate ASC, t.recuperableonly ASC";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -222,7 +222,7 @@ if ($socid)
 					print '<tr '.$bc[$var].'>';
 
 					print '<td>'.$obj->note.'</td>';
-					print '<td align="right">'.$obj->taux.'</td>';
+					print '<td align="right">'.$obj->rate.'</td>';
 
 					if ($mysoc->localtax1_assuj=="1" && $soc->localtax1_assuj)
 						print '<td align="right"><input size="4" type="text" class="flat" name="localtax1" value="'.$obj->localtax1.'"></td>';
@@ -238,7 +238,7 @@ if ($socid)
 					print '<tr '.$bc[$var].'>';
 
 					print '<td>'.$obj->note.'</td>';
-					print '<td align="right">'.$obj->taux.'</td>';
+					print '<td align="right">'.$obj->rate.'</td>';
 					if ($mysoc->localtax1_assuj=="1" && $soc->localtax1_assuj)
 						print '<td align="right">'.$obj->localtax1.'</td>';
 					if ($mysoc->localtax2_assuj=="1" && $soc->localtax2_assuj)

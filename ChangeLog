@@ -77,13 +77,15 @@ For developers:
 - New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
 - New: Added hook "formConfirm" and "doActions" for supplier invoice card
 - New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
-- New: renamed table llx_c_pays to llx_c_country & libelle field to label
+- Qual: renamed table llx_c_pays to llx_c_country & libelle field to label
+- Qual: renamed taux field to rate into table llx_c_tva & llx_c_revenuestamp
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
 
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
-- Some field into database wwere renamed from "libelle" to "label".
+- Some field into database were renamed from "libelle" to "label".
+- All field "taux" into database were renamed into "rate".
 - Table llx_c_pays were renamed into llx_c_country.  
  
 

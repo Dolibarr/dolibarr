@@ -105,7 +105,7 @@ $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
 $sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
 $sql.= " ct.accountancy_code_buy as account_tva, ct.recuperableonly";
 $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.rate AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
 $sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn";
 $sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
