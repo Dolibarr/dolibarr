@@ -43,6 +43,7 @@ if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@includ
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
+include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
 dol_include_once('/module/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
@@ -60,6 +61,14 @@ if ($user->societe_id > 0)
 	//accessforbidden();
 }
 
+// Load object if id or ref is provided as parameter
+$object=new Skeleton_Class($db);
+if (($id > 0 || ! empty($ref)) && $action != 'add')
+{
+	$result=$object->fetch($id,$ref);
+	if ($result < 0) dol_print_error($db);
+}
+
 
 
 /*******************************************************************
@@ -72,7 +81,6 @@ if ($action == 'add')
 {
 	$error=0;
 	
-	$object=new Skeleton_Class($db);
 	/* object_prop_getpost_prop */
 	$object->prop1=GETPOST("field1");
 	$object->prop2=GETPOST("field2");
@@ -122,7 +130,7 @@ $form=new Form($db);
 
 // Put here content of your page
 
-// Example 1 : Adding jquery code
+// Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
 	function init_myfunc()
@@ -138,13 +146,8 @@ jQuery(document).ready(function() {
 </script>';
 
 
-// Example 2 : Adding links to objects
-// The class must extends CommonObject class to have this method available
-//$somethingshown=$object->showLinkedObjectBlock();
-
-
-// Example 3 : List of data
-if ($action == 'list')
+// Part to show a list
+if ($action == 'list' || empty($id))
 {
     $sql = "SELECT";
     $sql.= " t.rowid,";
@@ -189,6 +192,69 @@ if ($action == 'list')
     print '</table>'."\n";
 }
 
+
+
+// Part to edit record
+if ($id && $action == 'edit')
+{
+	dol_fiche_head();
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="action" value="add">';
+
+
+	print '<br>';
+
+	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></center>';
+
+	print '</form>';
+
+	dol_fiche_end();
+}
+
+
+
+// Part to show record
+if ($id && (empty($action) || $action == 'view'))
+{
+	dol_fiche_head();
+	
+	
+	
+	dol_fiche_end();
+	
+	
+	// Buttons
+	print '<div class="tabsAction">'."\n";
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook))
+	{
+		if ($user->rights->mymodule->write)
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		}
+
+		if ($user->rights->mymodule->delete)
+		{
+			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
+			{
+				print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+			}
+			else
+			{
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+			}
+		}
+	}
+	print '</div>'."\n";
+	
+	
+	// Example 2 : Adding links to objects
+	// The class must extends CommonObject class to have this method available
+	//$somethingshown=$object->showLinkedObjectBlock();
+	
+}
 
 
 // End of page
