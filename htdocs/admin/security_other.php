@@ -105,9 +105,9 @@ else if ($action == 'MAIN_ANTIVIRUS_PARAM')
     if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
     else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
-else if ($action == 'MAIN_SECURITY_HIDDENNUMVER')
+else if ($action == 'MAIN_APPLICATION_TITLE')
 {
-	if (! dolibarr_set_const($db, "MAIN_SECURITY_HIDDENNUMVER", $_POST["MAIN_SECURITY_HIDDENNUMVER"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	if (! dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
 	else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
 
@@ -170,8 +170,24 @@ print '<input type="submit" class="button" name="button" value="'.$langs->trans(
 print '</td>';
 print '</tr></form>';
 
-print '</table>';
+$var=!$var;
+$sessiontimeout=ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_APPLICATION_TITLE" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("HiddeNumVersion").'</td><td align="right">';
+print $form->textwithpicto('',$langs->trans("HiddeNumVersionExample",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr></form>';
 
+print '</table>';
 print '<br>';
 
 
@@ -183,28 +199,6 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
-
-// Hidde version number
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td colspan="3">'.$langs->trans("HiddeNumVersion").'</td>'; // TODO add lag
-print '<td align="right">';
-if (! empty($conf->use_javascript_ajax))
-{
-	print ajax_constantonoff('MAIN_SECURITY_HIDDENNUMVER');
-}
-else
-{
-	if (empty($conf->global->MAIN_SECURITY_HIDDENNUMVER))
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_HIDDENNUMVER">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-	}
-	else
-	{
-		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_HIDDENNUMVER">'.img_picto($langs->trans("Enabled"),'on').'</a>';
-	}
-}
-print '</td></tr>';
 
 // Enable Captcha code
 $var=!$var;
@@ -361,7 +355,6 @@ $formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestF
 // List of document
 $filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
 $formfile->list_of_documents($filearray, '', 'admin_temp', '');
-
 
 llxFooter();
 $db->close();

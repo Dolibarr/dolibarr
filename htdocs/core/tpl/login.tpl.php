@@ -27,7 +27,6 @@ if (GETPOST('dol_use_jmobile')) $conf->dol_use_jmobile=1;
 
 $arrayofjs=array('/core/js/dst.js'.(empty($conf->dol_use_jmobile)?'':'?version='.urlencode(DOL_VERSION)));					// Javascript code on logon page only to detect user tz, dst_observed, dst_first, dst_second
 $titleofloginpage=$langs->trans('Login').' '.$title;	// title is defined by dol_loginfunction in security2.lib.php
-$titleAff = !empty($conf->$global->MAIN_SECURITY_HIDDENNUMVER) ? dol_escape_htmltag($title) : "Dolibarr" ;
 
 print top_htmlhead('',$titleofloginpage,0,0,$arrayofjs);
 ?>
@@ -63,8 +62,8 @@ $(document).ready(function () {
 <input type="hidden" name="dol_no_mouse_hover" id="dol_no_mouse_hover" value="<?php echo $dol_no_mouse_hover; ?>" />
 <input type="hidden" name="dol_use_jmobile" id="dol_use_jmobile" value="<?php echo $dol_use_jmobile; ?>" />
 
-<table class="login_table_title center" summary="<?php echo $titleAff; ?>">
-<tr class="vmenu"><td align="center"><?php echo $titleAff; ?></td></tr>
+<table class="login_table_title center" summary="<?php echo dol_escape_htmltag($title); ?>">
+<tr class="vmenu"><td align="center"><?php echo dol_escape_htmltag($title); ?></td></tr>
 </table>
 <br>
 
