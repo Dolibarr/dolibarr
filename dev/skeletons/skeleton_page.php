@@ -63,7 +63,7 @@ if ($user->societe_id > 0)
 
 // Load object if id or ref is provided as parameter
 $object=new Skeleton_Class($db);
-if (($id || $ref) && $action != 'add')
+if (($id > 0 || ! empty($ref)) && $action != 'add')
 {
 	$result=$object->fetch($id,$ref);
 	if ($result < 0) dol_print_error($db);
