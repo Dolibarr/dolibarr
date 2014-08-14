@@ -2192,8 +2192,8 @@ class User extends CommonObject
 		// Load array[child]=parent
 		$sql = "SELECT fk_user as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE fk_user != 0";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " WHERE fk_user <> 0";
+		$sql.= " AND entity IN (".getEntity('user',1).")";
 
 		dol_syslog(get_class($this)."::load_parentof sql=".$sql);
 		$resql = $this->db->query($sql);
@@ -2222,10 +2222,10 @@ class User extends CommonObject
 	 *				fullname = nom avec chemin complet du user
 	 *				fullpath = chemin complet compose des id
 	 *
-	 *  @param      int		$markafterid      Removed all users including the leaf $markafterid in user tree.
-	 *	@return		array		      		  Array of users. this->users and this->parentof are set.
+	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
+	 *	@return		array		      		  	Array of users. this->users and this->parentof are set.
 	 */
-	function get_full_tree($markafterid=0)
+	function get_full_tree($deleteafterid=0)
 	{
 		global $conf,$user;
 
@@ -2233,7 +2233,7 @@ class User extends CommonObject
 
 		// Init this->parentof that is array(id_son=>id_parent, ...)
 		$this->load_parentof();
-
+		
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.login, u.statut, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -2276,14 +2276,14 @@ class User extends CommonObject
 			$this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
 		}
 
-		// Exclude leaf including $markafterid from tree
-		if ($markafterid)
+		// Exclude leaf including $deleteafterid from tree
+		if ($deleteafterid)
 		{
-			//print "Look to discard user ".$markafterid."\n";
-			$keyfilter1='^'.$markafterid.'$';
-			$keyfilter2='_'.$markafterid.'$';
-			$keyfilter3='^'.$markafterid.'_';
-			$keyfilter4='_'.$markafterid.'_';
+			//print "Look to discard user ".$deleteafterid."\n";
+			$keyfilter1='^'.$deleteafterid.'$';
+			$keyfilter2='_'.$deleteafterid.'$';
+			$keyfilter3='^'.$deleteafterid.'_';
+			$keyfilter4='_'.$deleteafterid.'_';
 			foreach($this->users as $key => $val)
 			{
 				if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])
@@ -2322,13 +2322,13 @@ class User extends CommonObject
 
 		// Define fullpath and fullname
 		$this->users[$id_user]['fullpath'] = '_'.$id_user;
-		$this->users[$id_user]['fullname'] = $this->users[$id_user]['label'];
+		$this->users[$id_user]['fullname'] = $this->users[$id_user]['lastname'];
 		$i=0; $cursor_user=$id_user;
 
 		while ((empty($protection) || $i < $protection) && ! empty($this->parentof[$cursor_user]))
 		{
 			$this->users[$id_user]['fullpath'] = '_'.$this->parentof[$cursor_user].$this->users[$id_user]['fullpath'];
-			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['label'].' >> '.$this->users[$id_user]['fullname'];
+			$this->users[$id_user]['fullname'] = $this->users[$this->parentof[$cursor_user]]['lastname'].' >> '.$this->users[$id_user]['fullname'];
 			$i++; $cursor_user=$this->parentof[$cursor_user];
 		}
 

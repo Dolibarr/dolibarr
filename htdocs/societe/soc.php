@@ -1423,7 +1423,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td>'.$langs->trans("Logo").'</td>';
             print '<td colspan="3">';
-            if ($object->logo) print $form->showphoto('societe',$object,50);
+            if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
@@ -1497,7 +1497,7 @@ else
         print '</tr>';
 
         // Logo+barcode
-        $rowspan=4;
+        $rowspan=6;
         if (! empty($conf->global->SOCIETE_USEPREFIX)) $rowspan++;
         if (! empty($object->client)) $rowspan++;
         if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire)) $rowspan++;
@@ -1507,9 +1507,9 @@ else
         if ($showlogo || $showbarcode)
         {
             $htmllogobar.='<td rowspan="'.$rowspan.'" style="text-align: center;" width="25%">';
-            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object,50);
+            if ($showlogo)   $htmllogobar.=$form->showphoto('societe',$object);
             if ($showlogo && $showbarcode) $htmllogobar.='<br><br>';
-            if ($showbarcode) $htmllogobar.=$form->showbarcode($object,50);
+            if ($showbarcode) $htmllogobar.=$form->showbarcode($object);
             $htmllogobar.='</td>';
         }
 
@@ -1588,12 +1588,12 @@ else
         if (empty($conf->global->SOCIETE_DISABLE_STATE)) print '<tr><td>'.$langs->trans('State').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">'.$object->state.'</td>';
 
         // EMail
-        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('EMail').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_email($object->email,0,$object->id,'AC_EMAIL');
         print '</td></tr>';
 
         // Web
-        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
+        print '<tr><td>'.$langs->trans('Web').'</td><td colspan="'.(2+(($showlogo || $showbarcode)?0:1)).'">';
         print dol_print_url($object->url);
         print '</td></tr>';
 
@@ -1937,7 +1937,6 @@ else
 	        if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	        {
 				print '<div class="fichecenter"><div class="fichethirdleft">';
-	        	//print '<table width="100%"><tr><td valign="top" width="50%">';
 	            print '<a name="builddoc"></a>'; // ancre
 
 	            /*
