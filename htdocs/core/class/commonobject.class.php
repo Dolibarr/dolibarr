@@ -47,6 +47,8 @@ abstract class CommonObject
 
     public $array_options=array();
 
+    public $thirdparty;
+     
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
     public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
