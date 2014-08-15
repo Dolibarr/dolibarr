@@ -61,6 +61,7 @@ PostOrFunction=Posten / Funktion
 UserTitle=Anrede
 Surname=Nachname
 Address=Adresse
+Address2=Zusatzinfo Anschrift
 State=Bundesland
 Region=Region
 Country=Land
