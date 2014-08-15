@@ -886,7 +886,7 @@ class Project extends CommonObject
         $projects = array();
         $temp = array();
 
-        $sql = "SELECT DISTINCT p.rowid, p.ref";
+        $sql = "SELECT ".(($mode == 0 || $mode == 1) ? "DISTINCT " : "")."p.rowid, p.ref";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet as p";
         if ($mode == 0 || $mode == 1)
         {
