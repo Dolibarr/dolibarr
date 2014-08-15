@@ -76,7 +76,8 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($soc);
 print '</td></tr></table>';
 
-print '</div>';
+
+dol_fiche_end();
 
 
 llxFooter();
