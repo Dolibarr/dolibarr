@@ -73,17 +73,18 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		//print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone">';
 		//print $form->select_dolusers($filtera, 'userasked', 1, '', ! $canedit);
 		//print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionsForUser").' &nbsp; ';
+		print $langs->trans("ActionAffectedTo").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone">';
-		//print ' &nbsp;';
+		//print $langs->trans("User");
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit);
 		if (! empty($conf->use_javascript_ajax))
 		{
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			print ajax_combobox('usertodo');
 		}
-		print ' &nbsp; '.$langs->trans("or") . ' ';
-		print $langs->trans("ActionsForUsersGroup").' &nbsp; ';
+		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' ';
+		else print '<br>';
+		print $langs->trans("Group").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
 		if (! empty($conf->use_javascript_ajax))
 		{
