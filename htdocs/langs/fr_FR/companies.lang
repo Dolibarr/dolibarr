@@ -61,6 +61,7 @@ PostOrFunction=Poste/Fonction
 UserTitle=Titre civilité
 Surname=Surnom/Pseudo
 Address=Adresse
+Address2=Complément adresse
 State=Département/Canton
 Region=Région
 Country=Pays

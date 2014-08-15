@@ -61,6 +61,7 @@ PostOrFunction=Puesto/función
 UserTitle=Título de cortesía
 Surname=Seudónimo
 Address=Dirección
+Address2=complemento de dirección
 State=Provincia
 Region=Región
 Country=País

@@ -64,6 +64,7 @@ class Societe extends CommonObject
     var $particulier;
     var $civility_id;
     var $address;
+    var $address2;
     var $zip;
     var $town;
 
@@ -627,6 +628,7 @@ class Societe extends CommonObject
         $this->nom			= trim($this->nom);		// TODO obsolete
         $this->ref_ext		= trim($this->ref_ext);
         $this->address		= $this->address?trim($this->address):trim($this->address);
+        $this->address2     = $this->address2?trim($this->address2):trim($this->address2);
         $this->zip			= $this->zip?trim($this->zip):trim($this->zip);
         $this->town			= $this->town?trim($this->town):trim($this->town);
         $this->state_id		= trim($this->state_id);
@@ -730,6 +732,7 @@ class Societe extends CommonObject
             $sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
             $sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
             $sql .= ",address = '" . $this->db->escape($this->address) ."'";
+            $sql .= ",address2 = '" . $this->db->escape($this->address2) ."'";
 
             $sql .= ",zip = ".(! empty($this->zip)?"'".$this->zip."'":"null");
             $sql .= ",town = ".(! empty($this->town)?"'".$this->db->escape($this->town)."'":"null");
@@ -941,7 +944,7 @@ class Societe extends CommonObject
 
         if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
+        $sql = 'SELECT s.rowid, s.nom as name, s.entity, s.ref_ext, s.ref_int, s.address, s.address2, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
         $sql .= ', s.price_level';
         $sql .= ', s.tms as date_modification';
@@ -1006,6 +1009,7 @@ class Societe extends CommonObject
                 $this->date_modification = $this->db->jdate($obj->date_modification);
 
                 $this->address 		= $obj->address;
+                $this->address2     = $obj->address2;
                 $this->zip 			= $obj->zip;
                 $this->town 		= $obj->town;
 
@@ -2825,6 +2829,7 @@ class Societe extends CommonObject
         $this->ref_ext = 'Ref ext';
         $this->specimen=1;
         $this->address='21 jump street';
+        $this->address2 = 'bat 1';
         $this->zip='99999';
         $this->town='MyTown';
         $this->state_id=1;
