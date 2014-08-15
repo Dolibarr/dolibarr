@@ -29,6 +29,7 @@ ClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Billed
 RelatedInterventions=Related interventions
 ShowIntervention=Show intervention
+SendInterventionRef=Submission of intervention %s
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
 TypeContact_fichinter_internal_INTERVENING=Intervening
