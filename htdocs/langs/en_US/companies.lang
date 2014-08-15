@@ -61,6 +61,7 @@ PostOrFunction=Post/Function
 UserTitle=Title
 Surname=Surname/Pseudo
 Address=Address
+Address2=Address supplement 
 State=State/Province
 Region=Region
 Country=Country
