@@ -2226,10 +2226,10 @@ class User extends CommonObject
 	 *				fullname = nom avec chemin complet du user
 	 *				fullpath = chemin complet compose des id
 	 *
-	 *  @param      int		$markafterid      Removed all users including the leaf $markafterid in user tree.
-	 *	@return		array		      		  Array of users. this->users and this->parentof are set.
+	 *  @param      int		$deleteafterid      Removed all users including the leaf $deleteafterid (and all its child) in user tree.
+	 *	@return		array		      		  	Array of users. this->users and this->parentof are set.
 	 */
-	function get_full_tree($markafterid=0)
+	function get_full_tree($deleteafterid=0)
 	{
 		global $conf,$user;
 
@@ -2280,14 +2280,14 @@ class User extends CommonObject
 			$this->build_path_from_id_user($key,0);	// Process a branch from the root user key (this user has no parent)
 		}
 
-		// Exclude leaf including $markafterid from tree
-		if ($markafterid)
+		// Exclude leaf including $deleteafterid from tree
+		if ($deleteafterid)
 		{
-			//print "Look to discard user ".$markafterid."\n";
-			$keyfilter1='^'.$markafterid.'$';
-			$keyfilter2='_'.$markafterid.'$';
-			$keyfilter3='^'.$markafterid.'_';
-			$keyfilter4='_'.$markafterid.'_';
+			//print "Look to discard user ".$deleteafterid."\n";
+			$keyfilter1='^'.$deleteafterid.'$';
+			$keyfilter2='_'.$deleteafterid.'$';
+			$keyfilter3='^'.$deleteafterid.'_';
+			$keyfilter4='_'.$deleteafterid.'_';
 			foreach($this->users as $key => $val)
 			{
 				if (preg_match('/'.$keyfilter1.'/',$val['fullpath']) || preg_match('/'.$keyfilter2.'/',$val['fullpath'])

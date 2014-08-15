@@ -1820,15 +1820,7 @@ $now = dol_now();
 
 llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
-print '
-<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	jQuery("#linktoorder").click(function() {
-		jQuery("#commande").toggle();
-	});
-});
-</script>
-';
+
 
 /**
  * *******************************************************************
@@ -3539,15 +3531,26 @@ if ($action == 'create')
 		// Linked object block
 		$somethingshown = $object->showLinkedObjectBlock();
 
-		if (empty($somethingshown) && $object->statut > 0) {
+		if (empty($somethingshown) && ! empty($conf->commande->enabled))
+		{
 			print '<br><a href="#" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+
+			print '
+				<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery("#linktoorder").click(function() {
+						jQuery("#commande").toggle();
+					});
+				});
+				</script>
+				';
 
 			print '<div id="commande" style="display:none">';
 
 			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
 			$sql .= ", " . MAIN_DB_PREFIX . "commande as c";
-			$sql .= ' WHERE c.fk_soc = ' . $soc->id . '';
+			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $soc->id . '';
 
 			$resqlorderlist = $db->query($sql);
 			if ($resqlorderlist) {
