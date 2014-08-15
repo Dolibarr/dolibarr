@@ -25,6 +25,7 @@ NameAndSignatureOfExternalContact=Name and signature of customer :
 DocumentModelStandard=Standard document model for interventions
 InterventionCardsAndInterventionLines=Interventions and lines of interventions
 ClassifyBilled=Classify "Billed"
+ClassifyUnBilled=Classify "Unbilled"
 StatusInterInvoiced=Billed
 RelatedInterventions=Related interventions
 ShowIntervention=Show intervention
