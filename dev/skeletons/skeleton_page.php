@@ -62,6 +62,8 @@ if ($user->societe_id > 0)
 	//accessforbidden();
 }
 
+if (empty($action) && empty($id) && empty($ref)) $action='create';
+
 // Load object if id or ref is provided as parameter
 $object=new Skeleton_Class($db);
 if (($id > 0 || ! empty($ref)) && $action != 'add')
@@ -290,7 +292,7 @@ if ($action == 'create')
 
 
 // Part to edit record
-if ($id && $action == 'edit')
+if (($id || $ref) && $action == 'edit')
 {
 	dol_fiche_head();
 
