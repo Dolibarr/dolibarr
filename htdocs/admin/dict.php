@@ -570,7 +570,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            $_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+            setEventMessage($langs->transnoentities("RecordSaved"));
+        	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {
