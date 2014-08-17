@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
@@ -108,8 +108,11 @@ if ($result)
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+	}
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
@@ -122,8 +125,11 @@ if ($result)
 	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
 	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+    if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
 	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
@@ -150,8 +156,11 @@ if ($result)
 		print '</td>';
         print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
 		print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
-		print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
-		print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
+		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+		{
+			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
+			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
+		}
 		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
 
 		print "</tr>\n";
@@ -159,9 +168,13 @@ if ($result)
 		$total += $objp->duree;
 		$i++;
 	}
-	print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-	print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
-	print '</tr>';
+	$rowspan=3;
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
+		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td>';
+		print '</tr>';
+	}
 
 	print '</table>';
 	print "</form>\n";
