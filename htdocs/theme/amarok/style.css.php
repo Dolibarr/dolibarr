@@ -590,6 +590,10 @@ div.login {
 	height: 16px;
 }
 
+#securitycode {
+	min-width: 60px;
+}
+
 img.login, img.printer, img.entity {
 	/* padding: <?php echo ($conf->dol_optimize_smallscreen?'0':'8')?>px 0px 0px 0px; */
 	margin:2px 0px 0px 0px;
