@@ -1,5 +1,5 @@
 // Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
-// Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+// Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -631,7 +631,7 @@ function hideMessage(fieldId,message) {
 /*
  * TODO Used by admin page only ? 
  */
-function setConstant(url, code, input, entity) {
+function setConstant(url, code, input, entity, strict) {
 	$.get( url, {
 		action: "set",
 		name: code,
@@ -642,7 +642,7 @@ function setConstant(url, code, input, entity) {
 		$("#del_" + code).show();
 		$.each(input, function(type, data) {
 			// Enable another element
-			if (type == "disabled") {
+			if (type == "disabled" && strict != 1) {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
 					$(newvalue).removeAttr("disabled");
@@ -654,7 +654,10 @@ function setConstant(url, code, input, entity) {
 			} else if (type == "enabled") {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
-					$(newvalue).attr("disabled", true);
+					if (strict == 1)
+						$(newvalue).removeAttr("disabled");
+					else
+						$(newvalue).attr("disabled", true);
 					if ($(newvalue).hasClass("butAction") == true) {
 						$(newvalue).removeClass("butAction");
 						$(newvalue).addClass("butActionRefused");
@@ -686,7 +689,7 @@ function setConstant(url, code, input, entity) {
 /*
  * TODO Used by admin page only ? 
  */
-function delConstant(url, code, input, entity) {
+function delConstant(url, code, input, entity, strict) {
 	$.get( url, {
 		action: "del",
 		name: code,
@@ -706,7 +709,7 @@ function delConstant(url, code, input, entity) {
 						$(newvalue).addClass("butActionRefused");
 					}
 				});
-			} else if (type == "enabled") {
+			} else if (type == "enabled" && strict != 1) {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
 					$(newvalue).removeAttr("disabled");
@@ -740,7 +743,7 @@ function delConstant(url, code, input, entity) {
 /*
  * TODO Used by admin page only ? 
  */
-function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton) {
+function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict) {
 	var boxConfirm = box;
 	$("#confirm_" + code)
 			.attr("title", boxConfirm.title)
@@ -756,9 +759,9 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 						text : yesButton,
 						click : function() {
 							if (action == "set") {
-								setConstant(url, code, input, entity);
+								setConstant(url, code, input, entity, strict);
 							} else if (action == "del") {
-								delConstant(url, code, input, entity);
+								delConstant(url, code, input, entity, strict);
 							}
 							// Close dialog
 							$(this).dialog("close");
