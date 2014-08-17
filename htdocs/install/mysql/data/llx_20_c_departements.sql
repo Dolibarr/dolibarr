@@ -32,6 +32,7 @@
 -- Departements/Cantons/Provinces
 --
 
+SET SESSION sql_mode='NO_AUTO_VALUE_ON_ZERO';
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
 
 -- Departements France (id country=1)
