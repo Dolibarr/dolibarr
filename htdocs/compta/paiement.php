@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -374,19 +375,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						});
 			';
 
-			// Add user helper to input amount on invoices
-			if (! empty($conf->global->MAIN_JS_ON_PAYMENT) && $facture->type != 2)
-			{
-				print '	$("#payment_form").find("img").click(function() {
-							callForResult(jQuery(this).attr("id"));
-						});
-
-						$("#amountpayment").change(function() {
-							callForResult();
-						});';
-			}
-
 			print '	});'."\n";
+			if(!empty($conf->global->FAC_AUTO_FILLJS)){
+				//Add js for AutoFill
+				print ' $(document).ready(function () {';
+				print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
+								$("input[name="+$(this).data(\'rowname\')+"]").val($(this).data("value")).trigger("change");
+							});';
+				print '	});'."\n";
+			}
 			print '	</script>'."\n";
 		}
 
@@ -412,7 +409,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
         $rowspan=5;
-        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT)) $rowspan++;
 
         // Payment mode
         print '<tr><td><span class="fieldrequired">'.$langs->trans('PaymentMode').'</span></td><td>';
@@ -437,24 +433,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<td colspan="2">&nbsp;</td>';
         }
         print "</tr>\n";
-
-        // Payment amount
-        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
-        {
-            print '<tr><td><span class="fieldrequired">'.$langs->trans('AmountPayment').'</span></td>';
-            print '<td>';
-            if ($action == 'add_paiement')
-            {
-                print '<input id="amountpayment" name="amountpaymenthidden" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'" disabled="disabled">';
-                print '<input name="amountpayment" type="hidden" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
-            }
-            else
-            {
-                print '<input id="amountpayment" name="amountpayment" size="8" type="text" value="'.(empty($_POST['amountpayment'])?'':$_POST['amountpayment']).'">';
-            }
-            print '</td>';
-            print '</tr>';
-        }
 
         // Cheque number
         print '<tr><td>'.$langs->trans('Numero');
@@ -578,10 +556,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     if ($action != 'add_paiement')
                     {
-                        if ($conf->use_javascript_ajax && !empty($conf->global->MAIN_JS_ON_PAYMENT))
-                        {
-                            print img_picto($langs->trans('AddRemind'),'rightarrow.png','id="'.$objp->facid.'"');
-                        }
+						if(!empty($conf->global->FAC_AUTO_FILLJS))
+							print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
                         print '<input type=hidden name="'.$nameRemain.'" value="'.$remaintopay.'">';
                         print '<input type="text" size="8" name="'.$namef.'" value="'.$_POST[$namef].'">';
                     }

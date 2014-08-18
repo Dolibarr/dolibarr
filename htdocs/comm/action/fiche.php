@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -384,7 +385,48 @@ if ($action == 'update')
 	}
 }
 
+/*
+ * Action move update, used when user move an event in calendar by drag'n drop
+ */
+if ($action == 'mupdate')
+{
+    $object->fetch($id);
+    $shour = dol_print_date($object->datep,"%H");
+    $smin = dol_print_date($object->datep, "%M");
+    
+    $newdate=GETPOST('newdate','alpha');
+    if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
+    {
+       header("Location: ".$backtopage);        
+        exit;
+    }
 
+    $datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
+    if ($datep!=$object->datep)
+    { 
+        if (!empty($object->datef))
+        {
+            $object->datef+=$datep-$object->datep;
+        }
+        $object->datep=$datep;
+        $result=$object->update($user);
+        if ($result < 0)
+        {
+            setEventMessage($object->error,'errors');
+            setEventMessage($object->errors,'errors');
+        }              
+    }
+    if (! empty($backtopage))
+    {
+        header("Location: ".$backtopage);
+        exit;
+    }
+    else 
+    {
+        $action='';
+    }
+    
+}
 /*
  * View
  */

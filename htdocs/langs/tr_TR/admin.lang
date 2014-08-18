@@ -47,7 +47,7 @@ DictionarySetup=Sözlük ayarları
 Dictionary=Sözlükler
 ErrorReservedTypeSystemSystemAuto='system' ve 'systemauto' değerleri tür için ayrılmıştır. 'kullanıcı'yı kendi kayıtlarınıza eklemek için değer olarak kullanabilirsiniz
 ErrorCodeCantContainZero=Kod 0 değeri içeremez
-DisableJavascript=Disable JavaScript and Ajax functions (Recommended for blind person or text browsers)
+DisableJavascript=Javascript ve Ajax fonksiyonlarını engelle (Görme engelli kişiler ve metin tarayıcılar için önerilir)
 ConfirmAjax=Açılır Ajax onay pencereleri kullanın
 UseSearchToSelectCompanyTooltip=Also if you have a large number of third parties (> 100 000), you can increase speed by setting constant COMPANY_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
 UseSearchToSelectCompany=Üçüncü parti seçimi için liste kutusu kullanmak yerine oto tamamlamalı alan kullanın
@@ -296,7 +296,7 @@ CurrentVersion=Dolibarr geçerli sürümü
 CallUpdatePage=Veritabanı yapısını ve verileri güncelleyen sayfaya git: %s.
 LastStableVersion=Son kararlı sürüm
 GenericMaskCodes=Herhangi bir numaralandırma maskesi girebilirsiniz. Bu maskede alttaki etiketler kullanılabilir: <br><b>{000000}</ b> her %s te artırılacak bir numaraya karşılık gelir. Sayacın istenilen uzunluğu kadar çok sıfır girin. Sayaç, maskedeki kadar çok sayıda sıfır olacak şekilde soldan sıfırlarla tamamlanacaktır.<br><b>{000000+000}</b> önceki ile aynıdır fakat + işaretinin sağındaki sayıya denk gelen bir sapma ilk %s ten itibaren uygulanır.<br><b>{000000@x}</b> önceki ile aynıdır fakat sayaç x aya ulaşıldığında sıfırlanır (x= 1 ve 12 arasındadır veya yapılandırmada tanımlanan mali yılın ilk aylarını kullanmak için 0 dır). Bu seçenek kullanılırsa ve x= 2 veya daha yüksekse, {yyyy}{mm} veya {yyyy}{mm} dizisi de gereklidir.<br><b>{dd}</b> gün (01 ila 31).<br><b> {mm}</b> ay (01 ila 12).<br><b>{yy}</b>, <b>{yyyy}</b> veya <b>{y}</b> yıl 2, 4 veya 1 sayıları üzerindedir.<br>
-GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated for customer. This counter dedicated to customer is reset at same time than global counter.<br><b>{tttt}</b> The code of thirdparty type on n characters (see dictionary-thirdparty types).<br>
+GenericMaskCodes2=b>cccc{}</b>n Karakterdeki istemci kodu <br><b>cccc000{}</b>n Karakterdeki istemci kodu müşteri için özel bir sayaç tarafından takip edilmektedir. Müşteriye ayrılan bu sayaç, genel sayaçla aynı anda sıfırlanır.<br><b>tttt{}</b> n Karakterdeki firma türü kodu (bakınız sözlük-şirket türleri).<br>
 GenericMaskCodes3=Maskede diğer tüm karakterler olduğu gibi kalır.<br>Boşluklara izin verilmez.<br>
 GenericMaskCodes4a=<u>Üçüncü partinin 99 uncu %s örneği Firma 2007/01/31 de yapıldı:</u><br>
 GenericMaskCodes4b=<u>2007/03/01 tarihinde oluşturulan üçüncü parti örneği:</u><br>
@@ -373,9 +373,9 @@ ExtrafieldSelectList = Tablodan seç
 ExtrafieldSeparator=Ayırıcı
 ExtrafieldCheckBox=Onay kutusu
 ExtrafieldRadio=Onay düğmesi
-ExtrafieldParamHelpselect=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...<br><br>In order to have the list depending on another :<br>1,value1|parent_list_code:parent_key<br>2,value2|parent_list_code:parent_key
-ExtrafieldParamHelpcheckbox=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
-ExtrafieldParamHelpradio=Parameters list have to be like key,value<br><br> for example : <br>1,value1<br>2,value2<br>3,value3<br>...
+ExtrafieldParamHelpselect=Parametre listesi anahtar.değer gibi olmalı, örneğin <br><br> : <br>1,değer1<br>2,değer2<br>3,değer3<br>...<br><br>Başka bir listeye bağlı bir liste elde etmek için :<br>1,değer1|parent_list_code:parent_key<br>2,değer2|parent_list_code:parent_key
+ExtrafieldParamHelpcheckbox=Parametre listesi anahtar.değer gibi olmalı, örneğin <br><br> : <br>1,değer1<br>2,değer2<br>3,değer3<br>...
+ExtrafieldParamHelpradio=Parametre listesi anahtar.değer gibi olmalı, örneğin <br><br> : <br>1,değer1<br>2,değer2<br>3,değer3<br>...
 ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value <br> if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 LibraryToBuildPDF=PDF oluşturmada kullanılan kütüphane
 WarningUsingFPDF=Warning: Your <b>conf.php</b> contains directive <b>dolibarr_pdf_force_fpdf=1</b>. This means you use the FPDF library to generate PDF files. This library is old and does not support a lot of features (Unicode, image transparency, cyrillic, arab and asiatic languages, ...), so you may experience errors during PDF generation.<br>To solve this and have a full support of PDF generation, please download <a href="http://www.tcpdf.org/" target="_blank">TCPDF library</a>, then comment or remove the line <b>$dolibarr_pdf_force_fpdf=1</b>, and add instead <b>$dolibarr_lib_TCPDF_PATH='path_to_TCPDF_dir'</b>
@@ -1092,7 +1092,7 @@ WebCalServer=Takvim veritabanını barındıran sunucu
 WebCalDatabaseName=Veritabanı ismi
 WebCalUser=Veritabanına erişecek kullanıcı
 WebCalSetupSaved=WebTakvimi kurulumu başarıyla kaydedildi.
-WebCalTestOk=Connection to server '%s' on database '%s' with user '%s' successful.
+WebCalTestOk='%s' sunucusuna '%s' veritabanında kullanıcı '%s' ile bağlantı başarılı.
 WebCalTestKo1=%s Sunucusuna bağlantısı başarıldı ama %s veritabanına ulaşılamadı.
 WebCalTestKo2=Sunucusu &#39;Bağlantısı%&#39; user &#39;% s s&#39; başarısız oldu.
 WebCalErrorConnectOkButWrongDatabase=Bağlantı başarılı ama veritabanı WebTakvimi veritabanı olarak görünmüyor.
@@ -1138,7 +1138,7 @@ WatermarkOnDraftProposal=Taslak tekliflerde filigran (boşsa yoktur)
 OrdersSetup=Sipariş yönetimi kurulumu
 OrdersNumberingModules=Sipariş numaralandırma modülü
 OrdersModelModule=Sipariş belgesi modelleri
-HideTreadedOrders=Hide the treated or cancelled orders in the list
+HideTreadedOrders=İşlem görmüş ya da iptal edilmiş siprişleri listede gizle
 ValidOrderAfterPropalClosed=Teklifin kapatılmasından sonra siparişi doğrulamak için geçici teklifin izlenmemesini sağlar
 FreeLegalTextOnOrders=Siparişte serbest metin
 WatermarkOnDraftOrders=Taslak siparişlerde filigran (boşsa yoktur)
@@ -1233,7 +1233,7 @@ LDAPSynchroKO=Başarısız senkronizasyon testi
 LDAPSynchroKOMayBePermissions=Başarısız senkronizasyon testi. Bu sunucuya bağlantının düzgün yapılandırılmış olduğunu ve LDAP güncellemesi sağladığını kontrol edin
 LDAPTCPConnectOK=LDAP sunucusu için TCP bağlantı başarılı (Sunucu =%s, Port =%s)
 LDAPTCPConnectKO=LDAP sunucusuna TCP bağlantısı başarısız (Server =%s başarısız, Port =% s)
-LDAPBindOK=Connect/Authentificate to LDAP server successful (Server=%s, Port=%s, Admin=%s, Password=%s)
+LDAPBindOK=LDAP sunucusuna bağlantı/kimlik doğrulama başarılı (Server=%s, Port=%s, Yönetici=%s, Parola=%s)
 LDAPBindKO=LDAP sunucusuna bağlantı/kimlik doğrulama başarısız (Server=%s, Port=%s, Yönetici=%s, Parola=%s
 LDAPUnbindSuccessfull=Bağlantı keme başarılı
 LDAPUnbindFailed=Bağlantı kesme başarısız
@@ -1292,7 +1292,7 @@ LDAPFieldSidExample=Örnek: objectsid
 LDAPFieldEndLastSubscription=Abonelik tarihi sonu
 LDAPFieldTitle=Görev/İşlev
 LDAPFieldTitleExample=Örnek: unvan
-LDAPParametersAreStillHardCoded=LDAP parameters are still hardcoded (in contact class)
+LDAPParametersAreStillHardCoded=LDAP parametreleri hala sabit kodludur (iletişim sınıfında)
 LDAPSetupNotComplete=LDAP kurulumu tamamlanmamış (diğer sekmelere git)
 LDAPNoUserOrPasswordProvidedAccessIsReadOnly=Hiçbir yönetici veya parola verilmiştir. LDAP erişimi anonim ve salt okunur modunda olacaktır.
 LDAPDescContact=Bu sayfa Dolibarr kişileri üzerinde bulunan her bir veri için LDAP ağacındaki LDAP öznitelikleri adını tanımlamanızı sağlar.
@@ -1329,7 +1329,7 @@ ModifyProductDescAbility=Formlarda ürün tanımlamalarının kişiselleştirilm
 ViewProductDescInFormAbility=Formlarda ürün tanımlarının görselleştirilmesi (aksi durumda açılır araç ipucu olarak)
 ViewProductDescInThirdpartyLanguageAbility=Ürün açıklamalarının üçüncü partilerin dilinde gösterilmesi
 UseSearchToSelectProductTooltip=Also if you have a large number of product (> 100 000), you can increase speed by setting constant PRODUCT_DONOTSEARCH_ANYWHERE to 1 in Setup->Other. Search will then be limited to start of string.
-UseSearchToSelectProduct=Use a search form to choose a product (rather than a drop-down list).
+UseSearchToSelectProduct=Bir ürün seçmek için arama formu kullanın (liste kutusu yerine).
 UseEcoTaxeAbility=Eko-Vergi Desteği (WEEE)
 SetDefaultBarcodeTypeProducts=Ürünler için kullanılacak varsayılan barkod türü
 SetDefaultBarcodeTypeThirdParties=Üçüncü partiler için kullanılacak varsayılan barkod tipi
@@ -1444,8 +1444,8 @@ ConfirmDeleteLine=Bu satırı silmek istediğinizden emin misiniz?
 ##### Tax #####
 TaxSetup=Vergi, sosyal güvenlik primi ve temettü modülü kurulumu
 OptionVatMode=KDV nedeniyle
-OptionVATDefault=Cash basis
-OptionVATDebitOption=Accrual basis
+OptionVATDefault=Nakit temelli
+OptionVATDebitOption=Tahakkuk temelli
 OptionVatDefaultDesc=KDV nedeniyle: <br> - malların tesliminde ( fatura tarihini kullanırız) <br>- hizmet ödemelerinde (borç)
 OptionVatDebitOptionDesc=KDV nedeniyle: <br> - malların tesliminde ( fatura tarihini kullanırız) <br> - hizmet faturalarında (borç)
 SummaryOfVatExigibilityUsedByDefault=Time of VAT exigibility by default according to chosen option:
@@ -1465,7 +1465,7 @@ AccountancyCodeBuy=Alış hesap. kodu
 AgendaSetup=Eylem ve gündem modülü kurulumu
 PasswordTogetVCalExport=Verme bağlantısı yetki anahtarı
 PastDelayVCalExport=Daha büyük eylemi dışaaktarma
-AGENDA_USE_EVENT_TYPE=Use events types (managed into menu Setup -> Dictionary -> Type of agenda events)
+AGENDA_USE_EVENT_TYPE=Etkinlik türlerini kullan (Ayarlar -> Sözlük -> Gündem etkinlik türleri) menüsünden yönetilir
 AGENDA_DEFAULT_FILTER_TYPE=Set automatically this type of event into search filter of agenda view
 AGENDA_DEFAULT_FILTER_STATUS=Set automatically this status for events into search filter of agenda view
 AGENDA_DEFAULT_VIEW=Which tab do you want to open by default when selecting menu Agenda

@@ -11,7 +11,8 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- *
+ * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -169,11 +170,13 @@ function dol_shutdown()
  *  Return value of a param into GET or POST supervariable
  *
  *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array)
+ *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'= Use filter_var with FILTER_SANITIZE_STRING, 'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
+ *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom     
  *  @return string||string[]      		 Value found, or '' if check fails
  */
-function GETPOST($paramname,$check='',$method=0)
+function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 {
 	if (empty($method)) $out = isset($_GET[$paramname])?$_GET[$paramname]:(isset($_POST[$paramname])?$_POST[$paramname]:'');
 	elseif ($method==1) $out = isset($_GET[$paramname])?$_GET[$paramname]:'';
@@ -184,28 +187,33 @@ function GETPOST($paramname,$check='',$method=0)
 
 	if (! empty($check))
 	{
-		// Check if numeric
-		if ($check == 'int' && ! is_numeric($out)) $out='';
-		// Check if alpha
-		elseif ($check == 'alpha')
-		{
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/"/',$out)) $out='';
-			else if (preg_match('/\.\.\//',$out)) $out='';
-		}
-		elseif ($check == 'aZ')
-		{
-			$out=trim($out);
-			// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
-			// '../' is dangerous because it allows dir transversals
-			if (preg_match('/[^a-z]+/i',$out)) $out='';
-		}
-		elseif ($check == 'array')
-		{
-			if (! is_array($out) || empty($out)) $out=array();
-		}
+	    switch ($check)
+	    {
+	        case 'int':
+	            if (! is_numeric($out)) { $out=''; }
+	            break;
+	        case 'alpha':
+	            $out=trim($out);
+	            // '"' is dangerous because param in url can close the href= or src= and add javascript functions.
+	            // '../' is dangerous because it allows dir transversals
+	            if (preg_match('/"/',$out)) $out='';
+	            else if (preg_match('/\.\.\//',$out)) $out='';
+	            break;
+	        case 'san_alpha':
+	            $out=filter_var($out,FILTER_SANITIZE_STRING);
+	            break;
+	        case 'aZ':
+	            $out=trim($out);
+	            if (preg_match('/[^a-z]+/i',$out)) $out='';
+	            break;
+	        case 'array':
+	            if (! is_array($out) || empty($out)) $out=array();
+	            break;
+	        case 'custom':
+	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
+	            $out=filter_var($out, $filter, $options);
+	            break;
+	    }
 	}
 
 	return $out;
@@ -2989,8 +2997,8 @@ function get_localtax($tva, $local, $thirdparty_buyer="", $thirdparty_seller="")
 
 
 	$sql  = "SELECT t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$thirdparty_seller->country_code."'";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
 	$sql .= " AND t.taux = ".$tva." AND t.active = 1";
 
 	dol_syslog("get_localtax", LOG_DEBUG);
@@ -3037,11 +3045,11 @@ function isOnlyOneLocalTax($local)
 function get_localtax_by_third($local)
 {
 	global $db, $mysoc;
-	$sql="SELECT t.localtax1, t.localtax2 ";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_pays as p ON p.rowid=t.fk_pays";
-	$sql.=" WHERE p.code = '".$mysoc->country_code."' AND t.taux=(SELECT max(tt.taux)";
-	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_pays as p ON p.rowid=tt.fk_pays";
-	$sql.= " WHERE p.code = '".$mysoc->country_code."')";
+	$sql ="SELECT t.localtax1, t.localtax2 ";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=t.fk_pays";
+	$sql.=" WHERE c.code = '".$mysoc->country_code."' AND t.taux=(SELECT max(tt.taux)";
+	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as tt inner join ".MAIN_DB_PREFIX."c_country as c ON c.rowid=tt.fk_pays";
+	$sql.=" WHERE c.code = '".$mysoc->country_code."')";
 
 	$resql=$db->query($sql);
 	if ($resql)
@@ -3077,8 +3085,8 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$buyer->country_code."'";
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
 	$sql .= " AND t.taux = ".$vatrate." AND t.active = 1";
 
 	$resql=$db->query($sql);
@@ -3212,8 +3220,8 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 		{
 			// If vat of product for the country not found or not defined, we return higher vat of country.
 			$sql = "SELECT taux as vat_rate";
-			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-			$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+			$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 			$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 			$sql.= $db->plimit(1);
 
@@ -3282,8 +3290,8 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
 	{
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql.= " WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$thirdparty_seller->country_code."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+		$sql.= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='".$thirdparty_seller->country_code."'";
 		$sql.= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql.= $db->plimit(1);
 
@@ -4432,6 +4440,7 @@ function dol_eval($s,$returnvalue=0)
 	global $langs, $user, $conf;
 	global $leftmenu;
 	global $rights;
+	global $object;
 
 	//print $s."<br>\n";
 	if ($returnvalue) return @eval('return '.$s.';');

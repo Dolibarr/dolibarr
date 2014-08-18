@@ -222,13 +222,13 @@ class FormCompany
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as country, p.code as country_code FROM";
-		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
-		$sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
-		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND p.rowid = '".$country_codeid."'";
-		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND p.code = '".$country_codeid."'";
-		$sql .= " ORDER BY p.code, d.code_departement";
+		$sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, c.label as country, c.code as country_code FROM";
+		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
+		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
+		if ($country_codeid && is_numeric($country_codeid))   $sql .= " AND c.rowid = '".$country_codeid."'";
+		if ($country_codeid && ! is_numeric($country_codeid)) $sql .= " AND c.code = '".$country_codeid."'";
+		$sql .= " ORDER BY c.code, d.code_departement";
 
 		dol_syslog(get_class($this)."::select_departement", LOG_DEBUG);
 		$result=$this->db->query($sql);
@@ -303,9 +303,10 @@ class FormCompany
 		global $conf,$langs;
 		$langs->load("dict");
 
-		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.code as country_code, p.libelle as country FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql.= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1";
-		$sql.= " ORDER BY p.code, p.libelle ASC";
+		$sql = "SELECT r.rowid, r.code_region as code, r.nom as label, r.active, c.code as country_code, c.label as country";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
+		$sql.= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
+		$sql.= " ORDER BY c.code, c.label ASC";
 
 		dol_syslog(get_class($this)."::select_region", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -335,11 +336,11 @@ class FormCompany
 
 						if ($selected > 0 && $selected == $obj->code)
 						{
-							print '<option value="'.$obj->code.'" selected="selected">'.$obj->libelle.'</option>';
+							print '<option value="'.$obj->code.'" selected="selected">'.$obj->label.'</option>';
 						}
 						else
 						{
-							print '<option value="'.$obj->code.'">'.$obj->libelle.'</option>';
+							print '<option value="'.$obj->code.'">'.$obj->label.'</option>';
 						}
 					}
 					$i++;
@@ -440,13 +441,13 @@ class FormCompany
 		$out='';
 
 		// On recherche les formes juridiques actives des pays actifs
-		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, p.libelle as country, p.code as country_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p";
-		$sql .= " WHERE f.fk_pays=p.rowid";
-		$sql .= " AND f.active = 1 AND p.active = 1";
-		if ($country_codeid) $sql .= " AND p.code = '".$country_codeid."'";
+		$sql  = "SELECT f.rowid, f.code as code , f.libelle as label, f.active, c.label as country, c.code as country_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_country as c";
+		$sql .= " WHERE f.fk_pays=c.rowid";
+		$sql .= " AND f.active = 1 AND c.active = 1";
+		if ($country_codeid) $sql .= " AND c.code = '".$country_codeid."'";
 		if ($filter) $sql .= " ".$filter;
-		$sql .= " ORDER BY p.code";
+		$sql .= " ORDER BY c.code";
 
 		dol_syslog(get_class($this)."::select_juridicalstatus", LOG_DEBUG);
 		$resql=$this->db->query($sql);

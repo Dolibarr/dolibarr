@@ -136,6 +136,8 @@ ErrorBadFormat=Bad format!
 ErrorPaymentDateLowerThanInvoiceDate=Payment date (%s) cant' be before invoice date (%s) for invoice %s. 
 ErrorMemberNotLinkedToAThirpartyLinkOrCreateFirst=Error, this member is not yet linked to any thirdparty. Link member to an existing third party or create a new thirdparty before creating subscription with invoice.
 ErrorThereIsSomeDeliveries=Error, there is some deliveries linked to this shipment. Deletion refused.
+ErrorCantDeletePaymentReconciliated=Can't delete a payment that had generated a bank transaction that was conciliated
+ErrorCantDeletePaymentSharedWithPayedInvoice=Can't delete a payment shared by at least one invoice with status Payed
 
 # Warnings
 WarningMandatorySetupNotComplete=Mandatory setup parameters are not yet defined

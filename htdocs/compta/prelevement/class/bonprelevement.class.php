@@ -1260,7 +1260,7 @@ class BonPrelevement extends CommonObject
 			/*
 			 * section Debiteur (sepa Debiteurs bloc lines)
 			 */
-			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, soc.datec, p.code as country_code,";
+			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, soc.datec, c.code as country_code,";
 			$sql.= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
 			$sql.= " f.facnumber as fac, pf.fk_facture as idfac, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum";
 			$sql.= " FROM";
@@ -1268,12 +1268,12 @@ class BonPrelevement extends CommonObject
 			$sql.= " ".MAIN_DB_PREFIX."facture as f,";
 			$sql.= " ".MAIN_DB_PREFIX."prelevement_facture as pf,";
 			$sql.= " ".MAIN_DB_PREFIX."societe as soc,";
-			$sql.= " ".MAIN_DB_PREFIX."c_pays as p,";
+			$sql.= " ".MAIN_DB_PREFIX."c_country as c,";
 			$sql.= " ".MAIN_DB_PREFIX."societe_rib as rib";
 			$sql.= " WHERE pl.fk_prelevement_bons = ".$this->id;
 			$sql.= " AND pl.rowid = pf.fk_prelevement_lignes";
 			$sql.= " AND pf.fk_facture = f.rowid";
-			$sql.= " AND soc.fk_pays = p.rowid";
+			$sql.= " AND soc.fk_pays = c.rowid";
 			$sql.= " AND soc.rowid = f.fk_soc";
 			$sql.= " AND rib.fk_soc = f.fk_soc";
 			$sql.= " AND rib.default_rib = 1";
@@ -1493,7 +1493,7 @@ class BonPrelevement extends CommonObject
      *	@param	string		$row_address		soc.address AS adr,
      *	@param	string		$row_zip			soc.zip
      *  @param	string		$row_town			soc.town
-     *	@param	string		$row_country_code	p.code AS pays,
+     *	@param	string		$row_country_code	c.code AS country,
      *	@param	string		$row_cb				pl.code_banque AS cb,
      *	@param	string		$row_cg				pl.code_guichet AS cg,
      *	@param	string		$row_cc				pl.number AS cc,
@@ -1648,7 +1648,7 @@ class BonPrelevement extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 
 			// DONNEES BRUTES : par la suite Rows['XXX'] de la requete au dessus
-			$pays = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
+			$country = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
 			$type = ($nombre == 1) ? 'FRST' : 'RCUR' ;
@@ -1673,7 +1673,7 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Nm>'.$configuration->global->PRELEVEMENT_RAISON_SOCIALE.'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
-			$XML_SEPA_INFO .= '					<Ctry>'.$pays[1].'</Ctry>'.$CrLf;
+			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$configuration->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$configuration->global->MAIN_INFO_SOCIETE_ZIP.' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
@@ -1691,7 +1691,7 @@ class BonPrelevement extends CommonObject
 /*			$XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Nm>'.$configuration->global->PRELEVEMENT_RAISON_SOCIALE.'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
-			$XML_SEPA_INFO .= '					<Ctry>'.$pays[1].'</Ctry>'.$CrLf;
+			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
 			$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;

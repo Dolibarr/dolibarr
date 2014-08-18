@@ -1,6 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,11 +16,7 @@
 --
 -- ========================================================================
 
-create table llx_c_pays
-(
-  rowid    integer            PRIMARY KEY,
-  code     varchar(2)         NOT NULL,
-  code_iso varchar(3)         ,
-  libelle  varchar(50)        NOT NULL,
-  active   tinyint DEFAULT 1  NOT NULL
-)ENGINE=innodb;
+
+ALTER TABLE llx_c_country ADD UNIQUE INDEX idx_c_country_code (code);
+ALTER TABLE llx_c_country ADD UNIQUE INDEX idx_c_country_code_iso (code_iso);
+ALTER TABLE llx_c_country ADD UNIQUE INDEX idx_c_country_label (label);

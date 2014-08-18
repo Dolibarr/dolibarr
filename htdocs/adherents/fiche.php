@@ -326,6 +326,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 			{
 				if (GETPOST('deletephoto'))
 				{
+					require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 					$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/'.$object->photo;
 					$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/thumbs';
 					dol_delete_file($fileimg);
@@ -945,7 +946,7 @@ else
 		$country=GETPOST('country','int');
 		if (!empty($country) || $object->country_id)
 		{
-			$sql = "SELECT rowid, code, libelle as label from ".MAIN_DB_PREFIX."c_pays where rowid = ".(!empty($country)?$country:$object->country_id);
+			$sql = "SELECT rowid, code, label from ".MAIN_DB_PREFIX."c_country where rowid = ".(!empty($country)?$country:$object->country_id);
 			$resql=$db->query($sql);
 			if ($resql)
 			{

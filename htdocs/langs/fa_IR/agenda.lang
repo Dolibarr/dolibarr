@@ -25,15 +25,15 @@ ListOfEvents= فهرست وقایع Dolibarr
 ActionsAskedBy=رویدادهای گزارش شده توسط
 ActionsToDoBy=رویدادهای اختصاص یافته به
 ActionsDoneBy=رویدادهای انجام شده توسط
-ActionsForUser=Events for user
-ActionsForUsersGroup=Events for all users of group
+ActionsForUser=رویدادهای ها برای کاربر
+ActionsForUsersGroup=رویدادها برای همه کاربران گروه
 AllMyActions= همه رویدادها من / وظایف
 AllActions= همه رویدادها / وظایف
 ViewList=مشاهده لیست
 ViewCal=مشاهده ماه
 ViewDay=نمای روز
 ViewWeek=مشاهده هفته
-ViewPerUser=Per user
+ViewPerUser=در طول کاربر
 ViewWithPredefinedFilters= نمایش با فیلترهای از پیش تعریف شده
 AutoActions= پر کردن خودکار
 AgendaAutoActionDesc= تعریف اینجا رویدادی که می خواهید Dolibarr برای ایجاد به طور خودکار یک رویداد در دستور کار. اگر چیزی (به طور پیش فرض) انتخاب شود، فقط اقدامات تجاری خواهد شد در دستور کار گنجانده شده است.
@@ -58,7 +58,7 @@ SupplierInvoiceSentByEMail=تامین کننده فاکتور٪ s ارسال ب�
 ShippingSentByEMail=حمل و نقل٪ s ارسال با ایمیل
 ShippingValidated= حمل و نقل از٪ s معتبر
 InterventionSentByEMail=مداخله٪ s ارسال با ایمیل
-InterventionClassifiedBilled=Intervention %s classified as Billed
+InterventionClassifiedBilled=مداخله٪ s در طبقه بندی گونه که اعلام شده
 NewCompanyToDolibarr= شخص ثالث ایجاد شده
 DateActionPlannedStart= تاریخ شروع برنامه ریزی شده
 DateActionPlannedEnd= تاریخ پایان برنامه ریزی شده

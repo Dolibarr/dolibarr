@@ -43,6 +43,7 @@ if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@includ
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
+include_once(DOL_DOCUMENT_ROOT.'/core/class/formcompany.class.php');
 dol_include_once('/module/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
@@ -52,12 +53,23 @@ $langs->load("other");
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
+$backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
 // Protection if external user
 if ($user->societe_id > 0)
 {
 	//accessforbidden();
+}
+
+if (empty($action) && empty($id) && empty($ref)) $action='create';
+
+// Load object if id or ref is provided as parameter
+$object=new Skeleton_Class($db);
+if (($id > 0 || ! empty($ref)) && $action != 'add')
+{
+	$result=$object->fetch($id,$ref);
+	if ($result < 0) dol_print_error($db);
 }
 
 
@@ -68,19 +80,104 @@ if ($user->societe_id > 0)
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
+// Action to add record
 if ($action == 'add')
 {
-	$object=new Skeleton_Class($db);
-	$object->prop1=$_POST["field1"];
-	$object->prop2=$_POST["field2"];
-	$result=$object->create($user);
+	if (GETPOST('cancel'))
+	{
+		$urltogo=$backtopage?$backtopage:dol_buildpath('/buildingmanagement/list.php',1);
+		header("Location: ".$urltogo);
+		exit;
+	}
+
+	$error=0;
+
+	/* object_prop_getpost_prop */
+	$object->prop1=GETPOST("field1");
+	$object->prop2=GETPOST("field2");
+
+	if (empty($object->ref))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),'errors');
+	}
+
+	if (! $error)
+	{
+		$result=$object->create($user);
+		if ($result > 0)
+		{
+			// Creation OK
+			$urltogo=$backtopage?$backtopage:dol_buildpath('/mymodule/list.php',1);
+			header("Location: ".$urltogo);
+			exit;
+		}
+		{
+			// Creation KO
+			if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
+			else  setEventMessage($object->error, 'errors');
+			$action='create';
+		}
+	}
+	else
+	{
+		$action='create';
+	}
+}
+
+// Cancel
+if ($action == 'update' && GETPOST('cancel')) $action='view';
+
+// Action to update record
+if ($action == 'update' && ! GETPOST('cancel'))
+{
+	$error=0;
+
+	$object->prop1=GETPOST("field1");
+	$object->prop2=GETPOST("field2");
+
+	if (empty($object->ref))
+	{
+		$error++;
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Ref")),'errors');
+	}
+
+	if (! $error)
+	{
+		$result=$object->update($user);
+		if ($result > 0)
+		{
+			$action='view';
+		}
+		else
+		{
+			// Creation KO
+			if (! empty($object->errors)) setEventMessage($object->errors, 'errors');
+			else setEventMessage($object->error, 'errors');
+			$action='edit';
+		}
+	}
+	else
+	{
+		$action='edit';
+	}
+}
+
+// Action to delete
+if ($action == 'confirm_delete')
+{
+	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		// Creation OK
+		// Delete OK
+		setEventMessage($langs->trans("RecordDeleted"));
+		header("Location: ".dol_buildpath('/buildingmanagement/list.php',1));
+		exit;
 	}
+	else
 	{
-		// Creation KO
-		$mesg=$object->error;
+		if (! empty($object->errors)) setEventMessage($object->errors,'errors');
+		else setEventMessage($object->error,'errors');
 	}
 }
 
@@ -101,7 +198,7 @@ $form=new Form($db);
 
 // Put here content of your page
 
-// Example 1 : Adding jquery code
+// Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
 	function init_myfunc()
@@ -117,13 +214,8 @@ jQuery(document).ready(function() {
 </script>';
 
 
-// Example 2 : Adding links to objects
-// The class must extends CommonObject class to have this method available
-//$somethingshown=$object->showLinkedObjectBlock();
-
-
-// Example 3 : List of data
-if ($action == 'list')
+// Part to show a list
+if ($action == 'list' || empty($id))
 {
     $sql = "SELECT";
     $sql.= " t.rowid,";
@@ -145,21 +237,18 @@ if ($action == 'list')
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        if ($num)
+        while ($i < $num)
         {
-            while ($i < $num)
+            $obj = $db->fetch_object($resql);
+            if ($obj)
             {
-                $obj = $db->fetch_object($resql);
-                if ($obj)
-                {
-                    // You can use here results
-                    print '<tr><td>';
-                    print $obj->field1;
-                    print $obj->field2;
-                    print '</td></tr>';
-                }
-                $i++;
+                // You can use here results
+                print '<tr><td>';
+                print $obj->field1;
+                print $obj->field2;
+                print '</td></tr>';
             }
+            $i++;
         }
     }
     else
@@ -171,6 +260,100 @@ if ($action == 'list')
     print '</table>'."\n";
 }
 
+
+
+// Part to create
+if ($action == 'create')
+{
+	print_fiche_titre($langs->trans("NewResidence"));
+
+	dol_fiche_head();
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
+	print '<table class="border centpercent">'."\n";
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
+	print '<input class="flat" type="text" size="36" name="label" value="'.$label.'">';
+	print '</td></tr>';
+
+	print '</table>'."\n";
+
+	print '<br>';
+
+	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"> &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></center>';
+
+	print '</form>';
+
+	dol_fiche_end();
+}
+
+
+
+// Part to edit record
+if (($id || $ref) && $action == 'edit')
+{
+	dol_fiche_head();
+
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	print '<input type="hidden" name="id" value="'.$object->id.'">';
+
+
+	print '<br>';
+
+	print '<center><input type="submit" class="button" name="add" value="'.$langs->trans("Create").'"></center>';
+
+	print '</form>';
+
+	dol_fiche_end();
+}
+
+
+
+// Part to show record
+if ($id && (empty($action) || $action == 'view'))
+{
+	dol_fiche_head();
+
+
+
+	dol_fiche_end();
+
+
+	// Buttons
+	print '<div class="tabsAction">'."\n";
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook))
+	{
+		if ($user->rights->mymodule->write)
+		{
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
+		}
+
+		if ($user->rights->mymodule->delete)
+		{
+			if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
+			{
+				print '<div class="inline-block divButAction"><span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span></div>'."\n";
+			}
+			else
+			{
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
+			}
+		}
+	}
+	print '</div>'."\n";
+
+
+	// Example 2 : Adding links to objects
+	// The class must extends CommonObject class to have this method available
+	//$somethingshown=$object->showLinkedObjectBlock();
+
+}
 
 
 // End of page

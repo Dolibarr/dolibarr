@@ -291,7 +291,7 @@ class modFournisseur extends DolibarrModules
 		// End add axtra fields
             $this->export_sql_start[$r]='SELECT DISTINCT ';
             $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as c ON s.fk_pays = c.rowid,';
+            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_extrafields as extra ON f.rowid = extra.fk_object';
             $this->export_sql_end[$r] .=' , '.MAIN_DB_PREFIX.'facture_fourn_det as fd';
@@ -345,7 +345,7 @@ class modFournisseur extends DolibarrModules
 		// End add axtra fields
             $this->export_sql_start[$r]='SELECT DISTINCT ';
             $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as c ON s.fk_pays = c.rowid,';
+            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_extrafields as extra ON f.rowid = extra.fk_object';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
@@ -365,7 +365,7 @@ class modFournisseur extends DolibarrModules
 
             $this->export_sql_start[$r]='SELECT DISTINCT ';
             $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as c ON s.fk_pays = c.rowid,';
+            $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
             $this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseur as f, '.MAIN_DB_PREFIX.'commande_fournisseurdet as fd';
             $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
             $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';

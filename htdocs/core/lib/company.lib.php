@@ -64,13 +64,21 @@ function societe_prepare_head($object)
         $h++;
     }
 
-	if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
-		$head[$h][1] = $langs->trans("LocalTaxes");
-		$head[$h][2] = 'localtaxes';
-		$h++;
-	}
+    if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Contact");
+        $head[$h][2] = 'contact';
+        $h++;
+    }
+
+    if (($object->localtax1_assuj || $object->localtax2_assuj) && (isset($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL > 0) )
+    {
+    	$head[$h][0] = DOL_URL_ROOT.'/societe/localtaxes.php?socid='.$object->id;
+	$head[$h][1] = $langs->trans("LocalTaxes");
+	$head[$h][2] = 'localtaxes';
+	$h++;
+    }
 
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
      {
@@ -262,10 +270,10 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     if (! is_object($dbtouse)) $dbtouse=$db;
     if (! is_object($outputlangs)) $outputlangs=$langs;
 
-    $sql = "SELECT rowid, code, libelle FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
     if (is_numeric($searchkey)) $sql.= " WHERE rowid=".$searchkey;
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
-    else $sql.= " WHERE libelle='".$db->escape($searchlabel)."'";
+    else $sql.= " WHERE label='".$db->escape($searchlabel)."'";
 
     dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
@@ -274,7 +282,7 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
         $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
-            $label=((! empty($obj->libelle) && $obj->libelle!='-')?$obj->libelle:'');
+            $label=((! empty($obj->label) && $obj->label!='-')?$obj->label:'');
             if (is_object($outputlangs))
             {
                 $outputlangs->load("dict");

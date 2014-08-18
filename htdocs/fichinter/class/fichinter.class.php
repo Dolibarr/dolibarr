@@ -463,31 +463,6 @@ class Fichinter extends CommonObject
 		}
 	}
 
-	/**
-	 * 	Set intervetnion as billed
-	 *
-	 *  @return int     <0 si ko, >0 si ok
-	 */
-	function setBilled()
-	{
-		global $conf;
-
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_statut = 2';
-		$sql.= ' WHERE rowid = '.$this->id;
-		$sql.= " AND entity = ".$conf->entity;
-		$sql.= " AND fk_statut = 1";
-
-		if ($this->db->query($sql) )
-		{
-			return 1;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
 
 	/**
 	 *	Returns the label status

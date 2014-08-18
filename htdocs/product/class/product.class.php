@@ -766,6 +766,7 @@ class Product extends CommonObject
 	function delete($id=0)
 	{
 		global $conf,$user,$langs;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 

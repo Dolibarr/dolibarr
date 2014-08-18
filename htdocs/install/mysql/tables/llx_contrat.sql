@@ -22,7 +22,7 @@ create table llx_contrat
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
   ref						varchar(30),		            -- contrat reference
-  ref_ext					varchar(30),		            -- external contract ref
+  ref_supplier				varchar(30),		            -- suplier contract ref
   entity					integer DEFAULT 1 NOT NULL,	-- multi company id
   tms						timestamp,
   datec						datetime,                   -- creation date

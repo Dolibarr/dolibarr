@@ -125,12 +125,12 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
     //$conf->global->THEME_ELDY_BACKBODY='#ffffff url('.$img_head.') 0 0 no-repeat;';
     $conf->global->THEME_ELDY_BACKBODY='#fcfcfc;';
-    $conf->global->THEME_ELDY_LINEIMPAIR1='242,242,242';
-    $conf->global->THEME_ELDY_LINEIMPAIR2='248,248,248';
-    $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
-    $conf->global->THEME_ELDY_LINEPAIR1='255,255,255';
-    $conf->global->THEME_ELDY_LINEPAIR2='255,255,255';
+    $conf->global->THEME_ELDY_LINEPAIR1='242,242,242';
+    $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
+    $conf->global->THEME_ELDY_LINEIMPAIR1='255,255,255';
+    $conf->global->THEME_ELDY_LINEIMPAIR2='255,255,255';
+    $conf->global->THEME_ELDY_LINEIMPAIRHOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='50,50,130';
 	if ($dol_use_jmobile)
 	{
@@ -676,7 +676,7 @@ div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1) ?>);
 }
 
 div.mainmenu.commercial {
@@ -1720,6 +1720,86 @@ table.liste td {
 .tagtr, .table-border-row  { display: table-row; }
 .tagtd, .table-border-col, .table-key-border-col, .table-val-border-col { display: table-cell; }
 
+
+/* Prepare to remove class pair - impair
+.noborder > tbody > tr:nth-child(even) td {
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+	min-height: 18px;
+}
+
+.noborder > tbody > tr:nth-child(odd) td {
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+}
+*/
+
+.impair:hover {
+<?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
+	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
+<?php } else { ?>
+	background: #fafafa;
+<?php } } ?>
+	border: 0px;
+}
+
+.impair, .nohover .impair:hover, tr.impair td.nohover {
+<?php if ($usecss3) { ?>
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%) !important;
+<?php } else { ?>
+	background: #eaeaea !important;
+<?php } ?>
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+	min-height: 18px; /* seems to not be used */
+}
+
+td.nohover, .pair:hover {
+<?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
+	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
+<?php } else { ?>
+	background: #fafafa !important;
+<?php } }?>
+	border: 0px;
+}
+
+.pair, .nohover .pair:hover, tr.pair td.nohover {
+<?php if ($usecss3) { ?>
+	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%) !important;
+<?php } else { ?>
+	background: #ffffff !important;
+<?php } ?>
+	font-family: <?php print $fontlist ?>;
+	border: 0px;
+	margin-bottom: 1px;
+	color: #202020;
+}
+
+
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
 	height: 26px !important;
@@ -1772,66 +1852,16 @@ input.liste_titre {
     border: 0px;
 }
 
-tr.liste_total, form.liste_total {
+.noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
 	background: #F0F0F0;
 }
-tr.liste_total td, form.liste_total div {
+.noborder tr.liste_total td, tr.liste_total td, form.liste_total div {
     border-top: 1px solid #DDDDDD;
     color: #332266;
     font-weight: normal;
     white-space: nowrap;
 }
 
-.impair:hover {
-<?php if ($colorbacklineimpairhover) { if ($usecss3) { ?>
-	background: rgb(<?php echo $colorbacklineimpairhover; ?>);
-<?php } else { ?>
-	background: #fafafa;
-<?php } } ?>
-	border: 0px;
-}
-
-.impair, .nohover .impair:hover, tr.impair td.nohover {
-<?php if ($usecss3) { ?>
-	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
-<?php } else { ?>
-	background: #eaeaea;
-<?php } ?>
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-	min-height: 18px; /* seems to not be used */
-}
-
-.pair:hover {
-<?php if ($colorbacklinepairhover) { if ($usecss3) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>);
-<?php } else { ?>
-	background: #fafafa;
-<?php } }?>
-	border: 0px;
-}
-
-.pair, .nohover .pair:hover, tr.pair td.nohover {
-<?php if ($usecss3) { ?>
-	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -webkit-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-	background: -ms-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
-<?php } else { ?>
-	background: #ffffff;
-<?php } ?>
-	font-family: <?php print $fontlist ?>;
-	border: 0px;
-	margin-bottom: 1px;
-	color: #202020;
-}
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
 	background: none;

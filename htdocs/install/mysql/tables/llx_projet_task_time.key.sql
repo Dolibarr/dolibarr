@@ -1,5 +1,5 @@
--- ========================================================================
--- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- ===========================================================================
+-- Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,9 +14,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===========================================================================
 
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
 
-ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_country_code (code);
-ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_country_code_iso (code_iso);
-ALTER TABLE llx_c_pays ADD UNIQUE INDEX idx_c_pays_libelle (libelle);

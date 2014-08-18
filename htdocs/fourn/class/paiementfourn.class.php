@@ -203,7 +203,7 @@ class PaiementFourn extends Paiement
 				{
                     // Call trigger
                     $result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE',$user);
-                    if ($result < 0) $error++;          
+                    if ($result < 0) $error++;
                     // End call triggers
 				}
 			}
@@ -255,7 +255,7 @@ class PaiementFourn extends Paiement
 		{
 			if (count($billsarray))
 			{
-				$this->error='Can\'t delete a payment shared by at least one invoice with status payed';
+				$this->error="ErrorCantDeletePaymentSharedWithPayedInvoice";
 				$this->db->rollback();
 				return -1;
 			}
@@ -274,7 +274,7 @@ class PaiementFourn extends Paiement
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
-				$this->error='Impossible de supprimer un paiement qui a genere une ecriture qui a ete rapprochee';
+				$this->error="ErrorCantDeletePaymentReconciliated";
 				$this->db->rollback();
 				return -3;
 			}

@@ -143,11 +143,11 @@ print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
 
-// Charge tableau de correspondance des pays
+// Load table of correspondence of countries
 $hashlib2rowid=array();
 $countries=array();
-$sql = "SELECT rowid, code, libelle, active";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+$sql = "SELECT rowid, code, label, active";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_country";
 $sql.= " WHERE active = 1";
 $sql.= " ORDER BY code ASC";
 $resql=$db->query($sql);
@@ -162,9 +162,9 @@ if ($resql)
 			$obj = $db->fetch_object($resql);
 			if ($obj)
 			{
-				//print 'Load cache for country '.strtolower($obj->libelle).' rowid='.$obj->rowid."\n";
-				$hashlib2rowid[strtolower($obj->libelle)]=$obj->rowid;
-				$countries[$obj->rowid]=array('rowid' => $obj->rowid, 'label' => $obj->libelle, 'code' => $obj->code);
+				//print 'Load cache for country '.strtolower($obj->label).' rowid='.$obj->rowid."\n";
+				$hashlib2rowid[strtolower($obj->label)]=$obj->rowid;
+				$countries[$obj->rowid]=array('rowid' => $obj->rowid, 'label' => $obj->label, 'code' => $obj->code);
 			}
 			$i++;
 		}

@@ -71,6 +71,14 @@ function user_prepare_head($object)
     $head[$h][2] = 'guisetup';
     $h++;
 
+    if (! empty($conf->agenda->enabled))
+    {
+	    $head[$h][0] = DOL_URL_ROOT.'/user/agenda_extsites.php?id='.$object->id;
+	    $head[$h][1] = $langs->trans("ExtSites");
+	    $head[$h][2] = 'extsites';
+	    $h++;
+    }
+
     if (! empty($conf->clicktodial->enabled))
     {
         $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$object->id;

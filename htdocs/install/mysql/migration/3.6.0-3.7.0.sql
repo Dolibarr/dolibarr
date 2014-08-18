@@ -19,6 +19,7 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
@@ -68,10 +69,17 @@ ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_da
 -- Localtaxes by thirds
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax1 varchar(10);
 ALTER TABLE llx_c_tva MODIFY COLUMN localtax2 varchar(10);
-ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint(4) after entity;
+ALTER TABLE llx_localtax ADD COLUMN localtaxtype tinyint after entity;
 ALTER TABLE llx_societe ADD COLUMN localtax1_value double(6,3) after localtax1_assuj;
 ALTER TABLE llx_societe ADD COLUMN localtax2_value double(6,3) after localtax2_assuj;
 
+-- Change on table c_pays
+ALTER TABLE llx_c_pays RENAME TO llx_c_country;
+
+ALTER TABLE llx_c_country CHANGE libelle label VARCHAR(50);
+
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country (rowid);
+ALTER TABLE llx_c_regions ADD CONSTRAINT fk_c_regions_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country (rowid);
 
 
 -- Added missing relations of llx_product
@@ -81,7 +89,7 @@ ALTER TABLE llx_product MODIFY COLUMN fk_country INTEGER NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_country SET DEFAULT NULL;
 UPDATE llx_product SET fk_country = NULL WHERE fk_country = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_country (fk_country);
-ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_pays (rowid);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_fk_country FOREIGN KEY (fk_country) REFERENCES  llx_c_country (rowid);
 -- fk_user_author
 ALTER TABLE llx_product MODIFY COLUMN fk_user_author INTEGER NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_user_author DROP NOT NULL;
@@ -125,6 +133,7 @@ create table llx_accounting_fiscalyear
 )ENGINE=innodb;
 
 ALTER TABLE llx_contrat ADD COLUMN ref_ext varchar(30) after ref;
+ALTER TABLE llx_contrat ADD COLUMN ref_customer varchar(30) after ref_ext;
 
 ALTER TABLE llx_propal ADD COLUMN fk_shipping_method integer AFTER date_livraison;
 ALTER TABLE llx_commande ADD COLUMN fk_shipping_method integer AFTER date_livraison;
@@ -939,25 +948,31 @@ create table llx_c_email_templates
   position        smallint,					      -- Position
   topic			  text,                           -- Predefined topic
   content         text                            -- Predefined text
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 
-UPDATE llx_c_regions SET rowid = 0 where rowid = 1; 
-DELETE FROM llx_c_departements WHERE fk_region NOT IN (select rowid from llx_c_regions) AND fk_region IS NOT NULL AND fk_region <> 0;
-ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_region	FOREIGN KEY (fk_region) REFERENCES llx_c_regions (rowid);
+ALTER TABLE llx_c_departements DROP FOREIGN KEY fk_departements_fk_region;
+--UPDATE llx_c_regions SET rowid = 0 where rowid = 1;
+
+ALTER TABLE llx_c_regions ADD UNIQUE INDEX uk_code_region (code_region);
+
+DELETE FROM llx_c_departements WHERE fk_region NOT IN (select code_region from llx_c_regions) AND fk_region IS NOT NULL AND fk_region <> 0;
+
+ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_code_region FOREIGN KEY (fk_region) REFERENCES llx_c_regions (code_region);
 
 
 CREATE TABLE llx_holiday_types (
   rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   label varchar(45) NOT NULL,
   description varchar(255) NOT NULL,
-  affect int(1) NOT NULL,
-  delay int(1) NOT NULL,
+  affect integer NOT NULL,
+  delay integer NOT NULL,
   insertAt DATETIME NOT NULL,
   updateAt DATETIME,
   deleteAt DATETIME,
   nbCongesDeducted varchar(255) NOT NULL,
   nbCongesEveryMonth varchar(255) NOT NULL
+<<<<<<< HEAD
 );
 
 -- Change on table c_civilite
@@ -968,3 +983,17 @@ ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
 ALTER TABLE llx_adherent CHANGE civilite civility VARCHAR(6);
 ALTER TABLE llx_socpeople CHANGE civilite civility VARCHAR(6);
 ALTER TABLE llx_user CHANGE civilite civility VARCHAR(6);
+=======
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_type_fees CHANGE libelle label VARCHAR(30);
+ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
+
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_element (fk_element);
+
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
+
+>>>>>>> refs/remotes/Upstream/develop

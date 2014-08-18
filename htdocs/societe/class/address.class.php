@@ -263,9 +263,9 @@ class Address
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification, a.fk_soc';
 				$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-				$sql .= ', p.code as country_code, p.libelle as country';
+				$sql .= ', c.code as country_code, c.label as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 				$sql .= ' WHERE a.fk_soc = '.$this->socid;
 
 				$resql=$this->db->query($sql);
@@ -332,9 +332,9 @@ class Address
 
 		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification';
 		$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-		$sql .= ', p.code as country_code, p.libelle as country';
+		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 		$sql .= ' WHERE a.rowid = '.$id;
 		$resql=$this->db->query($sql);
 		if ($resql)

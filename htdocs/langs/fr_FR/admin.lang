@@ -1075,6 +1075,7 @@ NotificationsDesc=La fonction des notifications par emails permet d'envoyer auto
 ModelModules=Modèle de documents
 DocumentModelOdt=Génération depuis des modèles OpenDocument (Fichier .ODT ou .ODS OpenOffice, KOffice, TextEdit…)
 WatermarkOnDraft=Filigrane sur les documents brouillons
+JSOnPaimentBill=Ajout surcouche js
 CompanyIdProfChecker=Règles sur les Identifiants professionnels
 MustBeUnique=Doit être unique ?
 MustBeMandatory=Obligatoire pour creer tiers ?
