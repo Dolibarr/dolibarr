@@ -54,8 +54,8 @@ class Form
     var $cache_types_fees=array();
     var $cache_vatrates=array();
 
-    var $tva_taux_value;
-    var $tva_taux_libelle;
+    var $tva_rate_value;
+    var $tva_rate_libelle;
 
 
     /**
@@ -3439,12 +3439,12 @@ class Form
     	$num = count($this->cache_vatrates);
     	if ($num > 0) return $num;    // Cache deja charge
 
-    	$sql  = "SELECT DISTINCT t.taux, t.recuperableonly";
+    	$sql  = "SELECT DISTINCT t.rate, t.recuperableonly";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE t.fk_pays = c.rowid";
     	$sql.= " AND t.active = 1";
     	$sql.= " AND c.code IN (".$country_code.")";
-    	$sql.= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+    	$sql.= " ORDER BY t.rate ASC, t.recuperableonly ASC";
 
     	$resql=$this->db->query($sql);
     	if ($resql)
@@ -3455,8 +3455,8 @@ class Form
     			for ($i = 0; $i < $num; $i++)
     			{
     				$obj = $this->db->fetch_object($resql);
-    				$this->cache_vatrates[$i]['txtva']	= $obj->taux;
-    				$this->cache_vatrates[$i]['libtva']	= $obj->taux.'%';
+    				$this->cache_vatrates[$i]['txtva']	= $obj->rate;
+    				$this->cache_vatrates[$i]['libtva']	= $obj->rate.'%';
     				$this->cache_vatrates[$i]['nprtva']	= $obj->recuperableonly;
     			}
 
@@ -3494,7 +3494,7 @@ class Form
      *  @param	bool	$options_only		Return options only (for ajax treatment)
      *  @return	void
      */
-    function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
+    function load_tva($htmlname='ratetva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false)
     {
         global $langs,$conf,$mysoc;
 
@@ -3609,9 +3609,9 @@ class Form
         		$return.= $rate['nprtva'] ? ' *': '';
         		$return.= '</option>';
 
-        		$this->tva_taux_value[]		= $rate['txtva'];
-        		$this->tva_taux_libelle[]	= $rate['libtva'];
-        		$this->tva_taux_npr[]		= $rate['nprtva'];
+        		$this->tva_rate_value[]		= $rate['txtva'];
+        		$this->tva_rate_libelle[]	= $rate['libtva'];
+        		$this->tva_rate_npr[]		= $rate['nprtva'];
         	}
 
         	if (! $options_only) $return.= '</select>';

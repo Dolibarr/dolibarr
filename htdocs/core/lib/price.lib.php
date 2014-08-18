@@ -107,9 +107,9 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 	else
 	{
-		$sql = "SELECT taux, localtax1, localtax2, localtax1_type, localtax2_type";
+		$sql = "SELECT rate, localtax1, localtax2, localtax1_type, localtax2_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_tva as cv";
-		$sql.= " WHERE cv.taux = ".$txtva;
+		$sql.= " WHERE cv.rate = ".$txtva;
 		$sql.= " AND cv.fk_pays = ".$countryid;
 		dol_syslog("calcul_price_total search vat information", LOG_DEBUG);
 		$resql = $db->query($sql);

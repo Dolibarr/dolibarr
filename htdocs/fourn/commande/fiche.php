@@ -116,13 +116,13 @@ if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
     if ($result < 0) dol_print_error($db, $object->error);
 }
 
-// conditions de reglement
+// conditions of payment
 if ($action == 'setconditions' && $user->rights->fournisseur->commande->creer)
 {
     $result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 }
 
-// mode de reglement
+// method of payment
 else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 {
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
@@ -133,7 +133,7 @@ else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->cr
      $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
     }
 
-// date de livraison
+// delivery date
 if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
 {
 	$datelivraison=dol_mktime(0, 0, 0, GETPOST('liv_month','int'), GETPOST('liv_day','int'),GETPOST('liv_year','int'));
@@ -194,13 +194,13 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	{
 		$idprod=0;
 		$price_ht = GETPOST('price_ht');
-		$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
+		$ratevat = (GETPOST('ratevat') ? GETPOST('ratevat') : 0);
 	}
 	else
 	{
 		$idprod=GETPOST('idprod', 'int');
 		$price_ht = '';
-		$tva_tx = '';
+		$ratevat = '';
 	}
 
 	$qty = GETPOST('qty'.$predef);
@@ -256,18 +256,18 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     		$desc = $productsupplier->description;
     		if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-    		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+    		$ratevat = get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
     		$type = $productsupplier->type;
 
     		// Local Taxes
-    		$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
-    		$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
+    		$localtax1_tx= get_localtax($ratevat, 1,$mysoc,$object->thirdparty);
+    		$localtax2_tx= get_localtax($ratevat, 2,$mysoc,$object->thirdparty);
 
     		$result=$object->addline(
     			$desc,
     			$productsupplier->fourn_pu,
     			$qty,
-    			$tva_tx,
+    			$ratevat,
     			$localtax1_tx,
     			$localtax2_tx,
     			$productsupplier->id,
@@ -297,34 +297,34 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	{
 		$pu_ht = price2num($price_ht, 'MU');
 		$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
-		$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
-		$tva_tx = str_replace('*', '', $tva_tx);
+		$tva_npr = (preg_match('/\*/', $ratevat) ? 1 : 0);
+		$ratevat = str_replace('*', '', $ratevat);
 		$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 		$desc = $product_desc;
 		$type = GETPOST('type');
 
-    	$tva_tx = price2num($tva_tx);	// When vat is text input field
+    	$ratevat = price2num($ratevat);	// When vat is text input field
 
     	// Local Taxes
-    	$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
-    	$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
+    	$localtax1_tx= get_localtax($ratevat, 1,$mysoc,$object->thirdparty);
+    	$localtax2_tx= get_localtax($ratevat, 2,$mysoc,$object->thirdparty);
 
     	if (!empty($_POST['price_ht']))
     	{
     		$price_base_type = 'HT';
     		$ht = price2num($_POST['price_ht']);
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type);
+    		$result=$object->addline($desc, $ht, $qty, $ratevat, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type);
     	}
     	else
     	{
     		$ttc = price2num($_POST['price_ttc']);
-    		$ht = $ttc / (1 + ($tauxtva / 100));
+    		$ht = $ttc / (1 + ($ratevat / 100));
     		$price_base_type = 'HT';
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
+    		$result=$object->addline($desc, $ht, $qty, $ratevat, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
     	}
 	}
 
-    //print "xx".$tva_tx; exit;
+    //print "xx".$ratevat; exit;
     if (! $error && $result > 0)
     {
     	$ret=$object->fetch($object->id);    // Reload to get new records
@@ -352,7 +352,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     	unset($_POST['pu']);
     	unset($_POST['price_ht']);
     	unset($_POST['price_ttc']);
-    	unset($_POST['tva_tx']);
+    	unset($_POST['ratevat']);
     	unset($_POST['label']);
     	unset($localtax1_tx);
     	unset($localtax2_tx);
@@ -381,7 +381,7 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 }
 
 /*
- *	Mise a jour	d'une ligne	dans la	commande
+ *	Update line in the command
  */
 else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer &&	! GETPOST('cancel'))
 {
@@ -392,8 +392,8 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
         if (!$res) dol_print_error($db);
     }
 
-    $localtax1_tx=get_localtax($_POST['tva_tx'],1,$mysoc,$object->thirdparty);
-    $localtax2_tx=get_localtax($_POST['tva_tx'],2,$mysoc,$object->thirdparty);
+    $localtax1_tx=get_localtax($_POST['ratevat'],1,$mysoc,$object->thirdparty);
+    $localtax2_tx=get_localtax($_POST['ratevat'],2,$mysoc,$object->thirdparty);
 
     $result	= $object->updateline(
         $_POST['elrowid'],
@@ -401,7 +401,7 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
         $_POST['pu'],
         $_POST['qty'],
         $_POST['remise_percent'],
-        $_POST['tva_tx'],
+        $_POST['ratevat'],
         $localtax1_tx,
         $localtax2_tx,
         'HT',
@@ -415,7 +415,7 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
     unset($_POST['dp_desc']);
     unset($_POST['np_desc']);
     unset($_POST['pu']);
-    unset($_POST['tva_tx']);
+    unset($_POST['ratevat']);
     unset($localtax1_tx);
     unset($localtax2_tx);
     if ($result	>= 0)
@@ -861,7 +861,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 //        {
             if (GETPOST('sendto','alpha'))
             {
-                // Le destinataire a ete fourni via le champ libre
+                // The addressee was supplied via the free field
                 $sendto = GETPOST('sendto','alpha');
                 $sendtoid = 0;
             }
@@ -931,7 +931,7 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
 
                         $error=0;
 
-                        // Initialisation donnees
+                        // Initialization data
                         $object->sendtoid		= $sendtoid;
                         $object->actiontypecode	= $actiontypecode;
                         $object->actionmsg 		= $actionmsg;
@@ -939,12 +939,12 @@ if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! G
                         $object->fk_element		= $object->id;
                         $object->elementtype	= $object->element;
 
-                        // Appel des triggers
+                        // Call triggers
                         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
                         $interface=new Interfaces($db);
                         $result=$interface->run_triggers('ORDER_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
                         if ($result < 0) { $error++; $errors=$interface->errors; }
-                        // Fin appel triggers
+                        // End call triggers
 
                         if ($error)
                         {
@@ -1027,13 +1027,13 @@ if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fourniss
 		}
 	}
 
-	// bascule du statut d'un contact
+	// Seesaw of the status of a contact
 	else if ($action == 'swapstatut' && $object->id > 0)
 	{
 		$result=$object->swapContactStatus(GETPOST('ligne'));
 	}
 
-	// Efface un contact
+	// Erase a contact
 	else if ($action == 'deletecontact' && $object->id > 0)
 	{
 		$result = $object->delete_contact($_GET["lineid"]);
@@ -1156,7 +1156,7 @@ if ($action=="create")
 		print $object->showOptionals($extrafields,'edit');
     }
 
-	// Bouton "Create Draft"
+	// Button "Create Draft"
     print "</table>\n";
 
 	print '<br><center><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></center>';
@@ -1661,7 +1661,7 @@ elseif (! empty($object->id))
 
 			print '</td>';
 
-			print '<td align="right" class="nowrap">'.vatrate($line->tva_tx).'%</td>';
+			print '<td align="right" class="nowrap">'.vatrate($line->ratevat).'%</td>';
 
 			print '<td align="right" class="nowrap">'.price($line->subprice)."</td>\n";
 
@@ -1746,7 +1746,7 @@ elseif (! empty($object->id))
 
 			print '</td>';
 			print '<td>';
-			print $form->load_tva('tva_tx',$line->tva_tx,$object->thirdparty,$mysoc);
+			print $form->load_tva('ratevat',$line->ratevat,$object->thirdparty,$mysoc);
 			print '</td>';
 			print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($line->subprice).'"></td>';
 			print '<td align="right"><input size="2" type="text" name="qty" value="'.$line->qty.'"></td>';

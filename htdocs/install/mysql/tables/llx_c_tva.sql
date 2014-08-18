@@ -22,7 +22,7 @@ create table llx_c_tva
 (
   rowid             integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   fk_pays           integer NOT NULL,
-  taux              double  NOT NULL,
+  rate              double  NOT NULL,
   localtax1         varchar(10)  NOT NULL DEFAULT '0',
   localtax1_type	varchar(10)	 NOT NULL DEFAULT '0',
   localtax2         varchar(10)  NOT NULL DEFAULT '0',

@@ -141,7 +141,7 @@ $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.t
 $tabsql[7] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.accountancy_code as accountancy_code, a.deductible, c.code as country_code, c.label as country, a.fk_pays as country_id, a.active FROM ".MAIN_DB_PREFIX."c_chargesociales AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_pays=c.rowid and c.active=1";
 $tabsql[8] = "SELECT t.id    as rowid, t.code as code, t.libelle, t.fk_country as country_id, c.code as country_code, c.label as country, t.active FROM ".MAIN_DB_PREFIX."c_typent as t LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON t.fk_country=c.rowid";
 $tabsql[9] = "SELECT code_iso as code, label, unicode, active FROM ".MAIN_DB_PREFIX."c_currencies";
-$tabsql[10]= "SELECT t.rowid, t.taux, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
+$tabsql[10]= "SELECT t.rowid, t.rate, t.localtax1_type, t.localtax1, t.localtax2_type, t.localtax2, c.label as country, c.code as country_code, t.fk_pays as country_id, t.recuperableonly, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX.'c_payment_term AS c';
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active, accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement AS c";
@@ -156,7 +156,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT rowid   as rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number as accountancy_code, account_parent, label, active FROM ".MAIN_DB_PREFIX."accountingaccount";
 $tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
-$tabsql[25]= "SELECT t.rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
+$tabsql[25]= "SELECT t.rowid, t.rate, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
 
 // Criteria to sort dictionaries
@@ -170,7 +170,7 @@ $tabsqlsort[6] ="a.type ASC, a.module ASC, a.position ASC, a.code ASC";
 $tabsqlsort[7] ="country ASC, code ASC, a.libelle ASC";
 $tabsqlsort[8] ="country DESC, libelle ASC";
 $tabsqlsort[9] ="label ASC";
-$tabsqlsort[10]="country ASC, taux ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
+$tabsqlsort[10]="country ASC, rate ASC, recuperableonly ASC, localtax1 ASC, localtax2 ASC";
 $tabsqlsort[11]="element ASC, source ASC, code ASC";
 $tabsqlsort[12]="sortorder ASC, code ASC";
 $tabsqlsort[13]="code ASC";
@@ -185,7 +185,7 @@ $tabsqlsort[21]="code ASC, label ASC";
 $tabsqlsort[22]="code ASC, label ASC";
 $tabsqlsort[23]="fk_pcg_version ASC, accountancy_code ASC";
 $tabsqlsort[24]="pcg_version ASC";
-$tabsqlsort[25]="country ASC, taux ASC";
+$tabsqlsort[25]="country ASC, rate ASC";
 $tabsqlsort[26]="code ASC,label ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
@@ -199,7 +199,7 @@ $tabfield[6] = "code,libelle,type,position";
 $tabfield[7] = "code,libelle,country_id,country,accountancy_code,deductible";
 $tabfield[8] = "code,libelle,country_id,country";
 $tabfield[9] = "code,label,unicode";
-$tabfield[10]= "country_id,country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[10]= "country_id,country,rate,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type,accountancy_code";
@@ -214,7 +214,7 @@ $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
 $tabfield[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
 $tabfield[24]= "pcg_version,country_id,country,label";
-$tabfield[25]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[25]= "country_id,country,rate,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[26]= "code,label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
@@ -228,7 +228,7 @@ $tabfieldvalue[6] = "code,libelle,type,position";
 $tabfieldvalue[7] = "code,libelle,country,accountancy_code,deductible";
 $tabfieldvalue[8] = "code,libelle,country";
 $tabfieldvalue[9] = "code,label,unicode";
-$tabfieldvalue[10]= "country,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[10]= "country,rate,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldvalue[13]= "code,libelle,type,accountancy_code";
@@ -243,7 +243,7 @@ $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
 $tabfieldvalue[24]= "pcg_version,country,label";
-$tabfieldvalue[25]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[25]= "country,rate,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[26]= "code,label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
@@ -257,7 +257,7 @@ $tabfieldinsert[6] = "code,libelle,type,position";
 $tabfieldinsert[7] = "code,libelle,fk_pays,accountancy_code,deductible";
 $tabfieldinsert[8] = "code,libelle,fk_country";
 $tabfieldinsert[9] = "code_iso,label,unicode";
-$tabfieldinsert[10]= "fk_pays,taux,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[10]= "fk_pays,rate,recuperableonly,localtax1_type,localtax1,localtax2_type,localtax2,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type,accountancy_code";
@@ -272,7 +272,7 @@ $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[23]= "fk_pcg_version,account_number,account_parent,pcg_type,pcg_subtype,label";
 $tabfieldinsert[24]= "pcg_version,fk_pays,label";
-$tabfieldinsert[25]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[25]= "fk_pays,rate,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[26]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
@@ -475,7 +475,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'module')   $fieldnamekey='Module';
             if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
             if ($fieldnamekey == 'note') $fieldnamekey = 'Note';
-            if ($fieldnamekey == 'taux') $fieldnamekey = 'Rate';
+            if ($fieldnamekey == 'rate') $fieldnamekey = 'Rate';
             if ($fieldnamekey == 'type') $fieldnamekey = 'Type';
             if ($fieldnamekey == 'position') $fieldnamekey = 'Position';
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
@@ -781,7 +781,7 @@ if ($id)
             $align="left";
             if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
             if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-            if ($fieldlist[$field]=='taux')            {
+            if ($fieldlist[$field]=='rate')            {
 				if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
 				else $valuetoshow=$langs->trans("Amount");
 				$align='right';
@@ -903,7 +903,7 @@ if ($id)
                 $valuetoshow=$langs->trans($valuetoshow);   // try to translate
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
                 if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
-                if ($fieldlist[$field]=='taux')            {
+                if ($fieldlist[$field]=='rate')            {
 					if ($tabname[$id] != MAIN_DB_PREFIX."c_revenuestamp") $valuetoshow=$langs->trans("Rate");
 					else $valuetoshow=$langs->trans("Amount");
 					$align='right';
@@ -1126,7 +1126,7 @@ if ($id)
 							    $valuetoshow = '';
 							  $align="right";
 							}
-							else if (in_array($fieldlist[$field],array('taux','localtax1','localtax2')))
+							else if (in_array($fieldlist[$field],array('rate','localtax1','localtax2')))
 							{
 								$align="right";
 							}
@@ -1325,9 +1325,9 @@ function fieldList($fieldlist,$obj='',$tabname='')
 			print $form->selectyesno($fieldlist[$field],(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''),1);
 			print '</td>';
 		}
-		elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
+		elseif (in_array($fieldlist[$field],array('nbjour','decalage','rate','localtax1','localtax2'))) {
 			$align="left";
-			if (in_array($fieldlist[$field],array('taux','localtax1','localtax2'))) $align="right";	// Fields aligned on right
+			if (in_array($fieldlist[$field],array('rate','localtax1','localtax2'))) $align="right";	// Fields aligned on right
 			print '<td align="'.$align.'">';
 			print '<input type="text" class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'">';
 			print '</td>';

@@ -1257,7 +1257,7 @@ function migrate_price_facture($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 
     // Liste des lignes facture non a jour
-    $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as tva_taux, fd.total_ttc, fd.info_bits,";
+    $sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_tx as vat_rate, fd.total_ttc, fd.info_bits,";
     $sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
     $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
     $sql.= " WHERE fd.fk_facture = f.rowid";
@@ -1279,7 +1279,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $txtva = $obj->vat_rate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $total_ttc_f = $obj->total_ttc_f;
@@ -1298,7 +1298,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $facligne->total_tva = $total_tva;
                 $facligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty vat_rate=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $facligne->update_total();
 
@@ -1371,7 +1371,7 @@ function migrate_price_propal($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
     // Liste des lignes propal non a jour
-    $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as tva_taux, pd.info_bits,";
+    $sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as vat_rate, pd.info_bits,";
     $sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
     $sql.= " WHERE pd.fk_propal = p.rowid";
@@ -1392,7 +1392,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $txtva = $obj->vat_rate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
@@ -1410,7 +1410,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $propalligne->total_tva = $total_tva;
                 $propalligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty vat_rate=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $propalligne->update_total();
 
@@ -1480,7 +1480,7 @@ function migrate_price_contrat($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
 
     // Liste des lignes contrat non a jour
-    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
+    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vat_rate, cd.info_bits,";
     $sql.= " c.rowid as contratid";
     $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
     $sql.= " WHERE cd.fk_contrat = c.rowid";
@@ -1501,7 +1501,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $txtva = $obj->vat_rate;
                 $remise_percent = $obj->remise_percent;
                 $info_bits = $obj->info_bits;
 
@@ -1519,7 +1519,7 @@ function migrate_price_contrat($db,$langs,$conf)
                 $contratligne->total_tva = $total_tva;
                 $contratligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty vat_rate=$txtva remise_percent=$remise_percent -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $contratligne->update_total();
 
@@ -1565,7 +1565,7 @@ function migrate_price_commande($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
     // Liste des lignes commande non a jour
-    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
+    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vat_rate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
     $sql.= " WHERE cd.fk_commande = c.rowid";
@@ -1586,7 +1586,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $txtva = $obj->vat_rate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
@@ -1604,7 +1604,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $commandeligne->total_tva = $total_tva;
                 $commandeligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty vat_rate=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $commandeligne->update_total();
 
@@ -1679,7 +1679,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
     print '<b>'.$langs->trans('MigrationSupplierOrder')."</b><br>\n";
 
     // Liste des lignes commande non a jour
-    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, cd.info_bits,";
+    $sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as vat_rate, cd.info_bits,";
     $sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd, ".MAIN_DB_PREFIX."commande_fournisseur as c";
     $sql.= " WHERE cd.fk_commande = c.rowid";
@@ -1700,7 +1700,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $rowid = $obj->rowid;
                 $qty = $obj->qty;
                 $pu = $obj->subprice;
-                $txtva = $obj->tva_taux;
+                $txtva = $obj->vat_rate;
                 $remise_percent = $obj->remise_percent;
                 $remise_percent_global = $obj->remise_percent_global;
                 $info_bits = $obj->info_bits;
@@ -1718,7 +1718,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $commandeligne->total_tva = $total_tva;
                 $commandeligne->total_ttc = $total_ttc;
 
-                dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+                dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty vat_rate=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
                 print ". ";
                 $commandeligne->update_total();
 

@@ -129,12 +129,12 @@ $langs->load("cashdesk");
                         $tab_tva_size=count($tab_tva);
                         for($i=0;$i < $tab_tva_size;$i++) {
 
-                            if ( $tva_tx == $tab_tva[$i]['taux'] )
+                            if ( $tva_tx == $tab_tva[$i]['rate'] )
                                 $selected = 'selected="selected"';
                             else
                                 $selected = '';
 
-                            echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ");
+                            echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['rate'].'</option>'."\n               ");
 
                         }
 

@@ -222,7 +222,7 @@ class FormOther
 
     	$out='';
 
-    	$sql = "SELECT r.taux";
+    	$sql = "SELECT r.rate";
     	$sql.= " FROM ".MAIN_DB_PREFIX."c_revenuestamp as r,".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE r.active = 1 AND r.fk_pays = c.rowid";
     	$sql.= " AND c.code = '".$country_code."'";
@@ -240,16 +240,16 @@ class FormOther
     			while ($i < $num)
     			{
     				$obj = $this->db->fetch_object($resql);
-    				if (($selected && $selected == $obj->taux) || $num == 1)
+    				if (($selected && $selected == $obj->rate) || $num == 1)
     				{
-    					$out.='<option value="'.$obj->taux.'" selected="selected">';
+    					$out.='<option value="'.$obj->rate.'" selected="selected">';
     				}
     				else
     				{
-    					$out.='<option value="'.$obj->taux.'">';
+    					$out.='<option value="'.$obj->rate.'">';
     					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
     				}
-    				$out.=$obj->taux;
+    				$out.=$obj->rate;
     				$out.='</option>';
     				$i++;
     			}
