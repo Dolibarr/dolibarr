@@ -107,10 +107,10 @@ insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values ( 5
 insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2462, 102, 23, 0, '0', 0, '0', 0, 'Κανονικός Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2463, 102, 0, 0, '0', 0, '0', 0, 'Μηδενικό Φ.Π.Α.', 1);
 insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2464, 102, 13, 0, '0', 0, '0', 0, 'Μειωμένος Φ.Π.Α.', 1);
-insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2465, 102, 6.5, 0, '0', 0, '0', 0, 'Υπερμειωμένος Φ.Π.Α.', 1);
-insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2466, 102, 16, 0, '0', 0, '0', 0, 'Νήσων κανονικός Φ.Π.Α.', 1);
-insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2467, 102, 9, 0, '0', 0, '0', 0, 'Νήσων μειωμένος Φ.Π.Α.', 1);
-insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2468, 102, 5, 0, '0', 0, '0', 0, 'Νήσων υπερμειωμένος Φ.Π.Α.', 1);
+insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2465, 102, 6.5, 0, '0', 0, '0', 0, 'Υπε�?μειωμένος Φ.Π.Α.', 1);
+insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2466, 102, 16, 0, '0', 0, '0', 0, '�?ήσων κανονικός Φ.Π.Α.', 1);
+insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2467, 102, 9, 0, '0', 0, '0', 0, '�?ήσων μειωμένος Φ.Π.Α.', 1);
+insert into llx_c_tva(rowid,fk_pays,rate,localtax1,localtax1_type,localtax2,localtax2_type,recuperableonly,note,active) values (2468, 102, 5, 0, '0', 0, '0', 0, '�?ήσων υπε�?μειωμένος Φ.Π.Α.', 1);
 
 -- ICELAND (id country=116)
 insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (1161, 116,'25.5','0','VAT standard rate',1);
@@ -128,6 +128,13 @@ insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (11
 insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (1172, 117,  '4','0','VAT reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (1173, 117,  '1','0','VAT super-reduced rate',1);
 insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (1174, 117,  '0','0','VAT Rate 0',1);
+
+-- IRELAND (id country=8)
+insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (81,     8,    '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (82,     8,   '23','0','VAT standard rate',1);
+insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (83,     8, '13.5','0','VAT reduced rate',1);
+insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (84,     8,    '9','0','VAT reduced rate',1);
+insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (85,     8,  '4.8','0','VAT reduced rate',1);
 
 -- JAPAN (id country=123)
 insert into llx_c_tva(rowid,fk_pays,rate,recuperableonly,note,active) values (1231, 123, '0','0','VAT Rate 0',1);

@@ -843,6 +843,7 @@ class Contrat extends CommonObject
 	function delete($user)
 	{
 		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 		$error=0;
 

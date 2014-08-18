@@ -1,6 +1,5 @@
--- ============================================================================
--- Copyright (C) 2005-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2011		Regis Houssin		<regis.houssin@capnetworks.com>
+-- ===========================================================================
+-- Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,9 +16,7 @@
 --
 -- ===========================================================================
 
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
 
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_datea (datea);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_soc (fk_soc);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_contact (fk_contact);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_code (code);
-ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_element (fk_element);

@@ -19,6 +19,7 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+
 ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
@@ -950,9 +951,14 @@ create table llx_c_email_templates
 ) ENGINE=innodb;
 
 
-UPDATE llx_c_regions SET rowid = 0 where rowid = 1;
-DELETE FROM llx_c_departements WHERE fk_region NOT IN (select rowid from llx_c_regions) AND fk_region IS NOT NULL AND fk_region <> 0;
-ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_fk_region	FOREIGN KEY (fk_region) REFERENCES llx_c_regions (rowid);
+ALTER TABLE llx_c_departements DROP FOREIGN KEY fk_departements_fk_region;
+--UPDATE llx_c_regions SET rowid = 0 where rowid = 1;
+
+ALTER TABLE llx_c_regions ADD UNIQUE INDEX uk_code_region (code_region);
+
+DELETE FROM llx_c_departements WHERE fk_region NOT IN (select code_region from llx_c_regions) AND fk_region IS NOT NULL AND fk_region <> 0;
+
+ALTER TABLE llx_c_departements ADD CONSTRAINT fk_departements_code_region FOREIGN KEY (fk_region) REFERENCES llx_c_regions (code_region);
 
 
 CREATE TABLE llx_holiday_types (
@@ -975,3 +981,9 @@ DROP INDEX uk_c_tva_id ON llx_c_tva;
 ALTER TABLE llx_c_tva CHANGE taux rate double NOT NULL;
 ALTER TABLE llx_c_revenuestamp CHANGE taux rate double NOT NULL;
 ALTER TABLE llx_c_tva ADD UNIQUE INDEX uk_c_tva_id (fk_pays, rate, recuperableonly);
+
+ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_element (fk_element);
+
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
+ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
