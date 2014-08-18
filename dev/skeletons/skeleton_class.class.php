@@ -106,7 +106,7 @@ class Skeleton_Class extends CommonObject
 
 	            //// Call triggers
 	            //$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}            
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			}
         }
@@ -133,10 +133,11 @@ class Skeleton_Class extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param	int		$id    Id object
+     *  @param	int		$id    	Id object
+     *  @param	string	$ref	Ref
      *  @return int          	<0 if KO, >0 if OK
      */
-    function fetch($id)
+    function fetch($id,$ref='')
     {
     	global $langs;
         $sql = "SELECT";
@@ -145,7 +146,8 @@ class Skeleton_Class extends CommonObject
 		$sql.= " t.field2";
 		//...
         $sql.= " FROM ".MAIN_DB_PREFIX."mytable as t";
-        $sql.= " WHERE t.rowid = ".$id;
+        if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
+        else $sql.= " WHERE t.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch");
         $resql=$this->db->query($sql);
@@ -214,7 +216,7 @@ class Skeleton_Class extends CommonObject
 
 	            //// Call triggers
 	            //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}            
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			 }
 		}
@@ -261,7 +263,7 @@ class Skeleton_Class extends CommonObject
 
 	            //// Call triggers
 	            //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
-	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}            
+	            //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 	            //// End call triggers
 			}
 		}

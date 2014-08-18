@@ -303,7 +303,7 @@ class FormCompany
 		global $conf,$langs;
 		$langs->load("dict");
 
-		$sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, c.code as country_code, c.label as country"; 
+		$sql = "SELECT r.rowid, r.code_region as code, r.nom as label, r.active, c.code as country_code, c.label as country";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_country as c";
 		$sql.= " WHERE r.fk_pays=c.rowid AND r.active = 1 and c.active = 1";
 		$sql.= " ORDER BY c.code, c.label ASC";

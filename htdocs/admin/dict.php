@@ -570,7 +570,8 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         $result = $db->query($sql);
         if ($result)	// Add is ok
         {
-            $_POST=array('id'=>$id);	// Clean $_POST array, we keep only
+            setEventMessage($langs->transnoentities("RecordSaved"));
+        	$_POST=array('id'=>$id);	// Clean $_POST array, we keep only
         }
         else
         {
@@ -1276,7 +1277,7 @@ function fieldList($fieldlist,$obj='',$tabname='')
 	foreach ($fieldlist as $field => $value)
 	{
 		if ($fieldlist[$field] == 'country') {
-			if (in_array('region_id',$fieldlist)) { print '<td>&nbsp;</td>'; continue; }	// For region page, we do not show the country input
+			if (in_array('region_id',$fieldlist)) { print '<td>'.join(',',$fieldlist).'&nbsp;</td>'; continue; }	// For state page, we do not show the country input (we link to region, not country)
 			print '<td>';
 			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), 'country', '', 28);
 			print '</td>';
