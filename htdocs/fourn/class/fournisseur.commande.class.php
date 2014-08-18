@@ -1765,6 +1765,8 @@ class CommandeFournisseur extends CommonOrder
      *	@param		int		$info_bits			Miscellaneous informations
      *	@param		int		$type				Type of line (0=product, 1=service)
      *  @param		int		$notrigger			Disable triggers
+     *  @param      timestamp   $date_start         Date start of service
+     *  @param      timestamp   $date_end           Date end of service
      *	@return    	int             			< 0 if error, > 0 if ok
      */
     function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type=0, $notrigger=false, $date_start='', $date_end='')
