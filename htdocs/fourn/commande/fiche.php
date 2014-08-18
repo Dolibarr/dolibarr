@@ -80,6 +80,9 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+//Date prefix
+$date_pf = '';
+
 // Load object
 if ($id > 0 || ! empty($ref))
 {
@@ -182,6 +185,8 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	// Set if we used free entry or predefined product
 	$predef='';
 	$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+	$date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
+	$date_end=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
 	if (GETPOST('prod_entry_mode') == 'free')
 	{
 		$idprod=0;
@@ -267,7 +272,12 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     			$productsupplier->fourn_ref,
     			$remise_percent,
     			'HT',
-    			$type
+    			$pu_ttc,
+    			$type,
+    			'',
+    			'',
+    			$date_start,
+    			$date_end
     		);
     	}
     	if ($idprod == -2 || $idprod == 0)
@@ -305,14 +315,14 @@ else if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
     	{
     		$price_base_type = 'HT';
     		$ht = price2num($_POST['price_ht']);
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type);
+    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, 0, $type,'','', $date_start, $date_end);
     	}
     	else
     	{
     		$ttc = price2num($_POST['price_ttc']);
     		$ht = $ttc / (1 + ($tauxtva / 100));
     		$price_base_type = 'HT';
-    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type);
+    		$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, '', $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end);
     	}
 	}
 
@@ -384,6 +394,9 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
         if (!$res) dol_print_error($db);
     }
 
+    $date_start=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_start'.$date_pf.'month'), GETPOST('date_start'.$date_pf.'day'), GETPOST('date_start'.$date_pf.'year'));
+    $date_end=dol_mktime(GETPOST('date_start'.$date_pf.'hour'), GETPOST('date_start'.$date_pf.'min'), 0, GETPOST('date_end'.$date_pf.'month'), GETPOST('date_end'.$date_pf.'day'), GETPOST('date_end'.$date_pf.'year'));
+
     $localtax1_tx=get_localtax($_POST['tva_tx'],1,$mysoc,$object->thirdparty);
     $localtax2_tx=get_localtax($_POST['tva_tx'],2,$mysoc,$object->thirdparty);
 
@@ -398,7 +411,10 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
         $localtax2_tx,
         'HT',
         0,
-        isset($_POST["type"])?$_POST["type"]:$line->product_type
+        isset($_POST["type"])?$_POST["type"]:$line->product_type,
+        false,
+        $date_start,
+        $date_end
     );
     unset($_POST['qty']);
     unset($_POST['type']);
@@ -408,6 +424,8 @@ else if ($action == 'update_line' && $user->rights->fournisseur->commande->creer
     unset($_POST['np_desc']);
     unset($_POST['pu']);
     unset($_POST['tva_tx']);
+    unset($_POST['date_start']);
+    unset($_POST['date_end']);
     unset($localtax1_tx);
     unset($localtax2_tx);
     if ($result	>= 0)
@@ -1739,6 +1757,12 @@ elseif (! empty($object->id))
 			if (! empty($conf->global->MAIN_INPUT_DESC_HEIGHT)) $nbrows=$conf->global->MAIN_INPUT_DESC_HEIGHT;
 			$doleditor=new DolEditor('eldesc',$line->description,'',200,'dolibarr_details','',false,true,$conf->global->FCKEDITOR_ENABLE_DETAILS,$nbrows,70);
 			$doleditor->Create();
+
+            print '<br>';
+            print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+            print $form->select_date($date_start,'date_start'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'');
+            print ' '.$langs->trans('to').' ';
+            print $form->select_date($date_end,'date_end'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'');
 
 			print '</td>';
 			print '<td>';
