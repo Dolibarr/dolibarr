@@ -1763,16 +1763,6 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			// Set new ref and define current statut
-			if (! $error)
-			{
-				$this->ref = $num;
-				$this->facnumber=$num;
-				$this->statut=1;
-				$this->brouillon=0;
-				$this->date_validation=$now;
-			}
-
 			// Trigger calls
 			if (! $error)
 			{
@@ -1781,6 +1771,16 @@ class Facture extends CommonInvoice
 	            if ($result < 0) $error++;    
 	            //TODO: Restoring ref, facnumber, statut, brouillon to previous value if trigger fail           
 	            // End call triggers
+			}
+			
+			// Set new ref and define current statut
+			if (! $error)
+			{
+				$this->ref = $num;
+				$this->facnumber=$num;
+				$this->statut=1;
+				$this->brouillon=0;
+				$this->date_validation=$now;
 			}
 		}
 		else
