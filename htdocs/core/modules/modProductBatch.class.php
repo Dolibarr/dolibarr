@@ -78,13 +78,13 @@ class modProductBatch extends DolibarrModules
 
         $this->tabs = array();
 
-        // Dictionnaries
+        // Dictionaries
 	    if (! isset($conf->productbatch->enabled))
         {
         	$conf->productbatch=new stdClass();
         	$conf->productbatch->enabled=0;
         }
-		$this->dictionnaries=array();
+		$this->dictionaries=array();
 
         // Boxes
         $this->boxes = array();			// List of boxes
