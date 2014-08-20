@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: On contact list can set filter on both active and not active (no more exclusive select). 
 - New: Each user can include its own external ics calendar into dolibarr agenda view.
 - New: Intervention documents are now available in ECM module.
 - New: Can attach supplier order to a customer order.
@@ -89,6 +90,8 @@ Dolibarr better:
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database wwere renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
+- Trigger PROJECT_BUILDDOC is removed. Building a doc is not a business event. For action after 
+  creation of a pdf, hook "afterPDFCreation" must be used instead.
  
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
