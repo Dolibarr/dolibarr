@@ -33,13 +33,13 @@ class DoliDBMssql extends DoliDB
 	//! Database type
 	public $type='mssql';
 	//! Database label
-	static $label='MSSQL';
+	const LABEL='MSSQL';
 	//! Charset used to force charset when creating database
 	var $forcecharset='latin1';      // Can't be static as it may be forced with a dynamic value
 	//! Collate used to force collate when creating database
 	var $forcecollate='latin1_swedish_ci';      // Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	static $versionmin=array(2000);
+	const VERSIONMIN='2000';
 	//! Resultset of last query
 	private $_results;
 
@@ -349,6 +349,8 @@ class DoliDBMssql extends DoliDB
 
 		//print "<!--".$query."-->";
 
+		if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+
 		if (! $this->database_name)
 		{
 			// Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
@@ -370,7 +372,9 @@ class DoliDBMssql extends DoliDB
                 $this->lastqueryerror = $query;
 				$this->lasterror = $this->error();
 				$this->lasterrno = $row["code"];
-                dol_syslog(get_class($this)."::query SQL error: ".$query, LOG_WARNING);
+
+				dol_syslog(get_class($this)."::query SQL Error query: ".$query, LOG_ERR);
+				dol_syslog(get_class($this)."::query SQL Error message: ".$this->lasterror." (".$this->lasterrno.")", LOG_ERR);
 			}
 			$this->lastquery=$query;
 			$this->_results = $ret;

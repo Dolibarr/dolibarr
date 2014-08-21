@@ -105,6 +105,13 @@ else if ($action == 'MAIN_ANTIVIRUS_PARAM')
     if (! dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", $_POST["MAIN_ANTIVIRUS_PARAM"],'chaine',0,'',$conf->entity)) dol_print_error($db);
     else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
 }
+else if ($action == 'MAIN_APPLICATION_TITLE')
+{
+	if (! dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", $_POST["MAIN_SESSION_TIMEOUT"],'chaine',0,'',$conf->entity)) dol_print_error($db);
+	else setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+}
+
+
 
 // Delete file
 else if ($action == 'delete')
@@ -163,8 +170,24 @@ print '<input type="submit" class="button" name="button" value="'.$langs->trans(
 print '</td>';
 print '</tr></form>';
 
-print '</table>';
+$var=!$var;
+$sessiontimeout=ini_get("session.gc_maxlifetime");
+if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE="";
+print '<form action="'.$_SERVER["PHP_SELF"].'?action=MAIN_APPLICATION_TITLE" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("HiddeNumVersion").'</td><td align="right">';
+print $form->textwithpicto('',$langs->trans("HiddeNumVersionExample",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print '</td>';
+print '<td class="nowrap">';
+print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="20" value="'.htmlentities($conf->global->MAIN_APPLICATION_TITLE).'"> ';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" name="button" value="'.$langs->trans("Modify").'">';
+print '</td>';
+print '</tr></form>';
 
+print '</table>';
 print '<br>';
 
 
@@ -332,7 +355,6 @@ $formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestF
 // List of document
 $filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
 $formfile->list_of_documents($filearray, '', 'admin_temp', '');
-
 
 llxFooter();
 $db->close();

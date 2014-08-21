@@ -309,8 +309,8 @@ if (! empty($force_install_message))
                     if ($type == 'sqlite') continue;    // We hide sqlite because support can't be complete unti sqlit does not manage foreign key creation after table creation
 
 		            // Version min of database
-                    $versionbasemin=getStaticMember($class, 'versionmin');
-                    $note='('.getStaticMember($class, 'label').' >= '.versiontostring($versionbasemin).')';
+                    $versionbasemin=explode('.',$class::VERSIONMIN);
+                    $note='('.$class::LABEL.' >= '.$class::VERSIONMIN.')';
 
 		            // Switch to mysql if mysqli is not present
 		            if ($defaultype=='mysqli' && !function_exists('mysqli_connect')) $defaultype = 'mysql';

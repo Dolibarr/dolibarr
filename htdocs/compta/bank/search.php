@@ -145,7 +145,7 @@ $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 //print $sql;
 
-dol_syslog('compta/bank/search.php:: sql='.$sql);
+dol_syslog('compta/bank/search.php::', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {

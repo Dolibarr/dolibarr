@@ -28,11 +28,13 @@ create table llx_user
 
   datec             datetime,
   tms               timestamp,
+  fk_user_creat     integer,
+  fk_user_modif     integer,
   login             varchar(24) NOT NULL,
   pass              varchar(32),
   pass_crypted      varchar(128),
   pass_temp         varchar(32),			    -- temporary password when asked for forget password
-  civilite          varchar(6),
+  civility          varchar(6),
   lastname          varchar(50),
   firstname         varchar(50),
   address           varchar(255),                        		-- user personal address
@@ -67,7 +69,7 @@ create table llx_user
   color				varchar(6),
   barcode			varchar(255) DEFAULT NULL,
   fk_barcode_type	integer      DEFAULT 0,
-  accountancy_code  varchar(24) NULL,
+  accountancy_code  varchar(32) NULL,
   nb_holiday		integer DEFAULT 0,
   salary			double(24,8)
 )ENGINE=innodb;

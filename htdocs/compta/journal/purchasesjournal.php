@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Alexandre spangaro	<alexandre.spangaro@gmail.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
@@ -117,7 +117,6 @@ if ($date_start && $date_end) $sql .= " AND f.datef >= '".$db->idate($date_start
 // TODO Find a better trick to avoid problem with some mysql installations
 if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
 
-dol_syslog("sql=".$sql);
 $result = $db->query($sql);
 if ($result)
 {
@@ -150,9 +149,9 @@ if ($result)
 		$compta_localtax1 = (! empty($obj->account_localtax1)?$obj->account_localtax1:$langs->trans("CodeNotDef"));
 		$compta_localtax2 = (! empty($obj->account_localtax2)?$obj->account_localtax2:$langs->trans("CodeNotDef"));
 
-		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
+		$account_localtax1=getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc, $obj->thirdparty);
 		$compta_localtax1= (! empty($account_localtax1[2])?$account_localtax1[2]:$langs->trans("CodeNotDef"));
-		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
+		$account_localtax2=getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc, $obj->thirdparty);
 		$compta_localtax2= (! empty($account_localtax2[2])?$account_localtax2[2]:$langs->trans("CodeNotDef"));
 
 		$tabfac[$obj->rowid]["date"] = $obj->datef;

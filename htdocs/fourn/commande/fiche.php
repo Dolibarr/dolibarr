@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
@@ -105,6 +105,9 @@ $permissionnote=$user->rights->fournisseur->commande->creer;	// Used by the incl
  * Actions
  */
 
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
 
 if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
@@ -124,6 +127,11 @@ else if ($action == 'setmode' && $user->rights->fournisseur->commande->creer)
 {
     $result = $object->setPaymentMethods(GETPOST('mode_reglement_id','int'));
 }
+
+// bank account
+else if ($action == 'setbankaccount' && $user->rights->fournisseur->commande->creer) {
+     $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+    }
 
 // date de livraison
 if ($action == 'setdate_livraison' && $user->rights->fournisseur->commande->creer)
@@ -150,10 +158,11 @@ else if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
-    if (in_array($object->statut, array(1, 5, 6, 7, 9)))
+    if (in_array($object->statut, array(1, 2, 5, 6, 7, 9)))
     {
         if ($object->statut == 1) $newstatus=0;	// Validated->Draft
-    	else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
+        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
+        else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
         else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
         else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
         else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
@@ -633,7 +642,7 @@ else if ($action == 'livraison' && $user->rights->fournisseur->commande->recepti
     }
     else
     {
-        $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")).'</div>';
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Delivery")), 'errors');
     }
 }
 
@@ -762,7 +771,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
 
     if ($socid <1)
     {
-    	$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')).'</div>';
+	    setEventMessage($langs->trans('ErrorFieldRequired',$langs->transnoentities('Supplier')), 'errors');
     	$action='create';
     	$error++;
     }
@@ -776,6 +785,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         $object->socid         	= $socid;
 		$object->cond_reglement_id = GETPOST('cond_reglement_id');
         $object->mode_reglement_id = GETPOST('mode_reglement_id');
+        $object->fk_account        = GETPOST('fk_account', 'int');
         $object->note_private	= GETPOST('note_private');
         $object->note_public   	= GETPOST('note_public');
 
@@ -792,7 +802,7 @@ else if ($action == 'add' && $user->rights->fournisseur->commande->creer)
         {
             $langs->load("errors");
             $db->rollback();
-            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	        setEventMessage($langs->trans($object->error), 'errors');
             $action='create';
             $_GET['socid']=$_POST['socid'];
         }
@@ -1064,7 +1074,6 @@ if ($action=="create")
 {
 	print_fiche_titre($langs->trans('NewOrder'));
 
-	dol_htmloutput_mesg($mesg);
 	dol_htmloutput_events();
 
 	$societe='';
@@ -1115,6 +1124,11 @@ if ($action=="create")
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 	print '<td>';
@@ -1288,17 +1302,9 @@ elseif (! empty($object->id))
 	if (! empty($conf->projet->enabled))	$nbrow++;
 
 	//Local taxes
-	//TODO: Place into a function to control showing by country or study better option
-	if ($mysoc->country_code=='ES')
-	{
-		if($mysoc->localtax1_assuj=="1") $nbrow++;
-		if($object->thirdparty->localtax2_assuj=="1") $nbrow++;
-	}
-	else
-	{
-		if($mysoc->localtax1_assuj=="1") $nbrow++;
-		if($mysoc->localtax2_assuj=="1") $nbrow++;
-	}
+	if($mysoc->localtax1_assuj=="1") $nbrow++;
+	if($mysoc->localtax2_assuj=="1") $nbrow++;
+
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1388,6 +1394,23 @@ elseif (! empty($object->id))
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id,$object->mode_reglement_id,'none');
 	}
 	print '</td></tr>';
+
+    // Bank Account
+    print '<tr><td class="nowrap">';
+    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+    print $langs->trans('BankAccount');
+    print '<td>';
+    if ($action != 'editbankaccount' && $user->rights->fournisseur->commande->creer)
+        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+    print '</tr></table>';
+    print '</td><td colspan="3">';
+    if ($action == 'editbankaccount') {
+        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+    } else {
+        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+    }
+    print '</td>';
+    print '</tr>';
 
 	// Delivery date planed
 	print '<tr><td height="10">';
@@ -1514,37 +1537,19 @@ elseif (! empty($object->id))
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	// Amount Local Taxes
-	//TODO: Place into a function to control showing by country or study better option
-	if ($mysoc->country_code=='ES')
+	if ($mysoc->localtax1_assuj=="1" || $object->total_localtax1 != 0) //Localtax1
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1 RE
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($object->thirdparty->localtax2_assuj=="1") //Localtax2 IRPF
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
+		print '<td align="right">'.price($object->total_localtax1).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
-	else
+	if ($mysoc->localtax2_assuj=="1" || $object->total_localtax2 != 0) //Localtax2
 	{
-		if ($mysoc->localtax1_assuj=="1") //Localtax1
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT1",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax1).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
-		if ($mysoc->localtax2_assuj=="1") //Localtax2
-		{
-			print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
-			print '<td align="right">'.price($object->total_localtax2).'</td>';
-			print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
-		}
+		print '<tr><td>'.$langs->transcountry("AmountLT2",$mysoc->country_code).'</td>';
+		print '<td align="right">'.price($object->total_localtax2).'</td>';
+		print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
+
 	print '<tr><td>'.$langs->trans("AmountTTC").'</td><td align="right">'.price($object->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
@@ -1768,7 +1773,6 @@ elseif (! empty($object->id))
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-
 	}
 	print '</table>';
 
@@ -1830,7 +1834,7 @@ elseif (! empty($object->id))
 			}
 
 			// Reopen
-			if (in_array($object->statut, array(5, 6, 7, 9)))
+			if (in_array($object->statut, array(2, 5, 6, 7, 9)))
 			{
 				if ($user->rights->fournisseur->commande->commander)
 				{
@@ -1987,20 +1991,24 @@ elseif (! empty($object->id))
 		$fileparams = dol_most_recent_file($conf->fournisseur->commande->dir_output . '/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
 
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('commercial');
+		}
+
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-
 			$result=supplier_order_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
@@ -2018,6 +2026,7 @@ elseif (! empty($object->id))
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
@@ -2028,7 +2037,7 @@ elseif (! empty($object->id))
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$langs->trans('SendOrderRef','__ORDERREF__');
+		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__ORDERREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;

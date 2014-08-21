@@ -48,6 +48,7 @@ $langs->load("orders");
 $langs->load("companies");
 $langs->load("bills");
 $langs->load("products");
+$langs->load('compta');
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -206,6 +207,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
     	$object->fk_project					= GETPOST('projectid','int');
     	$object->remise_percent				= GETPOST('remise_percent','alpha');
     	$object->ref						= GETPOST('ref','alpha');
+    	$object->ref_customer				= GETPOST('ref_customer','alpha');
 
 	    // If creation from another object of another module (Example: origin=propal, originid=1)
 	    if ($_POST['origin'] && $_POST['originid'])
@@ -275,7 +277,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 									$outputlangs = $langs;
 									$newlang='';
 									if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-									if (empty($newlang)) $newlang=$srcobject->client->default_lang;
+									if (empty($newlang)) $newlang=$srcobject->thirdparty->default_lang;
 									if (! empty($newlang))
 									{
 										$outputlangs = new Translate("",$conf);
@@ -340,7 +342,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 	    	
 	    	// Fill array 'array_options' with data from add form
 	    	$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-	    	
+
 	        $result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -439,7 +441,7 @@ else if ($action == 'addline' && $user->rights->contrat->creer)
 
 				$prodcustprice = new Productcustomerprice($db);
 
-				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->client->id);
+				$filter = array('t.fk_product' => $prod->id,'t.fk_soc' => $object->thirdparty->id);
 
 				$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
 				if ($result) {
@@ -727,6 +729,36 @@ else if ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contra
 		$action = 'edit_extras';
 		setEventMessage($object->error,'errors');
 	}
+} elseif ($action=='setref_customer') {
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+	}
+	$object->ref_customer=GETPOST('ref_customer','alpha');
+	
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+		$action='editref_customer';
+	} else {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit;
+	}
+} elseif ($action=='setref') {
+	$result = $object->fetch($id);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+	}
+	$object->ref=GETPOST('ref','alpha');
+	
+	$result = $object->update($user);
+	if ($result < 0) {
+		setEventMessage($object->errors,'errors');
+		$action='editref';
+	} else {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+		exit;
+	}
 }
 
 if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->contrat->creer)
@@ -801,6 +833,18 @@ $form = new Form($db);
 
 $objectlignestatic=new ContratLigne($db);
 
+// Load object modContract
+$module=(! empty($conf->global->CONTRACT_ADDON)?$conf->global->CONTRACT_ADDON:'mod_contract_olive');
+if (substr($module, 0, 13) == 'mod_contract_' && substr($module, -3) == 'php')
+{
+	$module = substr($module, 0, dol_strlen($module)-4);
+}
+$result=dol_include_once('/core/modules/contract/'.$module.'.php');
+if ($result > 0)
+{
+	$modCodeContract = new $module();
+}
+
 
 /*********************************************************************
  *
@@ -861,8 +905,6 @@ if ($action == 'create')
 
     $object->date_contrat = dol_now();
 
-    $numct = $object->getNextNumRef($soc);
-
     print '<form name="form_contract" action="'.$_SERVER["PHP_SELF"].'" method="post">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -873,7 +915,16 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     // Ref
-	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans("Draft").'</td></tr>';
+    if (! empty($modCodeContract->code_auto)) {
+    	$tmpcode=$langs->trans("Draft");
+    } else {
+    	$tmpcode='<input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
+    }
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
+	
+	// Ref Int
+	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
+	print '<td colspan="2"><input type="text" siez="5" name="ref_customer" id="ref_customer" value="'.GETPOST('ref_customer','alpha').'"></td></tr>';
 
     // Customer
 	print '<tr>';
@@ -1019,7 +1070,7 @@ else
         if ($action == 'valid')
         {
         	$ref = substr($object->ref, 1, 4);
-        	if ($ref == 'PROV')
+        	if ($ref == 'PROV' && !empty($modCodeContract->code_auto))
         	{
         		$numref = $object->getNextNumRef($soc);
         	}
@@ -1058,9 +1109,27 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/liste.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
         // Ref du contrat
-        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
-        print "</td></tr>";
+        if (!empty($modCodeContract->code_auto)) {
+	        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+	        print "</td></tr>";
+        } else {
+        	print '<tr>';
+        	print '<td  width="20%">';
+        	print $form->editfieldkey("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
+        	print '</td><td>';
+        	print $form->editfieldval("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
+        	print '</td>';
+        	print '</tr>';
+        }
+
+        print '<tr>';
+		print '<td  width="20%">';
+		print $form->editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
+		print '</td><td>';
+		print $form->editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
+		print '</td>';
+		print '</tr>';
 
         // Customer
         print "<tr><td>".$langs->trans("Customer")."</td>";

@@ -189,7 +189,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve DESC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -211,7 +211,7 @@ else
 		$sql.= " AND b.fk_account = ".$acct->id;
 		$sql.= " ORDER BY b.num_releve ASC";
 
-		dol_syslog("htdocs/compta/bank/releve.php sql=".$sql);
+		dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -277,7 +277,6 @@ else
 	$sql.= " AND b.fk_account = ba.rowid";
 	$sql.= $db->order("b.datev, b.datec", "ASC");  // We add date of creation to have correct order when everything is done the same day
 
-	dol_syslog("sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{

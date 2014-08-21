@@ -104,8 +104,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 			}
 			else
 			{
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-				$tmparray=dol_json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
+				$tmparray=json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode],true);
 				$endyear=$tmparray['year'];
 				$shownb=$tmparray['shownb'];
 				$showtot=$tmparray['showtot'];
@@ -115,11 +114,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 			if (empty($endyear)) $endyear=$nowarray['year'];
 			$startyear=$endyear-1;
 			$mode='customer';
-			$userid=0;
 			$WIDTH=(($shownb && $showtot) || ! empty($conf->dol_optimize_smallscreen))?'256':'320';
 			$HEIGHT='192';
 
-			$stats = new CommandeStats($this->db, 0, $mode, ($userid>0?$userid:0));
+			$stats = new CommandeStats($this->db, $socid, $mode, 0);
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb)
@@ -222,7 +220,7 @@ class box_graph_orders_permonth extends ModeleBoxes
 				$stringtoshow.='<input type="checkbox" name="'.$param_showtot.'"'.($showtot?' checked="true"':'').'"> '.$langs->trans("AmountOfOrdersByMonthHT");
 				$stringtoshow.='<br>';
 				$stringtoshow.=$langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow.='<input type="image" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
+				$stringtoshow.='<input type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"),'refresh.png','','',1).'">';
 				$stringtoshow.='</form>';
 				$stringtoshow.='</div>';
 				if ($shownb && $showtot)

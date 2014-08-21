@@ -183,27 +183,6 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     // Formulaire pour module Paybox
     print '<form action="'.$URLPAYBOX.'" NAME="Submit" method="POST">'."\n";
 
-    // For Paybox V1 (IBS_xxx)
-    /*
-    print '<!-- Param for Paybox v1 -->'."\n";
-    print '<input type="hidden" name="IBS_MODE" value="'.$IBS_MODE.'">'."\n";
-    print '<input type="hidden" name="IBS_SITE" value="'.$IBS_SITE.'">'."\n";
-    print '<input type="hidden" name="IBS_RANG" value="'.$IBS_RANG.'">'."\n";
-    print '<input type="hidden" name="IBS_TOTAL" value="'.$IBS_TOTAL.'">'."\n";
-    print '<input type="hidden" name="IBS_DEVISE" value="'.$IBS_DEVISE.'">'."\n";
-    print '<input type="hidden" name="IBS_CMD" value="'.$IBS_CMD.'">'."\n";
-    print '<input type="hidden" name="IBS_PORTEUR" value="'.$IBS_PORTEUR.'">'."\n";
-    print '<input type="hidden" name="IBS_RETOUR" value="'.$IBS_RETOUR.'">'."\n";
-    print '<input type="hidden" name="IBS_EFFECTUE" value="'.$IBS_EFFECTUE.'">'."\n";
-    print '<input type="hidden" name="IBS_ANNULE" value="'.$IBS_ANNULE.'">'."\n";
-    print '<input type="hidden" name="IBS_REFUSE" value="'.$IBS_REFUSE.'">'."\n";
-    print '<input type="hidden" name="IBS_TXT" value="'.$IBS_TXT.'">'."\n";
-    print '<input type="hidden" name="IBS_BKGD" value="'.$IBS_BKGD.'">'."\n";
-    print '<input type="hidden" name="IBS_WAIT" value="'.$IBS_WAIT.'">'."\n";
-    print '<input type="hidden" name="IBS_LANG" value="'.$IBS_LANG.'">'."\n";
-    print '<input type="hidden" name="IBS_OUTPUT" value="'.$IBS_OUTPUT.'">'."\n";
-	*/
-
     // For Paybox V2 (PBX_xxx)
     print '<!-- Param for Paybox v2 -->'."\n";
     print '<input type="hidden" name="PBX_IDENTIFIANT" value="'.$PBX_IDENTIFIANT.'">'."\n";
@@ -227,8 +206,6 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print '<input type="hidden" name="PBX_TYPEPAIEMENT" value="'.$PBX_TYPEPAIEMENT.'">'."\n";
 
     print '</form>'."\n";
-
-    // Formulaire pour module Paybox v2 (PBX_xxx)
 
 
     print "\n";

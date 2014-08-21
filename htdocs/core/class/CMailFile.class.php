@@ -170,7 +170,7 @@ class CMailFile
 			}
 		}
 
-		// Add autocopy to
+		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc.=($addr_bcc?', ':'').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
 		// Action according to choosed sending method
@@ -657,6 +657,7 @@ class CMailFile
 		{
 			$out.= "To: ".$this->getValidAddress($this->addr_to,0,1).$this->eol2;
 		}
+		// Return-Path is important because it is used by SPF. Some MTA does not read Return-Path from header but from command line. See option MAIN_MAIL_ALLOW_SENDMAIL_F for that.
 		$out.= "Return-Path: ".$this->getValidAddress($this->addr_from,0,1).$this->eol2;
 		if (isset($this->reply_to)  && $this->reply_to)  $out.= "Reply-To: ".$this->getValidAddress($this->reply_to,2).$this->eol2;
 		if (isset($this->errors_to) && $this->errors_to) $out.= "Errors-To: ".$this->getValidAddress($this->errors_to,2).$this->eol2;

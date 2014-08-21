@@ -3,6 +3,7 @@
  * Copyright (C) 2012-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2014	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,7 @@ if ($action == 'create')
 
 	    // Si aucun jours ouvrés dans la demande
 	    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
-	    if($nbopenedday < 1)
+	    if($nbopenedday < 0.5)
 	    {
 	        header('Location: fiche.php?action=request&error=DureeHoliday');
 	        exit;
@@ -208,7 +209,7 @@ if ($action == 'update')
 
             // Si pas de jours ouvrés dans la demande
             $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
-            if ($nbopenedday < 1)
+            if ($nbopenedday < 0.5)
             {
                 header('Location: fiche.php?id='.$_POST['holiday_id'].'&action=edit&error=DureeHoliday');
                 exit;
@@ -398,7 +399,7 @@ if($action == 'confirm_valid')
         if ($verif > 0)
         {
             // Calculcate number of days consummed
-            $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1);
+            $nbopenedday=num_open_day($cp->date_debut_gmt,$cp->date_fin_gmt,0,1,$cp->halfday);
 
             $soldeActuel = $cp->getCpforUser($cp->fk_user);
             $newSolde = $soldeActuel - ($nbopenedday * $cp->getConfCP('nbHolidayDeducted'));
@@ -704,7 +705,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
                     break;
             }
 
-            dol_htmloutput_mesg('',$errors,'error');
+	        setEventMessage($errors, 'errors');
         }
 
 
@@ -760,8 +761,9 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	print '<input type="hidden" name="userid" value="'.$userid.'">';
         }
         else print $form->select_users(GETPOST('userid')?GETPOST('userid'):$user->id,'userid',0,'',0);
+        //var_dump($cp->getConfCP('nbHolidayDeducted'));
         $nb_holiday = $cp->getCPforUser($user->id) / $cp->getConfCP('nbHolidayDeducted');
-        print ' &nbsp; <span>'.$langs->trans('SoldeCPUser', round($nb_holiday,0)).'</span>';
+        print ' &nbsp; <span>'.$langs->trans('SoldeCPUser', round($nb_holiday,2)).'</span>';
         print '</td>';
         print '</tr>';
         print '<tr>';
@@ -889,7 +891,7 @@ else
                         break;
                 }
 
-                dol_htmloutput_mesg('',$errors,'error');
+	            setEventMessage($errors, 'errors');
             }
 
             // On vérifie si l'utilisateur à le droit de lire cette demande
@@ -1069,7 +1071,7 @@ else
                     // Liste des utiliseurs du groupes choisi dans la config
                     $idGroupValid = $cp->getConfCP('userGroup');
 
-                    $validator = new UserGroup($db,$idGroupValid);
+                    $validator = new UserGroup($db);
                     $valideur = $validator->listUsersForGroup('',1);
 
                     print '<td>';

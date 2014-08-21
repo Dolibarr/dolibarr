@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ class box_actions extends ModeleBoxes
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog("Box_actions::loadBox sql=".$sql, LOG_DEBUG);
+			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
 			$result = $db->query($sql);
 			if ($result)
 			{
@@ -151,7 +152,70 @@ class box_actions extends ModeleBoxes
 	 */
 	function showBox($head = null, $contents = null)
 	{
+		global $langs, $conf;
 		parent::showBox($this->info_box_head, $this->info_box_contents);
+				if ($conf->global->SHOW_DIALOG_HOMEPAGE)
+		{		
+			$actioncejour=false;
+			$contents=$this->info_box_contents;
+			$nblines=count($contents);
+			$bcx[0] = 'class="box_pair"';
+			$bcx[1] = 'class="box_impair"';
+			if ($contents[0][0]['text'] != $langs->trans("NoActionsToDo"))
+			{
+				print '<div id="dialog" title="'.$nblines." ".$langs->trans("ActionsToDo").'">';
+				print '<table width=100%>';
+				for ($i=0, $n=$nblines; $i < $n; $i++)
+				{
+					if (isset($contents[$i]))
+					{
+						// on affiche que les évènement du jours ou passé
+						// qui ne sont pas à 100% 
+						$actioncejour=true;
+						$var=!$var;
+						// TR
+						$logo=$contents[$i][0]['logo'];
+						$label=$contents[$i][1]['text'];
+						$urlevent=$contents[$i][1]['url'];
+						$logosoc=$contents[$i][2]['logo'];
+						$nomsoc=$contents[$i][3]['text'];
+						$urlsoc=$contents[$i][3]['url'];
+						$dateligne=$contents[$i][4]['text'];
+						$percentage=$contents[$i][5]['text'];
+						print '<tr '.$bcx[$var].'>';
+						print '<td align=center>';
+						print img_object("",$logo);
+						print '</td>';
+						print '<td align=center><a href="'.$urlevent.'">'.$label.'</a></td>';
+						print '<td align=center><a href="'.$urlsoc.'">'.img_object("",$logosoc)." ".$nomsoc.'</a></td>';
+						print '<td align=center>'.$dateligne.'</td>';
+						print '<td align=center>'.$percentage.'</td>';
+						print '</tr>';
+					}
+				}
+				print '</table>'; 
+	
+			}
+			print '</div>';
+			if ($actioncejour)
+			{
+				print '<script>';
+				print '$( "#dialog" ).dialog({ autoOpen: true });';
+				if ($conf->global->SHOW_DIALOG_HOMEPAGE > 1)
+				{
+					print 'setTimeout(function(){';
+					print '$("#dialog").dialog("close");';
+					print '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE*1000).');';
+				}
+				print '</script>';
+			}
+			else
+			{
+				print '<script>';
+				print '$( "#dialog" ).dialog({ autoOpen: false });';
+				print '</script>';
+			}
+		}
 	}
 
 }

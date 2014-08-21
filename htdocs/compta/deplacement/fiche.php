@@ -44,8 +44,6 @@ $result = restrictedArea($user, 'deplacement', $id,'');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
-$mesg = '';
-
 $object = new Deplacement($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
@@ -73,7 +71,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         }
         else
         {
-            $mesg=$object->error;
+	        setEventMessage($object->error, 'errors');
         }
     }
 }
@@ -88,7 +86,7 @@ else if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->depl
     }
     else
     {
-        $mesg=$object->error;
+	    setEventMessage($object->error, 'errors');
     }
 }
 
@@ -109,17 +107,17 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
 
         if (! $object->date)
         {
-            $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date"));
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")), 'errors');
             $error++;
         }
         if ($object->type == '-1') 	// Otherwise it is TF_LUNCH,...
         {
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")).'</div>';
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type")), 'errors');
             $error++;
         }
         if (! ($object->fk_user > 0))
         {
-            $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")).'</div>';
+	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Person")), 'errors');
             $error++;
         }
 
@@ -134,7 +132,7 @@ else if ($action == 'add' && $user->rights->deplacement->creer)
             }
             else
             {
-                $mesg=$object->error;
+	            setEventMessage($object->error, 'errors');
                 $action='create';
             }
         }
@@ -174,7 +172,7 @@ else if ($action == 'update' && $user->rights->deplacement->creer)
         }
         else
         {
-            $mesg=$object->error;
+	        setEventMessage($object->error, 'errors');
         }
     }
     else
@@ -225,8 +223,6 @@ if ($action == 'create')
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
     print_fiche_titre($langs->trans("NewTrip"));
-
-    dol_htmloutput_errors($mesg);
 
     $datec = dol_mktime(12, 0, 0, GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
 
@@ -299,8 +295,6 @@ else if ($id)
     $result = $object->fetch($id);
     if ($result > 0)
     {
-        dol_htmloutput_mesg($mesg);
-
         $head = trip_prepare_head($object);
 
         dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');

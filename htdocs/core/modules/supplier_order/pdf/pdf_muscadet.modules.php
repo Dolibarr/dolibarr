@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2014 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2013 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -393,7 +393,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if ((! isset($localtax1_type) || $localtax1_type=='' || ! isset($localtax2_type) || $localtax2_type=='') // if tax type not defined
 					&& (! empty($localtax1_rate) || ! empty($localtax2_rate))) // and there is local tax
 					{
-						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc);
+						$localtaxtmp_array=getLocalTaxesFromRate($vatrate,0,$mysoc,$object->thirdparty);
 						$localtax1_type = $localtaxtmp_array[0];
 						$localtax2_type = $localtaxtmp_array[2];
 					}
@@ -698,7 +698,11 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 			//{
     			//Local tax 1
-			    foreach( $this->localtax1 as $tvakey => $tvaval )
+			foreach( $this->localtax1 as $localtax_type => $localtax_rate )
+			{
+				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+		
+				foreach( $localtax_rate as $tvakey => $tvaval )
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -718,15 +722,19 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
 						$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
+						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval, 0, $outputlangs), 0, 'R', 1);
 					}
 				}
-			//}
+			}
 
 			//if (! empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
 			//{
     			//Local tax 2
-			    foreach( $this->localtax2 as $tvakey => $tvaval )
+			foreach( $this->localtax2 as $localtax_type => $localtax_rate )
+			{
+				if (in_array((string) $localtax_type, array('2','4','6'))) continue;
+			
+				foreach( $localtax_rate as $tvakey => $tvaval )
 				{
 					if ($tvakey != 0)    // On affiche pas taux 0
 					{
@@ -749,7 +757,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
 					}
 				}
-			//}
+			}
 		}
 
 		// Total TTC

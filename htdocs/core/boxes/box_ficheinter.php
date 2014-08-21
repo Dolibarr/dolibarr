@@ -79,7 +79,7 @@ class box_ficheinter extends ModeleBoxes
 			$sql.= " ORDER BY f.tms DESC";
 			$sql.= $db->plimit($max, 0);
 
-			dol_syslog(get_class($this).'::loadBox sql='.$sql,LOG_DEBUG);
+			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{

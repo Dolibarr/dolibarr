@@ -2,6 +2,98 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 3.7 compared to 3.6.* *****
+For users:
+- New: On contact list can set filter on both active and not active (no more exclusive select). 
+- New: Each user can include its own external ics calendar into dolibarr agenda view.
+- New: Intervention documents are now available in ECM module.
+- New: Can attach supplier order to a customer order.
+- New: Supervisor is now visible into user list. 
+- New: Add user of creation and validation on invoice export.
+- New: Add info page about browser.
+- New: Enable feature developed for 3.6 we forgot to enabled: Adding prefix
+       on uploaded file names. 
+- New: No more dependency between contract and service module.
+- New: [ task #867 ] Remove ESAEB external module code from core.
+- New: Can create proposal from an intervention.
+- New: Can filter events on a group of users.
+- New: Can filter events of a thirdparty.
+- New: Split Agenda view (month, week, day) into different tabs.
+- New: Form to add a photo is immediatly available on photo page if
+       permissions are ok (save one click per photo to add).
+- New: Add option PRODUCT_MAX_VISIBLE_PHOTO to limit number of photos
+       shown on main product card.
+- New: Add event FICHINTER_CLASSIFY_BILLED into list of possible events to
+       create an automatic event into agenda.
+- New: Add new type of event (when type of events are used, not by default)
+- New: Add country into table of thirdparties type. This will allow to provide
+       a list of thirdparty types specific to a country (like argentina that
+       need type A or B).
+- New: Can force a specific bank account onto an invoice/order.
+- New: Home page of project area shows list of draft project (like other main page).
+- New: Can search on project ref or string from project main page (like other main page).
+- New: First change to match accessibility rules: http://www.w3.org/TR/WCAG10-HTML-TECHS/
+       Differentiate text and img.
+       Use label into quick search form.
+       Use accesskey on form search.
+- New: Intervention documents are now available in ECM module
+- New: Add attachments on user card + in ECM module
+- New: Can add __PROJECT_REF__ and __TIHRPARTY_NAME__ into email topic or content template.    
+- New: [ task #1204 ] add Numering contrat module free (like leopard in product module)
+- New: [ task #712 ] Add warning when creating invoice from proposal or order, when there is already one invoice
+- New: Enable supplier price log table
+- New: [ task #1204 ] add a External reference to contract
+- New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
+- Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
+- Fix: [ bug #1470, #1472, #1473] User trigger problem
+- Fix: [ bug #1489, #1491 ] Intervention trigger problem
+- Fix: [ bug #1492, #1493 ] Member trigger problem
+- Fix: [ bug #1474, #1475 ] Contract trigger problem
+- Fix: [ bug #1496 ] ACTION_DELETE trigger does not show trigger error
+- Fix: [ bug #1494 ] CATEGORY_CREATE and CATEGORY_MODIFY triggers do not intercept trigger action
+- Fix: [ bug #1502 ] DON_CREATE trigger does not intercept trigger action
+- Fix: [ bug #1505, #1504] Project trigger problem
+- Fix: [ bug #1463, #1464 ] Proposal triggers problem
+- Fix: [ bug #1498, #1499 ] Shipment/Delivery triggers problem
+- Fix: [ bug #1465, #1466 ] Product triggers problem
+- Fix: [ bug #1508 ] STOCK_MOVEMENT does not show trigger error message
+- Fix: [ bug #1501 ] DEPLACEMENT_CREATE trigger do not intercept trigger action
+- Fix: [ bug #1506, #1507 ] ECM trigger error problem
+- Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
+- Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
+
+For translators:
+- Update language files.
+- New: When a translation is not available we always jump to en_US and only en_US.
+
+For developers:
+- New: Select list of users can return user into hierarchy.
+- New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
+- New: Add hook "searchAgendaFrom".
+- New: Add trigger DON_UPDATE, DON_DELETE
+- New: Add country iso code on 3 chars into table of countries.
+- Qual: Removed hard coded rowid into data init of table llx_c_action_trigger.
+- LINEBILL_DELETE, LINK_DELETE, ORDER_SUPPLIER_DELETE, RESOURCE_DELETE trigger called before SQL delete
+- New: [ Task #1481 ] Add trigger BILL_SUPPLIER_UPDATE.
+- New: [ Task #1495 ] Add trigger LINECONTRACT_CREATE.
+- New: Added hook "formConfirm" and "doActions" for supplier invoice card
+- New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
+- New: renamed table llx_c_pays to llx_c_country & libelle field to label
+- Qual: Renamed table llx_c_civilite into llx_c_civility
+		field civilite into label in the same table
+		and field civilite into civility in other table
+
+WARNING: Following change may create regression for some external modules, but was necessary to make
+Dolibarr better:
+
+- Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
+- Some field into database wwere renamed from "libelle" to "label".
+- Table llx_c_pays were renamed into llx_c_country.  
+- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
+  creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
+ 
+
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
 - New: Update ckeditor to version 4.
@@ -66,6 +158,9 @@ For users:
 - Fix: Add actions events not implemented.
 - Fix: Price min of composition is not supplier price min by quantity.
 - Fix: [ bug #1356 ] Bank accountancy number is limited to 8 numbers.
+- Fix: [ bug #1439 ] impossible to remove a a translation (multilanguage-feature) 
+- New: If multilangue is enabled, mail (from propal, invoice, etc...) message is pre-defaulted in Customer language
+- Fix: [ bug #1459 ] _ADD_CONTACT and _DEL_CONTACT triggers do not intercept insertion when reported an error
 - Fix: [ bug #1478 ] BILL_PAYED trigger action does not intercept failure under some circumstances
 - Fix: [ bug #1479 ] Several customer invoice triggers do not intercept trigger action
 - Fix: [ bug #1477 ] Several customer invoice triggers do not show trigger error messages
@@ -93,6 +188,8 @@ For developers:
 - New: A module can disable a standard ECM view.
 - New: Add multilang support into product webservice.
 - New: Add hooks on project card page.
+- New: Add call_trigger method on CommonObject class. So new trigger call within object is just : 
+$result = $this->call_trigger($trigger_name, $user) 
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -100,11 +197,11 @@ Dolibarr better:
 - The deprecated way (with 4 parameters) to declare a new tab into a module descriptor file has been
 removed. You must now use the 6 parameters way. See file modMyModule.class.php for example. 
 - Remove the javascript function ac_delay() that is not used anymore by core code.
-- Properties "dictionnaries" into module descriptor files has been renamed into "dictionaries".
+- Properties "dictionnaries" into module descriptor files have been renamed into "dictionaries".
 - Method form->select_currency() has been removed. Use instead print form->selectCurrency().
 - Method form->select_methodes_commande() has been renamed into english name selectInputMethod().
 - The following hooks are now 'addreplace' hooks: "formCreateThirdpartyOptions" 
-  So check that return value is 0 to keep default standard behaviour after hook or 1 to disable
+  So check that return value is 0 to keep default standard behaviour after hook, or 1 to disable
   default standard behaviour.
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is ot used anymore by core code.

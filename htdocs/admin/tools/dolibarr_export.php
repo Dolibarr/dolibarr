@@ -65,7 +65,7 @@ if ($action == 'delete')
 $form=new Form($db);
 $formfile = new FormFile($db);
 
-$label=getStaticMember($db, 'label');
+$label=$db::LABEL;
 
 $help_url='EN:Backups|FR:Sauvegardes|ES:Copias_de_seguridad';
 llxHeader('','',$help_url);

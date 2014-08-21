@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2014 Cedric GROSS	        <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -370,7 +371,7 @@ class Product extends CommonObject
 					$sql.= ", ".((empty($this->status_batch) || $this->status_batch < 0)? '0':$this->status_batch);
 					$sql.= ")";
 
-					dol_syslog(get_class($this)."::Create sql=".$sql);
+					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
 					$result = $this->db->query($sql);
 					if ( $result )
 					{
@@ -426,12 +427,10 @@ class Product extends CommonObject
 
 			if (! $error && ! $notrigger)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PRODUCT_CREATE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
 			if (! $error)
@@ -661,7 +660,8 @@ class Product extends CommonObject
 			$sql.= ", desiredstock = " . ((isset($this->desiredstock) && $this->desiredstock != '') ? $this->desiredstock : "null");
 			$sql.= " WHERE rowid = " . $id;
 
-			dol_syslog(get_class($this)."update sql=".$sql);
+			dol_syslog(get_class($this)."update", LOG_DEBUG);
+
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -696,12 +696,10 @@ class Product extends CommonObject
 
 				if (! $error && ! $notrigger)
 				{
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($this->db);
-					$result=$interface->run_triggers('PRODUCT_MODIFY',$this,$user,$langs,$conf);
-					if ($result < 0) { $error++; $this->errors=$interface->errors; }
-					// Fin appel triggers
+                    // Call trigger
+                    $result=$this->call_trigger('PRODUCT_MODIFY',$user);
+                    if ($result < 0) { $error++; }            
+                    // End call triggers
 				}
 
 				if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref != $this->ref))
@@ -795,47 +793,44 @@ class Product extends CommonObject
 
 			if (! $error)
 			{
-				// Appel des triggers
-				include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_DELETE',$this,$user,$langs,$conf);
-				if ($result < 0) {
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PRODUCT_DELETE',$user);
+                if ($result < 0) { $error++; }            
+                // End call triggers
 			}
 
-			// Delete all child tables
-			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
-			foreach($elements as $table)
+   			// Delete all child tables
+			if (! $error)
 			{
-				if (! $error)
-				{
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
-					$sql.= " WHERE fk_product = ".$id;
-					dol_syslog(get_class($this).'::delete sql='.$sql, LOG_DEBUG);
-					$result = $this->db->query($sql);
-					if (! $result)
-					{
-						$error++;
-						$this->errors[] = $this->db->lasterror();
-						dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
-					}
-				}
+    			$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock');
+    			foreach($elements as $table)
+    			{
+    				if (! $error)
+    				{
+    					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+    					$sql.= " WHERE fk_product = ".$id;
+    					dol_syslog(get_class($this).'::delete', LOG_DEBUG);
+    					$result = $this->db->query($sql);
+    					if (! $result)
+    					{
+    						$error++;
+    						$this->errors[] = $this->db->lasterror();
+    					}
+    				}
+    			}
 			}
-
+            
 			// Delete product
 			if (! $error)
 			{
 				$sqlz = "DELETE FROM ".MAIN_DB_PREFIX."product";
 				$sqlz.= " WHERE rowid = ".$id;
-				dol_syslog(get_class($this).'::delete sql='.$sqlz, LOG_DEBUG);
+				dol_syslog(get_class($this).'::delete', LOG_DEBUG);
 				$resultz = $this->db->query($sqlz);
 				if ( ! $resultz )
 				{
 					$error++;
 					$this->errors[] = $this->db->lasterror();
-					dol_syslog(get_class($this).'::delete error '.$this->error, LOG_ERR);
 				}
 			}
 
@@ -930,11 +925,10 @@ class Product extends CommonObject
 					$sql2.= "','".$this->db->escape($this->description);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
-				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				dol_syslog(get_class($this).'::setMultiLangs');
 				if (! $this->db->query($sql2))
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 					return -1;
 				}
 			}
@@ -958,11 +952,10 @@ class Product extends CommonObject
 
 				// on ne sauvegarde pas des champs vides
 				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-				dol_syslog(get_class($this).'::setMultiLangs sql='.$sql2);
+				dol_syslog(get_class($this).'::setMultiLangs');
 				if (! $this->db->query($sql2))
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this).'::setMultiLangs error='.$this->error, LOG_ERR);
 					return -1;
 				}
 			}
@@ -973,7 +966,7 @@ class Product extends CommonObject
 	/**
 	 *	Delete a language for this product
 	 *
-	 *  @param		string	$langtodelete		Language to delete
+	 *  @param		string	$langtodelete		Language code to delete
 	 *	@return		int							<0 if KO, >0 if OK
 	 */
 	function delMultiLangs($langtodelete)
@@ -981,7 +974,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id." AND lang='".$this->db->escape($langtodelete)."'";
 
-		dol_syslog("Delete translation sql=".$sql);
+		dol_syslog(get_class($this).'::delMultiLangs', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -989,7 +982,8 @@ class Product extends CommonObject
 		}
 		else
 		{
-			$this->error="Error: ".$this->db->error()." - ".$sql;
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
 			return -1;
 		}
 	}
@@ -1057,7 +1051,7 @@ class Product extends CommonObject
 		$sql.= " ".$this->localtax1_tx.",".$this->localtax2_tx.",".$this->price_min.",".$this->price_min_ttc.",".$this->price_by_qty.",".$conf->entity;
 		$sql.= ")";
 
-		dol_syslog(get_class($this)."_log_price sql=".$sql);
+		dol_syslog(get_class($this)."_log_price", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if(! $resql)
 		{
@@ -1084,7 +1078,7 @@ class Product extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price";
 		$sql.= " WHERE rowid=".$rowid;
 
-		dol_syslog(get_class($this)."log_price_delete sql=".$sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."log_price_delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1120,7 +1114,7 @@ class Product extends CommonObject
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty) $sql.= " AND pfp.quantity <= ".$qty;
 
-		dol_syslog(get_class($this)."::get_buyprice sql=".$sql);
+		dol_syslog(get_class($this)."::get_buyprice", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1146,7 +1140,7 @@ class Product extends CommonObject
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
-				dol_syslog(get_class($this)."::get_buyprice sql=".$sql);
+				dol_syslog(get_class($this)."::get_buyprice", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -1170,7 +1164,6 @@ class Product extends CommonObject
 				else
 				{
 					$this->error=$this->db->error();
-					dol_syslog(get_class($this)."::get_buyprice ".$this->error, LOG_ERR);
 					return -3;
 				}
 			}
@@ -1178,7 +1171,6 @@ class Product extends CommonObject
 		else
 		{
 			$this->error=$this->db->error();
-			dol_syslog(get_class($this)."::get_buyprice ".$this->error, LOG_ERR);
 			return -2;
 		}
 	}
@@ -1264,6 +1256,8 @@ class Product extends CommonObject
 			$localtax2=get_localtax($newvat,2);
 			if (empty($localtax1)) $localtax1=0;	// If = '' then = 0
 			if (empty($localtax2)) $localtax2=0;	// If = '' then = 0
+			
+			$this->db->begin();
 
 			// Ne pas mettre de quote sur les numeriques decimaux.
 			// Ceci provoque des stockages avec arrondis en base au lieu des valeurs exactes.
@@ -1279,7 +1273,7 @@ class Product extends CommonObject
             $sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
 
-			dol_syslog(get_class($this)."update_price sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."update_price", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -1301,19 +1295,21 @@ class Product extends CommonObject
 
 				$this->level = $level;				// Store level of price edited for trigger
 
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('PRODUCT_PRICE_MODIFY',$this,$user,$langs,$conf);
-				if ($result < 0)
-				{
-					$error++; $this->errors=$interface->errors;
-				}
-				// Fin appel triggers
+                // Call trigger
+                $result=$this->call_trigger('PRODUCT_PRICE_MODIFY',$user);
+                if ($result < 0) 
+                { 
+                	$this->db->rollback();
+                	return -1;
+                }            
+                // End call triggers
+                
+                $this->db->commit();
 			}
 			else
 			{
-				dol_print_error($this->db);
+				$this->db->rollback();
+			    dol_print_error($this->db);
 			}
 		}
 
@@ -1360,7 +1356,7 @@ class Product extends CommonObject
 			else if ($ref_ext) $sql.= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch sql=".$sql);
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
@@ -1794,7 +1790,7 @@ class Product extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *  Charge tableau des stats contrat pour le produit/service
 	 *
@@ -2187,7 +2183,7 @@ class Product extends CommonObject
 		$sql.= " WHERE fk_product_pere  = ".$fk_parent;
 		$sql.= " AND fk_product_fils = ".$fk_child;
 
-		dol_syslog(get_class($this).'::del_sousproduit sql='.$sql);
+		dol_syslog(get_class($this).'::del_sousproduit', LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			dol_print_error($this->db);
@@ -2261,7 +2257,7 @@ class Product extends CommonObject
     		$sql.= " AND fk_product != ".$this->id;
     		$sql.= " AND entity = ".$conf->entity;
 
-    		dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
+    		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
     		$resql=$this->db->query($sql);
     		if ($resql)
     		{
@@ -2285,7 +2281,7 @@ class Product extends CommonObject
 		$sql.= " AND fk_product = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
+		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2314,7 +2310,7 @@ class Product extends CommonObject
 				$sql.= ", 0";
 				$sql.= ")";
 
-				dol_syslog(get_class($this)."::add_fournisseur sql=".$sql);
+				dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
@@ -2323,7 +2319,6 @@ class Product extends CommonObject
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::add_fournisseur ".$this->error, LOG_ERR);
 					return -1;
 				}
 			}
@@ -2392,7 +2387,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_price ";
 		$sql.= " WHERE fk_product = ". $fromId;
 
-		dol_syslog(get_class($this).'::clone_price sql='.$sql);
+		dol_syslog(get_class($this).'::clone_price', LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
@@ -2417,7 +2412,7 @@ class Product extends CommonObject
 		$sql.= " SELECT null, $toId, fk_product_fils, qty FROM ".MAIN_DB_PREFIX."product_association";
 		$sql.= " WHERE fk_product_pere = '".$fromId."'";
 
-		dol_syslog(get_class($this).'::clone_association sql='.$sql);
+		dol_syslog(get_class($this).'::clone_association', LOG_DEBUG);
 		if (! $this->db->query($sql))
 		{
 			$this->db->rollback();
@@ -2461,7 +2456,7 @@ class Product extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_product = ".$fromId;
 
-		dol_syslog(get_class($this).'::clone_fournisseurs sql='.$sql);
+		dol_syslog(get_class($this).'::clone_fournisseurs', LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql)
 		{
@@ -2671,7 +2666,7 @@ class Product extends CommonObject
 		$sql.= " AND pa.fk_product_pere = ".$id;
 		$sql.= " AND pa.fk_product_fils != ".$id;	// This should not happens, it is to avoid infinite loop if it happens
 
-		dol_syslog(get_class($this).'::getChildsArbo sql='.$sql);
+		dol_syslog(get_class($this).'::getChildsArbo', LOG_DEBUG);
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
@@ -2914,7 +2909,7 @@ class Product extends CommonObject
 			}
 			else
 			{
-				dol_print_error($this->db);
+			    $this->error=$movementstock->error;
 				$this->db->rollback();
 				return -1;
 			}
@@ -2938,7 +2933,7 @@ class Product extends CommonObject
 		$sql.= " AND w.rowid = ps.fk_entrepot";
 		$sql.= " AND ps.fk_product = ".$this->id;
 
-		dol_syslog(get_class($this)."::load_stock sql=".$sql);
+		dol_syslog(get_class($this)."::load_stock", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -2977,7 +2972,7 @@ class Product extends CommonObject
 	function load_virtual_stock()
 	{
 		global $conf;
-		
+
 		if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))
 		{
 			$stock_commande_client=$stock_commande_fournisseur=0;
@@ -3000,7 +2995,7 @@ class Product extends CommonObject
 				$result=$this->load_stats_commande_fournisseur(0,'3');
 				if ($result < 0) dol_print_error($db,$this->error);
 				$stock_commande_fournisseur=$this->stats_commande_fournisseur['qty'];
-				
+
 				$result=$this->load_stats_reception(0,'3');
 				if ($result < 0) dol_print_error($db,$this->error);
 				$stock_reception_fournisseur=$this->stats_reception['qty'];
@@ -3102,7 +3097,7 @@ class Product extends CommonObject
 	 *  @param      string	$sdir        	Directory to scan
 	 *  @param      int		$size        	0=original size, 1 use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
-	 *  @param      int		$nbbyrow     	Nombre vignettes par ligne (si mode vignette)
+	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div. Used only if size=1.
 	 * 	@param		int		$showfilename	1=Show filename
 	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
 	 * 	@param		int		$maxHeight		Max height of image when size=1
@@ -3153,10 +3148,14 @@ class Product extends CommonObject
     						// Get filesize of original file
     						$imgarray=dol_getImageSize($dir.$photo);
 
-    						if ($nbbyrow && $nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+    						if ($nbbyrow > 0)
+    						{
+    							if ($nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
 
-    						if ($nbbyrow && ($nbphoto % $nbbyrow == 1)) $return.= '<tr align=center valign=middle border=1>';
-    						if ($nbbyrow) $return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    							if ($nbphoto % $nbbyrow == 1) $return.= '<tr align=center valign=middle border=1>';
+    							$return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+    						}
+    						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
     						$return.= "\n";
     						$return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
@@ -3197,9 +3196,12 @@ class Product extends CommonObject
     						}
     						$return.= "\n";
 
-    						if ($nbbyrow) $return.= '</td>';
-    						if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) $return.= '</tr>';
-
+    						if ($nbbyrow > 0)
+    						{
+    							$return.= '</td>';
+    							if (($nbphoto % $nbbyrow) == 0) $return.= '</tr>';
+    						}
+    						else if ($nbbyrow < 0) $return.='</div>';
     					}
 
     					if ($size == 0) {     // Format origine
@@ -3226,16 +3228,19 @@ class Product extends CommonObject
     			}
             }
 
-			if ($nbbyrow && $size==1)
+			if ($size==1)
 			{
-				// Ferme tableau
-				while ($nbphoto % $nbbyrow)
+				if ($nbbyrow > 0)
 				{
-					$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
-					$nbphoto++;
-				}
+					// Ferme tableau
+					while ($nbphoto % $nbbyrow)
+					{
+						$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$nbphoto++;
+					}
 
-				if ($nbphoto) $return.= '</table>';
+					if ($nbphoto) $return.= '</table>';
+				}
 			}
 
 			closedir($handle);
@@ -3502,7 +3507,7 @@ class Product extends CommonObject
 			}
 			else
 			{
-				dol_print_error($this->db);
+			    $this->error=$movementstock->error;
 				$this->db->rollback();
 				return -1;
 			}

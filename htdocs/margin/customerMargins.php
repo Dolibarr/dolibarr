@@ -66,7 +66,7 @@ $form = new Form($db);
 llxHeader('',$langs->trans("Margins").' - '.$langs->trans("Clients"));
 
 $text=$langs->trans("Margins");
-print_fiche_titre($text);
+//print_fiche_titre($text);
 
 // Show tabs
 $head=marges_prepare_head($user);
@@ -80,7 +80,7 @@ print '<table class="border" width="100%">';
 $client = false;
 if ($socid > 0) {
 
-	$soc = new Societe($db, $socid);
+	$soc = new Societe($db);
 	$soc->fetch($socid);
 
 	if ($soc->client)
@@ -188,7 +188,7 @@ $sql.=$db->order($sortfield,$sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
 
-dol_syslog('margin::customerMargins.php sql='.$sql,LOG_DEBUG);
+dol_syslog('margin::customerMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
 if ($result)
 {

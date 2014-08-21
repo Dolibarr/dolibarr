@@ -64,7 +64,7 @@ class CActionComm
         if (is_numeric($id)) $sql.= " WHERE id=".$id;
         else $sql.= " WHERE code='".$id."'";
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -117,7 +117,7 @@ class CActionComm
         if (! empty($excludetype)) $sql.=($active != ''?" AND":" WHERE")." type <> '".$excludetype."'";
         $sql.= " ORDER BY module, position";
 
-        dol_syslog(get_class($this)."::liste_array sql=".$sql);
+        dol_syslog(get_class($this)."::liste_array", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

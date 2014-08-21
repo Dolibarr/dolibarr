@@ -138,6 +138,7 @@ class ModelNumRefContracts
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
 		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
 		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
 }
@@ -223,16 +224,9 @@ function contract_pdf_create($db, $object, $modele, $outputlangs, $hidedetails=0
 			// We delete old preview
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
-			
+
 			// Success in building document. We build meta file.
 			dol_meta_create($object);
-
-			// Appel des triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('CONTRACT_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { $error++; $obj->errors=$interface->errors; }
-			// Fin appel triggers
 
 			return 1;
 		}

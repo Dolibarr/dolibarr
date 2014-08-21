@@ -123,7 +123,7 @@ $sql.= " GROUP BY dm";
 $sql.= " ORDER BY dm";
 
 //print $sql;
-dol_syslog("get customers invoices sql=".$sql);
+dol_syslog("get customers invoices", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -157,7 +157,7 @@ if ($modecompta != 'CREANCES-DETTES')
 	$sql.= " GROUP BY dm";
 	$sql.= " ORDER BY dm";
 
-	dol_syslog("get old customers payments not linked to invoices sql=".$sql);
+	dol_syslog("get old customers payments not linked to invoices", LOG_DEBUG);
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -208,7 +208,7 @@ $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY dm";
 
-dol_syslog("get suppliers invoices sql=".$sql);
+dol_syslog("get suppliers invoices", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result)
 {
@@ -249,7 +249,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat to pay sql=".$sql);
+	dol_syslog("get vat to pay", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -280,7 +280,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat to receive back sql=".$sql);
+	dol_syslog("get vat to receive back", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -311,7 +311,7 @@ else {
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat really paid sql=".$sql);
+	dol_syslog("get vat really paid", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -340,7 +340,7 @@ else {
 	$sql.= " AND t.entity = ".$conf->entity;
 	$sql.= " GROUP BY dm";
 
-	dol_syslog("get vat really received back sql=".$sql);
+	dol_syslog("get vat really received back", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -390,7 +390,7 @@ else
 $sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
-dol_syslog("get social contributions deductible=0  sql=".$sql);
+dol_syslog("get social contributions deductible=0 ", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -440,7 +440,7 @@ else
 $sql.= " AND cs.entity = ".$conf->entity;
 $sql.= " GROUP BY c.libelle, dm";
 
-dol_syslog("get social contributions paid deductible=1 sql=".$sql);
+dol_syslog("get social contributions paid deductible=1", LOG_DEBUG);
 $result=$db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);

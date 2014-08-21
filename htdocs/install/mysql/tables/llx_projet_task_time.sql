@@ -20,7 +20,8 @@ create table llx_projet_task_time
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_task          integer NOT NULL,
-  task_date        date,
+  task_date        date,				-- only the day
+  task_datehour    datetime,			-- day + hour
   task_duration    double,
   fk_user          integer,
   thm			   double(24,8),

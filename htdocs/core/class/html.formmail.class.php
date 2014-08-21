@@ -439,7 +439,7 @@ class FormMail
         		}
         		$out.= "</td></tr>\n";
         	}
-
+        	 
         	// CCC
         	if (! empty($this->withtoccc) || is_array($this->withtoccc))
         	{
@@ -459,7 +459,12 @@ class FormMail
         				$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
         			}
         		}
-        		//if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print ' '.info_admin("+ ".$conf->global->MAIN_MAIL_AUTOCOPY_TO,1);
+
+        		$showinfobcc='';
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO;
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO;
+        		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $showinfobcc=$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO;
+        		if ($showinfobcc) $out.=' + '.$showinfobcc;
         		$out.= "</td></tr>\n";
         	}
 
@@ -474,7 +479,11 @@ class FormMail
         		}
         		else
         		{
-        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:0), 1);
+        			$defaultvaluefordeliveryreceipt=0;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_PROPAL) && ! empty($this->param['models']) && $this->param['models'] == 'propal_send') $defaultvaluefordeliveryreceipt=1;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
+        			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
+        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
         		}
 
         		$out.= "</td></tr>\n";
@@ -554,17 +563,30 @@ class FormMail
         	if (! empty($this->withbody))
         	{
         		$defaultmessage="";
+        		
+        		// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $this->param['langsmodels'];
+        		
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('other');
+				}
+				
 
         		// TODO    A partir du type, proposer liste de messages dans table llx_c_email_template
-        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoice"); }
-        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
-        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendProposal"); }
-        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendOrder"); }
-        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
-        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
-        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendShipping"); }
-        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$langs->transnoentities("PredefinedMailContentSendFichInter"); }
-        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$langs->transnoentities("PredefinedMailContentThirdparty"); }
+        		if     ($this->param["models"]=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
+        		elseif ($this->param["models"]=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
+        		elseif ($this->param["models"]=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
+        		elseif ($this->param["models"]=='order_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendOrder"); }
+        		elseif ($this->param["models"]=='order_supplier_send')		{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); }
+        		elseif ($this->param["models"]=='invoice_supplier_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
+        		elseif ($this->param["models"]=='shipping_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
+        		elseif ($this->param["models"]=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
+        	    elseif ($this->param["models"]=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
         		elseif (! is_numeric($this->withbody))						{ $defaultmessage=$this->withbody; }
 
         		// Complete substitution array

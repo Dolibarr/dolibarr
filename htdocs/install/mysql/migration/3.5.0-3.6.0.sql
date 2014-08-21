@@ -38,7 +38,7 @@ create table llx_c_email_templates
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
-  type_template   varchar(32),  -- template for wich type of email (send invoice by email, send order, ...)
+  type_template   varchar(32),  -- template for which type of email (send invoice by email, send order, ...)
   datec           datetime,
   label           varchar(255),
   content         text
@@ -194,6 +194,10 @@ ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock F
 
 ALTER TABLE llx_expeditiondet_batch ADD INDEX idx_fk_expeditiondet (fk_expeditiondet);
 ALTER TABLE llx_expeditiondet_batch ADD CONSTRAINT fk_expeditiondet_batch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet(rowid);
+
+
+ALTER TABLE llx_product_batch ADD INDEX ix_fk_product_stock (fk_product_stock);
+ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
 
 
 -- New 1074 : Stock mouvement link to origin

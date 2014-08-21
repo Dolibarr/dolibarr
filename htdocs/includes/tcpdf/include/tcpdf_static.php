@@ -1358,7 +1358,7 @@ class TCPDF_STATIC {
 		}
 		$seed .= uniqid('', true);
 		$seed .= rand();
-		$seed .= getmypid();
+		$seed .= dol_getmypid();
 		$seed .= __FILE__;
 		if (isset($_SERVER['REMOTE_ADDR'])) {
 			$seed .= $_SERVER['REMOTE_ADDR'];

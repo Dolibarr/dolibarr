@@ -77,11 +77,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 	    {
-	        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		    setEventMessage($langs->trans("SetupSaved"));
 	    }
 	    else
 	    {
-	        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		    setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 	
@@ -92,11 +92,11 @@ if ($action == 'updateoptions')
 		if (! $res > 0) $error++;
 		if (! $error)
 		{
-			$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+			setEventMessage($langs->trans("SetupSaved"));
 		}
 		else
 		{
-			$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+			setEventMessage($langs->trans("Error"), 'errors');
 		}
 	}
 }
@@ -121,12 +121,12 @@ if ($action == 'setModuleOptions')
 	if (! $error)
     {
         $db->commit();
-        $mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+	    setEventMessage($langs->trans("SetupSaved"));
     }
     else
     {
         $db->rollback();
-        $mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+	    setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -184,7 +184,7 @@ if ($action == 'setdoc')
 	$sql.= ($label?"'".$db->escape($label)."'":'null').", ";
 	$sql.= (! empty($scandir)?"'".$db->escape($scandir)."'":"null");
 	$sql.= ")";
-    dol_syslog("societe.php ".$sql);
+    dol_syslog("societe.php", LOG_DEBUG);
 	$result2=$db->query($sql);
 	if ($result1 && $result2)
 	{
@@ -192,7 +192,6 @@ if ($action == 'setdoc')
 	}
 	else
 	{
-        dol_syslog("societe.php ".$db->lasterror(), LOG_ERR);
 	    $db->rollback();
 	}
 }
@@ -221,11 +220,11 @@ if ($action=="setaddrefinlist") {
 	if (! $res > 0) $error++;
 	if (! $error)
 	{
-		$mesg = "<font class=\"ok\">".$langs->trans("SetupSaved")."</font>";
+		setEventMessage($langs->trans("SetupSaved"));
 	}
 	else
 	{
-		$mesg = "<font class=\"error\">".$langs->trans("Error")."</font>";
+		setEventMessage($langs->trans("Error"), 'errors');
 	}
 }
 
@@ -298,9 +297,6 @@ print_fiche_titre($langs->trans("CompanySetup"),$linkback,'setup');
 $head = societe_admin_prepare_head(null);
 
 dol_fiche_head($head, 'general', $langs->trans("ThirdParties"), 0, 'company');
-
-dol_htmloutput_mesg($mesg);
-
 
 $dirsociete=array_merge(array('/core/modules/societe/'),$conf->modules_parts['societe']);
 

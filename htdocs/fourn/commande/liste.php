@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 
 $langs->load("orders");
+$langs->load("sendings");
 
 
 $search_ref=GETPOST('search_ref');
@@ -85,7 +86,7 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT s.rowid as socid, s.nom, cf.date_commande as dc,";
-$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,";
+$sql.= " cf.rowid,cf.ref, cf.ref_supplier, cf.fk_statut, cf.total_ttc, cf.fk_user_author,cf.date_livraison,";
 $sql.= " u.login";
 $sql.= " FROM (".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -168,6 +169,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"total_ttc","",$param,$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('DateDeliveryPlanned'),$_SERVER["PHP_SELF"],'cf.date_livraison','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
@@ -179,6 +181,7 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_user" value="'.$search_user.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	$formorder->selectSupplierOrderStatus($search_status,1,'search_status');
@@ -237,6 +240,12 @@ if ($resql)
 			print "-";
 		}
 		print '</td>';
+
+		// Delivery date
+		print '<td align="right">';
+		print dol_print_date($db->jdate($obj->date_livraison), 'day');
+		print '</td>';
+
 
 		// Statut
 		print '<td align="right" colspan="2">'.$commandestatic->LibStatut($obj->fk_statut, 5).'</td>';

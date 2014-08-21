@@ -74,7 +74,7 @@ class ChargeSociales extends CommonObject
         $sql.= " WHERE cs.fk_type = c.id";
         $sql.= " AND cs.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch sql=".$sql);
+        dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -137,7 +137,7 @@ class ChargeSociales extends CommonObject
         $sql.= " ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql);
+        dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -192,7 +192,7 @@ class ChargeSociales extends CommonObject
         if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
-            dol_syslog(get_class($this)."::delete sql=".$sql);
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
@@ -204,7 +204,7 @@ class ChargeSociales extends CommonObject
         if (! $error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
-            dol_syslog(get_class($this)."::delete sql=".$sql);
+            dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
             {
@@ -243,7 +243,7 @@ class ChargeSociales extends CommonObject
         $sql.= " periode='".$this->db->idate($this->periode)."'";
         $sql.= " WHERE rowid=".$this->id;
 
-        dol_syslog(get_class($this)."::update sql=".$sql);
+        dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -419,7 +419,7 @@ class ChargeSociales extends CommonObject
         $sql.= ' FROM '.MAIN_DB_PREFIX.$table;
         $sql.= ' WHERE '.$field.' = '.$this->id;
 
-        dol_syslog(get_class($this)."::getSommePaiement sql=".$sql, LOG_DEBUG);
+        dol_syslog(get_class($this)."::getSommePaiement", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -449,7 +449,7 @@ class ChargeSociales extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as e";
         $sql.= " WHERE e.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::info sql=".$sql);
+        dol_syslog(get_class($this)."::info", LOG_DEBUG);
         $result=$this->db->query($sql);
         if ($result)
         {

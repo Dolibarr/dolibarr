@@ -99,7 +99,7 @@ if ($user->rights->banque->modifier && $action == "update")
 
 	if ($ac->courant == 2 && $_POST['value'] != 'LIQ')
 	{
-		$mesg = '<div class="error">'.$langs->trans("ErrorCashAccountAcceptsOnlyCashMoney").'</div>';
+		setEventMessage($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), 'errors');
 		$error++;
 	}
 
@@ -141,7 +141,7 @@ if ($user->rights->banque->modifier && $action == "update")
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$mesg=$langs->trans("RecordSaved");
+			setEventMessage($langs->trans("RecordSaved"));
 			$db->commit();
 		}
 		else
@@ -161,7 +161,7 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
     // Check parameters
     if ($rappro && empty($num_rel))
     {
-        $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountStatement"));
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("AccountStatement")), 'errors');
         $error++;
     }
 
@@ -175,11 +175,11 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
         else $sql.=", rappro = ".$rappro;
         $sql.= " WHERE rowid = ".$rowid;
 
-        dol_syslog("ligne.php sql=".$sql, LOG_DEBUG);
+        dol_syslog("ligne.php", LOG_DEBUG);
         $result = $db->query($sql);
         if ($result)
         {
-            $mesg=$langs->trans("RecordSaved");
+	        setEventMessage($langs->trans("RecordSaved"));
             $db->commit();
         }
         else
@@ -234,8 +234,6 @@ $tabs = array(
 );
 
 dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
-
-dol_htmloutput_mesg($mesg);
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
 $sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";

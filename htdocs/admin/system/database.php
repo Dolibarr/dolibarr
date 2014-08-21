@@ -44,7 +44,7 @@ print_fiche_titre($langs->trans("InfoDatabase"),'','setup');
 // Database
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Database").'</td></tr>'."\n";
-print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Version").'</td><td>'.getStaticMember(get_class($db),'label').' '.$db->getVersion().'</td></tr>'."\n";
+print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Version").'</td><td>'.$db::LABEL.' '.$db->getVersion().'</td></tr>'."\n";
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DatabaseServer").'</td><td>'.$conf->db->host.'</td></tr>'."\n";
 print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DatabasePort").'</td><td>'.(empty($conf->db->port)?$langs->trans("Default"):$conf->db->port).'</td></tr>'."\n";
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DatabaseName").'</td><td>'.$conf->db->name.'</td></tr>'."\n";
@@ -81,7 +81,7 @@ else
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';
 		print '<td>'.$langs->trans("Value").'</td>';
 		print '</tr>'."\n";
-	
+
 		// arraytest is an array of test to do
 		$arraytest=array();
 		if (preg_match('/mysql/i',$db->type))
@@ -91,7 +91,7 @@ else
 				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_general_ci')
 			);
 		}
-	
+
 		$listtouse=array();
 		if ($listname == 'listofvars') $listtouse=$listofvars;
 		if ($listname == 'listofstatus') $listtouse=$listofstatus;
@@ -124,4 +124,5 @@ else
 }
 
 llxFooter();
-?>
+
+$db->close();

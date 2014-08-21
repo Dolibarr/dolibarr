@@ -124,7 +124,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 		}
 		else
 		{
-			dol_syslog("mod_propale_marbre::getNextValue sql=".$sql);
+			dol_syslog("mod_propale_marbre::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 

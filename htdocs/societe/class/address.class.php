@@ -114,10 +114,7 @@ class Address
 
 					$this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
 				}
-				else
-				{
-					dol_syslog(get_class($this)."::create echec insert sql=$sql");
-				}
+
 				$this->db->rollback();
 				return -2;
 			}
@@ -200,7 +197,7 @@ class Address
 			if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
 			$sql .= " WHERE fk_soc = '" . $socid ."' AND rowid = '" . $this->db->escape($id) ."'";
 
-			dol_syslog(get_class($this)."::Update sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::Update", LOG_DEBUG);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -219,7 +216,6 @@ class Address
 				else
 				{
 					$this->error=$this->db->lasterror();
-					dol_syslog(get_class($this)."::Update error sql=".$sql, LOG_ERR);
 					$result=-2;
 				}
 				$this->db->rollback();
@@ -267,9 +263,9 @@ class Address
 			{
 				$sql = 'SELECT a.rowid as id, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification, a.fk_soc';
 				$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-				$sql .= ', p.code as country_code, p.libelle as country';
+				$sql .= ', c.code as country_code, c.label as country';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 				$sql .= ' WHERE a.fk_soc = '.$this->socid;
 
 				$resql=$this->db->query($sql);
@@ -318,7 +314,6 @@ class Address
 		}
 		else
 		{
-			dol_syslog(get_class($this).'::Fetch '.$this->db->error(), LOG_ERR);
 			$this->error=$this->db->error();
 		}
 	}
@@ -337,9 +332,9 @@ class Address
 
 		$sql = 'SELECT a.rowid, a.fk_soc, a.label, a.name, a.address, a.datec as date_creation, a.tms as date_modification';
 		$sql .= ', a.zip, a.town, a.note, a.fk_pays as country_id, a.phone, a.fax';
-		$sql .= ', p.code as country_code, p.libelle as country';
+		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_address as a';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON a.fk_pays = p.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON a.fk_pays = c.rowid';
 		$sql .= ' WHERE a.rowid = '.$id;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -381,7 +376,7 @@ class Address
 		}
 		else
 		{
-			dol_syslog('Erreur Societe::Fetch echec sql='.$sql);
+			dol_syslog('Erreur Societe::Fetch echec', LOG_DEBUG);
 			dol_syslog('Erreur Societe::Fetch '.$this->db->error());
 			$this->error=$this->db->error();
 			$result = -3;

@@ -66,7 +66,7 @@ class rabbitmq::server(
   }
 
   if $config_mirrored_queues != undef {
-    warning('The $config_mirrored_queues parameter is deprecated; it does not affect anything')
+    warning('The $config_mirrored_queues parameter is deprecated in this class, use the rabbitmq class')
   }
 
   anchor {'before::rabbimq::class':

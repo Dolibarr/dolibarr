@@ -450,7 +450,7 @@ abstract class ActionsContactCardCommon
         // We set country_id, and country_code label of the chosen country
         if ($this->object->country_id)
         {
-            $sql = "SELECT code, libelle FROM ".MAIN_DB_PREFIX."c_pays WHERE rowid = ".$this->object->country_id;
+            $sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_country WHERE rowid = ".$this->object->country_id;
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -460,9 +460,9 @@ abstract class ActionsContactCardCommon
             {
                 dol_print_error($this->db);
             }
-            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+            $this->object->country_id	=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
             $this->object->country_code	=	$obj->code;
-            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
+            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->label;
         }
     }
 

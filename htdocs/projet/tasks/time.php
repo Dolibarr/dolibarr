@@ -50,7 +50,7 @@ $projectstatic = new Project($db);
 
 /*
  * Actions
-*/
+ */
 
 if ($action == 'addtimespent' && $user->rights->projet->creer)
 {
@@ -73,22 +73,31 @@ if ($action == 'addtimespent' && $user->rights->projet->creer)
 	if (! $error)
 	{
 		$object->fetch($id);
+		$object->fetch_projet();
 
-		$object->timespent_note = $_POST["timespent_note"];
-		$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
-		$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
-		$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
-		$object->timespent_fk_user = $_POST["userid"];
-
-		$result=$object->addTimeSpent($user);
-		if ($result >= 0)
+		if (empty($object->projet->statut))
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessage($langs->trans("ProjectMustBeValidatedFirst"),'errors');
+			$error++;
 		}
 		else
 		{
-			setEventMessage($langs->trans($object->error),'errors');
-			$error++;
+			$object->timespent_note = $_POST["timespent_note"];
+			$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
+			$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
+			$object->timespent_date = dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
+			$object->timespent_fk_user = $_POST["userid"];
+
+			$result=$object->addTimeSpent($user);
+			if ($result >= 0)
+			{
+				setEventMessage($langs->trans("RecordSaved"));
+			}
+			else
+			{
+				setEventMessage($langs->trans($object->error),'errors');
+				$error++;
+			}
 		}
 	}
 	else
@@ -141,7 +150,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->c
 	$object->fetchTimeSpent($_GET['lineid']);
 	$result = $object->delTimeSpent($user);
 
-	if (!$result)
+	if ($result < 0)
 	{
 		$langs->load("errors");
 		setEventMessage($langs->trans($object->error),'errors');
@@ -255,8 +264,6 @@ if ($id > 0 || ! empty($ref))
 		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_time', $langs->trans("Task"),0,'projecttask');
 
-		dol_htmloutput_mesg($mesg);
-
 		if ($action == 'deleteline')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
@@ -277,7 +284,7 @@ if ($id > 0 || ! empty($ref))
 			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'id',$linkback,1,'rowid','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label

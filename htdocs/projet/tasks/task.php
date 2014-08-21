@@ -69,7 +69,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 	if (empty($_POST["label"]))
 	{
 		$error++;
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), 'errors');
 	}
 	if (! $error)
 	{
@@ -91,6 +91,12 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 
 		$result=$object->update($user);
+		
+		if ($result < 0)
+		{
+		    setEventMessage($object->error,'errors');
+		    setEventMessage($object->errors,'errors');
+		}
 	}
 	else
 	{
@@ -110,13 +116,13 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header("Location: index.php");
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id);
 			exit;
 		}
 		else
 		{
 			$langs->load("errors");
-			$mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+			setEventMessage($langs->trans($object->error), 'errors');
 			$action='';
 		}
 	}
@@ -287,8 +293,6 @@ if ($id > 0 || ! empty($ref))
 		// To verify role of users
 		//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project
 		//$arrayofuseridoftask=$object->getListContactId('internal');
-
-		dol_htmloutput_mesg($mesg);
 
 		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');

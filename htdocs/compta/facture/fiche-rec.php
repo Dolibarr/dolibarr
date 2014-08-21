@@ -31,8 +31,6 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 $langs->load('bills');
-$langs->load('compta');
-$langs->load('products');
 
 // Security check
 $id=(GETPOST('facid','int')?GETPOST('facid','int'):GETPOST('id','int'));
@@ -219,12 +217,15 @@ if ($action == 'create')
 			if ($num)
 			{
 				print '<tr class="liste_titre">';
-				print '<td width="54%">'.$langs->trans("Description").'</td>';
-				print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
-				print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
-				print '<td width="8%" align="right">'.$langs->trans("ReductionShort").'</td>';
-				print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td width="12%" align="right">'.$langs->trans("CurrentProductPrice").'</td>';
+				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td align="center">'.$langs->trans("VAT").'</td>';
+				print '<td align="center">'.$langs->trans("Qty").'</td>';
+				print '<td>'.$langs->trans("ReductionShort").'</td>';
+				print '<td align="right">'.$langs->trans("TotalHT").'</td>';
+				print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
+				print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
+				print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
+				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">'.$langs->trans("CurrentProductPrice").'</td>';
 				print "</tr>\n";
 			}
 			$var=True;
@@ -290,9 +291,13 @@ if ($action == 'create')
 					print "</td>\n";
 				}
 
-
+				// Vat rate
 				print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
+
+				// Qty
 				print '<td align="center">'.$objp->qty.'</td>';
+
+				// Percent
 				if ($objp->remise_percent > 0)
 				{
 					print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -302,9 +307,19 @@ if ($action == 'create')
 					print '<td>&nbsp;</td>';
 				}
 
+				// Total HT
+				print '<td align="right">'.price($objp->total_ht)."</td>\n";
+
+				// Total VAT
+				print '<td align="right">'.price($objp->total_vat)."</td>\n";
+
+				// Total TTC
+				print '<td align="right">'.price($objp->total_ttc)."</td>\n";
+
+				// Total Unit price
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
-				// Price of product
+				// Current price of product
 				if (empty($conf->global->PRODUIT_MULTIPRICES))
 				{
 					if ($objp->fk_product > 0)

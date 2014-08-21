@@ -64,7 +64,7 @@ class modService extends DolibarrModules
 
 		// Dependancies
 		$this->depends = array();
-		$this->requiredby = array("modContrat");
+		$this->requiredby = array();
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");

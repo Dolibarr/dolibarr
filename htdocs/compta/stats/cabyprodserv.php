@@ -212,7 +212,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " GROUP BY p.rowid";
     $sql.= " ORDER BY p.ref";
 
-    dol_syslog("cabyprodserv sql=".$sql);
+    dol_syslog("cabyprodserv", LOG_DEBUG);
     $result = $db->query($sql);
     if ($result) {
 	$num = $db->num_rows($result);

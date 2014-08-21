@@ -56,7 +56,7 @@ class FormPropal
         $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
         $sql .= " WHERE active = 1";
 
-        dol_syslog(get_class($this)."::selectProposalStatus sql=".$sql);
+        dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

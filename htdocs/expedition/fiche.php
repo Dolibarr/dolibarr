@@ -163,7 +163,7 @@ if ($action == 'add')
         {
             $qty = "qtyl".$i;
 			if (! isset($batch_line[$i])) {
-				if (GETPOST($qty,'int') > 0)
+				if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 				{
 					$ent = "entl".$i;
 					$idl = "idl".$i;
@@ -241,26 +241,34 @@ else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->exped
     $object->fetch_thirdparty();
 
     $result = $object->valid($user);
-
-    // Define output language
-    $outputlangs = $langs;
-    $newlang='';
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-    if (! empty($newlang))
-    {
-        $outputlangs = new Translate("",$conf);
-        $outputlangs->setDefaultLang($newlang);
-    }
-    if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-    {
-        $ret=$object->fetch($id);    // Reload to get new records
-        $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
-    }
+    
     if ($result < 0)
     {
-        dol_print_error($db,$result);
-        exit;
+		$langs->load("errors");
+        setEventMessage($langs->trans($object->error),'errors');
+    }
+    else
+    {
+        // Define output language
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+        {
+            $ret=$object->fetch($id);    // Reload to get new records
+            $result=expedition_pdf_create($db,$object,$object->modelpdf,$outputlangs);
+        }
+        if ($result < 0)
+        {
+            dol_print_error($db,$result);
+            exit;
+        }
     }
 }
 
@@ -1573,21 +1581,25 @@ else if ($id || $ref)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		$fileparams = dol_most_recent_file($conf->expedition->dir_output . '/sending/' . $ref, preg_quote($ref,'/'));
 		$file=$fileparams['fullname'];
+		
+		// Define output language
+		$outputlangs = $langs;
+		$newlang = '';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
+			$newlang = $_REQUEST['lang_id'];
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+			$newlang = $object->client->default_lang;
+
+		if (!empty($newlang))
+		{
+			$outputlangs = new Translate('', $conf);
+			$outputlangs->setDefaultLang($newlang);
+			$outputlangs->load('sendings');
+		}
 
 		// Build document if it not exists
 		if (! $file || ! is_readable($file))
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
-			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-
 			$result=expedition_pdf_create($db, $object, GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			if ($result <= 0)
 			{
@@ -1604,6 +1616,7 @@ else if ($id || $ref)
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 		$formmail->fromtype = 'user';
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
@@ -1614,7 +1627,7 @@ else if ($id || $ref)
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
-		$formmail->withtopic=$langs->trans('SendShippingRef','__SHIPPINGREF__');
+		$formmail->withtopic=$outputlangs->trans('SendShippingRef','__SHIPPINGREF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;

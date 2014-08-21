@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2011	Juanjo Menent	<jmenent@2byte.es>
--- Copyright (C) 2011	Regis Houssin	<regis.houssin@capnetworks.com>
+-- Copyright (C) 2011-2014	Juanjo Menent	<jmenent@2byte.es>
+-- Copyright (C) 2011		Regis Houssin	<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@ create table llx_localtax
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity          integer DEFAULT 1 NOT NULL,
+  localtaxtype    tinyint,
   tms             timestamp,
   datep           date,								-- date of payment
   datev           date,								-- date of value
@@ -30,5 +31,4 @@ create table llx_localtax
   fk_bank         integer,  
   fk_user_creat   integer,                 
   fk_user_modif   integer 
-                      
 )ENGINE=innodb;

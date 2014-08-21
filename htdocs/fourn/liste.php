@@ -118,7 +118,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-dol_syslog('fourn/liste.php: sql='.$sql,LOG_DEBUG);
+dol_syslog('fourn/liste.php:', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
 {

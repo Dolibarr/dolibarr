@@ -75,7 +75,7 @@ if ($id)
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, "", $num);
 
 // Show description of content
-if ($mine) print $langs->trans("MyProjectsDesc").'<br><br>';
+if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
 else
 {
 	if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';

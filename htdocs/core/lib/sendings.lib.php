@@ -171,7 +171,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 	$sql.= " ORDER BY obj.fk_product";
 
-	dol_syslog("show_list_sending_receive sql=".$sql, LOG_DEBUG);
+	dol_syslog("show_list_sending_receive", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
 	{

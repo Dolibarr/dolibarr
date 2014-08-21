@@ -739,7 +739,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// Capital
 	if ($fromcompany->capital)
 	{
-		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",$fromcompany->capital)." ".$outputlangs->transnoentities("Currency".$conf->currency);
+		$line3.=($line3?" - ":"").$outputlangs->transnoentities("CapitalOf",price($fromcompany->capital, 0, $outputlangs, 0, 0, 0, $conf->currency));
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
@@ -1581,25 +1581,6 @@ function pdf_getLinkedObjects($object,$outputlangs)
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($objects[$i]->ref) . ($objects[$i]->ref_client ? ' ('.$objects[$i]->ref_client.')' : '');
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($objects[$i]->date,'day','',$outputlangs);
-			}
-		}
-		else if ($objecttype == 'shipping')
-		{
-			$outputlangs->load('orders');
-			$outputlangs->load('sendings');
-			
-			$num=count($objects);
-			for ($i=0;$i<$num;$i++)
-			{
-				$objects[$i]->fetchObjectLinked();
-				$order = $objects[$i]->linkedObjects['commande'][0];
-				
-				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
-				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
-				$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($objects[$i]->ref);
-				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
-				$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-				$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($objects[$i]->date_delivery,'day','',$outputlangs);
 			}
 		}
 		else if ($objecttype == 'contrat')
