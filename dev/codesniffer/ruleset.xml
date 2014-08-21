@@ -11,6 +11,28 @@
 		
 	<!-- List of all tests -->
 
+    <!-- Include the whole PSR-2 standard -->
+    <rule ref="PSR2">
+        <!-- Dolibarr uses tabs instead of spaces -->
+        <exclude name="Generic.WhiteSpace.ScopeIndent"/>
+        <exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+    </rule>
+
+    <!-- Dolibarr uses tabs instead of spaces -->
+    <rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+
+    <!-- Dolibarr choose to use only the long tag -->
+    <rule ref="Generic.PHP.DisallowShortOpenTag" />
+
+    <!-- Lines can be 85 chars long, but never show errors -->
+    <!-- Rule disabled because PSR2 simply issues a warning (not an error) on lines longer than 120 characters
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="1000" />
+            <property name="absoluteLineLimit" value="0" />
+        </properties>
+    </rule>
+    -->
 	
 	<!-- Rules from Internal Standard -->
 	
@@ -60,14 +82,6 @@
 
     <!-- PHP code MUST use only UTF-8 without BOM. -->
     <rule ref="Generic.Files.ByteOrderMark"/>
-
-	<!-- Lines can be 85 chars long, but never show errors -->
-	<rule ref="Generic.Files.LineLength">
-		<properties>
-			<property name="lineLimit" value="1000" />
-			<property name="absoluteLineLimit" value="0" />
-		</properties>
-	</rule>
 
 	<!-- Use Unix newlines -->
 	<rule ref="Generic.Files.LineEndings">
@@ -130,8 +144,6 @@
     <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
         <severity>0</severity>
     </rule>
-	
-	<rule ref="Generic.PHP.DisallowShortOpenTag" />
 
     <rule ref="Generic.PHP.ForbiddenFunctions" />
 
@@ -148,15 +160,6 @@
 	</rule>
     
     <rule ref="Generic.VersionControl.SubversionProperties" />
-
-	<!-- Disallow usage of tab -->
-	<!--  <rule ref="Generic.WhiteSpace.DisallowTabIndent" /> -->
-
-	<!-- Check indent are done with spaces and wiht correct number -->
-	<!-- Disabled as this does not support tab -->
-	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
-
-
 
 	<!-- Rules from PEAR Standard -->
 
