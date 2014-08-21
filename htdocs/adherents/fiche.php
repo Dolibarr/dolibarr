@@ -328,6 +328,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->adherent->creer)
 			{
 				if (GETPOST('deletephoto'))
 				{
+					require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 					$fileimg=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/'.$object->photo;
 					$dirthumbs=$conf->adherent->dir_output.'/'.get_exdir($object->id,2,0,1).'/photos/thumbs';
 					dol_delete_file($fileimg);
