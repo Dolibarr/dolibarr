@@ -158,10 +158,11 @@ else if ($action == 'setremisepercent' && $user->rights->fournisseur->commande->
 
 else if ($action == 'reopen' && $user->rights->fournisseur->commande->approuver)
 {
-    if (in_array($object->statut, array(1, 5, 6, 7, 9)))
+    if (in_array($object->statut, array(1, 2, 5, 6, 7, 9)))
     {
         if ($object->statut == 1) $newstatus=0;	// Validated->Draft
-    	else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
+        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
+        else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
         else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
         else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
         else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
@@ -1833,7 +1834,7 @@ elseif (! empty($object->id))
 			}
 
 			// Reopen
-			if (in_array($object->statut, array(5, 6, 7, 9)))
+			if (in_array($object->statut, array(2, 5, 6, 7, 9)))
 			{
 				if ($user->rights->fournisseur->commande->commander)
 				{
