@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,29 +32,161 @@
  */
 abstract class DolibarrModules
 {
-    //! Database handler
-    var $db;
-    //! Relative path to module style sheet
-    var $style_sheet = ''; // deprecated
-    //! Path to create when module activated
-    var $dirs = array();
-    //! Tableau des boites
-    var $boxes;
-    //! Tableau des constantes
-    var $const;
-    //! Tableau des droits
-    var $rights;
-    //! Tableau des menus
-    var $menu=array();
-    //! Module parts array
-    var $module_parts=array();
-    //! Tableau des documents ???
-    var $docs;
-
-    var $dbversion = "-";
-
-
     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+	/**
+	 * @var string Relative path to module style sheet
+	 * @deprecated
+	 */
+	public $style_sheet = '';
+
+	/**
+	 * @var array Paths to create when module is activated
+	 */
+	public $dirs = array();
+
+	/**
+	 * @var array Module boxes
+	 */
+	public $boxes = array();
+
+	/**
+	 * @var array Module constants
+	 */
+	public $const = array();
+
+	/**
+	 * @var array Module access rights
+	 */
+	public $rights;
+
+	/**
+	 * @var string Module access rights family
+	 */
+	public $rights_class;
+
+	/**
+	 * @var array Module menu entries
+	 */
+	public $menu = array();
+
+	/**
+	 * @var array Module parts
+	 *  array(
+	 *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
+	 *      'triggers' => 0,
+	 *      // Set this to 1 if module has its own login method directory (/mymodule/core/login)
+	 *  	'login' => 0,
+	 *      // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
+	 *	    'substitutions' => 0,
+	 *      // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
+	 *	    'menus' => 0,
+	 *      // Set this to 1 if module has its own theme directory (/mymodule/theme)
+	 *	    'theme' => 0,
+	 *      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
+	 *      'tpl' => 0,
+	 *      // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
+	 *	    'barcode' => 0,
+	 *      // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
+	 *	    'models' => 0,
+	 *      // Set this to relative path of css file if module has its own css file
+	 *	    'css' => '/mymodule/css/mymodule.css.php',
+	 *      // Set this to relative path of js file if module must load a js on all pages
+	 *	    'js' => '/mymodule/js/mymodule.js',
+	 *      // Set here all hooks context managed by module
+	 *	    'hooks' => array('hookcontext1','hookcontext2'),
+	 *      // Set here all workflow context managed by module
+	 *	    'workflow' => array(
+	 *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
+	 *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
+	 *              'picto'=>'yourpicto@mymodule'
+	 *          )
+	 *      )
+	 *  )
+	 */
+	public $module_parts = array();
+
+	/**
+	 * @var string Module documents ?
+	 * @deprecated Seems unused anywhere
+	 */
+	public $docs;
+
+	/**
+	 * @var string ?
+	 * @deprecated Seems unused anywhere
+	 */
+	public $dbversion = "-";
+
+	/**
+	 * @var string Error message
+	 */
+	public $error;
+
+	/**
+	 * @var int Module unique ID
+	 */
+	public $numero;
+
+	/**
+	 * @var string Module name
+	 */
+	public $name;
+
+	/**
+	 * @var string Module version
+	 */
+	public $version;
+
+	/**
+	 * @var string Module description
+	 */
+	public $description;
+
+	/**
+	 * @var string[] Module language files
+	 */
+	public $langfiles;
+
+	/**
+	 * @var string Module export code
+	 */
+	public $export_code;
+
+	/**
+	 * @var string Module export label
+	 */
+	public $export_label;
+
+	/**
+	 * @var string Module import code
+	 */
+	public $import_code;
+
+	/**
+	 * @var string Module import label
+	 */
+	public $import_label;
+
+	/**
+	 * @var string Module constant name
+	 */
+	public $const_name;
+
+	/**
+	 * @var bool Module can't be disabled
+	 */
+	public $always_enabled;
+
+	/**
+	 * @var bool Module is enabled globally (Multicompany support)
+	 */
+	public $core_enabled;
+
+	/**
      *  Method to enable a module. Insert into database all constants, boxes of module
      *
      *  @param      array	$array_sql  	Array of SQL requests to execute when enabling module
@@ -62,7 +195,7 @@ abstract class DolibarrModules
      */
     function _init($array_sql, $options='')
     {
-        global $conf, $langs;
+        global $conf;
         $err=0;
 
         $this->db->begin();
@@ -98,18 +231,13 @@ abstract class DolibarrModules
             if (! $err)
             {
                 $val=$array_sql[$i];
-                $sql='';
+	            $sql=$val;
                 $ignoreerror=0;
                 if (is_array($val))
                 {
                     $sql=$val['sql'];
                     $ignoreerror=$val['ignoreerror'];
                 }
-                else
-                {
-                    $sql=$val;
-                }
-
                 // Add current entity id
                 $sql=str_replace('__ENTITY__', $conf->entity, $sql);
 
@@ -152,7 +280,6 @@ abstract class DolibarrModules
      */
     function _remove($array_sql, $options='')
     {
-        global $langs;
         $err=0;
 
         $this->db->begin();
@@ -424,7 +551,7 @@ abstract class DolibarrModules
      */
     function _load_tables($reldir)
     {
-        global $db,$conf;
+        global $conf;
 
         $error=0;
 		$dirfound=0;
