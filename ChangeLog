@@ -45,6 +45,7 @@ For users:
 - New: Enable supplier price log table
 - New: [ task #1204 ] add a External reference to contract
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
+- New: Optimize size of image static resources.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
