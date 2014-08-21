@@ -80,6 +80,9 @@ For developers:
 - New: Added hook "formConfirm" and "doActions" for supplier invoice card
 - New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label
+- Qual: Renamed table llx_c_civilite into llx_c_civility
+		field civilite into label in the same table
+		and field civilite into civility in other table
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
