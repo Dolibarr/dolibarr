@@ -33,14 +33,13 @@
         </properties>
     </rule>
     -->
-	
+
 	<!-- Rules from Internal Standard -->
 	
 	<rule ref="Internal.NoCodeFound">
 		<severity>0</severity>
 	</rule>
 
-	
 	<!-- Rules from Generic Standard -->
 		
 	<rule ref="Generic.CodeAnalysis.EmptyStatement" />
@@ -79,9 +78,6 @@
 		<properties> <property name="error" value="false"/> </properties>
 		</rule>
 	-->
-
-    <!-- PHP code MUST use only UTF-8 without BOM. -->
-    <rule ref="Generic.Files.ByteOrderMark"/>
 
 	<!-- Use Unix newlines -->
 	<rule ref="Generic.Files.LineEndings">
@@ -137,8 +133,6 @@
 	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
         <severity>0</severity>
 	</rule>
-
-	<rule ref="Generic.NamingConventions.UpperCaseConstantName" />
 
     <rule ref="Generic.PHP.DeprecatedFunctions" />
     <rule ref="Generic.PHP.DeprecatedFunctions.Deprecated">
@@ -231,19 +225,6 @@
 	</rule>
 	
 	<rule ref="PEAR.Functions.ValidDefaultValue" />
-
-	<rule ref="PEAR.NamingConventions.ValidClassName" />
-	<rule ref="PEAR.NamingConventions.ValidClassName.Invalid">
-        <severity>0</severity>
-	</rule>
-	
-	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCapital">
-        <severity>0</severity>
-	</rule>
-	<!-- some phpcs have a typo error in rule, so we add it too -->
-	<rule ref="PEAR.NamingConventions.ValidClassName.StartWithCaptial">
-        <severity>0</severity>
-	</rule>
 	
 	<rule ref="PEAR.NamingConventions.ValidFunctionName" />
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNameInvalid">
