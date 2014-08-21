@@ -22,13 +22,15 @@
  */
 
 /**
- *  \file           htdocs/core/modules/DolibarrModules.class.php
- *  \brief          File of parent class of module descriptor class files
+ * \file           htdocs/core/modules/DolibarrModules.class.php
+ * \brief          File of parent class of module descriptor class files
  */
 
 
 /**
- *  Parent class of module descriptor class files
+ * Class DolibarrModules
+ *
+ * Parent class for module descriptor class files
  */
 abstract class DolibarrModules
 {
@@ -187,12 +189,14 @@ abstract class DolibarrModules
 	public $core_enabled;
 
 	/**
-     *  Method to enable a module. Insert into database all constants, boxes of module
-     *
-     *  @param      array	$array_sql  	Array of SQL requests to execute when enabling module
-     *  @param      string	$options    	String with options when disabling module ('newboxdefonly|noboxes')
-     *  @return     int              		1 if OK, 0 if KO
-     */
+	 * Enables a module.
+	 * Inserts all informations into database
+	 *
+	 * @param   string[]    $array_sql  SQL requests to be executed when enabling module
+	 * @param   string      $options    String with options when disabling module ('newboxdefonly|noboxes')
+	 *
+	 * @return  int                     1 if OK, 0 if KO
+	 */
     function _init($array_sql, $options='')
     {
         global $conf;
@@ -272,11 +276,12 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Fonction de desactivation. Supprime de la base les constantes et boites du module
+     * Disable function. Deletes the module constant and boxes from the database.
      *
-     *  @param      array	$array_sql      Array of SQL requests to execute when disable module
-     *  @param      string	$options		String with options when disabling module ('newboxdefonly|noboxes')
-     *  @return     int      		       	1 if OK, 0 if KO
+     * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
+     * @param   string      $options	Options when disabling module ('newboxdefonly|noboxes')
+     *
+     * @return  int                     1 if OK, 0 if KO
      */
     function _remove($array_sql, $options='')
     {
@@ -339,10 +344,9 @@ abstract class DolibarrModules
 
 
     /**
-     *  Retourne le nom traduit du module si la traduction existe dans admin.lang,
-     *  sinon le nom defini par defaut dans le module.
+     * Gives the translated module name if translation exists in admin.lang or the default module name.
      *
-     *  @return     string      Nom du module traduit
+     * @return  string  Translated module name
      */
     function getName()
     {
@@ -351,22 +355,21 @@ abstract class DolibarrModules
 
         if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
         {
-            // Si traduction du nom du module existe
+            // If module name translation exists
             return $langs->trans("Module".$this->numero."Name");
         }
         else
         {
-            // If translation of module with its numero does not exists, we take its name
+            // If module name translation using it's unique id does not exists, we take its name
             return $this->name;
         }
     }
 
 
     /**
-     *  Retourne la description traduite du module si la traduction existe dans admin.lang,
-     *  sinon la description definie par defaut dans le module
+     * Gives the translated module description if translation exists in admin.lang or the default module description
      *
-     *  @return     string      Nom du module traduit
+     * @return  string  Translated module description
      */
     function getDesc()
     {
@@ -375,24 +378,23 @@ abstract class DolibarrModules
 
         if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
         {
-            // Si traduction de la description du module existe
+	        // If module description translation exists
             return $langs->trans("Module".$this->numero."Desc");
         }
         else
         {
-            // Si traduction de la description du module n'existe pas, on prend definition en dur dans module
+	        // If module description translation using it's unique id does not exists, we take its description
             return $this->description;
         }
     }
 
 
     /**
-     *  Return module version.
-     *  Pour les modules a l'etat 'experimental', retourne la traduction de 'experimental'
-     *  Pour les modules 'dolibarr', retourne la version de Dolibarr
-     *  Pour les autres modules, retourne la version du module
+     * Gives module version
+     * For 'experimental' modules, gives 'experimental' translation
+     * For 'dolibarr' modules, gives Dolibarr version
      *
-     *  @return     string      Version du module
+     * @return  string  Module version
      */
     function getVersion()
     {
@@ -408,9 +410,9 @@ abstract class DolibarrModules
 
 
     /**
-     *  Return if a module is a core or external module
+     * Tells if module is core or external
      *
-     *  @return     string      'core', 'external' or 'unknown'
+     * @return  string  'core', 'external' or 'unknown'
      */
     function isCoreOrExternalModule()
     {
@@ -422,9 +424,9 @@ abstract class DolibarrModules
 
 
     /**
-     *  Return list of lang files related to module
+     * Gives module related language files list
      *
-     *  @return     array       Array of lang files
+     * @return  string[]    Language files list
      */
     function getLangFilesArray()
     {
@@ -432,10 +434,11 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Return translated label of a export dataset
+     * Gives translated label of an export dataset
      *
-     *	@param	int		$r		Index of dataset
-     *  @return string      	Label of databaset
+     * @param   int     $r  Dataset index
+     *
+     * @return string       Translated databaset label
      */
     function getExportDatasetLabel($r)
     {
@@ -456,10 +459,11 @@ abstract class DolibarrModules
 
 
     /**
-     *  Return translated label of an import dataset
+     * Gives translated label of an import dataset
      *
-     *  @param	int		$r		Index of dataset
-     *  @return	string    		Label of databaset
+     * @param   int     $r  Dataset index
+     *
+     * @return  string      Translated dataset label
      */
     function getImportDatasetLabel($r)
     {
@@ -481,9 +485,9 @@ abstract class DolibarrModules
 
 
     /**
-     *      Insert constant to activate module
+     * Insert constants for module activation
      *
-     *      @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function _active()
     {
@@ -516,10 +520,10 @@ abstract class DolibarrModules
 
 
     /**
-     *      Remove activation line
+     * Module deactivation
      *
-     *      @return     int     Nb of errors (0 if OK)
-     **/
+     * @return  int Error count (0 if OK)
+     */
     function _unactive()
     {
         global $conf;
@@ -541,13 +545,13 @@ abstract class DolibarrModules
 
 
     /**
-     *  Create tables and keys required by module.
-     *  Files module.sql and module.key.sql with create table and create keys
-     *  commands must be stored in directory reldir='/module/sql/'
-     *  This function is called by this->init
+     * Create tables and keys required by module.
+     * Files module.sql and module.key.sql with create table and create keys
+     * commands must be stored in directory reldir='/module/sql/'
+     * This function is called by this->init
      *
-     *  @param	string	$reldir		Relative directory where to scan files
-     *  @return	int     			<=0 if KO, >0 if OK
+     * @param   string  $reldir Relative directory where to scan files
+     * @return  int             <=0 if KO, >0 if OK
      */
     function _load_tables($reldir)
     {
@@ -558,7 +562,7 @@ abstract class DolibarrModules
 
 		if (empty($reldir)) return 1;
 
-        include_once DOL_DOCUMENT_ROOT .'/core/lib/admin.lib.php';
+        include_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
         $ok = 1;
         foreach($conf->file->dol_document_root as $dirroot)
@@ -635,14 +639,15 @@ abstract class DolibarrModules
 
 
     /**
-     *  Insert boxes into llx_boxes_def
+     * Adds boxes
      *
-     *	@param		string	$option		String with options when disabling module ('newboxdefonly'=insert only boxes definition)
-     *  @return     int     			Nb of errors (0 if OK)
+     * @param   string  $option Options when disabling module ('newboxdefonly'=insert only boxes definition)
+     *
+     * @return  int             Error count (0 if OK)
      */
     function insert_boxes($option='')
     {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 
     	global $conf;
 
@@ -732,9 +737,9 @@ abstract class DolibarrModules
 
 
     /**
-     *  Delete boxes
+     * Removes boxes
      *
-     *  @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function delete_boxes()
     {
@@ -784,9 +789,9 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Remove links to new module page present in llx_const
+     * Removes tabs
      *
-     *  @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function delete_tabs()
     {
@@ -809,9 +814,9 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Add links of new pages from modules in llx_const
+     * Adds tabs
      *
-     *  @return     int     Number of errors (0 if ok)
+     * @return int  Error count (0 if ok)
      */
     function insert_tabs()
     {
@@ -844,13 +849,7 @@ abstract class DolibarrModules
                     $sql.= ")";
 
                     dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
-                    $resql=$this->db->query($sql);
-                    /* Allow duplicate key
-                     if (! $resql)
-                     {
-                        $err++;
-                        }
-                        */
+                    $this->db->query($sql);
                 }
                 $i++;
             }
@@ -859,9 +858,9 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Insert constants defined into $this->const array into table llx_const
+     * Adds constants
      *
-     *  @return     int     Number of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function insert_const()
     {
@@ -926,9 +925,9 @@ abstract class DolibarrModules
     }
 
     /**
-     * Remove constants with tags deleteonunactive
+     * Removes constants tagged 'deleteonunactive'
      *
-     * @return     int     <0 if KO, 0 if OK
+     * @return  int <0 if KO, 0 if OK
      */
     function delete_const()
     {
@@ -959,11 +958,12 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Insert permissions definitions related to the module into llx_rights_def
+     * Adds access rights
      *
-     *  @param	int		$reinitadminperms   If 1, we also grant them to all admin users
-     *  @param	int		$force_entity		Force current entity
-     *  @return int                 		Number of error (0 if OK)
+     * @param   int $reinitadminperms   If 1, we also grant them to all admin users
+     * @param   int $force_entity       Force current entity
+     *
+     * @return  int                     Error count (0 if OK)
      */
     function insert_permissions($reinitadminperms=0, $force_entity=null)
     {
@@ -1055,7 +1055,7 @@ abstract class DolibarrModules
                     if ($reinitadminperms)
                     {
                     	if (! class_exists('User')) {
-                    		require DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+							require DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
                     	}
                         $sql="SELECT rowid FROM ".MAIN_DB_PREFIX."user WHERE admin = 1";
                         dol_syslog(get_class($this)."::insert_permissions Search all admin users", LOG_DEBUG);
@@ -1099,9 +1099,9 @@ abstract class DolibarrModules
 
 
     /**
-     * Delete permissions
+     * Removes access rights
      *
-     * @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function delete_permissions()
     {
@@ -1124,15 +1124,15 @@ abstract class DolibarrModules
 
 
     /**
-     *  Insert menus entries found into $this->menu into llx_menu*
+     * Adds menu entries
      *
-     *  @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function insert_menus()
     {
     	global $user;
 
-        require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/core/class/menubase.class.php';
 
         $err=0;
 
@@ -1228,9 +1228,9 @@ abstract class DolibarrModules
 
 
     /**
-     *  Remove menus entries
+     * Removes menu entries
      *
-     *  @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function delete_menus()
     {
@@ -1254,9 +1254,9 @@ abstract class DolibarrModules
     }
 
     /**
-     *  Create directories required by module
+     * Creates directories
      *
-     *  @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function create_dirs()
     {
@@ -1312,11 +1312,12 @@ abstract class DolibarrModules
 
 
     /**
-     *  Insert directories in llx_const
+     * Adds directories definitions
      *
-     *  @param	string	$name		Name
-     *  @param	string	$dir		Directory
-     *  @return	int     			Nb of errors (0 if OK)
+     * @param   string  $name   Name
+     * @param   string  $dir    Directory
+     *
+     * @return  int             Error count (0 if OK)
      */
     function insert_dirs($name,$dir)
     {
@@ -1341,7 +1342,7 @@ abstract class DolibarrModules
                 $sql.= " VALUES (".$this->db->encrypt($name,1).",'chaine',".$this->db->encrypt($dir,1).",'Directory for module ".$this->name."','0',".$conf->entity.")";
 
                 dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
-                $resql=$this->db->query($sql);
+                $this->db->query($sql);
             }
         }
         else
@@ -1355,9 +1356,9 @@ abstract class DolibarrModules
 
 
     /**
-     *  Remove directory entries
+     * Removes directories
      *
-     *  @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function delete_dirs()
     {
@@ -1380,23 +1381,9 @@ abstract class DolibarrModules
     }
 
     /**
-     * Insert activation of generic parts from modules in llx_const
-	 * Input entry use $this->module_parts = array(
-	 *                        	'triggers' => 0,                                 // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
-	 *							'login' => 0,                                    // Set this to 1 if module has its own login method directory (/mymodule/core/login)
-	 *							'substitutions' => 0,                            // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
-	 *							'menus' => 0,                                    // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
-	 *							'theme' => 0,                                    // Set this to 1 if module has its own theme directory (/mymodule/theme)
-	 *                        	'tpl' => 0,                                      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
-	 *							'barcode' => 0,                                  // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
-	 *							'models' => 0,                                   // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
-	 *							'css' => '/mymodule/css/mymodule.css.php',       // Set this to relative path of css file if module has its own css file
-	 *							'js' => '/mymodule/js/mymodule.js',              // Set this to relative path of js file if module must load a js on all pages
-	 *							'hooks' => array('hookcontext1','hookcontext2')  // Set here all hooks context managed by module
-	 *							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@mymodule') // Set here all workflow context managed by module
-	 * )
+     * Adds generic parts
      *
-     * @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function insert_module_parts()
     {
@@ -1465,9 +1452,9 @@ abstract class DolibarrModules
     }
 
     /**
-     * Remove activation of generic parts of modules from llx_const
+     * Removes generic parts
      *
-     * @return     int     Nb of errors (0 if OK)
+     * @return  int Error count (0 if OK)
      */
     function delete_module_parts()
     {
@@ -1495,7 +1482,6 @@ abstract class DolibarrModules
     			}
     		}
     	}
-
     	return $err;
     }
 
