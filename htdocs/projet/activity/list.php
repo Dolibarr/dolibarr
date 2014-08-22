@@ -121,7 +121,7 @@ $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);  // R
 if ($id)
 {
     $project->fetch($id);
-    $project->societe->fetch($project->societe->id);
+    $project->fetch_thirdparty();
 }
 
 $tasksarray=$taskstatic->getTasksArray(0,0,($project->id?$project->id:$projectsListId),$socid,0);    // We want to see all task of project i am allowed to see, not only mine. Later only mine will be editable later.

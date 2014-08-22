@@ -45,6 +45,7 @@ For users:
 - New: Enable supplier price log table
 - New: [ task #1204 ] add a External reference to contract
 - New: [ task #1218 ] Can drag and drop an event from calendar to change its day.
+- New: Optimize size of image static resources.
 - Fix: [ bug #1487 ] PAYMENT_DELETE trigger does not intercept trigger action
 - Fix: [ bug #1470, #1472, #1473] User trigger problem
 - Fix: [ bug #1489, #1491 ] Intervention trigger problem
@@ -80,6 +81,9 @@ For developers:
 - New: Added hook "formConfirm" and "doActions" for supplier invoice card
 - New: [ task #1511, #1426 ] Added hook "doActions" for supplier card and supplier order card
 - New: renamed table llx_c_pays to llx_c_country & libelle field to label
+- Qual: Renamed table llx_c_civilite into llx_c_civility
+		field civilite into label in the same table
+		and field civilite into civility in other table
 
 WARNING: Following change may create regression for some external modules, but was necessary to make
 Dolibarr better:
@@ -87,8 +91,8 @@ Dolibarr better:
 - Changed the way parameters are provided to scripts sync_xxx_ldap2dolibarr.php
 - Some field into database wwere renamed from "libelle" to "label".
 - Table llx_c_pays were renamed into llx_c_country.  
-- Trigger PROJECT_BUILDDOC is removed. Building a doc is not a business event. For action after 
-  creation of a pdf, hook "afterPDFCreation" must be used instead.
+- Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
+  creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
  
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****

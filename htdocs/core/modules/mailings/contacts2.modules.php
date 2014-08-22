@@ -79,7 +79,7 @@ class mailing_contacts2 extends MailingTargets
 
         // La requete doit retourner: id, email, fk_contact, name, firstname, other
         $sql = "SELECT sp.rowid as id, sp.email as email, sp.rowid as fk_contact,";
-        $sql.= " sp.lastname, sp.firstname as firstname, sp.civilite as civility_id,";
+        $sql.= " sp.lastname, sp.firstname as firstname, sp.civility as civility_id,";
         $sql.= " s.nom as companyname";
     	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = sp.fk_soc";

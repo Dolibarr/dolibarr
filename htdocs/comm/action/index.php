@@ -1192,22 +1192,19 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     $cssclass=$cssclass.' '.$cssclass.'_day_'.$ymd;
 
                     // Defined style to disable drag and drop feature
-                    if (empty($event->fulldayevent))
+                    if ($event->date_end_in_calendar && date('Ymd',$event->date_start_in_calendar) != date('Ymd',$event->date_end_in_calendar))
                     {
-                        if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
-                        {
-                            $tmpyearend    = date('Y',$event->date_end_in_calendar);
-                            $tmpmonthend   = date('m',$event->date_end_in_calendar);
-                            $tmpdayend     = date('d',$event->date_end_in_calendar);
-                            if ($tmpyearend != $annee || $tmpmonthend != $mois || $tmpdayend != $jour)
-                            {
-                                $cssclass.= " unsortable";
-                            }
-                        }
-                        if ($event->type_code =='AC_OTH_AUTO')
+                        $tmpyearend    = date('Y',$event->date_end_in_calendar);
+                        $tmpmonthend   = date('m',$event->date_end_in_calendar);
+                        $tmpdayend     = date('d',$event->date_end_in_calendar);
+                        if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
                         {
                             $cssclass.= " unsortable";
                         }
+                    }
+                    if ($event->type_code =='AC_OTH_AUTO')
+                    {
+                        $cssclass.= " unsortable";
                     }
 
                     // Show rect of event

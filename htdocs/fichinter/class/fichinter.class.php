@@ -365,7 +365,7 @@ class Fichinter extends CommonObject
 	 */
 	function setValid($user)
 	{
-		global $langs, $conf;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
