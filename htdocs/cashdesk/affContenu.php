@@ -55,6 +55,8 @@ print '</div>';
 print '<div class="principal">';
 
 $page=GETPOST('menu','alpha');
+if (empty($page)) $page='facturation';
+
 if (in_array(
 		$page,
 		array(
