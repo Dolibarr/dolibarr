@@ -1379,6 +1379,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function deleteline($idline, $notrigger=0)
     {
+        global $user,$langs,$conf;
         if ($this->statut == 0)
         {
         	$this->db->begin();
