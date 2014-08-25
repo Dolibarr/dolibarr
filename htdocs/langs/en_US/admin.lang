@@ -1082,6 +1082,7 @@ NotificationsDesc=EMails notifications feature allows you to silently send autom
 ModelModules=Documents templates
 DocumentModelOdt=Generate documents from OpenDocuments templates (.ODT or .ODS files for OpenOffice, KOffice, TextEdit,...)
 WatermarkOnDraft=Watermark on draft document
+JSOnPaimentBill=Activate feature to autofill payment lines on payment form
 CompanyIdProfChecker=Rules on Professional Ids
 MustBeUnique=Must be unique ?
 MustBeMandatory=Mandatory to create third parties ?
