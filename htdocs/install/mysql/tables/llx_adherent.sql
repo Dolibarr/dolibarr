@@ -30,7 +30,7 @@ create table llx_adherent
   entity           integer DEFAULT 1 NOT NULL,	-- multi company id
   ref_ext          varchar(128),                -- reference into an external system (not used by dolibarr)
 
-  civilite         varchar(6),
+  civility         varchar(6),
   lastname         varchar(50),
   firstname        varchar(50),
   login            varchar(50),          -- login

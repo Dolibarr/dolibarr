@@ -120,7 +120,7 @@ abstract class ModeleNumRefSuppliersOrders
 		return $langs->trans("NotAvailable");
 	}
 
-	/**   Returns version of the numbering model 
+	/**   Returns version of the numbering model
 	 *
 	 *    @return     string      Value
 	 */
@@ -196,7 +196,7 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 		{
 			$file = $prefix."_".$modele.".modules.php";
 
-			// We check the model location 
+			// We check the model location
 			$file=dol_buildpath($reldir."core/modules/supplier_order/pdf/".$file,0);
 			if (file_exists($file))
 			{
@@ -225,15 +225,6 @@ function supplier_order_pdf_create($db, $object, $modele, $outputlangs, $hidedet
 			// we delete preview files
         	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
-
-			// Calls triggers
-			include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-			$interface=new Interfaces($db);
-			$result=$interface->run_triggers('ORDER_SUPPLIER_BUILDDOC',$object,$user,$langs,$conf);
-			if ($result < 0) { 
-				$error++; $obj->errors=$interface->errors;
-			}
-			// End calls triggers
 
 			return 1;
 		}

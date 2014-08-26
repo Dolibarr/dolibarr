@@ -1019,6 +1019,8 @@ class doc_generic_project_odt extends ModelePDFProjects
 					}
 				}
 
+				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+				
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 

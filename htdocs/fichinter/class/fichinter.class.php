@@ -224,7 +224,7 @@ class Fichinter extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
-		$sql.= ", description  = '".$this->db->escape($this->description)."'";
+		$sql.= "description  = '".$this->db->escape($this->description)."'";
 		$sql.= ", duree = ".$this->duree;
 		$sql.= ", fk_projet = ".$this->fk_project;
 		$sql.= ", note_private = ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
@@ -365,7 +365,7 @@ class Fichinter extends CommonObject
 	 */
 	function setValid($user)
 	{
-		global $langs, $conf;
+		global $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$error=0;
