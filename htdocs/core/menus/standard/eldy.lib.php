@@ -1247,7 +1247,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			else dol_print_error($db);
 			$db->free($resql);
 		}
-		if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP
+		if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 		{
 			$MAXFTP=20;
 			$i=1;
