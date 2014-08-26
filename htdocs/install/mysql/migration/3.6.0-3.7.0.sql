@@ -982,7 +982,6 @@ ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
 ALTER TABLE llx_adherent CHANGE civilite civility VARCHAR(6);
 ALTER TABLE llx_socpeople CHANGE civilite civility VARCHAR(6);
 ALTER TABLE llx_user CHANGE civilite civility VARCHAR(6);
-) ENGINE=innodb;
 
 ALTER TABLE llx_c_type_fees CHANGE libelle label VARCHAR(30);
 ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
