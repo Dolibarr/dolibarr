@@ -266,12 +266,20 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							    $duration = 0;
 							}
 
+							$predef = '';
+							// Extrafields
+							$extrafieldsline = new ExtraFields($db);
+							$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+							$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+					
+
 		                    $result = $object->addline(
 								$user,
 		                        $id,
 		                        $desc,
 					            $date_intervention,
-                 				$duration
+                 				$duration,
+                 				$array_option
 		                    );
 
 							if ($result < 0)
@@ -433,12 +441,19 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
+		
+		// Extrafields
+		$extrafieldsline = new ExtraFields($db);
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+
         $result=$object->addline(
 			$user,
             $id,
             $desc,
             $date_intervention,
-            $duration
+            $duration,
+            $array_option
         );
 
 		// Define output language
@@ -524,6 +539,13 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     $objectline->datei		= $date_inter;
     $objectline->desc		= $desc;
     $objectline->duration	= $duration;
+	
+	// Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$objectline->array_options = $array_option;
+
 	$result = $objectline->update($user);
     if ($result < 0)
     {
