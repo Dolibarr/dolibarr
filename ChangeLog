@@ -5,6 +5,9 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
 - Fix: Can upload files on services.
+- Fix: sql errors on updat fichinter
+- Fix: debian script syntax error
+- Fix: error "menu param is not inside list" into pos module.
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
