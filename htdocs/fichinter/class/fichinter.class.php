@@ -987,7 +987,10 @@ class FichinterLigne extends CommonObjectLine
 	var $duration;        // Duree de l'intervention
 	var $rang = 0;
 
-
+	public $element='fichinterdet';
+	public $table_element='fichinterdet';
+	public $fk_element='fk_fichinter';
+	
 	/**
 	 *	Constructor
 	 *
