@@ -167,6 +167,17 @@ class Fichinter extends CommonObject
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
+			
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+            	
+            	$result=$this->insertExtraFields();
+            	if ($result < 0)
+            	{
+            		$error++;
+            	}
+            }	
+			
 			// Add linked object
 			if (! $error && $this->origin && $this->origin_id)
 			{
@@ -1026,6 +1037,7 @@ class FichinterLigne extends CommonObjectLine
 		{
 			$objp = $this->db->fetch_object($result);
 			$this->rowid          	= $objp->rowid;
+			$this->id 				= $objp->rowid;
 			$this->fk_fichinter   	= $objp->fk_fichinter;
 			$this->datei			= $this->db->jdate($objp->datei);
 			$this->desc           	= $objp->description;

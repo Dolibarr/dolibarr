@@ -196,6 +196,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 			}
 
+			// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+	
+	        $object->array_options = $array_option;
+
 			$id = $object->create($user);
 
 			if ($id > 0)
@@ -306,6 +313,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    }
 	    else
 	    {
+	    	// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+	
+	        $object->array_options = $array_option;
+			
 			$result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -1455,6 +1469,18 @@ else if ($id > 0 || ! empty($ref))
 					}
 
 					print '</tr>';
+					
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+					
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+					 
+					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
+			
+					
 				}
 
 				// Line in update mode
@@ -1483,6 +1509,17 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>' . "\n";
+					
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+					
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+					
+					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+			
+					
 				}
 
 				$i++;
@@ -1541,7 +1578,7 @@ else if ($id > 0 || ! empty($ref))
 				$extrafieldsline = new ExtraFields($db);
 				$extralabelslines=$extrafieldsline->fetch_name_optionals_label($lineadd->table_element);
 		
-				print $lineadd->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>4));
+				print $lineadd->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
 		
 				if (! $num) print '</table>';
 			}
