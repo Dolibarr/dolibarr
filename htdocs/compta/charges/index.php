@@ -203,7 +203,7 @@ if ($conf->tax->enabled)
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
-	if (! preg_match('/^pv/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
+	if (! preg_match('/^cs/',$sortfield)) $sql.= $db->order($sortfield,$sortorder);
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
