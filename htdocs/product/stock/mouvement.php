@@ -53,7 +53,7 @@ $search_warehouse = trim(GETPOST("search_warehouse"));
 $search_user = trim(GETPOST("search_user"));
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 if ($page < 0) $page = 0;
 $offset = $conf->liste_limit * $page;
 

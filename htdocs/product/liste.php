@@ -55,7 +55,7 @@ $fourn_id = GETPOST("fourn_id",'int');
 $catid = GETPOST('catid','int');
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;

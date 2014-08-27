@@ -37,7 +37,7 @@ $status=GETPOST('status');
 //if (! isset($_POST['status']) && ! isset($_GET['status'])) $status='opened';	// If filter unknown, we choose 'opened'
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;

@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page == -1) {
     $page = 0;

@@ -37,7 +37,7 @@ if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service');
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page < 0) $page = 0;
 if (! $sortfield) $sortfield="c";

@@ -44,7 +44,7 @@ $accountid	= GETPOST('accountid');
 $paymentnum	= GETPOST('num_paiement');
 
 $sortfield	= GETPOST('sortfield','alpha');
-$sortorder	= GETPOST('sortorder','alpha');
+$sortorder	= GETPOST('sortorder','sortorder');
 $page		= GETPOST('page','int');
 
 $amounts=array();

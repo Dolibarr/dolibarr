@@ -48,7 +48,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldname);
 
 $sortfield=GETPOST('sortfield', 'alpha');
-$sortorder=GETPOST('sortorder', 'alpha');
+$sortorder=GETPOST('sortorder', 'sortorder');
 $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="b.dateo,b.rowid";

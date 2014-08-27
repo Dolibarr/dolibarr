@@ -56,7 +56,7 @@ $listlimit=GETPOST('listlimit')>0?GETPOST('listlimit'):1000;
 $active = 1;
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
 $offset = $listlimit * $page ;

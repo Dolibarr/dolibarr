@@ -40,7 +40,7 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 
 // Get supervariables
 $page = GETPOST('page','int');
-$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
+$sortorder = ((GETPOST('sortorder','sortorder')=="")) ? "desc" : GETPOST('sortorder','sortorder');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.datec" : GETPOST('sortfield','alpha');
 $search_line = GETPOST('search_ligne','alpha');
 $search_bon = GETPOST('search_bon','alpha');

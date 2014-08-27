@@ -45,7 +45,7 @@ $langs->load('bills');
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
 $page = GETPOST('page','int');
-$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
+$sortorder = ((GETPOST('sortorder','sortorder')=="")) ? "desc" : GETPOST('sortorder','sortorder');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "pl.fk_soc" : GETPOST('sortfield','alpha');
 
 

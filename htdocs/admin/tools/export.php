@@ -34,7 +34,7 @@ $export_type=GETPOST('export_type','alpha');
 $file=GETPOST('filename_template','alpha');
 
 $sortfield = GETPOST('sortfield','alpha');
-$sortorder = GETPOST('sortorder','alpha');
+$sortorder = GETPOST('sortorder','sortorder');
 $page = GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";

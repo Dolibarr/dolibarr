@@ -55,7 +55,7 @@ $sall			= GETPOST('sall');
 $socid			= GETPOST('socid','int');
 $selected		= GETPOST('orders_to_invoice');
 $sortfield		= GETPOST("sortfield",'alpha');
-$sortorder		= GETPOST("sortorder",'alpha');
+$sortorder		= GETPOST("sortorder",'sortorder');
 $viewstatut		= GETPOST('viewstatut');
 
 $error = 0;

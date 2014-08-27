@@ -69,7 +69,7 @@ $error=$hookmanager->error; $errors=$hookmanager->errors;
 
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";

@@ -69,7 +69,7 @@ $sall = GETPOST('search_all', 'alpha');
 $sdate = GETPOST('search_date', 'alpha');
 $page = GETPOST('page', 'int');
 $sproduct = GETPOST('sproduct', 'int');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'sortorder');
 $sortfield = GETPOST('sortfield', 'alpha');
 
 if (!$sortorder) {

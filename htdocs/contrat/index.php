@@ -31,7 +31,7 @@ $langs->load("products");
 $langs->load("companies");
 
 $sortfield=GETPOST('sortfield','alpha');
-$sortorder=GETPOST('sortorder','alpha');
+$sortorder=GETPOST('sortorder','sortorder');
 $page=GETPOST('page','int');
 
 $statut=GETPOST('statut')?GETPOST('statut'):1;

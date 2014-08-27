@@ -39,7 +39,7 @@ $agentid = GETPOST('agentid','int');
 $mesg = '';
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield)
 {
