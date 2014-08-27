@@ -14,13 +14,11 @@
 -- To make pk to be auto increment (mysql):    VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres): VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
 -- To set a field as NULL:                     VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
--- To set a field as defailt NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
+-- To set a field as default NULL:             VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
-
-ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
 
 -- Defined only to have specific list for countries that can't use generic list (like argentina that need type A or B)
 ALTER TABLE llx_c_typent ADD COLUMN fk_country integer NULL AFTER libelle;
@@ -29,17 +27,42 @@ INSERT INTO llx_c_action_trigger (rowid,code,label,description,elementtype,rang)
 
 INSERT INTO llx_c_actioncomm (id, code, type, libelle, module, active, position) values (11,'AC_INT','system','Intervention on site',NULL, 1, 4);
 
-
 ALTER TABLE llx_user ADD COLUMN fk_user_creat integer AFTER tms;
 ALTER TABLE llx_user ADD COLUMN fk_user_modif integer AFTER fk_user_creat;
 
+-- Add module accounting Expert
+ALTER TABLE llx_bookkeeping RENAME TO llx_accounting_bookkeeping; -- To update old user of module Accounting Expert
+ 
+
+CREATE TABLE llx_accounting_bookkeeping 
+(
+  rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  doc_date			date NOT NULL,
+  doc_type			varchar(30) NOT NULL,	-- facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
+  doc_ref			varchar(30) NOT NULL,	-- facture_client/reglement_client/... reference number
+  fk_doc			integer NOT NULL,		-- facture_client/reglement_client/... rowid
+  fk_docdet			integer NOT NULL,		-- facture_client/reglement_client/... line rowid
+  code_tiers		varchar(24),			-- code tiers
+  numero_compte		varchar(32) DEFAULT NULL,
+  label_compte		varchar(128) NOT NULL,
+  debit				double NOT NULL,
+  credit			double NOT NULL,
+  montant			double NOT NULL,
+  sens				varchar(1) DEFAULT NULL,
+  fk_user_author	integer NOT NULL,
+  import_key		varchar(14),
+  code_journal		varchar(10) DEFAULT NULL,
+  piece_num		integer NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_paiement ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER active;
+ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
 
 ALTER TABLE llx_accountingaccount add column entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_accountingaccount add column datec datetime NOT NULL AFTER entity;
 ALTER TABLE llx_accountingaccount add column tms timestamp AFTER datec;
 ALTER TABLE llx_accountingaccount add column fk_user_author integer DEFAULT NULL AFTER label;
 ALTER TABLE llx_accountingaccount add column fk_user_modif integer DEFAULT NULL AFTER fk_user_author;
-
 
 -- Drop old table
 DROP TABLE llx_compta;
@@ -60,8 +83,6 @@ ALTER TABLE llx_product MODIFY COLUMN accountancy_code_sell varchar(32);
 ALTER TABLE llx_product MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
-
-ALTER TABLE llx_bank_account ADD COLUMN accountancy_journal varchar(3) DEFAULT NULL AFTER account_number;
 
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
 

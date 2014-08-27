@@ -1,0 +1,161 @@
+﻿# Dolibarr language file - es_ES - Experto de la contabilidad
+CHARSET=UTF-8
+
+Module150000Name= Desglose contable
+Module150000Desc= Gestión desglose contable
+
+Accounting=Contabilidad
+Globalparameters=Configuración global
+Chartofaccounts=Cuentas
+Fiscalyear=Los años fiscales
+Menuaccount=Contabilidad Cuentas
+Menuthirdpartyaccount=Cuentas de terceros
+MenuTools=Instrumentos
+
+ConfigAccountingExpert=Módulo de configuración experto en contabilidad
+Journaux=Periódicos
+Exports=Exportaciones
+About=acerca de
+Contributors=Contributors
+Investors=Investors
+Modelcsv=Plantilla de Exportación
+Selectmodelcsv=Seleccione una plantilla de exportación
+Modelcsv_normal=clásico exportación
+Modelcsv_CEGID=Exportar a Cegid Expert
+BackToChartofaccounts=Plan contable Volver
+
+Definechartofaccounts=Definir la contabilidad
+Selectchartofaccounts=Seleccione una contabilidad
+Validate=validar
+Addanaccount=Añadir una cuenta contable
+AccountAccounting=cuenta de Contabilidad
+Ventilation=ventilación
+ToDispatch=Para llevar a cabo
+Dispatched=Realizado
+
+CustomersVentilation=Los clientes de ventilación
+SuppliersVentilation=proveedores de ventilación
+TradeMargin=margen de beneficio
+Reports=relaciones
+ByCustomerInvoice=Por las facturas de los clientes
+ByMonth=por mes
+NewAccount=Nueva cuenta contable
+Update=Actualización
+List=lista
+Create=crear
+UpdateAccount=Editar una cuenta
+UpdateMvts=Modificación de un movimiento
+WriteBookKeeping=Asientos contables en el libro mayor
+Bookkeeping=libro mayor
+AccountBalanceByMonth=Saldo Mensual
+
+VentilationComptable=desglose de Contabilidad
+VentilationComptableSupplier=Proveedor de cuentas de ventilación
+Intitule=título
+Line=línea
+
+CAHTF=Total HT proveedor compra
+InvoiceLines=Líneas de factura para ventilar
+InvoiceLinesDone=Líneas de factura rotos
+IntoAccount=En la cuenta
+
+Ventilate=ventilar
+VentilationAuto=ventilación automática
+
+Processing=Tratamiento
+EndProcessing=Final del tratamiento
+AnyLineVentilate=No hay línea para ventilar
+SelectedLines=Las líneas seleccionadas
+Lineofinvoice=Línea de la factura
+VentilatedinAccount=Ventilada con éxito en la cuenta contable
+NotVentilatedinAccount=Cuenta sin ventilación en la contabilidad
+
+ACCOUNTINGEX_SEPARATORCSV=separador CSV
+
+ACCOUNTINGEX_LIMIT_LIST_VENTILATION=(El máximo recomendado: 50) Número de elementos que se muestran por página para ventilar
+ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO=Páginas de inicio de clasificación de ventilación "desglose" de las pruebas más recientes
+ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE=Páginas de inicio de clasificación de ventilación "ventilada" por la evidencia más reciente
+
+AccountLength=Cuentas contables longitud mostrada en Dolibarr
+AccountLengthDesc=Función para simular una longitud de cuenta contable sustituyendo espacios con el número cero. Esta función sólo afecta a la pantalla, no cambia las cuentas contables registrados en Dolibarr. Para la exportación, esta función se requiere para ser compatible con algunos programas.
+ACCOUNTINGEX_LENGTH_GACCOUNT=Longitud de las cuentas generales
+ACCOUNTINGEX_LENGTH_AACCOUNT=Duración de subcuentas
+
+ACCOUNTINGEX_SELL_JOURNAL=Diario de Ventas
+ACCOUNTINGEX_PURCHASE_JOURNAL=Diario de Compras
+ACCOUNTINGEX_BANK_JOURNAL=Diario del Banco
+ACCOUNTINGEX_CASH_JOURNAL=Diario de Caso
+ACCOUNTINGEX_MISCELLANEOUS_JOURNAL=Diario de Operaciones diversas
+ACCOUNTINGEX_SOCIAL_JOURNAL=Diario Social
+
+ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH=En caso de transferencia
+ACCOUNTINGEX_ACCOUNT_SUSPENSE=Cuenta Suspense
+
+COMPTA_PRODUCT_BUY_ACCOUNT=Cuenta predeterminada de contabilidad para los productos comprados (si no se define en el producto)
+COMPTA_PRODUCT_SOLD_ACCOUNT=Cuenta predeterminada de contabilidad para los productos vendidos (si no se define en el producto)
+COMPTA_SERVICE_BUY_ACCOUNT=Cuenta predeterminada de contabilidad para los servicios adquiridos (si no está definido en la hoja de servicio)
+COMPTA_SERVICE_SOLD_ACCOUNT=Cuenta predeterminada de contabilidad para servicios vendidos (si no se define en la ficha de servicio)
+
+Doctype=Tipo de documento
+Docdate=fecha
+Docref=referencia
+Numerocompte=cuenta
+Code_tiers=tercera
+Labelcompte=cuenta de fraseología
+Debit=débito
+Credit=crédito
+Amount=cantidad
+Sens=sentido
+Codejournal=periódico
+
+DelBookKeeping=Eliminar el libro mayor
+
+SellsJournal=Sell journal
+PurchasesJournal=Purchase journal
+DescSellsJournal=Sell journal
+DescPurchasesJournal=Purchase journal
+BankJournal=Diario de banco
+DescBankJournal=Descripción de la revista del Banco
+CashJournal=Libro de Caja
+DescCashJournal=Descripción Libro de Caja
+
+CashPayment=especies Reglas
+
+SupplierInvoicePayment=Reglamento Factura
+CustomerInvoicePayment=Factura del cliente Reglamento
+
+ThirdPartyAccount=Thirdparty account
+
+NumMvts=Number of movement
+ListeMvts=List of the movement
+ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+
+ReportThirdParty=List thirdparty account
+DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+
+ListAccounts=List of the accounting accounts
+
+Pcgversion=Version of the plan
+Pcgtype=Class of account
+Pcgsubtype=Under class of account
+Accountparent=Root of the account
+Active=Statement
+
+NewFiscalYear=New fiscal year
+
+DescVentilCustomer=Consult here the annual accounting ventilation of your invoices customers
+TotalVente=Total turnover HT
+TotalMarge=Total sales margin
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
+DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+ChangeAccount=Change the accounting account for lines selected by the account:
+Vide=-
+DescVentilSupplier=Consult here the annual accounting ventilation of your invoices suppliers
+DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+
+ValidateHistory=Validate Automatically
+
+ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+
+FicheVentilation=Ventilation card
