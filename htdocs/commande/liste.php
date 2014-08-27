@@ -62,11 +62,13 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! in_array($sortfield, array('c.ref', 'c.ref_client', 's.nom', 'c.date_commande', 'c.date_livraison', 'c.total_ht', 'c.fk_statut'))) $sortfield='c.rowid';
 if (! $sortfield) $sortfield='c.rowid';
+if (! in_array($sortorder, array('asc', 'desc'))) $sortorder='desc';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
-$viewstatut=GETPOST('viewstatut');
+$viewstatut=GETPOST('viewstatut', 'int');
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array

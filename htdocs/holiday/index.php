@@ -46,6 +46,7 @@ $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 
 if (! $sortfield) $sortfield="cp.rowid";
+if (! in_array($sortorder, array('asc', 'desc'))) $sortorder='desc';
 if (! $sortorder) $sortorder="DESC";
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;

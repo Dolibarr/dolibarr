@@ -61,6 +61,7 @@ $viewstatut		= GETPOST('viewstatut');
 $error = 0;
 
 if (! $sortfield) $sortfield='c.rowid';
+if (! in_array($sortorder, array('asc', 'desc'))) $sortorder='desc';
 if (! $sortorder) $sortorder='DESC';
 
 $now = dol_now();
