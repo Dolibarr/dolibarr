@@ -66,7 +66,7 @@ if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
-$viewstatut=GETPOST('viewstatut');
+$viewstatut=GETPOST('viewstatut','int');
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
