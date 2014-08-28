@@ -18,9 +18,9 @@
  */
 
 /**
- * \file accountingex/admin/fiche.php
- * \ingroup Accounting Expert
- * \brief Page fiche de compte
+ * \file		htdocs/accountancy/admin/card.php
+ * \ingroup		Accounting Expert
+ * \brief		Card accounting account
  */
 $res = @include ("../main.inc.php");
 if (! $res && file_exists("../main.inc.php"))
@@ -34,12 +34,12 @@ if (! $res)
 	
 	// Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/accountingex/class/accountingaccount.class.php");
-dol_include_once("/accountingex/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/accountingaccount.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
 
 // Langs
 $langs->load("bills");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action');
@@ -47,17 +47,16 @@ $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
+	
 $accounting = new AccountingAccount($db);
 
-// action
+// Action
 if ($action == 'add') {
 	$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 	
-	dol_syslog('accountingex/admin/fiche.php:: $sql=' . $sql);
+	dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 	
@@ -89,7 +88,7 @@ if ($action == 'add') {
 		
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 		
-		dol_syslog('accountingex/admin/fiche.php:: $sql=' . $sql);
+		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 		$result2 = $db->query($sql);
 		$obj = $db->fetch_object($result2);
 		

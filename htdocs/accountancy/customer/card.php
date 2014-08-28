@@ -1,7 +1,7 @@
 <?PHP
-/* Copyright (C) 2013      Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro	<alexandre.spangaro@fidurex.fr>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
  */
 
 /**
- * \file accountingex/customer/fiche.php
- * \ingroup Accounting Expert
- * \brief Page fiche ventilation
+ * \file		htdocs/accountancy/customer/card.php
+ * \ingroup		Accounting Expert
+ * \brief		Card customer ventilation
  */
 
 // Dolibarr environment
@@ -36,11 +36,11 @@ if (! $res)
 	
 	// Class
 dol_include_once("/compta/facture/class/facture.class.php");
-dol_include_once("/accountingex/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
 
 // Langs
 $langs->load("bills");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $action = GETPOST('action', 'alpha');
 $codeventil = GETPOST('codeventil');
@@ -49,19 +49,19 @@ $id = GETPOST('id');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountingex->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 	
-	/*
+/*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accountingex->access) {
+if ($action == 'ventil' && $user->rights->accounting->access) {
 	$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 	$sql .= " SET fk_code_ventilation = " . $codeventil;
 	$sql .= " WHERE rowid = " . $id;
 	
-	dol_syslog("/accountingex/customer/fiche.php sql=" . $sql, LOG_DEBUG);
+	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 	$resql = $db->query($sql);
 	if (! $resql) {
 		setEventMessage($db->lasterror(), 'errors');
@@ -95,14 +95,14 @@ if (! empty($id)) {
 		$sql .= " AND f.entity = '" . $conf->entity . "'";
 	}
 	
-	dol_syslog("/accountingex/customer/fiche.php sql=" . $sql, LOG_DEBUG);
+	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
 	
 	if ($result) {
-		$num_lignes = $db->num_rows($result);
+		$num_lines = $db->num_rows($result);
 		$i = 0;
 		
-		if ($num_lignes) {
+		if ($num_lines) {
 			
 			$objp = $db->fetch_object($result);
 			

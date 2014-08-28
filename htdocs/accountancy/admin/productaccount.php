@@ -1,7 +1,7 @@
 <?PHP
 /* 
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@fidurex.fr>
+ * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,9 +19,9 @@
  */
 
 /**
- * \file accountingex/admin/productaccount.php
- * \ingroup Accounting Expert
- * \brief Onglet de gestion de parametrages des ventilations
+ * \file		htdocs/accountancy/admin/productaccount.php
+ * \ingroup		Accounting Expert
+ * \brief		Onglet de gestion de parametrages des ventilations
  */
 
 // Dolibarr environment
@@ -43,13 +43,11 @@ dol_include_once("/product/class/product.class.php");
 $langs->load("companies");
 $langs->load("compta");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 
 llxHeader('', $langs->trans("Accounts"));
 
@@ -70,7 +68,7 @@ $sql = "SELECT p.rowid, p.ref , p.label, p.description , p.accountancy_code_sell
 $sql .= " FROM " . MAIN_DB_PREFIX . "product as p";
 $sql .= " WHERE p.accountancy_code_sell IS NULL  AND p.tosell = 1  OR p.accountancy_code_buy IS NULL AND p.tobuy = 1";
 
-dol_syslog('accountingex/admin/productaccount.php:: $sql=' . $sql);
+dol_syslog('accountancy/admin/productaccount.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

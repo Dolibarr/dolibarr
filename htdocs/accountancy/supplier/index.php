@@ -1,8 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2013      Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
  *
@@ -21,8 +18,8 @@
  */
 
 /**
- * \file		accountingex/supplier/index.php
- * \ingroup	Accounting Expert
+ * \file		htdocs/accountancy/supplier/index.php
+ * \ingroup		Accounting Expert
  * \brief		Page accueil ventilation
  */
 
@@ -45,12 +42,12 @@ $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountingex->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 	
 	// Filter
@@ -159,7 +156,7 @@ if (! empty($conf->multicompany->enabled)) {
 
 $sql .= " GROUP BY ffd.fk_code_ventilation";
 
-dol_syslog('/accountingex/supplier/index.php:: sql=' . $sql);
+dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -189,7 +186,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 } else {
-	print $db->lasterror(); // affiche la derniere erreur sql
+	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
 
@@ -234,7 +231,7 @@ if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND ff.entity = '" . $conf->entity . "'";
 }
 
-dol_syslog('/accountingex/supplier/index.php:: sql=' . $sql);
+dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -264,7 +261,7 @@ if ($resql) {
 	
 	$db->free($resql);
 } else {
-	print $db->lasterror(); // show last sql error
+	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
 

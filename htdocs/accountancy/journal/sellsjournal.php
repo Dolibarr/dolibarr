@@ -23,7 +23,7 @@
  */
 
 /**
- * \file		accountingex/journal/sellsjournal.php
+ * \file		htdocs/accountancy/journal/sellsjournal.php
  * \ingroup		Accounting Expert
  * \brief		Page with sells journal
  */
@@ -45,15 +45,15 @@ dol_include_once("/core/lib/date.lib.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 dol_include_once("/compta/facture/class/facture.class.php");
 dol_include_once("/societe/class/client.class.php");
-dol_include_once("/accountingex/class/bookkeeping.class.php");
-dol_include_once("/accountingex/class/accountingaccount.class.php");
+dol_include_once("/accountancy/class/bookkeeping.class.php");
+dol_include_once("/accountancy/class/accountingaccount.class.php");
 
 // Langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -119,7 +119,7 @@ if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
 $sql .= " ORDER BY f.datef";
 
-dol_syslog('accountingex/journal/sellsjournal.php:: $sql=' . $sql);
+dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
 	$tabfac = array ();
@@ -130,7 +130,7 @@ if ($result) {
 	
 	$num = $db->num_rows($result);
 	$i = 0;
-	$resligne = array ();
+	
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
 		// les variables
@@ -147,7 +147,7 @@ if ($result) {
 		$cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)) ? $conf->global->COMPTA_VAT_ACCOUNT : $langs->trans("CodeNotDef");
 		$compta_tva = (! empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 		
-		// la ligne facture
+		// Invoice lines
 		$tabfac[$obj->rowid]["date"] = $obj->df;
 		$tabfac[$obj->rowid]["ref"] = $obj->facnumber;
 		$tabfac[$obj->rowid]["type"] = $obj->type;
@@ -198,7 +198,7 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->credit = ($mt < 0) ? $mt : 0;
-			$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_SELL_JOURNAL;
+			$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 			
 			$bookkeeping->create();
 		}
@@ -223,7 +223,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-					$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_SELL_JOURNAL;
+					$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 					
 					$bookkeeping->create();
 				}
@@ -249,7 +249,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 				$bookkeeping->debit = ($mt < 0) ? $mt : 0;
 				$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-				$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_SELL_JOURNAL;
+				$bookkeeping->code_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 				
 				$bookkeeping->create();
 			}
@@ -258,14 +258,14 @@ if ($action == 'writebookkeeping') {
 }
 // export csv
 if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTINGEX_SEPARATORCSV;
+	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
 	
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_ventes.csv');
 	
 	$companystatic = new Client($db);
 	
-	if ($conf->global->ACCOUNTINGEX_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_MODELCSV == 1) 	// Modèle Export Cegid Expert
 	{
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
@@ -275,7 +275,7 @@ if ($action == 'export_csv') {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 			
 			print $date . $sep;
-			print $conf->global->ACCOUNTINGEX_SELL_JOURNAL . $sep;
+			print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
 			print length_accountg($conf->global->COMPTA_ACCOUNT_CUSTOMER) . $sep;
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print length_accounta(html_entity_decode($k)) . $sep;
@@ -290,7 +290,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabht[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTINGEX_SELL_JOURNAL . $sep;
+					print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -304,7 +304,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTINGEX_SELL_JOURNAL . $sep;
+					print $conf->global->ACCOUNTING_SELL_JOURNAL . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;

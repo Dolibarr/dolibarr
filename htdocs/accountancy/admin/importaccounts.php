@@ -1,7 +1,7 @@
 <?php
 /* 
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@fidurex.fr> 
+ * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com> 
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/compta/accountingex/liste.php
- * \ingroup compta
- * \brief Page IMPORT COMPTE COMPTABLE
+ * \file			htdocs/accountancy/admin/importaccounts.php
+ * \ingroup			Accounting Expert
+ * \brief			Page import accounting account
  */
 $res = @include ("../main.inc.php");
 if (! $res && file_exists("../main.inc.php"))
@@ -37,20 +37,18 @@ if (! $res)
 	
 	// Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/accountingex/class/accountingaccount.class.php");
-dol_include_once("/accountingex/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/accountingaccount.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
 
 // langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 
 llxHeader('', $langs->trans("ImportAccount"));
 
@@ -109,7 +107,7 @@ if ($_POST["action"] == 'import') {
 $page = GETPOST("page");
 if ($page < 0)
 	$page = 0;
-$limit = $conf->global->ACCOUNTINGEX_LIMIT_LIST_VENTILATION;
+$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 $offset = $limit * $page;
 
 $sql = "(SELECT p.rowid as product_id, p.accountancy_code_sell as accounting ";
@@ -124,12 +122,12 @@ $sql .= " GROUP BY accounting ";
 $sql .= ") ";
 $sql .= " ORDER BY accounting DESC " . $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountingex/admin/importaccounts.php:: $sql=' . $sql);
+dol_syslog('accountancy/admin/importaccounts.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
-	$num_lignes = $db->num_rows($result);
+	$num_lines = $db->num_rows($result);
 	$i = 0;
-	print_barre_liste($langs->trans("ImportAccount"), $page, "importaccounts.php", "", $sortfield, $sortorder, '', $num_lignes);
+	print_barre_liste($langs->trans("ImportAccount"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>' . $langs->trans("accountingaccount") . '</td>';
@@ -143,11 +141,11 @@ if ($result) {
 	$form = new Form($db);
 	$htmlacc = new FormVentilation($db);
 	
-	print '<form action="importaccounts.php" method="post">' . "\n";
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
 	print '<input type="hidden" name="action" value="import">';
 	
 	$var = True;
-	while ( $i < min($num_lignes, $limit) ) {
+	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
 		print "<tr $bc[$var]>";

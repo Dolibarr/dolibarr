@@ -19,7 +19,7 @@
  */
 
 /**
- * \file		accountingex/bookkeeping/listebyyear.php
+ * \file		htdocs/accountancy/bookkeeping/listbyyear.php
  * \ingroup		Accounting Expert
  * \brief		Book keeping by year
  */
@@ -40,7 +40,7 @@ dol_include_once("/core/lib/date.lib.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Langs
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
@@ -65,8 +65,8 @@ $offset = $conf->liste_limit * $page;
 
 llxHeader('', $langs->trans("Bookkeeping"));
 
-$textprevyear = "<a href=\"listebyyear.php?year=" . ($year_current - 1) . "\">" . img_previous() . "</a>";
-$textnextyear = " <a href=\"listebyyear.php?year=" . ($year_current + 1) . "\">" . img_next() . "</a>";
+$textprevyear = "<a href=\"listbyyear.php?year=" . ($year_current - 1) . "\">" . img_previous() . "</a>";
+$textnextyear = " <a href=\"listbyyear.php?year=" . ($year_current + 1) . "\">" . img_next() . "</a>";
 
 /*
  * Mode Liste
@@ -74,12 +74,12 @@ $textnextyear = " <a href=\"listebyyear.php?year=" . ($year_current + 1) . "\">"
  */
 
 $sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens, bk.code_journal";
-$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping as bk";
+$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 // $sql .= " WHERE bk.doc_date >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 // $sql .= " AND bk.doc_date <= '".$db->idate(dol_get_last_day($y,12,false))."'";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit + 1, $offset);
 
-dol_syslog('accountingex/bookkeeping/listebyyear.php:: $sql=' . $sql);
+dol_syslog('accountancy/bookkeeping/listbyyear.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
@@ -122,7 +122,7 @@ if ($resql) {
 		print '<td align="right">' . price($obj->montant) . '</td>';
 		print '<td>' . $obj->sens . '</td>';
 		print '<td>' . $obj->code_journal . '</td>';
-		print '<td><a href="./fiche.php?action=update&id=' . $obj->rowid . '">' . img_edit() . '</a></td>';
+		print '<td><a href="./card.php?action=update&id=' . $obj->rowid . '">' . img_edit() . '</a></td>';
 		print "</tr>\n";
 		
 		$i ++;

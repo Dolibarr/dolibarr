@@ -19,8 +19,8 @@
  */
 
 /**
- * \file		accountingex/bookkeeping/liste.php
- * \ingroup	Accounting Expert
+ * \file		htdocs/accountancy/bookkeeping/list.php
+ * \ingroup		Accounting Expert
  * \brief		List operation of book keeping
  */
 
@@ -36,8 +36,8 @@ if (! $res)
 	die("Include of main fails");
 	
 	// Class
-dol_include_once("/accountingex/class/html.formventilation.class.php");
-dol_include_once("/accountingex/class/bookkeeping.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/bookkeeping.class.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 $page = GETPOST("page");
@@ -64,7 +64,7 @@ if ($action == 'delbookkeeping') {
 	if (! empty($import_key)) {
 		$object = new BookKeeping($db);
 		$result = $object->delete_by_importkey($import_key);
-		Header("Location: liste.php");
+		Header("Location: list.php");
 		if ($result < 0) {
 			setEventMessage($object->errors, 'errors');
 		}
@@ -106,7 +106,7 @@ else {
  */
 	
 	$sql = "SELECT bk.rowid, bk.doc_date, bk.doc_type, bk.doc_ref, bk.code_tiers, bk.numero_compte , bk.label_compte, bk.debit , bk.credit, bk.montant , bk.sens , bk.code_journal , bk.piece_num ";
-	$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping as bk";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 	
 	if (dol_strlen(trim(GETPOST("search_doc_type")))) {
 		
@@ -131,13 +131,13 @@ else {
 	
 	$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit + 1, $offset);
 	
-	dol_syslog('accountingex/bookkeeping/liste.php:: $sql=' . $sql);
+	dol_syslog('accountancy/bookkeeping/list.php:: $sql=' . $sql);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 		
-		print_barre_liste($langs->trans("Bookkeeping"), $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+		print_barre_liste($langs->trans("Bookkeeping"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num);
 		
 		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -149,7 +149,7 @@ else {
 		
 		print '</form>';
 		
-		print '<a href="./fiche.php?action=create" class="butAction">Nouveau mouvement comptable</a>';
+		print '<a href="./card.php?action=create" class="butAction">' . $langs->trans("NewAccountingMvt") . '</a>';
 		
 		print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -174,7 +174,7 @@ else {
 		print "</tr>\n";
 		
 		print '<tr class="liste_titre">';
-		print '<form action="liste.php" method="GET">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 		print '<td><input type="text" name="search_doc_type" value="' . $_GET["search_doc_type"] . '"></td>';
 		print '<td>&nbsp;</td>';
 		print '<td><input type="text" name="search_doc_ref" value="' . $_GET["search_doc_ref"] . '"></td>';
@@ -211,7 +211,7 @@ else {
 			print '<td align="right">' . price($obj->montant) . '</td>';
 			print '<td>' . $obj->sens . '</td>';
 			print '<td>' . $obj->code_journal . '</td>';
-			print '<td><a href="./fiche.php?piece_num=' . $obj->piece_num . '">' . img_edit() . '</a></td>';
+			print '<td><a href="./card.php?piece_num=' . $obj->piece_num . '">' . img_edit() . '</a></td>';
 			print "</tr>\n";
 			$i ++;
 		}

@@ -18,8 +18,9 @@
  */
 
 /**
- * \file accountingex/class/html.formventilation.class.php
- * \brief Class for HML form
+ * \file		htdocs/accountancy/class/html.formventilation.class.php
+ * \ingroup		Accounting Expert 
+ * \brief		Class for HML form
  */
 class FormVentilation extends Form {
 	var $db;
@@ -47,7 +48,7 @@ class FormVentilation extends Form {
 		
 		$date_array = array ();
 		
-		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'bookkeeping ';
+		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
 		
 		$out = '<SELECT name="' . $htmlname . '">';

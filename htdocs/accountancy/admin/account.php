@@ -17,7 +17,7 @@
  */
 
 /**
- * \file		accountingex/admin/account.php
+ * \file		htdocs/accountancy/admin/account.php
  * \ingroup		Accounting Expert
  * \brief		List accounting account
  */
@@ -35,12 +35,12 @@ if (! $res)
 	
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/accountingex/class/accountingaccount.class.php");
-dol_include_once("/accountingex/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/accountingaccount.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
 
 // Langs
 $langs->load("compta");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $mesg = '';
 $action = GETPOST('action');
@@ -48,10 +48,8 @@ $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -130,7 +128,7 @@ if (strlen(trim($_GET["search_pcgsubtype"]))) {
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountingex/admin/account.php:: $sql=' . $sql);
+dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
 $result = $db->query($sql);
 
 if ($result) {
@@ -144,7 +142,7 @@ if ($result) {
 	
 	print '<br/>';
 	
-	print '<a class="butAction" href="./fiche.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 	print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
 	print '<br/><br/>';
 	
@@ -178,7 +176,7 @@ if ($result) {
 		
 		$var = ! $var;
 		print '<tr ' . $bc[$var] . '>';
-		print '<td><a href="./fiche.php?id=' . $obj->rowid . '">' . $obj->account_number . '</td>';
+		print '<td><a href="./card.php?id=' . $obj->rowid . '">' . $obj->account_number . '</td>';
 		print '<td>' . $obj->label . '</td>';
 		print '<td>' . $obj->account_parent . '</td>';
 		print '<td>' . $obj->pcg_type . '</td>';
@@ -197,10 +195,10 @@ if ($result) {
 		
 		print '<td>';
 		if ($user->rights->accountingex->admin) {
-			print '<a href="./fiche.php?action=update&id=' . $obj->rowid . '">';
+			print '<a href="./card.php?action=update&id=' . $obj->rowid . '">';
 			print img_edit();
 			print '</a>&nbsp;';
-			print '<a href="./fiche.php?action=delete&id=' . $obj->rowid . '">';
+			print '<a href="./card.php?action=delete&id=' . $obj->rowid . '">';
 			print img_delete();
 			print '</a>';
 		}

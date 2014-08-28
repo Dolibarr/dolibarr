@@ -19,7 +19,7 @@
  */
 
 /**
- * \file		htdocs/accountingex/admin/export.php
+ * \file		htdocs/accountancy/admin/export.php
  * \ingroup		Accounting Expert
  * \brief		Setup page to configure accounting expert module
  */
@@ -41,20 +41,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");
-$langs->load('admin');
-$langs->load('accountingex@accountingex');
+$langs->load("admin");
+$langs->load("accountancy");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters ACCOUNTINGEX_*
+// Other parameters ACCOUNTING_*
 $list = array (
-		'ACCOUNTINGEX_SEPARATORCSV' 
+		'ACCOUNTING_SEPARATORCSV' 
 );
 
 /*
@@ -67,7 +65,7 @@ if ($action == 'update') {
 	
 	if (! empty($modelcsv)) {
 		
-		if (! dolibarr_set_const($db, 'ACCOUNTINGEX_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
+		if (! dolibarr_set_const($db, 'ACCOUNTING_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	} else {
@@ -121,12 +119,12 @@ print "<td>" . $langs->trans("Selectmodelcsv") . "</td>";
 print "<td>";
 print '<select class="flat" name="modelcsv" id="modelcsv">';
 print '<option value="0"';
-if ($conf->global->ACCOUNTINGEX_MODELCSV == 0) {
+if ($conf->global->ACCOUNTING_MODELCSV == 0) {
 	print ' selected="selected"';
 }
 print '>' . $langs->trans("Modelcsv_normal") . '</option>';
 print '<option value="1"';
-if ($conf->global->ACCOUNTINGEX_MODELCSV == 1) {
+if ($conf->global->ACCOUNTING_MODELCSV == 1) {
 	print ' selected="selected"';
 }
 print '>' . $langs->trans("Modelcsv_CEGID") . '</option>';
@@ -141,7 +139,7 @@ print "<br>\n";
  *
  */
 $list = array (
-		'ACCOUNTINGEX_SEPARATORCSV' 
+		'ACCOUNTING_SEPARATORCSV' 
 );
 
 $num = count($list);

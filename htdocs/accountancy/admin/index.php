@@ -21,7 +21,7 @@
  */
 
 /**
- * \file		htdocs/accountingex/admin/index.php
+ * \file		htdocs/accountancy/admin/index.php
  * \ingroup		Accounting Expert
  * \brief		Setup page to configure accounting expert module
  */
@@ -43,30 +43,28 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 $langs->load("compta");
 $langs->load("bills");
-$langs->load('admin');
-$langs->load('accountingex@accountingex');
+$langs->load("admin");
+$langs->load("accountancy");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters COMPTA_* & ACCOUNTINGEX_*
+// Other parameters COMPTA_* & ACCOUNTING_*
 $list = array (
-		'ACCOUNTINGEX_LIMIT_LIST_VENTILATION',
-		'ACCOUNTINGEX_LENGTH_GACCOUNT',
-		'ACCOUNTINGEX_LENGTH_AACCOUNT',
+		'ACCOUNTING_LIMIT_LIST_VENTILATION',
+		'ACCOUNTING_LENGTH_GACCOUNT',
+		'ACCOUNTING_LENGTH_AACCOUNT',
 		'COMPTA_ACCOUNT_CUSTOMER',
 		'COMPTA_ACCOUNT_SUPPLIER',
 		'COMPTA_PRODUCT_BUY_ACCOUNT',
 		'COMPTA_PRODUCT_SOLD_ACCOUNT',
 		'COMPTA_SERVICE_BUY_ACCOUNT',
 		'COMPTA_SERVICE_SOLD_ACCOUNT',
-		'ACCOUNTINGEX_ACCOUNT_SUSPENSE',
-		'ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH' 
+		'ACCOUNTING_ACCOUNT_SUSPENSE',
+		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
 );
 
 /*
@@ -126,7 +124,7 @@ if ($action == 'update')
 
 if ($action == 'setlistsorttodo') {
 	$setlistsorttodo = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
 	
@@ -139,7 +137,7 @@ if ($action == 'setlistsorttodo') {
 
 if ($action == 'setlistsortdone') {
 	$setlistsortdone = GETPOST('value', 'int');
-	$res = dolibarr_set_const($db, "ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
 	if (! $error) {
@@ -217,7 +215,7 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
 $sql .= " WHERE active = 1";
 $sql .= " AND fk_pays = " . $mysoc->country_id;
 
-dol_syslog('accountingex/admin/index.php:: $sql=' . $sql);
+dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 
 $var = True;
@@ -267,8 +265,8 @@ foreach ($list as $key)
 }
 
 print "<tr " . $bc[$var] . ">";
-print '<td width="80%">' . $langs->trans("ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO") . '</td>';
-if (! empty($conf->global->ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO)) {
+print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
+if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsorttodo&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';
@@ -280,8 +278,8 @@ if (! empty($conf->global->ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO)) {
 print '</tr>';
 
 print "<tr " . $bc[$var] . ">";
-print '<td width="80%">' . $langs->trans("ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE") . '</td>';
-if (! empty($conf->global->ACCOUNTINGEX_LIST_SORT_VENTILATION_DONE)) {
+print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
+if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 	print '</a></td>';

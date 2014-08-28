@@ -18,9 +18,9 @@
  */
 
 /**
- * \file accountingex/admin/thirdpartyaccount.php
- * \ingroup Accounting Expert
- * \brief Onglet de gestion de parametrages des ventilations
+ * \file 		htdocs/accountancy/admin/thirdpartyaccount.php
+ * \ingroup		Accounting Expert
+ * \brief		Onglet de gestion de parametrages des ventilations
  */
 
 // Dolibarr environment
@@ -41,13 +41,11 @@ dol_include_once("/core/lib/date.lib.php");
 $langs->load("companies");
 $langs->load("compta");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 	
 	// Date range
 $year = GETPOST("year");
@@ -164,7 +162,7 @@ $sql .= ")";
 
 $sql .= "ORDER BY name ASC";
 
-dol_syslog('accountingex/admin/thirdpartyaccount.php:: $sql=' . $sql);
+dol_syslog('accountancy/admin/thirdpartyaccount.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);

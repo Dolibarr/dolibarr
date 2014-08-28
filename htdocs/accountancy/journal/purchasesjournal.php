@@ -22,7 +22,7 @@
  */
 
 /**
- * \file		accountingex/journal/purchasesjournal.php
+ * \file		htdocs/accountancy/journal/purchasesjournal.php
  * \ingroup		Accounting Expert
  * \brief		Page with purchases journal
  */
@@ -44,15 +44,15 @@ dol_include_once("/core/lib/date.lib.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 dol_include_once("/fourn/class/fournisseur.facture.class.php");
 dol_include_once("/fourn/class/fournisseur.class.php");
-dol_include_once("/accountingex/class/bookkeeping.class.php");
-dol_include_once("/accountingex/class/accountingaccount.class.php");
+dol_include_once("/accountancy/class/bookkeeping.class.php");
+dol_include_once("/accountancy/class/accountingaccount.class.php");
 
 // Langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -115,7 +115,7 @@ if ($date_start && $date_end)
 	$sql .= " AND f.datef >= '" . $db->idate($date_start) . "' AND f.datef <= '" . $db->idate($date_end) . "'";
 $sql .= " ORDER BY f.datef";
 
-dol_syslog('accountingex/journal/purchasesjournal.php:: $sql=' . $sql);
+dol_syslog('accountancy/journal/purchasesjournal.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
@@ -188,7 +188,7 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 			$bookkeeping->debit = ($mt <= 0) ? $mt : 0;
 			$bookkeeping->credit = ($mt > 0) ? $mt : 0;
-			$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL;
+			$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 			
 			$bookkeeping->create();
 		}
@@ -213,7 +213,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 					$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-					$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL;
+					$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 					
 					$bookkeeping->create();
 				}
@@ -240,7 +240,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 				$bookkeeping->debit = ($mt > 0) ? $mt : 0;
 				$bookkeeping->credit = ($mt <= 0) ? $mt : 0;
-				$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL;
+				$bookkeeping->code_journal = $conf->global->ACCOUNTING_PURCHASE_JOURNAL;
 				
 				$bookkeeping->create();
 			}
@@ -251,12 +251,12 @@ if ($action == 'writebookkeeping') {
 // export csv
 
 if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTINGEX_SEPARATORCSV;
+	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
 	
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_achats.csv');
 	
-	if ($conf->global->ACCOUNTINGEX_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_MODELCSV == 1) 	// Modèle Export Cegid Expert
 	{
 		foreach ( $tabfac as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
@@ -269,7 +269,7 @@ if ($action == 'export_csv') {
 				
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL . $sep;
+					print $conf->global->ACCOUNTING_PURCHASE_JOURNAL . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -285,7 +285,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL . $sep;
+					print $conf->global->ACCOUNTING_PURCHASE_JOURNAL . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -296,7 +296,7 @@ if ($action == 'export_csv') {
 				}
 			}
 			print $date . $sep;
-			print $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL . $sep;
+			print $conf->global->ACCOUNTING_PURCHASE_JOURNAL . $sep;
 			print length_accountg($conf->global->COMPTA_ACCOUNT_SUPPLIER) . $sep;
 			
 			foreach ( $tabttc[$key] as $k => $mt ) {

@@ -18,7 +18,7 @@
  */
 
 /**
- * \file		accountingex/bookkeeping/fiche.php
+ * \file		htdocs/accountancy/bookkeeping/card.php
  * \ingroup		Accounting Expert
  * \brief		Page to show account
  */
@@ -35,10 +35,10 @@ if (! $res)
 	die("Include of main fails");
 	
 	// Class
-dol_include_once("accountingex/class/bookkeeping.class.php");
+dol_include_once("accountancy/class/bookkeeping.class.php");
 
 // Langs
-$langs->load("accountingex@accountingex");
+$langs->load("accounting");
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -190,7 +190,6 @@ else if ($action == "confirm_create") {
 llxHeader();
 
 $html = new Form($db);
-$nbligne = 0;
 
 /*
  *	Confirmation to delete the command
@@ -205,16 +204,16 @@ if ($action == 'create') {
 	print_fiche_titre($langs->trans("CreateMvts"));
 	
 	$code_journal_array = array (
-			$conf->global->ACCOUNTINGEX_SELL_JOURNAL => $conf->global->ACCOUNTINGEX_SELL_JOURNAL,
-			$conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL => $conf->global->ACCOUNTINGEX_PURCHASE_JOURNAL,
-			$conf->global->ACCOUNTINGEX_BANK_JOURNAL => $conf->global->ACCOUNTINGEX_BANK_JOURNAL,
-			$conf->global->ACCOUNTINGEX_SOCIAL_JOURNAL => $conf->global->ACCOUNTINGEX_SOCIAL_JOURNAL 
+			$conf->global->ACCOUNTING_SELL_JOURNAL => $conf->global->ACCOUNTING_SELL_JOURNAL,
+			$conf->global->ACCOUNTING_PURCHASE_JOURNAL => $conf->global->ACCOUNTING_PURCHASE_JOURNAL,
+			$conf->global->ACCOUNTING_BANK_JOURNAL => $conf->global->ACCOUNTING_BANK_JOURNAL,
+			$conf->global->ACCOUNTING_SOCIAL_JOURNAL => $conf->global->ACCOUNTING_SOCIAL_JOURNAL 
 	);
 	
 	$book = new BookKeeping($db);
 	$next_num_mvt = $book->next_num_mvt();
 	
-	print '<form action="' . $_SERVER["PHP_SELF"] . '" name="create_mvt" method="post">';
+	print '<form action="' . $_SERVER["PHP_SELF"] . '" name="create_mvt" method="POST">';
 	print '<input type="hidden" name="action" value="confirm_create">' . "\n";
 	print '<input type="hidden" name="next_num_mvt" value="' . $next_num_mvt . '">' . "\n";
 	
@@ -337,10 +336,10 @@ if ($action == 'create') {
 						
 						print '<td>';
 						if ($user->rights->accoutingex->access) {
-							print '<a href="./fiche.php?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
+							print '<a href="./card.php?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
 							print img_edit();
 							print '</a>&nbsp;';
-							print '<a href="./fiche.php?action=delete&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
+							print '<a href="./card.php?action=delete&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
 							print img_delete();
 							print '</a>';
 						}

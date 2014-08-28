@@ -204,20 +204,6 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r ++;
 		
-		$this->rights[$r][0] = 150002; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Administration_module'; // Permission label
-		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'admin'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r ++;
-		
-		$this->rights[$r][0] = 150010; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Développement'; // Permission label
-		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'dev'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r ++;
-		
 		// Main menu entries
 		$this->menus = array ();
 		$r = 0;

@@ -19,9 +19,9 @@
  */
 
 /**
- * \file accountingex/bookkeeping/balancebymonth.php
- * \ingroup Accounting Expert
- * \brief Balance by month
+ * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
+ * \ingroup		Accounting Expert
+ * \brief		Balance by month
  */
 
 // Dolibarr environment
@@ -37,14 +37,14 @@ if (! $res)
 	
 	// Class
 dol_include_once("/core/lib/date.lib.php");
-dol_include_once("accountingex/core/lib/account.lib.php");
+dol_include_once("accountancy/core/lib/account.lib.php");
 
 // Langs
 $langs->load("main");
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Filter
 $year = $_GET["year"];
@@ -71,7 +71,7 @@ $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " WHERE fd.fk_code_ventilation = 0";
 $sql .= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 
-dol_syslog('accountingex/bookkeeping/balancebymonth.php:: $sql=' . $sql);
+dol_syslog('accountancy/bookkeeping/balancebymonth.php:: $sql=' . $sql);
 $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
@@ -101,7 +101,7 @@ $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=10,bk.montant,0)),2) AS 'Octobre',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=11,bk.montant,0)),2) AS 'Novembre',";
 $sql .= "  ROUND(SUM(IF(MONTH(bk.doc_date)=12,bk.montant,0)),2) AS 'Decembre',";
 $sql .= "  ROUND(SUM(bk.montant),2) as 'Total'";
-$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping as bk";
+$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as bk";
 $sql .= " WHERE bk.doc_date >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
 $sql .= "  AND bk.doc_date <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
 $sql .= " GROUP BY bk.numero_compte";

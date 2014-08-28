@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/accountingex/admin/journaux.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file		htdocs/accountancy/admin/journaux.php
+ * \ingroup		Accounting Expert
+ * \brief		Setup page to configure accounting expert module
  */
 
 // Dolibarr environment
@@ -42,23 +42,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 dol_include_once("/core/lib/bank.lib.php");
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('accountingex@accountingex');
+$langs->load("accountancy");
 
 // Security check
-if ($user->societe_id > 0)
-	accessforbidden();
-if (! $user->rights->accountingex->admin)
-	accessforbidden();
+if (!$user->admin)
+    accessforbidden();
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters ACCOUNTINGEX_*
+// Other parameters ACCOUNTING_*
 $list = array (
-		'ACCOUNTINGEX_SELL_JOURNAL',
-		'ACCOUNTINGEX_PURCHASE_JOURNAL',
-		'ACCOUNTINGEX_SOCIAL_JOURNAL',
-		'ACCOUNTINGEX_CASH_JOURNAL',
-		'ACCOUNTINGEX_MISCELLANEOUS_JOURNAL' 
+		'ACCOUNTING_SELL_JOURNAL',
+		'ACCOUNTING_PURCHASE_JOURNAL',
+		'ACCOUNTING_SOCIAL_JOURNAL',
+		'ACCOUNTING_CASH_JOURNAL',
+		'ACCOUNTING_MISCELLANEOUS_JOURNAL' 
 );
 
 /*
@@ -134,7 +132,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."lx_bank_account as ba";
 $sql .= " WHERE ba.clos = 0" ;
 $sql .= " ORDER BY label";
 
-dol_syslog('accountingex/admin/journaux.php:: $sql='.$sql);
+dol_syslog('accountancy/admin/journaux.php:: $sql='.$sql);
 
 $resql = $db->query($sql);
 if ($resql)

@@ -19,7 +19,7 @@
  */
 
 /**
- * \file		accountingex/customer/index.php
+ * \file		htdocs/accountancy/customer/index.php
  * \ingroup		Accounting Expert
  * \brief		Page accueil clients ventilation comptable
  */
@@ -42,12 +42,12 @@ $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountingex->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 	
 // Filter
@@ -82,7 +82,7 @@ if ($action == 'validatehistory') {
 		$sql1 .= " AND fd.fk_code_ventilation = 0";
 	}
 	
-	dol_syslog("/accountingex/customer/index.php sql=" . $sql, LOG_DEBUG);
+	dol_syslog("/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
 		$error ++;
@@ -112,7 +112,7 @@ $sql .= " , " . MAIN_DB_PREFIX . "facture as f";
 $sql .= " WHERE fd.fk_code_ventilation = 0";
 $sql .= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 
-dol_syslog("/accountingex/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	$row = $db->fetch_row($result);
@@ -168,7 +168,7 @@ if (! empty($conf->multicompany->enabled)) {
 
 $sql .= " GROUP BY fd.fk_code_ventilation";
 
-dol_syslog("/accountingex/customer/index.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -197,7 +197,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 } else {
-	print $db->lasterror(); // affiche la derniere erreur sql
+	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
 
@@ -241,7 +241,7 @@ if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND f.entity = '" . $conf->entity . "'";
 }
 
-dol_syslog('accountingext/customer/index.php:: $sql=' . $sql);
+dol_syslog('accountancy/customer/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
 	$i = 0;
@@ -269,7 +269,7 @@ if ($resql) {
 	}
 	$db->free($resql);
 } else {
-	print $db->lasterror(); // affiche la derniere erreur sql
+	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
 
@@ -314,7 +314,7 @@ if (! empty($conf->margin->enabled)) {
 		$sql .= " AND f.entity = '" . $conf->entity . "'";
 	}
 	
-	dol_syslog('accountingext/customer/index.php:: $sql=' . $sql);
+	dol_syslog('accountancy/customer/index.php:: $sql=' . $sql);
 	$resql = $db->query($sql);
 	if ($resql) {
 		$i = 0;
@@ -342,7 +342,7 @@ if (! empty($conf->margin->enabled)) {
 		}
 		$db->free($resql);
 	} else {
-		print $db->lasterror(); // affiche la derniere erreur sql
+		print $db->lasterror(); // Show last sql error
 	}
 	print "</table>\n";
 }

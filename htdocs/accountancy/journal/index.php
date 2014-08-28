@@ -19,9 +19,9 @@
  */
 
 /**
- * \file accountingex/journal/index.php
- * \ingroup Accounting Expert
- * \brief Index
+ * \file		htdocs/accountancy/journal/index.php
+ * \ingroup		Accounting Expert
+ * \brief		Index
  */
 
 // Dolibarr environment
@@ -40,7 +40,7 @@ $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 // Security check
 if ($user->societe_id > 0)
@@ -55,4 +55,3 @@ $form = new Form($db);
 // End of page
 $db->close();
 llxFooter();
-?>

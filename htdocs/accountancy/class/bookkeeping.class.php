@@ -19,9 +19,9 @@
  */
 
 /**
- * \file accountingex/class/bookkeeping.class.php
- * \ingroup Accounting Expert
- * \brief Fichier de la classe des comptes comptable
+ * \file		htdocs/accountancy/class/bookkeeping.class.php
+ * \ingroup		Accounting Expert
+ * \brief		Fichier de la classe des comptes comptable
  */
 
 /**
@@ -63,7 +63,7 @@ class BookKeeping {
 	 * \brief Load record in memory
 	 */
 	function fetch_per_mvt($piecenum) {
-		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type FROM " . MAIN_DB_PREFIX . "bookkeeping WHERE ";
+		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
 		$sql .= " piece_num = '" . $piecenum . "'";
 		
 		dol_syslog(get_class($this) . "fetch_per_mvt sql=" . $sql, LOG_DEBUG);
@@ -93,7 +93,7 @@ class BookKeeping {
 		$sql .= "doc_ref, fk_doc, fk_docdet, code_tiers, ";
 		$sql .= "numero_compte, label_compte, debit, credit, ";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE rowid = '" . $id . "'";
 		
 		dol_syslog(get_class($this) . "fetch sql=" . $sql, LOG_DEBUG);
@@ -130,7 +130,7 @@ class BookKeeping {
 	 * \brief Return next num mvt
 	 */
 	function next_num_mvt() {
-		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . "bookkeeping";
+		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		
 		dol_syslog(get_class($this) . "next_num_mvt sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -153,7 +153,7 @@ class BookKeeping {
 		$sql .= "doc_ref, fk_doc, fk_docdet, code_tiers, ";
 		$sql .= "numero_compte, label_compte, debit, credit, ";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE piece_num = '" . $piecenum . "'";
 		
 		dol_syslog(get_class($this) . "fetch_all_per_mvt sql=" . $sql, LOG_DEBUG);
@@ -193,8 +193,8 @@ class BookKeeping {
 	}
 	
 	/**
-	 * \brief Insere une ligne dans bookkeeping
-	 * \param user utilisateur qui effectue l'insertion
+	 * \brief 		Insert line into bookkeeping
+	 * \param user 	User who inserted operation
 	 */
 	function create() {
 		global $conf, $user, $langs;
@@ -203,7 +203,7 @@ class BookKeeping {
 		
 		// first check if line not yet in bookkeeping
 		$sql = "SELECT count(*)";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE doc_type = '" . $this->doc_type . "'";
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
 		$sql .= " AND numero_compte = '" . $this->numero_compte . "'";
@@ -217,7 +217,7 @@ class BookKeeping {
 				
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";
-				$sqlnum .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+				$sqlnum .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 				$sqlnum .= " WHERE doc_type = '" . $this->doc_type . "'";
 				$sqlnum .= " AND fk_docdet = '" . $this->fk_docdet . "'";
 				$sqlnum .= " AND doc_ref = '" . $this->doc_ref . "'";
@@ -231,7 +231,7 @@ class BookKeeping {
 				dol_syslog(get_class($this) . ":: create this->piece_num=" . $this->piece_num, LOG_DEBUG);
 				if (empty($this->piece_num)) {
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
-					$sqlnum .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+					$sqlnum .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 					
 					dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
 					$resqlnum = $this->db->query($sqlnum);
@@ -249,7 +249,7 @@ class BookKeeping {
 				if (empty($this->date_create))
 					$this->date_create = $now();
 				
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "bookkeeping (doc_date, ";
+				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (doc_date, ";
 				$sql .= "doc_type, doc_ref,fk_doc,fk_docdet,code_tiers,numero_compte,label_compte,";
 				$sql .= "debit,credit,montant,sens,fk_user_author,import_key,code_journal,piece_num)";
 				$sql .= " VALUES ('" . $this->doc_date . "','" . $this->doc_type . "','" . $this->doc_ref . "'," . $this->fk_doc . ",";
@@ -260,7 +260,7 @@ class BookKeeping {
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "bookkeeping");
+					$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
 					
 					if ($id > 0) {
 						$this->id = $id;
@@ -293,7 +293,7 @@ class BookKeeping {
 		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE import_key = '" . $importkey . "'";
 		
 		$resql = $this->db->query($sql);
@@ -364,7 +364,7 @@ class BookKeeping {
 			// Put here code to add control on parameters values
 			
 		// Insert request
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "bookkeeping(";
+		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping(";
 		
 		$sql .= "doc_date,";
 		$sql .= "doc_type,";
@@ -414,7 +414,7 @@ class BookKeeping {
 		}
 		
 		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "bookkeeping");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_bookkeeping");
 			
 			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -491,7 +491,7 @@ class BookKeeping {
 			// Put here code to add a control on parameters values
 			
 		// Update request
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "bookkeeping SET";
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 		
 		$sql .= " doc_date=" . (dol_strlen($this->doc_date) != 0 ? "'" . $this->db->idate($this->doc_date) . "'" : 'null') . ",";
 		$sql .= " doc_type=" . (isset($this->doc_type) ? "'" . $this->db->escape($this->doc_type) . "'" : "null") . ",";
@@ -577,7 +577,7 @@ class BookKeeping {
 		}
 		
 		if (! $error) {
-			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "bookkeeping";
+			$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 			$sql .= " WHERE rowid=" . $this->id;
 			
 			dol_syslog(get_class($this) . "::delete sql=" . $sql);
@@ -610,7 +610,7 @@ class BookKeeping {
 		$sql .= "doc_ref, fk_doc, fk_docdet, code_tiers, ";
 		$sql .= "numero_compte, label_compte, debit, credit, ";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "bookkeeping ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		
 		$resql = $this->db->query($sql);
 		

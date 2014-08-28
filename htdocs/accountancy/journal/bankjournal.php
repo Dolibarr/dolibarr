@@ -23,7 +23,7 @@
  */
 
 /**
- *	\file		accountingex/journal/bankjournal.php
+ *	\file		htdocs/accountancy/journal/bankjournal.php
  *	\ingroup	Accounting Expert
  *	\brief		Page with sells journal
  */
@@ -52,7 +52,7 @@ dol_include_once("/compta/tva/class/tva.class.php");
 dol_include_once("/fourn/class/paiementfourn.class.php");
 dol_include_once("/fourn/class/fournisseur.facture.class.php");
 dol_include_once("/fourn/class/fournisseur.class.php");
-dol_include_once("/accountingex/class/bookkeeping.class.php");
+dol_include_once("/accountancy/class/bookkeeping.class.php");
 dol_include_once("/societe/class/client.class.php");
 
 // Langs
@@ -61,7 +61,7 @@ $langs->load("other");
 $langs->load("compta");
 $langs->load("bank");
 $langs->load('bills');
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -123,7 +123,7 @@ $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
 $paymentvatstatic = new TVA($db);
 
-dol_syslog("accountingex/journal/bankjournal.php:: sql=" . $sql, LOG_DEBUG);
+dol_syslog("accountancy/journal/bankjournal.php:: sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
 	
@@ -131,8 +131,8 @@ if ($result) {
 	// Variables
 	$cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER) ? $conf->global->COMPTA_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
 	$cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER) ? $conf->global->COMPTA_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-	$cpttva = (! empty($conf->global->ACCOUNTINGEX_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTINGEX_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
-	$cptsociale = (! empty($conf->global->ACCOUNTINGEX_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTINGEX_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
+	$cpttva = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
+	$cptsociale = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) ? $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE : $langs->trans("CodeNotDef"));
 	
 	$tabpay = array ();
 	$tabbq = array ();
@@ -155,7 +155,7 @@ if ($result) {
 		if ($obj->label == '(CustomerInvoicePayment)')
 			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $cptcli);
 		if ($obj->typeop == '(BankTransfert)')
-			$compta_soc = $conf->global->ACCOUNTINGEX_ACCOUNT_TRANSFER_CASH;
+			$compta_soc = $conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH;
 			
 		// Variable bookkeeping
 		$tabpay[$obj->rowid]["date"] = $obj->do;
@@ -209,7 +209,7 @@ if ($result) {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "bank_url as bkurl ON  bkurl.url_id=paycharg.rowid";
 				$sqlmid .= " WHERE bkurl.fk_bank=" . $obj->rowid;
 				
-				dol_syslog("accountingex/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
@@ -263,7 +263,7 @@ if ($action == 'writeBookKeeping') {
 			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
 			$bookkeeping->credit = ($mt < 0 ? price - ($mt) : 0);
-			$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_BANK_JOURNAL;
+			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 			
 			if ($tabtype[$key] == 'payment') {
 				
@@ -272,7 +272,7 @@ if ($action == 'writeBookKeeping') {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
 				$sqlmid .= " WHERE pay.fk_bank=" . $key;
-				dol_syslog("accountingex/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
@@ -285,7 +285,7 @@ if ($action == 'writeBookKeeping') {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
 				$sqlmid .= " WHERE payf.fk_bank=" . $key;
-				dol_syslog("accountingex/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
@@ -313,7 +313,7 @@ if ($action == 'writeBookKeeping') {
 			$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt < 0 ? price - ($mt) : 0);
 			$bookkeeping->credit = ($mt >= 0) ? $mt : 0;
-			$bookkeeping->code_journal = $conf->global->ACCOUNTINGEX_BANK_JOURNAL;
+			$bookkeeping->code_journal = $conf->global->ACCOUNTING_BANK_JOURNAL;
 			
 			if ($tabtype[$key] == 'sc') {
 				$bookkeeping->code_tiers = '';
@@ -325,7 +325,7 @@ if ($action == 'writeBookKeeping') {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
 				$sqlmid .= " WHERE pay.fk_bank=" . $key;
-				dol_syslog("accountingex/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
@@ -340,7 +340,7 @@ if ($action == 'writeBookKeeping') {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn_facturefourn as payfacf ON  payfacf.fk_facturefourn=facf.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiementfourn as payf ON  payfacf.fk_paiementfourn=payf.rowid";
 				$sqlmid .= " WHERE payf.fk_bank=" . $key;
-				dol_syslog("accountingex/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
@@ -355,7 +355,7 @@ if ($action == 'writeBookKeeping') {
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement_facture as payfac ON  payfac.fk_facture=fac.rowid";
 				$sqlmid .= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as pay ON  payfac.fk_paiement=pay.rowid";
 				$sqlmid .= " WHERE pay.fk_bank=" . $key;
-				dol_syslog("accountingex/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
+				dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=" . $sqlmid, LOG_DEBUG);
 				$resultmid = $db->query($sqlmid);
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
@@ -383,14 +383,14 @@ if ($action == 'writeBookKeeping') {
 }
 // export csv
 if ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTINGEX_SEPARATORCSV;
+	$sep = $conf->global->ACCOUNTING_SEPARATORCSV;
 	
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename=journal_banque.csv');
 	
 	$companystatic = new Client($db);
 	
-	if ($conf->global->ACCOUNTINGEX_MODELCSV == 1) 	// Modèle Export Cegid Expert
+	if ($conf->global->ACCOUNTING_MODELCSV == 1) 	// Modèle Export Cegid Expert
 	{
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
@@ -400,7 +400,7 @@ if ($action == 'export_csv') {
 			
 			// Bank
 			print $date . $sep;
-			print $conf->global->ACCOUNTINGEX_BANK_JOURNAL . $sep;
+			print $conf->global->ACCOUNTING_BANK_JOURNAL . $sep;
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				print length_accountg(html_entity_decode($k)) . $sep;
 				print $sep;
@@ -415,7 +415,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabtp[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $conf->global->ACCOUNTINGEX_BANK_JOURNAL . $sep;
+					print $conf->global->ACCOUNTING_BANK_JOURNAL . $sep;
 					if ($val["lib"] == '(SupplierInvoicePayment)') {
 						print length_accountg($conf->global->COMPTA_ACCOUNT_SUPPLIER) . $sep;
 					} else {

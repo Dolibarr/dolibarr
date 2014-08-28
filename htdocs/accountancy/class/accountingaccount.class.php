@@ -18,9 +18,9 @@
  */
 
 /**
- * \file accountingex/class/Accountingaccount.class.php
- * \ingroup Accounting Expert
- * \brief Fichier de la classe des comptes comptable
+ * \file		htdocs/accountancy/class/Accountingaccount.class.php
+ * \ingroup		Accounting Expert
+ * \brief		Fichier de la classe des comptes comptable
  */
 
 /**

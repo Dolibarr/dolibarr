@@ -19,9 +19,9 @@
  */
 
 /**
- * \file		accountingex/customer/liste.php
- * \ingroup	Accounting Expert
- * \brief		Page de ventilation des lignes de facture clients
+ * \file		htdocs/accountancy/customer/list.php
+ * \ingroup		Accounting Expert
+ * \brief		Ventilation page from customers invoices
  */
 
 // Dolibarr environment
@@ -38,13 +38,13 @@ if (! $res)
 	// Class
 dol_include_once("/compta/facture/class/facture.class.php");
 dol_include_once("/product/class/product.class.php");
-dol_include_once("/accountingex/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
 
 // Langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $action = GETPOST('action');
 $codeventil = GETPOST('codeventil', 'array');
@@ -53,7 +53,7 @@ $mesCasesCochees = GETPOST('mesCasesCochees', 'array');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountingex->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);
@@ -81,7 +81,7 @@ if ($action == 'ventil') {
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
 			
-			dol_syslog("/accountingex/customer/liste.php sql=" . $sql, LOG_DEBUG);
+			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
 				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
 			} else {
@@ -103,9 +103,9 @@ $page = GETPOST('page');
 if ($page < 0)
 	$page = 0;
 
-if (! empty($conf->global->ACCOUNTINGEX_LIMIT_LIST_VENTILATION)) {
-	$limit = $conf->global->ACCOUNTINGEX_LIMIT_LIST_VENTILATION;
-} else if ($conf->global->ACCOUNTINGEX_LIMIT_LIST_VENTILATION <= 0) {
+if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
+	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
+} else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
 	$limit = $conf->liste_limit;
 } else {
 	$limit = $conf->liste_limit;
@@ -127,19 +127,19 @@ if (! empty($conf->multicompany->enabled)) {
 }
 
 $sql .= " ORDER BY l.rowid";
-if ($conf->global->ACCOUNTINGEX_LIST_SORT_VENTILATION_TODO > 0) {
+if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO > 0) {
 	$sql .= " DESC ";
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog("/accountingex/customer/liste.php sql=" . $sql, LOG_DEBUG);
+dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
 if ($result) {
-	$num_lignes = $db->num_rows($result);
+	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
 	// TODO : print_barre_liste always use $conf->liste_limit and do not care about custom limit in list...
-	print_barre_liste($langs->trans("InvoiceLines"), $page, "liste.php", "", $sortfield, $sortorder, '', $num_lignes);
+	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	
 	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
 	
@@ -162,7 +162,7 @@ if ($result) {
 	$form = new Form($db);
 	
 	$var = True;
-	while ( $i < min($num_lignes, $limit) ) {
+	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
 		

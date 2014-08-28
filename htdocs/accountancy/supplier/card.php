@@ -3,7 +3,7 @@
  * Copyright (C) 2005       Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2013-2014  Alexandre Spangaro    <alexandre.spangaro@gmail.com>
  * Copyright (C) 2013-2014  Olivier Geffroy       <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry	      	<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014	Florian Henry	      <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  *
  */
 /**
- * \file accountingex/supplier/fiche.php
- * \ingroup Accountign Expert
- * \brief Page fiche ventilation
+ * \file		htdocs/accountancy/supplier/card.php
+ * \ingroup		Accounting Expert
+ * \brief		Card supplier ventilation
  */
 
 // Dolibarr environment
@@ -38,14 +38,14 @@ if (! $res)
 	
 	// Class
 dol_include_once("/fourn/class/fournisseur.facture.class.php");
-dol_include_once("/accountingex/class/html.formventilation.class.php");
+dol_include_once("/accountancy/class/html.formventilation.class.php");
 
 // Langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("main");
-$langs->load("accountingex@accountingex");
+$langs->load("accountancy");
 
 $action = GETPOST('action');
 $id = GETPOST('id', 'int');
@@ -54,15 +54,15 @@ $codeventil = GETPOST('codeventil');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountingex->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 
-if ($action == 'ventil' && $user->rights->accountingex->access) {
+if ($action == 'ventil' && $user->rights->accounting->access) {
 	$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 	$sql .= " SET fk_code_ventilation = " . $codeventil;
 	$sql .= " WHERE rowid = " . $id;
 	
-	dol_syslog('accountingex/journal/sellsjournal.php:: $sql=' . $sql);
+	dol_syslog('accountancy/journal/sellsjournal.php:: $sql=' . $sql);
 	
 	$resql = $db->query($sql);
 	if (! $resql) {
@@ -101,10 +101,10 @@ if ($_GET["id"]) {
 	
 	$result = $db->query($sql);
 	if ($result) {
-		$num_lignes = $db->num_rows($result);
+		$num_lines = $db->num_rows($result);
 		$i = 0;
 		
-		if ($num_lignes) {
+		if ($num_lines) {
 			$objp = $db->fetch_object($result);
 			
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
