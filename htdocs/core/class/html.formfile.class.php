@@ -270,7 +270,7 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        $printer = ($user->rights->printipp->read && $conf->printipp->enabled)?true:false;
+        $printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
