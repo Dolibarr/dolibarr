@@ -37,7 +37,7 @@ if (! $res)
 	
 	// Class
 dol_include_once("/core/lib/date.lib.php");
-dol_include_once("accountancy/core/lib/account.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("main");

@@ -34,7 +34,7 @@ if (! $res && file_exists("../../../main.inc.php"))
 if (! $res)
 	die("Include of main fails");
 	
-	// Class
+// Class
 dol_include_once("accountancy/class/bookkeeping.class.php");
 
 // Langs
