@@ -858,18 +858,22 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
-			// Compta simple
-			if (! empty($conf->comptabilite->enabled) && ($conf->global->MAIN_FEATURES_LEVEL >= 2))
-			{
-				$newmenu->add("/compta/ventilation/index.php?leftmenu=ventil",$langs->trans("Dispatch"),0,$user->rights->compta->ventilation->lire, '', $mainmenu, 'ventil');
-				if (empty($leftmenu) || $leftmenu=="ventil") $newmenu->add("/compta/ventilation/liste.php",$langs->trans("ToDispatch"),1,$user->rights->compta->ventilation->lire);
-				if (empty($leftmenu) || $leftmenu=="ventil") $newmenu->add("/compta/ventilation/lignes.php",$langs->trans("Dispatched"),1,$user->rights->compta->ventilation->lire);
-			}
-
-			// Compta expert
+			// Accounting Expert
 			if (! empty($conf->accounting->enabled))
 			{
-
+				$langs->load("accountancy");
+				
+				$newmenu->add("/accountancy/customer/index.php?leftmenu=ventil_customer",$langs->trans("CustomersVentilation"),0,$user->rights->accounting->ventilation->read, '', $mainmenu, 'ventil_customer');
+				if (empty($leftmenu) || $leftmenu=="ventil_customer") $newmenu->add("/accountancy/customer/list.php",$langs->trans("ToDispatch"),1,$user->rights->accounting->ventilation->read);
+				if (empty($leftmenu) || $leftmenu=="ventil_customer") $newmenu->add("/accountancy/customer/lines.php",$langs->trans("Dispatched"),1,$user->rights->accounting->ventilation->read);
+				
+				$newmenu->add("/accountancy/supplier/index.php?leftmenu=ventil_supplier",$langs->trans("SuppliersVentilation"),0,$user->rights->accounting->ventilation->read, '', $mainmenu, 'ventil_supplier');
+				if (empty($leftmenu) || $leftmenu=="ventil_customer") $newmenu->add("/accountancy/supplier/list.php",$langs->trans("ToDispatch"),1,$user->rights->accounting->ventilation->read);
+				if (empty($leftmenu) || $leftmenu=="ventil_customer") $newmenu->add("/accountancy/supplier/lines.php",$langs->trans("Dispatched"),1,$user->rights->accounting->ventilation->read);
+				
+				$newmenu->add("/accountancy/bookkeeping/list.php?leftmenu=bookkeeping",$langs->trans("Bookkeeping"),0,$user->rights->accounting->mouvements->lire, '', $mainmenu, 'bookeeping');
+				if (empty($leftmenu) || $leftmenu=="bookeeping") $newmenu->add("/accountancy/bookkeeping/listbyyear.php",$langs->trans("ByYear"),1,$user->rights->accounting->mouvements->lire);
+				if (empty($leftmenu) || $leftmenu=="bookeeping") $newmenu->add("/accountancy/bookkeeping/balancebymonth.php.php",$langs->trans("AccountBalanceByMonth"),1,$user->rights->accounting->mouvements->lire);
 			}
 
 			// Rapports
