@@ -973,7 +973,7 @@ CREATE TABLE llx_holiday_types (
   deleteAt DATETIME,
   nbCongesDeducted varchar(255) NOT NULL,
   nbCongesEveryMonth varchar(255) NOT NULL
-);
+) ENGINE=innodb;
 
 -- Change on table c_civilite
 ALTER TABLE llx_c_civilite DROP INDEX uk_c_civilite;
@@ -1001,7 +1001,7 @@ CREATE TABLE llx_fichinterdet_extrafields
   tms                       timestamp,
   fk_object                 integer NOT NULL,
   import_key                varchar(14)                          		-- import key
-) ENGINE=innodb
+) ENGINE=innodb;
 
 ALTER TABLE llx_fichinterdet_extrafields ADD INDEX idx_ficheinterdet_extrafields (fk_object);
 
