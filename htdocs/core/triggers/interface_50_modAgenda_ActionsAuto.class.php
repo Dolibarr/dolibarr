@@ -131,7 +131,7 @@ class InterfaceActionsAuto
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
             $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
-            if ($object->prefix) $object->actionmsg.=" (".$object->prefix.")";
+            if (!empty($object->prefix)) $object->actionmsg.=" (".$object->prefix.")";
             //$this->desc.="\n".$langs->transnoentities("Customer").': '.yn($object->client);
             //$this->desc.="\n".$langs->transnoentities("Supplier").': '.yn($object->fournisseur);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
