@@ -167,17 +167,17 @@ class Fichinter extends CommonObject
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
-			
+
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-            	
+
             	$result=$this->insertExtraFields();
             	if ($result < 0)
             	{
             		$error++;
             	}
-            }	
-			
+            }
+
 			// Add linked object
 			if (! $error && $this->origin && $this->origin_id)
 			{
@@ -864,11 +864,12 @@ class Fichinter extends CommonObject
 	 *	@param    	string	$desc					Line description
 	 *	@param      date	$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
+	 *  @param		array	$array_option			Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
-	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option=0)
+	function addline($user,$fichinterid, $desc, $date_intervention, $duration, $array_option='')
 	{
-		dol_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
+		dol_syslog(get_class($this)."::addline $fichinterid, $desc, $date_intervention, $duration");
 
 		if ($this->statut == 0)
 		{
@@ -887,15 +888,14 @@ class Fichinter extends CommonObject
 			}
 
 			$result=$line->insert($user);
-			
+
 			if ($result >= 0)
 			{
-				
 				$this->db->commit();
 				return 1;
 			}
 			else
-			{	
+			{
 				$this->error=$this->db->error();
 				$this->db->rollback();
 				return -1;
@@ -1007,7 +1007,7 @@ class FichinterLigne extends CommonObjectLine
 	public $element='fichinterdet';
 	public $table_element='fichinterdet';
 	public $fk_element='fk_fichinter';
-	
+
 	/**
 	 *	Constructor
 	 *
@@ -1103,8 +1103,8 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');	
-				
+			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
             	$this->id=$this->rowid;
@@ -1113,11 +1113,11 @@ class FichinterLigne extends CommonObjectLine
             	{
             		$error++;
             	}
-            }	
-				
-			
+            }
+
+
 			$result=$this->update_total();
-			
+
 			if ($result > 0)
 			{
 				$this->rang=$rangToUse;
@@ -1175,7 +1175,7 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			
+
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$this->id=$this->rowid;
@@ -1185,7 +1185,7 @@ class FichinterLigne extends CommonObjectLine
         			$error++;
         		}
         	}
-			
+
 			$result=$this->update_total();
 			if ($result > 0)
 			{
