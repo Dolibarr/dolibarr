@@ -101,6 +101,7 @@ ALTER TABLE llx_product MODIFY COLUMN fk_barcode_type INTEGER NULL DEFAULT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_product ALTER COLUMN fk_barcode_type SET DEFAULT NULL;
 UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type = 0;
 ALTER TABLE llx_product ADD INDEX idx_product_fk_barcode_type (fk_barcode_type);
+UPDATE llx_product SET fk_barcode_type = NULL WHERE fk_barcode_type NOT IN (SELECT rowid from llx_c_barcode_type);
 ALTER TABLE llx_product ADD CONSTRAINT fk_product_barcode_type FOREIGN KEY (fk_barcode_type) REFERENCES  llx_c_barcode_type (rowid);
 
 
@@ -975,14 +976,13 @@ CREATE TABLE llx_holiday_types (
 );
 
 -- Change on table c_civilite
-DROP INDEX uk_c_civilite ON llx_c_civilite;
+ALTER TABLE llx_c_civilite DROP INDEX uk_c_civilite;
 ALTER TABLE llx_c_civilite RENAME TO llx_c_civility;
 ALTER TABLE llx_c_civility CHANGE civilite label VARCHAR(50);
 ALTER TABLE llx_c_civility ADD UNIQUE INDEX uk_c_civility(code);
 ALTER TABLE llx_adherent CHANGE civilite civility VARCHAR(6);
 ALTER TABLE llx_socpeople CHANGE civilite civility VARCHAR(6);
 ALTER TABLE llx_user CHANGE civilite civility VARCHAR(6);
-) ENGINE=innodb;
 
 ALTER TABLE llx_c_type_fees CHANGE libelle label VARCHAR(30);
 ALTER TABLE llx_c_type_fees ADD COLUMN accountancy_code varchar(32) DEFAULT NULL AFTER label;
