@@ -196,6 +196,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 			}
 
+			// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+	
+	        $object->array_options = $array_option;
+
 			$id = $object->create($user);
 
 			if ($id > 0)
@@ -266,12 +273,20 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 							    $duration = 0;
 							}
 
+							$predef = '';
+							// Extrafields
+							$extrafieldsline = new ExtraFields($db);
+							$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+							$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
+					
+
 		                    $result = $object->addline(
 								$user,
 		                        $id,
 		                        $desc,
 					            $date_intervention,
-                 				$duration
+                 				$duration,
+                 				$array_option
 		                    );
 
 							if ($result < 0)
@@ -298,6 +313,13 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	    }
 	    else
 	    {
+	    	// Extrafields
+			$extrafields = new ExtraFields($db);
+			$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+			$array_option = $extrafields->getOptionalsFromPost($extralabels);
+	
+	        $object->array_options = $array_option;
+			
 			$result = $object->create($user);
 	        if ($result > 0)
 	        {
@@ -433,12 +455,19 @@ else if ($action == "addline" && $user->rights->ficheinter->creer)
 		$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
 
+		
+		// Extrafields
+		$extrafieldsline = new ExtraFields($db);
+		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+		$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+
         $result=$object->addline(
 			$user,
             $id,
             $desc,
             $date_intervention,
-            $duration
+            $duration,
+            $array_option
         );
 
 		// Define output language
@@ -524,6 +553,13 @@ else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST(
     $objectline->datei		= $date_inter;
     $objectline->desc		= $desc;
     $objectline->duration	= $duration;
+	
+	// Extrafields
+	$extrafieldsline = new ExtraFields($db);
+	$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
+	$array_option = $extrafieldsline->getOptionalsFromPost($extralabelsline);
+	$objectline->array_options = $array_option;
+
 	$result = $objectline->update($user);
     if ($result < 0)
     {
@@ -1433,6 +1469,18 @@ else if ($id > 0 || ! empty($ref))
 					}
 
 					print '</tr>';
+					
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+					
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+					 
+					print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bc[$var], 'colspan'=>5));
+			
+					
 				}
 
 				// Line in update mode
@@ -1461,6 +1509,17 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="center" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td>';
 					print '</tr>' . "\n";
+					
+					$line = new FichinterLigne($db);
+					$line->fetch($objp->rowid);
+					
+					$extrafieldsline = new ExtraFields($db);
+					$extralabelslines=$extrafieldsline->fetch_name_optionals_label($line->table_element);
+					$line->fetch_optionals($line->rowid, $extralabelslines);
+					
+					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+			
+					
 				}
 
 				$i++;
@@ -1511,7 +1570,16 @@ else if ($id > 0 || ! empty($ref))
 
 				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'" name="addline"></td>';
 				print '</tr>';
-
+				
+				//Line extrafield
+				
+				$lineadd = new FichinterLigne($db);
+				
+				$extrafieldsline = new ExtraFields($db);
+				$extralabelslines=$extrafieldsline->fetch_name_optionals_label($lineadd->table_element);
+		
+				print $lineadd->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>5));
+		
 				if (! $num) print '</table>';
 			}
 
