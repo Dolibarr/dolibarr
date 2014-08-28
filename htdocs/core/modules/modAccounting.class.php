@@ -54,7 +54,7 @@ class modAccounting extends DolibarrModules
 		
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
-		$this->picto = 'accountingex@accountingex';
+		$this->picto = 'accounting';
 		
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		// $this->triggers = 1;
@@ -65,7 +65,7 @@ class modAccounting extends DolibarrModules
 		);
 		
 		// Config pages
-		$this->config_page_url = array('index.php@accounting');
+		$this->config_page_url = array('index.php@accountancy');
 		
 		// Dependencies
 		$this->depends = array ("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
@@ -77,10 +77,10 @@ class modAccounting extends DolibarrModules
 		); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array (
 				3,
-				4
+				6
 		); // Minimum version of Dolibarr required by module
 		$this->langfiles = array (
-				"accountingex@accountingex" 
+				"accountancy" 
 		);
 		
 		// Constants
@@ -182,11 +182,7 @@ class modAccounting extends DolibarrModules
 		$this->tabs = array();
 		
 		// Css
-		$this->module_parts = array (
-				'css' => array (
-						'/accountingex/css/accountingex.css.php' 
-				) 
-		);
+		$this->module_parts = array ();
 		
 		// Boxes
 		$this->boxes = array ();
@@ -197,12 +193,37 @@ class modAccounting extends DolibarrModules
 		$this->rights = array (); // Permission array used by this module
 		$r = 0;
 		
-		$this->rights[$r][0] = 150001; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Acces_module'; // Permission label
-		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'access'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$r ++;
+		$this->rights[$r][0] = 50401;
+		$this->rights[$r][1] = 'Access_accountancy';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'access';
+		$this->rights[$r][5] = '';
+		$r++;
+
+		$this->rights[$r][0] = 50411;
+		$this->rights[$r][1] = 'Lire les mouvements comptables';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'lire';
+		$r++;
+
+		$this->rights[$r][0] = 50412;
+		$this->rights[$r][1] = 'Creer/modifier/annuler les mouvements comptables';
+		$this->rights[$r][2] = 'w';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'mouvements';
+		$this->rights[$r][5] = 'creer';
+		$r++;
+
+		$this->rights[$r][0] = 50420;
+		$this->rights[$r][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'comptarapport';
+		$this->rights[$r][5] = 'lire';
+		$r++;
 		
 		// Main menu entries
 		$this->menus = array ();
@@ -218,7 +239,7 @@ class modAccounting extends DolibarrModules
 				'langs' => 'accountingex@accountingex',
 				'position' => 100,
 				'perms' => '$user->rights->accountingex->access',
-				'enabled' => '$conf->accountingexpert->enabled',
+				'enabled' => '$conf->accounting->enabled',
 				'target' => '',
 				'user' => 0 
 		);

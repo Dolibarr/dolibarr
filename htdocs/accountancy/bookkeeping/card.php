@@ -44,7 +44,7 @@ $langs->load("accounting");
 $id = GETPOST('id', 'int');
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountingex->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 
 $action = GETPOST('action');
@@ -320,7 +320,7 @@ if ($action == 'create') {
 						print '<td>' . $line->sens . '</td>';
 						
 						print '<td>';
-						if ($user->rights->accountingex->access) {
+						if ($user->rights->accounting->access) {
 							print '<input type="submit" class="button" value="' . $langs->trans("Update") . '">';
 						}
 						print '</form>';
@@ -335,7 +335,7 @@ if ($action == 'create') {
 						print '<td>' . $line->sens . '</td>';
 						
 						print '<td>';
-						if ($user->rights->accoutingex->access) {
+						if ($user->rights->accouting->access) {
 							print '<a href="./card.php?action=update&id=' . $line->id . '&piece_num=' . $line->piece_num . '">';
 							print img_edit();
 							print '</a>&nbsp;';

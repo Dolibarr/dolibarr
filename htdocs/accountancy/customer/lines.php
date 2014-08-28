@@ -52,7 +52,7 @@ $account_parent = GETPOST('account_parent');
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accountancy->access)
+if (! $user->rights->accounting->access)
 	accessforbidden();
 
 $formventilation = new FormVentilation($db);

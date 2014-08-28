@@ -194,7 +194,7 @@ if ($result) {
 		print '</td>';
 		
 		print '<td>';
-		if ($user->rights->accountingex->admin) {
+		if ($user->admin) {
 			print '<a href="./card.php?action=update&id=' . $obj->rowid . '">';
 			print img_edit();
 			print '</a>&nbsp;';
