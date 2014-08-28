@@ -992,3 +992,15 @@ ALTER TABLE llx_actioncomm ADD INDEX idx_actioncomm_fk_element (fk_element);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_task (fk_task);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_date (task_date);
 ALTER TABLE llx_projet_task_time ADD INDEX idx_projet_task_time_datehour (task_datehour);
+
+
+-- add extrafield on ficheinter lines
+CREATE TABLE IF NOT EXISTS `llx_fichinterdet_extrafields` (
+  `rowid` int(11) NOT NULL AUTO_INCREMENT,
+  `tms` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `fk_object` int(11) NOT NULL,
+  `import_key` varchar(14) DEFAULT NULL,
+  PRIMARY KEY (`rowid`),
+  KEY `idx_ficheinter_extrafields` (`fk_object`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
