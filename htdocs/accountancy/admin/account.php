@@ -52,7 +52,7 @@ if (!$user->admin)
     accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
+$sortorder = GETPOST("sortorder", 'sortorder');
 $limit = $conf->liste_limit;
 $page = GETPOST("page", 'int');
 if ($page == - 1) {
