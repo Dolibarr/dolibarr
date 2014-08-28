@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -468,6 +469,44 @@ $parameters["mode"] = $modecompta;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
 $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+/*
+ * Salaries
+ */
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
+$sql = "SELECT p.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
+$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+$sql.= " WHERE p.entity = ".$conf->entity;
+$sql.= " GROUP BY p.label, dm";
+
+dol_syslog("get social salaries payments  sql=".$sql);
+$result=$db->query($sql);
+if ($result)
+{
+	$num = $db->num_rows($result);
+	$var=false;
+	$i = 0;
+	if ($num)
+	{
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($result);
+
+			if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+			$decaiss[$obj->dm] += $obj->amount;
+
+			if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
+			$decaiss_ttc[$obj->dm] += $obj->amount;
+
+			$i++;
+		}
+	}
+}
+else
+{
+	dol_print_error($db);
+}
 
 /*
  * Show result array
