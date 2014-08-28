@@ -153,7 +153,13 @@ from origin/upstream and origin/pristine.
 
 * Into root dir, launch:
 > debian/get-orig-source.sh
-If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0 " to solve this.
+If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
+
+* Edit tgz file to remove 
+- includes/sRGB.icc
+And rename file into 
+dolibarr-x.y.z+dsfgw.tgz
+(x.y.z = version, w start from 1 and is increased for each new import)
 
 * Staying into git root directory, run
 > git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz
@@ -229,7 +235,7 @@ from origin/upstream and origin/pristine.
 
 * If new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
-If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0 " to solve this.
+If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
 
 * Edit tgz file to remove 
 - ckeditor
