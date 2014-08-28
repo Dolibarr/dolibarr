@@ -8,6 +8,7 @@ For users:
 - Fix: sql errors on updat fichinter
 - Fix: debian script syntax error
 - Fix: error "menu param is not inside list" into pos module.
+- Fix: Salary payments are not reflected on the reporting sheets
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
