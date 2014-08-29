@@ -32,11 +32,10 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 class modAccounting extends DolibarrModules
 {
 	/**
-	 * Constructor.
-	 * Define names, constants, directories, boxes, permissions
+	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 * @param DoliDB $db
-	 */
+	 *   @param      DoliDB		$db      Database handler
+     */
 	function __construct($db)
 	{
 		global $conf;
