@@ -69,7 +69,7 @@ $companystatic=new Societe($db);
 ***************************************************************************/
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 
 $search_ref = GETPOST('search_ref','alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier','alpha');

@@ -41,8 +41,8 @@ $sRefSupplier = GETPOST('srefsupplier');
 $snom = GETPOST('snom');
 $type = GETPOST('type');
 
-$sortfield = GETPOST('sortfield');
-$sortorder = GETPOST('sortorder');
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','sortorder');
 $page = GETPOST('page');
 if ($page < 0) {
     $page = 0 ;

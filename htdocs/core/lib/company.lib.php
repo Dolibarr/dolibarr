@@ -544,7 +544,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $form= new Form($db);
 
     $sortfield = GETPOST("sortfield",'alpha');
-    $sortorder = GETPOST("sortorder",'alpha');
+    $sortorder = GETPOST("sortorder",'sortorder');
     $search_status		= GETPOST("search_status",'int');
     if ($search_status=='') $search_status=1; // always display activ customer first
     $search_name = GETPOST("search_name",'alpha');

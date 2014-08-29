@@ -44,7 +44,7 @@ if ($user->societe_id > 0) accessforbidden();
 $prev_id = GETPOST('id','int');
 $socid = GETPOST('socid','int');
 $page = GETPOST('page','int');
-$sortorder = ((GETPOST('sortorder','alpha')=="")) ? "DESC" : GETPOST('sortorder','alpha');
+$sortorder = ((GETPOST('sortorder','sortorder')=="")) ? "desc" : GETPOST('sortorder','sortorder');
 $sortfield = ((GETPOST('sortfield','alpha')=="")) ? "p.ref" : GETPOST('sortfield','alpha');
 
 llxHeader('',$langs->trans("WithdrawalsReceipts"));

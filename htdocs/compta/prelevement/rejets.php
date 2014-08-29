@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'prelevement','','','bons');
 
 // Get supervariables
 $page = GETPOST('page','int');
-$sortorder = GETPOST('sortorder','alpha');
+$sortorder = GETPOST('sortorder','sortorder');
 $sortfield = GETPOST('sortfield','alpha');
 
 /*

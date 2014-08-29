@@ -46,7 +46,7 @@ $resource_id		= GETPOST('resource_id','int');
 $resource_type		= GETPOST('resource_type','alpha');
 
 /*
-$sortorder			= GETPOST('sortorder','alpha');
+$sortorder			= GETPOST('sortorder','sortorder');
 $sortfield			= GETPOST('sortfield','alpha');
 $page				= GETPOST('page','int');
 */

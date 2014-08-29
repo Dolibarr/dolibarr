@@ -56,7 +56,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $id,'');
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
@@ -66,7 +66,7 @@ if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 
-$viewstatut=GETPOST('viewstatut');
+$viewstatut=GETPOST('viewstatut','int');
 
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array

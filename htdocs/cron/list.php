@@ -43,7 +43,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 
-$sortorder=GETPOST('sortorder','alpha');
+$sortorder=GETPOST('sortorder','sortorder');
 $sortfield=GETPOST('sortfield','alpha');
 $page=GETPOST('page','int');
 $status=GETPOST('status','int');

@@ -48,7 +48,7 @@ if ($search_status == '') $search_status=-1;
 
 $page  = GETPOST('page','int');
 $socid = GETPOST('socid','int');
-$sortorder = GETPOST('sortorder','alpha');
+$sortorder = GETPOST('sortorder','sortorder');
 $sortfield = GETPOST('sortfield','alpha');
 
 // Security check

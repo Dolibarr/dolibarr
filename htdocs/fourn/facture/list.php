@@ -53,7 +53,7 @@ $modesearch=GETPOST("mode_search");
 
 $page=GETPOST("page",'int');
 $sortorder = GETPOST("sortorder",'alpha');
-$sortfield = GETPOST("sortfield",'alpha');
+$sortfield = GETPOST("sortfield",'sortorder');
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;

@@ -213,6 +213,9 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
 	            $out=filter_var($out, $filter, $options);
 	            break;
+	        case 'sortorder':
+	            if (! in_array($out, array('asc', 'desc'))) $out='desc';
+	            break;
 	    }
 	}
 

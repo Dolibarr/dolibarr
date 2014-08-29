@@ -50,7 +50,7 @@ $tobuy = GETPOST("tobuy");
 $fourn_id = GETPOST("fourn_id",'int');
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if (! $sortfield) $sortfield="stock_physique";
 if (! $sortorder) $sortorder="ASC";

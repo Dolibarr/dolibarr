@@ -47,7 +47,7 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 $mesg = '';
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield)
 {

@@ -124,14 +124,14 @@ $companystatic=new Societe($db);
 $now=dol_now();
 
 $sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
+$sortorder = GETPOST("sortorder",'sortorder');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$viewstatut=$db->escape(GETPOST('viewstatut'));
+$viewstatut=$db->escape(GETPOST('viewstatut','int'));
 $object_statut = $db->escape(GETPOST('propal_statut'));
 if($object_statut != '')
 $viewstatut=$object_statut;

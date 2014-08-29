@@ -61,7 +61,7 @@ $view=GETPOST("view");
 
 $sall=GETPOST("contactname");
 $sortfield = GETPOST('sortfield', 'alpha');
-$sortorder = GETPOST('sortorder', 'alpha');
+$sortorder = GETPOST('sortorder', 'sortorder');
 $page = GETPOST('page', 'int');
 $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
