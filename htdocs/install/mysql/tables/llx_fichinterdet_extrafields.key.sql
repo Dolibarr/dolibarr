@@ -1,5 +1,5 @@
--- ========================================================================
--- Copyright (C) 2014     Laurent Destailleur  <eldy@users.sourceforge.net>
+-- ===================================================================
+-- Copyright (C) 2013 Florian Henry	<florian.henry@open-cocncept.pro>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ========================================================================
+-- ===================================================================
 
 
-ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, code);
-
+ALTER TABLE llx_fichinterdet_extrafields ADD INDEX idx_ficheinterdet_extrafields (fk_object);
