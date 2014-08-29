@@ -651,7 +651,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height (no more used)
  * 	@param	Object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version.
+ * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version. (1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
  * 	@return	int							Return height of bottom margin including footer text
  */
@@ -681,10 +681,10 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// First line of company infos
+	$line1=""; $line2=""; $line3=""; $line4="";
 
-	if ($showdetails)
+	if ($showdetails && 1)
 	{
-		$line1="";
 		// Company name
 		if ($fromcompany->name)
 		{
@@ -716,7 +716,6 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			$line1.=($line1?" - ":"").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
 		}
 
-		$line2="";
 		// URL
 		if ($fromcompany->url)
 		{
@@ -728,9 +727,16 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 			$line2.=($line2?" - ":"").$fromcompany->email;
 		}
 	}
+	if (($showdetails && 2) || ($fromcompany->country_code == 'DE'))
+	{
+		// Managers
+		if ($fromcompany->managers)
+		{
+			$line2.=($line2?" - ":"").$fromcompany->managers;
+		}
+	}
 
 	// Line 3 of company infos
-	$line3="";
 	// Juridical status
 	if ($fromcompany->forme_juridique_code)
 	{
@@ -757,7 +763,6 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	}
 
 	// Line 4 of company infos
-	$line4="";
 	// Prof Id 3
 	if ($fromcompany->idprof3)
 	{

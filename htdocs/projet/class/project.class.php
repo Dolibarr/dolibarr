@@ -53,6 +53,7 @@ class Project extends CommonObject
     var $statuts;
     var $oldcopy;
 
+
     /**
      *  Constructor
      *
@@ -252,7 +253,7 @@ class Project extends CommonObject
                     $result = 1;
                 }
                 else
-                {
+              {
                     $this->db->rollback();
                     $result = -1;
                 }

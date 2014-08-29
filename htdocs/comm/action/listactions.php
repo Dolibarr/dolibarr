@@ -197,12 +197,7 @@ if ($resql)
 
 	$newtitle=$langs->trans($title);
 
-	$tabactive='';
-	if ($action == 'show_month') $tabactive='cardmonth';
-	if ($action == 'show_week') $tabactive='cardweek';
-	if ($action == 'show_day') $tabactive='cardday';
-	if ($action == 'show_list') $tabactive='cardlist';
-	if ($action == 'show_peruser') $tabactive='cardperuser';
+	$tabactive='cardlist';
 
 	$head = calendars_prepare_head($param);
 
