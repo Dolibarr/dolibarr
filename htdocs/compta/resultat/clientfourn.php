@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -538,6 +539,69 @@ if ($mysoc->tva_assuj == 'franchise')	// Non assujeti
     print '</tr>';
 }
 
+/*
+ * Salaries
+ */
+
+print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';    
+$sql = "SELECT p.label as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount, u.firstname, u.lastname, p.fk_user";
+$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
+$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
+$sql.= " WHERE p.entity = ".$conf->entity;
+if (! empty($date_start) && ! empty($date_end))
+	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
+	
+$sql.= " GROUP BY u.rowid";
+$sql.= " ORDER BY u.firstname";
+    
+dol_syslog("get payment salaries sql=".$sql);
+$result=$db->query($sql);
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
+if ($result)
+{
+    $num = $db->num_rows($result);
+    $var=true;
+    $i = 0;
+    if ($num)
+    {
+        while ($i < $num)
+        {
+            $obj = $db->fetch_object($result);
+
+            $total_ht -= $obj->amount;
+            $total_ttc -= $obj->amount;
+            $subtotal_ht += $obj->amount;
+            $subtotal_ttc += $obj->amount;
+
+            $var = !$var;
+            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            
+            print "<td>".$langs->trans("Salaries")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
+            
+            if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
+            print '<td align="right">'.price(-$obj->amount).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    else
+    {
+        $var = !$var;
+        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '</tr>';
+    }
+}
+else
+{
+    dol_print_error($db);
+}
+print '<tr class="liste_total">';
+if ($modecompta == 'CREANCES-DETTES')
+	print '<td colspan="3" align="right">'.price(-$subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price(-$subtotal_ttc).'</td>';
+print '</tr>';
 
 /*
  * VAT
