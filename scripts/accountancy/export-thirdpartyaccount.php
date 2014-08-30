@@ -18,25 +18,14 @@
  */
 
 /**
- * \file 		htdocs/accountancy/admin/thirdpartyaccount.php
+ * \file 		htdocs/accountancy/admin/export-thirdpartyaccount.php
  * \ingroup		Accounting Expert
- * \brief		Onglet de gestion de parametrages des ventilations
+ * \brief		Page to detect empty accounting account
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
-	
-	// Class
-dol_include_once("/core/lib/report.lib.php");
-dol_include_once("/core/lib/date.lib.php");
+require_once($path."../../htdocs/master.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("companies");
 $langs->load("compta");
@@ -47,7 +36,7 @@ $langs->load("accountancy");
 if (!$user->admin)
     accessforbidden();
 	
-	// Date range
+// Date range
 $year = GETPOST("year");
 if (empty($year)) {
 	$year_current = strftime("%Y", dol_now());
@@ -124,10 +113,11 @@ print '<input type="button" class="button" style="float: right;" value="Export C
 
 print '
 	<script type="text/javascript">
-		function launch_export() {
+		function launch_export()
+		{
 		    $("div.fiche div.tabBar form input[name=\"action\"]").val("export_csv");
 			$("div.fiche div.tabBar form input[type=\"submit\"]").click();
-		    $("div.fiche div.tabBar form input[name=\"action\"]").val("");
+		    $("div.fiche div.tabBar form input[name=\"action\"]").val();
 		}
 </script>';
 
