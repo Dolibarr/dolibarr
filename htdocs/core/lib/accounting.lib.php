@@ -18,16 +18,15 @@
  */
 
 /**
- * \file accountingex/core/lib/account.lib.php
- * \ingroup Accounting Expert
- * \brief Ensemble de fonctions de base pour les comptes comptables
+ * \file			htdocs/core/lib/account.lib.php
+ * \ingroup			Accounting Expert
+ * \brief			Library of accountancy functions
  */
 
 /**
- * Prepare array with list of tabs
+ * Prepare array with list of admin tabs
  *
- * @param Object $object to tabs
- * @return array of tabs to shoc
+ * @return	array				Array of tabs to show
  */
 function admin_accounting_prepare_head($object) {
 	global $langs, $conf;
@@ -64,8 +63,7 @@ function admin_accounting_prepare_head($object) {
 /**
  * Prepare array with list of tabs
  *
- * @param Object $object to tabs
- * @return array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function accounting_prepare_head($object) {
 	global $langs, $conf;
@@ -90,14 +88,13 @@ function accounting_prepare_head($object) {
 }
 
 /**
- * Return general account with defined length
+ * Return general accounting account with defined length
  *
- * @param $account
- *       
- * @return $account
+ * @param 	string	$account		Accounting account
+ * @return	string          		String with defined length     
  */
 function length_accountg($account) {
-	global $conf, $langs;
+	global $conf;
 	
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
 	
@@ -122,11 +119,10 @@ function length_accountg($account) {
 }
 
 /**
- * Return auxiliary account with defined length
+ * Return auxiliary accounting account with defined length
  *
- * @param $account
- *       
- * @return $account
+ * @param 	string	$account		Accounting account
+ * @return	string          		String with defined length     
  */
 function length_accounta($accounta) {
 	global $conf, $langs;
@@ -153,6 +149,15 @@ function length_accounta($accounta) {
 	}
 }
 
+/**
+ * Return accounting account with defined length for Sage Export Software
+ *
+ * @param 	string		$txt		Accounting account
+ * @param	int			$len		Length
+ * @param	int			$end		Number of characters
+ * 
+ * @return	string          		Formated string     
+ */
 /**
  * Return account with defined length for Sage export software
  *
