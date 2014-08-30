@@ -48,12 +48,13 @@ class FormVentilation extends Form
 	 *	@param	string	$selectedkey	Value
 	 *	@return	string					HTML edit field
 	 */
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey) {
+	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey)
+	{
 		global $langs;
 		
 		$date_array = array ();
 		
-		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
+		$sql  = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
 		
 		$out = '<SELECT name="' . $htmlname . '">';
@@ -90,10 +91,10 @@ class FormVentilation extends Form
 	/**
 	 *	Return list of accounts with label by chart of accounts
 	 *
-	 *	@param	string	$selectedid		Preselected chart of accounts
+	 *	@param	string	$selectid		Preselected chart of accounts
 	 *	@param	string	$htmlname		Name of field in html form
 	 *	@param	int		$showempty		Add an empty field
-	 *  @param	array	$events			Event options
+	 *  @param	array	$event			Event options
      *       
 	 *	@return	string					String with HTML select
 	 */
@@ -151,10 +152,10 @@ class FormVentilation extends Form
 	/**
 	 *	Return list of accounts with label by class of accounts
 	 *
-	 *	@param	string	$selectedid		Preselected pcg_type
+	 *	@param	string	$selectid		Preselected pcg_type
 	 *	@param	string	$htmlname		Name of field in html form
 	 *	@param	int		$showempty		Add an empty field
-	 *  @param	array	$events			Event options
+	 *  @param	array	$event			Event options
      *       
 	 *	@return	string					String with HTML select
 	 */
@@ -205,10 +206,10 @@ class FormVentilation extends Form
 	/**
 	 *	Return list of accounts with label by sub_class of accounts
 	 *
-	 *	@param	string	$selectedid		Preselected pcg_type
+	 *	@param	string	$selectid		Preselected pcg_type
 	 *	@param	string	$htmlname		Name of field in html form
 	 *	@param	int		$showempty		Add an empty field
-	 *  @param	array	$events			Event options
+	 *  @param	array	$event			Event options
      *       
 	 *	@return	string					String with HTML select
 	 */
