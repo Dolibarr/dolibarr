@@ -129,7 +129,7 @@ case "$1" in
 		then
 			# Create an empty conf.php with permission to web server
 			setup_empty_conf
-		else
+		#else
 			# File already exist. We add params not found.
 			#echo Add new params to overwrite path to use shared libraries/fonts
 			#grep -q -c "dolibarr_lib_ADODB_PATH" $config    || [ ! -d "/usr/share/php/adodb" ]  || echo "<?php \$dolibarr_lib_ADODB_PATH='/usr/share/php/adodb'; ?>" >> $config

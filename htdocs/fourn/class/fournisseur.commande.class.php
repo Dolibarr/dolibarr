@@ -194,7 +194,7 @@ class CommandeFournisseur extends CommonOrder
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
-            
+
             // Retreive all extrafield
             // fetch optionals attributes and labels
             require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -658,7 +658,7 @@ class CommandeFournisseur extends CommonOrder
                 {
 					// Call trigger
 					$result=$this->call_trigger('ORDER_SUPPLIER_APPROVE',$user);
-					if ($result < 0) $error++;            
+					if ($result < 0) $error++;
 					// End call triggers
                 }
 
@@ -722,7 +722,7 @@ class CommandeFournisseur extends CommonOrder
                         $error++;
                         $this->db->rollback();
                     }
-                    else 
+                    else
                     	$this->db->commit();
 					// End call triggers
                 }
@@ -774,7 +774,7 @@ class CommandeFournisseur extends CommonOrder
 
 				// Call trigger
 				$result=$this->call_trigger('ORDER_SUPPLIER_CANCEL',$user);
-				if ($result < 0) $error++;            
+				if ($result < 0) $error++;
 				// End call triggers
 
                 if ($error == 0)
@@ -967,7 +967,7 @@ class CommandeFournisseur extends CommonOrder
 	                {
 						// Call trigger
 						$result=$this->call_trigger('ORDER_SUPPLIER_CREATE',$user);
-						if ($result < 0)            
+						if ($result < 0)
 	                    {
 	                        $this->db->rollback();
 	                        return -1;
@@ -1037,7 +1037,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Call trigger
 			$result=$this->call_trigger('ORDER_SUPPLIER_CLONE',$user);
-			if ($result < 0) $error++;            
+			if ($result < 0) $error++;
 			// End call triggers
         }
 
@@ -1216,7 +1216,7 @@ class CommandeFournisseur extends CommonOrder
                     global $conf, $langs, $user;
 					// Call trigger
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
-					if ($result < 0)        
+					if ($result < 0)
                     {
                         $this->db->rollback();
                         return -1;
@@ -1285,7 +1285,7 @@ class CommandeFournisseur extends CommonOrder
                     global $conf, $langs, $user;
 					// Call trigger
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_DISPATCH',$user);
-					if ($result < 0)        
+					if ($result < 0)
                     {
                         $this->db->rollback();
                         return -1;
@@ -1347,6 +1347,7 @@ class CommandeFournisseur extends CommonOrder
      */
     function deleteline($idline, $notrigger=0)
     {
+        global $user,$langs,$conf;
         if ($this->statut == 0)
         {
         	$this->db->begin();
@@ -1355,7 +1356,7 @@ class CommandeFournisseur extends CommonOrder
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
-				if ($result < 0) $error++;            
+				if ($result < 0) $error++;
 				// End call triggers
 			}
 
@@ -1403,7 +1404,7 @@ class CommandeFournisseur extends CommonOrder
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error = 0;
-        
+
         // Call trigger
         $result=$this->call_trigger('ORDER_SUPPLIER_DELETE',$user);
         if ($result < 0)
@@ -1412,7 +1413,7 @@ class CommandeFournisseur extends CommonOrder
         	return -1;
         }
         // End call triggers
-        
+
 
         $this->db->begin();
 
@@ -1807,7 +1808,7 @@ class CommandeFournisseur extends CommonOrder
                     global $conf, $langs, $user;
 					// Call trigger
 					$result=$this->call_trigger('LINEORDER_SUPPLIER_UPDATE',$user);
-					if ($result < 0)        
+					if ($result < 0)
                     {
                         $this->db->rollback();
                         return -1;
@@ -1951,8 +1952,8 @@ class CommandeFournisseur extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $this->nbtodo++;
-				
-				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date; 
+
+				$date_to_test = empty($obj->delivery_date) ? $obj->datec : $obj->delivery_date;
                 if ($obj->fk_statut != 3 && $this->db->jdate($date_to_test) < ($now - $conf->commande->fournisseur->warning_delay)) $this->nbtodolate++;
             }
             return 1;
