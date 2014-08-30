@@ -93,7 +93,7 @@ function accounting_prepare_head($object)
 /**
  * Return general accounting account with defined length
  *
- * @param 	string	$account		Accounting account
+ * @param 	string	$account		General accounting account
  * @return	string          		String with defined length     
  */
 function length_accountg($account)
@@ -125,7 +125,7 @@ function length_accountg($account)
 /**
  * Return auxiliary accounting account with defined length
  *
- * @param 	string	$account		Accounting account
+ * @param 	string	$accounta		Auxiliary accounting account
  * @return	string          		String with defined length     
  */
 function length_accounta($accounta)
