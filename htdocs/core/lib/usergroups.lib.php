@@ -27,7 +27,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function user_prepare_head($object)
 {
@@ -178,7 +178,7 @@ function group_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function user_admin_prepare_head()
 {

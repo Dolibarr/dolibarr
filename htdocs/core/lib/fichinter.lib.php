@@ -28,7 +28,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function fichinter_prepare_head($object)
 {

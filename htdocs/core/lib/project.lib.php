@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function project_prepare_head($object)
 {
@@ -113,7 +113,7 @@ function project_prepare_head($object)
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function task_prepare_head($object)
 {
@@ -170,7 +170,7 @@ function task_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function project_admin_prepare_head()
 {
