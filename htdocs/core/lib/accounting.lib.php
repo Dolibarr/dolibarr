@@ -18,17 +18,18 @@
  */
 
 /**
- * \file			htdocs/core/lib/account.lib.php
- * \ingroup			Accounting Expert
- * \brief			Library of accountancy functions
+ * 		\file			htdocs/core/lib/account.lib.php
+ * 		\ingroup		Accounting Expert
+ * 		\brief			Library of accountancy functions
  */
 
 /**
- * Prepare array with list of admin tabs
+ *	Prepare array with list of admin tabs
  *
- * @return	array				Array of tabs to show
+ *	@return	array				Array of tabs to show
  */
-function admin_accounting_prepare_head($object) {
+function admin_accounting_prepare_head()
+{
 	global $langs, $conf;
 	
 	$h = 0;
@@ -61,17 +62,19 @@ function admin_accounting_prepare_head($object) {
 }
 
 /**
- * Prepare array with list of tabs
+ *	Prepare array with list of tabs
  *
- * @return  array				Array of tabs to show
+ *	@param	Object	$object		Accounting account
+ *	@return	array				Array of tabs to show
  */
-function accounting_prepare_head($object) {
+function accounting_prepare_head($object)
+{
 	global $langs, $conf;
 	
 	$h = 0;
 	$head = array ();
 	
-	$head[$h][0] = dol_buildpath('/accountancy/admin/fiche.php', 1) . '?id=' . $object->id;
+	$head[$h][0] = dol_buildpath('/accountancy/admin/card.php', 1) . '?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h ++;
@@ -93,7 +96,8 @@ function accounting_prepare_head($object) {
  * @param 	string	$account		Accounting account
  * @return	string          		String with defined length     
  */
-function length_accountg($account) {
+function length_accountg($account)
+{
 	global $conf;
 	
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
@@ -124,7 +128,8 @@ function length_accountg($account) {
  * @param 	string	$account		Accounting account
  * @return	string          		String with defined length     
  */
-function length_accounta($accounta) {
+function length_accounta($accounta)
+{
 	global $conf, $langs;
 	
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
@@ -158,14 +163,8 @@ function length_accounta($accounta) {
  * 
  * @return	string          		Formated string     
  */
-/**
- * Return account with defined length for Sage export software
- *
- * @param $account
- *       
- * @return $account
- */
-function length_exportsage($txt, $len, $end) {
+function length_exportsage($txt, $len, $end)
+{
 	// $txt = utf8_decode($txt);
 	// problem with this function, but we need to have the number of letter
 	if (strlen($txt) == $len) {
