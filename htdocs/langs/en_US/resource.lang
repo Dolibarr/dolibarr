@@ -23,9 +23,11 @@ ShowResourcePlanning=Show resource planning
 NoResourceInDatabase=No resource in database
 GotoDate=Go to date
 
+ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource successfully created
 RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
+ResourceLinkedWithSuccess=Resource linked with success
 
 TitleResourceCard=Resource card
 ConfirmDeleteResource=Confirm to delete this resource
