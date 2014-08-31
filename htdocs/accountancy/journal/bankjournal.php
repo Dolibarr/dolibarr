@@ -115,7 +115,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url bu1 ON bu1.fk_bank = b.rowid 
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe soc on bu1.url_id=soc.rowid";
 // To isolate the cash of the other accounts
 $sql .= " WHERE ba.courant <> 2";
-$sql .= " AND rowid=".$id_accountancy_journal;
+$sql .= " AND ba.rowid=".$id_accountancy_journal;
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND ba.entity = " . $conf->entity;
 }

@@ -1266,7 +1266,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$numr = $db->num_rows($resql);
 				$i = 0;
 
-				if ($numr > 0) 	$newmenu->add('/accountancy/journal/bankjournal.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+				if ($numr > 0) 	$newmenu->add('/accountancy/journal/index.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
 				
 				// Add other journal
 				$newmenu->add("/accountancy/journal/sellsjournal.php",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
@@ -1275,7 +1275,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				while ($i < $numr)
 				{
 					$objp = $db->fetch_object($resql);
-					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$objp->label,1,$user->rights->accounting->comptarapport->lire);
+					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$langs->trans("Journal").' - '.$objp->label,1,$user->rights->accounting->comptarapport->lire);
 					$i++;
 				}
 			}
