@@ -65,9 +65,10 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
     	$sql = "SELECT z.rowid, z.zip, z.town, z.fk_county, z.fk_pays as fk_country";
     	$sql.= ", c.rowid as fk_country, c.code as country_code, c.label as country";
     	$sql.= ", d.rowid as fk_county, d.code_departement as county_code, d.nom as county";
-    	$sql.= " FROM (".MAIN_DB_PREFIX."c_ziptown as z,".MAIN_DB_PREFIX."c_country as c)";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown as z";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON z.fk_county = d.rowid";
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r ON d.fk_region = r.code_region,";
+    	$sql.= " ".MAIN_DB_PREFIX."c_country as c";
     	$sql.= " WHERE z.fk_pays = c.rowid";
     	$sql.= " AND z.active = 1 AND c.active = 1";
     	if ($zipcode) $sql.=" AND z.zip LIKE '" . $db->escape($zipcode) . "%'";
@@ -81,8 +82,8 @@ if (! empty($_GET['zipcode']) || ! empty($_GET['town']))
         $sql.= ", c.code as country_code, c.label as country";
         $sql.= ", d.code_departement as county_code , d.nom as county";
         $sql.= " FROM ".MAIN_DB_PREFIX.'societe as s';
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON fk_departement = d.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_country as c ON fk_pays = c.rowid';
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX ."c_departements as d ON s.fk_departement = d.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
         $sql.= " WHERE";
         if ($zipcode) $sql.= " s.zip LIKE '".$db->escape($zipcode)."%'";
         if ($town)    $sql.= " s.town LIKE '%" . $db->escape($town) . "%'";

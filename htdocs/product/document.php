@@ -141,7 +141,7 @@ if ($object->id)
     print '</div>';
 
     $modulepart = 'produit';
-    $permission = $user->rights->produit->creer;
+    $permission = (($object->type == 0 && $user->rights->produit->creer) || ($object->type == 1 && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

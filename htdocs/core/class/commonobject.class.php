@@ -48,7 +48,7 @@ abstract class CommonObject
     public $array_options=array();
 
     public $thirdparty;
-     
+
     public $linkedObjectsIds;	// Loaded by ->fetchObjectLinked
     public $linkedObjects;		// Loaded by ->fetchObjectLinked
 
@@ -2784,7 +2784,7 @@ abstract class CommonObject
 		// Price HT
 		print '<td align="right" width="80"><label for="price_ht">'.$langs->trans('PriceUHT').'</label></td>';
 
-		if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<td align="right" width="80">&nbsp;</td>';
+		if ($inputalsopricewithtax) print '<td align="right" width="80">&nbsp;</td>';
 
 		// Qty
 		print '<td align="right" width="50"><label for="qty">'.$langs->trans('Qty').'</label></td>';
