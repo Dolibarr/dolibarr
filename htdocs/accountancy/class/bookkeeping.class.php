@@ -579,23 +579,21 @@ class BookKeeping
 	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0) {
+	function delete($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 		
 		$this->db->begin();
 		
-		if (! $error) {
-			if (! $notrigger) {
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-				
-				// // Call triggers
-				// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				// $interface=new Interfaces($this->db);
-				// $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				// if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				// // End call triggers
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('ACCOUNTING_NUMPIECE_DELETE',$user);
+				if ($result < 0) $error++;             
+                // End call triggers
 			}
 		}
 		
@@ -619,7 +617,9 @@ class BookKeeping
 			}
 			$this->db->rollback();
 			return - 1 * $error;
-		} else {
+		}
+		else
+		{
 			$this->db->commit();
 			return 1;
 		}
@@ -628,12 +628,13 @@ class BookKeeping
 	/**
 	 * \brief Delete bookkepping by importkey
 	 */
-	function export_bookkeping($model = 'ebp') {
-		$sql = "SELECT rowid, doc_date, doc_type, ";
-		$sql .= "doc_ref, fk_doc, fk_docdet, code_tiers, ";
-		$sql .= "numero_compte, label_compte, debit, credit, ";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
+	function export_bookkeping($model = 'ebp')
+	{
+		$sql = "SELECT rowid, doc_date, doc_type,";
+		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
+		$sql .= " numero_compte, label_compte, debit, credit,";
+		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 		
 		$resql = $this->db->query($sql);
 		
@@ -668,7 +669,9 @@ class BookKeeping
 			$this->db->free($resql);
 			
 			return $num;
-		} else {
+		}
+		else
+		{
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::export_bookkeping " . $this->error, LOG_ERR);
 			return - 1;
