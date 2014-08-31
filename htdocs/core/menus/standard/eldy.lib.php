@@ -908,8 +908,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				// Journaux
 				//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 				//journaux
-				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/sellsjournal.php?leftmenu=ca",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/purchasesjournal.php?leftmenu=ca",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/sellsjournal.php?leftmenu=ca",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire);
+				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/purchasesjournal.php?leftmenu=ca",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire);
 			}
 		}
 
@@ -1252,7 +1252,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			else dol_print_error($db);
 			$db->free($resql);
 		}
-		if (!empty($user->rights->banque->lire) && !empty($user->rights->accounting->mouvements-lire) &&  $mainmenu == 'accounting')	// Entry for each bank journal
+		if (!empty($user->rights->banque->lire) && !empty($user->rights->accounting->mouvements->lire) &&  $mainmenu == 'accountancy')	// Entry for each bank journal
 		{
 			$sql = "SELECT rowid, label, accountancy_journal";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -1266,12 +1266,16 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$numr = $db->num_rows($resql);
 				$i = 0;
 
-				if ($numr > 0) 	$newmenu->add('/accountancy/journal/bankjournal.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+				if ($numr > 0) 	$newmenu->add('/accountancy/journal/bankjournal.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+				
+				// Add other journal
+				$newmenu->add("/accountancy/journal/sellsjournal.php",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
+				$newmenu->add("/accountancy/journal/purchasesjournal.php",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
 
 				while ($i < $numr)
 				{
 					$objp = $db->fetch_object($resql);
-					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
+					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$objp->label,1,$user->rights->accounting->comptarapport->lire);
 					$i++;
 				}
 			}
