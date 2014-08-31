@@ -2,11 +2,11 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
- * Copyright (C) 2013-2014 Florian Henry	      <florian.henry@open-concept.pro> 
+ * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -21,14 +21,14 @@
 /**
  * \file		htdocs/accountancy/class/bookkeeping.class.php
  * \ingroup		Accounting Expert
- * \brief		Fichier de la classe des comptes comptable
+ * \brief		File of class to manage book keeping
  */
 
 /**
- * \class BookKeeping
- * \brief Classe permettant la gestion des comptes generaux de compta
+ *	Class to manage accountancy book keeping
  */
-class BookKeeping {
+class BookKeeping
+{
 	var $db;
 	var $id;
 	var $doc_date;
@@ -50,48 +50,27 @@ class BookKeeping {
 	var $linesexport = array ();
 	var $linesmvt = array ();
 	
-	/**
-	 * \brief Constructeur de la classe
-	 * \param DB handler acces base de donnees
-	 * \param id id compte (0 par defaut)
-	 */
-	function BookKeeping($db) {
-		$this->db = $db;
-	}
+    /**
+     *  Constructor
+     *
+     *  @param	DoliDB		$db		Database handler
+     */
+    function __construct($db)
+    {
+        $this->db = $db;
+    }
 	
 	/**
-	 * \brief Load record in memory
-	 */
-	function fetch_per_mvt($piecenum) {
-		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE ";
-		$sql .= " piece_num = '" . $piecenum . "'";
-		
-		dol_syslog(get_class($this) . "fetch_per_mvt sql=" . $sql, LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			$obj = $this->db->fetch_object($result);
-			
-			$this->piece_num = $obj->piece_num;
-			$this->code_journal = $obj->code_journal;
-			$this->doc_date = $this->db->jdate($obj->doc_date);
-			$this->doc_ref = $obj->doc_ref;
-			$this->doc_type = $obj->doc_type;
-		} else {
-			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
-			return - 1;
-		}
-		
-		return 1;
-	}
-	
-	/**
-	 * \brief Load record in memory
-	 */
-	function fetch($id) {
-		$sql = "SELECT rowid, doc_date, doc_type, ";
-		$sql .= "doc_ref, fk_doc, fk_docdet, code_tiers, ";
-		$sql .= "numero_compte, label_compte, debit, credit, ";
+     *      Load a line into memory from database
+     *
+     *      @param	int		$id		 	id of line to get
+     *      @return	int					<0 if KO, >0 if OK
+     */
+	function fetch($id)
+	{
+		$sql = "SELECT rowid, doc_date, doc_type,";
+		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers, ";
+		$sql .= " numero_compte, label_compte, debit, credit, ";
 		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE rowid = '" . $id . "'";
@@ -117,7 +96,9 @@ class BookKeeping {
 			$this->sens = $obj->sens;
 			$this->code_journal = $obj->code_journal;
 			$this->piece_num = $obj->piece_num;
-		} else {
+		}
+		else
+		{
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
 			return - 1;
@@ -127,32 +108,73 @@ class BookKeeping {
 	}
 	
 	/**
-	 * \brief Return next num mvt
-	 */
-	function next_num_mvt() {
-		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+     *      Load an accounting document into memory from database
+     *
+     *      @param	int		$piecenum 	Accounting document to get
+     *      @return	int					<0 if KO, >0 if OK
+     */
+	function fetch_per_mvt($piecenum)
+	{
+		$sql = "SELECT piece_num,doc_date,code_journal,doc_ref,doc_type";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		$sql .= " WHERE piece_num = '" . $piecenum . "'";
 		
-		dol_syslog(get_class($this) . "next_num_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "fetch_per_mvt sql=" . $sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
 			
-			return $obj->max;
+			$this->piece_num = $obj->piece_num;
+			$this->code_journal = $obj->code_journal;
+			$this->doc_date = $this->db->jdate($obj->doc_date);
+			$this->doc_ref = $obj->doc_ref;
+			$this->doc_type = $obj->doc_type;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . "::fetch_per_mvt " . $this->error, LOG_ERR);
 			return - 1;
 		}
+		
+		return 1;
 	}
 	
 	/**
-	 * \brief Load record in memory
-	 */
-	function fetch_all_per_mvt($piecenum) {
-		$sql = "SELECT rowid, doc_date, doc_type, ";
-		$sql .= "doc_ref, fk_doc, fk_docdet, code_tiers, ";
-		$sql .= "numero_compte, label_compte, debit, credit, ";
-		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num  ";
+     *      Return next number movement
+     *
+     *      @return    string			Last number
+     */
+	function getNextNumMvt() {
+		$sql = "SELECT MAX(piece_num)+1 as max FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+		
+		dol_syslog(get_class($this) . "getNextNumMvt sql=" . $sql, LOG_DEBUG);
+		$result = $this->db->query($sql);
+		
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			
+			return $obj->max;
+		}
+		else
+		{
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(get_class($this) . "::getNextNumMvt " . $this->error, LOG_ERR);
+			return - 1;
+		}
+	}
+	
+	/**
+     *      Load all informations of accountancy document
+     *
+     *      @param	int		$piecenum	id of line to get
+     *      @return	int					<0 if KO, >0 if OK
+     */
+	function fetch_all_per_mvt($piecenum)
+	{
+		$sql = "SELECT rowid, doc_date, doc_type,";
+		$sql .= " doc_ref, fk_doc, fk_docdet, code_tiers,";
+		$sql .= " numero_compte, label_compte, debit, credit,";
+		$sql .= " montant, sens, fk_user_author, import_key, code_journal, piece_num";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 		$sql .= " WHERE piece_num = '" . $piecenum . "'";
 		
@@ -224,12 +246,14 @@ class BookKeeping {
 				
 				dol_syslog(get_class($this) . ":: create sqlnum=" . $sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
-				if ($resqlnum) {
+				if ($resqlnum)
+				{
 					$objnum = $this->db->fetch_object($resqlnum);
 					$this->piece_num = $objnum->piece_num;
 				}
 				dol_syslog(get_class($this) . ":: create this->piece_num=" . $this->piece_num, LOG_DEBUG);
-				if (empty($this->piece_num)) {
+				if (empty($this->piece_num))
+				{
 					$sqlnum = "SELECT MAX(piece_num)+1 as maxpiecenum";
 					$sqlnum .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping ";
 					
@@ -317,18 +341,18 @@ class BookKeeping {
 	}
 	
 	/**
-	 * Create object into database
+	 *	Create object into database
 	 *
-	 * @param User $user that creates
-	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, Id of created object if OK
+	 *	@param	User	$user      		Object user that create
+	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function create_std($user, $notrigger = 0) {
+	function create_std($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 		
 		// Clean parameters
-		
 		if (isset($this->doc_type))
 			$this->doc_type = trim($this->doc_type);
 		if (isset($this->doc_ref))
@@ -360,12 +384,11 @@ class BookKeeping {
 		if (isset($this->piece_num))
 			$this->piece_num = trim($this->piece_num);
 			
-			// Check parameters
-			// Put here code to add control on parameters values
+		// Check parameters
+		// Put here code to add control on parameters values
 			
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping(";
-		
 		$sql .= "doc_date,";
 		$sql .= "doc_type,";
 		$sql .= "doc_ref,";
@@ -444,18 +467,18 @@ class BookKeeping {
 	}
 	
 	/**
-	 * Update object into database
+	 *	Update object into database
 	 *
-	 * @param User $user that modifies
-	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 *	@param	User	$user      		Object user that create
+	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
-	function update($user = 0, $notrigger = 0) {
+	function update($user = 0, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 		
 		// Clean parameters
-		
 		if (isset($this->doc_type))
 			$this->doc_type = trim($this->doc_type);
 		if (isset($this->doc_ref))
@@ -487,8 +510,8 @@ class BookKeeping {
 		if (isset($this->piece_num))
 			$this->piece_num = trim($this->piece_num);
 			
-			// Check parameters
-			// Put here code to add a control on parameters values
+		// Check parameters
+		// Put here code to add a control on parameters values
 			
 		// Update request
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
@@ -550,11 +573,11 @@ class BookKeeping {
 	}
 	
 	/**
-	 * Delete object in database
+	 *	Delete object in database
 	 *
-	 * @param User $user that deletes
-	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 *	@param	User	$user      		Object user that create
+	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
+	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function delete($user, $notrigger = 0) {
 		global $conf, $langs;
@@ -652,7 +675,9 @@ class BookKeeping {
 		}
 	}
 }
-class BookKeepingLine {
+
+class BookKeepingLine
+{
 	var $id;
 	var $doc_date;
 	var $doc_type;
