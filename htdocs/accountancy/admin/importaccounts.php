@@ -130,7 +130,7 @@ if ($result) {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>' . $langs->trans("accountingaccount") . '</td>';
 	print '<td>' . $langs->trans("label") . '</td>';
-	print '<td>' . $langs->trans("parentaccount") . '</td>';
+	print '<td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>' . $langs->trans("Pcgtype") . '</td>';
 	print '<td>' . $langs->trans("Pcgsubtype") . '</td>';
 	print '<td align="center">' . $langs->trans("Import") . '</td>';
@@ -153,7 +153,7 @@ if ($result) {
 		print '</td>';
 		
 		print '<td align="left">';
-		print '<input name="intitule" size="70" value="">';
+		print '<input name="intitule" size="30" value="">';
 		print '</td>';
 		
 		// Colonne choix du compte
