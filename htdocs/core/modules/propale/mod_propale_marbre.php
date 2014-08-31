@@ -26,8 +26,8 @@
 require_once DOL_DOCUMENT_ROOT .'/core/modules/propale/modules_propale.php';
 
 
-/**	    \class      mod_propale_marbre
- *		\brief      Class to manage customer order numbering rules Marbre
+/**
+ *	Class to manage customer order numbering rules Marbre
  */
 class mod_propale_marbre extends ModeleNumRefPropales
 {
