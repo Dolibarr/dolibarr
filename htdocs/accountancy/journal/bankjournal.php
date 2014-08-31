@@ -39,21 +39,21 @@ if (! $res && file_exists("../../../main.inc.php"))
 if (! $res)
 	die("Include of main fails");
 	
-	// Class
-dol_include_once("/core/lib/report.lib.php");
-dol_include_once("/core/lib/date.lib.php");
-dol_include_once("/core/lib/bank.lib.php");
+// Class
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/societe/class/societe.class.php");
-dol_include_once("/adherents/class/adherent.class.php");
-dol_include_once("/compta/sociales/class/chargesociales.class.php");
-dol_include_once("/compta/paiement/class/paiement.class.php");
-dol_include_once("/compta/tva/class/tva.class.php");
-dol_include_once("/fourn/class/paiementfourn.class.php");
-dol_include_once("/fourn/class/fournisseur.facture.class.php");
-dol_include_once("/fourn/class/fournisseur.class.php");
-dol_include_once("/accountancy/class/bookkeeping.class.php");
-dol_include_once("/societe/class/client.class.php");
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 // Langs
 $langs->load("companies");
@@ -62,6 +62,8 @@ $langs->load("compta");
 $langs->load("bank");
 $langs->load('bills');
 $langs->load("accountancy");
+
+$id_accountancy_journal = GETPOST('id_account');
 
 $date_startmonth = GETPOST('date_startmonth');
 $date_startday = GETPOST('date_startday');
@@ -80,6 +82,10 @@ if (! $user->rights->accounting->access)
 /*
  * View
  */
+if (empty($id_accountancy_journal))
+{
+	accessforbidden();
+}
 
 $year_current = strftime("%Y", dol_now());
 $pastmonth = strftime("%m", dol_now()) - 1;
@@ -109,6 +115,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "bank_url bu1 ON bu1.fk_bank = b.rowid 
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe soc on bu1.url_id=soc.rowid";
 // To isolate the cash of the other accounts
 $sql .= " WHERE ba.courant <> 2";
+$sql .= " AND rowid=".$id_accountancy_journal;
 if (! empty($conf->multicompany->enabled)) {
 	$sql .= " AND ba.entity = " . $conf->entity;
 }

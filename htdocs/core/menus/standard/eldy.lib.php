@@ -1224,7 +1224,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		// We update newmenu for special dynamic menus
 		if (!empty($user->rights->banque->lire) && $mainmenu == 'bank')	// Entry for each bank account
 		{
-			$sql = "SELECT rowid, label, courant, rappro, courant";
+			$sql = "SELECT rowid, label, courant, rappro";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql.= " WHERE entity = ".$conf->entity;
 			$sql.= " AND clos = 0";
@@ -1246,6 +1246,32 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					{
 						$newmenu->add('/compta/bank/rappro.php?account='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
 					}
+					$i++;
+				}
+			}
+			else dol_print_error($db);
+			$db->free($resql);
+		}
+		if (!empty($user->rights->banque->lire) && !empty($user->rights->accounting->mouvements-lire) &&  $mainmenu == 'accounting')	// Entry for each bank journal
+		{
+			$sql = "SELECT rowid, label, accountancy_journal";
+			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+			$sql.= " WHERE entity = ".$conf->entity;
+			$sql.= " AND clos = 0";
+			$sql.= " ORDER BY label";
+
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$numr = $db->num_rows($resql);
+				$i = 0;
+
+				if ($numr > 0) 	$newmenu->add('/accountancy/journal/bankjournal.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+
+				while ($i < $numr)
+				{
+					$objp = $db->fetch_object($resql);
+					$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
 					$i++;
 				}
 			}
