@@ -82,6 +82,7 @@ print "Press a key to confirm...\n";
 $input = trim(fgets(STDIN));
 print "Warning, this operation may result in data loss if it failed.\n";
 print "Be sure to have a backup of your LDAP database (With OpenLDAP: slapcat > save.ldif).\n";
+
 print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 

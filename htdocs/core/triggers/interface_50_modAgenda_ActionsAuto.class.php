@@ -131,7 +131,7 @@ class InterfaceActionsAuto
 			$object->actiontypecode='AC_OTH_AUTO';
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
             $object->actionmsg=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
-            if ($object->prefix) $object->actionmsg.=" (".$object->prefix.")";
+            if (! empty($object->prefix)) $object->actionmsg.=" (".$object->prefix.")";
             //$this->desc.="\n".$langs->transnoentities("Customer").': '.yn($object->client);
             //$this->desc.="\n".$langs->transnoentities("Supplier").': '.yn($object->fournisseur);
             $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
@@ -380,7 +380,7 @@ class InterfaceActionsAuto
         	$langs->load("other");
         	$langs->load("sendings");
         	$langs->load("agenda");
-        
+
         	$object->actiontypecode='AC_OTH_AUTO';
         	if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ShippingValidated",$object->ref);
         	if (empty($object->actionmsg))
@@ -388,7 +388,7 @@ class InterfaceActionsAuto
         		$object->actionmsg=$langs->transnoentities("ShippingValidated",$object->ref);
         		$object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
         	}
-        
+
         	// Parameters $object->sendtoid defined by caller
         	//$object->sendtoid=0;
         	$ok=1;
@@ -641,8 +641,8 @@ class InterfaceActionsAuto
 			$actioncomm->contact     = $contactforaction;
 			$actioncomm->societe     = $societeforaction;
 			$actioncomm->author      = $user;   // User saving action
-			//$actioncomm->usertodo  = $user;	// User affected to action
-			$actioncomm->userdone    = $user;	// User doing action
+			$actioncomm->usertodo    = $user;	// User action is assigned to (owner of action)
+			$actioncomm->userdone    = $user;	// User doing action (deprecated, not used anymore)
 
 			$actioncomm->fk_element  = $object->id;
 			$actioncomm->elementtype = $object->element;

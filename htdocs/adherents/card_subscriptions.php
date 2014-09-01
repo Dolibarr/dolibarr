@@ -813,7 +813,8 @@ if ($rowid)
 			$name = $object->getFullName($langs);
 			if (! empty($name))
 			{
-				if ($object->societe) $name.=' ('.$object->societe.')';
+				if ($object->morphy == 'mor' && ! empty($object->societe)) $name=$object->societe.' ('.$name.')';
+				else if ($object->societe) $name.=' ('.$object->societe.')';
 			}
 			else
 			{

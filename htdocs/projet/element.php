@@ -209,20 +209,18 @@ foreach ($listofreferent as $key => $value)
 	$classname=$value['class'];
 	$tablename=$value['table'];
 	$qualified=$value['test'];
-	
+
 	if ($qualified)
 	{
 		print '<br>';
 
 		print_titre($langs->trans($title));
-		
-		$selectList=$formproject->select_element($tablename);
-		if ($selectList<0) {
+
+		$selectList=$formproject->select_element($tablename,$project->societe->id);
+
+		if (!$selectList || ($selectList<0)) {
 			setEventMessage($formproject->error,'errors');
-		}
-		
-		if ($selectList)
-		{
+		} else {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 			print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 			print '<input type="hidden" name="action" value="addelement">';

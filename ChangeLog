@@ -2,7 +2,30 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.5.5 compared to 3.5.4 *****
+Fix: Holiday module was broken. Initializaion of amount of holidays failed.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: Fusion PDF button on unpaid invoice is no more displayed.
+Fix: Unpaid invoice launch fusion PDF action even if it is only search (with enter keyboard input instead of lens click).
+Fix: Pb when showing log list of holiday module with some mysql versions.
+Fix: Error with bad timezone pushed by some browsers.
+Fix: shipping list SQL request was not filtering on shipping element
+Fix: debian package provided by dolibarr team must use embedded libraries.
+Fix: [ bug #1528 ] Leopard Services numeration module description is not translated.
+Fix: [ bug #1523 ] suite bug #1334 : filtre et ordre de tri conjoints ne s'appliquent pas.
+Fix: [ bug #1534 ] Unknown error when deleting a product photo under special circumstances.
+Fix: Update impayees.php
+Fix: Link product, In list view and label product.
+Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
+Fix: When disabled, all fields to add time into task line must be disabled.
+Fix: Missing include files.lib.php in some pages to use dol_delete_recursive.
+Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
+Fix: [ bug #1553 ] Saving User displays setup removes menu.
+Fix: [ bug #1544 ] Can remove date from invoice
+
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
+Fix: Hide title of event when agenda module disabled.
+Fix: When using option MAIN_MAIL_ALLOW_SENDMAIL_F, a mail was sent to sender.
 Fix: Question about warehouse must not be done when module stock is disabled.
 Fix: Option STOCK_SUPPORTS_SERVICES was not correctly implemented
      (missing test at some places).
@@ -42,6 +65,9 @@ Fix: [ bug #1461 ] LINEORDER_SUPPLIER_CREATE does not intercept supplier order l
 Fix: [ bug #1484 ] BILL_SUPPLIER_PAYED trigger action does not intercept failure under some circumstances
 Fix: [ bug #1482 ] Several supplier invoice triggers do not show trigger error messages
 Fix: [ bug #1486 ] LINEBILL_SUPPLIER_CREATE and LINEBILL_SUPPLIER_UPDATE triggers do not intercept trigger action
+Fix: [ bug #1522 ] Element list into associate object into project are no more filterd by project thirdparty
+Fix: [ bug #1526 ] Thumbs of files uploaded with dots in their names do not load correctly
+Fix: Import ProfId1 to siren and ProfId2 to siret
 
 ***** ChangeLog for 3.5.3 compared to 3.5.2 *****
 Fix: Error on field accountancy code for export profile of invoices.
@@ -313,6 +339,7 @@ Fix: Add a limit into list to avoid browser to hang when database is too large.
 Fix: [ bug #1212 ] 'jqueryFileTree.php' directory traversal vulnerability
 Fix: Agenda and Banks module were not working with multicompany module
 Fix: [ bug #1317 ] Removing a category does not remove all child categories
+Fix: [ bug #1380 ] Customer invoices are not grouped in company results report.
 
 ***** ChangeLog for 3.4.2 compared to 3.4.1 *****
 Fix: field's problem into company's page (RIB).

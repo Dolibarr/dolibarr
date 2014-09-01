@@ -1,9 +1,10 @@
 <?php
-/* Copyright (c) 2008-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (c) 2010      Juanjo Menent		<jmenent@2byte.es>
- * Copyright (c) 2013      Charles-Fr BENKE		<charles.fr@benke.fr>
- * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
+ * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -267,7 +268,7 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-        $printer = ($user->rights->printipp->read && $conf->printipp->enabled)?true:false;
+        $printer = (!empty($user->rights->printipp->read) && !empty($conf->printipp->enabled))?true:false;
         $hookmanager->initHooks(array('formfile'));
         $forname='builddoc';
         $out='';
@@ -498,7 +499,7 @@ class FormFile
             // Button
             $addcolumforpicto=($delallowed || $printer || $morepicto);
             $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre">';
-            $genbutton = '<input class="button" id="'.$forname.'_generatebutton"';
+            $genbutton = '<input class="button" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled="disabled"';
             $genbutton.= '>';
@@ -508,15 +509,15 @@ class FormFile
                	$genbutton.= ' '.img_warning($langs->transnoentitiesnoconv("WarningNoDocumentModelActivated"));
             }
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist) && empty($conf->dol_no_mouse_hover) && $modulepart != 'unpaid') $genbutton='';
-            if (empty($modellist) && ! $showempty) $genbutton='';
+            if (empty($modellist) && ! $showempty && $modulepart != 'unpaid') $genbutton='';
             $out.= $genbutton;
             $out.= '</th>';
 
-            if($hookmanager->hooks['formfile'])
+            if (!empty($hookmanager->hooks['formfile']))
             {
                 foreach($hookmanager->hooks['formfile'] as $module)
                 {
-                    if(method_exists($module, 'formBuilddocLineOptions')) $out .= '<th></th>';
+                    if (method_exists($module, 'formBuilddocLineOptions')) $out .= '<th></th>';
                 }
             }
             $out.= '</tr>';
@@ -800,9 +801,10 @@ class FormFile
 					// Preview
 					if (empty($useinecm))
 					{
+						$fileinfo = pathinfo($file['name']);
+
 						print '<td align="center">';
-						$tmp=explode('.',$file['name']);
-						$minifile=$tmp[0].'_mini.'.strtolower($tmp[1]);	// Thumbs are created with filename in lower case
+						$minifile=$fileinfo['filename'].'_mini.'.$fileinfo['extension'];	// Thumbs are created with filename in lower case
 						if (image_format_supported($file['name']) > 0) print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
 						else print '&nbsp;';
 						print '</td>';

@@ -37,6 +37,7 @@ $langs->load("bills");
 $id = (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action = GETPOST('action','alpha');
 $option = GETPOST('option');
+$builddoc_generatebutton=GETPOST('builddoc_generatebutton');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -50,7 +51,7 @@ if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'
  * Action
  */
 
-if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search'))
+if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search') && !empty($builddoc_generatebutton))
 {
 	if (is_array($_POST['toGenerate']))
 	{
@@ -174,6 +175,7 @@ $(document).ready(function() {
 $now=dol_now();
 
 $search_ref = GETPOST("search_ref");
+$search_refcustomer=GETPOST('search_refcustomer');
 $search_societe = GETPOST("search_societe");
 $search_montant_ht = GETPOST("search_montant_ht");
 $search_montant_ttc = GETPOST("search_montant_ttc");
@@ -192,7 +194,7 @@ if (! $sortorder) $sortorder="ASC";
 $limit = $conf->liste_limit;
 
 $sql = "SELECT s.nom, s.rowid as socid";
-$sql.= ", f.rowid as facid, f.facnumber, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
+$sql.= ", f.rowid as facid, f.facnumber, f.ref_client, f.increment, f.total as total_ht, f.tva as total_tva, f.total_ttc, f.localtax1, f.localtax2, f.revenuestamp";
 $sql.= ", f.datef as df, f.date_lim_reglement as datelimite";
 $sql.= ", f.paye as paye, f.fk_statut, f.type";
 $sql.= ", sum(pf.amount) as am";
@@ -218,6 +220,7 @@ if (GETPOST('filtre'))
 	}
 }
 if ($search_ref)         $sql .= " AND f.facnumber LIKE '%".$db->escape($search_ref)."%'";
+if ($search_refcustomer) $sql .= " AND f.ref_client LIKE '%".$db->escape($search_refcustomer)."%'";
 if ($search_societe)     $sql .= " AND s.nom LIKE '%".$db->escape($search_societe)."%'";
 if ($search_montant_ht)  $sql .= " AND f.total = '".$db->escape($search_montant_ht)."'";
 if ($search_montant_ttc) $sql .= " AND f.total_ttc = '".$db->escape($search_montant_ttc)."'";
@@ -246,6 +249,7 @@ if ($resql)
 	$param.=(! empty($socid)?"&amp;socid=".$socid:"");
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	if ($search_ref)         $param.='&amp;search_ref='.urlencode($search_ref);
+    	if ($search_refcustomer) $param.='&amp;search_ref='.urlencode($search_refcustomer);
 	if ($search_societe)     $param.='&amp;search_societe='.urlencode($search_societe);
 	if ($search_montant_ht)  $param.='&amp;search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_montant_ttc) $param.='&amp;search_montant_ttc='.urlencode($search_montant_ttc);
@@ -274,6 +278,7 @@ if ($resql)
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","",$param,"",$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans('RefCustomer'),$_SERVER["PHP_SELF"],'f.ref_client','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateDue"),$_SERVER["PHP_SELF"],"f.date_lim_reglement","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
@@ -291,6 +296,9 @@ if ($resql)
 	// Ref
 	print '<td class="liste_titre">';
 	print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'"></td>';
+        print '<td class="liste_titre">';
+        print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+        print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="left"><input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
@@ -356,6 +364,11 @@ if ($resql)
 
 			print "</td>\n";
 
+	                // Customer ref
+	                print '<td class="nowrap">';
+	                print $objp->ref_client;
+	                print '</td>';
+
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->df),'day').'</td>'."\n";
 			print '<td class="nowrap" align="center">'.dol_print_date($db->jdate($objp->datelimite),'day').'</td>'."\n";
 
@@ -402,7 +415,7 @@ if ($resql)
 		}
 
 		print '<tr class="liste_total">';
-		print '<td colspan="4" align="left">'.$langs->trans("Total").'</td>';
+		print '<td colspan="5" align="left">'.$langs->trans("Total").'</td>';
 		print '<td align="right"><b>'.price($total_ht).'</b></td>';
 		print '<td align="right"><b>'.price($total_tva).'</b></td>';
 		print '<td align="right"><b>'.price($total_ttc).'</b></td>';

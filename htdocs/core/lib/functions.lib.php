@@ -871,7 +871,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?/i',$time,$reg)
 	|| preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])([0-9][0-9])$/i',$time,$reg))
 	{
-		// This part of code should not be used.
+		// This part of code should not be used. TODO Remove this.
 		dol_syslog("Functions.lib::dol_print_date function call with deprecated value of time in page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Date has format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS' or 'YYYYMMDDHHMMSS'
 		$syear	= (! empty($reg[1]) ? $reg[1] : '');
@@ -889,7 +889,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 		// Date is a timestamps
 		if ($time < 100000000000)	// Protection against bad date values
 		{
-			$ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);
+			$ret=adodb_strftime($format,$time+$offsettz+$offsetdst,$to_gmt);	// TODO Remove this
 		}
 		else $ret='Bad value '.$time.' for date';
 	}
@@ -897,7 +897,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if (preg_match('/__b__/i',$format))
 	{
 		// Here ret is string in PHP setup language (strftime was used). Now we convert to $outputlangs.
-		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);
+		$month=adodb_strftime('%m',$time+$offsettz+$offsetdst);					// TODO Remove this
 		if ($encodetooutput)
 		{
 			$monthtext=$outputlangs->transnoentities('Month'.$month);
@@ -916,7 +916,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	}
 	if (preg_match('/__a__/i',$format))
 	{
-		$w=adodb_strftime('%w',$time+$offsettz+$offsetdst);
+		$w=adodb_strftime('%w',$time+$offsettz+$offsetdst);						// TODO Remove this
 		$dayweek=$outputlangs->transnoentitiesnoconv('Day'.$w);
 		$ret=str_replace('__A__',$dayweek,$ret);
 		$ret=str_replace('__a__',dol_substr($dayweek,0,3),$ret);
@@ -1029,8 +1029,16 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 		}
 		else if ($gm === 'user')
 		{
-			$default_timezone=(empty($_SESSION["dol_tz_string"])?'UTC':$_SESSION["dol_tz_string"]);
-			$localtz = new DateTimeZone($default_timezone);
+			// We use dol_tz_string first because it contains dst.
+			$default_timezone=(empty($_SESSION["dol_tz_string"])?@date_default_timezone_get():$_SESSION["dol_tz_string"]);
+			try {
+				$localtz = new DateTimeZone($default_timezone);
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
+				$default_timezone=@date_default_timezone_get();
+			}
 		}
 		else $localtz = new DateTimeZone('UTC');
 		$dt = new DateTime(null,$localtz);
@@ -4234,6 +4242,7 @@ function dol_eval($s,$returnvalue=0)
 	global $langs, $user, $conf;
 	global $leftmenu;
 	global $rights;
+	global $object;
 
 	//print $s."<br>\n";
 	if ($returnvalue) return @eval('return '.$s.';');

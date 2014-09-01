@@ -681,7 +681,7 @@ div.mainmenu.click2dial {
 }
 
 div.mainmenu.companies {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/company.png',1) ?>);
 }
 
 div.mainmenu.commercial {
@@ -862,11 +862,15 @@ div#login_left, div#login_right {
 table.login_table tr td table.none tr td {
 	padding: 2px;
 }
+#securitycode {
+	min-width: 60px;
+}
 #img_securitycode {
 	border: 1px solid #DDDDDD;
 }
 #img_logo {
 	max-width: 200px;
+	max-height: 100px;
 }
 
 div.login_block {

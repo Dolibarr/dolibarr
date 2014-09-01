@@ -404,7 +404,7 @@ class CMailFile
 						// le return-path dans les header ne fonctionne pas avec tous les MTA
 						// Le passage par -f est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
-						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $conf->global->MAIN_MAIL_ERRORS_TO : ($this->addr_from != '' ? '-f' . $this->addr_from : '') );
+						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
                     if (! empty($conf->global->MAIN_MAIL_SENDMAIL_FORCE_BA))    // To force usage of -ba option. This option tells sendmail to read From: or Sender: to setup sender
                     {

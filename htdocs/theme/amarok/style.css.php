@@ -471,6 +471,7 @@ form#login img  {width:auto; height:auto; opacity:.7;}
 form#login img#img_logo {
 	width:190px;
 	max-width:190px;
+	max-height:100px;
 	height:auto;
 	border-radius:6px;
 	padding:6px;
@@ -587,6 +588,10 @@ div.login {
 	vertical-align: top;
 	padding: 0px 0px 0px 8px !important;
 	height: 16px;
+}
+
+#securitycode {
+	min-width: 60px;
 }
 
 img.login, img.printer, img.entity {

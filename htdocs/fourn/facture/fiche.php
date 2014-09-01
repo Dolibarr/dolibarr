@@ -1287,18 +1287,8 @@ if ($action == 'create')
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
-	// Project
-	if (! empty($conf->projet->enabled))
-	{
-		$formproject=new FormProjets($db);
-
-		$langs->load('projects');
-		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$formproject->select_projects(-1, $projectid, 'projectid');
-		print '</td></tr>';
-	}
-
-    print '<tr><td>'.$langs->trans('NotePublic').'</td>';
+	// Public note
+	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
     $doleditor = new DolEditor('note_public', GETPOST('note_public'), '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
@@ -1819,11 +1809,11 @@ else
             print '</td><td colspan="3">';
             if ($action == 'classify')
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,'projectid');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1', $object->fk_project, 'projectid');
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,'none');
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none');
             }
             print '</td>';
             print '</tr>';
