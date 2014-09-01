@@ -206,9 +206,9 @@ else
 	// Add vat rates examples specific to country
 	$vat_rates=array();
 
-	$sql.="SELECT taux as vat_rate";
+	$sql="SELECT taux as vat_rate";
 	$sql.=" FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-	$sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$mysoc->country_code."' AND taux != 0";
+	$sql.=" WHERE t.active=1 AND t.fk_pays = p.rowid AND p.code='".$mysoc->country_code."' AND taux <> 0";
 	$sql.=" ORDER BY t.taux ASC";
 	$resql=$db->query($sql);
 	if ($resql)
