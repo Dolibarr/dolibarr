@@ -132,7 +132,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	// Create category in database
 	if (! $error)
 	{
-		$result = $object->create();
+		$result = $object->create($user);
 		if ($result > 0)
 		{
 			$action = 'confirmed';
