@@ -103,6 +103,7 @@ For users:
 - Fix: error "menu param is not inside list" into pos module.
 - Fix: Salary payments are not reflected on the reporting sheets
 - Fix: Unsubscribe emailing not working
+- Fix: Trigger on create category call failed because user is not passed on card
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
