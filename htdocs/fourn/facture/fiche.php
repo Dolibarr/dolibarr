@@ -1320,6 +1320,16 @@ if ($action == 'create')
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 
+	// Project
+	if (! empty($conf->projet->enabled)) {
+		$formproject = new FormProjets($db);
+
+		$langs->load('projects');
+		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
+		$formproject->select_projects($soc->id, $projectid, 'projectid');
+		print '</td></tr>';
+	}
+	
 	// Public note
 	print '<tr><td>'.$langs->trans('NotePublic').'</td>';
     print '<td>';
