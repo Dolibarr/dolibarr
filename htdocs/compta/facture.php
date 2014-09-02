@@ -249,18 +249,23 @@ else if ($action == 'setmode' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setinvoicedate' && $user->rights->facture->creer) {
+else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$old_date_lim_reglement = $object->date_lim_reglement;
-	$object->date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	if (empty($date))
+	{
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+	    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
+	    exit;
+	}
+    $object->date=$date;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-	if ($new_date_lim_reglement > $old_date_lim_reglement)
-		$object->date_lim_reglement = $new_date_lim_reglement;
-	if ($object->date_lim_reglement < $object->date)
-		$object->date_lim_reglement = $object->date;
+	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 	$result = $object->update($user);
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 else if ($action == 'setconditions' && $user->rights->facture->creer) {
@@ -268,18 +273,14 @@ else if ($action == 'setconditions' && $user->rights->facture->creer) {
 	$object->cond_reglement_code = 0; // To clean property
 	$object->cond_reglement_id = 0; // To clean property
 	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 
 	$old_date_lim_reglement = $object->date_lim_reglement;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-	if ($new_date_lim_reglement > $old_date_lim_reglement)
-		$object->date_lim_reglement = $new_date_lim_reglement;
-	if ($object->date_lim_reglement < $object->date)
-		$object->date_lim_reglement = $object->date;
+	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 	$result = $object->update($user);
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 else if ($action == 'setpaymentterm' && $user->rights->facture->creer) {
@@ -940,7 +941,7 @@ else if ($action == 'add' && $user->rights->facture->creer)
 							{
 								// Don't add lines with qty 0 when coming from a shipment including all order lines
 								if($srcobject->element == 'shipping' && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS && $lines[$i]->qty == 0) continue;
-								
+
 								$label=(! empty($lines[$i]->label)?$lines[$i]->label:'');
 								$desc=(! empty($lines[$i]->desc)?$lines[$i]->desc:$lines[$i]->libelle);
 
@@ -1159,12 +1160,12 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				// We define price for product
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->thirdparty->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->thirdparty->price_level];
-					$price_min = $prod->multiprices_min [$object->thirdparty->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->thirdparty->price_level];
-					$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-					$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+					$pu_ht = $prod->multiprices[$object->thirdparty->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
+					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
+					//$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+					//$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
