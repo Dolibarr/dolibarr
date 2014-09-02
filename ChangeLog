@@ -12,6 +12,7 @@ For users:
 - Fix: Unsubscribe emailing not working
 - Fix: Trigger on create category call failed because user is not passed on card
 - Fix: list event view lost type event filter
+- Fix: Save also code event
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:

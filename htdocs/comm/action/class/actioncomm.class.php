@@ -140,6 +140,7 @@ class ActionComm extends CommonObject
             if ($result > 0)
             {
                 $this->type_id=$cactioncomm->id;
+                $this->code=$cactioncomm->code;
             }
             else if ($result == 0)
             {
