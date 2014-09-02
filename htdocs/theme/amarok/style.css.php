@@ -586,6 +586,10 @@ div.login {
 	height: 16px;
 }
 
+#securitycode {
+	min-width: 60px;
+}
+
 img.login, img.printer, img.entity {
 	margin:2px 0px 0px 0px;
 	text-decoration:none;

@@ -31,7 +31,7 @@
  *
  *  @param	string	$selected           Preselecte value
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$url                Url for request: /chemin/fichier.php
+ *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
@@ -98,26 +98,30 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
-								response($.map( data, function( item ) {
-									if (autoselect == 1 && data.length == 1) {
-										$("#search_'.$htmlname.'").val(item.value);
-										$("#'.$htmlname.'").val(item.key).trigger("change");
-									}
-									var label = item.label.toString();
-									var update = {};
-									if (options.update) {
-										$.each(options.update, function(key, value) {
-											update[key] = item[value];
-										});
-									}
-									var textarea = {};
-									if (options.update_textarea) {
-										$.each(options.update_textarea, function(key, value) {
-											textarea[key] = item[value];
-										});
-									}
-									return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
-								}));
+								if (data != null)
+								{
+									response($.map( data, function(item) {
+										if (autoselect == 1 && data.length == 1) {
+											$("#search_'.$htmlname.'").val(item.value);
+											$("#'.$htmlname.'").val(item.key).trigger("change");
+										}
+										var label = item.label.toString();
+										var update = {};
+										if (options.update) {
+											$.each(options.update, function(key, value) {
+												update[key] = item[value];
+											});
+										}
+										var textarea = {};
+										if (options.update_textarea) {
+											$.each(options.update_textarea, function(key, value) {
+												textarea[key] = item[value];
+											});
+										}
+										return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
+									}));
+								}
+								else console.error("Error: Ajax url '.$url.($urloption?'?'.$urloption:'').' has returned an empty page. Should be an empty json array.");
 							}, "json");
 						},
 						dataType: "json",

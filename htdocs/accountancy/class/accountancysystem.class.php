@@ -24,10 +24,10 @@
  */
 
 /**
- * \class AccountancySystem
- * \brief Classe to manage accountancy systems
+ * Class to manage accountancy systems
  */
-class AccountancySystem {
+class AccountancySystem
+{
 	var $db;
 	var $error;
 	var $rowid;
@@ -37,7 +37,7 @@ class AccountancySystem {
 	var $label;
 	var $account_number;
 	var $account_parent;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -46,7 +46,7 @@ class AccountancySystem {
 	function __construct($db) {
 		$this->db = $db;
 	}
-	
+
 	/**
 	 * Insert accountancy system name into database
 	 *
@@ -55,16 +55,16 @@ class AccountancySystem {
 	 */
 	function create($user) {
 		$now = dol_now();
-		
+
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_system";
 		$sql .= " (date_creation, fk_user_author, numero,intitule)";
 		$sql .= " VALUES (" . $this->db->idate($now) . "," . $user->id . ",'" . $this->numero . "','" . $this->intitule . "')";
-		
+
 		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_system");
-			
+
 			if ($id > 0) {
 				$this->id = $id;
 				$result = $this->id;
@@ -78,7 +78,7 @@ class AccountancySystem {
 			$this->error = "AccountancySystem::Create Erreur $result";
 			dol_syslog($this->error, LOG_ERR);
 		}
-		
+
 		return $result;
 	}
 }

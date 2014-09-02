@@ -35,7 +35,7 @@ $langs->load("accountancy");
 // Security check
 if (!$user->admin)
     accessforbidden();
-	
+
 // Date range
 $year = GETPOST("year");
 if (empty($year)) {
@@ -105,9 +105,8 @@ $period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . 
 $description = $langs->trans("DescThirdPartyReport");
 $builddate = time();
 
-report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
-		'action' => '' 
-));
+$moreparam=array('action' => '');
+report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam);
 
 print '<input type="button" class="button" style="float: right;" value="Export CSV" onclick="launch_export();" />';
 
@@ -157,16 +156,16 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	
+
 	// export csv
 	if (GETPOST('action') == 'export_csv') {
-		
+
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
-		
+
 		$obj = $db->fetch_object($resql);
 		$var = ! $var;
-		
+
 		print '"' . $obj->compta . '",';
 		print '"' . $obj->address . '",';
 		print '"' . $obj->zip . '",';
@@ -177,15 +176,15 @@ if ($resql) {
 		print "\n";
 		$i ++;
 	}
-	
+
 	/*
 	 * View
 	 */
-	
+
 	$thirdpartystatic = new Societe($db);
-	
+
 	print '<br><br>';
-	
+
 	print '<table class="noborder" width="100%">';
 	print "</table>\n";
 	print '</td><td valign="top" width="70%" class="notopnoleftnoright"></td>';
@@ -201,13 +200,13 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Contact") . '</td>';
 	print '<td align="left">' . $langs->trans("Phone") . '</td>';
 	print '<td align="left">' . $langs->trans("Fax") . '</td></tr>';
-	
+
 	$var = True;
-	
+
 	while ( $obj = $db->fetch_object($resql) ) {
-		
+
 		$var = ! $var;
-		
+
 		print "<tr $bc[$var]>";
 		print '<td>';
 		$thirdpartystatic->id = $obj->rowid;
@@ -227,10 +226,10 @@ if ($resql) {
 		print '<td align="left">' . $obj->phone . '</td>';
 		print '<td align="left">' . $obj->fax . '</td>';
 		print "</tr>\n";
-		
+
 		$i ++;
 	}
-	
+
 	print "</table>";
 	$db->free($resql);
 } else {
