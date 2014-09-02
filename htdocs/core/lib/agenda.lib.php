@@ -360,7 +360,7 @@ function show_array_last_actions_done($max=5)
 /**
  * Prepare array with list of tabs
  *
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function agenda_prepare_head()
 {
@@ -405,7 +405,7 @@ function agenda_prepare_head()
  * Prepare array with list of tabs
  *
  * @param   object	$object		Object related to tabs
- * @return  array				Array of tabs to shoc
+ * @return  array				Array of tabs to show
  */
 function actions_prepare_head($object)
 {
