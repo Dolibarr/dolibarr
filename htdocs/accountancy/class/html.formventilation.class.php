@@ -19,10 +19,10 @@
 
 /**
  *	\file		htdocs/accountancy/class/html.formventilation.class.php
- *	\ingroup	Accounting Expert 
+ *	\ingroup	Accounting Expert
  *	\brief		File of class with all html predefined components
  */
- 
+
 /**
  *	Class to manage generation of HTML components for bank module
  */
@@ -30,7 +30,7 @@ class FormVentilation extends Form
 {
 	var $db;
 	var $error;
-	
+
 	/**
      * Constructor
      *
@@ -48,33 +48,33 @@ class FormVentilation extends Form
 	 *	@param	string	$selectedkey	Value
 	 *	@return	string					HTML edit field
 	 */
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey)
+	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey='')
 	{
 		global $langs;
-		
+
 		$date_array = array ();
-		
+
 		$sql  = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
 		$sql .= ' ORDER BY import_key DESC';
-		
+
 		$out = '<SELECT name="' . $htmlname . '">';
-		
+
 		dol_syslog(get_class($this) . "::select_bookkeeping_importkey sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;
 			$num = $this->db->num_rows($resql);
-			
+
 			while ( $i < $num ) {
 				$obj = $this->db->fetch_object($resql);
-				
+
 				$selected = '';
 				if ($selectedkey == $obj->import_key) {
 					$selected = ' selected="selected" ';
 				}
-				
+
 				$out .= '<OPTION value="' . $obj->import_key . '"' . $selected . '>' . $obj->import_key . '</OPTION>';
-				
+
 				$i ++;
 			}
 		} else {
@@ -82,12 +82,12 @@ class FormVentilation extends Form
 			dol_syslog(get_class($this) . "::select_bookkeeping_importkey " . $this->error, LOG_ERR);
 			return - 1;
 		}
-		
+
 		$out .= '</SELECT>';
-		
+
 		return $out;
 	}
-	
+
 	/**
 	 *	Return list of accounts with label by chart of accounts
 	 *
@@ -95,38 +95,38 @@ class FormVentilation extends Form
 	 *	@param	string	$htmlname		Name of field in html form
 	 *	@param	int		$showempty		Add an empty field
 	 *  @param	array	$event			Event options
-     *       
+     *
 	 *	@return	string					String with HTML select
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array())
 	{
 		global $conf, $user, $langs;
-		
+
 		$out = '';
-		
+
 		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
 		$sql .= " ORDER BY aa.account_number";
-		
+
 		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			
+
 			$out .= ajax_combobox($htmlname, $event);
 			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
 			if ($showempty)
 				$out .= '<option value="-1"></option>';
 			$num = $this->db->num_rows($resql);
-			
+
 			$i = 0;
 			if ($num) {
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
 					$label = $obj->account_number . ' - ' . $obj->label;
-					
+
 					// Remember guy's we store in database llx_facturedet the rowid of accountingaccount and not the account_number
 					// Bacause same account_number can be share between different accounting_system and do have the same meaning
 					if (($selectid != '') && $selectid == $obj->rowid) {
@@ -148,7 +148,7 @@ class FormVentilation extends Form
 		$this->db->free($resql);
 		return $out;
 	}
-	
+
 	/**
 	 *	Return list of accounts with label by class of accounts
 	 *
@@ -156,25 +156,25 @@ class FormVentilation extends Form
 	 *	@param	string	$htmlname		Name of field in html form
 	 *	@param	int		$showempty		Add an empty field
 	 *  @param	array	$event			Event options
-     *       
+     *
 	 *	@return	string					String with HTML select
 	 */
 	function select_pcgtype($selectid, $htmlname = 'pcg_type', $showempty = 0, $event = array())
 	{
 		global $conf, $user, $langs;
-		
+
 		$out = '';
-		
+
 		$sql = "SELECT DISTINCT pcg_type ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount ";
 		$sql .= " ORDER BY pcg_type";
-		
+
 		dol_syslog(get_class($this) . "::select_pcgtype sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			
+
 			$out .= ajax_combobox($htmlname, $event);
-			
+
 			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
 			if ($showempty)
 				$out .= '<option value="-1"></option>';
@@ -184,7 +184,7 @@ class FormVentilation extends Form
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
 					$label = $obj->pcg_type;
-					
+
 					if (($selectid != '') && $selectid == $obj->pcg_type) {
 						$out .= '<option value="' . $obj->pcg_type . '" selected="selected">' . $label . '</option>';
 					} else {
@@ -202,7 +202,7 @@ class FormVentilation extends Form
 		$this->db->free($resql);
 		return $out;
 	}
-	
+
 	/**
 	 *	Return list of accounts with label by sub_class of accounts
 	 *
@@ -210,25 +210,25 @@ class FormVentilation extends Form
 	 *	@param	string	$htmlname		Name of field in html form
 	 *	@param	int		$showempty		Add an empty field
 	 *  @param	array	$event			Event options
-     *       
+     *
 	 *	@return	string					String with HTML select
 	 */
 	function select_pcgsubtype($selectid, $htmlname = 'pcg_subtype', $showempty = 0, $event = array())
 	{
 		global $conf, $user, $langs;
-		
+
 		$out = '';
-		
+
 		$sql = "SELECT DISTINCT pcg_subtype ";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount ";
 		$sql .= " ORDER BY pcg_subtype";
-		
+
 		dol_syslog(get_class($this) . "::select_pcgsubtype sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			
+
 			$out .= ajax_combobox($htmlname, $event);
-			
+
 			$out .= '<select id="' . $htmlname . '" class="flat" name="' . $htmlname . '">';
 			if ($showempty)
 				$out .= '<option value="-1"></option>';
@@ -238,7 +238,7 @@ class FormVentilation extends Form
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
 					$label = $obj->pcg_subtype;
-					
+
 					if (($selectid != '') && $selectid == $obj->pcg_subtype) {
 						$out .= '<option value="' . $obj->pcg_subtype . '" selected="selected">' . $label . '</option>';
 					} else {

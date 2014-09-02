@@ -1,5 +1,5 @@
 <?PHP
-/* 
+/*
  * Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Florian Henry		<florian.henry@open-concept.pro>
@@ -34,7 +34,7 @@ if (! $res && file_exists("../../../main.inc.php"))
 	$res = @include ("../../../main.inc.php");
 if (! $res)
 	die("Include of main fails");
-	
+
 	// Class
 dol_include_once("/core/lib/report.lib.php");
 dol_include_once("/core/lib/date.lib.php");
@@ -73,13 +73,13 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	
+
 	/*
 * view
 */
-	
+
 	print '<br><br>';
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<td align="left">' . $langs->trans("Ref") . '</td>';
 	print '<td align="left">' . $langs->trans("Label") . '</td>';
@@ -88,13 +88,13 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Accountancy_code_buy_suggest") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell") . '</td>';
 	print '<td align="left">' . $langs->trans("Accountancy_code_sell_suggest") . '</td>';
-	
+
 	$var = True;
-	
+
 	while ( $i < min($num, 250) ) {
 		$obj = $db->fetch_object($resql);
 		$var = ! $var;
-		
+
 		$compta_prodsell = $obj->accountancy_code_sell;
 		if (empty($compta_prodsell)) {
 			if ($obj->product_type == 0)
@@ -102,7 +102,7 @@ if ($resql) {
 			else
 				$compta_prodsell = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT) ? $conf->global->COMPTA_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 		}
-		
+
 		$compta_prodbuy = $obj->accountancy_code_buy;
 		if (empty($compta_prodbuy)) {
 			if ($obj->product_type == 0)
@@ -110,12 +110,12 @@ if ($resql) {
 			else
 				$compta_prodbuy = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT) ? $conf->global->COMPTA_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 		}
-		
+
 		$product_static = new Product($db);
-		
+
 		print "<tr $bc[$var]>";
 		// Ref produit
-		$product_static->ref = $objp->p . ref;
+		$product_static->ref = $objp->ref;
 		$product_static->id = $objp->rowid;
 		$product_static->type = $objp->type;
 		print '<td>';
@@ -127,13 +127,13 @@ if ($resql) {
 		print '<td align="left">' . $obj->ref . '</td>';
 		print '<td align="left">' . $obj->label . '</td>';
 		print '<td align="left">' . $obj->description . '</td>';
-		
+
 		print '<td align="left">' . $obj->accountancy_code_buy . '</td>';
 		print '<td align="left">' . $compta_prodbuy . '</td>';
-		
+
 		print '<td align="left">' . $obj->accountancy_code_sell . '</td>';
 		print '<td align="left">' . $compta_prodsell . '</td>';
-		
+
 		print "</tr>\n";
 		$i ++;
 	}
