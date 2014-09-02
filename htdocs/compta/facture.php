@@ -248,16 +248,18 @@ else if ($action == 'setmode' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setinvoicedate' && $user->rights->facture->creer) {
+else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$old_date_lim_reglement = $object->date_lim_reglement;
-	$object->date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
 	if (empty($date))
 	{
 	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 	    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
 	    exit;
 	}
+    $object->date=$date;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
 	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
