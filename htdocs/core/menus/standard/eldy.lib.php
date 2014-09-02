@@ -1176,7 +1176,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,(empty($user->societe_id)?0:1),'eldy',$tabMenu);
 
 		// We update newmenu for special dynamic menus
-		if ($user->rights->banque->lire && $mainmenu == 'bank')	// Entry for each bank account
+		if (!empty($user->rights->banque->lire) && $mainmenu == 'bank')	// Entry for each bank account
 		{
 			$sql = "SELECT rowid, label, courant, rappro, courant";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
@@ -1206,7 +1206,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			else dol_print_error($db);
 			$db->free($resql);
 		}
-		if ($conf->ftp->enabled && $mainmenu == 'ftp')	// Entry for FTP
+		if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 		{
 			$MAXFTP=20;
 			$i=1;
