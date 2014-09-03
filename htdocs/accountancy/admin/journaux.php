@@ -91,7 +91,7 @@ $form = new Form($db);
 
 print_fiche_titre($langs->trans('ConfigAccountingExpert'));
 
-$head = admin_account_prepare_head(null);
+$head = admin_accounting_prepare_head(null);
 
 dol_fiche_head($head, 'journal', $langs->trans("Configuration"), 0, 'cron');
 

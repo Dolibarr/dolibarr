@@ -43,11 +43,12 @@ class AccountingAccount
 	var $active;
 
 	/**
-	 * \brief Constructeur de la classe
-	 * \param DB handler acces base de donnees
-	 * \param id id compte (0 par defaut)
-	 */
-	function __construct($db, $rowid = '') {
+	 *	Constructor
+	 *
+	 *	@param 		DoliDB		$db		Database handler
+     */
+	function __construct($db, $rowid = '')
+	{
 		$this->db = $db;
 
 		if ($rowid != '')
@@ -57,7 +58,8 @@ class AccountingAccount
 	/**
 	 * \brief Load record in memory
 	 */
-	function fetch($rowid = null, $account_number = null) {
+	function fetch($rowid = null, $account_number = null)
+	{
 		if ($rowid || $account_number) {
 			$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE ";
 			if ($rowid) {
@@ -96,7 +98,8 @@ class AccountingAccount
 	 * \brief insert line in accountingaccount
 	 * \param user utilisateur qui effectue l'insertion
 	 */
-	function create($user, $notrigger = 0) {
+	function create($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 
@@ -195,7 +198,8 @@ class AccountingAccount
 	 * @param User $user update
 	 * @return int if KO, >0 if OK
 	 */
-	function update($user) {
+	function update($user)
+	{
 		global $langs;
 
 		$this->db->begin();
@@ -230,7 +234,8 @@ class AccountingAccount
 	 * @param User $user update
 	 * @return int if KO, >0 if OK
 	 */
-	function checkUsage() {
+	function checkUsage()
+	{
 		global $langs;
 
 		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
@@ -259,11 +264,12 @@ class AccountingAccount
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user that deletes
-	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger = 0) {
+	 * @param  User		$user       User object of making delete
+     * @param  int		$notrigger  1=Disable all triggers
+     * @return int
+     */
+	function delete($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 
@@ -281,7 +287,7 @@ class AccountingAccount
 					// // Call triggers
 					// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					// $interface=new Interfaces($this->db);
-					// $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+					// $result=$interface->run_triggers('ACCOUNTANCY_ACOUNT_DELETE',$this,$user,$langs,$conf);
 					// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// // End call triggers
 				}
@@ -322,7 +328,8 @@ class AccountingAccount
 	 * @param int $id of record
 	 * @return void
 	 */
-	function info($id) {
+	function info($id)
+	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accountingaccount as a';
 		$sql .= ' WHERE a.rowid = ' . $id;
@@ -359,7 +366,8 @@ class AccountingAccount
 	 * @param User $user update
 	 * @return int if KO, >0 if OK
 	 */
-	function account_desactivate($id) {
+	function account_desactivate($id)
+	{
 		global $langs;
 
 		$result = $this->checkUsage();
@@ -393,7 +401,8 @@ class AccountingAccount
 	 * @param User $user update
 	 * @return int if KO, >0 if OK
 	 */
-	function account_activate($id) {
+	function account_activate($id)
+	{
 		global $langs;
 
 		$this->db->begin();
