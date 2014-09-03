@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Add proposals into referer page of thirdparty.
 - New: On contact list can set filter on both active and not active (no more exclusive select). 
 - New: Each user can include its own external ics calendar into dolibarr agenda view.
 - New: Intervention documents are now available in ECM module.
