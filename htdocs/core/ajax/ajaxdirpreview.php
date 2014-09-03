@@ -207,7 +207,6 @@ if ($type == 'directory')
         if ($section === '0')
         {
             $filearray=array();
-            $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         }
         else $filearray=dol_dir_list($upload_dir,"files",0,'',array('^\.','(\.meta|_preview\.png)$','^temp$','^CVS$'),$sortfield, $sorting,1);
 
@@ -216,6 +215,7 @@ if ($type == 'directory')
             $param.='&section='.$section;
             $textifempty = $langs->trans('NoFileFound');
         }
+        else if ($section === '0') $textifempty='<br><div align="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         else $textifempty=($showonrightsize=='featurenotyetavailable'?$langs->trans("FeatureNotYetAvailable"):$langs->trans("ECMSelectASection"));
 
         $formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload,1,$textifempty,$maxlengthname,'',$url);
