@@ -43,21 +43,24 @@ class AccountingAccount
 	var $active;
 
 	/**
-	 * \brief Constructeur de la classe
-	 * \param DB handler acces base de donnees
-	 * \param id id compte (0 par defaut)
+	 * Constructor
+	 *
+	 * @param 	DoliDB	$db		Database handle
 	 */
-	function __construct($db, $rowid = '') {
+	function __construct($db)
+	{
 		$this->db = $db;
-
-		if ($rowid != '')
-			return $this->fetch($rowid);
 	}
 
 	/**
-	 * \brief Load record in memory
+	 * Load record in memory
+	 *
+	 * @param	int		$rowid				Id
+	 * @param	string	$account_number		Account number
+	 * @return 	int							<0 if KO, >0 if OK
 	 */
-	function fetch($rowid = null, $account_number = null) {
+	function fetch($rowid = null, $account_number = null)
+	{
 		if ($rowid || $account_number) {
 			$sql = "SELECT * FROM " . MAIN_DB_PREFIX . "accountingaccount WHERE ";
 			if ($rowid) {
@@ -93,10 +96,14 @@ class AccountingAccount
 	}
 
 	/**
-	 * \brief insert line in accountingaccount
-	 * \param user utilisateur qui effectue l'insertion
+	 * Insert line in accountingaccount
+	 *
+	 * @param 	User	$user 			Use making action
+	 * @param	int		$notrigger		Disable triggers
+	 * @return 	int						<0 if KO, >0 if OK
 	 */
-	function create($user, $notrigger = 0) {
+	function create($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 
@@ -192,10 +199,11 @@ class AccountingAccount
 	/**
 	 * Update record
 	 *
-	 * @param User $user update
-	 * @return int if KO, >0 if OK
+	 * @param 	User 	$user 	Use making update
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function update($user) {
+	function update($user)
+	{
 		global $langs;
 
 		$this->db->begin();
@@ -227,10 +235,10 @@ class AccountingAccount
 	/**
 	 * Check usage of accounting code
 	 *
-	 * @param User $user update
-	 * @return int if KO, >0 if OK
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function checkUsage() {
+	function checkUsage()
+	{
 		global $langs;
 
 		$sql = "(SELECT fk_code_ventilation FROM " . MAIN_DB_PREFIX . "facturedet";
@@ -259,11 +267,12 @@ class AccountingAccount
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user that deletes
-	 * @param int $notrigger triggers after, 1=disable triggers
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	User 	$user 			User that deletes
+	 * @param 	int 	$notrigger 		0=triggers after, 1=disable triggers
+	 * @return 	int 					<0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0) {
+	function delete($user, $notrigger = 0)
+	{
 		global $conf, $langs;
 		$error = 0;
 
@@ -356,10 +365,11 @@ class AccountingAccount
 	/**
 	 * Account desactivate
 	 *
-	 * @param User $user update
-	 * @return int if KO, >0 if OK
+	 * @param	int		$id		Id
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function account_desactivate($id) {
+	function account_desactivate($id)
+	{
 		global $langs;
 
 		$result = $this->checkUsage();
@@ -390,10 +400,11 @@ class AccountingAccount
 	/**
 	 * Account activate
 	 *
-	 * @param User $user update
-	 * @return int if KO, >0 if OK
+	 * @param 	int		$id		Id
+	 * @return 	int 			<0 if KO, >0 if OK
 	 */
-	function account_activate($id) {
+	function account_activate($id)
+	{
 		global $langs;
 
 		$this->db->begin();
