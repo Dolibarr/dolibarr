@@ -248,18 +248,23 @@ else if ($action == 'setmode' && $user->rights->facture->creer) {
 		dol_print_error($db, $object->error);
 }
 
-else if ($action == 'setinvoicedate' && $user->rights->facture->creer) {
+else if ($action == 'setinvoicedate' && $user->rights->facture->creer)
+{
 	$object->fetch($id);
 	$old_date_lim_reglement = $object->date_lim_reglement;
-	$object->date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	$date = dol_mktime(12, 0, 0, $_POST['invoicedatemonth'], $_POST['invoicedateday'], $_POST['invoicedateyear']);
+	if (empty($date))
+	{
+	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+	    header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id.'&action=editinvoicedate');
+	    exit;
+	}
+    $object->date=$date;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-	if ($new_date_lim_reglement > $old_date_lim_reglement)
-		$object->date_lim_reglement = $new_date_lim_reglement;
-	if ($object->date_lim_reglement < $object->date)
-		$object->date_lim_reglement = $object->date;
+	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 	$result = $object->update($user);
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 else if ($action == 'setconditions' && $user->rights->facture->creer) {
@@ -267,18 +272,14 @@ else if ($action == 'setconditions' && $user->rights->facture->creer) {
 	$object->cond_reglement_code = 0; // To clean property
 	$object->cond_reglement_id = 0; // To clean property
 	$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 
 	$old_date_lim_reglement = $object->date_lim_reglement;
 	$new_date_lim_reglement = $object->calculate_date_lim_reglement();
-	if ($new_date_lim_reglement > $old_date_lim_reglement)
-		$object->date_lim_reglement = $new_date_lim_reglement;
-	if ($object->date_lim_reglement < $object->date)
-		$object->date_lim_reglement = $object->date;
+	if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
+	if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 	$result = $object->update($user);
-	if ($result < 0)
-		dol_print_error($db, $object->error);
+	if ($result < 0) dol_print_error($db, $object->error);
 }
 
 else if ($action == 'setpaymentterm' && $user->rights->facture->creer) {
@@ -1143,12 +1144,12 @@ else if ($action == 'addline' && $user->rights->facture->creer)
 				// We define price for product
 				if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->client->price_level))
 				{
-					$pu_ht = $prod->multiprices [$object->client->price_level];
-					$pu_ttc = $prod->multiprices_ttc [$object->client->price_level];
-					$price_min = $prod->multiprices_min [$object->client->price_level];
-					$price_base_type = $prod->multiprices_base_type [$object->client->price_level];
-					$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-					$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
+					$pu_ht = $prod->multiprices[$object->client->price_level];
+					$pu_ttc = $prod->multiprices_ttc[$object->client->price_level];
+					$price_min = $prod->multiprices_min[$object->client->price_level];
+					$price_base_type = $prod->multiprices_base_type[$object->client->price_level];
+					//$tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
+					//$tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
 				}
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
