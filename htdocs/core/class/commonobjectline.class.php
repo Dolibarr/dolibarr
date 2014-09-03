@@ -26,7 +26,7 @@
  *  Parent class for class inheritance lines of business objects
  *  This class is useless for the moment so no inherit are done on it
  */
-abstract class CommonObjectLine extends CommonObject
+abstract class CommonObjectLine
 {
     /**
      * Call trigger based on this instance
