@@ -1254,8 +1254,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			else dol_print_error($db);
 			$db->free($resql);
 		}
-		if (!empty($user->rights->banque->lire) && !empty($user->rights->accounting->mouvements->lire) &&  $mainmenu == 'accountancy')	// Entry for each bank journal
+		
+		// Accountancy journals
+		if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) &&  $mainmenu == 'accountancy')
 		{
+			$newmenu->add('/accountancy/journal/index.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+		
 			$sql = "SELECT rowid, label, accountancy_journal";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql.= " WHERE entity = ".$conf->entity;
@@ -1268,12 +1272,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$numr = $db->num_rows($resql);
 				$i = 0;
 
-				if ($numr > 0) 	$newmenu->add('/accountancy/journal/index.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+				if ($numr > 0)
 				
-				// Add other journal
-				$newmenu->add("/accountancy/journal/sellsjournal.php",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
-				$newmenu->add("/accountancy/journal/purchasesjournal.php",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
-
 				while ($i < $numr)
 				{
 					$objp = $db->fetch_object($resql);
@@ -1283,7 +1283,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 			else dol_print_error($db);
 			$db->free($resql);
+			
+			// Add other journal
+			$newmenu->add("/accountancy/journal/sellsjournal.php",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
+			$newmenu->add("/accountancy/journal/purchasesjournal.php",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
 		}
+
 		if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 		{
 			$MAXFTP=20;
