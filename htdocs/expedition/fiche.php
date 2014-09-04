@@ -112,7 +112,6 @@ if ($action == 'add')
     $classname = ucfirst($object->origin);
     $objectsrc = new $classname($db);
     $objectsrc->fetch($object->origin_id);
-    //$object->fetch_lines();
 
     $object->socid					= $objectsrc->socid;
     $object->ref_customer			= $objectsrc->ref_client;
@@ -717,7 +716,6 @@ if ($action == 'create')
              * Lignes de commandes
              */
 
-            //$lines = $object->fetch_lines(1);
             $numAsked = count($object->lines);
 
             print '<script type="text/javascript" language="javascript">

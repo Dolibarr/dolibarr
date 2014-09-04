@@ -392,7 +392,7 @@ class Opensurveysondage extends CommonObject
 	/**
 	 * Return array of lines
 	 *
-	 * @return 	array	Array of lines
+	 * @return 	int		<0 if KO, >0 if OK
 	 */
 	function fetch_lines()
 	{
@@ -418,7 +418,7 @@ class Opensurveysondage extends CommonObject
 
 		$this->lines=$ret;
 
-		return $this->lines;
+		return count($this->lines);
 	}
 
 	/**
