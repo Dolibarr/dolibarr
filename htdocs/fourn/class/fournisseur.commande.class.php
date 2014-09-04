@@ -431,8 +431,8 @@ class CommandeFournisseur extends CommonOrder
     /**
      *  Return label of the status of object
      *
-     *  @param	int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label
-     *  @return string        		Label
+	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto
+     *  @return 	string        			Label
      */
     function getLibStatut($mode=0)
     {
