@@ -153,16 +153,22 @@ from origin/upstream and origin/pristine.
 
 * Into root dir, launch:
 > debian/get-orig-source.sh
-If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0 " to solve this.
+If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
+
+* Edit tgz file to remove 
+- includes/sRGB.icc
+And rename file into 
+tcpdf_x.y.z+dfsg.tar.xz
+(x.y.z = version, w start from 1 and is increased for each new import)
 
 * Staying into git root directory, run
-> git-import-orig -vv ../tcpdf_x.y.z+dfsg.orig.tar.xz
+> git-import-orig -vv ../tcpdf_x.y.z+dfsg.tar.xz
 
 Note: If there was errors solved manually, you may need to make a git commit
 
 * Add an entry into debian/changelog
-> dch -v x.y.z-dsfg-1 "My comment" will add entry.
-For example: dch -v x.y.z-dsfg-1 "New upstream release." for a new version
+> dch -v x.y.z+dsfg-1 "My comment" will add entry.
+For example: dch -v x.y.z+dsfg-1 "New upstream release." for a new version
 Then modify changelog to replace "version" or "unstable" with "UNRELEASED".
 
 Warning: Date must have format reported by "date -R"
@@ -229,7 +235,7 @@ from origin/upstream and origin/pristine.
 
 * If new upstream is available onto sourceforge, launch:
 > debian/get-orig-source.sh
-If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0 " to solve this.
+If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
 
 * Edit tgz file to remove 
 - ckeditor
@@ -248,8 +254,8 @@ x.y.z+dsfgw
 Note: If there was errors solved manually after get-orig-sources.sh, you may need to make a git commit
 
 * Add an entry into debian/changelog
-> dch -v x.y.z-w "My comment" will add entry.
-For example: dch -v x.y.z-w "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
+> dch -v x.y.z+dfsg-w "My comment" will add entry.
+For example: dch -v x.y.z+dfsg-w "New upstream release." for a new version (x.y.z = version, w start from 1 and increaed for each new import)
 Then modify changelog to replace "version" or "unstable" with "UNRELEASED".
 Then check/modify also the user/date signature:
 - Date must have format reported by "date -R"

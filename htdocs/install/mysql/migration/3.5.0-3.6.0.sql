@@ -297,6 +297,9 @@ create table llx_c_type_resource
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
 
+-- Fix llx_c_type_resource when you update from a 3.6-beta
+ALTER TABLE llx_c_type_resource CHANGE libelle label VARCHAR(64) NOT NULL;
+
 ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, code);
 
 -- Fix :: account_parent must be an int, not an account number

@@ -5,6 +5,7 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Add proposals into referer page of thirdparty.
 - New: On contact list can set filter on both active and not active (no more exclusive select). 
 - New: Each user can include its own external ics calendar into dolibarr agenda view.
 - New: Intervention documents are now available in ECM module.
@@ -64,6 +65,9 @@ For users:
 - Fix: [ bug #1469 ] Triggers CONTACT_MODIFY and CONTACT_DELETE duplicates error message
 - Fix: [ bug #1537 ] Difference between societe.nom and adherent.societe.
 
+New experimental module:
+- New: Module Accounting Expert to manage accountancy 
+
 For translators:
 - Update language files.
 - New: When a translation is not available we always jump to en_US and only en_US.
@@ -93,7 +97,17 @@ Dolibarr better:
 - Table llx_c_pays were renamed into llx_c_country.  
 - Triggers *_BUILDDOC are removed. Building a doc is not a business event. For action after 
   creation of a pdf or odt, hook "afterPDFCreation" or "afterODTCreation" must be used instead.
+
  
+***** ChangeLog for 3.6.1 compared to 3.6.* *****
+For users:
+- Fix: Can upload files on services.
+- Fix: sql errors on updat fichinter
+- Fix: debian script syntax error
+- Fix: error "menu param is not inside list" into pos module.
+- Fix: Salary payments are not reflected on the reporting sheets
+- Fix: Unsubscribe emailing not working
+- Fix: Trigger on create category call failed because user is not passed on card
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
@@ -225,9 +239,9 @@ Fix: Link product, In list view and label product.
 Fix: visible task into area "time" for "My task" must limit task to tasks i am assigned to.
 Fix: When disabled, all fields to add time into task line must be disabled.
 Fix: Missing include files.lib.php in some pages that use dol_delete_recursive
-Fix: Missing include files.lib.php in some pages ti use dol_delete_recursive.
 Fix: [ bug #1558 ] Product/service edit page title shows new Ref instead of old ref.
 Fix: [ bug #1553 ] Saving User displays setup removes menu.
+Fix: [ bug #1544 ] Can remove date from invoice
 
 ***** ChangeLog for 3.5.4 compared to 3.5.3 *****
 Fix: Hide title of event when agenda module disabled.

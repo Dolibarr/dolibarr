@@ -70,7 +70,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,25,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24,23,0,26);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,0,5,11,0,6,0,10,23,12,13,0,14,0,7,17,0,22,20,18,21,0,15,0,24);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -96,10 +96,8 @@ $tabname[19]= MAIN_DB_PREFIX."c_effectif";
 $tabname[20]= MAIN_DB_PREFIX."c_input_method";
 $tabname[21]= MAIN_DB_PREFIX."c_availability";
 $tabname[22]= MAIN_DB_PREFIX."c_input_reason";
-$tabname[23]= MAIN_DB_PREFIX."accountingaccount";
-$tabname[24]= MAIN_DB_PREFIX."accounting_system";
-$tabname[25]= MAIN_DB_PREFIX."c_revenuestamp";
-$tabname[26]= MAIN_DB_PREFIX."c_type_resource";
+$tabname[23]= MAIN_DB_PREFIX."c_revenuestamp";
+$tabname[24]= MAIN_DB_PREFIX."c_type_resource";
 
 // Dictionary labels
 $tablib=array();
@@ -125,10 +123,8 @@ $tablib[19]= "DictionaryStaff";
 $tablib[20]= "DictionaryOrderMethods";
 $tablib[21]= "DictionaryAvailability";
 $tablib[22]= "DictionarySource";
-$tablib[23]= "DictionaryAccountancyplan";
-$tablib[24]= "DictionaryAccountancysystem";
-$tablib[25]= "DictionaryRevenueStamp";
-$tablib[26]= "DictionaryResourceType";
+$tablib[23]= "DictionaryRevenueStamp";
+$tablib[24]= "DictionaryResourceType";
 
 // Requests to extract data
 $tabsql=array();
@@ -154,10 +150,8 @@ $tabsql[19]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[20]= "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_input_method";
 $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_availability AS c";
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
-$tabsql[23]= "SELECT rowid   as rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number as accountancy_code, account_parent, label, active FROM ".MAIN_DB_PREFIX."accountingaccount";
-$tabsql[24]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
-$tabsql[25]= "SELECT t.rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
-$tabsql[26]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
+$tabsql[23]= "SELECT t.rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
+$tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -183,10 +177,8 @@ $tabsqlsort[19]="id ASC";
 $tabsqlsort[20]="code ASC, libelle ASC";
 $tabsqlsort[21]="code ASC, label ASC";
 $tabsqlsort[22]="code ASC, label ASC";
-$tabsqlsort[23]="fk_pcg_version ASC, accountancy_code ASC";
-$tabsqlsort[24]="pcg_version ASC";
-$tabsqlsort[25]="country ASC, taux ASC";
-$tabsqlsort[26]="code ASC,label ASC";
+$tabsqlsort[23]="country ASC, taux ASC";
+$tabsqlsort[24]="code ASC,label ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -212,10 +204,8 @@ $tabfield[19]= "code,libelle";
 $tabfield[20]= "code,libelle";
 $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
-$tabfield[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
-$tabfield[24]= "pcg_version,country_id,country,label";
-$tabfield[25]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
-$tabfield[26]= "code,label";
+$tabfield[23]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfield[24]= "code,label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -241,10 +231,8 @@ $tabfieldvalue[19]= "code,libelle";
 $tabfieldvalue[20]= "code,libelle";
 $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
-$tabfieldvalue[23]= "fk_pcg_version,accountancy_code,account_parent,pcg_type,pcg_subtype,label";
-$tabfieldvalue[24]= "pcg_version,country,label";
-$tabfieldvalue[25]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldvalue[26]= "code,label";
+$tabfieldvalue[23]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldvalue[24]= "code,label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -270,10 +258,8 @@ $tabfieldinsert[19]= "code,libelle";
 $tabfieldinsert[20]= "code,libelle";
 $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
-$tabfieldinsert[23]= "fk_pcg_version,account_number,account_parent,pcg_type,pcg_subtype,label";
-$tabfieldinsert[24]= "pcg_version,fk_pays,label";
-$tabfieldinsert[25]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
-$tabfieldinsert[26]= "code,label";
+$tabfieldinsert[23]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
+$tabfieldinsert[24]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -302,9 +288,7 @@ $tabrowid[20]= "";
 $tabrowid[21]= "rowid";
 $tabrowid[22]= "rowid";
 $tabrowid[23]= "";
-$tabrowid[24]= "";
-$tabrowid[25]= "";
-$tabrowid[25]= "";
+$tabrowid[23]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -330,10 +314,8 @@ $tabcond[19]= ! empty($conf->societe->enabled);
 $tabcond[20]= ! empty($conf->fournisseur->enabled);
 $tabcond[21]= ! empty($conf->propal->enabled);
 $tabcond[22]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled));
-$tabcond[23]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy plan should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionary editor.
-$tabcond[24]= (! empty($conf->global->ACCOUNTING_USEDICTTOEDIT) && ! empty($conf->accounting->enabled));	// The accountancy system should be edited with specific pages. You can set ACCOUNTING_USEDICTTOEDIT to 1 if you want to use dictionary editor.
-$tabcond[25]= true;
-$tabcond[26]= ! empty($conf->resource->enabled);
+$tabcond[23]= true;
+$tabcond[24]= ! empty($conf->resource->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -361,8 +343,6 @@ $tabhelp[21] = array();
 $tabhelp[22] = array();
 $tabhelp[23] = array();
 $tabhelp[24] = array();
-$tabhelp[25] = array();
-$tabhelp[26] = array();
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -390,8 +370,6 @@ $tabfieldcheck[21] = array();
 $tabfieldcheck[22] = array();
 $tabfieldcheck[23] = array();
 $tabfieldcheck[24] = array();
-$tabfieldcheck[25] = array();
-$tabfieldcheck[26] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);

@@ -25,16 +25,17 @@
 
 
 /**
- *	Get value of an HTML field, do Ajax process and show result.
+ *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
  *  The HTML field must be an input text with id=search_$htmlname.
+ *  This use the jQuery "autocomplete" function.
  *
  *  @param	string	$selected           Preselecte value
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$url                Url for request: /chemin/fichier.php
+ *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array (Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *  @param	array	$ajaxoptions		Multiple options array (Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
@@ -97,26 +98,30 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
     						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
-								response($.map( data, function( item ) {
-									if (autoselect == 1 && data.length == 1) {
-										$("#search_'.$htmlname.'").val(item.value);
-										$("#'.$htmlname.'").val(item.key).trigger("change");
-									}
-									var label = item.label.toString();
-									var update = {};
-									if (options.update) {
-										$.each(options.update, function(key, value) {
-											update[key] = item[value];
-										});
-									}
-									var textarea = {};
-									if (options.update_textarea) {
-										$.each(options.update_textarea, function(key, value) {
-											textarea[key] = item[value];
-										});
-									}
-									return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
-								}));
+								if (data != null)
+								{
+									response($.map( data, function(item) {
+										if (autoselect == 1 && data.length == 1) {
+											$("#search_'.$htmlname.'").val(item.value);
+											$("#'.$htmlname.'").val(item.key).trigger("change");
+										}
+										var label = item.label.toString();
+										var update = {};
+										if (options.update) {
+											$.each(options.update, function(key, value) {
+												update[key] = item[value];
+											});
+										}
+										var textarea = {};
+										if (options.update_textarea) {
+											$.each(options.update_textarea, function(key, value) {
+												textarea[key] = item[value];
+											});
+										}
+										return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
+									}));
+								}
+								else console.error("Error: Ajax url '.$url.($urloption?'?'.$urloption:'').' has returned an empty page. Should be an empty json array.");
 							}, "json");
 						},
 						dataType: "json",
@@ -182,25 +187,28 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 }
 
 /**
- *	Get value of field, do Ajax process and return result
+ *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: core/ajax/ziptown.php).
+ *  The Ajax page can also returns several values (json format) to fill several input fields.
+ *  The HTML field must be an input text with id=$htmlname.
+ *  This use the jQuery "autocomplete" function.
  *
- *	@param	string	$htmlname           Name of field
- *	@param	string	$fields				other fields to autocomplete
- *	@param	string	$url                Chemin du fichier de reponse : /chemin/fichier.php
+ *	@param	string	$htmlname           HTML name of input field
+ *	@param	string	$fields				Other fields to autocomplete
+ *	@param	string	$url                URL for ajax request : /chemin/fichier.php
  *	@param	string	$option				More parameters on URL request
  *	@param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *	@param	int		$autoselect			Automatic selection if just one value
  *	@return string              		Script
  */
-function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,$autoselect=0)
+function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLength=2, $autoselect=0)
 {
 	$script = '<!-- Autocomplete -->'."\n";
 	$script.= '<script type="text/javascript">';
 	$script.= 'jQuery(document).ready(function() {
 					var fields = '.json_encode($fields).';
-					var length = fields.length;
+					var nboffields = fields.length;
 					var autoselect = '.$autoselect.';
-					//alert(fields + " " + length);
+					//alert(fields + " " + nboffields);
 
     				jQuery("input#'.$htmlname.'").autocomplete({
     					dataType: "json",
@@ -214,7 +222,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 										if (item.states) {
 											jQuery("#state_id").html(item.states);
 										}
-										for (i=0;i<length;i++) {
+										for (i=0;i<nboffields;i++) {
 											if (item[fields[i]]) {   // If defined
                                                 //alert(item[fields[i]]);
 											    jQuery("#" + fields[i]).val(item[fields[i]]);
@@ -226,8 +234,7 @@ function ajax_multiautocompleter($htmlname,$fields,$url,$option='',$minLength=2,
 							});
     					},
     					select: function( event, ui ) {
-
-    						for (i=0;i<length;i++) {
+    						for (i=0;i<nboffields;i++) {
     							//alert(fields[i] + " = " + ui.item[fields[i]]);
 								if (fields[i]=="selectcountry_id")
 								{

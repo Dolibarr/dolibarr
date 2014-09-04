@@ -1205,7 +1205,7 @@ class Product extends CommonObject
 		if ($newvat == '') $newvat=$this->tva_tx;
 		if (! empty($newminprice) && ($newminprice > $newprice))
 		{
-			$this->error='ErrorPricCanBeLowerThanMinPrice';
+			$this->error='ErrorPriceCantBeLowerThanMinPrice';
 			return -1;
 		}
 

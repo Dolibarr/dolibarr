@@ -1,9 +1,8 @@
 <?php
-/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
- * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
+ * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com> 
+ * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,100 +19,207 @@
  */
 
 /**
- * 	\defgroup   accounting 			Module accounting
- * 	\brief      Module to include accounting features
- *	\file       htdocs/core/modules/modAccounting.class.php
- *	\ingroup    accounting
- * 	\brief      Fichier de description et activation du module Comptabilite Expert
+ * \file		accountingex/core/modules/modAccountingExpert.class.php
+ * \ingroup		Accounting Expert
+ * \brief		Module to activate Accounting Expert module
  */
-
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
-
 /**
- *	Classe de description et activation du module Comptabilite Expert
+ * \class	modAccountingExpert
+ * \brief	Description and activation class for module accounting expert
  */
 class modAccounting extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
 	 *   @param      DoliDB		$db      Database handler
-	 */
+     */
 	function __construct($db)
 	{
 		global $conf;
 
-		$this->db = $db;
-		$this->numero = 50400 ;
-
+        $this->db = $db;
+		$this->numero = 50400;
+		
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion complete de comptabilite (doubles parties)";
-
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
+		$this->description = "Advanced manage of accounting";
+		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		//$this->version = 'dolibarr';
-		$this->version = "development";
-
-		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		$this->version = 'development';
+		
+		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
-
-		// Config pages
-		$this->config_page_url = array("accounting.php");
-
-		// Dependancies
-		$this->depends = array("modFacture","modBanque","modTax");
-		$this->requiredby = array();
-		$this->conflictwith = array("modComptabilite");
-		$this->langfiles = array("compta");
-
-		// Constants
-		$this->const = array(0=>array('MAIN_COMPANY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, third party code is always required whatever is numbering module behaviour',0,'current',1),
-							 1=>array('MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED','chaine','1','With this constants on, bank account number is always required',0,'current',1),
-
-		);			// List of particular constants to add when module is enabled
-
+		$this->picto = 'accounting';
+		
+		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
+		// $this->triggers = 1;
+		
 		// Data directories to create when module is enabled
-		$this->dirs = array("/accounting/temp");
-
+		$this->dirs = array (
+				'/accountingex/temp' 
+		);
+		
+		// Config pages
+		$this->config_page_url = array('index.php@accountancy');
+		
+		// Dependencies
+		$this->depends = array ("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array (); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array ("modComptabilite"); // List of modules are in conflict with this module
+		$this->phpmin = array (
+				5,
+				2 
+		); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array (
+				3,
+				6
+		); // Minimum version of Dolibarr required by module
+		$this->langfiles = array (
+				"accountancy" 
+		);
+		
+		// Constants
+		$this->const = array ();
+		$this->const[1] = array (
+				"MAIN_COMPANY_CODE_ALWAYS_REQUIRED",
+				"chaine",
+				"1",
+				"With this constants on, third party code is always required whatever is numbering module behaviour"
+		);
+		$this->const[2] = array (
+				"MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED",
+				"chaine",
+				"1",
+				"With this constants on, bank account number is always required"
+		);
+		$this->const[1] = array (
+				"ACCOUNTING_SEPARATORCSV",
+				"string",
+				"," 
+		);
+		$this->const[2] = array (
+				"ACCOUNTING_ACCOUNT_SUSPENSE",
+				"chaine",
+				"471" 
+		);
+		$this->const[3] = array (
+				"ACCOUNTING_SELL_JOURNAL",
+				"chaine",
+				"VTE" 
+		);
+		$this->const[4] = array (
+				"ACCOUNTING_PURCHASE_JOURNAL",
+				"chaine",
+				"ACH" 
+		);
+		$this->const[5] = array (
+				"ACCOUNTING_SOCIAL_JOURNAL",
+				"chaine",
+				"SOC" 
+		);
+		$this->const[6] = array (
+				"ACCOUNTING_CASH_JOURNAL",
+				"chaine",
+				"CAI" 
+		);
+		$this->const[7] = array (
+				"ACCOUNTING_MISCELLANEOUS_JOURNAL",
+				"chaine",
+				"OD" 
+		);
+		$this->const[8] = array (
+				"ACCOUNTING_BANK_JOURNAL",
+				"chaine",
+				"BQ" 
+		); // Deprecated Move into llx_bank_account
+		$this->const[9] = array (
+				"ACCOUNTING_ACCOUNT_TRANSFER_CASH",
+				"chaine",
+				"58" 
+		);
+		$this->const[10] = array (
+				"CHARTOFACCOUNTS",
+				"chaine",
+				"2" 
+		);
+		$this->const[11] = array (
+				"ACCOUNTING_MODELCSV",
+				"chaine",
+				"0" 
+		);
+		$this->const[12] = array (
+				"ACCOUNTING_LENGTH_GACCOUNT",
+				"chaine",
+				"" 
+		);
+		$this->const[13] = array (
+				"ACCOUNTING_LENGTH_AACCOUNT",
+				"chaine",
+				"" 
+		);
+		$this->const[14] = array (
+				"ACCOUNTING_LIMIT_LIST_VENTILATION",
+				"chaine",
+				"50" 
+		);
+		$this->const[15] = array (
+				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
+				"yesno",
+				"1" 
+		);
+		$this->const[16] = array (
+				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
+				"yesno",
+				"1" 
+		);
+		
+		// Tabs
+		$this->tabs = array();
+		
+		// Css
+		$this->module_parts = array ();
+		
 		// Boxes
-		$this->boxes = array();
-
+		$this->boxes = array ();
+		
 		// Permissions
-		$this->rights = array();
 		$this->rights_class = 'accounting';
-		$r=0;
-
+		
+		$this->rights = array (); // Permission array used by this module
+		$r = 0;
+		
 		$this->rights[$r][0] = 50401;
-		$this->rights[$r][1] = 'Lire le plan de compte';
+		$this->rights[$r][1] = 'Access_accountancy';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
-		$this->rights[$r][4] = 'plancompte';
-		$this->rights[$r][5] = 'lire';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'access';
+		$this->rights[$r][5] = '';
 		$r++;
-
+		
 		$this->rights[$r][0] = 50402;
-		$this->rights[$r][1] = 'Creer/modifier un plan de compte';
-		$this->rights[$r][2] = 'w';
+		$this->rights[$r][1] = 'Read ventilation';
+		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'plancompte';
-		$this->rights[$r][5] = 'creer';
+		$this->rights[$r][4] = 'ventilation';
+		$this->rights[$r][5] = 'read';
 		$r++;
-
+		
 		$this->rights[$r][0] = 50403;
-		$this->rights[$r][1] = 'Cloturer plan de compte';
-		$this->rights[$r][2] = 'w';
+		$this->rights[$r][1] = 'Dispatched ventilation';
+		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'plancompte';
-		$this->rights[$r][5] = 'cloturer';
+		$this->rights[$r][4] = 'ventilation';
+		$this->rights[$r][5] = 'dispatch';
 		$r++;
 
 		$this->rights[$r][0] = 50411;
 		$this->rights[$r][1] = 'Lire les mouvements comptables';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'mouvements';
 		$this->rights[$r][5] = 'lire';
 		$r++;
@@ -126,48 +232,47 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 		$r++;
 
-		$this->rights[$r][0] = 50415;
+		$this->rights[$r][0] = 50420;
 		$this->rights[$r][1] = 'Lire CA, bilans, resultats, journaux, grands livres';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'comptarapport';
 		$this->rights[$r][5] = 'lire';
 		$r++;
+		
+		// Main menu entries
+		$this->menus = array ();
+		$r = 0;
 	}
-
-
-	/**
+	
+    /**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function init($options='')
-	{
-		// Prevent pb of modules not correctly disabled
-		//$this->remove($options);
+     */
+    function init($options='')
+    {
 
+        $sql = array();
+
+        return $this->_init($sql,$options);
+    }
+
+    /**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted
+	 *
+     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @return     int             	1 if OK, 0 if KO
+     */
+    function remove($options='')
+    {
 		$sql = array();
 
-		return $this->_init($sql,$options);
-	}
-
-	/**
-	 *		Function called when module is enabled.
-	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
-	 *		It also creates data directories
-	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
-	 *      @return     int             	1 if OK, 0 if KO
-	 */
-	function remove($options='')
-	{
-		global $conf;
-
-		$sql = array("DELETE FROM ".MAIN_DB_PREFIX."const where name='MAIN_COMPANY_CODE_ALWAYS_REQUIRED' and entity IN ('0','".$conf->entity."')");
-
 		return $this->_remove($sql,$options);
-	}
+    }
 }
