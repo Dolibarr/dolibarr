@@ -3949,7 +3949,7 @@ class Form
 
         if ($show_empty)
         {
-            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'> </option>'."\n";	// Do not use &nbsp; here. It will show it when list is not ajaxed
         }
 
         if (is_array($array))
