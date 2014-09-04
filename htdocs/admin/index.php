@@ -25,6 +25,7 @@ require '../main.inc.php';
 
 $langs->load("admin");
 $langs->load("companies");
+$langs->load("accountancy");
 
 if (!$user->admin) accessforbidden();
 
