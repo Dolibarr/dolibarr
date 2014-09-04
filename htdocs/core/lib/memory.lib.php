@@ -28,7 +28,7 @@ $shmkeys=array('main'=>1,'admin'=>2,'dict'=>3,'companies'=>4,'suppliers'=>5,'pro
 				'propal'=>13,'boxes'=>14,'banks'=>15,'other'=>16,'errors'=>17,'members'=>18,'ecm'=>19,
 				'orders'=>20,'users'=>21,'help'=>22,'stocks'=>23,'interventions'=>24,
 				'donations'=>25,'contracts'=>26);
-$shmoffset=100;
+$shmoffset=1000;	// Max number of entries found into a language file. If too low, some entries will be overwritten.
 
 
 
@@ -156,7 +156,7 @@ function dol_getcache($memoryid)
 /**
  * 	Return shared memory address used to store dataset with key memoryid
  *
- *  @param	string	$memoryid		Memory id of shared area
+ *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@return	int						<0 if KO, Memoy address of shared memory for key
  */
 function dol_getshmopaddress($memoryid)
@@ -187,7 +187,7 @@ function dol_listshmop()
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
- *  @param	int		$memoryid		Memory id of shared area
+ *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@param	string	$data			Data to save
  * 	@return	int						<0 if KO, Nb of bytes written if OK
  */
@@ -223,7 +223,7 @@ function dol_setshmop($memoryid,$data)
 /**
  * 	Read a memory area shared by all users, all sessions on server
  *
- *  @param	string	$memoryid		Memory id of shared area
+ *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
  * 	@return	int						<0 if KO, data if OK
  */
 function dol_getshmop($memoryid)
