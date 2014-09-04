@@ -219,7 +219,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				{
 					$srcobject->fetch_thirdparty();
 					$lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+					if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+					{
+						$srcobject->fetch_lines();
+						$lines = $srcobject->lines;
+					}
 
 					$fk_parent_line=0;
 					$num=count($lines);
@@ -964,7 +968,11 @@ if ($action == 'create')
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch(GETPOST('originid'));
-			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
+			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))
+			{
+				$objectsrc->fetch_lines();
+				$lines = $objectsrc->lines;
+			}
 			$objectsrc->fetch_thirdparty();
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');

@@ -271,10 +271,12 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 			if ($ret < 0)
 				$error ++;
 
-			if (! $error) {
+			if (! $error)
+			{
 				$object_id = $object->create($user);
 
-				if ($object_id > 0) {
+				if ($object_id > 0)
+				{
 					dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
 
 					$classname = ucfirst($subelement);
@@ -282,15 +284,20 @@ else if ($action == 'add' && $user->rights->commande->creer) {
 
 					dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 					$result = $srcobject->fetch($object->origin_id);
-					if ($result > 0) {
+					if ($result > 0)
+					{
 						$lines = $srcobject->lines;
 						if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
-							$lines = $srcobject->fetch_lines();
+						{
+							$srcobject->fetch_lines();
+							$lines = $srcobject->lines;
+						}
 
 						$fk_parent_line = 0;
 						$num = count($lines);
 
-						for($i = 0; $i < $num; $i ++) {
+						for($i = 0; $i < $num; $i ++)
+						{
 							$label = (! empty($lines [$i]->label) ? $lines [$i]->label : '');
 							$desc = (! empty($lines [$i]->desc) ? $lines [$i]->desc : $lines [$i]->libelle);
 							$product_type = (! empty($lines [$i]->product_type) ? $lines [$i]->product_type : 0);

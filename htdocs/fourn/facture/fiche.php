@@ -364,7 +364,11 @@ elseif ($action == 'add' && $user->rights->fournisseur->facture->creer)
                 if ($result > 0)
                 {
                     $lines = $srcobject->lines;
-                    if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+                    if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+                    {
+                    	$srcobject->fetch_lines();
+                    	$lines = $srcobject->lines;
+                    }
 
                     $num=count($lines);
                     for ($i = 0; $i < $num; $i++)

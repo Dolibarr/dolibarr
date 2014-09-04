@@ -944,9 +944,9 @@ class Fichinter extends CommonObject
 	}
 
 	/**
-	 *	Load array lines
+	 *	Load array lines ->lines
 	 *
-	 *	@return		int		<0 if Ko,	>0 if OK
+	 *	@return		int		<0 if KO, >0 if OK
 	 */
 	function fetch_lines()
 	{
