@@ -12,7 +12,7 @@
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -173,7 +173,7 @@ function dol_shutdown()
  *  @param	string	$check	     Type of check (''=no check,  'int'=check it's numeric, 'alpha'=check it's text and sign, 'aZ'=check it's a-z only, 'array'=check it's array, 'san_alpha'= Use filter_var with FILTER_SANITIZE_STRING, 'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to custom. (See http://php.net/manual/en/filter.filters.php for détails)
- *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom     
+ *  @param  mixed   $options     Options to pass to filter_var when $check is set to custom
  *  @return string||string[]      		 Value found, or '' if check fails
  */
 function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
@@ -4064,10 +4064,10 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
  *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
  *  @return	void
  *  @see	dol_htmloutput_events
+ *  @deprecated	Use setEventMessages instead
  */
 function setEventMessage($mesgs, $style='mesgs')
 {
-	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
 	if (! is_array($mesgs))		// If mesgs is a string
 	{
 		if ($mesgs) $_SESSION['dol_events'][$style][] = $mesgs;
@@ -4079,6 +4079,23 @@ function setEventMessage($mesgs, $style='mesgs')
 			if ($mesg) $_SESSION['dol_events'][$style][] = $mesg;
 		}
 	}
+}
+
+/**
+ *	Set event messages in dol_events session object. Will be output by calling dol_htmloutput_events.
+ *  Note: Calling dol_htmloutput_events is done into pages by standard llxFooter() function.
+ *
+ *	@param	string	$mesg			Message string
+ *	@param	array	$mesgs			Message array
+ *  @param  string	$style      	Which style to use ('mesgs' by default, 'warnings', 'errors')
+ *  @return	void
+ *  @see	dol_htmloutput_events
+ */
+function setEventMessages($mesg, $mesgs, $style='mesgs')
+{
+	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
+	if (empty($mesgs)) setEventMessage($mesg, $style);
+	else setEventMessage($mesgs, $style);
 }
 
 /**

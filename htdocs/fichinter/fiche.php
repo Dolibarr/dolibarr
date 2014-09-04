@@ -328,7 +328,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        else
 	        {
 	            $langs->load("errors");
-	            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'create';
 	        }
         }
@@ -1214,10 +1214,13 @@ else if ($id > 0 || ! empty($ref))
 	// Third party
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
-	// Duration
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-	print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-	print '</tr>';
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		// Duration
+		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
+		print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td valign="top">';
@@ -1345,7 +1348,7 @@ else if ($id > 0 || ! empty($ref))
 				else
 				{
 					print $extrafields->showOutputField($key,$value);
-					if ($object->statut == 0 && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
+					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 				}
 				print '</td></tr>'."\n";
 			}
@@ -1615,7 +1618,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Modify
-			if ($object->statut == 1 && $user->rights->ficheinter->creer && empty($conf->global->FICHINTER_DISABLE_DETAILS))
+			if ($object->statut == 1 && $user->rights->ficheinter->creer)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
 				print '>'.$langs->trans("Modify").'</a></div>';
