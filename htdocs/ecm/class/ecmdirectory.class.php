@@ -154,7 +154,7 @@ class EcmDirectory // extends CommonObject
 
                 // Call trigger
                 $result=$this->call_trigger('MYECMDIR_CREATE',$user);
-                if ($result < 0) { $error++; }            
+                if ($result < 0) { $error++; }
                 // End call triggers
 
 				if (! $error)
@@ -219,7 +219,7 @@ class EcmDirectory // extends CommonObject
 		{
             // Call trigger
             $result=$this->call_trigger('MYECMDIR_MODIFY',$user);
-            if ($result < 0) { $error++; }            
+            if ($result < 0) { $error++; }
             // End call triggers
 		}
 
@@ -356,10 +356,10 @@ class EcmDirectory // extends CommonObject
             {
             	$this->db->rollback();
             	return -2;
-            }            
+            }
             // End call triggers
 		}
-		
+
 		if ($mode != 'databaseonly')
 		{
 			$file = $conf->ecm->dir_output . "/" . $relativepath;
@@ -511,7 +511,7 @@ class EcmDirectory // extends CommonObject
 
 
 	/**
-	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau
+	 * 	Reconstruit l'arborescence des categories sous la forme d'un tableau à partir de la base de donnée
 	 *	Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
 	 *				id                  Id de la categorie
 	 *				id_mere             Id de la categorie mere
@@ -693,7 +693,7 @@ class EcmDirectory // extends CommonObject
 			return -1;
 		}
 	}
-	
+
 	/**
      * Call trigger based on this instance
      *
@@ -725,6 +725,6 @@ class EcmDirectory // extends CommonObject
         return $result;
 
     }
-	
+
 
 }
