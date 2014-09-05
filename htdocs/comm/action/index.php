@@ -343,10 +343,6 @@ $showextcals=$listofextcals;
 if ($conf->use_javascript_ajax)
 {
 	$s='';
-	//print '<tr><td>';
-
-	//print $langs->trans("Calendars").': ';
-	//print '<td align="center" valign="middle" class="nowrap">';
 	$s.='<script type="text/javascript">' . "\n";
 	$s.='jQuery(document).ready(function () {' . "\n";
 	$s.='jQuery("#check_mytasks").click(function() { jQuery(".family_mytasks").toggle(); jQuery(".family_other").toggle(); });' . "\n";
@@ -380,8 +376,6 @@ if ($conf->use_javascript_ajax)
 		}
 	}
 	$s.='<div class="nowrap float"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
-
-	//print '</td></tr>';
 }
 
 
@@ -859,8 +853,7 @@ if (count($listofextcals))
                         $daykey=dol_mktime(0,0,0,$mois,$jour,$annee);
                         $daykeygmt=dol_mktime(0,0,0,$mois,$jour,$annee,true,0);
                         do
-                        //print 'x'.$datestart.'-'.$dateend;exit;
-                        {
+                     {
                             //if ($event->fulldayevent) print dol_print_date($daykeygmt,'dayhour','gmt').'-'.dol_print_date($daykey,'dayhour','gmt').'-'.dol_print_date($event->date_end_in_calendar,'dayhour','gmt').' ';
                             $eventarray[$daykey][]=$event;
                             $daykey+=60*60*24;  $daykeygmt+=60*60*24;   // Add one day
@@ -914,7 +907,6 @@ if (empty($action) || $action == 'show_month')      // View by month
 
     // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
     //var_dump($eventarray);
-    //print $tmpday;
     for ($iter_week = 0; $iter_week < 6 ; $iter_week++)
     {
         echo " <tr>\n";
@@ -987,10 +979,6 @@ elseif ($action == 'show_week') // View by week
         $i++;
     }
     echo " </tr>\n";
-
-    // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
-    //var_dump($eventarray);
-    //print $tmpday;
 
     echo " <tr>\n";
 
@@ -1384,6 +1372,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print '</div>'."\n";
 }
 
+
 /**
  * Change color with a delta
  *
@@ -1399,4 +1388,3 @@ function dol_color_minus($color, $minus)
 	$newcolor[4]=((hexdec($newcolor[4])-$minus)<0)?0:dechex((hexdec($newcolor[4])-$minus));
 	return $newcolor;
 }
-

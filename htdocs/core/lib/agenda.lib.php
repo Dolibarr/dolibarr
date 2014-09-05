@@ -141,7 +141,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '</td></tr>';
 	}
 
-	if ($canedit && $action == 'show_week')
+	if ($canedit && $action == 'show_peruser')
 	{
 		// Filter on hours
 		print '<tr>';
