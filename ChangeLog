@@ -5,14 +5,16 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
 - Fix: Can upload files on services.
-- Fix: sql errors on updat fichinter
-- Fix: debian script syntax error
+- Fix: sql errors on updat fichinter.
+- Fix: debian script syntax error.
 - Fix: error "menu param is not inside list" into pos module.
-- Fix: Salary payments are not reflected on the reporting sheets
-- Fix: Unsubscribe emailing not working
-- Fix: Trigger on create category call failed because user is not passed on card
-- Fix: list event view lost type event filter
-- Fix: Save also code event
+- Fix: Salary payments are not reflected on the reporting sheets.
+- Fix: Unsubscribe emailing not working.
+- Fix: Trigger on create category call failed because user is not passed on card.
+- Fix: list event view lost type event filter.
+- Fix: Save also code event.
+- Fix: VAT payment - Add control on field date value.
+- Fix: Salaries payment - Field date value is now required and add control on it.
 - Fix: Iban was used instead of Bic into SEPA file.
 - Fix: Must unaccent strings into SEPA file.
 
