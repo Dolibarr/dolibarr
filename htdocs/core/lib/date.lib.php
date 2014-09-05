@@ -544,7 +544,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     	}
     }
 
-    $week = date("W",dol_mktime(0,0,0,$month,$tmpday,$year,$gm));
+    $week = date("W",dol_mktime(0,0,0,$tmpmonth,$tmpday,$tmpyear,$gm));
 
 	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'first_month' => $tmpmonth, 'first_year' => $tmpyear, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
 }
