@@ -166,7 +166,7 @@ $nowday=$nowarray['mday'];
 $listofextcals=array();
 
 // Define list of external calendars (global admin setup)
-if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0)
+if (empty($conf->global->AGENDA_DISABLE_EXT))
 {
     $i=0;
     while($i < $conf->global->AGENDA_EXT_NB)
@@ -184,19 +184,22 @@ if (empty($conf->global->AGENDA_DISABLE_EXT) && $conf->global->AGENDA_EXT_NB > 0
     }
 }
 // Define list of external calendars (user setup)
-$i=0;
-while($i < $conf->global->AGENDA_EXT_NB)
+if (empty($user->conf->AGENDA_DISABLE_EXT))
 {
-	$i++;
-	$source='AGENDA_EXT_SRC_'.$user->id.'_'.$i;
-	$name='AGENDA_EXT_NAME_'.$user->id.'_'.$i;
-	$color='AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
-	$enabled='AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
-	$buggedfile='AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
-	if (! empty($user->conf->$source) && ! empty($user->conf->$name))
+	$i=0;
+	while($i < $conf->global->AGENDA_EXT_NB)
 	{
-		// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
-		$listofextcals[]=array('src'=>$user->conf->$source,'name'=>$user->conf->$name,'color'=>$user->conf->$color,'buggedfile'=>(isset($user->conf->buggedfile)?$user->conf->buggedfile:0));
+		$i++;
+		$source='AGENDA_EXT_SRC_'.$user->id.'_'.$i;
+		$name='AGENDA_EXT_NAME_'.$user->id.'_'.$i;
+		$color='AGENDA_EXT_COLOR_'.$user->id.'_'.$i;
+		$enabled='AGENDA_EXT_ENABLED_'.$user->id.'_'.$i;
+		$buggedfile='AGENDA_EXT_BUGGEDFILE_'.$user->id.'_'.$i;
+		if (! empty($user->conf->$source) && ! empty($user->conf->$name))
+		{
+			// Note: $conf->global->buggedfile can be empty or 'uselocalandtznodaylight' or 'uselocalandtzdaylight'
+			$listofextcals[]=array('src'=>$user->conf->$source,'name'=>$user->conf->$name,'color'=>$user->conf->$color,'buggedfile'=>(isset($user->conf->buggedfile)?$user->conf->buggedfile:0));
+		}
 	}
 }
 
