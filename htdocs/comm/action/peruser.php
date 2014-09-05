@@ -789,7 +789,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					$title .= '00';
 				$string1='&nbsp;';
 				$style1='peruser_busy';
-				$url='<a href="" title="'.$title.'"><img src="red.png" alt="'.$title.'"></a>';
+				$url='<a href="" title="'.$title.'">';
 			}
 		}
 		if (isset($cases2[$h]))
@@ -802,17 +802,30 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				else $title .= '00';
 				$string2='&nbsp;';
 				$style2='peruser_busy';
-				$url='<a href="" title="'.$title.'"><img src="red.png" alt="'.$title.'"></a>';
+				$url='<a href="" title="'.$title.'">';
 			}
 		}
 
 
 		if ($h == $begin_h) echo '<td class="'.$style.'_peruserleft cal_peruser">';
 		else echo '<td class="'.$style.' cal_peruser">';
+		if (count($cases1[$h]) == 1)	// 1 seul evenement
+		{
+			$ids=array_keys($cases1[$h]);
+			$id=$ids[0];
+			$title1='zzz';
+		}
+			if (count($cases2[$h]) == 1)	// 1 seul evenement
+		{
+			$ids=array_keys($cases2[$h]);
+			$id=$ids[0];
+			$title2='bbb';
+		}
 		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td class="'.$style1.'">';
+		print '<tr><td class="'.$style1.' onclickopenref" ref="'.$id.'"'.($title1?' title="'.$title1.'"':'').'>';
+		//var_dump($cases1[$h]);
 		print $string1;
-		print '</td><td class="'.$style2.'">';
+		print '</td><td class="'.$style2.' onclickopenref" ref="'.$id.'"'.($title2?' title="'.$title2.'"':'').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';
