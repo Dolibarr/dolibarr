@@ -505,7 +505,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     $tmpday = date($tmparray[0])-$seconds;
 	$tmpday = date("d",$tmpday);
 
-	//Check first day of week is form this month or not
+	//Check first day of week is in same month than current day or not
 	if ($tmpday>$day)
     {
     	$prev_month = $month-1;
@@ -522,15 +522,17 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
     	$prev_month = $month;
 		$prev_year  = $year;
     }
-
+	$tmpmonth = $prev_month;
+	$tmpyear = $prev_year;
+    
     //Get first day of next week
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
 	$tmparray=dol_getdate($tmptime,true);
     $prev_day   = $tmparray['mday'];
 
-    //Check first day of week is form this month or not
-	if ($prev_day>$tmpday)
+    //Check prev day of week is in same month than first day or not
+    if ($prev_day>$tmpday)
     {
     	$prev_month = $month-1;
 		$prev_year  = $year;
@@ -544,7 +546,7 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 
     $week = date("W",dol_mktime(0,0,0,$month,$tmpday,$year,$gm));
 
-	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
+	return array('year' => $year, 'month' => $month, 'week' => $week, 'first_day' => $tmpday, 'first_month' => $tmpmonth, 'first_year' => $tmpyear, 'prev_year' => $prev_year, 'prev_month' => $prev_month, 'prev_day' => $prev_day);
 }
 
 /**
