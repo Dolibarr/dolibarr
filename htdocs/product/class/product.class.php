@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014 	   Philippe Grand 		<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3511,6 +3512,37 @@ class Product extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
+		}
+	}
+	
+	/**
+     * Return  minimum product recommended price
+     *
+	 * @return	void
+     */
+	function min_recommended_price() 
+	{
+		global $conf;
+		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+		{
+			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+			$product_fourn = new ProductFournisseur($this->db);
+			$product_fourn_list = $product_fourn->list_product_fournisseur_price($this->id, '', '');
+			$maxpricesupplier=0;
+			
+			if (is_array($product_fourn_list) && count($product_fourn_list)>0)
+			{				
+				foreach($product_fourn_list as $productfourn)
+				{		
+					if ($productfourn->fourn_unitprice>$maxpricesupplier) 
+					{
+						$maxpricesupplier = $productfourn->fourn_unitprice;
+					}
+				}
+				
+				$maxpricesupplier*=$conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE;
+			}
+			return $maxpricesupplier;
 		}
 	}
 }
