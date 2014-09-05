@@ -501,7 +501,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
 					$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 					$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
-					$newmenu->add("/accountancy/admin/account.php?mainmenu=home", $langs->trans("Chartofaccounts"),1);
 					$newmenu->add("/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
 					if (! in_array($langs->defaultlang,array('en_US','en_GB','en_NZ','en_AU','fr_FR','fr_BE','es_ES','ca_ES')))
 					{
@@ -515,6 +514,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/admin/mails.php?mainmenu=home", $langs->trans("Emails"),1);
 					$newmenu->add("/admin/sms.php?mainmenu=home", $langs->trans("SMS"),1);
 					$newmenu->add("/admin/dict.php?mainmenu=home", $langs->trans("Dictionary"),1);
+					if (! empty($conf->accounting->enabled)) $newmenu->add("/accountancy/admin/account.php?mainmenu=home", $langs->trans("Chartofaccounts"),1);
 					$newmenu->add("/admin/const.php?mainmenu=home", $langs->trans("OtherSetup"),1);
 				}
 
@@ -904,12 +904,14 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=ca", $langs->trans("ByProductsAndServices"),2,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
 
-
-				// Journaux
-				//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
-				//journaux
-				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/sellsjournal.php?leftmenu=ca",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire);
-				if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/purchasesjournal.php?leftmenu=ca",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire);
+				if (! empty($conf->comptabilite->enabled))
+				{
+					// Journaux
+					//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
+					//journaux
+					if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/sellsjournal.php?leftmenu=ca",$langs->trans("SellsJournal"),1,$user->rights->compta->resultat->lire);
+					if (empty($leftmenu) || $leftmenu=="ca") $newmenu->add("/compta/journal/purchasesjournal.php?leftmenu=ca",$langs->trans("PurchasesJournal"),1,$user->rights->compta->resultat->lire);
+				}	
 			}
 		}
 
@@ -1252,8 +1254,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			else dol_print_error($db);
 			$db->free($resql);
 		}
-		if (!empty($user->rights->banque->lire) && !empty($user->rights->accounting->mouvements->lire) &&  $mainmenu == 'accountancy')	// Entry for each bank journal
+		
+		// Accountancy journals
+		if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) &&  $mainmenu == 'accountancy')
 		{
+			$newmenu->add('/accountancy/journal/index.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+		
 			$sql = "SELECT rowid, label, accountancy_journal";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql.= " WHERE entity = ".$conf->entity;
@@ -1266,12 +1272,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$numr = $db->num_rows($resql);
 				$i = 0;
 
-				if ($numr > 0) 	$newmenu->add('/accountancy/journal/index.php',$langs->trans("Journaux"),0,$user->rights->banque->lire);
+				if ($numr > 0)
 				
-				// Add other journal
-				$newmenu->add("/accountancy/journal/sellsjournal.php",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
-				$newmenu->add("/accountancy/journal/purchasesjournal.php",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
-
 				while ($i < $numr)
 				{
 					$objp = $db->fetch_object($resql);
@@ -1281,7 +1283,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 			else dol_print_error($db);
 			$db->free($resql);
+			
+			// Add other journal
+			$newmenu->add("/accountancy/journal/sellsjournal.php",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire);
+			$newmenu->add("/accountancy/journal/purchasesjournal.php",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire);
 		}
+
 		if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
 		{
 			$MAXFTP=20;

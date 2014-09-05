@@ -22,21 +22,12 @@
  * \brief		List accounting account
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/accountancy/class/accountingaccount.class.php");
-dol_include_once("/accountancy/class/html.formventilation.class.php");
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");

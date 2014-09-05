@@ -22,20 +22,12 @@
  * \ingroup		Accounting Expert
  * \brief		Card accounting account
  */
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
-	// Class
+// Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/accountancy/class/accountingaccount.class.php");
-dol_include_once("/accountancy/class/html.formventilation.class.php");
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("bills");
@@ -53,7 +45,8 @@ if (!$user->admin)
 $accounting = new AccountingAccount($db);
 
 // Action
-if ($action == 'add') {
+if ($action == 'add')
+{
 	$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 	
 	dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
@@ -82,7 +75,9 @@ if ($action == 'add') {
 		}
 	}
 	Header("Location: account.php");
-} elseif ($action == 'edit') {
+}
+else if ($action == 'edit')
+{
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $accounting->fetch($id);
 		
@@ -111,8 +106,9 @@ if ($action == 'add') {
 		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 		exit();
 	}
-} else if ($action == 'delete') {
-	
+}
+else if ($action == 'delete')
+{
 	$result = $accounting->fetch($id);
 	
 	if (! empty($accounting->id)) {
@@ -137,7 +133,8 @@ llxheader('', $langs->trans('AccountAccounting'));
 $form = new Form($db);
 $htmlacc = new FormVentilation($db);
 
-if ($action == 'create') {
+if ($action == 'create')
+{
 	print_fiche_titre($langs->trans('NewAccount'));
 	
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
@@ -169,16 +166,19 @@ if ($action == 'create') {
 	print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '"></center';
 	
 	print '</form>';
-} else if ($id) {
+}
+else if ($id)
+{
 	$rowid = $id;
 	$account = $accounting->fetch($rowid);
 	
 	if ($account > 0) {
 		dol_htmloutput_mesg($mesg);
 		
-		$head = account_prepare_head($accounting);
+		$head = accounting_prepare_head($accounting);
 		
-		if ($action == 'update') {
+		if ($action == 'update')
+		{
 			// WYSIWYG Editor
 			$htmlacc = new FormVentilation($db);
 			
@@ -224,7 +224,9 @@ if ($action == 'create') {
 			print '</form>';
 			
 			print '</div>';
-		} else {
+		}
+		else
+		{
 			$linkback = '<a href="../admin/account.php">' . $langs->trans("BackToChartofaccounts") . '</a>';
 			
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
@@ -268,8 +270,8 @@ if ($action == 'create') {
 			print '</div>';
 			
 			/*
-       * Barre d'actions
-       */
+			 * Barre d'actions
+			 */
 			
 			print '<div class="tabsAction">';
 			
@@ -287,7 +289,9 @@ if ($action == 'create') {
 			
 			print '</div>';
 		}
-	} else {
+	}
+	else
+	{
 		dol_print_error($db);
 	}
 }

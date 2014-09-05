@@ -25,20 +25,11 @@
  * \brief		Card supplier ventilation
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
-	// Class
-dol_include_once("/fourn/class/fournisseur.facture.class.php");
-dol_include_once("/accountancy/class/html.formventilation.class.php");
+// Class
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");

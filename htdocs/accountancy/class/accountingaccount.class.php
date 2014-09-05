@@ -48,6 +48,7 @@ class AccountingAccount
 	 * @param 	DoliDB	$db		Database handle
 	 */
 	function __construct($db)
+
 	{
 		$this->db = $db;
 	}
@@ -290,7 +291,7 @@ class AccountingAccount
 					// // Call triggers
 					// include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
 					// $interface=new Interfaces($this->db);
-					// $result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+					// $result=$interface->run_triggers('ACCOUNTANCY_ACCOUNT_DELETE',$this,$user,$langs,$conf);
 					// if ($result < 0) { $error++; $this->errors=$interface->errors; }
 					// // End call triggers
 				}
@@ -331,7 +332,8 @@ class AccountingAccount
 	 * @param int $id of record
 	 * @return void
 	 */
-	function info($id) {
+	function info($id)
+	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accountingaccount as a';
 		$sql .= ' WHERE a.rowid = ' . $id;

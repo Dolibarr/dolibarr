@@ -24,21 +24,12 @@
  * \brief		Ventilation page from customers invoices
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
-	// Class
-dol_include_once("/compta/facture/class/facture.class.php");
-dol_include_once("/product/class/product.class.php");
-dol_include_once("/accountancy/class/html.formventilation.class.php");
+// Class
+require_once DOL_DOCUMENT_ROOT.'compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");
