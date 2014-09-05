@@ -387,17 +387,23 @@ if ($id == 11)
 	$langs->load("bills");
 	$langs->load("interventions");
 	$elementList = array(
-			'commande'          => $langs->trans('Order'),
+			'proposal'          => $langs->trans('Proposal'),
+			'order'             => $langs->trans('Order'),
+			'invoice'           => $langs->trans('Bill'),
 			'invoice_supplier'  => $langs->trans('SupplierBill'),
 			'order_supplier'    => $langs->trans('SupplierOrder'),
-			'contrat'           => $langs->trans('Contract'),
+			'intervention'      => $langs->trans('InterventionCard'),
+			'contract'          => $langs->trans('Contract'),
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
+			'agenda'			=> $langs->trans('Agenda'),
+			// old deprecated
+			'contrat'           => $langs->trans('Contract'),
 			'propal'            => $langs->trans('Proposal'),
+			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
 			'facture_fourn'     => $langs->trans('SupplierBill'),
-			'fichinter'         => $langs->trans('InterventionCard'),
-			'agenda'			=> $langs->trans('Agenda')
+			'fichinter'         => $langs->trans('InterventionCard')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 	$sourceList = array(
@@ -770,7 +776,10 @@ if ($id)
             if ($fieldlist[$field]=='localtax2')       { $valuetoshow=$langs->trans("Rate")." 3";}
             if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
-            if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
+            if ($fieldlist[$field]=='type')            {
+				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
+				else $valuetoshow=$langs->trans("Type");
+            }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
             if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*"; }
             if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
