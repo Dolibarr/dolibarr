@@ -24,18 +24,9 @@
  * \brief		Index
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
-	// Langs
+// Langs
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");

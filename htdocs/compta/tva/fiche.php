@@ -72,6 +72,16 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$tva->label=GETPOST("label");
 	$tva->note=GETPOST("note");
 	
+	if (empty($tva->datev))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DateValue")),'errors');
+		$error++;
+	}
+	if (empty($tva->datep))
+	{
+		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DatePayment")),'errors');
+		$error++;
+	}
 	if (empty($tva->type_payment) || $tva->type_payment < 0)
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentMode")),'errors');

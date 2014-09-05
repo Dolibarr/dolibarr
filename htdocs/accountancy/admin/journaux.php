@@ -25,21 +25,12 @@
  * \brief		Setup page to configure accounting expert module
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
 // Class
-dol_include_once("/core/lib/admin.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/core/lib/bank.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("accountancy");
@@ -91,7 +82,7 @@ $form = new Form($db);
 
 print_fiche_titre($langs->trans('ConfigAccountingExpert'));
 
-$head = admin_account_prepare_head(null);
+$head = admin_accounting_prepare_head(null);
 
 dol_fiche_head($head, 'journal', $langs->trans("Configuration"), 0, 'cron');
 

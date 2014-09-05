@@ -28,25 +28,16 @@
  * \brief		Page with sells journal
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
-	// Class
-dol_include_once("/core/lib/report.lib.php");
-dol_include_once("/core/lib/date.lib.php");
+// Class
+require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-dol_include_once("/compta/facture/class/facture.class.php");
-dol_include_once("/societe/class/client.class.php");
-dol_include_once("/accountancy/class/bookkeeping.class.php");
-dol_include_once("/accountancy/class/accountingaccount.class.php");
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php');
+require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 // Langs
 $langs->load("compta");

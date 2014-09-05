@@ -26,19 +26,10 @@
  * \brief		Setup page to configure accounting expert module
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
 // Class
-dol_include_once("/core/lib/admin.lib.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 $langs->load("compta");
@@ -157,7 +148,7 @@ $form = new Form($db);
 
 print_fiche_titre($langs->trans('ConfigAccountingExpert'));
 
-$head = admin_account_prepare_head($accounting);
+$head = admin_accounting_prepare_head($accounting);
 
 dol_fiche_head($head, 'general', $langs->trans("Configuration"), 0, 'cron');
 
@@ -264,6 +255,7 @@ foreach ($list as $key)
 	print '</td></tr>';
 }
 
+$var = ! $var;
 print "<tr " . $bc[$var] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
 if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
@@ -277,6 +269,7 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
 }
 print '</tr>';
 
+$var = ! $var;
 print "<tr " . $bc[$var] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE") . '</td>';
 if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {

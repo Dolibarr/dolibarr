@@ -23,19 +23,10 @@
  * \brief		Page to show account
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
 // Class
-dol_include_once("accountancy/class/bookkeeping.class.php");
+require_once DOL_DOCUMENT_ROOT.'accountancy/class/bookkeeping.class.php';
 
 // Langs
 $langs->load("accounting");

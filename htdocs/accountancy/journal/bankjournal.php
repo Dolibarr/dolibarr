@@ -28,16 +28,7 @@
  *	\brief		Page with sells journal
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
@@ -49,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
@@ -129,6 +121,7 @@ $paymentsupplierstatic = new PaiementFourn($db);
 $societestatic = new Societe($db);
 $chargestatic = new ChargeSociales($db);
 $paymentvatstatic = new TVA($db);
+$paymentsalstatic = new PaymentSalary($db);
 
 dol_syslog("accountancy/journal/bankjournal.php:: sql=" . $sql, LOG_DEBUG);
 $result = $db->query($sql);
@@ -228,6 +221,12 @@ if ($result) {
 				$paymentvatstatic->ref = $links[$key]['url_id'];
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
 				$tabtp[$obj->rowid][$cpttva] += $obj->amount;
+			} else if ($links[$key]['type'] == 'payment_salary') {
+				
+				$paymentsalstatic->id = $links[$key]['url_id'];
+				$paymentsalstatic->ref = $links[$key]['url_id'];
+				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
+				$tabtp[$obj->rowid][$cptsociale] += $obj->amount;
 			} else if ($links[$key]['type'] == 'banktransfert') {
 
 				$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);

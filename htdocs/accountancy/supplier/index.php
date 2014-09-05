@@ -23,19 +23,10 @@
  * \brief		Page accueil ventilation
  */
 
-// Dolibarr environment
-$res = @include ("../main.inc.php");
-if (! $res && file_exists("../main.inc.php"))
-	$res = @include ("../main.inc.php");
-if (! $res && file_exists("../../main.inc.php"))
-	$res = @include ("../../main.inc.php");
-if (! $res && file_exists("../../../main.inc.php"))
-	$res = @include ("../../../main.inc.php");
-if (! $res)
-	die("Include of main fails");
+require '../../main.inc.php';
 	
-	// Class
-dol_include_once("/core/lib/date.lib.php");
+// Class
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -50,7 +41,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->access)
 	accessforbidden();
 	
-	// Filter
+// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());

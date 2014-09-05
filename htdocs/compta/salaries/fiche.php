@@ -80,7 +80,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$sal->num_payment=GETPOST("num_payment");
 	$sal->fk_user_creat=$user->id;
 
-	if (empty($datep) || empty($datesp) || empty($dateep))
+	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
 		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
 		$error++;
@@ -219,7 +219,7 @@ if ($action == 'create')
 	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
 	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
