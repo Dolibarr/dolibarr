@@ -234,6 +234,9 @@ div.inline-block
 .nounderline {
     text-decoration: none;
 }
+.cursorpointer {
+	cursor: pointer;
+}
 
 
 /* ============================================================================== */

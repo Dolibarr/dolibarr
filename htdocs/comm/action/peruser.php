@@ -542,15 +542,6 @@ while ($i < 7)
 }
 echo "</tr>\n";
 
-
-
-
-
-
-// In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
-//var_dump($eventarray);
-//print $tmpday;
-
 // Define $usernames
 $usernames = array(); //init
 /* Use this to have list of users only if users have events
@@ -637,6 +628,18 @@ foreach ($usernames as $username)
 }
 
 echo "</table>\n";
+
+
+// Add js code to manage click on a box
+print '<script type="text/javascript" language="javascript">
+jQuery(document).ready(function() {
+	jQuery(".onclickopenref").click(function() {
+
+		alert(\'ee\');
+	});
+});
+</script>';
+
 
 
 llxFooter();
@@ -777,6 +780,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 	{
 		$style1='';$style2='';
 		$string1='&nbsp;';$string2='&nbsp;';
+		$title1='';$title2='';
 		if (isset($cases1[$h]))
 		{
 			if ($cases1[$h] != '')
@@ -822,10 +826,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$title2='bbb';
 		}
 		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td class="'.$style1.' onclickopenref" ref="'.$id.'"'.($title1?' title="'.$title1.'"':'').'>';
+		print '<tr><td class="'.$style1.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.$id.'"'.($title1?' title="'.$title1.'"':'').'>';
 		//var_dump($cases1[$h]);
 		print $string1;
-		print '</td><td class="'.$style2.' onclickopenref" ref="'.$id.'"'.($title2?' title="'.$title2.'"':'').'>';
+		print '</td><td class="'.$style2.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.$id.'"'.($title2?' title="'.$title2.'"':'').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

@@ -399,7 +399,9 @@ th .button {
 .nounderline {
     text-decoration: none;
 }
-
+.cursorpointer {
+	cursor: pointer;
+}
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */

@@ -336,6 +336,9 @@ th .button {
 .nounderline {
     text-decoration: none;
 }
+.cursorpointer {
+	cursor: pointer;
+}
 
 .blockvmenubookmarks .menu_contenu {
 	background-color: transparent;
