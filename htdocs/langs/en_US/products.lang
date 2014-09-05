@@ -240,3 +240,5 @@ PricingRule=Pricing Rules
 AddCustomerPrice=Add price by customers
 ForceUpdateChildPriceSoc=Set same price on customer subsidiaries
 PriceByCustomerLog=Price by customer log
+MinimumPriceLimit=Minimum price can't be lower that %s
+MinimumRecommendedPrice=Minimum recommended price is : %s

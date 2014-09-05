@@ -6,6 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014 	    Philippe Grand 		    <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,12 +53,17 @@ $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product
 
 $object = new Product($db);
 
+$error=0;
+
 /*
  * Actions
  */
 
 if ($action == 'update_price' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 	$result = $object->fetch($id);
+	
+	$error=0;
+	$maxpricesupplier = $object->min_recommended_price();
 	
 	// MultiPrix
 	if (! empty($conf->global->PRODUIT_MULTIPRICES)) 
@@ -91,6 +97,13 @@ if ($action == 'update_price' && ! $_POST ["cancel"] && ($user->rights->produit-
 		$newvat = str_replace('*', '', $_POST ["tva_tx"]);
 		$newpsq = GETPOST('psqflag');
 		$newpsq = empty($newpsq) ? 0 : $newpsq;
+	}
+	
+	if ($newprice_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+	{
+		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+		$error++;
+		$action='edit_price';
 	}
 	
 	if ($object->updatePrice($newprice, $newpricebase, $user, $newvat, $newprice_min, $level, $newnpr, $newpsq) > 0) {
@@ -197,6 +210,9 @@ if ($action == 'delete_all_price_by_qty') {
  * ****************************************************
  */
 if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+
+	$error=0;
+	$maxpricesupplier = $object->min_recommended_price();
 	
 	$update_child_soc = GETPOST('updatechildprice');
 	
@@ -211,15 +227,24 @@ if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->ri
 	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
 	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 	
-	$result = $prodcustprice->create($user, 0, $update_child_soc);
+	if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 	
+	{
+		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+		$error++;
+		$action='add_customer_price';
+	}	
 	
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'errors');
-	} else {
-		setEventMessage($langs->trans('Save'), 'mesgs');
+	if (empty($error)) {
+		$result = $prodcustprice->create($user, 0, $update_child_soc);
+		
+		if ($result < 0) {
+			setEventMessage($prodcustprice->error, 'errors');
+		} else {
+			setEventMessage($langs->trans('Save'), 'mesgs');
+		}
+		
+		$action = '';
 	}
-	
-	$action = '';
 }
 
 if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || $user->rights->service->supprimer)) {
@@ -236,6 +261,11 @@ if ($action == 'delete_customer_price' && ($user->rights->produit->supprimer || 
 }
 
 if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user->rights->produit->creer || $user->rights->service->creer)) {
+
+	$result = $object->fetch($id);
+	
+	$error=0;
+	$maxpricesupplier = $object->min_recommended_price();
 	
 	$update_child_soc = GETPOST('updatechildprice');
 	
@@ -248,15 +278,23 @@ if ($action == 'update_customer_price_confirm' && ! $_POST ["cancel"] && ($user-
 	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
 	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 	
-	$result = $prodcustprice->update($user, 0, $update_child_soc);
-	
-	if ($result < 0) {
-		setEventMessage($prodcustprice->error, 'errors');
-	} else {
-		setEventMessage($langs->trans('Save'), 'mesgs');
+	if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+	{
+		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
+		$error++;
+		$action='update_customer_price';
 	}
-	
-	$action = '';
+	if (empty($error)) {
+		$result = $prodcustprice->update($user, 0, $update_child_soc);
+		
+		if ($result < 0) {
+			setEventMessage($prodcustprice->error, 'errors');
+		} else {
+			setEventMessage($langs->trans('Save'), 'mesgs');
+		}
+		
+		$action = '';
+	}
 }
 
 /*
@@ -613,6 +651,10 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 		} else {
 			print '<td><input name="price_min" size="10" value="' . price($object->price_min) . '">';
 		}
+		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+		{
+			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+		}
 		print '</td></tr>';
 		
 		print '</table>';
@@ -659,6 +701,10 @@ if ($action == 'edit_price' && ($user->rights->produit->creer || $user->rights->
 				print '<td><input name="price_min_' . $i . '" size="10" value="' . price($object->multiprices_min_ttc ["$i"]) . '">';
 			} else {
 				print '<td><input name="price_min_' . $i . '" size="10" value="' . price($object->multiprices_min ["$i"]) . '">';
+			}
+			if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+			{
+				print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 			}
 			print '</td></tr>';
 			
@@ -806,6 +852,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	if ($action == 'add_customer_price') {
 		
 		// Create mode
+		$maxpricesupplier = $object->min_recommended_price();
 		
 		print_fiche_titre($langs->trans('PriceByCustomer'));
 		
@@ -856,6 +903,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		} else {
 			print '<td><input name="price_min" size="10" value="' . price($object->price_min) . '">';
 		}
+		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+		{
+			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
+		}
 		print '</td></tr>';
 		
 		// Update all child soc
@@ -876,6 +927,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	} elseif ($action == 'edit_customer_price') {
 		
 		// Edit mode
+		$maxpricesupplier = $object->min_recommended_price();
 		
 		print_fiche_titre($langs->trans('PriceByCustomer'));
 		
@@ -893,11 +945,11 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<td>' . $langs->trans('ThirdParty') . '</td>';
 		$staticsoc = new Societe($db);
 		$staticsoc->fetch($prodcustprice->fk_soc);
-		print "<td>" . $staticsoc->getNomUrl(1) . "</td>";
+		print "<td colspan='2'>" . $staticsoc->getNomUrl(1) . "</td>";
 		print '</tr>';
 		
 		// VAT
-		print '<tr><td>' . $langs->trans("VATRate") . '</td><td>';
+		print '<tr><td>' . $langs->trans("VATRate") . '</td><td colspan="2">';
 		print $form->load_tva("tva_tx", $prodcustprice->tva_tx, $mysoc, '', $object->id, $prodcustprice->recuperableonly);
 		print '</td></tr>';
 		
@@ -930,6 +982,10 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td><input name="price_min" size="10" value="' . price($prodcustprice->price_min_ttc) . '">';
 		} else {
 			print '<td><input name="price_min" size="10" value="' . price($prodcustprice->price_min) . '">';
+		}
+		if ( !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) 
+		{
+			print '<td align="left">'.$langs->trans("MinimumRecommendedPrice", price($maxpricesupplier,0,'',1,-1,-1,'auto')).' '.img_warning().'</td>';
 		}
 		print '</td></tr>';
 		
