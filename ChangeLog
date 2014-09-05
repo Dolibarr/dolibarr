@@ -13,6 +13,8 @@ For users:
 - Fix: Trigger on create category call failed because user is not passed on card
 - Fix: list event view lost type event filter
 - Fix: Save also code event
+- Fix: VAT payment - Add control on field date value
+- Fix: Salaries payment - Field date value is now required and add control on it
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:
