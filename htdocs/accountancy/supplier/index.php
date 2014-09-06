@@ -27,6 +27,7 @@ require '../../main.inc.php';
 	
 // Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -93,7 +94,7 @@ llxHeader('', $langs->trans("SuppliersVentilation"));
 $textprevyear = "<a href=\"index.php?year=" . ($year_current - 1) . "\">" . img_previous() . "</a>";
 $textnextyear = " <a href=\"index.php?year=" . ($year_current + 1) . "\">" . img_next() . "</a>";
 
-print_fiche_titre($langs->trans("VentilationComptableSupplier") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
+print_fiche_titre($langs->trans("AccountingVentilationSupplier") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
 print '<b>' . $langs->trans("DescVentilSupplier") . '</b>';
 print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=validatehistory">' . $langs->trans("ValidateHistory") . '</a></div>';
@@ -104,7 +105,7 @@ $var = true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td align="left">' . $langs->trans("Account") . '</td>';
-print '<td align="left">' . $langs->trans("Intitule") . '</td>';
+print '<td align="left">' . $langs->trans("Label") . '</td>';
 print '<td align="center">' . $langs->trans("JanuaryMin") . '</td>';
 print '<td align="center">' . $langs->trans("FebruaryMin") . '</td>';
 print '<td align="center">' . $langs->trans("MarchMin") . '</td>';
@@ -157,7 +158,7 @@ if ($resql) {
 		
 		$row = $db->fetch_row($resql);
 		
-		print '<tr><td>' . $row[0] . '</td>';
+		print '<tr><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
 		print '<td align="right">' . price($row[2]) . '</td>';
 		print '<td align="right">' . price($row[3]) . '</td>';

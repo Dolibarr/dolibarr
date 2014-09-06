@@ -20,6 +20,7 @@ Selectmodelcsv=Select a model of export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
+Back=Return
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
@@ -46,9 +47,9 @@ WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=General ledger
 AccountBalanceByMonth=Account balance by month
 
-VentilationComptable=Accounting ventilation
-VentilationComptableSupplier=Accounting ventilation supplier
-Intitule=Label
+AccountingVentilation=Accounting ventilation
+AccountingVentilationSupplier=Accounting ventilation supplier
+AccountingVentilationCustomer=Accounting ventilation customer
 Line=Line
 
 CAHTF=Total purchase supplier HT

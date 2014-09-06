@@ -27,9 +27,9 @@
 require '../../main.inc.php';
 	
 // Class
-require_once DOL_DOCUMENT_ROOT.'compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("compta");

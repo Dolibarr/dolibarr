@@ -47,31 +47,33 @@ $accounting = new AccountingAccount($db);
 // Action
 if ($action == 'add')
 {
-	$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
-	
-	dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
-	$result = $db->query($sql);
-	$obj = $db->fetch_object($result);
-	
-	$accounting->fk_pcg_version = $obj->pcg_version;
-	$accounting->pcg_type = GETPOST('pcg_type');
-	$accounting->pcg_subtype = GETPOST('pcg_subtype');
-	$accounting->account_number = GETPOST('account_number', 'int');
-	$accounting->account_parent = GETPOST('account_parent', 'int');
-	$accounting->label = GETPOST('label', 'alpha');
-	$accounting->active = 1;
-	
-	$res = $accounting->create($user);
-	
-	if ($res == 0) {
-	} else {
-		if ($res == - 3) {
-			$_error = 1;
-			$action = "create";
-		}
-		if ($res == - 4) {
-			$_error = 2;
-			$action = "create";
+	if (! GETPOST('cancel', 'alpha')) {
+		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
+		
+		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
+		$result = $db->query($sql);
+		$obj = $db->fetch_object($result);
+		
+		$accounting->fk_pcg_version = $obj->pcg_version;
+		$accounting->pcg_type = GETPOST('pcg_type');
+		$accounting->pcg_subtype = GETPOST('pcg_subtype');
+		$accounting->account_number = GETPOST('account_number', 'int');
+		$accounting->account_parent = GETPOST('account_parent', 'int');
+		$accounting->label = GETPOST('label', 'alpha');
+		$accounting->active = 1;
+		
+		$res = $accounting->create($user);
+		
+		if ($res == 0) {
+		} else {
+			if ($res == - 3) {
+				$_error = 1;
+				$action = "create";
+			}
+			if ($res == - 4) {
+				$_error = 2;
+				$action = "create";
+			}
 		}
 	}
 	Header("Location: account.php");

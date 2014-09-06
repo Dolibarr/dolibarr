@@ -26,7 +26,7 @@
 require '../../main.inc.php';
 	
 // Class
-require_once DOL_DOCUMENT_ROOT.'accountancy/class/bookkeeping.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 // Langs
 $langs->load("accounting");

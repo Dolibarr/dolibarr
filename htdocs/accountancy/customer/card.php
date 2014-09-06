@@ -47,16 +47,23 @@ if (! $user->rights->accounting->access)
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->access) {
-	$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
-	$sql .= " SET fk_code_ventilation = " . $codeventil;
-	$sql .= " WHERE rowid = " . $id;
+if ($action == 'ventil' && $user->rights->accounting->access) 
+{
+	if (! GETPOST('cancel', 'alpha'))
+	{
+		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
+		$sql .= " SET fk_code_ventilation = " . $codeventil;
+		$sql .= " WHERE rowid = " . $id;
 	
-	dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
-	$resql = $db->query($sql);
-	if (! $resql) {
-		setEventMessage($db->lasterror(), 'errors');
-	}
+		dol_syslog("/accounting/customer/card.php sql=" . $sql, LOG_DEBUG);
+		$resql = $db->query($sql);
+		if (! $resql) {
+			setEventMessage($db->lasterror(), 'errors');
+		}
+	} else {
+		header("Location: ./lines.php");
+		exit();
+	}		
 }
 
 llxHeader("", "", "FicheVentilation");
@@ -101,7 +108,8 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print_fiche_titre($langs->trans("Ventilation"));
+			$linkback='<a href="'.DOL_URL_ROOT.'/accountancy/customer/lines.php">'.$langs->trans("Back").'</a>';
+			print_fiche_titre($langs->trans('AccountingVentilationCustomer'),$linkback,'setup');
 			
 			print '<table class="border" width="100%">';
 			
@@ -119,9 +127,11 @@ if (! empty($id)) {
 			print '<tr><td width="20%">' . $langs->trans("NewAccount") . '</td><td>';
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
-			print '<tr><td>&nbsp;</td><td><input type="submit" class="button" value="' . $langs->trans("Update") . '"></td></tr>';
-			
 			print '</table>';
+			
+			print '<br><center><input class="button" type="submit" value="' . $langs->trans("Save") . '"> &nbsp; &nbsp; ';
+			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '"></center';
+	
 			print '</form>';
 		} else {
 			print "Error";

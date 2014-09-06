@@ -20,6 +20,7 @@ Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique
 Modelcsv_CEGID=Export vers CEGID Expert
 BackToChartofaccounts=Retour plan comptable
+Back=Retour
 
 Definechartofaccounts=Définir un plan comptable
 Selectchartofaccounts=Sélectionnez un plan comptable
@@ -46,9 +47,9 @@ WriteBookKeeping=Comptabiliser les écritures dans le grand livre
 Bookkeeping=Grand livre
 AccountBalanceByMonth=Balance mensuelle
 
-VentilationComptable=Ventilation comptable
-VentilationComptableSupplier=Ventilation comptable fournisseur
-Intitule=Intitulé
+AccountingVentilation=Ventilation comptable
+AccountingVentilationSupplier=Ventilation comptable fournisseur
+AccountingVentilationCustomer=Ventilation comptable client
 Line=Ligne
 
 CAHTF=Total achat fournisseur HT

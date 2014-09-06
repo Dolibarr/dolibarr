@@ -22,6 +22,7 @@ Selectmodelcsv=Seleccione una plantilla de exportación
 Modelcsv_normal=Exportación clásica
 Modelcsv_CEGID=Exportar a Cegid Expert
 BackToChartofaccounts=Volver al plan contable
+Back=Volver
 
 Definechartofaccounts=Definir la contabilidad
 Selectchartofaccounts=Seleccione un plan contable
@@ -49,14 +50,9 @@ WriteBookKeeping=Registrar los asientos en el libro mayor
 Bookkeeping=libro mayor
 AccountBalanceByMonth=Saldo Mensual
 
-VentilationComptable=desglose de Contabilidad
-VentilationComptableSupplier=Proveedor de cuentas de ventilación
-Intitule=título
-Line=línea
-
-VentilationComptable=desglose de Contabilidad
-VentilationComptableSupplier=Contabilización compras
-Intitule=título
+AccountingVentilation=desglose de Contabilidad
+AccountingVentilationSupplier=Proveedor de cuentas de ventilación
+AccountingVentilationCustomer=Cliente de cuentas de ventilación
 Line=línea
 
 Ventilate=contabilizar
