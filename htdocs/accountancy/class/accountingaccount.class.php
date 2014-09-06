@@ -126,8 +126,8 @@ class AccountingAccount
 		if (isset($this->active))
 			$this->active = trim($this->active);
 
-			// Check parameters
-			// Put here code to add control on parameters values
+		// Check parameters
+		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accountingaccount(";

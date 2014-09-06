@@ -166,7 +166,9 @@ class FormVentilation extends Form
 		$out = '';
 
 		$sql = "SELECT DISTINCT pcg_type ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount as aa";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " ORDER BY pcg_type";
 
 		dol_syslog(get_class($this) . "::select_pcgtype sql=" . $sql, LOG_DEBUG);
@@ -220,7 +222,9 @@ class FormVentilation extends Form
 		$out = '';
 
 		$sql = "SELECT DISTINCT pcg_subtype ";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accountingaccount as aa";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " ORDER BY pcg_subtype";
 
 		dol_syslog(get_class($this) . "::select_pcgsubtype sql=" . $sql, LOG_DEBUG);
