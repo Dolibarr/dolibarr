@@ -86,6 +86,14 @@ $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':'');
 
+$dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
+if ($dateselect > 0)
+{
+	$day=GETPOST('dateselectday');
+	$month=GETPOST('dateselectmonth');
+	$year=GETPOST('dateselectyear');
+}
+
 $tmp=empty($conf->global->MAIN_DEFAULT_WORKING_HOURS)?'9-18':$conf->global->MAIN_DEFAULT_WORKING_HOURS;
 $tmparray=explode('-',$tmp);
 $begin_h = GETPOST('begin_h')?GETPOST('begin_h','int'):($tmparray[0] != '' ? $tmparray[0] : 9);
@@ -226,7 +234,6 @@ $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
 $tmpday = $first_day;
 
-
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
 $nav.=" </span>\n";
@@ -234,6 +241,10 @@ $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $picto='calendarweek';
 
+$nav.=' &nbsp; <form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav.='</form>';
 
 // Must be after the nav definition
 $param.='&year='.$year.'&month='.$month.($day?'&day='.$day:'');

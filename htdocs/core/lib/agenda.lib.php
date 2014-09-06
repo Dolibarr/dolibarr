@@ -159,15 +159,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7"> - ';
 		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</td></tr>';
-
-		// Filter on day
-		print '<tr>';
-		print '<td class="nowrap">'.$langs->trans("Week").'</td>';
-		print "<td class='nowrap maxwidthonsmartphone'>";
-		print '<input type="date" name="day_date" value="';
-		if (isset($_REQUEST['day_date'])) print $_REQUEST['day_date'];
-		print '">';
-		print '</td></tr>';
 	}
 
 	// Hooks
