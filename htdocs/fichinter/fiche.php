@@ -63,6 +63,7 @@ $confirm	= GETPOST('confirm','alpha');
 $mesg		= GETPOST('msg','alpha');
 $origin=GETPOST('origin','alpha');
 $originid=(GETPOST('originid','int')?GETPOST('originid','int'):GETPOST('origin_id','int')); // For backward compatibility
+$note_public = GETPOST('note_public');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -218,7 +219,11 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 				{
 					$srcobject->fetch_thirdparty();
 					$lines = $srcobject->lines;
-					if (empty($lines) && method_exists($srcobject,'fetch_lines'))  $lines = $srcobject->fetch_lines();
+					if (empty($lines) && method_exists($srcobject,'fetch_lines'))
+					{
+						$srcobject->fetch_lines();
+						$lines = $srcobject->lines;
+					}
 
 					$fk_parent_line=0;
 					$num=count($lines);
@@ -328,7 +333,7 @@ else if ($action == 'add' && $user->rights->ficheinter->creer)
 	        else
 	        {
 	            $langs->load("errors");
-	            $mesg='<div class="error">'.$langs->trans($object->error).'</div>';
+	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'create';
 	        }
         }
@@ -963,15 +968,19 @@ if ($action == 'create')
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			$objectsrc->fetch(GETPOST('originid'));
-			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))  $objectsrc->fetch_lines();
+			if (empty($objectsrc->lines) && method_exists($objectsrc,'fetch_lines'))
+			{
+				$objectsrc->fetch_lines();
+				$lines = $objectsrc->lines;
+			}
 			$objectsrc->fetch_thirdparty();
 
 			$projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
 			$soc = $objectsrc->client;
 
-			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : ''));
-			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
+			$note_private		= (! empty($objectsrc->note) ? $objectsrc->note : (! empty($objectsrc->note_private) ? $objectsrc->note_private : GETPOST('note_private')));
+			$note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : GETPOST('note_public'));
 
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1,'external',1);
@@ -979,8 +988,6 @@ if ($action == 'create')
 	}
 	else {
 		$projectid = GETPOST('projectid','int');
-		$note_private = '';
-		$note_public = '';
 	}
 
 	if (! $conf->global->FICHEINTER_ADDON)
@@ -1017,7 +1024,7 @@ if ($action == 'create')
 		// Description (must be a textarea and not html must be allowed (used in list view)
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" cols="80" rows="'.ROWS_3.'"></textarea>';
+		print '<textarea name="description" cols="80" rows="'.ROWS_3.'">'.GETPOST('description').'</textarea>';
 		print '</td></tr>';
 
 		// Project
@@ -1214,10 +1221,13 @@ else if ($id > 0 || ! empty($ref))
 	// Third party
 	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
-	// Duration
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
-	print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
-	print '</tr>';
+	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	{
+		// Duration
+		print '<tr><td>'.$langs->trans("TotalDuration").'</td>';
+		print '<td>'.convertSecondToTime($object->duree, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
+		print '</tr>';
+	}
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td valign="top">';
@@ -1345,7 +1355,7 @@ else if ($id > 0 || ! empty($ref))
 				else
 				{
 					print $extrafields->showOutputField($key,$value);
-					if ($object->statut == 0 && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
+					if (($object->statut == 0 || $object->statut == 1) && $user->rights->ficheinter->creer) print ' &nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit_extras&attribute='.$key.'">'.img_picto('','edit').' '.$langs->trans('Modify').'</a>';
 				}
 				print '</td></tr>'."\n";
 			}
@@ -1615,7 +1625,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Modify
-			if ($object->statut == 1 && $user->rights->ficheinter->creer && empty($conf->global->FICHINTER_DISABLE_DETAILS))
+			if ($object->statut == 1 && $user->rights->ficheinter->creer)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="fiche.php?id='.$object->id.'&action=modify"';
 				print '>'.$langs->trans("Modify").'</a></div>';

@@ -239,3 +239,5 @@ PricingRule=Règle de prix
 AddCustomerPrice=Ajouter prix par clients
 ForceUpdateChildPriceSoc=Définir le même prix sur les filiales des clients
 PriceByCustomerLog=Trace des prix par clients
+MinimumPriceLimit=Le prix minimum ne peut être inférieur à %s
+MinimumRecommendedPrice=Le prix minimum conseillé est de : %s

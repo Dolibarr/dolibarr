@@ -43,7 +43,7 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
-$nblignes=count($object->fetch_lines());
+$nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
 $canbemodified = ($object->date_fin > dol_now());

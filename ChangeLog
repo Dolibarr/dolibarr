@@ -5,6 +5,8 @@ English Dolibarr ChangeLog
 
 ***** ChangeLog for 3.7 compared to 3.6.* *****
 For users:
+- New: Can filter on status on interventions.
+- New: Add help info of field type into dictionary of payment types.
 - New: Add proposals into referer page of thirdparty.
 - New: On contact list can set filter on both active and not active (no more exclusive select). 
 - New: Each user can include its own external ics calendar into dolibarr agenda view.
@@ -73,6 +75,7 @@ For translators:
 - New: When a translation is not available we always jump to en_US and only en_US.
 
 For developers:
+- New: Add a css style "cursorpointer".
 - New: Select list of users can return user into hierarchy.
 - New: getBrowserInfo can return type of layout of browser (classic/phone/tablet)
 - New: Add hook "searchAgendaFrom".
@@ -102,12 +105,18 @@ Dolibarr better:
 ***** ChangeLog for 3.6.1 compared to 3.6.* *****
 For users:
 - Fix: Can upload files on services.
-- Fix: sql errors on updat fichinter
-- Fix: debian script syntax error
+- Fix: sql errors on updat fichinter.
+- Fix: debian script syntax error.
 - Fix: error "menu param is not inside list" into pos module.
-- Fix: Salary payments are not reflected on the reporting sheets
-- Fix: Unsubscribe emailing not working
-- Fix: Trigger on create category call failed because user is not passed on card
+- Fix: Salary payments are not reflected on the reporting sheets.
+- Fix: Unsubscribe emailing not working.
+- Fix: Trigger on create category call failed because user is not passed on card.
+- Fix: list event view lost type event filter.
+- Fix: Save also code event.
+- Fix: VAT payment - Add control on field date value.
+- Fix: Salaries payment - Field date value is now required and add control on it.
+- Fix: Iban was used instead of Bic into SEPA file.
+- Fix: Must unaccent strings into SEPA file.
 
 ***** ChangeLog for 3.6 compared to 3.5.* *****
 For users:

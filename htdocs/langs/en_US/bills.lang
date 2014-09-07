@@ -85,6 +85,7 @@ ClassifyPaid=Classify 'Paid'
 ClassifyPaidPartially=Classify 'Paid partially'
 ClassifyCanceled=Classify 'Abandoned'
 ClassifyClosed=Classify 'Closed'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Create Invoice
 AddBill=Add invoice or credit note
 AddToDraftInvoices=Add to draft invoice

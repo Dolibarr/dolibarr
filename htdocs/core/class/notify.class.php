@@ -147,104 +147,116 @@ class Notify
         else $sql.= " AND a.code = '".$action."'";	// New usage
         $sql .= " AND s.rowid = ".$socid;
 
-		dol_syslog("Notify::send", LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
             $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)	// For each notification couple defined (third party/actioncode)
+
+            if ($num > 0)
             {
-                $obj = $this->db->fetch_object($result);
+	            $i = 0;
+	            while ($i < $num)	// For each notification couple defined (third party/actioncode)
+	            {
+	                $obj = $this->db->fetch_object($result);
 
-                $sendto = $obj->firstname . " " . $obj->lastname . " <".$obj->email.">";
-				$actiondefid = $obj->adid;
+	                $sendto = $obj->firstname . " " . $obj->lastname . " <".$obj->email.">";
+					$actiondefid = $obj->adid;
 
-                if (dol_strlen($sendto))
-                {
-                	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-                	$application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
+	                if (dol_strlen($obj->email))
+	                {
+	                	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	                	$application=($conf->global->MAIN_APPLICATION_TITLE?$conf->global->MAIN_APPLICATION_TITLE:'Dolibarr ERP/CRM');
 
-                	$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
+	                	$subject = '['.$application.'] '.$langs->transnoentitiesnoconv("DolibarrNotification");
 
-                	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
-                	$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
-                	$message.= "\n";
-                    $message.= $texte;
-                    // Add link
-                    $link='';
-                    switch($objet_type)
-                    {
-                    	case 'ficheinter':
-						    $link='/fichinter/fiche.php?id='.$objet_id;
-    						break;
-                    	case 'propal':
-						    $link='/comm/propal.php?id='.$objet_id;
-    						break;
-    					case 'facture':
-						    $link='/compta/facture.php?facid='.$objet_id;
-    						break;
-                    	case 'order':
-						    $link='/commande/fiche.php?id='.$objet_id;
-    						break;
-    					case 'order_supplier':
-						    $link='/fourn/commande/fiche.php?id='.$objet_id;
-    						break;
-                    }
-					// Define $urlwithroot
-                    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
-					$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
-					//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
-                    if ($link) $message.="\n".$urlwithroot.$link;
+	                	$message = $langs->transnoentities("YouReceiveMailBecauseOfNotification",$application,$mysoc->name)."\n";
+	                	$message.= $langs->transnoentities("YouReceiveMailBecauseOfNotification2",$application,$mysoc->name)."\n";
+	                	$message.= "\n";
+	                    $message.= $texte;
+	                    // Add link
+	                    $link='';
+	                    switch($objet_type)
+	                    {
+	                    	case 'ficheinter':
+							    $link='/fichinter/fiche.php?id='.$objet_id;
+	    						break;
+	                    	case 'propal':
+							    $link='/comm/propal.php?id='.$objet_id;
+	    						break;
+	    					case 'facture':
+							    $link='/compta/facture.php?facid='.$objet_id;
+	    						break;
+	                    	case 'order':
+							    $link='/commande/fiche.php?id='.$objet_id;
+	    						break;
+	    					case 'order_supplier':
+							    $link='/fourn/commande/fiche.php?id='.$objet_id;
+	    						break;
+	                    }
+						// Define $urlwithroot
+	                    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+						$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
+						//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
+	                    if ($link) $message.="\n".$urlwithroot.$link;
 
-                    $filename = basename($file);
+	                    $filename = basename($file);
 
-                    $mimefile=dol_mimetype($file);
+	                    $mimefile=dol_mimetype($file);
 
-                    $msgishtml=0;
+	                    $msgishtml=0;
 
-                    $replyto = $conf->notification->email_from;
+	                    $replyto = $conf->notification->email_from;
 
-                    $mailfile = new CMailFile(
-                        $subject,
-                        $sendto,
-                        $replyto,
-                        $message,
-                        array($file),
-                        array($mimefile),
-                        array($filename[count($filename)-1]),
-                        '',
-                        '',
-                        0,
-                        $msgishtml
-                    );
+	                    $mailfile = new CMailFile(
+	                        $subject,
+	                        $sendto,
+	                        $replyto,
+	                        $message,
+	                        array($file),
+	                        array($mimefile),
+	                        array($filename[count($filename)-1]),
+	                        '',
+	                        '',
+	                        0,
+	                        $msgishtml
+	                    );
 
-                    if ($mailfile->sendfile())
-                    {
-                    	$now=dol_now();
-                        $sendto = htmlentities($sendto);
+	                    if ($mailfile->sendfile())
+	                    {
+	                    	$now=dol_now();
+	                        $sendto = htmlentities($sendto);
 
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
-                        $sql.= " VALUES ('".$this->db->idate($now)."', ".$actiondefid.", ".$obj->cid.", '".$objet_type."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
-                        dol_syslog("Notify::send", LOG_DEBUG);
-                        if (! $this->db->query($sql) )
-                        {
-                            dol_print_error($this->db);
-                        }
-                    }
-                    else
-                    {
-                        $this->error=$mailfile->error;
-                        //dol_syslog("Notify::send ".$this->error, LOG_ERR);
-                    }
-                }
-                $i++;
+	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id, email)";
+	                        $sql.= " VALUES ('".$this->db->idate($now)."', ".$actiondefid.", ".$obj->cid.", '".$objet_type."', ".$objet_id.", '".$this->db->escape($obj->email)."')";
+	                        dol_syslog("Notify::send", LOG_DEBUG);
+	                        if (! $this->db->query($sql) )
+	                        {
+	                            dol_print_error($this->db);
+	                        }
+	                    }
+	                    else
+	                    {
+	                        $this->error=$mailfile->error;
+	                        //dol_syslog("Notify::send ".$this->error, LOG_ERR);
+	                    }
+	                }
+	                else
+	              {
+	                	dol_syslog("No notification sent for ".$sendto." because email is empty");
+	                }
+	                $i++;
+	            }
+	            return $i;
             }
-            return $i;
+            else
+			{
+	            dol_syslog("No notification sent, nothing into notification setup for the thirdparty socid = ".$socid);
+				return 0;
+			}
         }
         else
-        {
-            $this->error=$this->db->error();
+       {
+            $this->error=$this->db->lasterror();
             return -1;
         }
 

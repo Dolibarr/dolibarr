@@ -595,7 +595,7 @@ class Form
 
         $sql = "SELECT c.code, c.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_fees as c";
-        $sql.= " ORDER BY lower(c.libelle) ASC";
+        //$sql.= " ORDER BY c.label ASC";				  // No sort here, sort must be done after translation
 
         dol_syslog(get_class($this).'::load_cache_types_fees', LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -613,6 +613,9 @@ class Form
                 $this->cache_types_fees[$obj->code] = $label;
                 $i++;
             }
+
+			asort($this->cache_types_fees);
+
             return $num;
         }
         else
@@ -3949,7 +3952,7 @@ class Form
 
         if ($show_empty)
         {
-            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'>&nbsp;</option>'."\n";
+            $out.='<option value="-1"'.($id==-1?' selected="selected"':'').'> </option>'."\n";	// Do not use &nbsp; here. It will show it when list is not ajaxed
         }
 
         if (is_array($array))

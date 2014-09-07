@@ -80,8 +80,10 @@ DefaultWorkingHours=Default working hours in day (Example: 9-18)
 # External Sites ical
 ExportCal=Export calendar
 ExtSites=Import external calendars
-ExtSitesEnableThisTool=Show external calendars into agenda
+ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Number of calendars
 AgendaExtNb=Calendar nb %s
 ExtSiteUrlAgenda=URL to access .ical file
 ExtSiteNoLabel=No Description
+WorkingTimeRange=Working time range
+WorkingDaysRange=Working days range
