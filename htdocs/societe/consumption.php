@@ -48,7 +48,7 @@ if ($page == -1) {
 }
 $offset = $conf->liste_limit * $page;
 if (! $sortorder) $sortorder='DESC';
-if (! $sortfield) $sortfield='datePrint';
+if (! $sortfield) $sortfield='dateprint';
 $limit = $conf->liste_limit;
 
 // Search fields
@@ -169,12 +169,12 @@ if ($type_element == 'invoice')
 { 	// Customer : show products from invoices
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$documentstatic=new Facture($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as datePrint, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.facnumber as doc_number, f.type as doc_type, f.datef as dateprint, ';
 	$tables_from = MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture = f.rowid";
 	$where.= " AND f.entity = ".$conf->entity;
-	$datePrint = 'f.datef';
+	$dateprint = 'f.datef';
 	$doc_number='f.facnumber';
 	$thirdTypeSelect='customer';
 }
@@ -195,12 +195,12 @@ if ($type_element == 'order')
 {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 	$documentstatic=new Commande($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as datePrint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_commande as dateprint, ';
 	$tables_from = MAIN_DB_PREFIX."commande as c,".MAIN_DB_PREFIX."commandedet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
 	$where.= " AND c.entity = ".$conf->entity;
-	$datePrint = 'c.datef';
+	$dateprint = 'c.datef';
 	$doc_number='c.ref';
 	$thirdTypeSelect='customer';
 }
@@ -208,11 +208,11 @@ if ($type_element == 'supplier_invoice')
 { 	// Supplier : Show products from invoices.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$documentstatic=new FactureFournisseur($db);
-	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as datePrint, ';
+	$sql_select = 'SELECT f.rowid as doc_id, f.ref as doc_number, \'1\' as doc_type, f.datef as dateprint, ';
 	$tables_from = MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."facture_fourn_det as d";
 	$where = " WHERE f.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_facture_fourn = f.rowid";
-	$datePrint = 'f.datef';
+	$dateprint = 'f.datef';
 	$doc_number='f.ref';
 	$thirdTypeSelect='supplier';
 }
@@ -220,11 +220,11 @@ if ($type_element == 'supplier_order')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 	$documentstatic=new CommandeFournisseur($db);
-	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as datePrint, ';
+	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_valid as dateprint, ';
 	$tables_from = MAIN_DB_PREFIX."commande_fournisseur as c,".MAIN_DB_PREFIX."commande_fournisseurdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
 	$where.= " AND d.fk_commande = c.rowid";
-	$datePrint = 'c.date_valid';
+	$dateprint = 'c.date_valid';
 	$doc_number='c.ref';
 	$thirdTypeSelect='supplier';
 }
@@ -240,14 +240,14 @@ if ($month > 0) {
 	if ($year > 0) {
 		$start = dol_mktime(0, 0, 0, $month, 1, $year);
 		$end = dol_time_plus_duree($start,1,'m') - 1;
-		$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 	} else {
-		$sql.= " AND date_format(".$datePrint.", '%m') = '".sprintf('%02d',$month)."'";
+		$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
 	}
 } else if ($year > 0) {
 	$start = dol_mktime(0, 0, 0, 1, 1, $year);
 	$end = dol_time_plus_duree($start,1,'y') - 1;
-	$sql.= " AND ".$datePrint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+	$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 }
 if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
 if ($sprod_fulldescr) $sql.= " AND (d.description LIKE '%".$sprod_fulldescr."%' OR p.label LIKE '%".$sprod_fulldescr."%')";
@@ -272,7 +272,7 @@ print '<table class="liste" width="100%">'."\n";
 // Titles with sort buttons
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'datePrint','',$param,'align="center" width="150"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
 // Filters
@@ -308,7 +308,7 @@ if ($sql_select)
 		$documentstatic->type=$objp->type;
 		print $documentstatic->getNomUrl(1);
 		print '</td>';
-		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->datePrint),'day').'</td>';
+		print '<td align="center" width="80">'.dol_print_date($db->jdate($objp->dateprint),'day').'</td>';
 
 		print '<td>';
 

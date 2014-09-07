@@ -525,14 +525,14 @@ function dol_get_first_day_week($day,$month,$year,$gm=false)
 	$tmpmonth = $prev_month;
 	$tmpyear = $prev_year;
 
-    //Get first day of next week
+	//Get first day of next week
 	$tmptime=dol_mktime(12,0,0,$month,$tmpday,$year,1,0);
 	$tmptime-=24*60*60*7;
 	$tmparray=dol_getdate($tmptime,true);
     $prev_day   = $tmparray['mday'];
 
     //Check prev day of week is in same month than first day or not
-	if ($prev_day>$tmpday)
+	if ($prev_day > $tmpday)
     {
     	$prev_month = $month-1;
 		$prev_year  = $year;
