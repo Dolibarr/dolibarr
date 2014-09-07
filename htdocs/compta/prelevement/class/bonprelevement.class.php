@@ -1216,18 +1216,11 @@ class BonPrelevement extends CommonObject
 
 
     /**
-<<<<<<< HEAD
-     *	Generate a withdrawal file. Generation Formats:
-     *   European countries: SEPA
-     *   Others: Warning message
-     *	File is generated with name this->filename
-=======
      * Generate a withdrawal file.
      * Generation Formats:
      * - Europe: SEPA (France: CFONB no more supported, Spain:  AEB19 if external module EsAEB is enabled)
      * - Others countries: Warning message
      * File is generated with name this->filename
->>>>>>> refs/remotes/origin/3.6
      *
      *	@return		int			0 if OK, <0 if KO
      */

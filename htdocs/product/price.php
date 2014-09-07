@@ -99,7 +99,7 @@ if ($action == 'update_price' && ! $_POST ["cancel"] && ($user->rights->produit-
 		$newpsq = empty($newpsq) ? 0 : $newpsq;
 	}
 
-	if ($newprice_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
+	if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $newprice_min < $maxpricesupplier)
 	{
 		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
 		$error++;
@@ -227,7 +227,7 @@ if ($action == 'add_customer_price_confirm' && ! $_POST ["cancel"] && ($user->ri
 	$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
 	$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
 
-	if ($prodcustprice->price_min<$maxpricesupplier && !empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE))
+	if (! empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE) && $prodcustprice->price_min<$maxpricesupplier)
 	{
 		setEventMessage($langs->trans("MinimumPriceLimit",price($maxpricesupplier,0,'',1,-1,-1,'auto')),'errors');
 		$error++;
