@@ -919,6 +919,7 @@ class Expedition extends CommonObject
 		$this->db->begin();
 
 		if ($conf->productbatch->enabled) {
+            require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
 			if ( ExpeditionLigneBatch::deletefromexp($this->db,$this->id)<0) 
 			{$error++;$this->errors[]="Error ".$this->db->lasterror();}
 		}
@@ -1096,6 +1097,7 @@ class Expedition extends CommonObject
 				$line = new ExpeditionLigne($this->db);
 				$obj = $this->db->fetch_object($resql);
 
+                $line->line_id          = $obj->line_id;
 				$line->fk_origin_line 	= $obj->fk_origin_line;
 				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
 				$line->entrepot_id    	= $obj->fk_entrepot;
