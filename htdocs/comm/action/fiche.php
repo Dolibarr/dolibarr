@@ -393,17 +393,17 @@ if ($action == 'mupdate')
     $object->fetch($id);
     $shour = dol_print_date($object->datep,"%H");
     $smin = dol_print_date($object->datep, "%M");
-    
+
     $newdate=GETPOST('newdate','alpha');
     if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
     {
-       header("Location: ".$backtopage);        
+       header("Location: ".$backtopage);
         exit;
     }
 
     $datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
     if ($datep!=$object->datep)
-    { 
+    {
         if (!empty($object->datef))
         {
             $object->datef+=$datep-$object->datep;
@@ -414,19 +414,21 @@ if ($action == 'mupdate')
         {
             setEventMessage($object->error,'errors');
             setEventMessage($object->errors,'errors');
-        }              
+        }
     }
     if (! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
-    else 
+    else
     {
         $action='';
     }
-    
+
 }
+
+
 /*
  * View
  */

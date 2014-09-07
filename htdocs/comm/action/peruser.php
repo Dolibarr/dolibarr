@@ -579,7 +579,6 @@ foreach ($eventarray as $daykey => $notused)
 }*/
 if ($filtert > 0)
 {
-	var_dump($filtert);
 	$tmpuser = new User($db);
 	$tmpuser->fetch($filtert);
 	$usernames[] = $tmpuser;
@@ -645,8 +644,36 @@ echo "</table>\n";
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
 	jQuery(".onclickopenref").click(function() {
-
-		alert(\'ee\');
+		var ref=$(this).attr(\'ref\');
+		var res = ref.split("_");
+		var userid = res[1];
+		var year = res[2];
+		var month = res[3];
+		var day = res[4];
+		var hour = res[5];
+		var min = res[6];
+		var ids = res[7];
+		if (ids == \'none\') /* No event */
+		{
+			/* alert(\'no event\'); */
+			url = "'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&affectedto="+userid+"&datep="+year+month+day+hour+min+"00"
+			alert(url);
+			window.location.href = url;
+		}
+		else if (ids.indexOf(",") > -1)	/* There is several events */
+		{
+			/* alert(\'several events\'); */
+			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid
+			alert(url);
+			window.location.href = url;
+		}
+		else	/* One event */
+		{
+			/* alert(\'one event\'); */
+			url = "'.DOL_URL_ROOT.'/comm/action/list.php?action=view&id="+ids
+			alert(url);
+			window.location.href = url;
+		}
 	});
 });
 </script>';
@@ -796,28 +823,30 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		{
 			if ($cases1[$h] != '')
 			{
-				$title = (int) $cases1[$h];
+				$title1=count($cases1[$h]).' '.$langs->trans("Events");
+				/*$title = $h;
 				$title .= 'h';
 				if ((int) $cases1[$h] != $cases1[$h])
 					$title .= '30';
 				else
-					$title .= '00';
+					$title .= '00';*/
 				$string1='&nbsp;';
 				$style1='peruser_busy';
-				$url='<a href="" title="'.$title.'">';
+				$url='<a href="" title="'.$title1.'">';
 			}
 		}
 		if (isset($cases2[$h]))
 		{
 			if ($cases2[$h] != '')
 			{
-				$title = (int) $cases2[$h];
+				/*$title = $h;
 				$title .= 'h';
 				if ((int) $cases2[$h] != $cases2[$h]) $title .= '30';
-				else $title .= '00';
+				else $title .= '00';*/
+				$title2=count($cases1[$h]).' '.$langs->trans("Events");
 				$string2='&nbsp;';
 				$style2='peruser_busy';
-				$url='<a href="" title="'.$title.'">';
+				$url='<a href="" title="'.$title2.'">';
 			}
 		}
 
@@ -828,19 +857,19 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		{
 			$ids=array_keys($cases1[$h]);
 			$id=$ids[0];
-			$title1='zzz';
 		}
-			if (count($cases2[$h]) == 1)	// 1 seul evenement
+		if (count($cases2[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases2[$h]);
 			$id=$ids[0];
-			$title2='bbb';
 		}
-		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td class="'.$style1.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.$id.'"'.($title1?' title="'.$title1.'"':'').'>';
+		$ids1=join(',',array_keys($cases1[$h]));
+		$ids2=join(',',array_keys($cases2[$h]));
 		//var_dump($cases1[$h]);
+		print '<table class="nobordernopadding" width="100%">';
+		print '<tr><td class="'.$style1.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
 		print $string1;
-		print '</td><td class="'.$style2.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.$id.'"'.($title2?' title="'.$title2.'"':'').'>';
+		print '</td><td class="'.$style2.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_30_'.($ids2?$ids2:'none').'"'.($title2?' title="'.$title2.'"':'').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';
