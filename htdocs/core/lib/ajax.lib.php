@@ -337,7 +337,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0)
 	width: "500px" */
 
 	$msg = '<script type="text/javascript">
-    $(function() {
+	$(document).ready(function() {
     	$("#'.$htmlname.'").combobox({
     		minLengthToAutocomplete : '.$minLengthToAutocomplete.',
     		selected : function(event,ui) {
