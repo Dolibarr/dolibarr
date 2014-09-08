@@ -1146,6 +1146,8 @@ class Project extends CommonObject
 			//Duplicate task
 			if ($clone_task)
 			{
+				require_once DOL_DOCUMENT_ROOT . '/projet/class/task.class.php';
+
 				$taskstatic = new Task($this->db);
 
 				// Security check
