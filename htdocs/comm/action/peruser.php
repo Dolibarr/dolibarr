@@ -399,7 +399,8 @@ if ($resql)
         $event->datep=$db->jdate($obj->datep);      // datep and datef are GMT date
         $event->datef=$db->jdate($obj->datep2);
         $event->type_code=$obj->code;
-        $event->libelle=$obj->label;
+        $event->libelle=$obj->label;				// deprecated
+        $event->label=$obj->label;
         $event->percentage=$obj->percent;
         $event->author->id=$obj->fk_user_author;	// user id of creator
         $event->usertodo->id=$obj->fk_user_action;	// user id of owner
@@ -657,21 +658,18 @@ jQuery(document).ready(function() {
 		{
 			/* alert(\'no event\'); */
 			url = "'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&affectedto="+userid+"&datep="+year+month+day+hour+min+"00"
-			alert(url);
 			window.location.href = url;
 		}
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
 			url = "'.DOL_URL_ROOT.'/comm/action/listactions.php?usertodo="+userid
-			alert(url);
 			window.location.href = url;
 		}
 		else	/* One event */
 		{
 			/* alert(\'one event\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/list.php?action=view&id="+ids
-			alert(url);
+			url = "'.DOL_URL_ROOT.'/comm/action/fiche.php?action=view&id="+ids
 			window.location.href = url;
 		}
 	});
@@ -787,23 +785,33 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					$color = ''; //init
 					if (empty($event->fulldayevent))
 					{
-						$a = dol_mktime((int) $h,0,0,$month,$day,$year);
-						$b = dol_mktime((int) $h,30,0,$month,$day,$year);
-						$c = dol_mktime((int) $h+1,0,0,$month,$day,$year);
+						$a = dol_mktime((int) $h,0,0,$month,$day,$year,false,false);
+						$b = dol_mktime((int) $h,30,0,$month,$day,$year,false,false);
+						$c = dol_mktime((int) $h+1,0,0,$month,$day,$year,false,false);
 
-						if ($event->date_start_in_calendar < $b && $event->date_end_in_calendar > $a)
+						$dateendtouse=$event->date_end_in_calendar;
+						if ($dateendtouse==$event->date_start_in_calendar) $dateendtouse++;
+
+						if ($event->date_start_in_calendar < $b && $dateendtouse > $a)
 						{
-							$cases1[$h][$event->id]++;
+							$busy=$event->transparency;
+							$cases1[$h][$event->id]['busy']=$busy;
+							$cases1[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour').' - '.dol_print_date($event->date_end_in_calendar,'dayhour').' - '.$event->label;
 						}
-						if ($event->date_start_in_calendar < $c && $event->date_end_in_calendar > $b)
+						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
 						{
-							$cases2[$h][$event->id]++;
+							$busy=$event->transparency;
+							$cases2[$h][$event->id]['busy']=$busy;
+							$cases2[$h][$event->id]['string']=dol_print_date($event->date_start_in_calendar,'dayhour').' - '.dol_print_date($event->date_end_in_calendar,'dayhour').' - '.$event->label;
 						}
 					}
 					else
 					{
-						$cases1[$h][$event->id]=1;
-						$cases2[$h][$event->id]=1;
+						$busy=$event->transparency;
+						$cases1[$h][$event->id]['busy']=$busy;
+						$cases2[$h][$event->id]['busy']=$busy;
+						$cases1[$h][$event->id]['string']=$event->label;
+						$cases2[$h][$event->id]['string']=$event->label;
 						break;
 					}
 				}
@@ -819,34 +827,24 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		$style1='';$style2='';
 		$string1='&nbsp;';$string2='&nbsp;';
 		$title1='';$title2='';
-		if (isset($cases1[$h]))
+		if (isset($cases1[$h]) && $cases1[$h] != '')
 		{
-			if ($cases1[$h] != '')
+			$title1=count($cases1[$h]).' '.(count($cases1[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			$string1='&nbsp;';
+			$style1='peruser_notbusy';
+			foreach($cases1[$h] as $id => $ev)
 			{
-				$title1=count($cases1[$h]).' '.$langs->trans("Events");
-				/*$title = $h;
-				$title .= 'h';
-				if ((int) $cases1[$h] != $cases1[$h])
-					$title .= '30';
-				else
-					$title .= '00';*/
-				$string1='&nbsp;';
-				$style1='peruser_busy';
-				$url='<a href="" title="'.$title1.'">';
+				if ($ev['busy']) $style1='peruser_busy';
 			}
 		}
-		if (isset($cases2[$h]))
+		if (isset($cases2[$h]) && $cases2[$h] != '')
 		{
-			if ($cases2[$h] != '')
+			$title2=count($cases2[$h]).' '.(count($cases2[$h])==1?$langs->trans("Event"):$langs->trans("Events"));
+			$string2='&nbsp;';
+			$style2='peruser_notbusy';
+			foreach($cases2[$h] as $id => $ev)
 			{
-				/*$title = $h;
-				$title .= 'h';
-				if ((int) $cases2[$h] != $cases2[$h]) $title .= '30';
-				else $title .= '00';*/
-				$title2=count($cases1[$h]).' '.$langs->trans("Events");
-				$string2='&nbsp;';
-				$style2='peruser_busy';
-				$url='<a href="" title="'.$title2.'">';
+				if ($ev['busy']) $style2='peruser_busy';
 			}
 		}
 
@@ -856,20 +854,22 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		if (count($cases1[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases1[$h]);
-			$id=$ids[0];
+			$output = array_slice($cases1[$h], 0, 1);
+			if ($output[0]['string']) $title1.=' - '.$output[0]['string'];
 		}
 		if (count($cases2[$h]) == 1)	// 1 seul evenement
 		{
 			$ids=array_keys($cases2[$h]);
-			$id=$ids[0];
+			$output = array_slice($cases2[$h], 0, 1);
+			if ($output[0]['string']) $title2.=' - '.$output[0]['string'];
 		}
 		$ids1=join(',',array_keys($cases1[$h]));
 		$ids2=join(',',array_keys($cases2[$h]));
 		//var_dump($cases1[$h]);
 		print '<table class="nobordernopadding" width="100%">';
-		print '<tr><td class="'.$style1.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
+		print '<tr><td class="'.($style1?$style1.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_00_'.($ids1?$ids1:'none').'"'.($title1?' title="'.$title1.'"':'').'>';
 		print $string1;
-		print '</td><td class="'.$style2.' onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_30_'.($ids2?$ids2:'none').'"'.($title2?' title="'.$title2.'"':'').'>';
+		print '</td><td class="'.($style2?$style2.' ':'').'onclickopenref'.($title1?' cursorpointer':'').'" ref="ref_'.$username->id.'_'.sprintf("%04d",$year).'_'.sprintf("%02d",$month).'_'.sprintf("%02d",$day).'_'.sprintf("%02d",$h).'_30_'.($ids2?$ids2:'none').'"'.($title2?' title="'.$title2.'"':'').'>';
 		print $string2;
 		print '</td></tr>';
 		print '</table>';

@@ -1986,6 +1986,8 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event a:visited {font-size: 11px; font-weight: bold !important; }
 .cal_event a:active  {font-size: 11px; font-weight: bold !important; }
 .cal_event a:hover   {font-size: 11px; font-weight: bold !important; }
+.peruser_busy      { background: #CC8888; }
+.peruser_notbusy   { background: #EEDDDD; }
 
 
 /* ============================================================================== */

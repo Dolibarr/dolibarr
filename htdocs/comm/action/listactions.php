@@ -63,15 +63,15 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder)
 {
-	$sortorder="ASC";
-	if ($status == 'todo') $sortorder="ASC";
-	if ($status == 'done') $sortorder="DESC";
+	$sortorder="DESC";
+	if ($status == 'todo') $sortorder="DESC";
+	//if ($status == 'done') $sortorder="DESC";
 }
 if (! $sortfield)
 {
-	$sortfield="a.percent";
+	$sortfield="a.datep";
 	if ($status == 'todo') $sortfield="a.datep";
-	if ($status == 'done') $sortfield="a.datep2";
+	//if ($status == 'done') $sortfield="a.datep2";
 }
 
 // Security check
