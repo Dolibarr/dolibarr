@@ -803,7 +803,11 @@ class Form
 
             // Construct $out and $outarray
             $out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
-            if ($showempty) $out.= '<option value="-1"></option>'."\n";
+
+            $textifempty=' ';
+            if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='&nbsp;';
+            if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
+
             $num = $this->db->num_rows($resql);
             $i = 0;
             if ($num)
