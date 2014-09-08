@@ -19,3 +19,4 @@ TF_TRIP=Putovanje
 ListTripsAndExpenses=Lista putovanja i troškova
 ExpensesArea=Područje za putovanja i troškove
 SearchATripAndExpense=Traži putovanja i troškove
+ClassifyRefunded=Classify 'Refunded'

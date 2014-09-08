@@ -85,6 +85,7 @@ ClassifyPaid=Luokittele "maksetaan"
 ClassifyPaidPartially=Luokittele "maksetaan osittain"
 ClassifyCanceled=Luokittele "Hylätty"
 ClassifyClosed=Luokittele "Suljettu"
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Luo lasku
 AddBill=Lisää laskun tai menoilmoitus
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Määrä väitti
 ExcessReceived=Trop Peru
 EscompteOffered=Discount tarjotaan (maksu ennen aikavälillä)
-SendBillRef=Lähetä lasku %s
-SendReminderBillRef=Lähetä lasku %s (muistutus)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Pysyvän tilaukset
 StandingOrder=Kestotilaus
 NoDraftBills=Ei Luonnos laskut
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Yhteensä kaksi uutta alennus on oltava alk
 ConfirmRemoveDiscount=Oletko varma, että haluat poistaa tämän edullisista?
 RelatedBill=Related lasku
 RelatedBills=Related laskut
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Välittömät

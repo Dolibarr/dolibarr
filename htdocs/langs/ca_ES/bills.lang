@@ -85,6 +85,7 @@ ClassifyPaid=Classificar 'Pagat'
 ClassifyPaidPartially=Classificar 'Pagat parcialment'
 ClassifyCanceled=Classificar 'Abandonat'
 ClassifyClosed=Classificar 'Tancat'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Crear factura
 AddBill=Crear factura o abonament
 AddToDraftInvoices=Afegir a factura esborrany
@@ -197,8 +198,8 @@ Rest=Pendent
 AmountExpected=Import reclamat
 ExcessReceived=Rebut en excés
 EscompteOffered=Descompte (pagament aviat)
-SendBillRef=Enviament de la factura %s
-SendReminderBillRef=Recordatori de la factura %s
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Domiciliacions
 StandingOrder=Domiciliació
 NoDraftBills=Cap factura esborrany
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma de l'import dels 2 nous descomptes 
 ConfirmRemoveDiscount=Esteu segur de voler eliminar aquest descompte?
 RelatedBill=Factura associada
 RelatedBills=Factures associades
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepció

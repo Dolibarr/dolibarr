@@ -85,6 +85,7 @@ ClassifyPaid=Clasează "Platită"
 ClassifyPaidPartially=Clasează "Platită Parţial"
 ClassifyCanceled=Clasează "Abandonată"
 ClassifyClosed=Clasează "Închisă"
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Crează  Factura
 AddBill=Crează  Factura sau Notă de Credit
 AddToDraftInvoices=Adaugă la factura nevalidată
@@ -197,8 +198,8 @@ Rest=Creanţă
 AmountExpected=Suma reclamată
 ExcessReceived=Primit în plus
 EscompteOffered=Discount  oferit ( plată înainte de termen)
-SendBillRef=Trimiteţi factura %s
-SendReminderBillRef=Retrimiteţi factura %s (reamintire)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Ordine de plată
 StandingOrder=Ordin de plată
 NoDraftBills=Nici o  factură nevalidată
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Valoarea totală a celor două noi reduceri
 ConfirmRemoveDiscount=Sigur doriţi să eliminaţi acest discount?
 RelatedBill=Factură asociată
 RelatedBills=Facturi asociate
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Imediat
@@ -315,7 +318,6 @@ PaymentConditionShortPT_5050=50-50
 PaymentConditionPT_5050=50%% în avans, 50%% la livrare
 FixAmount=Valoare fixă
 VarAmount=Valoare variabilă (%% tot.)
-
 # PaymentType
 PaymentTypeVIR=Depozit bancar
 PaymentTypeShortVIR=Depozit bancar

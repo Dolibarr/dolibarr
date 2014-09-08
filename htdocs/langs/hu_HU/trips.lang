@@ -19,3 +19,4 @@ TF_TRIP=Trip
 ListTripsAndExpenses=Utak és kiadások listája
 ExpensesArea=Kirándulások és kiadások területén
 SearchATripAndExpense=Keresés út és költségek
+ClassifyRefunded=Classify 'Refunded'

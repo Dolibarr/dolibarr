@@ -85,6 +85,7 @@ ClassifyPaid=Χαρακτηρισμός ως 'Πληρωμένο''
 ClassifyPaidPartially=Χαρακτηρισμός ως 'Μη Εξοφλημένο'
 ClassifyCanceled=Χαρακτηρισμός ως 'Εγκαταλελειμμένο'
 ClassifyClosed=Χαρακτηρισμός ως 'Κλειστό'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Δημιουργία Τιμολογίου
 AddBill=Προσθήκη τιμολ./πιστ. σημ.
 AddToDraftInvoices=Προσθήκη στο πρόχειρο τιμολόγιο
@@ -197,8 +198,8 @@ Rest=Εκκρεμής
 AmountExpected=Ποσό που ζητήθηκε
 ExcessReceived=Περίσσεια που λήφθηκε
 EscompteOffered=Discount offered (payment before term)
-SendBillRef=Αποστολή τιμολογίου %s
-SendReminderBillRef=Αποστολή τιμολογίου %s (υπενθύμιση)
+SendBillRef=Υποβολή των τιμολογίων %s
+SendReminderBillRef=Υποβολή των τιμολογίων %s (υπενθύμιση)
 StandingOrders=Πάγιες Εντολές
 StandingOrder=Πάγια εντολή
 NoDraftBills=Δεν υπάρχουν προσχέδια
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Το σύνολο των δύο νέων τ
 ConfirmRemoveDiscount=Είστε σίγουροι ότι θέλετε να αφαιρέσετε την έκπτωση;
 RelatedBill=Σχετιζόμενο τιμολόγιο
 RelatedBills=Σχετιζόμενα τιμολόγια
+LatestRelatedBill=Τελευταίο σχετικό τιμολόγιο
+WarningBillExist=Προσοχή, ένα ή περισσότερα τιμολόγια υπάρχουν ήδη
 
 # PaymentConditions
 PaymentConditionShortRECEP=Άμεση

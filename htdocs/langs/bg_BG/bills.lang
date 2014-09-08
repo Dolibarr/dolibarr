@@ -85,6 +85,7 @@ ClassifyPaid=Класифициране 'Платено'
 ClassifyPaidPartially=Класифициране 'Платено частично'
 ClassifyCanceled=Класифициране 'Изоставено'
 ClassifyClosed=Класифициране 'Затворено'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Създаване на фактура
 AddBill=Добави фактура или кредитно известие
 AddToDraftInvoices=Add to draft invoice
@@ -197,8 +198,8 @@ Rest=Pending
 AmountExpected=Претендираната сума
 ExcessReceived=Превишение получи
 EscompteOffered=Отстъпка предложи (плащане преди термина)
-SendBillRef=Изпрати фактура %s
-SendReminderBillRef=Изпрати фактура %s (напомняне)
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Постоянните поръчки
 StandingOrder=Постоянния цел
 NoDraftBills=Няма тяга фактури
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=Общо на две нови отстъп�
 ConfirmRemoveDiscount=Сигурен ли сте, че искате да премахнете тази отстъпка?
 RelatedBill=Свързани фактура
 RelatedBills=Свързани фактури
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=Непосредствен
