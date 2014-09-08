@@ -13,10 +13,8 @@ Export=Exportación
 
 ConfigAccountingExpert=Configuración del módulo contable
 Journaux=Diarios
+JournalFinancial=Diarios
 Exports=Exportaciones
-About=acerca de
-Contributors=Colaboradores
-Investors=Inversores
 Modelcsv=Plantilla de Exportación
 Selectmodelcsv=Seleccione una plantilla de exportación
 Modelcsv_normal=Exportación clásica

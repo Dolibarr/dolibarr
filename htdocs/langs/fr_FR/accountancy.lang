@@ -11,10 +11,8 @@ MenuTools=Outils
 
 ConfigAccountingExpert=Configuration du module comptabilité expert
 Journaux=Journaux
+JournalFinancial=Journaux de trésorerie
 Exports=Exports
-About=A propos
-Contributors=Contributeurs
-Investors=Investisseurs
 Modelcsv=Modèle d'export
 Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique

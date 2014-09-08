@@ -11,10 +11,8 @@ MenuTools=Tools
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
+JournalFinancial=Financial journals
 Exports=Exports
-About=About
-Contributors=Contributors
-Investors=Investors
 Modelcsv=Model of export
 Selectmodelcsv=Select a model of export
 Modelcsv_normal=Classic export
