@@ -2,7 +2,7 @@
 /**
  * PHPExcel
  *
- * Copyright (c) 2006 - 2011 PHPExcel
+ * Copyright (c) 2006 - 2012 PHPExcel
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,9 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  * @license	http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt	LGPL
- * @version	1.7.6, 2011-02-27
+ * @version	1.7.8, 2012-10-12
  */
 
 
@@ -31,7 +31,7 @@
  *
  * @category   PHPExcel
  * @package	PHPExcel_Style
- * @copyright  Copyright (c) 2006 - 2011 PHPExcel (http://www.codeplex.com/PHPExcel)
+ * @copyright  Copyright (c) 2006 - 2012 PHPExcel (http://www.codeplex.com/PHPExcel)
  */
 class PHPExcel_Style_NumberFormat implements PHPExcel_IComparable
 {
@@ -126,11 +126,22 @@ class PHPExcel_Style_NumberFormat implements PHPExcel_IComparable
 
 	/**
 	 * Create a new PHPExcel_Style_NumberFormat
+	 *
+	 * @param	boolean	$isSupervisor	Flag indicating if this is a supervisor or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
+	 * @param	boolean	$isConditional	Flag indicating if this is a conditional style or not
+	 *									Leave this value at default unless you understand exactly what
+	 *										its ramifications are
 	 */
-	public function __construct($isSupervisor = false)
+	public function __construct($isSupervisor = false, $isConditional = false)
 	{
 		// Supervisor?
 		$this->_isSupervisor = $isSupervisor;
+
+		if ($isConditional) {
+			$this->_formatCode = NULL;
+		}
 	}
 
 	/**
@@ -447,12 +458,18 @@ class PHPExcel_Style_NumberFormat implements PHPExcel_IComparable
 		}
 	}
 
+	/**
+	 * Search/replace values to convert Excel date/time format masks to PHP format masks
+	 *
+	 * @var array
+	 */
 	private static $_dateFormatReplacements = array(
 			// first remove escapes related to non-format characters
 			'\\'	=> '',
 			//	12-hour suffix
 			'am/pm'	=> 'A',
 			//	4-digit year
+			'e'	=> 'Y',
 			'yyyy'	=> 'Y',
 			//	2-digit year
 			'yy'	=> 'y',
@@ -481,10 +498,20 @@ class PHPExcel_Style_NumberFormat implements PHPExcel_IComparable
 			//	fractional seconds - no php equivalent
 			'.s'	=> ''
 		);
+	/**
+	 * Search/replace values to convert Excel date/time format masks hours to PHP format masks (24 hr clock)
+	 *
+	 * @var array
+	 */
 	private static $_dateFormatReplacements24 = array(
 			'hh'	=> 'H',
 			'h'		=> 'G'
 		);
+	/**
+	 * Search/replace values to convert Excel date/time format masks hours to PHP format masks (12 hr clock)
+	 *
+	 * @var array
+	 */
 	private static $_dateFormatReplacements12 = array(
 			'hh'	=> 'h',
 			'h'		=> 'g'

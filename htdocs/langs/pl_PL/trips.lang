@@ -19,3 +19,4 @@ TF_TRIP=Wycieczka
 ListTripsAndExpenses=Lista wycieczek i wydatków
 ExpensesArea=Wycieczki i obszar wydatki
 SearchATripAndExpense=Szukaj w podróż i wydatki
+ClassifyRefunded=Classify 'Refunded'

@@ -85,6 +85,7 @@ ClassifyPaid=Clasificar 'Pagado'
 ClassifyPaidPartially=Clasificar 'Pagado parcialmente'
 ClassifyCanceled=Clasificar 'Abandonado'
 ClassifyClosed=Clasificar 'Cerrado'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=Crear factura
 AddBill=Crear factura o abono
 AddToDraftInvoices=Añadir a factura borrador
@@ -197,8 +198,8 @@ Rest=Pendiente
 AmountExpected=Importe reclamado
 ExcessReceived=Recibido en exceso
 EscompteOffered=Descuento (Pronto pago)
-SendBillRef=Envío de la factura %s
-SendReminderBillRef=Recordatorio de la factura %s
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=Domiciliaciones
 StandingOrder=Domiciliación
 NoDraftBills=Ninguna factura borrador
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=La suma del importe de los 2 nuevos descuen
 ConfirmRemoveDiscount=¿Está seguro de querer eliminar este descuento?
 RelatedBill=Factura asociada
 RelatedBills=Facturas asociadas
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=A la recepción

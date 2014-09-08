@@ -85,6 +85,7 @@ ClassifyPaid=分类'已付'
 ClassifyPaidPartially=分类'部分已付'
 ClassifyCanceled=分类'已遗弃'
 ClassifyClosed=分类'已关闭'
+ClassifyUnBilled=Classify 'Unbilled'
 CreateBill=创建发票
 AddBill=添加注意发票或信用
 AddToDraftInvoices=添加到草案发票
@@ -197,8 +198,8 @@ Rest=待办
 AmountExpected=索赔额
 ExcessReceived=收到过剩
 EscompteOffered=折扣额（任期前付款）
-SendBillRef=%s的发送发票
-SendReminderBillRef=发送发票的%s（提醒）
+SendBillRef=Submission of invoice %s
+SendReminderBillRef=Submission of invoice %s (reminder)
 StandingOrders=常年订单
 StandingOrder=长期订单
 NoDraftBills=没有发票草案
@@ -295,6 +296,8 @@ TotalOfTwoDiscountMustEqualsOriginal=两个新的折扣总额必须等于原来�
 ConfirmRemoveDiscount=你确定要删除此折扣？
 RelatedBill=相关发票
 RelatedBills=有关发票
+LatestRelatedBill=Latest related invoice
+WarningBillExist=Warning, one or more invoice already exist
 
 # PaymentConditions
 PaymentConditionShortRECEP=即时

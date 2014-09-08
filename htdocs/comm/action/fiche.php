@@ -393,17 +393,17 @@ if ($action == 'mupdate')
     $object->fetch($id);
     $shour = dol_print_date($object->datep,"%H");
     $smin = dol_print_date($object->datep, "%M");
-    
+
     $newdate=GETPOST('newdate','alpha');
     if (empty($newdate) || strpos($newdate,'dayevent_') != 0 )
     {
-       header("Location: ".$backtopage);        
+       header("Location: ".$backtopage);
         exit;
     }
 
     $datep=dol_mktime($shour, $smin, 0, substr($newdate,13,2), substr($newdate,15,2), substr($newdate,9,4));
     if ($datep!=$object->datep)
-    { 
+    {
         if (!empty($object->datef))
         {
             $object->datef+=$datep-$object->datep;
@@ -414,19 +414,21 @@ if ($action == 'mupdate')
         {
             setEventMessage($object->error,'errors');
             setEventMessage($object->errors,'errors');
-        }              
+        }
     }
     if (! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
     }
-    else 
+    else
     {
         $action='';
     }
-    
+
 }
+
+
 /*
  * View
  */
@@ -514,7 +516,7 @@ if ($action == 'create')
 	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" size="60" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
-    print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
+    print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked="checked"':'').'></td></tr>';
 
 	// Date start
 	$datep=$object->datep;
@@ -935,7 +937,7 @@ if ($id > 0)
 		else print dol_print_date($object->datep,'day');
 		if ($object->percentage == 0 && $object->datep && $object->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
 		print '</td>';
-		print '<td rowspan="4" align="center" valign="middle" width="180">'."\n";
+		print '<td rowspan="5" align="center" valign="middle" width="180">'."\n";
         print '<form name="listactionsfiltermonth" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="show_month">';
@@ -963,6 +965,15 @@ if ($id > 0)
         //print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
         print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewday" value="'.$langs->trans("ViewDay").'">';
         print '</form>'."\n";
+        print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="action" value="show_peruser">';
+        print '<input type="hidden" name="year" value="'.dol_print_date($object->datep,'%Y').'">';
+        print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
+        print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+        //print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
+        print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone"').' <input type="submit" style="min-width: 120px" class="button" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+        print '</form>'."\n";
         print '</td>';
 		print '</tr>';
 
@@ -982,7 +993,7 @@ if ($id > 0)
         print '<tr><td>'.$langs->trans("Location").'</td><td colspan="2">'.$object->location.'</td></tr>';
 
 		// Assigned to
-		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+		print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td>';
 		if ($object->usertodo->id > 0) print $object->usertodo->getNomUrl(1);
 		print '</td></tr>';
 
