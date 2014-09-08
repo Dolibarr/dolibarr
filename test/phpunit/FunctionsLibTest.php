@@ -364,7 +364,22 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testDolTextIsHtml
+     * testDolUnaccent
+     *
+     * @return boolean
+     */
+    public function testDolUnaccent()
+    {
+    	// Text not already HTML
+
+    	$input="A string\nwith a à ä é è ë ï ü ö ÿ, &, < and >.";
+        $after=dol_string_unaccent($input);
+        $this->assertEquals("A string\nwith a a a e e e i u o y, &, < and >.",$after);
+    }
+
+
+    /**
+     * testDolUtf8Check
      *
      * @return void
      */

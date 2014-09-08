@@ -924,7 +924,11 @@ else if ($action == 'add' && $user->rights->facture->creer)
 						if ($result > 0)
 						{
 							$lines = $srcobject->lines;
-							if (empty($lines) && method_exists($srcobject, 'fetch_lines')) $lines = $srcobject->fetch_lines();
+							if (empty($lines) && method_exists($srcobject, 'fetch_lines'))
+							{
+								$srcobject->fetch_lines();
+								$lines = $srcobject->lines;
+							}
 
 							$fk_parent_line=0;
 							$num=count($lines);
@@ -2211,7 +2215,7 @@ if ($action == 'create')
 
 	// Payment mode
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
-	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id');
+	$form->select_types_paiements(isset($_POST['mode_reglement_id']) ? $_POST['mode_reglement_id'] : $mode_reglement_id, 'mode_reglement_id', 'CRDT');
 	print '</td></tr>';
 
 	// Project
@@ -3151,10 +3155,13 @@ if ($action == 'create')
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
-	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
-	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->mode_reglement_id, 'none');
+	if ($action == 'editmode')
+	{
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT');
+	}
+	else
+	{
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
 	}
 	print '</td></tr>';
 

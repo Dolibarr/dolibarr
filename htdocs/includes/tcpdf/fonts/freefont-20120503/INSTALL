@@ -9,18 +9,19 @@ UNIX/GNU/Linux/BSD Systems
 --------------------------
 
 FreeFont works with any system using the free font rasterizer FreeType
-<http://www.freetype.org/>.
+<http://www.freetype.org/>.  Some features such as glyph substitution and
+positioning may be handled by the text layout library
+Pango <http://www.pango.org/>.
+
+Most recent systems using FreeType2 and Pango handle OpenType fonts well,
+but on older systems TrueType may perform better.
 
 * Debian GNU/Linux
 
 Users of Debian GNU/Linux system will probably want to use the Debian package,
-available from the Debian site, 
+named 'ttf-freefont', available from the Debian Linux site.
 
-	<http://packages.debian.org/unstable/x11/ttf-freefont.html>,
-
-or any of its mirrors.
-
-Install them by issuing the command
+Install the fonts by issuing the command
 	apt-get install ttf-freefont
 
 
@@ -34,7 +35,7 @@ Control Center module "kcmfontinst", which may appear in the menu as
 This is especially helpful for developers and testers.
 
 
-* Generic X-windows
+* Generic X Window systems
 
 	1) Fetch the freefont-ttf.tar.gz package with Free UCS outline fonts
 	   in the TrueType format.
@@ -52,13 +53,21 @@ This is especially helpful for developers and testers.
 	4) Run ttmkfdir in the directory where you unpacked the fonts.
 
 
-Windows 95/98/NT/2000/XP; Vista
--------------------------------
+Microsoft Windows 95/98/NT/2000/XP; Vista/7
+-------------------------------------------
 
-Note that in at least Vista, XP and 2000, the OpenType versions perform much
-better than, and are recommended over, the TrueType ones.
+Note that in at least Windows 7, Vista, XP and 2000, the TrueType versions
+perform much better than, and are recommended over, the OpenType ones.
 
-* Vista:
+For good font smoothing in Windows, Microsoft ClearType must be enabled.
+The native Windows web browser must be used to install, enable, and configure
+ClearType. A web search for "ClearType Tuner" will find the proper web pages.
+Recent versions of the browser raise a security block (a yellow bar at the
+top of the window), which you must act upon to allow installation.  A
+checkbox in the window turns ClearType on (in Win-speek, "Turn on ClearType").
+The change happens immediately.
+
+* Vista, Windows 7:
 	1) From the Start menu, open Control Panels
 	2) Drag-n-drop font files onto Fonts control panel
            You may get a dialog saying
@@ -69,18 +78,21 @@ better than, and are recommended over, the TrueType ones.
 	The font installation is similar to Vista.
 
 	In order to use OpenType, users of Windows 95, 98 and NT 4.0 can
-	install Adobe's 'Type Manager Light'.  It is available for download
-	without cost from Adobe's web site.
+	install Adobe's 'Type Manager Light', which may be obtained from
+	the Adobe web site.
 
 	Otherwise, use the TrueType versions.
 
-Mac OS X
---------
+Apple Mac OS X
+--------------
 
-Installing on Mac OS X consists of moving the .ttf files to either
+Support for OpenType on MacOS X started with OS 10.4, and has been improved
+gradually in later versions.
+
+Installing on Mac OS X consists of moving the font files to either
 	/Library/Fonts/  or  ~/Library/Fonts/
 depending on whether they should be available to all users on your system
-or just to yourself.
+or just to your own user.
 
 --------------------------------------------------------------------------
-$Id: INSTALL,v 1.7 2008/12/26 12:33:31 Stevan_White Exp $
+$Id: INSTALL,v 1.11 2011-06-12 07:14:12 Stevan_White Exp $
