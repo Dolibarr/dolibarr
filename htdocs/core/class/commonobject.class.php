@@ -7,6 +7,7 @@
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2014	   Teddy Andreotti		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2807,11 +2808,16 @@ abstract class CommonObject
 		// Total HT
 		print '<td align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
 
+		print '<td width="10"></td>';
+
+		print '<td width="10"></td>';
+
+		// add coll for align duplication button
+		if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
+			print '<td width="10"></td>';
+		}
+
 		print '<td></td>';  // No width to allow autodim
-
-		print '<td width="10"></td>';
-
-		print '<td width="10"></td>';
 
 		print "</tr>\n";
 

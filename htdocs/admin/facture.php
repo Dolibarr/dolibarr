@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,6 +260,24 @@ if ($action == 'setforcedate')
     {
         setEventMessage($langs->trans("Error"),'errors');
     }
+}
+
+if ($action == 'setaffdupliquer')
+{
+	$affdupliquer = GETPOST('affdupliquer','alpha');
+
+	$res = dolibarr_set_const($db, "FAC_AFF_BUTTON_DUPPLIQUER",$affdupliquer,'chaine',0,'',$conf->entity);
+
+	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		setEventMessage($langs->trans("SetupSaved"));
+	}
+	else
+	{
+		setEventMessage($langs->trans("Error"),'errors');
+	}
 }
 
 
@@ -736,6 +755,20 @@ print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
+print "</td></tr>\n";
+print '</form>';
+
+//Aff button dupliquer
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+print '<input type="hidden" name="action" value="setaffdupliquer" />';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("AffButtonDupliquer");
+print '</td><td width="60" align="center">';
+print $form->selectyesno("affdupliquer",$conf->global->FAC_AFF_BUTTON_DUPPLIQUER,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

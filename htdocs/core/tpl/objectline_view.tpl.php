@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,17 @@
  */
 ?>
 <?php $coldisplay=0; ?>
+
+<?php
+	echo ".<br />";
+	echo $line->ref . "</br>";
+	echo $line->product_type . "</br>";
+	echo $line->description . "</br>";
+	var_dump(htmlspecialchars($line->description,  ENT_QUOTES));
+	echo "&quot;";
+	echo "------------------<br />";
+
+?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
 <tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
@@ -147,6 +159,34 @@
 		</a>
 		<?php } ?>
 	</td>
+
+	<?php if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
+			if(empty($line->ref)){
+				// produit prédefini
+				$string_argument = "'1'";
+				$string_argument .= ", '".addslashes(htmlspecialchars($line->description))."'";
+				$string_argument .= ", '".$line->qty."'";
+				$string_argument .= ", '".$line->remise_percent."'";
+				$string_argument .= ", '".$line->subprice."'";
+				$string_argument .= ", '".$line->tva_tx."'";
+				$string_argument .= ", '".$line->product_type."'";
+				?>
+				<td align="center"><?php $coldisplay++; ?>
+					<a href="" class="dupdup" onclick="autofillnewproduct(<?php echo $string_argument; ?>); return false;" >
+						<?php echo img_picto("Dupliquer",'split.png'); ?>
+					</a>
+				</td>
+
+				<?php
+			}else{
+				//ligne libre
+				$string_argument = "";
+			?>
+				<td align="center"><?php $coldisplay++; ?>
+
+				</td>
+			<?php }	?>
+	<?php } ?>
 
 	<td align="center"><?php $coldisplay++; ?>
 		<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id; ?>">

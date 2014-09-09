@@ -3325,6 +3325,25 @@ if ($action == 'create')
 
 	print '</table><br>';
 
+	if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
+		print '<script type="text/javascript">';
+		print '	function autofillnewproduct(){';
+		print '		if(arguments.length > 0){';
+		print '         if(arguments[0] == 1){';
+		print '         	var description_arg = arguments[1];';
+		print '				$("#dp_desc").val(description_arg);';
+		print '				$("#qty").val(Number(arguments[2]));';
+		print '				$("#remise_percent").val(Number(arguments[3]));';
+		print '				$("#price_ht").val(Number(arguments[4]));';
+		print '				$("#tva_tx").val(Number(arguments[5]));';
+		print '				$("#prod_entry_mode_free").prop("checked", true);';
+		print '				$("#select_type").val(Number(arguments[6]));';
+		print '     	}';
+		print '     }';
+		print '	}';
+		print '</script>';
+	}
+
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 		$blocname = 'contacts';
 		$title = $langs->trans('ContactsAddresses');
