@@ -80,7 +80,8 @@ llxHeader();
 
 $form = new Form($db);
 
-print_fiche_titre($langs->trans('ConfigAccountingExpert'));
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+print_fiche_titre($langs->trans('ConfigAccountingExpert'),$linkback,'setup');
 
 $head = admin_accounting_prepare_head(null);
 
