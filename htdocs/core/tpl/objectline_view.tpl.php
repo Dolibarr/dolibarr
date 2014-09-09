@@ -161,15 +161,13 @@
 	</td>
 
 	<?php if(!empty($conf->global->FAC_AFF_BUTTON_DUPPLIQUER)){
-			if(empty($line->ref)){
+			if(!empty($line->ref)){
 				// produit prédefini
-				$string_argument = "'1'";
+				$string_argument = "'2'";
 				$string_argument .= ", '".addslashes(htmlspecialchars($line->description))."'";
 				$string_argument .= ", '".$line->qty."'";
 				$string_argument .= ", '".$line->remise_percent."'";
-				$string_argument .= ", '".$line->subprice."'";
-				$string_argument .= ", '".$line->tva_tx."'";
-				$string_argument .= ", '".$line->product_type."'";
+				$string_argument .= ", '".$line->fk_product."'";
 				?>
 				<td align="center"><?php $coldisplay++; ?>
 					<a href="" class="dupdup" onclick="autofillnewproduct(<?php echo $string_argument; ?>); return false;" >
@@ -180,7 +178,13 @@
 				<?php
 			}else{
 				//ligne libre
-				$string_argument = "";
+				$string_argument = "'1'";
+				$string_argument .= ", '".addslashes(htmlspecialchars($line->description))."'";
+				$string_argument .= ", '".$line->qty."'";
+				$string_argument .= ", '".$line->remise_percent."'";
+				$string_argument .= ", '".$line->subprice."'";
+				$string_argument .= ", '".$line->tva_tx."'";
+				$string_argument .= ", '".$line->product_type."'";
 			?>
 				<td align="center"><?php $coldisplay++; ?>
 
