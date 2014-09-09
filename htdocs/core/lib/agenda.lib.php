@@ -501,14 +501,14 @@ function calendars_prepare_head($param)
     $head[$h][2] = 'cardday';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
-    $head[$h][1] = $langs->trans("ViewList");
-    $head[$h][2] = 'cardlist';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/peruser.php'.($param?'?'.$param:'');
     $head[$h][1] = $langs->trans("ViewPerUser");
     $head[$h][2] = 'cardperuser';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/listactions.php'.($param?'?'.$param:'');
+    $head[$h][1] = $langs->trans("ViewList");
+    $head[$h][2] = 'cardlist';
     $h++;
 
 	$object=new stdClass();

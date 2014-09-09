@@ -998,7 +998,7 @@ elseif ($action == 'show_week') // View by week
         if ($todayarray['mday']==$tmpday && $todayarray['mon']==$tmpmonth && $todayarray['year']==$tmpyear) $today=1;
         if ($today) $style='cal_today';
 
-        echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
+        echo '  <td class="'.$style.'" width="14%" valign="top">';
         show_day_events($db, $tmpday, $tmpmonth, $tmpyear, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
         echo "  </td>\n";
     }
@@ -1032,7 +1032,7 @@ else    // View by day
     echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </tr>\n";
     echo " <tr>\n";
-    echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
+    echo '  <td class="'.$style.'" width="14%" valign="top">';
     $maxnbofchar=80;
     show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
     echo "</td>\n";
@@ -1073,18 +1073,20 @@ $db->close();
  * @param   int		$maxprint        Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar     Nb of characters to show for event line
  * @param   string	$newparam        Parameters on current URL
- * @param   int		$showinfo        Add extended information (used by day view)
+ * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60)
 {
     global $user, $conf, $langs;
-    global $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
+    global $action, $filter, $filtera, $filtert, $filterd, $status, $actioncode;	// Filters used into search form
     global $theme_datacolor;
     global $cachethirdparties, $cachecontacts, $colorindexused;
 
     print '<div id="dayevent_'.sprintf("%04d",$year).sprintf("%02d",$month).sprintf("%02d",$day).'" class="dayevent">'."\n";
+
+    // Line with title of day
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
     print '<table class="nobordernopadding" width="100%">';
     print '<tr><td align="left" class="nowrap">';
@@ -1092,7 +1094,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
     print $newparam;
     print '">';
-    if ($showinfo) print dol_print_date($curtime,'daytext');
+    if ($showinfo) print dol_print_date($curtime,'daytextshort');
     else print dol_print_date($curtime,'%d');
     print '</a>';
     print '</td><td align="right" class="nowrap">';
@@ -1107,7 +1109,10 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         print '</a>';
     }
     print '</td></tr>';
-    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="nowrap sortable" style="padding-bottom: 2px;">';
+
+    // Line with td contains all div of each events
+    print '<tr height="'.$minheight.'"><td valign="top" colspan="2" class="sortable" style="padding-bottom: 2px;">';
+	print '<div style="width: 100%; position: relative;">';
 
     //$curtime = dol_mktime (0, 0, 0, $month, $day, $year);
     $i=0; $nummytasks=0; $numother=0; $numbirthday=0; $numical=0; $numicals=array();
@@ -1192,15 +1197,23 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         $cssclass.= " unsortable";
                     }
 
+                    $h=''; $nowrapontd=1;
+                    if ($action == 'show_day')  { $h='height: 100%; '; $nowrapontd=0; }
+                    if ($action == 'show_week') { $h='height: 100%; '; $nowrapontd=0; }
+
                     // Show rect of event
-                    print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'">';
-                    print '<ul class="cal_event"><li class="cal_event">';
-                    print '<table class="cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="';
+                    print '<div id="event_'.$ymd.'_'.$i.'" class="event '.$cssclass.'"';
+                    //print ' style="height: 100px;';
+                    //print ' position: absolute; top: 40px; width: 50%;';
+                    //print '"';
+                    print '>';
+                    print '<ul class="cal_event" style="'.$h.'"><li class="cal_event" style="'.$h.'">';
+                    print '<table class="cal_event'.(empty($event->transparency)?'':' cal_event_busy').'" style="'.$h;
                     print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //if (! empty($event->transparency)) print 'background: #'.$color.'; background: -webkit-gradient(linear, left top, left bottom, from(#'.$color.'), to(#'.dol_color_minus($color,1).'));';
                     //else print 'background-color: transparent !important; background: none; border: 1px solid #bbb;';
                     print ' -moz-border-radius:4px;" width="100%"><tr>';
-                    print '<td class="nowrap cal_event'.($event->type_code == 'BIRTHDAY'?' cal_event_birthday':'').'">';
+                    print '<td class="'.($nowrapontd?'nowrap ':'').'cal_event'.($event->type_code == 'BIRTHDAY'?' cal_event_birthday':'').'">';
                     if ($event->type_code == 'BIRTHDAY') // It's a birthday
                     {
                         print $event->getNomUrl(1,$maxnbofchar,'cal_event','birthday','contact');
@@ -1367,6 +1380,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
         print '</script>'."\n";
     }
 
+    print '</div>';
     print '</td></tr>';
     print '</table>';
     print '</div>'."\n";
