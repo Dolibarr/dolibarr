@@ -96,10 +96,14 @@ print "</tr>\n";
 $var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
+	// Load language file for external modules
+	$label = explode('@', $extrafields->attribute_label[$key]);
+	$langs->load('extrafields@' . $label[1]);
+
     $var=!$var;
     print "<tr ".$bc[$var].">";
     print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
-    print "<td>".$extrafields->attribute_label[$key]."</td>\n";
+    print "<td>".$langs->trans($label[0])."</td>\n";
     print "<td>".$key."</td>\n";
     print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
     print '<td align="right">'.$extrafields->attribute_size[$key]."</td>\n";
