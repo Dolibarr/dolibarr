@@ -16,12 +16,12 @@
  */
 
 /**
- *      \file       htdocs/admin/fiscalyear.php
+ *      \file       htdocs/accountancy/admin/fiscalyear.php
  *		\ingroup    fiscal year
  *		\brief      Setup page to configure fiscal year
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
@@ -55,6 +55,8 @@ $object = new Fiscalyear($db);
  * View
  */
 
+$max=100;
+
 $form = new Form($db);
 
 llxHeader('',$title);
@@ -68,16 +70,13 @@ $sql.= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 
 $result = $db->query($sql);
-
-$max=10;
-
 if ($result)
 {
 	$var=false;
     $num = $db->num_rows($result);
 
     $i = 0;
-	
+
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -85,13 +84,13 @@ if ($result)
 	print '<td>'.$langs->trans("Label").'</td>';
 	print '<td>'.$langs->trans("DateStart").'</td>';
 	print '<td>'.$langs->trans("DateEnd").'</td>';
-	print '<td>'.$langs->trans("Statut").'</td>';
+	print '<td align="right">'.$langs->trans("Statut").'</td>';
 	print '</tr>';
-	
+
 	if ($num)
     {
 	    $fiscalyearstatic=new Fiscalyear($db);
-    
+
 		while ($i < $num && $i < $max)
         {
             $obj = $db->fetch_object($result);
@@ -102,7 +101,7 @@ if ($result)
             print '<td align="left">'.$obj->label.'</td>';
             print '<td align="left">'.dol_print_date($db->jdate($obj->date_start),'day').'</td>';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_end),'day').'</td>';
-            print '<td>'.$fiscalyearstatic->LibStatut($obj->statut,5).'</td>';
+            print '<td align="right">'.$fiscalyearstatic->LibStatut($obj->statut,5).'</td>';
             print '</tr>';
             $var=!$var;
             $i++;
@@ -113,10 +112,9 @@ if ($result)
     {
         print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
     }
-	
+
 	print '</table>';
-	print '</form>';
-} 
+}
 else
 {
 	dol_print_error($db);

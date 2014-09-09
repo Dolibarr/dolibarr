@@ -1274,6 +1274,49 @@ class Form
 
 
     /**
+     *	Return select list of users. Selected users are stored into session.
+     *
+     *  @param  string	$htmlname       Field name in form
+     *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+     *  @param  array	$exclude        Array list of users id to exclude
+     * 	@param	int		$disabled		If select list must be disabled
+     *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
+     * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
+     *  @param	int		$force_entity	0 or Id of environment to force
+     *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
+     *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+     *  @param	string	$morefilter		Add more filters into sql request
+     * 	@return	string					HTML select string
+     *  @see select_dolgroups
+     */
+    function select_dolusers_forevent($htmlname='userid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='')
+    {
+        global $conf,$user,$langs;
+
+        $userstatic=new User($this->db);
+
+        // Method with no ajax
+        //$out.='<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
+		$out.='<input type="submit" class="button" name="addassignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+		$assignedtouser=array();
+		if (!empty($_SESSION['assignedtouser'])) $assignedtouser=dol_json_decode($_SESSION['assignedtouser'], true);
+		if (count($assignedtouser)) $out.='<br>';
+		foreach($assignedtouser as $key => $value)
+		{
+			$userstatic->fetch($key);
+			$out.=$userstatic->getNomUrl(1);
+			//$out.=' '.($value['mandatory']?$langs->trans("Mandatory"):$langs->trans("Optional"));
+			//$out.=' '.($value['transparency']?$langs->trans("Busy"):$langs->trans("NotBusy"));
+			$out.='<br>';
+		}
+
+		//$out.='</form>';
+        return $out;
+    }
+
+
+    /**
      *  Return list of products for customer in Ajax if Ajax activated or go to select_produits_list
      *
      *  @param		int			$selected				Preselected products
@@ -3932,11 +3975,12 @@ class Form
 
     /**
      *	Return a HTML select string, built from an array of key+value.
+     *  Note: Do not use returned string into a langs->trans function, content may be entity encoded twice.
      *
      *	@param	string	$htmlname       Name of html select area
      *	@param	array	$array          Array with key+value
      *	@param	string	$id             Preselected key
-     *	@param	int		$show_empty     1 si il faut ajouter une valeur vide dans la liste, 0 sinon
+     *	@param	int		$show_empty     0 no empty value allowed, 1 to add an empty value into list (value is '' or '&nbsp;').
      *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
      *	@param	int		$value_as_key   1 to use value as key
      *	@param  string	$moreparam      Add more parameters onto the select tag
@@ -3945,7 +3989,7 @@ class Form
      * 	@param	int		$disabled		Html select box is disabled
      *  @param	int		$sort			'ASC' or 'DESC' =Sort on label, '' or 'NONE'=Do not sort
      *  @param	string	$morecss		Add more class to css styles
-     * 	@return	string					HTML select string
+     * 	@return	string					HTML select string.
      */
     static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='')
     {
@@ -3982,11 +4026,11 @@ class Form
 
                 if ($key_in_label)
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
+                    $selectOptionValue = dol_escape_htmltag($key.' - '.($maxlen?dol_trunc($value,$maxlen):$value));
                 }
                 else
                 {
-                    $selectOptionValue = dol_htmlentitiesbr($maxlen?dol_trunc($value,$maxlen):$value);
+                    $selectOptionValue = dol_escape_htmltag($maxlen?dol_trunc($value,$maxlen):$value);
                     if ($value == '' || $value == '-') $selectOptionValue='&nbsp;';
                 }
                 $out.=$selectOptionValue;

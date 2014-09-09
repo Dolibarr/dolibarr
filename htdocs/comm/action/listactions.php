@@ -43,6 +43,7 @@ $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
 $type=GETPOST('type');
 $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_USE_EVENT_TYPE)?'AC_OTH':''));
+$dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth'), GETPOST('dateselectday'), GETPOST('dateselectyear'));
 
 if ($actioncode == '') $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
@@ -178,6 +179,8 @@ if ($filtera > 0 || $filtert > 0 || $filterd > 0 || $usergroup > 0)
 	if ($usergroup > 0) $sql.= ($filtera>0||$filtert>0||$filterd>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }
+//if ($dateselect > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($dateselect)."' AND '".$db->idate($dateselect+3600*24-1).'"';
+if ($dateselect > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($dateselect)."' AND '".$db->idate($dateselect+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
@@ -191,9 +194,11 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 
-	$title=$langs->trans("DoneAndToDoActions");
+	/*$title=$langs->trans("DoneAndToDoActions");
 	if ($status == 'done') $title=$langs->trans("DoneActions");
 	if ($status == 'todo') $title=$langs->trans("ToDoActions");
+	*/
+	$title=$langs->trans("ListOfEvents");
 
 	$newtitle=$langs->trans($title);
 
@@ -225,6 +230,8 @@ if ($resql)
     print_barre_liste($newtitle, $page, $_SERVER["PHP_SELF"], $param,$sortfield,$sortorder,$link,$num,0,'');
     //print '<br>';
 
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
+
 	$i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
@@ -238,6 +245,22 @@ if ($resql)
 	print_liste_field_titre($langs->trans("AffectedTo"),$_SERVER["PHP_SELF"],"ut.login",$param,"","",$sortfield,$sortorder);
 	//print_liste_field_titre($langs->trans("DoneBy"),$_SERVER["PHP_SELF"],"ud.login",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
+	print "</tr>\n";
+
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre" align="center">';
+	print $form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+	print '</td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+    //print '&nbsp; ';
+    //print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '</td>';
 	print "</tr>\n";
 
 	$contactstatic = new Contact($db);
@@ -349,6 +372,9 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
+
+	print '</form>';
+
 	$db->free($resql);
 
 }

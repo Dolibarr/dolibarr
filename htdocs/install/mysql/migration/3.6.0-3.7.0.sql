@@ -84,6 +84,9 @@ ALTER TABLE llx_product MODIFY COLUMN accountancy_code_buy varchar(32);
 ALTER TABLE llx_user MODIFY COLUMN accountancy_code varchar(32);
 
 
+ALTER TABLE llx_user ADD COLUMN weeklyhours double(16,8);
+
+
 ALTER TABLE llx_projet_task_time ADD COLUMN task_datehour datetime after task_date;
 
 
