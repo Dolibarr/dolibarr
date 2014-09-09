@@ -1999,7 +1999,7 @@ if ($action == 'create') {
 		foreach ($extrafields->attribute_label as $key => $label) {
 
 			// Load language file for external modules
-			$label = explode('@', $label)[1];
+			$label = explode('@', $label);
 			$langs->load('extrafields@' . $label[1]);
 
 			if ($action == 'edit_extras') {
@@ -2013,7 +2013,7 @@ if ($action == 'create') {
 				print '<tr><td';
 				if (! empty($extrafields->attribute_required [$key]))
 					print ' class="fieldrequired"';
-				print '>' . $langs->trans($label) . '</td><td colspan="5">';
+				print '>' . $langs->trans($label[0]) . '</td><td colspan="5">';
 				// Convert date into timestamp format
 				if (in_array($extrafields->attribute_type [$key], array('date','datetime'))) {
 					$value = isset($_POST ["options_" . $key]) ? dol_mktime($_POST ["options_" . $key . "hour"], $_POST ["options_" . $key . "min"], 0, $_POST ["options_" . $key . "month"], $_POST ["options_" . $key . "day"], $_POST ["options_" . $key . "year"]) : $db->jdate($object->array_options ['options_' . $key]);
