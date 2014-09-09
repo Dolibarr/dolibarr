@@ -16,11 +16,11 @@
  */
 
 /**
- *  \file       	htdocs/admin/fiscalyear_card.php
+ *  \file       	htdocs/accountancy/admin/fiscalyear_card.php
  *  \brief      	Page to show info of a fiscal year
  */
 
-require '../main.inc.php';
+require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -43,15 +43,15 @@ if ($id)
 	$object = new Fiscalyear($db);
 	$object->fetch($id);
 	$object->info($id);
-	
+
 	$head = fiscalyear_prepare_head($object);
-	
+
 	dol_fiche_head($head, 'info', $langs->trans("FiscalYearCard"), 0, 'cron');
 
     print '<table width="100%"><tr><td>';
     dol_print_object_info($object);
     print '</td></tr></table>';
-      
+
     print '</div>';
 }
 

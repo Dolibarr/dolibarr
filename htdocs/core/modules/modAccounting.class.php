@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<alexandre.spangaro@gmail.com>
- * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com> 
+ * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  */
 
 /**
- * \file		accountingex/core/modules/modAccountingExpert.class.php
+ * \file		accountingex/core/modules/modAccounting.class.php
  * \ingroup		Accounting Expert
  * \brief		Module to activate Accounting Expert module
  */
@@ -42,164 +42,154 @@ class modAccounting extends DolibarrModules
 
         $this->db = $db;
 		$this->numero = 50400;
-		
+
 		$this->family = "financial";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Advanced manage of accounting";
-		
+		$this->description = "Advanced accounting management";
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
-		
+
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
 		$this->picto = 'accounting';
-		
+
 		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
 		// $this->triggers = 1;
-		
+
 		// Data directories to create when module is enabled
-		$this->dirs = array (
-				'/accountingex/temp' 
-		);
-		
+		$this->dirs = array('/accounting/temp');
+
 		// Config pages
 		$this->config_page_url = array('index.php@accountancy');
-		
+
 		// Dependencies
-		$this->depends = array ("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array (); // List of modules id to disable if this one is disabled
-		$this->conflictwith = array ("modComptabilite"); // List of modules are in conflict with this module
-		$this->phpmin = array (
-				5,
-				2 
-		); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array (
-				3,
-				6
-		); // Minimum version of Dolibarr required by module
-		$this->langfiles = array (
-				"accountancy" 
-		);
-		
+		$this->depends = array("modFacture","modBanque","modTax"); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
+		$this->phpmin = array(5, 2); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 6); // Minimum version of Dolibarr required by module
+		$this->langfiles = array("accountancy");
+
 		// Constants
-		$this->const = array ();
-		$this->const[1] = array (
+		$this->const = array();
+		$this->const[1] = array(
 				"MAIN_COMPANY_CODE_ALWAYS_REQUIRED",
 				"chaine",
 				"1",
 				"With this constants on, third party code is always required whatever is numbering module behaviour"
 		);
-		$this->const[2] = array (
+		$this->const[2] = array(
 				"MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED",
 				"chaine",
 				"1",
 				"With this constants on, bank account number is always required"
 		);
-		$this->const[1] = array (
+		$this->const[1] = array(
 				"ACCOUNTING_SEPARATORCSV",
 				"string",
-				"," 
+				","
 		);
-		$this->const[2] = array (
+		$this->const[2] = array(
 				"ACCOUNTING_ACCOUNT_SUSPENSE",
 				"chaine",
-				"471" 
+				"471"
 		);
-		$this->const[3] = array (
+		$this->const[3] = array(
 				"ACCOUNTING_SELL_JOURNAL",
 				"chaine",
-				"VTE" 
+				"VTE"
 		);
-		$this->const[4] = array (
+		$this->const[4] = array(
 				"ACCOUNTING_PURCHASE_JOURNAL",
 				"chaine",
-				"ACH" 
+				"ACH"
 		);
-		$this->const[5] = array (
+		$this->const[5] = array(
 				"ACCOUNTING_SOCIAL_JOURNAL",
 				"chaine",
-				"SOC" 
+				"SOC"
 		);
-		$this->const[6] = array (
+		$this->const[6] = array(
 				"ACCOUNTING_CASH_JOURNAL",
 				"chaine",
-				"CAI" 
+				"CAI"
 		);
-		$this->const[7] = array (
+		$this->const[7] = array(
 				"ACCOUNTING_MISCELLANEOUS_JOURNAL",
 				"chaine",
-				"OD" 
+				"OD"
 		);
-		$this->const[8] = array (
+		$this->const[8] = array(
 				"ACCOUNTING_BANK_JOURNAL",
 				"chaine",
-				"BQ" 
+				"BQ"
 		); // Deprecated Move into llx_bank_account
-		$this->const[9] = array (
+		$this->const[9] = array(
 				"ACCOUNTING_ACCOUNT_TRANSFER_CASH",
 				"chaine",
-				"58" 
+				"58"
 		);
-		$this->const[10] = array (
+		$this->const[10] = array(
 				"CHARTOFACCOUNTS",
 				"chaine",
-				"2" 
+				"2"
 		);
-		$this->const[11] = array (
+		$this->const[11] = array(
 				"ACCOUNTING_MODELCSV",
 				"chaine",
-				"0" 
+				"0"
 		);
-		$this->const[12] = array (
+		$this->const[12] = array(
 				"ACCOUNTING_LENGTH_GACCOUNT",
 				"chaine",
-				"" 
+				""
 		);
-		$this->const[13] = array (
+		$this->const[13] = array(
 				"ACCOUNTING_LENGTH_AACCOUNT",
 				"chaine",
-				"" 
+				""
 		);
-		$this->const[14] = array (
+		$this->const[14] = array(
 				"ACCOUNTING_LIMIT_LIST_VENTILATION",
 				"chaine",
-				"50" 
+				"50"
 		);
-		$this->const[15] = array (
+		$this->const[15] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_TODO",
 				"yesno",
-				"1" 
+				"1"
 		);
-		$this->const[16] = array (
+		$this->const[16] = array(
 				"ACCOUNTING_LIST_SORT_VENTILATION_DONE",
 				"yesno",
-				"1" 
+				"1"
 		);
-		
+
 		// Tabs
 		$this->tabs = array();
-		
+
 		// Css
-		$this->module_parts = array ();
-		
+		$this->module_parts = array();
+
 		// Boxes
-		$this->boxes = array ();
-		
+		$this->boxes = array();
+
 		// Permissions
 		$this->rights_class = 'accounting';
-		
-		$this->rights = array (); // Permission array used by this module
+
+		$this->rights = array(); // Permission array used by this module
 		$r = 0;
-		
-		$this->rights[$r][0] = 50401;
+
+		$this->rights[$r][0] = 50401;		// TODO Goal of this permission compared to others ???
 		$this->rights[$r][1] = 'Access_accountancy';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'access';
 		$this->rights[$r][5] = '';
 		$r++;
-		
+
 		$this->rights[$r][0] = 50402;
 		$this->rights[$r][1] = 'Read ventilation';
 		$this->rights[$r][2] = 'r';
@@ -207,7 +197,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'ventilation';
 		$this->rights[$r][5] = 'read';
 		$r++;
-		
+
 		$this->rights[$r][0] = 50403;
 		$this->rights[$r][1] = 'Dispatched ventilation';
 		$this->rights[$r][2] = 'r';
@@ -239,12 +229,20 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'comptarapport';
 		$this->rights[$r][5] = 'lire';
 		$r++;
-		
+
+		$this->rights[$r][0] = 50430;
+		$this->rights[$r][1] = 'Define and close a fiscal year';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'fiscalyear';
+		$this->rights[$r][5] = '';
+		$r++;
+
 		// Main menu entries
-		$this->menus = array ();
+		$this->menus = array();
 		$r = 0;
 	}
-	
+
     /**
 	 *		Function called when module is enabled.
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
